@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T11:22:57.091Z",
+  "updated_at": "2026-11-28T11:47:44.705Z",
   "stats": {
-    "total_discovered": 10905,
-    "approved_pending_harvest": 10357,
+    "total_discovered": 10906,
+    "approved_pending_harvest": 10358,
     "harvested_count": 0,
     "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10364,
+      "COMMUNITY_AND_EXPERT": 10365,
       "OFFICIAL_DOCUMENTATION": 299,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
@@ -236101,6 +236101,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
         "fileName": "wzh4869-appports-learnings.md"
+      }
+    },
+    "SRC-FA103D78F7C0": {
+      "id": "SRC-FA103D78F7C0",
+      "url": "https://github.com/mikelikesdesign/SwiftUI-experiments",
+      "title": "https://github.com/mikelikesdesign/SwiftUI-experiments",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:47:44.705Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikelikesdesign-swiftui-experiments-learnings.md",
+        "fileName": "mikelikesdesign-swiftui-experiments-learnings.md"
       }
     }
   }

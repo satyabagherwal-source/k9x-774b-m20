@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T11:22:49.935Z",
-  "total_cycles_completed": 13321,
-  "total_learnings_persisted": 13321,
-  "total_rules_promoted": 12019,
+  "last_updated": "2026-11-28T11:47:38.345Z",
+  "total_cycles_completed": 13323,
+  "total_learnings_persisted": 13323,
+  "total_rules_promoted": 12021,
   "history": [
-    {
-      "timestamp": "2026-11-27T17:01:53.926Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T17:19:20.165Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T17:19:32.233Z",
       "repository": "linkerd/linkerd2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T11:22:49.935Z",
       "repository": "oven-sh/bun",
       "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T11:47:36.681Z",
+      "repository": "webdriverio/webdriverio",
+      "learningId": "learn-github-webdriverio-webdriverio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T11:47:38.345Z",
+      "repository": "mikelikesdesign/SwiftUI-experiments",
+      "learningId": "learn-github-mikelikesdesign-swiftui-experiments",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -14080,3 +14080,5 @@ Every entry in this ledger must capture:
 | `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `c4799792` | Multi-dimensional audit evidence | 2026-11-28T11:17:51.386Z |
 | `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `cc33027a` | Multi-dimensional audit evidence | 2026-11-28T11:17:52.075Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `e3bbc3fc` | Multi-dimensional audit evidence | 2026-11-28T11:22:49.930Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `f50ab796` | Multi-dimensional audit evidence | 2026-11-28T11:47:36.675Z |
+| `learn-github-mikelikesdesign-swiftui-experiments` | `https://github.com/mikelikesdesign/SwiftUI-experiments` | `6effebb7` | Multi-dimensional audit evidence | 2026-11-28T11:47:38.339Z |

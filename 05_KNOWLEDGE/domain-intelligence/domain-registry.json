@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T11:22:57.574Z",
-  "total_records": 2896,
+  "last_updated": "2026-11-28T11:47:46.439Z",
+  "total_records": 2898,
   "domains": {
     "A": {
       "total": 27,
@@ -1280,7 +1280,7 @@
       ]
     },
     "G": {
-      "total": 492,
+      "total": 494,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1773,7 +1773,9 @@
         "domain_intelligence-architecture-intelligence-infracost-infracost-core-invariants",
         "domain_intelligence-architecture-intelligence-infracost-infracost-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-chroma-core-chroma-core-invariants",
-        "domain_intelligence-architecture-intelligence-chroma-core-chroma-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-chroma-core-chroma-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-core-invariants",
+        "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-learnings-core-inv"
       ]
     },
     "H": {
@@ -37756,8 +37758,8 @@
       "title": "Quality & Verification Intelligence: webdriverio/webdriverio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webdriverio-webdriverio-quality-verification-intelligence-webdriverio-webdriveri.md",
       "repository": "webdriverio/webdriverio",
-      "content_hash": "eab90bdb17372180147ac34879af6e18c9195f5b9f465e6003e8befe8a995fcd",
-      "created_at": "2026-11-25T00:51:59.532Z"
+      "content_hash": "16092468c7eeac49366b7fc789d86b8b1dcaaacfe2399b298c1631cf08c3d99d",
+      "created_at": "2026-11-28T11:47:37.182Z"
     },
     "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria": {
       "record_id": "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria",
@@ -37765,8 +37767,8 @@
       "title": "Quality & Verification Intelligence: webdriverio-webdriverio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webdriverio-webdriverio-learnings-quality-verification-intelligence-webdriverio-.md",
       "repository": "webdriverio-webdriverio-learnings",
-      "content_hash": "44cb5126af185ca9a4327c33ce0f0b4647e02899f55df4554599f5c9b598859b",
-      "created_at": "2026-11-25T00:52:39.656Z"
+      "content_hash": "0e8625386d95845efa36ae6ea27b1eab534a95dac99e5a1fa43610525486c05e",
+      "created_at": "2026-11-28T11:47:44.200Z"
     },
     "domain_intelligence-architecture-intelligence-mswjs-msw-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mswjs-msw-core-invariants",
@@ -46843,8 +46845,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "3cb478a46c53d06ae279c703ef77240389a36cc09f69f3f051581fec1841f849",
-      "created_at": "2026-11-28T08:40:16.181Z"
+      "content_hash": "4ee99bf230649c9ea317a997a853921d348655605fda894b27f04049fde7389a",
+      "created_at": "2026-11-28T11:47:46.439Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -49227,6 +49229,24 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-28T09:34:51.695Z"
+    },
+    "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mikelikesdesign/SwiftUI-experiments Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mikelikesdesign-swiftui-experiments-architecture-intelligence-mikelikesdesign-sw.md",
+      "repository": "mikelikesdesign/SwiftUI-experiments",
+      "content_hash": "52a6ddb66e5f3a4ef48a9d8c9b3c0fd0ad7e8d31dd066d06c670d593a47e9a12",
+      "created_at": "2026-11-28T11:47:38.814Z"
+    },
+    "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-learnings-core-inv": {
+      "record_id": "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-learnings-core-inv",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mikelikesdesign-swiftui-experiments-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mikelikesdesign-swiftui-experiments-learnings-architecture-intelligence-mikelike.md",
+      "repository": "mikelikesdesign-swiftui-experiments-learnings",
+      "content_hash": "cdd76e029ab8d46d37ebc9cc780371121ef6b488b78eeb82c1b5031b5ef8c4e8",
+      "created_at": "2026-11-28T11:47:45.222Z"
     }
   }
 }

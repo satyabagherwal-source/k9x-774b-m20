@@ -1953,10 +1953,10 @@
     "repository": "webdriverio/webdriverio",
     "platform": "github",
     "sourceUrl": "https://github.com/webdriverio/webdriverio",
-    "sourceVersion": "cfd6c6b2",
+    "sourceVersion": "f50ab796",
     "license": "MIT",
-    "contentHash": "5a6ec9c63b1c4a90cee8474e1fd07b499c08bf9d7766dc63c500f15d80731702",
-    "lastHarvestedAt": "2026-11-25T00:51:59.048Z",
+    "contentHash": "6492c11eb0badd4154e9c9aaae4dfa6773c5afd553e68b63e41ff6b82fc6ff79",
+    "lastHarvestedAt": "2026-11-28T11:47:36.675Z",
     "learningId": "learn-github-webdriverio-webdriverio"
   },
   "rubenverborgh-sparql.js": {
@@ -9763,10 +9763,10 @@
     "repository": "mikelikesdesign/SwiftUI-experiments",
     "platform": "github",
     "sourceUrl": "https://github.com/mikelikesdesign/SwiftUI-experiments",
-    "sourceVersion": "8deaa990",
+    "sourceVersion": "6effebb7",
     "license": "MIT",
-    "contentHash": "b026177aebd55bbe20372d651999ed0f3755d148b2f23b8a69d401cae60525c1",
-    "lastHarvestedAt": "2026-11-09T01:12:39.636Z",
+    "contentHash": "be6ddd5ab7a5433e72da62dc776f11964902f435abe312d1f0a88d473cda5616",
+    "lastHarvestedAt": "2026-11-28T11:47:38.339Z",
     "learningId": "learn-github-mikelikesdesign-swiftui-experiments"
   },
   "jsonld-java-jsonld-java": {

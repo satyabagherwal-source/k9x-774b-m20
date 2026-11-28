@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-T8YE",
-    "timestamp": "2026-11-26T18:24:21.398Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "675d54f1ccdb27b6c9f29759e31d03ad1f46731e41e1a2c78120b8a9018c8d6a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-TB2V",
-    "timestamp": "2026-11-26T18:24:24.151Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "e99435686fc2639bb54b00c270e1dc79ea1879e13aeeab3189f4639f646bb077",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-477M",
     "timestamp": "2026-11-26T18:32:52.354Z",
     "repository": "CompVis/stable-diffusion-v1-4",
@@ -7490,6 +7460,36 @@
     "repository": "oven-sh/bun",
     "learningId": "learn-github-oven-sh-bun",
     "contentHash": "6f58170ae2c2c78c2db741a37f9b020838ed7f532d91d7d6957952a23ccedf3d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-IQFY",
+    "timestamp": "2026-11-28T11:47:36.670Z",
+    "repository": "webdriverio/webdriverio",
+    "learningId": "learn-github-webdriverio-webdriverio",
+    "contentHash": "6492c11eb0badd4154e9c9aaae4dfa6773c5afd553e68b63e41ff6b82fc6ff79",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-IRQ6",
+    "timestamp": "2026-11-28T11:47:38.334Z",
+    "repository": "mikelikesdesign/SwiftUI-experiments",
+    "learningId": "learn-github-mikelikesdesign-swiftui-experiments",
+    "contentHash": "be6ddd5ab7a5433e72da62dc776f11964902f435abe312d1f0a88d473cda5616",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

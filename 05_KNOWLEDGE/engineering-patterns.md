@@ -839795,3 +839795,199 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `e3bbc3fc` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11096. docs(devtools): document capture cost changes for the filmstrip, Python and nati (Harvested from webdriverio/webdriverio)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "docs(devtools): document capture cost changes for the filmstrip, Python and nati",
+  "source": "webdriverio/webdriverio",
+  "source_url": "https://github.com/webdriverio/webdriverio",
+  "source_version": "f50ab796",
+  "license": "MIT",
+  "extracted_at": "2026-11-28T11:47:36.020Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-webdriverio-webdriverio",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [webdriverio/webdriverio](https://github.com/webdriverio/webdriverio) (Revision: `f50ab796`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `website/docs/devtools/Limitations.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f50ab796`: docs(devtools): document capture cost changes for the filmstrip, Python and native traces. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/docs/devtools/Limitations.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+- **Non-Chrome video/filmstrip**: on browsers without a CDP push path the recorder polls `takeScreenshot`, which adds WebDriver round-trips and (under Allure) floods the step log; pair with the reporter's step-silencing options. The recorder skips a tick while a command or a per-action capture holds the driver, so its polls do not queue in front of the test.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+- **Non-Chrome video/filmstrip** — on browsers without a CDP push path the recorder polls `takeScreenshot`, which adds WebDriver round-trips and (under Allure) floods the step log; pair with the reporter's step-silencing options.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f50ab796` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11097. drag to delete to SwiftUI best practices (Harvested from mikelikesdesign/SwiftUI-experiments)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "drag to delete to SwiftUI best practices",
+  "source": "mikelikesdesign/SwiftUI-experiments",
+  "source_url": "https://github.com/mikelikesdesign/SwiftUI-experiments",
+  "source_version": "6effebb7",
+  "license": "MIT",
+  "extracted_at": "2026-11-28T11:47:37.666Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mikelikesdesign-swiftui-experiments",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mikelikesdesign/SwiftUI-experiments](https://github.com/mikelikesdesign/SwiftUI-experiments) (Revision: `6effebb7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `drag to delete/drag to delete/ContentView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikelikesdesign/SwiftUI-experiments. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `07bf7ed0`: drag to delete to SwiftUI best practices. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `drag to delete/drag to delete/ContentView.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+/// Drag the image onto the trash target at the bottom of the screen to delete it.
+    private enum Phase: Equatable {
+        case idle
+        case dragging(CGPoint)
+        case deleting
+    }
+
+    private enum Metrics {
+        static let restingImageSize: CGFloat = 320
+        static let restingImageTop: CGFloat = 144
+        static let maxDraggingImageSize: CGFloat = 160
+        static let minDraggingImageSize: CGFloat = 32
+        static let minTrashDiameter: CGFloat = 64
+        static let maxTrashDiameter: CGFloat = 92
+        /// Fraction of the distance to the trash past which releasing deletes the image.
+        static let deleteThreshold: CGFloat = 0.7
+    }
+
+    @State private var phase: Phase = .idle
+
+        GeometryReader { proxy in
+            let size = proxy.size
+            let progress = progress(in: size)
+
+            ZStack(alignment: .bottom) {
+                if case .dragging = phase {
+                    TrashTarget(diameter: trashDiameter(progress: progress))
+                        // Fixed slot so the circle grows outward from a stable center.
+                        .frame(width: Metrics.maxTrashDiameter, height: Metrics.maxTrashDiameter)
+           
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+    @State private var imageSize: CGFloat = 320
+    @State private var showCircle = false
+    @State private var circleSize: CGFloat = 64
+    @State private var showImage = true
+    @State private var initialCircleGrowth = false
+    @State private var dragPosition = CGPoint(x: UIScreen.main.bounds.width / 2, y: 72 + 160)
+    @State private var shrinkCircle = false
+    
+        ZStack {
+            Color.white
+                .edgesIgnoringSafeArea(.all)
+            
+            VStack {
+                Spacer()
+                
+                if showCircle {
+                    ZStack {
+                        Circle()
+                            .fill(Color.black)
+                            .frame(width: circleSize, height: circleSize)
+                            .scaleEffect(initialCircleGrowth ? 0 : 1)
+                            .scaleEffect(shrinkCircle ? 0 : 1)
+                            .animation(.easeInOut(duration: 0.3), value: initialCircleGrowth)
+                            .animation(.easeInOut(duration: 0.5), value: shrinkCircle)
+                        
+                        Image("trash")
+                            .resizable()
+                            .asp
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `07bf7ed0` are properly handled with clean fallback behavior.

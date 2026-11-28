@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T11:22:57.775Z",
-  "total_verified_learnings": 9149,
+  "last_updated": "2026-11-28T11:47:46.667Z",
+  "total_verified_learnings": 9150,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27108,
+  "total_items": 27116,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "41ed79eadb9878dbf75a2a72e4f979845ba943ca940e3b3a57b938a36fec24c4",
+      "content_hash": "9abd2caee545c3d5838229f6484d485ef33ac4c4b151e5a1ec8f53d4fc3073e3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T08:40:16.455Z"
+      "persisted_at": "2026-11-28T11:47:46.667Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -274794,8 +274794,8 @@
       "slug": "webdriverio-webdriverio",
       "platform": "github",
       "source_url": "https://github.com/webdriverio/webdriverio",
-      "source_version": "cfd6c6b2",
-      "content_hash": "5a6ec9c63b1c4a90cee8474e1fd07b499c08bf9d7766dc63c500f15d80731702",
+      "source_version": "f50ab796",
+      "content_hash": "6492c11eb0badd4154e9c9aaae4dfa6773c5afd553e68b63e41ff6b82fc6ff79",
       "dossier_path": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "promoted_rules": [
@@ -274808,6 +274808,11 @@
           "number": 10409,
           "title": "test(e2e): run Chrome stable in place of the Chrome 155 pin, and note the Firefo",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11096,
+          "title": "docs(devtools): document capture cost changes for the filmstrip, Python and nati",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -274815,7 +274820,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:51:58.774Z",
+      "verified_at": "2026-11-28T11:47:36.394Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274869,10 +274874,10 @@
       "relative_path": "08_VERIFICATION/webdriverio-webdriverio-verification-protocol-empirical-defect-shield-for-webdri.md",
       "title": "Verification Protocol: Empirical Defect Shield for webdriverio/webdriverio",
       "repository": "webdriverio/webdriverio",
-      "source_version": "cfd6c6b2",
-      "content_hash": "0053ab2922baed89a00e13d048cef305c73403012344c9e1035f3da6b058dc19",
+      "source_version": "f50ab796",
+      "content_hash": "68ceee7c0b136c825a61f8455a6cc74087bd3a28def59ef38ec0997c237fa558",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:51:59.750Z"
+      "persisted_at": "2026-11-28T11:47:37.407Z"
     },
     "learn-github-kirillzyusko-react-native-keyboard-controller": {
       "learning_id": "learn-github-kirillzyusko-react-native-keyboard-controller",
@@ -274970,9 +274975,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for webdriverio-webdriverio-learnings",
       "repository": "webdriverio-webdriverio-learnings",
       "source_version": "HEAD",
-      "content_hash": "900f968fa9e2099158a039b7d371998caa8b7c55173aff2eeb9e67b5c018cf23",
+      "content_hash": "12e1d4edb029ca85ed4e3cb1272c90e9c32aacd4b65e4dec8c68d25aebf312a6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:52:39.936Z"
+      "persisted_at": "2026-11-28T11:47:44.440Z"
     },
     "learn-github-mdiri-ai-soduwork": {
       "learning_id": "learn-github-mdiri-ai-soduwork",
@@ -316407,10 +316412,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webdriverio-webdriverio-quality-verification-intelligence-webdriverio-webdriveri.md",
       "title": "Quality & Verification Intelligence: webdriverio/webdriverio Core Invariants",
       "repository": "webdriverio/webdriverio",
-      "source_version": "cfd6c6b2",
-      "content_hash": "eab90bdb17372180147ac34879af6e18c9195f5b9f465e6003e8befe8a995fcd",
+      "source_version": "f50ab796",
+      "content_hash": "16092468c7eeac49366b7fc789d86b8b1dcaaacfe2399b298c1631cf08c3d99d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:51:59.532Z"
+      "persisted_at": "2026-11-28T11:47:37.182Z"
     },
     "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria": {
       "item_id": "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria",
@@ -316420,9 +316425,9 @@
       "title": "Quality & Verification Intelligence: webdriverio-webdriverio-learnings Core Invariants",
       "repository": "webdriverio-webdriverio-learnings",
       "source_version": "HEAD",
-      "content_hash": "44cb5126af185ca9a4327c33ce0f0b4647e02899f55df4554599f5c9b598859b",
+      "content_hash": "0e8625386d95845efa36ae6ea27b1eab534a95dac99e5a1fa43610525486c05e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:52:39.656Z"
+      "persisted_at": "2026-11-28T11:47:44.200Z"
     },
     "rule-9690": {
       "learning_id": "rule-9690",
@@ -359244,13 +359249,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TT0J-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-IXT6-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "44371e4d30f0e071a179c2ee60d376bf5382646e6781b0693effaeec49bd50b7",
+      "content_hash": "0a1b80084196a4f6eb20c1688d5824fd2b4373c1976285d2500baf5d6d25b437",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T08:40:15.925Z"
+      "persisted_at": "2026-11-28T11:47:46.221Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -359260,9 +359265,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "3cb478a46c53d06ae279c703ef77240389a36cc09f69f3f051581fec1841f849",
+      "content_hash": "4ee99bf230649c9ea317a997a853921d348655605fda894b27f04049fde7389a",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T08:40:16.181Z"
+      "persisted_at": "2026-11-28T11:47:46.439Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -372666,6 +372671,127 @@
       "content_hash": "1af1265625d92b42ac06a6e23d313632eb55d629ecb98c2110fb04ca6d2da7da",
       "domain_letter": "G",
       "persisted_at": "2026-11-28T11:22:57.358Z"
+    },
+    "rule-11096": {
+      "learning_id": "rule-11096",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11096,
+      "title": "docs(devtools): document capture cost changes for the filmstrip, Python and nati",
+      "source_url": "https://github.com/webdriverio/webdriverio",
+      "source_version": "f50ab796",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T11:47:36.394Z"
+    },
+    "candidate_directive-docs-devtools-document-capture-cost-changes-for-the-filmstrip-python-and-nati": {
+      "item_id": "candidate_directive-docs-devtools-document-capture-cost-changes-for-the-filmstrip-python-and-nati",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IW2V-docs-devtools-document-capture-cost-changes-for-the-filmstrip-python-and-nati.md",
+      "title": "docs(devtools): document capture cost changes for the filmstrip, Python and nati",
+      "repository": "webdriverio-webdriverio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f6e1fbd6cd7702c58f172a34276d19574cb652e3d5e47a2f94d13270b404846a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T11:47:43.976Z"
+    },
+    "learn-github-mikelikesdesign-swiftui-experiments": {
+      "learning_id": "learn-github-mikelikesdesign-swiftui-experiments",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mikelikesdesign/SwiftUI-experiments",
+      "repository": "mikelikesdesign/SwiftUI-experiments",
+      "slug": "mikelikesdesign-swiftui-experiments",
+      "platform": "github",
+      "source_url": "https://github.com/mikelikesdesign/SwiftUI-experiments",
+      "source_version": "6effebb7",
+      "content_hash": "be6ddd5ab7a5433e72da62dc776f11964902f435abe312d1f0a88d473cda5616",
+      "dossier_path": "07_PROJECT_LEARNING/mikelikesdesign-swiftui-experiments-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mikelikesdesign-swiftui-experiments-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 11097,
+          "title": "drag to delete to SwiftUI best practices",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-28T11:47:38.035Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-11097": {
+      "learning_id": "rule-11097",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11097,
+      "title": "drag to delete to SwiftUI best practices",
+      "source_url": "https://github.com/mikelikesdesign/SwiftUI-experiments",
+      "source_version": "6effebb7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T11:47:38.035Z"
+    },
+    "candidate_directive-drag-to-delete-to-swiftui-best-practices": {
+      "item_id": "candidate_directive-drag-to-delete-to-swiftui-best-practices",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IWVC-drag-to-delete-to-swiftui-best-practices.md",
+      "title": "drag to delete to SwiftUI best practices",
+      "repository": "mikelikesdesign-swiftui-experiments-learnings",
+      "source_version": "HEAD",
+      "content_hash": "14e6989de067c4dfc59067a76b5e80616c35cc1b638c1e5e2a26ef19c6ec88ab",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T11:47:45.000Z"
+    },
+    "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mikelikesdesign-swiftui-experiments-architecture-intelligence-mikelikesdesign-sw.md",
+      "title": "Architecture Intelligence: mikelikesdesign/SwiftUI-experiments Core Invariants",
+      "repository": "mikelikesdesign/SwiftUI-experiments",
+      "source_version": "6effebb7",
+      "content_hash": "52a6ddb66e5f3a4ef48a9d8c9b3c0fd0ad7e8d31dd066d06c670d593a47e9a12",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T11:47:38.814Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mikelikesdesign-swiftui-experi": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mikelikesdesign-swiftui-experi",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mikelikesdesign-swiftui-experiments-learnings-verification-protocol-empirical-de.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mikelikesdesign-swiftui-experiments-learnings",
+      "repository": "mikelikesdesign-swiftui-experiments-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5f26125a7770f2ea1588ef890fa80b67ea3924637d7812f7f9e0c6b53da6ff26",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T11:47:45.459Z"
+    },
+    "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-learnings-core-inv": {
+      "item_id": "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mikelikesdesign-swiftui-experiments-learnings-architecture-intelligence-mikelike.md",
+      "title": "Architecture Intelligence: mikelikesdesign-swiftui-experiments-learnings Core Invariants",
+      "repository": "mikelikesdesign-swiftui-experiments-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cdd76e029ab8d46d37ebc9cc780371121ef6b488b78eeb82c1b5031b5ef8c4e8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T11:47:45.222Z"
     }
   },
   "ai-builder-brain": {

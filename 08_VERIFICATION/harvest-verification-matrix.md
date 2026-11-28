@@ -14047,3 +14047,5 @@
 | `CYCLE-20261128-GGWM` | `2026-11-28T11:17:51.382Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11093` | Yes (`2264c1b5...`) |
 | `CYCLE-20261128-GHFR` | `2026-11-28T11:17:52.071Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11094` | Yes (`c373da08...`) |
 | `CYCLE-20261128-MV9I` | `2026-11-28T11:22:49.926Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11095` | Yes (`6f58170a...`) |
+| `CYCLE-20261128-IQFY` | `2026-11-28T11:47:36.670Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11096` | Yes (`6492c11e...`) |
+| `CYCLE-20261128-IRQ6` | `2026-11-28T11:47:38.334Z` | `mikelikesdesign/SwiftUI-experiments` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11097` | Yes (`be6ddd5a...`) |

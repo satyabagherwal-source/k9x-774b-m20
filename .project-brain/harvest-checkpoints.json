@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T11:22:49.938Z",
+  "last_updated": "2026-11-28T11:47:38.349Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3066,14 +3066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webdriverio-webdriverio",
-      "content_hash": "5a6ec9c63b1c4a90cee8474e1fd07b499c08bf9d7766dc63c500f15d80731702",
-      "verified_at": "2026-11-25T00:51:59.068Z",
+      "content_hash": "6492c11eb0badd4154e9c9aaae4dfa6773c5afd553e68b63e41ff6b82fc6ff79",
+      "verified_at": "2026-11-28T11:47:36.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:51:59.068Z"
+      "last_updated": "2026-11-28T11:47:36.684Z"
     },
     "RubenVerborgh/SPARQL.js": {
       "repository": "RubenVerborgh/SPARQL.js",
@@ -14691,14 +14691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mikelikesdesign-swiftui-experiments",
-      "content_hash": "b026177aebd55bbe20372d651999ed0f3755d148b2f23b8a69d401cae60525c1",
-      "verified_at": "2026-11-09T01:12:39.642Z",
+      "content_hash": "be6ddd5ab7a5433e72da62dc776f11964902f435abe312d1f0a88d473cda5616",
+      "verified_at": "2026-11-28T11:47:38.348Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:12:39.642Z"
+      "last_updated": "2026-11-28T11:47:38.348Z"
     },
     "jsonld-java/jsonld-java": {
       "repository": "jsonld-java/jsonld-java",
