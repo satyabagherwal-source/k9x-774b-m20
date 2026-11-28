@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-GFR4",
-    "timestamp": "2026-11-26T18:14:23.680Z",
-    "repository": "amazon/chronos-2",
-    "learningId": "learn-huggingface-amazon-chronos-2",
-    "contentHash": "16ffb404afd7414d81208dcb225ea65a09dafb2ce19f47b55e01c9822bcaea61",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-GIAF",
-    "timestamp": "2026-11-26T18:14:26.967Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "28b6ae4a3a0f9ea56a9bc81bfaf0ebcadb3afb21b8c98a67f40e90172c83a0b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-GQRF",
     "timestamp": "2026-11-26T18:14:37.947Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7460,36 @@
     "repository": "QwikDev/qwik",
     "learningId": "learn-github-qwikdev-qwik",
     "contentHash": "42ccd6ab806ba907b3a27074e777bebf76d605e4ae9583d48cd89905c4cd758c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-GP75",
+    "timestamp": "2026-11-28T10:50:02.513Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "12fe2a3c541e994cf66b9333b17de0aa22cb4eca4b8fb2698784c92b1ef34c4a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-TLCD",
+    "timestamp": "2026-11-28T11:00:04.045Z",
+    "repository": "vitest-dev/vitest",
+    "learningId": "learn-github-vitest-dev-vitest",
+    "contentHash": "526ff14958b82c891060bfd9f0b8670658bc38ee6347b9a9592e321e0cd23ae9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

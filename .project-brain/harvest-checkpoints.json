@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T10:36:10.785Z",
+  "last_updated": "2026-11-28T11:00:04.057Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "bd907fd193800b8c9c16dbc595b123be7ef643da083f515a689759903956bebf",
-      "verified_at": "2026-11-27T10:25:53.486Z",
+      "content_hash": "12fe2a3c541e994cf66b9333b17de0aa22cb4eca4b8fb2698784c92b1ef34c4a",
+      "verified_at": "2026-11-28T10:50:02.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T10:25:53.486Z"
+      "last_updated": "2026-11-28T10:50:02.522Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -15216,14 +15216,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vitest-dev-vitest",
-      "content_hash": "84de2b0643e1d58f089026cb067ed5165edf20bee8538fbafe4a3302ba0cdd41",
-      "verified_at": "2026-11-25T00:35:14.634Z",
+      "content_hash": "526ff14958b82c891060bfd9f0b8670658bc38ee6347b9a9592e321e0cd23ae9",
+      "verified_at": "2026-11-28T11:00:04.056Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:35:14.634Z"
+      "last_updated": "2026-11-28T11:00:04.056Z"
     },
     "Mijick/Popups": {
       "repository": "Mijick/Popups",

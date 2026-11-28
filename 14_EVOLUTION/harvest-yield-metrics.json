@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T10:36:10.782Z",
-  "total_cycles_completed": 13316,
-  "total_learnings_persisted": 13316,
-  "total_rules_promoted": 12014,
+  "last_updated": "2026-11-28T11:00:04.053Z",
+  "total_cycles_completed": 13318,
+  "total_learnings_persisted": 13318,
+  "total_rules_promoted": 12016,
   "history": [
-    {
-      "timestamp": "2026-11-27T16:41:33.341Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T16:41:39.288Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T16:52:06.824Z",
       "repository": "cilium/cilium",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T10:36:10.782Z",
       "repository": "QwikDev/qwik",
       "learningId": "learn-github-qwikdev-qwik",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T10:50:02.520Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T11:00:04.053Z",
+      "repository": "vitest-dev/vitest",
+      "learningId": "learn-github-vitest-dev-vitest",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

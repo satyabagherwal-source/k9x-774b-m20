@@ -4,24 +4,24 @@
 {
   "source_repository": "vitest-dev/vitest",
   "source_url": "https://github.com/vitest-dev/vitest",
-  "source_version": "e0e8e000",
+  "source_version": "c08e4db5",
   "license": "MIT",
-  "timestamp": "2026-11-25T00:35:14.848Z",
+  "timestamp": "2026-11-28T11:00:04.276Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vitest-dev-vitest",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [vitest-dev/vitest](https://github.com/vitest-dev/vitest) (Revision: `e0e8e000`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T00:35:14.848Z`  
+> **Provenance**: Harvested from [vitest-dev/vitest](https://github.com/vitest-dev/vitest) (Revision: `c08e4db5`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T11:00:04.276Z`  
 > **Learning ID**: `learn-github-vitest-dev-vitest`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from vitest-dev/vitest:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vitest-dev/vitest](https://github.com/vitest-dev/vitest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:35:13.380Z  
+> **Harvest Timestamp**: 2026-11-28T10:50:01.417Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Next generation testing framework powered by Vite.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17441 stars
+- **Stars / Engagement**: 17510 stars
 
 ---
 
@@ -202,7 +202,7 @@ export interface BrowserRunnerState {
   providedContext: string
   type: 'tester' | 'orchestrator'
   disposeExceptionTracker: () => void
-  wrapModule: <T>(module: () => T) => T
+  wrapModule: <T>(module: (specifier?: unknown) => T, specifier?: unknown, importer?: string) => T
   iframeId?: string
   sessionId: string
   testerId: string
@@ -1297,14 +1297,11 @@ export function setState<State extends MatcherState = MatcherState>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12106** (2026-11-24): **perf: read external source maps once per run**
-  *Symptoms*: Fixes #12105  The source map of an external module is read once per test run instead of once per stack frame. Errors that the previous update already parsed keep their stacks. 
-  **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *vitest-dev* ready!   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 230935003589a879b622b532b8975fa66b01659e | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/vitest-dev/deploys/6b05b960dcc3f684d4db6115 | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-12106--vitest-dev.netlify.app](https://deploy-preview-12106--vitest-dev.netlify.app) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTEyMTA2LS12aXRlc3QtZGV2Lm5ldGxpZnkuYXBwIn0.LD9yBZVbMAW288EoYCWyu-BDOBtdnBKikBgn5hek37s)<br /><br />_Use your smartphone camera to open QR code link._</details> | |<span aria-hidden="true">🤖</span> Make changes | [Run an agent on this branch](
-  > <!-- flakiness.io pull request comment for project fkproj-3oQJwq1Vt0izSUdZRXJM8g --> ## Test Results Summary  This comment shows the latest test results for this pull request.  | Commit | Status | Test Results | CI Runs | |---|---|---|---| | `2309350` | ✅ **Passed** | [32281 passed](https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Apassed) · [236 flaky](https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Aflaked) · [1197 skipped](https://flakiness.io/Vitest/vitest/pull/12106?q=s%3Askipped) | 30 runs |  <details> <summary><b>⚠️ 236 flaky</b></summary>  ⚠️ `Ubuntu 26.04 · vmThreads` [test/unit/test/retry.test.ts:55 › describe object add(1, 1) › returned value not be greater than 2](https://flakiness.io/Vitest/vitest/run/11996/test/33ff835a0913c482?test_timeline=%7B%22type%22%3A%22open%22%2C%22eq%22%3A%7B%22env.id%22%3A%2263d3354fe2f7c137%22%7D%7D) ⚠️ `Ubuntu 26.04 · vmThreads` [test/unit/test/retry.test.ts:55 › describe object add(1, 1) › returned value not be greater than 2](https://fl
+- **Issue #12125** (2026-11-28): **fix(vitest): preserve file-only CSS @import entries in affected graph and fsModuleCache**
+  *Symptoms*: Fixes #12120.  ### Summary When a CSS file uses `@import`, Vite adds the imported CSS target to the importer's `importedModules` as a file-only `EnvironmentModuleNode` (`id: null`, `file: <path>`). Two places dropped those file-only entries: 1. `ProjectGraph.transformModule` in `packages/vitest/src/node/affected-modules.ts` required `imported.id && imported.file`, skipping file-only `@import` entries in `--changed` / `vitest related`. 2. `TransformService.getCachedImports` and `TransformService.resolveCachedImports` (with `CachedModuleImports` in `packages/vitest/src/node/cache/fsModuleCache.ts`) skipped `id == null` entries when writing/restoring `fsModuleCache`, so a warm cache run lost the edge back to the `@import`ed CSS file.  ### Changes - `packages/vitest/src/node/affected-modules.ts`: accept local source entries with `imported.file` even when `imported.id` is `null`, recording file-only entries in `watchedFiles` so `GraphWalk` propagates changes back through the importing CSS file. - `packages/vitest/src/node/cache/fsModuleCache.ts`: added optional `files?: string[]` to `CachedModuleImports`. - `packages/vitest/src/node/environments/transformService.ts`: save `file` paths for `id == null` `importedModules` entries in `getCachedImports` and restore them in `resolveCachedImports` via `environment.moduleGraph.createFileOnlyEntry(file)` (after checking `existsSync(file)` so deleted `@import` targets invalidate the cache, and registering `watchFile`). - `test/e2e/test/rela
 
-- **Issue #12105** (2026-11-24): **Reuse external source maps when reporting repeated failures in the same code**
-  *Symptoms*: ### Clear and concise description of the problem  When the same code runs several times, Vitest can end up reading the same external source map for every failure. I'd like Vitest to reuse that map while it reports the errors together. I used Codex for the performance investigation and to help write this issue. I also checked the impact myself and reviewed the patch.  One way to see this is with `retry: 2`. In a benchmark with 100 tests, each failed on two different lines of the same CommonJS dependency and passed on the third attempt. Vitest synchronously read the dependency 200 times and its `.map` another 200 times.  ### Suggested solution  Cache the lookup by file within a project for one worker result update. Each attempt still gets its own error and source location. The next update reads the map again, so editing it between runs still works. A custom `onStackTrace` keeps its existing lookup behavior.  ### Benchmarks  **Retries.** One file with 100 tests, one fork, `retry: 2`, and `includeTaskLocation: false` on an Apple M5 with Node 24.22.2. Each retried test failed twice in the same external dependency and passed on its third attempt. Times are medians of 7 runs of `runTestSpecifications`, with min–max in parentheses.  | Tests that needed retries | Main (`ff6b4275`) | Patch (`52c9457b`) | Median time saved | | --- | ---: | ---: | ---: | | 0 of 100 | 68 ms (66–68) | 67 ms (66–68) | 1 ms | | 1 of 100 | 75 ms (73–78) | 70 ms (68–167) | 5 ms | | 100 of 100 | 345 ms (325–358
+- **Issue #12124** (2026-11-28): **fix(vitest): ignore non-vitest method calls on test*-prefixed receivers in static collect**
+  *Symptoms*: Fixes #12122.  ### Summary In `packages/vitest/src/node/ast-collect.ts`, `isTestFunctionName` matches custom test wrappers by prefix/suffix (`name.startsWith('test') || name.endsWith('Test')`). When resolving `MemberExpression` callees (`getName`), any non-computed property access on a matching identifier (or imported `__vite_ssr_import_*__` / `__vi_import_*__` binding) returned the receiver name — causing regular method calls like `testSet.has(f)` or `testMap.get(f)` to be misidentified as Vitest test definitions.  ### Changes - Added `VITEST_CALL_PROPERTIES` (`each`, `for`, `skipIf`, `runIf`, `extend`, `scoped`, `override`, `skip`, `only`, `todo`, `concurrent`, `sequential`, `fails`, `shuffle`, `describe`, `suite`) and `isAllowedVitestMember` in `packages/vitest/src/node/ast-collect.ts`. - Kept exact Vitest identifiers (`it`, `test`, `describe`, `suite`) permissive for plugin/custom properties (e.g. `test.fuzz(...)`), while requiring `MemberExpression` calls on prefix/suffix-matched identifiers (`test*` / `*Test`) to access a valid Vitest modifier property. - Added a regression test in `test/e2e/test/static-collect.test.ts` covering `testSet.has(f)`, `testSet.has('a')`, imported `testMap.get(f)`, and `customTest.contains(f)`.  ### Verification - `pnpm exec oxfmt --check packages/vitest/src/node/ast-collect.ts test/e2e/test/static-collect.test.ts` - `pnpm exec oxlint packages/vitest/src/node/ast-collect.ts test/e2e/test/static-collect.test.ts` - `pnpm --filter vitest build` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1321,386 +1318,443 @@ export function setState<State extends MatcherState = MatcherState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e0e8e000` (2026-11-24)
-**Commit Message**: fix(browser): save failure screenshots per instance (#12042)
+### Incident Patch 1: `c6ad97de` (2026-11-25)
+**Commit Message**: fix(browser): mock assets and computed dynamic imports (#11954)
 
-**File**: `packages/browser/src/client/tester/runner.ts` (modified, +9/-3)
+**File**: `packages/browser/src/client/public/esm-client-injector.js` (modified, +5/-3)
 ```diff
-@@ -203,7 +203,7 @@ function createBrowserRunner(
-               this.config.attachmentsDir,
-               'failure-screenshots',
-               basename(task.file.filepath),
--              `${getFailureScreenshotName(task, retry, repeats)}.png`,
-+              `${getFailureScreenshotName(task, this.config.name, retry, repeats)}.png`,
-             ),
-           })
-           .catch((err) => {
-@@ -462,8 +462,14 @@ async function updateTestFilesLocations(files: File[], sourceMaps: Map<string, a
-   await Promise.all(promises)
+@@ -1,19 +1,21 @@
+ (() => {
+-  function wrapModule(moduleCallback) {
++  function wrapModule(moduleCallback, specifier, importer) {
+     if (typeof moduleCallback !== "function") {
+       return moduleCallback
+     }
+ 
+     if (typeof __vitest_mocker__ === "undefined" || typeof __vitest_worker__ === 'undefined') {
+-      return moduleCallback()
++      return moduleCallback(specifier)
+     }
+ 
+     const { evaluatedModules } = __vitest_worker__
+     const moduleId = `${Math.random()}`
+     const viteModule = evaluatedModules.ensureModule(moduleId, moduleId)
+ 
+     viteModule.evaluated = false
+-    viteModule.promise = __vitest_mocker__.prepare().then(() => moduleCallback())
++    viteModule.promise = __vitest_mocker__.prepare()
++      .then(() => __vitest_mocker__.resolveDynamicImport(specifier, importer))
++      .then((resolved) => moduleCallback(resolved))
+     return viteModule.promise.finally(() => {
+       viteModule.evaluated = true
+       viteModule.promise = undefined
+```
+
+**File**: `packages/browser/src/client/tester/mocker-interceptor.ts` (modified, +21/-16)
+```diff
+@@ -1,48 +1,53 @@
+ import type { ModuleMockerInterceptor } from '@vitest/mocker/browser'
+-import type { MockImportMap } from '../../types'
++import type { MockImportMapRule } from '../../types'
+ import type { BrowserRPC } from '../client'
+ import { getBrowserState, getWorkerState } from '../utils'
+ 
+ export function createModuleMockerInterceptor(): ModuleMockerInterceptor {
++  const mockUrls = new Map<string, string>()
+   return {
+     async register(module, importer) {
+       const { sessionId } = getBrowserState()
+-      const importMap = await rpc().registerMock(sessionId, module.toJSON(), {
++      const rule = await rpc().registerMock(sessionId, module.toJSON(), {
+         importer,
+         testFile: getWorkerState().filepath,
+       })
+-      if (importMap) {
+-        appendImportMap(importMap)
++      if (rule) {
++        mockUrls.set(module.url, appendImportMapRule(rule))
+       }
+     },
+     async delete(id) {
+       const state = getBrowserState()
++      mockUrls.delete(id)
+       await rpc().unregisterMock(state.sessionId, id)
+     },
+     async invalidate() {
+       const state = getBrowserState()
++      mockUrls.clear()
+       await rpc().clearMocks(state.sessionId)
+     },
++    getMockUrl(url) {
++      return mockUrls.get(url)
++    },
+   }
  }
  
--function getFailureScreenshotName(test: Test, retry: number, repeats: number) {
--  const name = test.fullTestName.replace(/\W/g, '-')
-+// the browser instances run the same test at the same time, so each one needs its own file
-+function getFailureScreenshotName(
-+  test: Test,
-+  projectName: string | undefined,
-+  retry: number,
-+  repeats: number,
-+) {
-+  const name = `${projectName ? `${projectName}-` : ''}${test.fullTestName}`.replace(/\W/g, '-')
-   const maxRetries = typeof test.retry === 'number' ? test.retry : (test.retry?.count ?? 0)
-   // add '<name>-<repeat>-<retry>' suffix only when test enables retry or repeat
-   if (!maxRetries && !test.repeats) {
-```
-
-**File**: `test/browser/specs/failure-screenshot.test.ts` (modified, +45/-10)
-```diff
-@@ -4,6 +4,7 @@ import { resolve } from 'pathe'
- import { describe, expect, test } from 'vitest'
- import { runInlineTests } from '../../test-utils'
- import utilsContent from '../fixtures/expect-dom/utils?raw'
-+import { instances, runInlineBrowserTests } from './utils'
- 
- const testFilename = 'basic.test.ts'
- 
-@@ -76,7 +77,7 @@ describe('failure screenshots', () => {
-       const screenshotPath = extractScreenshotPath(stderr)
- 
-       expect(screenshotPath).toContain(
--        '.vitest/attachments/failure-screenshots/basic.test.ts/screenshot-unstable.png',
-+        '.vitest/attachments/failure-screenshots/basic.test.ts/chromium-screenshot-unstable.png',
-       )
-     })
- 
-@@ -103,7 +104,7 @@ describe('failure screenshots', () => {
-       const screenshotPath = extractScreenshotPath(stderr)
- 
-       expect(screenshotPath).toContain(
--        '.vitest/attachments/failure-screenshots/basic.test.ts/screenshot-soft-then-fail.png',
-+        '.vitest/attachments/failure-screenshots/basic.test.ts/chromium-screenshot-soft-then-fail.png',
-       )
-     })
-   })
-@@ -142,19 +143,19 @@ describe('failure screenshots', () => {
-         " FAIL  |chromium| basic.test.ts > repeated (initial run)
-         AssertionError: expected 1 to be 10 // Object.is equality
-         Failure screenshot:
--          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/repeated-0-0.png
-+          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-repeated-0-0.png
-          FAIL  |chromium| basic.test.ts > repeated (1st retry)
-         AssertionError: expected 2 to be 10 // Object.is equality
-         Failure screenshot:
--          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/repeated-0-1.png
-+          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-repeated-0-1.png
-          FAIL  |chromium| basic.test.ts > repeated (1st repeat)
-         AssertionError: expected 3 to be 10 // Object.is equality
-         Failure screenshot:
--          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/repeated-1-0.png
-+          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-repeated-1-0.png
-          FAIL  |chromium| basic.test.ts > repeated (1st retry of 1st repeat)
-         AssertionError: expected 4 to be 10 // Object.is equality
-         Failure screenshot:
--          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/repeated-1-1.png"
-+          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-repeated-1-1.png"
-       `)
-       expect(new Set(readReportedScreenshots(stderr)).size).toBe(4)
-     })
-@@ -177,14 +178,48 @@ describe('failure screenshots', () => {
-         " FAIL  |chromium| basic.test.ts > soft (initial run, 1st retry)
-         AssertionError: expected 1 to be 2 // Object.is equality
-         Failure screenshots:
--          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/soft-0-0.png
--          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/soft-0-1.png
-+          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-soft-0-0.png
-+          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-soft-0-1.png
-          FAIL  |chromium| basic.test.ts > soft (initial run, 1st retry)
-         AssertionError: expected 2 to be 3 // Object.is equality
-         Failure screenshots:
--          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/soft-0-0.png
--          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/soft-0-1.png"
-+          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-soft-0-0.png
-+          - <root>/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-soft-0-1.png"
-       `)
-     })
-   })
-+
-+  test('each browser instance saves its own screenshot', async () => {
-+    const { root, results } = await runInlineBrowserTests({
-+      [testFilename]: /* ts */ `
-+        import { expect, test } from 'vitest'
-+
-+        test('adds an item', () => {
-+          document.body.innerHTML = '<button>Add</button>'
-+          expect(1).toBe(2)
-+        })
-+      `,
-+    })
-+
-+    const screenshots = Object.fromEntries(
-+      results.map((module) => {
-+        const [testCase] = module.children.allTests()
-+        const screenshot = testCase
-+          .artifacts()
-+          .find((artifact) => artifact.type === 'internal:failureScreenshot')
-+        return [module.project.name, screenshot?.attachments[0]?.originalPath]
-+      }),
+ // the browser drops a rule for a module that the document already resolved
+-// and only prints a console warning, so check that every rule took effect
+-function appendImportMap(importMap: MockImportMap) {
++// and only prints a console warning, so check that the rule took effect
++function appendImportMapRule({ specifier, url }: MockImportMapRule): string {
+   const script = document.createElement('script')
+   script.type = 'importmap'
+-  script.textContent = JSON.stringify(importMap)
++  script.textContent = JSON.stringify({ imports: { [specifier]: url } })
+   document.head.append(script)
+-  for (const [specifier, url] of Object.entries(importMap.imports)) {
+-    const expected = new URL(url, location.href).href
+-    if (import.meta.resolve(specifier) !== expected) {
+-      throw new Error(
+-        `Cannot mock "${specifier}" with an import map because the browser kept its original URL. ` +
+-          `The module was already imported before vi.mock was registered, ` +
+-          `for example by a setup file or by an earlier test file when "isolate" is false.`,
+-      )
+-    }
++  const mockUrl = new URL(url, location.href).href
++  if (import.meta.resolve(specifier) !== mockUrl) {
++    throw new Error(
++      `Cannot mock "${specifier}" with an import map because the browser kept its original URL. ` +
++        `The module was already imported before vi.mock was registered, ` +
++        `for example by a setup file or by an earlier test file when "isolate" is false.`,
 +    )
-+    expect(screenshots).toEqual(
-+      Object.fromEntries(
-+        instances.map(({ browser }) => [
-+          browser,
-+          resolve(
-+            root,
-+            `.vitest/attachments/failure-screenshots/basic.test.ts/${browser}-adds-an-item.png`,
-+          ),
-+        ]),
-+      ),
-+    )
-+  })
- })
+   }
++  return mockUrl
+ }
+ 
+ function rpc(): BrowserRPC {
 ```
 
-**File**: `test/e2e/snapshots/domain-aria-inline.test.ts` (modified, +1/-1)
+**File**: `packages/browser/src/client/tester/mocker.ts` (modified, +6/-2)
 ```diff
-@@ -96,7 +96,7 @@ test('aria inline snapshot', async () => {
-     Error: Snapshot \`semantic match with regex in snapshot 1\` mismatched
+@@ -7,7 +7,11 @@ export class VitestBrowserClientMocker extends ModuleMocker {
+     return { callstack: null }
+   }
  
-     Failure screenshot:
--      - snapshots/fixtures/domain-aria-inline/.vitest/attachments/failure-screenshots/basic.test.ts/semantic-match-with-regex-in-snapshot.png
-+      - snapshots/fixtures/domain-aria-inline/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-semantic-match-with-regex-in-snapshot.png
- 
-     - Expected
-     + Received
+-  public override wrapDynamicImport<T>(moduleFactory: () => Promise<T>): Promise<T> {
+-    return getBrowserState().wrapModule(moduleFactory)
++  public override wrapDynamicImport<T>(
++    moduleFactory: (specifier?: unknown) => Promise<T>,
++    specifier?: unknown,
++    importer?: string,
++  ): Promise<T> {
++    return getBrowserState().wrapModule(moduleFactory, specifier, importer)
+   }
+ }
 ```
 
-**File**: `test/e2e/snapshots/domain-aria.test.ts` (modified, +1/-1)
+**File**: `packages/browser/src/client/utils.ts` (modified, +1/-1)
 ```diff
-@@ -111,7 +111,7 @@ test('aria snapshot', { tags: ['browser'] }, async () => {
-     Error: Snapshot \`semantic match with regex in snapshot 1\` mismatched
+@@ -102,7 +102,7 @@ export interface BrowserRunnerState {
+   providedContext: string
+   type: 'tester' | 'orchestrator'
+   disposeExceptionTracker: () => void
+-  wrapModule: <T>(module: () => T) => T
++  wrapModule: <T>(module: (specifier?: unknown) => T, specifier?: unknown, importer?: string) => T
+   iframeId?: string
+   sessionId: string
+   testerId: string
+```
+
+**File**: `packages/browser/src/node/mocks.ts` (modified, +29/-12)
+```diff
+@@ -2,7 +2,7 @@ import type { MockedModuleSerialized, MockerRegistry } from '@vitest/mocker'
+ import type { StaticMockCall } from '@vitest/mocker/node'
+ import type { TransformResult, ViteDevServer } from 'vite'
+ import type { TestProject } from 'vitest/node'
+-import type { MockImportMap, WebSocketBrowserHandlers, WebSocketBrowserRPC } from '../types'
++import type { MockImportMapRule, WebSocketBrowserHandlers, WebSocketBrowserRPC } from '../types'
+ import type { BrowserServerState } from './state'
+ import {
+   AutomockedModule,
+@@ -11,7 +11,9 @@ import {
+   RedirectedModule,
+ } from '@vitest/mocker'
+ import { getManualMockId, getManualMockUrl, ServerMockResolver } from '@vitest/mocker/node'
+-import { join } from 'pathe'
++import { cleanUrl } from '@vitest/utils/helpers'
++import { extname, join } from 'pathe'
++import { isCSSRequest } from 'vitest/node'
+ import { slash } from './utils'
  
-     Failure screenshot:
--      - snapshots/fixtures/domain-aria/.vitest/attachments/failure-screenshots/basic.test.ts/semantic-match-with-regex-in-snapshot.png
-+      - snapshots/fixtures/domain-aria/.vitest/attachments/failure-screenshots/basic.test.ts/chromium-semantic-match-with-regex-in-snapshot.png
+ export interface FactoryExportResolver {
+@@ -59,7 +61,7 @@ export function createMockHandlers(
+       sessionId,
+       module,
+       { importer, testFile },
+-    ): Promise<MockImportMap | undefined> {
++    ): Promise<MockImportMapRule | undefined> {
+       const option = project.config.browser.importMapMocks
+       const state = project.browser!.state as BrowserServerState
+       if (option === true && state.lateImportMaps === false) {
+@@ -79,7 +81,7 @@ export function createMockHandlers(
+           return
+         }
+         if (module.type !== 'manual') {
+-          return resolveMockImportMap(vite, module)
++          return resolveMockImportMapRule(vite, module)
+         }
+         // the shim reads the original only when it loads; until then the
+         // server keeps a way to ask this session for the factory keys
+@@ -98,7 +100,7 @@ export function createMockHandlers(
+         if (shim) {
+           moduleGraph.invalidateModule(shim)
+         }
+-        return resolveMockImportMap(vite, module)
++        return resolveMockImportMapRule(vite, module)
+       }
+       if (!mocker) {
+         // make sure modules are not processed yet in case they were imported before
+@@ -162,13 +164,28 @@ export function createMockHandlers(
+   }
+ }
  
-     - Expected
-     + Received
++// the new query goes first, like in Vite
+ function injectQuery(url: string, query: string): string {
+-  return url.includes('?') ? `${url}&${query}` : `${url}?${query}`
++  const file = cleanUrl(url)
++  const postfix = url.slice(file.length)
++  return `${file}?${query}${postfix[0] === '?' ? `&${postfix.slice(1)}` : postfix}`
+ }
+ 
+-// the key must be the exact URL that import analysis emits in the browser,
++const knownJsSrcRE = /\.(?:[jt]sx?|m[jt]s|vue|marko|svelte|astro|imba|mdx)$/
++
++// Vite imports every module that is not JS or CSS with an `import` query
++function markExplicitImport(url: string): string {
++  const file = cleanUrl(url)
++  const isJS = knownJsSrcRE.test(file) || (!extname(file) && !file.endsWith('/'))
++  return isJS || isCSSRequest(url) ? url : injectQuery(url, 'import')
++}
++
++// the specifier must be the exact URL that import analysis emits in the browser,
+ // including the dependency version and the HMR timestamp
+-function resolveMockImportMap(vite: ViteDevServer, module: MockedModuleSerialized): MockImportMap {
++function resolveMockImportMapRule(
++  vite: ViteDevServer,
++  module: MockedModuleSerialized,
++): MockImportMapRule {
+   let url = module.url
+   const version = /[?&]v=(\w{8})/.exec(module.id)?.[1]
+   if (version) {
+@@ -179,15 +196,15 @@ function resolveMockImportMap(vite: ViteDevServer, module: MockedModuleSerialize
+     url = injectQuery(url, `t=${node.lastHMRTimestamp}`)
+   }
+   const base = vite.config.base.replace(/\/$/, '')
+-  const key = base + url
++  const specifier = base + markExplicitImport(url)
+   if (module.type === 'redirect') {
+     const redirect = new URL(module.redirect)
+-    return { imports: { [key]: base + redirect.pathname + redirect.search } }
++    return { specifier, url: base + markExplicitImport(redirect.pathname + redirect.search) }
+   }
+   if (module.type === 'manual') {
+-    return { imports: { [key]: base + getManualMockUrl(module.url, module.id) } }
++    return { specifier, url: base + getManualMockUrl(module.url, module.id) }
+   }
+-  return { imports: { [key]: injectQuery(key, `mock=${module.type}`) } }
++  return { specifier, url: injectQuery(specifier, `mock=${module.type}`) }
+ }
+ 
+ const staticUnmocks = new WeakMap<TransformResult, Promise<Set<string>>>()
+```
+
+**File**: `packages/browser/src/node/plugin.ts` (modified, +3/-1)
+```diff
+@@ -90,7 +90,9 @@ export default (contribution: BrowserServerContribution): Plugin[] => {
+         // https://github.com/vitejs/vite/blob/ba56cf43b5480f8519349f7d7fe60718e9af5f1a/packages/vite/src/node/plugins/worker.ts#L46
+         if (/(?:\?|&)worker_file&type=\w+(?:&|$)/.test(id)) {
+           const s = new MagicString(code)
+-          s.prepend('globalThis.__vitest_browser_runner__ = { wrapDynamicImport: f => f() };\n')
++          s.prepend(
++            'globalThis.__vitest_browser_runner__ = { wrapDynamicImport: (f, specifier) => f(specifier) };\n',
++          )
+           return {
+             code: s.toString(),
+             map: s.generateMap({ hires: 'boundary' }),
+```
+
+**File**: `packages/browser/src/types.ts` (modified, +6/-3)
+```diff
+@@ -25,8 +25,11 @@ interface OrchestratorCapabilities {
+   lateImportMaps: boolean
+ }
+ 
+-export interface MockImportMap {
+-  imports: Record<string, string>
++export interface MockImportMapRule {
++  /** the URL that the browser requests for the original module */
++  specifier: string
++  /** the URL of the mock */
++  url: string
+ }
+ 
+ export interface WebSocketBrowserHandlers {
+@@ -83,7 +86,7 @@ export interface WebSocketBrowserHandlers {
+       /** the test file that is running; its static `vi.unmock` calls cancel mocks from other modules */
+       testFile?: string
+     },
+-  ) => Promise<MockImportMap | undefined>
++  ) => Promise<MockImportMapRule | undefined>
+   unregisterMock: (sessionId: string, id: string) => void
+   clearMocks: (sessionId: string) => void
+ 
+```
+
+**File**: `packages/mocker/EXPORTS.md` (modified, +13/-0)
+```diff
+@@ -272,6 +272,19 @@ await import('./my-module.js')
+ await globalThis[`Symbol.for('my-mocker')`].wrapDynamicImport(() => import('./my-module.js'))
+ ```
+ 
++A computed specifier is passed to `wrapDynamicImport` with the importer, so the mocker can resolve it and load the mock of the resolved module:
++
++```ts
++await import(path)
++
++// produces this:
++await globalThis[`Symbol.for('my-mocker')`].wrapDynamicImport(
++  async (specifier) => import(specifier),
++  path,
++  '/project/src/importer.js',
++)
++```
++
+ ## findMockRedirect
+ 
+ This method will try to find a file inside `__mocks__` folder that corresponds to the current file.
 ```
 
 ---
 
-### Incident Patch 2: `2123874a` (2026-11-24)
-**Commit Message**: fix(snapshot): remove new snapshots of a failed retry (#12052)
+### Incident Patch 2: `5f884734` (2026-11-25)
+**Commit Message**: fix: warn when projects attach the same file (#12043)
 
-**File**: `packages/snapshot/src/port/state.ts` (modified, +3/-1)
+**File**: `packages/vitest/src/node/test-run.ts` (modified, +34/-2)
 ```diff
-@@ -186,8 +186,10 @@ export default class SnapshotState {
-       const name = keyToTestName(key)
-       const count = this._counters.get(name)
-       if (count > 0) {
--        if (key in this._snapshotData || key in this._initialData) {
-+        if (key in this._initialData) {
-           this._snapshotData[key] = this._initialData[key]
-+        } else {
-+          delete this._snapshotData[key]
-         }
-         this._counters.set(name, count - 1)
-       }
+@@ -30,15 +30,21 @@ import { serializeValue } from '@vitest/utils/serialize'
+ import { parseErrorStacktrace, parseStacktrace } from '@vitest/utils/source-map'
+ import { extractSourcemapFromFile } from '@vitest/utils/source-map/node'
+ import mime from 'mime/lite'
+-import { basename, extname, resolve } from 'pathe'
++import { basename, extname, relative, resolve } from 'pathe'
++import { withLabel } from './reporters/renderers/utils'
+ 
+ export class TestRun {
+   private externalSourceMaps = new Map<string, unknown>()
++  // the first project that attached each file in this run
++  private attachmentProjects = new Map<string, string>()
++  private warnedProjectPairs = new Set<string>()
+ 
+   constructor(private vitest: Vitest) {}
+ 
+   async start(specifications: TestSpecification[]): Promise<void> {
+     this.externalSourceMaps.clear()
++    this.attachmentProjects.clear()
++    this.warnedProjectPairs.clear()
+     const filepaths = specifications.map((spec) => spec.moduleId)
+     this.vitest.state.collectPaths(filepaths)
+ 
+@@ -345,9 +351,10 @@ export class TestRun {
+     if (path && !path.startsWith('http://') && !path.startsWith('https://')) {
+       const currentPath = resolve(project.config.root, path)
+       const hash = createHash('sha1').update(currentPath).digest('hex')
++      const suffix = this.getProjectSuffix(project, currentPath)
+       const newPath = resolve(
+         project.config.attachmentsDir,
+-        `${filename ? `${sanitizeFilePath(filename)}-` : ''}${hash}${extname(currentPath)}`,
++        `${filename ? `${sanitizeFilePath(filename)}-` : ''}${hash}${suffix}${extname(currentPath)}`,
+       )
+       if (!existsSync(project.config.attachmentsDir)) {
+         await mkdir(project.config.attachmentsDir, { recursive: true })
+@@ -361,6 +368,31 @@ export class TestRun {
+     return attachment
+   }
+ 
++  // the copies of a file that other projects attach get the project name,
++  // so each project keeps its own copy
++  private getProjectSuffix(project: TestProject, path: string): string {
++    const firstProject = this.attachmentProjects.get(path)
++    if (firstProject === undefined) {
++      this.attachmentProjects.set(path, project.name)
++      return ''
++    }
++    if (firstProject === project.name) {
++      return ''
++    }
++    const pair = `${firstProject}\0${project.name}`
++    if (!this.warnedProjectPairs.has(pair)) {
++      this.warnedProjectPairs.add(pair)
++      this.vitest.logger.warn(
++        withLabel(
++          'yellow',
++          'Vitest',
++          `The projects "${firstProject}" and "${project.name}" attach the same file "${relative(this.vitest.config.root, path)}", so they can overwrite each other's file. Save the file to a different path in each project.`,
++        ),
++      )
++    }
++    return `-${sanitizeFilePath(project.name)}`
++  }
++
+   private async reportChildren(children: TestCollection) {
+     for (const child of children) {
+       if (child.type === 'test') {
 ```
 
-**File**: `test/e2e/snapshots/test-update.test.ts` (modified, +34/-1)
+**File**: `test/e2e/test/annotations.test.ts` (modified, +40/-0)
 ```diff
-@@ -2,7 +2,7 @@ import fs, { rmSync } from 'node:fs'
- import { join } from 'node:path'
- import { globSync } from 'tinyglobby'
- import { expect, test } from 'vitest'
--import { runVitest } from '../../test-utils'
-+import { runInlineTests, runVitest } from '../../test-utils'
- 
- test('test update', async () => {
-   // copy fixtures/test-update to fixtures/test-update-result
-@@ -84,3 +84,36 @@ function readFiles(dir: string) {
-     files.sort().map((file) => [file, fs.readFileSync(join(dir, file), 'utf-8')]),
-   )
- }
+@@ -722,3 +722,43 @@ test("world", ({ annotate }) => {
+     ]
+   `)
+ })
 +
-+test('a retry removes the new snapshots of the failed attempt', async () => {
-+  const { stderr, errorTree, fs } = await runInlineTests(
++test('projects that attach the same file keep their own copies', async () => {
++  const result = await runInlineTests(
 +    {
-+      'basic.test.ts': `
-+import { expect, test } from 'vitest'
++      'invoice.test.js': `
++import { writeFileSync } from 'node:fs'
++import { test } from 'vitest'
 +
-+test('flaky', { retry: 1 }, ({ task }) => {
-+  expect('every attempt').toMatchSnapshot()
-+  if (task.result.retryCount === 0) {
-+    expect('failed attempt').toMatchSnapshot()
-+    throw new Error('boom')
-+  }
++test('renders the invoice', async ({ annotate }) => {
++  writeFileSync(new URL('./invoice.html', import.meta.url), '<p>' + process.env.LOCALE + '</p>')
++  await annotate('invoice', { path: './invoice.html' })
 +})
 +`,
 +    },
-+    { update: 'new' },
-+  )
-+  expect(stderr).toBe('')
-+  expect(errorTree()).toMatchInlineSnapshot(`
 +    {
-+      "basic.test.ts": {
-+        "flaky": "passed",
-+      },
-+    }
-+  `)
-+  expect(fs.readFile('__snapshots__/basic.test.ts.snap')).toMatchInlineSnapshot(`
-+    "// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-+
-+    exports[\`flaky 1\`] = \`"every attempt"\`;
++      projects: [
++        { extends: true, test: { name: 'en', env: { LOCALE: 'en' }, sequence: { groupOrder: 1 } } },
++        { extends: true, test: { name: 'de', env: { LOCALE: 'de' }, sequence: { groupOrder: 2 } } },
++      ],
++    },
++  )
++  expect(result.stderr).toMatchInlineSnapshot(`
++    " Vitest  The projects "en" and "de" attach the same file "invoice.html", so they can overwrite each other's file. Save the file to a different path in each project.
 +    "
 +  `)
++  const copies = Object.fromEntries(
++    result.results.map((module) => {
++      const [testCase] = module.children.allTests()
++      const copy = testCase.annotations()[0]?.attachment?.path ?? ''
++      return [
++        module.project.name,
++        [path.basename(copy).replace(/[\da-f]{40}/, '<hash>'), readFileSync(copy, 'utf-8')],
++      ]
++    }),
++  )
++  expect(copies).toEqual({
++    en: ['invoice-<hash>.html', '<p>en</p>'],
++    de: ['invoice-<hash>-de.html', '<p>de</p>'],
++  })
 +})
 ```
 
----
-
-### Incident Patch 3: `ff6b4275` (2026-11-23)
-**Commit Message**: fix(deps): update all non-major dependencies (#12050)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: Vladimir Sheremet <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ai-policy.yml` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ jobs:
-     steps:
-       - name: AgentScan
-         id: agentscan
--        uses: MatteoGabriele/agentscan-action@8112fb79b33fafb8506159df20129a34209ac410 # v2.5.0
-+        uses: MatteoGabriele/agentscan-action@7ad606f1e21df2119da8be99b763f282a670a1c5 # v2.8.0
-         with:
-           github-token: ${{ secrets.GITHUB_TOKEN }}
-           # the `labels` mode also labels accounts with mixed signals,
-```
-
-**File**: `.github/workflows/semgrep.yml` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ jobs:
-     permissions:
-       security-events: write # Required for upload-sarif to upload SARIF files.
-     container:
--      image: semgrep/semgrep:1.183.0@sha256:2e45517a85e13a9cca14a2a00df6bb48affd66b8ebfae1b0991cd57578362fb0
-+      image: semgrep/semgrep:1.185.0@sha256:67518c174185a2043fdbed16c70631b79209499b3671178e7194379b48295a0d
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-@@ -29,6 +29,6 @@ jobs:
-           > semgrep-results.sarif
- 
-       - name: Upload SARIF result
--        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-         with:
-           sarif_file: semgrep-results.sarif
-```
-
-**File**: `.github/workflows/zizmor.yml` (modified, +1/-1)
-```diff
-@@ -29,6 +29,6 @@ jobs:
-       # test locally by
-       #   zizmor .github/workflows --pedantic
-       - name: Run zizmor 🌈
--        uses: zizmorcore/zizmor-action@53290badfa369cb0bf7ad16342cb62c2fa47ac7b # v0.8.0
-+        uses: zizmorcore/zizmor-action@45d7276c9ca790aabd705e31ca99c6185c3e76dd # v0.8.1
-         with:
-           persona: pedantic
-```
-
-**File**: `docs/package.json` (modified, +2/-2)
-```diff
-@@ -37,8 +37,8 @@
-     "vite": "^6.3.5",
-     "vite-plugin-pwa": "^2.0.0",
-     "vitepress": "2.0.0-alpha.21",
--    "vitepress-plugin-group-icons": "^1.8.1",
--    "vitepress-plugin-llms": "^1.14.0",
-+    "vitepress-plugin-group-icons": "^1.8.2",
-+    "vitepress-plugin-llms": "^1.15.0",
-     "vitepress-plugin-tabs": "^0.9.1",
-     "vitest": "workspace:*",
-     "workbox-window": "^7.4.1",
-```
-
-**File**: `examples/fastify/package.json` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@
-   "devDependencies": {
-     "@vitest/ui": "latest",
-     "fastify": "^5.12.8",
--    "supertest": "^7.3.1",
-+    "supertest": "^7.3.2",
-     "tsx": "^4.23.15",
-     "vite": "latest",
-     "vitest": "latest"
-```
-
-**File**: `examples/lit/package.json` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@
-   "devDependencies": {
-     "@vitest/browser-playwright": "latest",
-     "jsdom": "^30.1.3",
--    "playwright": "^1.64.1",
-+    "playwright": "^1.65.1",
-     "vite": "latest",
-     "vitest": "latest"
-   },
-```
-
-**File**: `examples/opentelemetry/package.json` (modified, +4/-4)
-```diff
-@@ -9,10 +9,10 @@
-   },
-   "devDependencies": {
-     "@opentelemetry/api": "^1.10.0",
--    "@opentelemetry/context-zone": "^2.12.0",
--    "@opentelemetry/exporter-trace-otlp-proto": "^0.300.0",
--    "@opentelemetry/resources": "^2.12.0",
--    "@opentelemetry/sdk-node": "^0.300.0",
-+    "@opentelemetry/context-zone": "^2.12.1",
-+    "@opentelemetry/exporter-trace-otlp-proto": "^0.301.2",
-+    "@opentelemetry/resources": "^2.12.1",
-+    "@opentelemetry/sdk-node": "^0.301.2",
-     "@opentelemetry/sdk-trace-web": "^2.12.0",
-     "@vitest/browser-playwright": "latest",
-     "vite": "latest",
-```
-
-**File**: `examples/projects/package.json` (modified, +3/-3)
-```diff
-@@ -11,14 +11,14 @@
-   "devDependencies": {
-     "@testing-library/jest-dom": "^7.0.1",
-     "@testing-library/react": "^16.3.3",
--    "@testing-library/user-event": "^14.6.8",
-+    "@testing-library/user-event": "^14.6.12",
-     "@types/react": "^19.3.0",
--    "@vitejs/plugin-react": "^6.2.1",
-+    "@vitejs/plugin-react": "^6.3.0",
-     "@vitest/ui": "latest",
-     "fastify": "^5.12.8",
-     "jsdom": "^30.1.3",
-     "react": "^19.3.1",
--    "supertest": "^7.3.1",
-+    "supertest": "^7.3.2",
-     "tsx": "^4.23.15",
-     "vite": "latest",
-     "vitest": "latest"
-```
-
 #### Recent Merged Pull Requests:
-- **PR #12106** (2026-11-24): perf: read external source maps once per run (@sheremet-va)
-- **PR #12104** (2026-11-24): perf(expect): reuse the key array in deep equality (@camc314)
-- **PR #12101** (closed): fix(snapshot): match closing quote when inline snapshot ends with escaped backslash (@seragAhmed)
-- **PR #12100** (closed): fix(when): call original method on spyOn when onUnmatched is passthrough (@seragAhmed)
-- **PR #12099** (closed): fix(spy): ensure restoreAllMocks clears registry and restores remaining mocks when one throws (@seragAhmed)
-- **PR #12098** (closed): fix(browser): skip disk threshold check when VITEST_CHROMIUM_GC_FORCE is set (@EnesKartal)
+- **PR #12125** (closed): fix(vitest): preserve file-only CSS @import entries in affected graph and fsModuleCache (@aloneangel45)
+- **PR #12124** (closed): fix(vitest): ignore non-vitest method calls on test*-prefixed receivers in static collect (@aloneangel45)
+- **PR #12121** (closed): fix(expect): treat symbol keys with undefined values like string keys in toEqual (@yuyongyan29-dev)
+- **PR #12119** (closed): fix(expect): require one-to-one matching for Set equality with asymmetric matchers (@seragAhmed)
+- **PR #12117** (2026-11-27): perf: parse inlined modules once (@sheremet-va)
+- **PR #12115** (2026-11-26): docs: proper JavaScript capitalization (@mdong1909)
 
 ---
 
@@ -1720,41 +1774,37 @@ Co-authored-by: Vladimir Sheremet <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. browser): save failure screenshots per instance
+## X. browser): mock assets and computed dynamic imports
 
 **RULE**:
-When implementing operations in `packages/browser/src/client/tester/runner.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitest-dev/vitest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/browser/src/client/public/esm-client-injector.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitest-dev/vitest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e0e8e000`: browser): save failure screenshots per instance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6ad97de`: browser): mock assets and computed dynamic imports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/browser/src/client/tester/runner.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/browser/src/client/public/esm-client-injector.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-              `${getFailureScreenshotName(task, this.config.name, retry, repeats)}.png`,
-// the browser instances run the same test at the same time, so each one needs its own file
-function getFailureScreenshotName(
-  test: Test,
-  projectName: string | undefined,
-  retry: number,
-  repeats: number,
-) {
-  const name = `${projectName ? `${projectName}-` : ''}${test.fullTestName}`.replace(/\W/g, '-')
+  function wrapModule(moduleCallback, specifier, importer) {
+      return moduleCallback(specifier)
+    viteModule.promise = __vitest_mocker__.prepare()
+      .then(() => __vitest_mocker__.resolveDynamicImport(specifier, importer))
+      .then((resolved) => moduleCallback(resolved))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-              `${getFailureScreenshotName(task, retry, repeats)}.png`,
-function getFailureScreenshotName(test: Test, retry: number, repeats: number) {
-  const name = test.fullTestName.replace(/\W/g, '-')
+  function wrapModule(moduleCallback) {
+      return moduleCallback()
+    viteModule.promise = __vitest_mocker__.prepare().then(() => moduleCallback())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e0e8e000` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6ad97de` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

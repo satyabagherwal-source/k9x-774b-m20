@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "2b11b056",
+    "sourceVersion": "0dfdc6ac",
     "license": "MIT",
-    "contentHash": "bd907fd193800b8c9c16dbc595b123be7ef643da083f515a689759903956bebf",
-    "lastHarvestedAt": "2026-11-27T10:25:53.470Z",
+    "contentHash": "12fe2a3c541e994cf66b9333b17de0aa22cb4eca4b8fb2698784c92b1ef34c4a",
+    "lastHarvestedAt": "2026-11-28T10:50:02.516Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {
@@ -10113,10 +10113,10 @@
     "repository": "vitest-dev/vitest",
     "platform": "github",
     "sourceUrl": "https://github.com/vitest-dev/vitest",
-    "sourceVersion": "e0e8e000",
+    "sourceVersion": "c08e4db5",
     "license": "MIT",
-    "contentHash": "84de2b0643e1d58f089026cb067ed5165edf20bee8538fbafe4a3302ba0cdd41",
-    "lastHarvestedAt": "2026-11-25T00:35:14.618Z",
+    "contentHash": "526ff14958b82c891060bfd9f0b8670658bc38ee6347b9a9592e321e0cd23ae9",
+    "lastHarvestedAt": "2026-11-28T11:00:04.049Z",
     "learningId": "learn-github-vitest-dev-vitest"
   },
   "mijick-popups": {

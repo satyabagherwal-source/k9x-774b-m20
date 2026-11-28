@@ -14075,3 +14075,5 @@ Every entry in this ledger must capture:
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `965b3e76` | Multi-dimensional audit evidence | 2026-11-28T10:10:57.781Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `9398fb1d` | Multi-dimensional audit evidence | 2026-11-28T10:36:08.232Z |
 | `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `5b80fdec` | Multi-dimensional audit evidence | 2026-11-28T10:36:10.777Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `0dfdc6ac` | Multi-dimensional audit evidence | 2026-11-28T10:50:02.516Z |
+| `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `c08e4db5` | Multi-dimensional audit evidence | 2026-11-28T11:00:04.049Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T10:36:20.368Z",
+  "last_updated": "2026-11-28T11:00:10.660Z",
   "total_records": 2896,
   "domains": {
     "A": {
@@ -17448,8 +17448,8 @@
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "repository": "tokio-rs/tokio",
-      "content_hash": "f6ef1dc194366b845f260164365805313b9686dc0027e8acc6b4bc7b53fcb9ab",
-      "created_at": "2026-11-27T10:25:53.958Z"
+      "content_hash": "91c34e68ccc680bb54f6b3371ec8e4cf1b690028073954832ebbc42626157b9b",
+      "created_at": "2026-11-28T10:50:02.943Z"
     },
     "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants",
@@ -17475,8 +17475,8 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-learnings-technical-construction-intelligence-tokio-rs-tokio-lear.md",
       "repository": "tokio-rs-tokio-learnings",
-      "content_hash": "ae806d4c79e8b5322569724078204d3af207d0c131ac61b9bfa59f4b39e92f8d",
-      "created_at": "2026-11-27T10:26:04.375Z"
+      "content_hash": "2205a3f1094f6026be4e9976159c6908e0720da7f4d545a2e36e5f4deada8183",
+      "created_at": "2026-11-28T11:00:08.161Z"
     },
     "DOM-D-65E545AD": {
       "record_id": "DOM-D-65E545AD",
@@ -18546,8 +18546,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "22af1d6061f9a0dbd6c8d697ed2303e87105cd4a602e49b1263ffbeed375deda",
-      "created_at": "2026-11-28T06:31:04.495Z"
+      "content_hash": "418732fac60d644997338f05b213eebd7c3f21b59750f3a9ee5ea2d7be2daa69",
+      "created_at": "2026-11-28T11:00:10.660Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -26840,8 +26840,8 @@
       "title": "Quality & Verification Intelligence: vitest-dev/vitest Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-vitest-dev-vitest-quality-verification-intelligence-vitest-dev-vitest-core-invar.md",
       "repository": "vitest-dev/vitest",
-      "content_hash": "a47f9fb8f5ab2bdc1cf0af01416fbc758084343ee8537ccbe0aba8a89be9da63",
-      "created_at": "2026-11-25T00:35:15.027Z"
+      "content_hash": "82ce1e22d5e15627ef93b23a8c4ac54db031c584242430ae9bad989991d5c0bb",
+      "created_at": "2026-11-28T11:00:04.522Z"
     },
     "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants",
@@ -26849,8 +26849,8 @@
       "title": "Quality & Verification Intelligence: vitest-dev-vitest-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-vitest-dev-vitest-learnings-quality-verification-intelligence-vitest-dev-vitest-.md",
       "repository": "vitest-dev-vitest-learnings",
-      "content_hash": "b3ce90fdfd15fa7bd773ea06f753d33ed0ee4de2dcaad2faa3c303868391bd8c",
-      "created_at": "2026-11-25T00:35:23.805Z"
+      "content_hash": "c58c379f217e34c1f6082cae8fb5781a85b0422d18d6a394204d25310d721d25",
+      "created_at": "2026-11-28T11:00:09.253Z"
     },
     "domain_intelligence-design-intelligence-cypress-io-cypress-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-cypress-io-cypress-core-invariants",

@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T10:36:17.461Z",
-    "lastVerified": "2026-11-28T10:36:17.461Z",
+    "lastChecked": "2026-11-28T11:00:07.439Z",
+    "lastVerified": "2026-11-28T11:00:07.439Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -399,12 +399,12 @@
     "revisionIdentifier": "40d4f79e"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T09:28:41.938Z",
-    "lastVerified": "2026-11-28T09:28:41.938Z",
+    "lastChecked": "2026-11-28T10:50:08.300Z",
+    "lastVerified": "2026-11-28T10:50:08.300Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -413,7 +413,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "42b3267e"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1614,9 +1615,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-28T04:57:40.466Z",
+    "lastChecked": "2026-11-28T10:50:03.602Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-28T04:57:40.466Z"
+    "lastVerified": "2026-11-28T10:50:03.602Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -2595,8 +2596,8 @@
     "officialUrl": "https://github.com/infiniflow/infinity",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-27T15:18:26.170Z",
-    "lastVerified": "2026-11-27T15:18:26.170Z",
+    "lastChecked": "2026-11-28T10:50:05.992Z",
+    "lastVerified": "2026-11-28T10:50:05.992Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infiniflow-infinity",
@@ -6815,12 +6816,12 @@
     "lastVerified": "2026-11-27T05:57:35.240Z"
   },
   "juicedata-juicefs": {
-    "name": "juicedata/juicefs",
+    "name": "juicefs",
     "officialUrl": "https://github.com/juicedata/juicefs",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T16:30:22.730Z",
-    "lastVerified": "2026-11-27T16:30:22.730Z",
+    "lastChecked": "2026-11-28T10:50:00.974Z",
+    "lastVerified": "2026-11-28T10:50:00.974Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-juicedata-juicefs",
@@ -6829,7 +6830,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e375c609"
   },
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
@@ -8916,12 +8918,12 @@
     "officialUrl": "https://github.com/tokio-rs/tokio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T10:25:52.146Z",
-    "lastVerified": "2026-11-27T10:25:52.146Z",
+    "lastChecked": "2026-11-28T10:50:01.229Z",
+    "lastVerified": "2026-11-28T10:50:01.229Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "bd907fd193800b8c9c16dbc595b123be7ef643da083f515a689759903956bebf",
+    "contentHash": "12fe2a3c541e994cf66b9333b17de0aa22cb4eca4b8fb2698784c92b1ef34c4a",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -11849,9 +11851,9 @@
   "alexdrone-render": {
     "name": "Render",
     "officialUrl": "https://github.com/alexdrone/Render",
-    "lastChecked": "2026-11-26T07:00:51.227Z",
+    "lastChecked": "2026-11-28T10:49:58.246Z",
     "revisionIdentifier": "0955baef",
-    "lastVerified": "2026-11-26T07:00:51.227Z"
+    "lastVerified": "2026-11-28T10:49:58.246Z"
   },
   "mozilla-readability": {
     "name": "readability",
@@ -12240,14 +12242,14 @@
     "officialUrl": "https://github.com/vitest-dev/vitest",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T00:35:13.380Z",
-    "lastVerified": "2026-11-25T00:35:13.380Z",
+    "lastChecked": "2026-11-28T10:50:01.417Z",
+    "lastVerified": "2026-11-28T10:50:01.417Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vitest-dev-vitest",
-    "contentHash": "84de2b0643e1d58f089026cb067ed5165edf20bee8538fbafe4a3302ba0cdd41",
+    "contentHash": "526ff14958b82c891060bfd9f0b8670658bc38ee6347b9a9592e321e0cd23ae9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -4,24 +4,24 @@
 {
   "source_repository": "tokio-rs/tokio",
   "source_url": "https://github.com/tokio-rs/tokio",
-  "source_version": "2b11b056",
+  "source_version": "0dfdc6ac",
   "license": "MIT",
-  "timestamp": "2026-11-27T10:25:53.740Z",
+  "timestamp": "2026-11-28T10:50:02.738Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tokio-rs-tokio",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tokio-rs/tokio](https://github.com/tokio-rs/tokio) (Revision: `2b11b056`).  
-> **License**: MIT | **Timestamp**: `2026-11-27T10:25:53.740Z`  
+> **Provenance**: Harvested from [tokio-rs/tokio](https://github.com/tokio-rs/tokio) (Revision: `0dfdc6ac`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T10:50:02.738Z`  
 > **Learning ID**: `learn-github-tokio-rs-tokio`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 80%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tokio-rs/tokio:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T10:25:52.146Z  
+> **Harvest Timestamp**: 2026-11-28T10:50:01.229Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1955,8 +1955,8 @@ where
 - **Issue #8833** (2026-11-27): **docs: sort `use` in doc comments**
   *Symptoms*: Reading the IO chapter in the tutorial (and the docs of `AsyncReadExt` and `AsyncWriteExt`) I found that some `use` declaration  were in different orders, so I sorted them (and all the "import" in the repo).   This was done with "cargo -nightly fmt --check" (with "unstable_features" and "format_code_in_doc_comments") and only picking changes related to the sort of the use in the docs.
 
-- **Issue #8827** (2026-11-24): **tokio-util: improve panic docs for `DelayQueue`**
-  *Symptoms*: This PR adds documentation for scenarios in which `DelayQueue::insert` and `insert_at` panic namely when called from outside of a `tokio` runtime context or if timers are disabled . 
+- **Issue #8828** (2026-11-27): **Registration of `AsyncFd` from any `T: From<OwnedFd>`**
+  *Symptoms*: **Is your feature request related to a problem? Please describe.** As of version 1.53.3, there is no way to create an `AsyncFd` with purely safe Rust, even though identical constructions are possible with other tokio types e.g. a conversion chain of `std::os::fd::OwnedFd` -> `std::net::UdpSocket` -> `tokio::net::UdpSocket`.  **Describe the solution you'd like** The trivial implementation of this is a safe `register_from_owned<T: From<OwnedFd>>(inner: T)` constructor, effectively wrapping the unsafe code presented in `AsyncFd`'s own code example, with the same safety qualification as given there.  **Describe alternatives you've considered** Given #8539 's aversion to assuming stronger semantics of the `AsFd` trait than its documentation provides, the only acceptable way to provide any safe constructor is to accept only owned types. Explicit constructors from `std` and `tokio` owned fd-backed types are possible, but unnecessarily verbose when `From<OwnedFd>` covers those cases with more generality. `IntoRawFd` gives a weaker ownership guarantee.  **Additional context** #8539 is the motivation; fixing the soundness issue created an ergonomic deficit, and code attempting to adhere to a subset of Rust avoiding unsafe blocks and deprecated functions has to accept one or the other after a patch release update. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1973,731 +1973,149 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b11b056` (2026-11-27)
-**Commit Message**: docs: sort `use` in doc comments (#8833)
+### Incident Patch 1: `0dfdc6ac` (2026-11-27)
+**Commit Message**: signal: return self-pipe errors instead of aborting (#8650)
 
-**File**: `tokio-stream/src/stream_ext.rs` (modified, +7/-7)
+**File**: `tokio/src/runtime/signal/mod.rs` (modified, +3/-3)
 ```diff
-@@ -335,12 +335,12 @@ pub trait StreamExt: Stream {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamExt, Stream};
-     /// use tokio::sync::mpsc;
-     /// use tokio::time;
-+    /// use tokio_stream::{StreamExt, Stream};
-     ///
--    /// use std::time::Duration;
-     /// use std::pin::Pin;
-+    /// use std::time::Duration;
-     ///
-     /// # /*
-     /// #[tokio::main]
-@@ -953,8 +953,8 @@ pub trait StreamExt: Stream {
-     /// ```
-     /// # #[tokio::main(flavor = "current_thread")]
-     /// # async fn main() {
--    /// use tokio_stream::{self as stream, StreamExt};
-     /// use std::time::Duration;
-+    /// use tokio_stream::{self as stream, StreamExt};
-     /// # let int_stream = stream::iter(1..=3);
-     ///
-     /// let int_stream = int_stream.timeout(Duration::from_secs(1));
-@@ -990,8 +990,8 @@ pub trait StreamExt: Stream {
-     /// ```
-     /// # #[tokio::main(flavor = "current_thread", start_paused = true)]
-     /// # async fn main() {
--    /// use tokio_stream::{StreamExt, wrappers::IntervalStream};
-     /// use std::time::Duration;
-+    /// use tokio_stream::{wrappers::IntervalStream, StreamExt};
-     /// let interval_stream = IntervalStream::new(tokio::time::interval(Duration::from_millis(100)));
-     /// let timeout_stream = interval_stream.timeout(Duration::from_millis(10));
-     /// tokio::pin!(timeout_stream);
-@@ -1039,8 +1039,8 @@ pub trait StreamExt: Stream {
-     /// ```
-     /// # #[tokio::main(flavor = "current_thread")]
-     /// # async fn main() {
--    /// use tokio_stream::{self as stream, StreamExt};
-     /// use std::time::Duration;
-+    /// use tokio_stream::{self as stream, StreamExt};
-     /// # let int_stream = stream::iter(1..=3);
-     ///
-     /// let int_stream = int_stream.timeout_repeating(tokio::time::interval(Duration::from_secs(1)));
-@@ -1076,8 +1076,8 @@ pub trait StreamExt: Stream {
-     /// ```
-     /// # #[tokio::main(flavor = "current_thread", start_paused = true)]
-     /// # async fn main() {
--    /// use tokio_stream::{StreamExt, wrappers::IntervalStream};
-     /// use std::time::Duration;
-+    /// use tokio_stream::{wrappers::IntervalStream, StreamExt};
-     /// let interval_stream = IntervalStream::new(tokio::time::interval(Duration::from_millis(23)));
-     /// let timeout_stream = interval_stream.timeout_repeating(tokio::time::interval(Duration::from_millis(9)));
-     /// tokio::pin!(timeout_stream);
-@@ -1146,10 +1146,10 @@ pub trait StreamExt: Stream {
-     /// # Example
-     ///
-     /// ```rust
-+    /// use futures::FutureExt;
-     /// use std::time::Duration;
-     /// use tokio::time;
-     /// use tokio_stream::{self as stream, StreamExt};
--    /// use futures::FutureExt;
-     ///
-     /// #[tokio::main]
-     /// # async fn _unused() {}
-```
-
-**File**: `tokio-stream/src/stream_map.rs` (modified, +16/-16)
-```diff
-@@ -61,9 +61,9 @@ use std::task::{ready, Context, Poll};
- /// Merging two streams, then remove them after receiving the first value
- ///
- /// ```
--/// use tokio_stream::{StreamExt, StreamMap, Stream};
--/// use tokio::sync::mpsc;
- /// use std::pin::Pin;
-+/// use tokio::sync::mpsc;
-+/// use tokio_stream::{Stream, StreamExt, StreamMap};
- ///
- /// # #[tokio::main(flavor = "current_thread")]
- /// # async fn main() {
-@@ -215,7 +215,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, pending};
-+    /// use tokio_stream::{pending, StreamMap};
-     ///
-     /// let mut map = StreamMap::new();
-     ///
-@@ -238,7 +238,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, pending};
-+    /// use tokio_stream::{pending, StreamMap};
-     ///
-     /// let mut map = StreamMap::new();
-     ///
-@@ -262,7 +262,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, Pending};
-+    /// use tokio_stream::{Pending, StreamMap};
-     ///
-     /// let map: StreamMap<&str, Pending<()>> = StreamMap::new();
-     /// ```
-@@ -278,7 +278,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, Pending};
-+    /// use tokio_stream::{Pending, StreamMap};
-     ///
-     /// let map: StreamMap<&str, Pending<()>> = StreamMap::with_capacity(10);
-     /// ```
-@@ -295,7 +295,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, pending};
-+    /// use tokio_stream::{pending, StreamMap};
-     ///
-     /// let mut map = StreamMap::new();
-     ///
-@@ -318,7 +318,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, pending};
-+    /// use tokio_stream::{pending, StreamMap};
-     ///
-     /// let mut map = StreamMap::new();
-     ///
-@@ -341,7 +341,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, pending};
-+    /// use tokio_stream::{pending, StreamMap};
-     ///
-     /// let mut map = StreamMap::new();
-     ///
-@@ -365,7 +365,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, Pending};
-+    /// use tokio_stream::{Pending, StreamMap};
-     ///
-     /// let map: StreamMap<i32, Pending<()>> = StreamMap::with_capacity(100);
-     /// assert!(map.capacity() >= 100);
-@@ -379,7 +379,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, pending};
-+    /// use tokio_stream::{pending, StreamMap};
-     ///
-     /// let mut a = StreamMap::new();
-     /// assert_eq!(a.len(), 0);
-@@ -395,7 +395,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, pending};
-+    /// use tokio_stream::{pending, StreamMap};
-     ///
-     /// let mut a = StreamMap::new();
-     /// assert!(a.is_empty());
-@@ -412,7 +412,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, pending};
-+    /// use tokio_stream::{pending, StreamMap};
-     ///
-     /// let mut a = StreamMap::new();
-     /// a.insert(1, pending::<i32>());
-@@ -433,7 +433,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, pending};
-+    /// use tokio_stream::{pending, StreamMap};
-     ///
-     /// let mut map = StreamMap::new();
-     ///
-@@ -461,7 +461,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, pending};
-+    /// use tokio_stream::{pending, StreamMap};
-     ///
-     /// let mut map = StreamMap::new();
-     /// map.insert(1, pending::<i32>());
-@@ -490,7 +490,7 @@ impl<K, V> StreamMap<K, V> {
-     /// # Examples
-     ///
-     /// ```
--    /// use tokio_stream::{StreamMap, pending};
-+    /// use tokio_stream::{pending, StreamMap};
-     ///
-     /// let mut map = StreamMap::new();
-     /// map.insert(1, pending::<i32>());
-```
-
-**File**: `tokio-test/src/macros.rs` (modified, +2/-3)
-```diff
-@@ -223,9 +223,8 @@ macro_rules! assert_ok {
- /// # Examples
- ///
- /// ```
--/// use tokio_test::assert_err;
- /// use std::str::FromStr;
--///
-+/// use tokio_test::assert_err;
- ///
- /// let err = assert_err!(u32::from_str("fail"));
- ///
-@@ -258,8 +257,8 @@ macro_rules! assert_err {
- /// overshoot by more than 1ms and the assertion will fail.
- ///
- /// ```rust
--/// use tokio::time::{self, Instant};
- /// use std::time::Duration;
-+/// use tokio::time::{self, Instant};
- /// use tokio_test::assert_elapsed;
- /// # #[tokio::main(flavor = "current_thread", start_paused = true)]
- /// # async fn main() {
-```
-
-**File**: `tokio-util/src/task/join_map.rs` (modified, +1/-1)
-```diff
-@@ -188,8 +188,8 @@ impl<K, V, S> JoinMap<K, V, S> {
-     /// ```
-     /// # #[tokio::main(flavor = "current_thread")]
-     /// # async fn main() {
--    /// use tokio_util::task::JoinMap;
-     /// use std::collections::hash_map::RandomState;
-+    /// use tokio_util::task::JoinMap;
-     ///
-     /// let s = RandomState::new();
-     /// let mut map = JoinMap::with_capacity_and_hasher(10, s);
-```
-
-**File**: `tokio-util/src/util/poll_buf.rs` (modified, +5/-5)
-```diff
-@@ -13,11 +13,11 @@ use std::task::{ready, Context, Poll};
- ///
- /// ```
- /// use bytes::{Bytes, BytesMut};
--/// use tokio_stream as stream;
--/// use tokio::io::Result;
--/// use tokio_util::io::{StreamReader, poll_read_buf};
- /// use std::future::poll_fn;
- /// use std::pin::Pin;
-+/// use tokio::io::Result;
-+/// use tokio_stream as stream;
-+/// use tokio_util::io::{poll_read_buf, StreamReader};
- /// # #[tokio::main(flavor = "current_thread")]
- /// # async fn main() -> std::io::Result<()> {
- ///
-@@ -89,9 +89,9 @@ pub fn poll_read_buf<T: AsyncRead + ?Sized, B: BufMut>(
- /// [`Buf`]:
- ///
- /// ```no_run
--/// use tokio_util::io::poll_write_buf;
--/// use tokio::io;
- /// use tokio::fs::File;
-+/// use tokio::io;
-+/// use tokio_util::io::poll_write_buf;
- ///
- /// use bytes::Buf;
- /// use std::future::poll_fn;
-```
-
-**File**: `tokio/src/io/mod.rs` (modified, +3/-3)
-```diff
-@@ -38,8 +38,8 @@
- //! ```no_run
- //! # #[cfg(not(target_family = "wasm"))]
- //! # {
--//! use tokio::io::{self, AsyncReadExt};
- //! use tokio::fs::File;
-+//! use tokio::io::{self, AsyncReadExt};
- //!
- //! #[tokio::main]
- //! async fn main() -> io::Result<()> {
-@@ -78,8 +78,8 @@
- //! ```no_run
- //! # #[cfg(not(target_family = "wasm"))]
- //! # {
--//! use tokio::io::{self, BufReader, AsyncBufReadExt};
- //! use tokio::fs::File;
-+//! use tokio::io::{self, AsyncBufReadExt, BufReader};
- //!
- //! #[tokio::main]
- //! async fn main() -> io::Result<()> {
-@@ -103,8 +103,8 @@
- //! ```no_run
- //! # #[cfg(not(target_family = "wasm"))]
- //! # {
--//! use tokio::io::{self, BufWriter, AsyncWriteExt};
- //! use tokio::fs::File;
-+//! use tokio::io::{self, AsyncWriteExt, BufWriter};
- //!
- //! #[tokio::main]
- //! async fn main() -> io::Result<()> {
-```
-
-**File**: `tokio/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -277,8 +277,8 @@
- //! ```no_run
- //! # #[cfg(not(target_family = "wasm"))]
- //! # {
--//! use tokio::net::TcpListener;
- //! use tokio::io::{AsyncReadExt, AsyncWriteExt};
-+//! use tokio::net::TcpListener;
- //!
- //! #[tokio::main]
- //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-```
-
----
-
-### Incident Patch 2: `97c2e851` (2026-11-26)
-**Commit Message**: rt: ensure that `Waker::clone()` returns the same waker for `block_on` and `JoinSet` (#8819)
-
-The current-thread runtime and `JoinSet` get their waker vtable from a
-generic function, so a waker and its clone can end up with vtables at
-different addresses in different codegen units, which makes
-`Waker::will_wake` return false for the same task. Thus, use a `static`
-vtable for the current-thread runtime, store the vtable once per
-`JoinSet`, and remove the `Wake` trait.
-
-Co-authored-by: Lingao Meng <[REDACTED_EMAIL]>
-
-**File**: `tokio/src/runtime/scheduler/current_thread/mod.rs` (modified, +37/-9)
-```diff
-@@ -11,15 +11,16 @@ use crate::runtime::{
- };
- use crate::sync::notify::Notify;
- use crate::util::atomic_cell::AtomicCell;
--use crate::util::{waker_ref, RngSeedGenerator, Wake, WakerRef};
-+use crate::util::{RngSeedGenerator, WakerRef};
+@@ -3,7 +3,7 @@
+ //! Signal driver
  
- use std::cell::RefCell;
- use std::collections::VecDeque;
- use std::future::{poll_fn, Future};
-+use std::mem::ManuallyDrop;
- use std::pin::Pin;
- use std::sync::atomic::Ordering::{AcqRel, Acquire, Release};
- use std::task::Poll::{Pending, Ready};
--use std::task::Waker;
-+use std::task::{RawWaker, RawWakerVTable, Waker};
- use std::thread::ThreadId;
- use std::time::Duration;
- use std::time::Instant;
-@@ -661,11 +662,15 @@ impl Handle {
-         self.shared.inject.pop()
-     }
+ use crate::runtime::{driver, io};
+-use crate::signal::registry::globals;
++use crate::signal::registry::{globals, globals_unchecked};
  
-+    /// Returns a waker for the handle, without increasing its refcount.
-     fn waker_ref(me: &Arc<Self>) -> WakerRef<'_> {
-         // Set woken to true when enter block_on, ensure outer future
-         // be polled for the first time when enter loop
-         me.shared.woken.store(true, Release);
--        waker_ref(me)
-+        let ptr = Arc::as_ptr(me).cast::<()>();
-+        // Safety: The vtable functions expect a pointer from `Arc::as_ptr`,
-+        // and the returned `WakerRef` cannot outlive `me`.
-+        unsafe { WakerRef::from_raw(RawWaker::new(ptr, &WAKER_VTABLE)) }
-     }
+ use mio::net::UnixStream;
+ use std::io::{self as std_io, Read};
+@@ -64,7 +64,7 @@ impl Driver {
+         // only expect at least one dup to receive the notification.
  
-     // reset woken to false and return original value
-@@ -819,12 +824,7 @@ impl Schedule for Arc<Handle> {
-     }
- }
+         // Manually drop as we don't actually own this instance of UnixStream.
+-        let receiver_fd = globals().receiver.as_raw_fd();
++        let receiver_fd = globals()?.receiver.as_raw_fd();
  
--impl Wake for Handle {
--    fn wake(arc_self: Arc<Self>) {
--        Wake::wake_by_ref(&arc_self);
--    }
--
--    /// Wake by reference
-+impl Handle {
-     fn wake_by_ref(arc_self: &Arc<Self>) {
-         let already_woken = arc_self.shared.woken.swap(true, Release);
- 
-@@ -845,6 +845,34 @@ impl Wake for Handle {
-     }
- }
- 
-+// A `static` gives every waker for the handle the same vtable address, which
-+// `Waker::will_wake` relies on.
-+static WAKER_VTABLE: RawWakerVTable =
-+    RawWakerVTable::new(clone_waker, wake_by_val, wake_by_ref, drop_waker);
-+
-+unsafe fn clone_waker(ptr: *const ()) -> RawWaker {
-+    // Safety: `ptr` was created from `Arc::as_ptr` in `Handle::waker_ref`.
-+    unsafe { Arc::increment_strong_count(ptr as *const Handle) };
-+    RawWaker::new(ptr, &WAKER_VTABLE)
-+}
-+
-+unsafe fn wake_by_val(ptr: *const ()) {
-+    // Safety: `ptr` was created from `Arc::as_ptr` in `Handle::waker_ref`.
-+    let handle = unsafe { Arc::from_raw(ptr as *const Handle) };
-+    Handle::wake_by_ref(&handle);
-+}
-+
-+unsafe fn wake_by_ref(ptr: *const ()) {
-+    // Safety: `ptr` was created from `Arc::as_ptr` in `Handle::waker_ref`.
-+    let handle = ManuallyDrop::new(unsafe { Arc::from_raw(ptr as *const Handle) });
-+    Handle::wake_by_ref(&handle);
-+}
-+
-+unsafe fn drop_waker(ptr: *const ()) {
-+    // Safety: `ptr` was created from `Arc::as_ptr` in `Handle::waker_ref`.
-+    drop(unsafe { Arc::from_raw(ptr as *const Handle) });
-+}
-+
- // ===== CoreGuard =====
- 
- /// Used to ensure we always place the `Core` value back into its slot in
-```
-
-**File**: `tokio/src/util/idle_notified_set.rs` (modified, +78/-14)
-```diff
-@@ -9,12 +9,12 @@
- use std::marker::PhantomPinned;
- use std::mem::ManuallyDrop;
- use std::ptr::NonNull;
--use std::task::{Context, Waker};
-+use std::task::{Context, RawWaker, RawWakerVTable, Waker};
- 
- use crate::loom::cell::UnsafeCell;
--use crate::loom::sync::{Arc, Mutex};
-+use crate::loom::sync::{Arc, Mutex, MutexGuard};
- use crate::util::linked_list::{self, Link, LinkedList};
--use crate::util::{waker_ref, Wake};
-+use crate::util::WakerRef;
- 
- /// This is the main handle to the collection.
- pub(crate) struct IdleNotifiedSet<T> {
-@@ -37,7 +37,17 @@ pub(crate) struct EntryInOneOfTheLists<'a, T> {
-     set: &'a mut IdleNotifiedSet<T>,
- }
- 
--type Lists<T> = Mutex<ListsInner<T>>;
-+struct Lists<T> {
-+    inner: Mutex<ListsInner<T>>,
-+    /// The vtable used by all wakers for entries in these lists.
-+    vtable: &'static RawWakerVTable,
-+}
-+
-+impl<T> Lists<T> {
-+    fn lock(&self) -> MutexGuard<'_, ListsInner<T>> {
-+        self.inner.lock()
-+    }
-+}
- 
- /// The linked lists hold strong references to the `ListEntry` items, and the
- /// `ListEntry` items also hold a strong reference back to the Lists object, but
-@@ -123,11 +133,14 @@ unsafe impl<T> Sync for ListEntry<T> {}
- impl<T> IdleNotifiedSet<T> {
-     /// Create a new `IdleNotifiedSet`.
-     pub(crate) fn new() -> Self {
--        let lists = Mutex::new(ListsInner {
--            notified: LinkedList::new(),
--            idle: LinkedList::new(),
--            waker: None,
--        });
-+        let lists = Lists {
-+            inner: Mutex::new(ListsInner {
-+                notified: LinkedList::new(),
-+                idle: LinkedList::new(),
-+                waker: None,
-+            }),
-+            vtable: ListEntry::<T>::waker_vtable(),
-+        };
- 
-         IdleNotifiedSet {
-             lists: Arc::new(lists),
-@@ -409,9 +422,11 @@ impl<'a, T> EntryInOneOfTheLists<'a, T> {
-     pub(crate) fn with_value_and_context<F, U>(&mut self, func: F) -> U
-     where
-         F: FnOnce(&mut T, &mut Context<'_>) -> U,
--        T: 'static,
-     {
--        let waker = waker_ref(&self.entry);
-+        let ptr = Arc::as_ptr(&self.entry).cast::<()>();
-+        // Safety: The vtable functions expect a pointer from `Arc::as_ptr`,
-+        // and the returned `WakerRef` does not outlive `self.entry`.
-+        let waker = unsafe { WakerRef::from_raw(RawWaker::new(ptr, self.entry.parent.vtable)) };
- 
-         let mut context = Context::from_waker(&waker);
- 
-@@ -437,7 +452,7 @@ impl<T> Drop for IdleNotifiedSet<T> {
-     }
- }
- 
--impl<T: 'static> Wake for ListEntry<T> {
-+impl<T> ListEntry<T> {
-     fn wake_by_ref(me: &Arc<Self>) {
-         let mut lock = me.parent.lock();
- 
-@@ -466,11 +481,47 @@ impl<T: 'static> Wake for ListEntry<T> {
+         // safety: there is nothing unsafe about this, but the `from_raw_fd` fn is marked as unsafe.
+         let original =
+@@ -123,7 +123,7 @@ impl Driver {
          }
-     }
  
--    fn wake(me: Arc<Self>) {
--        Self::wake_by_ref(&me);
-+    /// Creates the vtable for wakers of a `ListEntry<T>`.
-+    ///
-+    /// A `static` cannot be generic over `T`, and each call may return a
-+    /// vtable at a different address. So this is called once per set, and all
-+    /// wakers for its entries use the stored vtable, as `Waker::will_wake`
-+    /// relies on.
-+    fn waker_vtable() -> &'static RawWakerVTable {
-+        &RawWakerVTable::new(
-+            clone_entry_waker::<T>,
-+            wake_entry_by_val::<T>,
-+            wake_entry_by_ref::<T>,
-+            drop_entry_waker::<T>,
-+        )
+         // Broadcast any signals which were received
+-        globals().broadcast();
++        globals_unchecked().broadcast();
      }
  }
  
-+unsafe fn clone_entry_waker<T>(ptr: *const ()) -> RawWaker {
-+    let entry = ptr as *const ListEntry<T>;
-+    // Safety: `ptr` was created from `Arc::as_ptr` in `with_value_and_context`.
-+    let vtable = unsafe { &*entry }.parent.vtable;
-+    unsafe { Arc::increment_strong_count(entry) };
-+    RawWaker::new(ptr, vtable)
-+}
-+
-+unsafe fn wake_entry_by_val<T>(ptr: *const ()) {
-+    // Safety: `ptr` was created from `Arc::as_ptr` in `with_value_and_context`.
-+    let entry = unsafe { Arc::from_raw(ptr as *const ListEntry<T>) };
-+    ListEntry::wake_by_ref(&entry);
-+}
-+
-+unsafe fn wake_entry_by_ref<T>(ptr: *const ()) {
-+    // Safety: `ptr` was created from `Arc::as_ptr` in `with_value_and_context`.
-+    let entry = ManuallyDrop::new(unsafe { Arc::from_raw(ptr as *const ListEntry<T>) });
-+    ListEntry::wake_by_ref(&entry);
-+}
-+
-+unsafe fn drop_entry_waker<T>(ptr: *const ()) {
-+    // Safety: `ptr` was created from `Arc::as_ptr` in `with_value_and_context`.
-+    drop(unsafe { Arc::from_raw(ptr as *const ListEntry<T>) });
-+}
-+
- /// # Safety
- ///
- /// `ListEntry` is forced to be !Unpin.
-@@ -512,4 +563,17 @@ mod tests {
- 
-         rt.block_on(set.join_next()).unwrap().unwrap();
-     }
-+
-+    #[test]
-+    fn entry_waker_matches_its_clone() {
-+        let mut set = super::IdleNotifiedSet::new();
-+        let mut entry = set.insert_idle(());
-+        entry.with_value_and_context(|_, cx| {
-+            let waker = cx.waker();
-+            let clone = waker.clone();
-+            assert!(waker.will_wake(&clone));
-+            clone.wake();
-+        });
-+        drop(set.pop_notified(futures::task::noop_waker_ref()).
 ```
 
-**File**: `tokio/src/util/mod.rs` (modified, +0/-1)
+**File**: `tokio/src/signal/registry.rs` (modified, +35/-9)
 ```diff
-@@ -69,7 +69,6 @@ cfg_rt! {
+@@ -1,6 +1,7 @@
+ use crate::signal::unix::{OsExtraData, OsStorage};
+ use crate::sync::watch;
  
-     mod wake;
-     pub(crate) use wake::WakerRef;
--    pub(crate) use wake::{waker_ref, Wake};
- 
-     mod sync_wrapper;
-     pub(crate) use sync_wrapper::SyncWrapper;
-```
-
-**File**: `tokio/src/util/wake.rs` (modified, +19/-60)
-```diff
-@@ -1,18 +1,7 @@
--use crate::loom::sync::Arc;
--
- use std::marker::PhantomData;
- use std::mem::ManuallyDrop;
- use std::ops::Deref;
--use std::task::{RawWaker, RawWakerVTable, Waker};
--
--/// Simplified waking interface based on Arcs.
--pub(crate) trait Wake: Send + Sync + Sized + 'static {
--    /// Wake by value.
--    fn wake(arc_self: Arc<Self>);
--
--    /// Wake by reference.
--    fn wake_by_ref(arc_self: &Arc<Self>);
--}
-+use std::task::{RawWaker, Waker};
- 
- /// A `Waker` that is only valid for a given lifetime.
- #[derive(Debug)]
-@@ -21,58 +10,28 @@ pub(crate) struct WakerRef<'a> {
-     _p: PhantomData<&'a ()>,
- }
- 
-+impl<'a> WakerRef<'a> {
-+    /// Creates a `WakerRef` from a `RawWaker` without taking ownership of the
-+    /// underlying resource.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must uphold the contract of [`Waker::from_raw`], except that
-+    /// the `WakerRef` will not invoke `drop` on the `RawWaker` when it is
-+    /// dropped, and the pointer inside `waker` only needs to remain valid for
-+    /// the lifetime `'a`.
-+    pub(crate) unsafe fn from_raw(waker: RawWaker) -> Self {
-+        Self {
-+            waker: ManuallyDrop::new(unsafe { Waker::from_raw(waker) }),
-+            _p: PhantomData,
-+        }
-+    }
-+}
-+
- impl Deref for WakerRef<'_> {
-     type Target = Waker;
- 
-     fn deref(&self) -> &Waker {
-         &self.waker
-     }
- }
--
--/// Creates a reference to a `Waker` from a reference to `Arc<impl Wake>`.
--pub(crate) fn waker_ref<W: Wake>(wake: &Arc<W>) -> WakerRef<'_> {
--    let ptr = Arc::as_ptr(wake).cast::<()>();
--
--    let waker = unsafe { Waker::from_raw(RawWaker::new(ptr, waker_vtable::<W>())) };
--
--    WakerRef {
--        waker: ManuallyDrop::new(waker),
--        _p: PhantomData,
--    }
--}
--
--fn waker_vtable<W: Wake>() -> &'static RawWakerVTable {
--    &RawWakerVTable::new(
--        clone_arc_raw::<W>,
--        wake_arc_raw::<W>,
--        wake_by_ref_arc_raw::<W>,
--        drop_arc_raw::<W>,
--    )
--}
--
--unsafe fn clone_arc_raw<T: Wake>(data: *const ()) -> RawWaker {
--    // Safety: `data` was created from an `Arc::as_ptr` in function `waker_ref`.
--    unsafe {
--        Arc::<T>::increment_strong_count(data as *const T);
--    }
--    RawWaker::new(data, waker_vtable::<T>())
--}
--
--unsafe fn wake_arc_raw<T: Wake>(data: *const ()) {
--    // Safety: `data` was created from an `Arc::as_ptr` in function `waker_ref`.
--    let arc: Arc<T> = unsafe { Arc::from_raw(data as *const T) };
--    Wake::wake(arc);
--}
--
--// used by `waker_ref`
--unsafe fn wake_by_ref_arc_raw<T: Wake>(data: *const ()) {
--    // Retain Arc, but don't touch refcount by wrapping in ManuallyDrop
--    // Safety: `data` was created from an `Arc::as_ptr` in function `waker_ref`.
--    let arc = ManuallyDrop::new(unsafe { Arc::<T>::from_raw(data.cast()) });
--    Wake::wake_by_ref(&arc);
--}
--
--unsafe fn drop_arc_raw<T: Wake>(data: *const ()) {
--    // Safety: `data` was created from an `Arc::as_ptr` in function `waker_ref`.
--    drop(unsafe { Arc::<T>::from_raw(data.cast()) });
--}
-```
-
-**File**: `tokio/tests/rt_basic.rs` (modified, +10/-1)
-```diff
-@@ -9,7 +9,7 @@ use tokio::sync::oneshot;
- use tokio::time::{timeout, Duration};
- use tokio_test::{assert_err, assert_ok};
- 
--use std::future::Future;
-+use std::future::{poll_fn, Future};
- use std::pin::Pin;
++use std::io;
+ use std::ops;
  use std::sync::atomic::{AtomicBool, Ordering};
- use std::task::{Context, Poll};
-@@ -47,6 +47,15 @@ fn spawned_task_does_not_progress_without_block_on() {
-     assert_eq!(out, "hello");
+ use std::sync::OnceLock;
+@@ -130,25 +131,50 @@ impl Globals {
+     }
  }
  
-+#[test]
-+fn block_on_waker_matches_its_clone() {
-+    rt().block_on(poll_fn(|cx| {
-+        let waker = cx.waker();
-+        assert!(waker.will_wake(&waker.clone()));
-+        Poll::Ready(())
-+    }));
+-fn globals_init() -> Globals
++fn globals_init() -> io::Result<Globals>
+ where
+-    OsExtraData: 'static + Send + Sync + Default,
++    OsExtraData: 'static + Send + Sync,
+     OsStorage: 'static + Send + Sync + Default,
+ {
+-    Globals {
+-        extra: OsExtraData::default(),
++    Ok(Globals {
++        extra: OsExtraData::new()?,
+         registry: Registry::new(OsStorage::default()),
+-    }
++    })
+ }
+ 
+-pub(crate) fn globals() -> &'static Globals
++static GLOBALS: OnceLock<Globals> = OnceLock::new();
++
++/// Returns the process-wide signal registry, initializing it on first use.
++///
++/// A failed initialization is not cached so that a subsequent call can succeed
++/// if the underlying error (such as file descriptor exhaustion) is transient.
++pub(crate) fn globals() -> io::Result<&'static Globals>
+ where
+-    OsExtraData: 'static + Send + Sync + Default,
++    OsExtraData: 'static + Send + Sync,
+     OsStorage: 'static + Send + Sync + Default,
+ {
+-    static GLOBALS: OnceLock<Globals> = OnceLock::new();
++    if let Some(globals) = GLOBALS.get() {
++        return Ok(globals);
++    }
+ 
+-    GLOBALS.get_or_init(globals_init)
++    let globals = globals_init()?;
++
++    // Two threads can race here and both build a `Globals`; the loser is
++    // dropped. Nothing can observe the discarded one because handlers are only
++    // registered after a successful return, so this is only wasted work.
++    // (`OnceLock::get_or_try_init` is still unstable.)
++    Ok(GLOBALS.get_or_init(|| globals))
 +}
 +
- #[test]
- fn no_extra_poll() {
-     use pin_project_lite::pin_project;
++/// Returns the signal registry, assuming initialization already succeeded.
++///
++/// Only call this after [`globals`] has returned `Ok`, which is the case for
++/// every user of the signal driver: the driver can only exist once the
++/// registry was initialized.
++pub(crate) fn globals_unchecked() -> &'static Globals {
++    GLOBALS
++        .get()
++        .expect("signal registry used before initialization")
+ }
+ 
+ #[cfg(all(test, not(loom)))]
+```
+
+**File**: `tokio/src/signal/unix.rs` (modified, +7/-6)
+```diff
+@@ -63,11 +63,12 @@ pub(crate) struct OsExtraData {
+     pub(crate) receiver: UnixStream,
+ }
+ 
+-impl Default for OsExtraData {
+-    fn default() -> Self {
+-        let (receiver, sender) = UnixStream::pair().expect("failed to create UnixStream");
++impl OsExtraData {
++    /// Creates the `socketpair` used to wake the signal driver.
++    pub(crate) fn new() -> io::Result<Self> {
++        let (receiver, sender) = UnixStream::pair()?;
+ 
+-        Self { sender, receiver }
++        Ok(Self { sender, receiver })
+     }
+ }
+ 
+@@ -274,7 +275,7 @@ fn signal_enable(signal: SignalKind, handle: &Handle) -> io::Result<()> {
+     // Check that we have a signal driver running
+     handle.check_inner()?;
+ 
+-    let globals = globals();
++    let globals = globals()?;
+     let siginfo = match globals.storage().get(signal as EventId) {
+         Some(slot) => slot,
+         None => return Err(io::Error::other("signal too large")),
+@@ -411,7 +412,7 @@ pub(crate) fn signal_with_handle(
+     // Turn the signal delivery on once we are ready for it
+     signal_enable(kind, handle)?;
+ 
+-    Ok(globals().register_listener(kind.0 as EventId))
++    Ok(globals()?.register_listener(kind.0 as EventId))
+ }
+ 
+ impl Signal {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2726,43 +2144,35 @@ Co-authored-by: Lingao Meng <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: sort `use` in doc comments
+## X. signal: return self-pipe errors instead of aborting
 
 **RULE**:
-When implementing operations in `tokio-stream/src/stream_ext.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio/src/runtime/signal/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b11b056`: docs: sort `use` in doc comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0dfdc6ac`: signal: return self-pipe errors instead of aborting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio-stream/src/stream_ext.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/runtime/signal/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// use tokio_stream::{StreamExt, Stream};
-    /// use std::time::Duration;
-    /// use tokio_stream::{self as stream, StreamExt};
-    /// use tokio_stream::{wrappers::IntervalStream, StreamExt};
-    /// use tokio_stream::{self as stream, StreamExt};
-    /// use tokio_stream::{wrappers::IntervalStream, StreamExt};
-    /// use futures::FutureExt;
+use crate::signal::registry::{globals, globals_unchecked};
+        let receiver_fd = globals()?.receiver.as_raw_fd();
+        globals_unchecked().broadcast();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    /// use tokio_stream::{StreamExt, Stream};
-    /// use std::time::Duration;
-    /// use tokio_stream::{self as stream, StreamExt};
-    /// use tokio_stream::{StreamExt, wrappers::IntervalStream};
-    /// use tokio_stream::{self as stream, StreamExt};
-    /// use tokio_stream::{StreamExt, wrappers::IntervalStream};
-    /// use futures::FutureExt;
+use crate::signal::registry::globals;
+        let receiver_fd = globals().receiver.as_raw_fd();
+        globals().broadcast();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b11b056` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0dfdc6ac` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T10:36:20.154Z",
+  "last_updated": "2026-11-28T11:00:09.669Z",
   "directives": [
     {
       "id": "CD-001",
@@ -75930,6 +75930,59 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1759D2-renderer-refuse-last-error-reads-off-the.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-GPDE",
+      "directive_title": "return self-pipe errors instead of aborting",
+      "source_repo": "tokio-rs/tokio",
+      "source_commit": "0dfdc6ac",
+      "staged_file": "11_INBOX/candidate-directives/CD-GPDE-return-self-pipe-errors-instead-of-aborting.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-TLIR",
+      "directive_title": "mock assets and computed dynamic imports",
+      "source_repo": "vitest-dev/vitest",
+      "source_commit": "c08e4db5",
+      "staged_file": "11_INBOX/candidate-directives/CD-TLIR-mock-assets-and-computed-dynamic-imports.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-TOD7",
+      "directive_title": "signal: return self-pipe errors instead of aborting",
+      "source_repo": "tokio-rs-tokio-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TOD7-signal-return-self-pipe-errors-instead-of-aborting.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-TP7K",
+      "directive_title": "browser): mock assets and computed dynamic imports",
+      "source_repo": "vitest-dev-vitest-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TP7K-browser-mock-assets-and-computed-dynamic-imports.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-8C1712",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8C1712-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-28"
     }
   ]
