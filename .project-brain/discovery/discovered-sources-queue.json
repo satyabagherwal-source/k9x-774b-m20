@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T17:10:30.343Z",
+  "updated_at": "2026-11-28T17:25:38.538Z",
   "stats": {
-    "total_discovered": 11023,
-    "approved_pending_harvest": 10464,
+    "total_discovered": 11029,
+    "approved_pending_harvest": 10470,
     "harvested_count": 0,
     "rejected_count": 559,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10480,
+      "COMMUNITY_AND_EXPERT": 10486,
       "OFFICIAL_DOCUMENTATION": 300,
       "STANDARDS_AND_SPECIFICATIONS": 166,
       "ENGINEERING_BLOGS": 7,
@@ -238620,6 +238620,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md",
         "fileName": "callstack-react-native-builder-bob-learnings.md"
+      }
+    },
+    "SRC-8B70929E3910": {
+      "id": "SRC-8B70929E3910",
+      "url": "https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5365?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5365?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:25:36.631Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-A24B32575C8B": {
+      "id": "SRC-A24B32575C8B",
+      "url": "https://github.com/software-mansion/react-freeze/issues/44",
+      "title": "https://github.com/software-mansion/react-freeze/issues/44",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:25:36.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-CEA3F8A3140F": {
+      "id": "SRC-CEA3F8A3140F",
+      "url": "https://github.com/software-mansion/react-freeze/pull/46",
+      "title": "https://github.com/software-mansion/react-freeze/pull/46",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:25:36.939Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-29D528D69D48": {
+      "id": "SRC-29D528D69D48",
+      "url": "https://github.com/expo/expo/pull/45775",
+      "title": "https://github.com/expo/expo/pull/45775",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:25:37.048Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-FA37F72E867E": {
+      "id": "SRC-FA37F72E867E",
+      "url": "https://github.com/facebook/react-native/pull/56311",
+      "title": "https://github.com/facebook/react-native/pull/56311",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:25:37.180Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+        "fileName": "software-mansion-react-native-screens-learnings.md"
+      }
+    },
+    "SRC-525EF2F4E813": {
+      "id": "SRC-525EF2F4E813",
+      "url": "https://github.com/gardener/cc-utils/releases/tag/1.2883.0",
+      "title": "https://github.com/gardener/cc-utils/releases/tag/1.2883.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:25:38.538Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
       }
     }
   }

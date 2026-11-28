@@ -14121,3 +14121,6 @@ Every entry in this ledger must capture:
 | `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `c38830f1` | Multi-dimensional audit evidence | 2026-11-28T17:09:55.102Z |
 | `learn-github-callstack-react-native-builder-bob` | `https://github.com/callstack/react-native-builder-bob` | `5961f36d` | Multi-dimensional audit evidence | 2026-11-28T17:09:57.561Z |
 | `learn-dom-h-f654669c` | `project://callstack-react-native-builder-bob` | `5961f36d` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md` | 2026-11-28T17:10:30.208Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `ff22a642` | Multi-dimensional audit evidence | 2026-11-28T17:25:22.171Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `d9ffcbf8` | Multi-dimensional audit evidence | 2026-11-28T17:25:28.801Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `1152132c` | Multi-dimensional audit evidence | 2026-11-28T17:25:31.078Z |

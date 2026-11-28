@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T11:29:15.052Z",
+  "timestamp": "2026-11-28T17:25:37.386Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-software-mansion-react-native-screens-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [software-mansion-react-native-screens-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T11:29:15.052Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T17:25:37.386Z`  
 > **Learning ID**: `LEARN-EVO-software-mansion-react-native-screens-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 75%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from software-mansion-react-native-screens-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
-> **Source Version**: `1b8f2fde`  
+> **Source Version**: `d9ffcbf8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T11:28:59.662Z  
+> **Timestamp**: 2026-11-28T17:25:27.246Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-screens`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T11:28:59.655Z  
+> **Harvest Timestamp**: 2026-11-28T17:25:27.237Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Native navigation primitives for your React Native app.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3756 stars
+- **Stars / Engagement**: 3758 stars
 
 ---
 
@@ -393,11 +393,13 @@ interface SafeAreaProvider {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5350** (2026-11-25): **fix(test): remove duplicate expectTabBarItemByLabel e2e helper**
-  *Symptoms*: ## Description  #4747 and #4818 each added an `expectTabBarItemByLabel` helper to `FabricExample/e2e/helpers/framework/tab-bar.ts`, and they merged within seconds of each other, so `main` has both. Every spec importing `tab-bar.ts` now fails to compile with `TS2300: Duplicate identifier 'expectTabBarItemByLabel'`. On `main`'s Android e2e run this broke 4 suites: both `tabs-stack-v5` specs, `test-tabs-special-effects-scroll-to-top` and `test-stack-svm-tabs-special-effects`.  ## Changes  - **`tab-bar.ts`**: removed the `const` added by #4818 and kept the `async function` from #4747. On iOS the function checks that the tab bar item exists, because the selected button fails Detox's visibility threshold on iOS 26; on Android it checks visibility. The #4818 spec (`test-stack-tabs-stack-in-tabs-header-persistence`) runs only on Android, so its assertions are unchanged. 
+- **Issue #5366** (2026-11-26): **[Android] Removed screen is drawn while detached since 4.30.1, crashing with "Software rendering doesn't support hardware bitmaps"**
+  *Symptoms*: ### Description  Since 4.30.1 (it doesn't happen on 4.25.2), Android crashes with  ``` java.lang.IllegalArgumentException: Software rendering doesn't support hardware bitmaps     at android.graphics.BaseCanvas.throwIfHwBitmapInSwMode     at android.graphics.BaseCanvas.drawRoundRect     at <our image view>.onDraw     ...     at org.reactnative.maskedview.RNCMaskedView.dispatchDraw(RNCMaskedView.java:31)     at android.view.View.buildDrawingCacheImpl     at android.view.View.buildDrawingCache     at android.view.View.draw     ...     at com.swmansion.rnscreens.ScreenStack.performDraw(ScreenStack.kt:404)     at com.swmansion.rnscreens.ScreenStack$DrawingOp.draw(ScreenStack.kt:417)     at com.swmansion.rnscreens.ScreenStack.drawAndRelease(ScreenStack.kt:373)     at com.swmansion.rnscreens.ScreenStack.dispatchDraw(ScreenStack.kt:383) ```  when a screen is pushed on top of a screen that contains a view with a hardware layer (here a `@react-native-masked-view/masked-view` `MaskedView`) holding a hardware `Bitmap`.  **What we found by instrumenting the app**  At the moment of the draw, the screen being *left* (whose fragment `isRemoving`) is still drawn by `ScreenStack.drawAndRelease` → `performDraw`, but its whole subtree is already detached: every view from the image up to its `ScreensCoordinatorLayout` reports `isAttachedToWindow == false`, and the `ScreensCoordinatorLayout` has no parent. A detached view has no `RenderNode`, so `View.draw(Canvas, ViewGroup, long)` draws any view 
 
-- **Issue #5343** (2026-11-25): **fix(Android): load native libraries with SoLoader**
-  *Symptoms*: ## Description  On Android 12 - 14, an app can crash when React Native starts in a process that has already been running for a while. It happens when a split APK (a part of the app that is delivered separately, e.g. translations for one language) was installed without killing the process, and any library had been loaded with `System.loadLibrary` before that install.  Such an install moves the app to a new directory in `/data/app` and the old one is deleted a few seconds later. `System.loadLibrary("rnscreens")` in `ScreensModule` can still resolve to the deleted directory and fail. `SoLoader`, which React Native uses for its own libraries, detects that the app has moved and retries with the current path.  This PR loads our libraries with `SoLoader` and removes the `catch` that hid the load error in `ScreensModule`.  Closes #5117.  Thanks to @malopezr7 for reporting the issue and pointing at the mechanism!  ### Details  - **Problem.** The load error is caught and only logged, then `initialize()` creates `NativeProxy`, whose native methods live in the library that has not been loaded. The app crashes with an error that points away from the cause:    ```   Exception in HostObject::get for prop 'RNSModule': java.lang.UnsatisfiedLinkError: No implementation found for com.facebook.jni.HybridData com.swmansion.rnscreens.legacy.NativeProxy.initHybrid()   ```  - **Why it happens.** After the install, Android appends the new path to the native search path of the running class loader and
+- **Issue #5365** (2026-11-27): **fix(Android, Sheet v5): update the shadow state synchronously instead of blocking the draw**
+  *Symptoms*: ## Description  On Android the sheet reports the size of its content to the ShadowTree, and the React children are laid out for that size. The report was asynchronous and was followed by a synchronous `onSyncFlush` event that flushed it.  The size is now reported with `StateWrapper.UpdateMode.unstable_Immediate` (available on Android since React Native 0.89). The ShadowTree is committed and mounted before the frame is drawn, so no draw has to be held back.  ## Changes  - `ShadowStateProxy.updateStateIfNeeded` takes an `immediate` flag. It defaults to `false`, so the other components that use the proxy still update asynchronously. #5344 adds the same flag, so whichever of the two lands second has a small conflict to resolve there. - `SheetHost` reports the size of the sheet's content with `immediate = true`. - Removed the `onSyncFlush` event: the codegen spec entry, `SheetSyncFlushEvent`, its emitter method and its registration. - Removed the draw blocking from `SheetContentView`: `isWaitingForFabricMount`, the pre-draw listener and the `UIManagerListener`.  ## Before & after - visual documentation  No visual changes.  ## Test plan  Go through FormSheet SFTs  ## Checklist  - [ ] Included code example that can be used to test this change. - [ ] For visual changes, included screenshots / GIFs / recordings documenting the change. - [ ] For API changes, updated relevant public types. - [ ] Ensured that CI passes  🤖 Generated with [Claude Code](https://
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5365?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- walkthrough_start -->  <details> <summary><strong>Walkthrough</strong></summary> <dl> <dd> <br>  Android sheet state updates can now use immediate mode, while
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -414,493 +416,514 @@ interface SafeAreaProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e21b804a` (2026-11-25)
-**Commit Message**: fix(Android, Stack v4): keep a popped screen's content during its exit animation (#5267)
+### Incident Patch 1: `39a877a6` (2026-11-27)
+**Commit Message**: chore(test): skip the Android bottom tabs stack-state e2e until react-freeze#44 is fixed (#5359)
 
 ## Description
 
-On Android, a screen popped from the native stack (v4) sometimes plays
-its exit animation without its content: an empty screen slides out.
-#4570 reports this from a production app.
+On Android CI, `should keep stack state on tab change` in
+`bottomTabs.e2e.ts` times out. With two frozen screens (the one under
+the focused screen of a stack and a blurred tab), react-freeze on React
+19 re-renders and re-commits the frozen boundary in a loop. The JS
+thread never goes idle, so Detox never syncs. It only shows up on slow
+(CI) emulators.
 
-The mount transaction of a pop removes the screen's descendants before
-the screen itself. The screen keeps drawing its content only if
-`Screen.startRemovalTransition()` calls `startViewTransition()` on its
-children before that transaction mounts. `RNSScreenRemovalListener` sees
-the pop when the transaction is pulled, and
-`NativeProxy.notifyScreenRemoved` posted `startRemovalTransition()` to
-the UI thread. That post races the mount:
+The root cause is in react-freeze:
+[software-mansion/react-freeze#44](https://github.com/software-mansion/react-freeze/issues/44),
+with a proposed fix in
+[software-mansion/react-freeze#46](https://github.com/software-mansion/react-freeze/pull/46).
+This PR skips the test on Android until that fix lands. iOS keeps
+running it.
 
-- **Push model (default).** The JS thread pulls and the batch mounts in
-a later frame callback. The post usually runs first, but loses when a
-frame is already pending (the case #4444 describes).
-- **Synchronous mount on the UI thread.** A synchronous mount on the UI
-thread executes every pending transaction at once, including a pop the
-JS thread has already pulled. Reanimated can flush pending transactions
-this way during its animation frames, for example while a layout
-
-
-**File**: `android/src/fabric/java/com/swmansion/rnscreens/legacy/NativeProxy.kt` (modified, +37/-14)
-```diff
-@@ -3,11 +3,17 @@ package com.swmansion.rnscreens.legacy
- import android.util.Log
- import com.facebook.jni.HybridData
- import com.facebook.proguard.annotations.DoNotStrip
-+import com.facebook.react.bridge.UIManager
-+import com.facebook.react.bridge.UIManagerListener
-+import com.facebook.react.bridge.UiThreadUtil
-+import com.facebook.react.common.annotations.UnstableReactNativeAPI
- import com.facebook.react.fabric.FabricUIManager
- import java.lang.ref.WeakReference
- import java.util.concurrent.ConcurrentHashMap
-+import java.util.concurrent.ConcurrentLinkedQueue
- 
--class NativeProxy {
-+@OptIn(UnstableReactNativeAPI::class)
-+class NativeProxy : UIManagerListener {
-     @DoNotStrip
-     @Suppress("unused")
-     private val mHybridData: HybridData
-@@ -29,6 +35,12 @@ class NativeProxy {
-         // and written to on the UI thread.
-         private val viewsMap = ConcurrentHashMap<Int, WeakReference<Screen>>()
- 
-+        // Added by the thread that pulled the transaction removing the screen, drained on the UI
-+        // thread before that transaction mounts. Shared by all proxies, because the native removal
-+        // listener notifies only the most recently installed one. Never cleared: invalidating one
-+        // React instance must not drop another instance's screens.
-+        private val screensPendingRemovalTransition = ConcurrentLinkedQueue<WeakReference<Screen>>()
-+
-         fun addScreenToMap(
-             tag: Int,
-             view: Screen,
-@@ -45,8 +57,8 @@ class NativeProxy {
-         }
-     }
- 
--    // Called from native. Currently this method is called from MountingCoordinator thread,
--    // which usually is not UI thread.
-+    // Called from native, on the thread that pulls the mounting transaction: the JS thread in
-+    // the push model, the UI thread in the pull model or when rendering synchronously.
-     @DoNotStrip
-     public fun notifyScreenRemoved(screenTag: Int) {
-         // Since RN 0.78 the screenTag we receive as argument here might not belong to a screen
-@@ -63,20 +75,31 @@ class NativeProxy {
- 
-         val screen = weakScreeRef.get()
-         if (screen is Screen) {
--            // Fabric's mounting transaction removes the screen on a Choreographer frame callback,
--            // which can execute before `startRemovalTransition` (scheduled via `Handler.post`).
--            // To prevent `Screen.isBeingRemoved` from being read as false during teardown,
--            // we must set this flag synchronously here.
--            screen.markAsBeingRemoved()
--            val isScheduled =
--                screen.post {
--                    screen.startRemovalTransition()
--                }
--            if (!isScheduled) {
--                Log.w("[RNScreens]", "Failed to schedule removal transition start for screen with tag $screenTag")
-+            // The transaction removes the screen's children before the screen, so the transition
-+            // must start before the transaction mounts. A transaction pulled on the UI thread can't
-+            // mount before the pull returns.
-+            if (UiThreadUtil.isOnUiThread()) {
-+                screen.startRemovalTransition()
-+            } else {
-+                screensPendingRemovalTransition.add(weakScreeRef)
-             }
-         } else {
-             Log.w("[RNScreens]", "Reference stored in NativeProxy for tag $screenTag no longer points to valid object.")
-         }
-     }
-+
-+    // Fabric calls it on the UI thread before each dispatch of queued mount items, after it has taken
-+    // those items.
-+    override fun willMountItems(uiManager: UIManager) {
-+        generateSequence { screensPendingRemovalTransition.poll() }
-+            .forEach { it.get()?.startRemovalTransition() }
-+    }
-+
-+    override fun didMountItems(uiManager: UIManager) = Unit
-+
-+    override fun didDispatchMountItems(uiManager: UIManager) = Unit
-+
-+    override fun didScheduleMountItems(uiManager: UIManager) = Unit
-+
-+    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
- }
-```
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/Screen.kt` (modified, +0/-10)
-```diff
-@@ -79,8 +79,6 @@ class Screen(
-     var screenId: String? = null
-     var isStatusBarAnimated: Boolean? = null
- 
--    // Can be set on the mounting coordinator's thread (see `markAsBeingRemoved`), read on the UI thread.
--    @Volatile
-     var isBeingRemoved = false
-         private set
- 
-@@ -453,14 +451,6 @@ class Screen(
- 
-     var nativeBackButtonDismissalEnabled: Boolean = true
- 
--    /**
--     * Marks this screen as being removed from the native stack. Safe to call off the UI thread;
--     * must run before the mount transaction removing this screen executes.
--     */
--    fun markAsBeingRemoved() {
--        isBeingRemoved = true
--    }
--
-     fun startRemovalTransition() {
-         isBeingRemoved = true
-         if (!isRemovalTransitionStarted) {
-```
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/react/module/ScreensModule.kt` (modified, +5/-0)
-```diff
-@@ -5,6 +5,7 @@ import com.facebook.proguard.annotations.DoNotStrip
- import com.facebook.react.bridge.LifecycleEventListener
- import com.facebook.react.bridge.ReactApplicationContext
- import com.facebook.react.bridge.UiThreadUtil
-+import com.facebook.react.common.annotations.UnstableReactNativeAPI
- import com.facebook.react.fabric.FabricUIManager
- import com.facebook.react.module.annotations.ReactModule
- import com.facebook.react.uimanager.UIManagerHelper
-@@ -16,6 +17,7 @@ import com.swmansion.rnscreens.legacy.ScreenStack // legacy-compat: v4 manual tr
- import com.swmansion.rnscreens.legacy.events.ScreenTransitionProgressEvent // legacy-compat: v4 manual transition progress
- import java.util.concurrent.atomic.AtomicBoolean
- 
-+@OptIn(UnstableReactNativeAPI::class)
- @ReactModule(name = ScreensModule.NAME)
- class ScreensModule(
-     private val reactContext: ReactApplicationContext,
-@@ -67,6 +69,9 @@ class ScreensModule(
-         val uiManager = UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) ?: return
-         proxy?.apply {
-             nativeAddMutationsListener(uiManager as FabricUIManager)
-+            // setupFabric runs again on every host resume, so the listener is removed before it is added.
-+            uiManager.removeUIManagerEventListener(this)
-+            uiManager.addUIManagerEventListener(this)
-         }
-     }
- 
-```
-
-**File**: `apps/src/tests/issue-tests/Test4570.tsx` (added, +142/-0)
-```diff
-@@ -0,0 +1,142 @@
-+import React, { useEffect, useState } from 'react';
-+import { Button, StyleSheet, Text, View } from 'react-native';
-+import { NavigationContainer } from '@react-navigation/native';
-+import {
-+  createNativeStackNavigator,
-+  type NativeStackScreenProps,
-+} from '@react-navigation/native-stack';
-+import Animated, {
-+  Easing,
-+  LinearTransition,
-+  useAnimatedStyle,
-+  useSharedValue,
-+  withRepeat,
-+  withTiming,
-+} from 'react-native-reanimated';
-+
-+type DetailAnimation = 'none' | 'layout' | 'spinner';
-+
-+type Routes = { Home: undefined; Detail: { animation: DetailAnimation } };
-+
-+const Stack = createNativeStackNavigator<Routes>();
-+
-+// Restarts a layout transition before the previous one ends, so a Reanimated
-+// layout animation is running when the screen is popped.
-+function LayoutAnimationTicker() {
-+  const [wide, setWide] = useState(false);
-+
-+  useEffect(() => {
-+    const interval = setInterval(() => setWide(value => !value), 500);
-+    return () => clearInterval(interval);
-+  }, []);
-+
-+  return (
-+    <Animated.View
-+      layout={LinearTransition.duration(700)}
-+      style={[styles.ticker, { width: wide ? '90%' : '20%' }]}
-+    />
-+  );
-+}
-+
-+// Animates a transform on the UI thread every frame, like the spinner in #4570.
-+function Spinner() {
-+  const rotation = useSharedValue(0);
-+
-+  useEffect(() => {
-+    rotation.value = withRepeat(
-+      withTiming(360, { duration: 1000, easing: Easing.linear }),
-+      -1,
-+    );
-+  }, [rotation]);
-+
-+  const animatedStyle = useAnimatedStyle(() => ({
-+    transform: [{ rotate: `${rotation.value}deg` }],
-+  }));
-+
-+  return <Animated.View style={[styles.spinner, animatedStyle]} />;
-+}
-+
-+function Home({ navigation }: NativeStackScreenProps<Routes, 'Home'>) {
-+  return (
-+    <View style={styles.home}>
-+      <Text>
-+        Push the detail screen and pop it. The orange content must stay visible
-+        until the exit animation ends, with and without a running Reanimated
-+        animation.
-+      </Text>
-+      <Button
-+        testID="test4570-push-detail"
-+        title="Push detail"
-+        onPress={() => navigation.navigate('Detail', { animation: 'none' })}
-+      />
-+      <Button
-+        testID="test4570-push-detail-with-layout-animation"
-+        title="Push detail with layout animation"
-+        onPress={() => navigation.navigate('Detail', { animation: 'layout' })}
-+      />
-+      <Button
-+        testID="test4570-push-detail-with-spinner"
-+        title="Push detail with spinner"
-+        onPress={() => navigation.navigate('Detail', { animation: 'spinner' })}
-+      />
-+    </View>
-+  );
-+}
-+
-+function Detail({
-+  navigation,
-+  route,
-+}: NativeStackScreenProps<Routes, 'Detail'>) {
-+  return (
-+    <View style={styles.detail}>
-+      {route.params.animation === 'layout' && <LayoutAnimationTicker />}
-+      {route.params.animation === 'spinner' && <Spinner />}
-+      <Text style={styles.detailText}>DETAIL CONTENT</Text>
-+      <Button
-+        testID="test4570-pop"
-+        title="Pop"
-+        onPress={() => navigation.goBack()}
-+      />
-+    </View>
-+  );
-+}
-+
-+export default function App() {
-+  return (
-+    <NavigationContainer>
-+      <Stack.Navigator screenOptions={{ animation: 'slide_from_right' }}>
-+        <Stack.Screen name="Home" component={Home} />
-+        <Stack.Screen name="Detail" component={Detail} />
-+      </Stack.Navigator>
-+    </NavigationContainer>
-+  );
-+}
-+
-+const styles = StyleSheet.create({
-+  home: {
-+    flex: 1,
-+    gap: 16,
-+    padding: 16,
-+    backgroundColor: '#cfe8ff',
-+  },
-+  ticker: {
-+    height: 24,
-+    backgroundColor: '#1f6feb',
-+  },
-+  detail: {
-+    flex: 1,
-+    alignItems: 'center',
-+    justifyContent: 'center',
-+    gap: 24,
-+    backgroundColor: '#ff8c00',
-+  },
-+  spinner: {
-+    width: 48,
-+    height: 48,
-+    backgroundColor: '#1f6feb',
-+  },
-+  detailText: {
-+    fontSize: 32,
-+    fontWeight: '700',
-+  },
-+});
-```
-
-**File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
-```diff
-@@ -214,6 +214,7 @@ export { default as Test4423 } from './Test4423';
- export { default as Test4504 } from './Test4504';
- export { default as Test4519 } from './Test4519';
- export { default as Test4551 } from './Test4551';
-+export { default as Test4570 } from './Test4570';
- export { default as Test4571 } from './Test4571';
- export { default as Test4605 } from './Test4605';
- export { default as Test4618 } from './Test4618'; // [E2E skipped]: tvOS Menu key requires Apple TV remote
-```
-
----
-
-### Incident Patch 2: `e369aa10` (2026-11-25)
-**Commit Message**: fix(Android): load native libraries with SoLoader (#5343)
-
-## Description
-
-On Android 12 - 14, an app can crash when React Native starts in a
-process that has already been running for a while. It happens when a
-split APK (a part of the app that is delivered separately, e.g.
-translations for one language) was installed without killing the
-process, and any library had been loaded with `System.loadLibrary`
-before that install.
-
-Such an install moves the app to a new directory in `/data/app` and the
-old one is deleted a few seconds later.
-`System.loadLibrary("rnscreens")` in `ScreensModule` can still resolve
-to the deleted directory and fail. `SoLoader`, which React Native uses
-for its own libraries, detects that the app has moved and retries with
-the current path.
-
-This PR loads our libraries with `SoLoader` and removes the `catch` that
-hid the load error in `ScreensModule`.
-
-Closes #5117.
-
-Thanks to @malopezr7 for reporting the issue and pointing at the
-mechanism!
-
-### Details
-
-- **Problem.** The load error is caught and only logged, then
-`initialize()` creates `NativeProxy`, whose native methods live in the
-library that has not been loaded. The app crashes with an error that
-points 
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/utils/ScreenDummyLayoutHelper.kt` (modified, +2/-1)
-```diff
-@@ -12,6 +12,7 @@ import com.facebook.jni.annotations.DoNotStrip
- import com.facebook.react.bridge.LifecycleEventListener
- import com.facebook.react.bridge.ReactApplicationContext
- import com.facebook.react.uimanager.PixelUtil
-+import com.facebook.soloader.SoLoader
- import com.google.android.material.appbar.AppBarLayout
- import com.swmansion.rnscreens.legacy.ScreenStackHeaderConfig
- import java.lang.ref.WeakReference
-@@ -52,7 +53,7 @@ internal class ScreenDummyLayoutHelper(
-         // Basically we leak this object to C++, as its lifecycle should span throughout whole application
-         // lifecycle anyway.
-         try {
--            System.loadLibrary(LIBRARY_NAME)
-+            SoLoader.loadLibrary(LIBRARY_NAME)
-         } catch (e: UnsatisfiedLinkError) {
-             Log.w(TAG, "[RNScreens] Failed to load $LIBRARY_NAME library.")
-         }
-```
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/react/module/ScreensModule.kt` (modified, +13/-10)
-```diff
-@@ -10,6 +10,7 @@ import com.facebook.react.fabric.FabricUIManager
- import com.facebook.react.module.annotations.ReactModule
- import com.facebook.react.uimanager.UIManagerHelper
- import com.facebook.react.uimanager.common.UIManagerType
-+import com.facebook.soloader.SoLoader
- import com.swmansion.rnscreens.NativeScreensModuleSpec
- import com.swmansion.rnscreens.legacy.NativeProxy // legacy-compat: v4 stack mounting listener (Fabric)
- import com.swmansion.rnscreens.legacy.ScreenFragment // legacy-compat: v4 manual transition progress
-@@ -28,16 +29,11 @@ class ScreensModule(
-     private var proxy: NativeProxy? = null
- 
-     init {
--        try {
--            System.loadLibrary("rnscreens")
--            val jsContext = reactApplicationContext.javaScriptContextHolder
--            if (jsContext != null) {
--                nativeInstall(jsContext.get())
--            } else {
--                Log.e("[RNScreens]", "Could not install JSI bindings.")
--            }
--        } catch (exception: UnsatisfiedLinkError) {
--            Log.w("[RNScreens]", "Could not load RNScreens module.")
-+        val jsContext = reactApplicationContext.javaScriptContextHolder
-+        if (jsContext != null) {
-+            nativeInstall(jsContext.get())
-+        } else {
-+            Log.e("[RNScreens]", "Could not install JSI bindings.")
-         }
-     }
- 
-@@ -165,5 +161,12 @@ class ScreensModule(
- 
-     companion object {
-         const val NAME = "RNSModule"
-+
-+        init {
-+            // Not System.loadLibrary: it can resolve to an install directory that a split install
-+            // has replaced and deleted without killing the process. SoLoader recovers from that.
-+            // See https://github.com/software-mansion/react-native-screens/issues/5117
-+            SoLoader.loadLibrary("rnscreens")
-+        }
-     }
- }
-```
-
----
-
-### Incident Patch 3: `1b8f2fde` (2026-11-25)
-**Commit Message**: fix(test): remove duplicate expectTabBarItemByLabel e2e helper (#5350)
-
-## Description
-
-#4747 and #4818 each added an `expectTabBarItemByLabel` helper to
-`FabricExample/e2e/helpers/framework/tab-bar.ts`, and they merged within
-seconds of each other, so `main` has both. Every spec importing
-`tab-bar.ts` now fails to compile with `TS2300: Duplicate identifier
-'expectTabBarItemByLabel'`. On `main`'s Android e2e run this broke 4
-suites: both `tabs-stack-v5` specs,
-`test-tabs-special-effects-scroll-to-top` and
-`test-stack-svm-tabs-special-effects`.
+Stacked on #5351.
 
 ## Changes
 
-- **`tab-bar.ts`**: removed the `const` added by #4818 and kept the
-`async function` from #4747. On iOS the function checks that the tab bar
-item exists, because the selected button fails Detox's visibility
-threshold on iOS 26; on Android it checks visibility. The #4818 spec
-(`test-stack-tabs-stack-in-tabs-header-persistence`) runs only on
-Android, so its assertions are unchanged.
+- `FabricExample/e2e/example-tests/bottomTabs.e2e.ts`: add an
+`itUnlessAndroid` helper (`it.skip` on Android, `it` elsewhere) and use
+it for `should keep stack state on tab change`, with a comment linking
+[react-freeze#44](https://github.com/software-mansion/react-freeze/issues/44).
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `FabricExample/e2e/helpers/framework/tab-bar.ts` (modified, +0/-5)
+**File**: `FabricExample/e2e/example-tests/bottomTabs.e2e.ts` (modified, +8/-1)
 ```diff
-@@ -28,11 +28,6 @@ export async function forceSelectTabByLabel(label: string) {
-   }
+@@ -1,6 +1,13 @@
+ import { device, expect, element, by } from 'detox';
+ import { tapBarBackButton } from '@e2e/framework/back-button';
+ 
++// Skipped on Android until software-mansion/react-freeze#44 is fixed: with two
++// frozen screens (the one under the focused screen of a stack and a blurred
++// tab), react-freeze on React 19 makes React re-render and commit in a loop,
++// so the JS thread never goes idle and Detox times out. It shows up on slow
++// (CI) emulators only.
++const itUnlessAndroid = device.getPlatform() === 'android' ? it.skip : it;
++
+ describe('Bottom tabs and native stack', () => {
+   beforeEach(async () => {
+     await device.reloadReactNative();
+@@ -69,7 +76,7 @@ describe('Bottom tabs and native stack', () => {
+     ).toHaveLabel('More details 0');
+   });
+ 
+-  it('should keep stack state on tab change', async () => {
++  itUnlessAndroid('should keep stack state on tab change', async () => {
+     await element(by.id('root-screen-example-BottomTabsAndStack')).tap();
+ 
+     await element(by.id('bottom-tabs-A-more-details-button')).tap();
+```
+
+---
+
+### Incident Patch 2: `341d550a` (2026-11-27)
+**Commit Message**: fix(Android, Sheet v5): update the shadow state synchronously instead of blocking the draw (#5365)
+
+## Description
+
+On Android the sheet reports the size of its content to the ShadowTree,
+and the React children are laid out for that size. The report was
+asynchronous and was followed by a synchronous `onSyncFlush` event that
+flushed it.
+
+The size is now reported with
+`StateWrapper.UpdateMode.unstable_Immediate` (available on Android since
+React Native 0.89). The ShadowTree is committed and mounted before the
+frame is drawn, so no draw has to be held back.
+
+## Changes
+
+- `ShadowStateProxy.updateStateIfNeeded` takes an `immediate` flag. It
+defaults to `false`, so the other components that use the proxy still
+update asynchronously. #5344 adds the same flag, so whichever of the two
+lands second has a small conflict to resolve there.
+- `SheetHost` reports the size of the sheet's content with `immediate =
+true`.
+- Removed the `onSyncFlush` event: the codegen spec entry,
+`SheetSyncFlushEvent`, its emitter method and its registration.
+- Removed the draw blocking from `SheetContentView`:
+`isWaitingForFabricMount`, the pre-draw listener and the
+`UIManagerListener`.
+
+## Before & after - visual
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/common/ShadowStateProxy.kt` (modified, +7/-1)
+```diff
+@@ -1,10 +1,12 @@
+ package com.swmansion.rnscreens.react.common
+ 
+ import com.facebook.react.bridge.WritableNativeMap
++import com.facebook.react.common.annotations.UnstableReactNativeAPI
+ import com.facebook.react.uimanager.StateWrapper
+ import com.swmansion.rnscreens.core.utils.pxToDp
+ import kotlin.math.abs
+ 
++@OptIn(UnstableReactNativeAPI::class)
+ internal class ShadowStateProxy(
+     private val includesFrameSize: Boolean = true,
+ ) {
+@@ -23,6 +25,7 @@ internal class ShadowStateProxy(
+         frameHeight: Int? = null,
+         contentOffsetX: Int? = null,
+         contentOffsetY: Int? = null,
++        immediate: Boolean = false,
+     ) {
+         val widthInDp = frameWidth?.let { pxToDp(it.toFloat(), density) } ?: lastFrameWidthInDp
+         val heightInDp = frameHeight?.let { pxToDp(it.toFloat(), density) } ?: lastFrameHeightInDp
+@@ -52,7 +55,10 @@ internal class ShadowStateProxy(
+                 putDouble("contentOffsetX", offsetXInDp.toDouble())
+                 putDouble("contentOffsetY", offsetYInDp.toDouble())
+             }
+-        stateWrapper?.updateState(map)
++        stateWrapper?.updateState(
++            map,
++            if (immediate) StateWrapper.UpdateMode.unstable_Immediate else StateWrapper.UpdateMode.Asynchronous,
++        )
+     }
+ 
+     companion object {
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/modals/sheet/event/SheetSyncFlushEvent.kt` (removed, +0/-39)
+```diff
+@@ -1,39 +0,0 @@
+-// Implementation adapted from `expo`: https://github.com/expo/expo/pull/45775
+-
+-package com.swmansion.rnscreens.react.modals.sheet.event
+-
+-import com.facebook.react.bridge.Arguments
+-import com.facebook.react.bridge.WritableMap
+-import com.facebook.react.uimanager.events.Event
+-import com.swmansion.rnscreens.react.common.event.NamingAwareEventType
+-
+-// Workaround helper that triggers a synchronous event to flush a pending
+-// shadow-node state update in the current event beat. Mirrors iOS's
+-// `EventQueue::UpdateMode::unstable_Immediate`, which Android does not expose
+-// to Java/Kotlin as of now.
+-// TODO: Remove when a synchronous state update API is exposed on Android.
+-// https://github.com/facebook/react-native/pull/56311
+-class SheetSyncFlushEvent(
+-    surfaceId: Int,
+-    viewId: Int,
+-) : Event<SheetSyncFlushEvent>(surfaceId, viewId),
+-    NamingAwareEventType {
+-    override fun getEventName(): String = EVENT_NAME
+-
+-    override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
+-
+-    override fun getEventData(): WritableMap? = Arguments.createMap()
+-
+-    override fun canCoalesce(): Boolean = false
+-
+-    override fun experimental_isSynchronous(): Boolean = true
+-
+-    companion object : NamingAwareEventType {
+-        const val EVENT_NAME = "topSyncFlush"
+-        const val EVENT_REGISTRATION_NAME = "onSyncFlush"
+-
+-        override fun getEventName() = EVENT_NAME
+-
+-        override fun getEventRegistrationName() = EVENT_REGISTRATION_NAME
+-    }
+-}
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/modals/sheet/host/SheetContentView.kt` (modified, +1/-48)
+```diff
+@@ -4,9 +4,6 @@ import android.annotation.SuppressLint
+ import android.content.Context
+ import android.view.MotionEvent
+ import android.view.View
+-import android.view.ViewTreeObserver
+-import com.facebook.react.bridge.UIManager
+-import com.facebook.react.bridge.UIManagerListener
+ import com.facebook.react.common.annotations.UnstableReactNativeAPI
+ import com.facebook.react.config.ReactFeatureFlags
+ import com.facebook.react.uimanager.JSPointerDispatcher
+@@ -19,17 +16,14 @@ import com.facebook.react.uimanager.events.EventDispatcher
+ import com.facebook.react.views.view.ReactViewGroup
+ import com.swmansion.rnscreens.core.modals.sheet.interfaces.SheetContentSizeChangeDelegate
+ import com.swmansion.rnscreens.core.modals.sheet.interfaces.SheetContentSizeChangeProvider
+-import com.swmansion.rnscreens.react.utils.getFabricUIManagerNotNull
+ 
+ @OptIn(UnstableReactNativeAPI::class)
+ @SuppressLint("ViewConstructor")
+ class SheetContentView(
+     context: Context,
+     private val onSizeChangedCallback: (width: Int, height: Int) -> Unit,
+ ) : ReactViewGroup(context),
+-    RootView,
+-    UIManagerListener,
+-    ViewTreeObserver.OnPreDrawListener {
++    RootView {
+     internal var contentSizeChangeDelegate: SheetContentSizeChangeDelegate? = null
+ 
+     private val themedReactContext: ThemedReactContext
+@@ -40,34 +34,12 @@ class SheetContentView(
+     private val eventDispatcher: EventDispatcher?
+         get() = UIManagerHelper.getEventDispatcher(themedReactContext, UIManagerType.FABRIC)
+ 
+-    private var isWaitingForFabricMount = false
+-
+     init {
+         if (ReactFeatureFlags.dispatchPointerEvents) {
+             jsPointerDispatcher = JSPointerDispatcher(this)
+         }
+     }
+ 
+-    override fun onAttachedToWindow() {
+-        super.onAttachedToWindow()
+-        viewTreeObserver.addOnPreDrawListener(this)
+-        themedReactContext.let { themedContext ->
+-            UIManagerHelper
+-                .getFabricUIManagerNotNull(themedContext)
+-                .addUIManagerEventListener(this)
+-        }
+-    }
+-
+-    override fun onDetachedFromWindow() {
+-        super.onDetachedFromWindow()
+-        viewTreeObserver.removeOnPreDrawListener(this)
+-        themedReactContext.let { themedContext ->
+-            UIManagerHelper
+-                .getFabricUIManagerNotNull(themedContext)
+-                .removeUIManagerEventListener(this)
+-        }
+-    }
+-
+     override fun onViewAdded(child: View) {
+         super.onViewAdded(child)
+         (child as? SheetContentSizeChangeProvider)?.setContentSizeChangeDelegate(contentSizeChangeDelegate)
+@@ -86,29 +58,10 @@ class SheetContentView(
+     ) {
+         super.onSizeChanged(w, h, oldw, oldh)
+         if (w != oldw || h != oldh) {
+-            isWaitingForFabricMount = true
+             onSizeChangedCallback(w, h)
+         }
+     }
+ 
+-    override fun onPreDraw(): Boolean {
+-        // If we're waiting for Fabric to update the recalculated layout for views, we prevent drawing.
+-        // This cancels the current drawing pass to prevent drawing the screen with stale React children frames.
+-        return !isWaitingForFabricMount
+-    }
+-
+-    override fun didDispatchMountItems(uiManager: UIManager) {
+-        isWaitingForFabricMount = false
+-    }
+-
+-    override fun willDispatchViewUpdates(uiManager: UIManager) = Unit
+-
+-    override fun willMountItems(uiManager: UIManager) = Unit
+-
+-    override fun didMountItems(uiManager: UIManager) = Unit
+-
+-    override fun didScheduleMountItems(uiManager: UIManager) = Unit
+-
+     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+         eventDispatcher?.let { eventDispatcher ->
+             jsTouchDispatcher.handleTouchEvent(event, eventDispatcher, themedReactContext)
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/modals/sheet/host/SheetHost.kt` (modified, +1/-11)
+```diff
+@@ -114,18 +114,8 @@ class SheetHost(
+             density = resources.displayMetrics.density,
+             frameWidth = width,
+             frameHeight = height,
++            immediate = true,
+         )
+-        flushPendingStateUpdates()
+-    }
+-
+-    // We trigger a synchronous flush event to force the layout recalculation.
+-    // However, while the calculation is synchronous, the actual UI mounting in Android isn't.
+-    // The synchronous flush makes a request to the EventBeat. Because EventBeat is controlled
+-    // by a frame callback on the Choreographer, if we are currently inside the
+-    // traversal phase, the actual mounting callback will be executed on the next frame.
+-    // To prevent drawing a stale layout, we block drawing the frame in `SheetContentView`.
+-    private fun flushPendingStateUpdates() {
+-        eventEmitter.emitOnSyncFlushEvent()
+     }
+ 
+     internal fun destroy() {
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/modals/sheet/host/SheetHostEventEmitter.kt` (modified, +0/-7)
+```diff
+@@ -9,7 +9,6 @@ import com.swmansion.rnscreens.react.modals.sheet.event.SheetDidDisappearEvent
+ import com.swmansion.rnscreens.react.modals.sheet.event.SheetDismissEvent
+ import com.swmansion.rnscreens.react.modals.sheet.event.SheetNativeDismissEvent
+ import com.swmansion.rnscreens.react.modals.sheet.event.SheetNativeDismissPreventedEvent
+-import com.swmansion.rnscreens.react.modals.sheet.event.SheetSyncFlushEvent
+ import com.swmansion.rnscreens.react.modals.sheet.event.SheetWillAppearEvent
+ import com.swmansion.rnscreens.react.modals.sheet.event.SheetWillDisappearEvent
+ 
+@@ -30,12 +29,6 @@ internal class SheetHostEventEmitter(
+         )
+     }
+ 
+-    fun emitOnSyncFlushEvent() {
+-        reactEventDispatcher.dispatchEvent(
+-            SheetSyncFlushEvent(surfaceId, viewTag),
+-        )
+-    }
+-
+     override fun emitOnWillAppear() {
+         reactEventDispatcher.dispatchEvent(
+             SheetWillAppearEvent(surfaceId, viewTag),
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/modals/sheet/host/SheetHostViewManager.kt` (modified, +0/-2)
+```diff
+@@ -16,7 +16,6 @@ import com.swmansion.rnscreens.react.modals.sheet.event.SheetDidDisappearEvent
+ import com.swmansion.rnscreens.react.modals.sheet.event.SheetDismissEvent
+ import com.swmansion.rnscreens.react.modals.sheet.event.SheetNativeDismissEvent
+ import com.swmansion.rnscreens.react.modals.sheet.event.SheetNativeDismissPreventedEvent
+-import com.swmansion.rnscreens.react.modals.sheet.event.SheetSyncFlushEvent
+ import com.swmansion.rnscreens.react.modals.sheet.event.SheetWillAppearEvent
+ import com.swmansion.rnscreens.react.modals.sheet.event.SheetWillDisappearEvent
+ import com.swmansion.rnscreens.react.utils.makeEventRegistrationInfo
+@@ -172,7 +171,6 @@ class SheetHostViewManager :
+         mutableMapOf(
+             makeEventRegistrationInfo(SheetDismissEvent),
+             makeEventRegistrationInfo(SheetNativeDismissEvent),
+-            makeEventRegistrationInfo(SheetSyncFlushEvent),
+             makeEventRegistrationInfo(SheetWillAppearEvent),
+             makeEventRegistrationInfo(SheetDidAppearEvent),
+             makeEventRegistrationInfo(SheetWillDisappearEvent),
+```
+
+**File**: `src/fabric/modals/sheet/SheetHostNativeComponent.ts` (modified, +0/-8)
+```diff
+@@ -73,14 +73,6 @@ interface NativeProps extends ViewProps {
+     | CT.DirectEventHandler<GenericEmptyEvent>
+     | undefined;
+   onDetentChanged?: CT.DirectEventHandler<DetentChangedEvent> | undefined;
+-
+-  // Workaround helper that triggers a synchronous event to flush a pending
+-  // shadow-node state update in the current event beat. Mirrors iOS's
+-  // `EventQueue::UpdateMode::unstable_Immediate`, which Android does not expose
+-  // to Java/Kotlin as of now.
+-  // TODO: Remove when a synchronous state update API is exposed on Android.
+-  // https://github.com/facebook/react-native/pull/56311
+-  onSyncFlush?: CT.DirectEventHandler<GenericEmptyEvent> | undefined;
  }
  
--/** Asserts the tab bar item carrying `label` (`tabBarItemAccessibilityLabel`)
-- * is in the tab bar. */
--export const expectTabBarItemByLabel = (label: string) =>
--  expect(element(by.label(label))).toBeVisible();
--
- /**
-  * Asserts the tab bar item carrying `label` (`tabBarItemAccessibilityLabel`)
-  * is in the tab bar. Existence only on iOS: the selected button fails Detox's
+ export default codegenNativeComponent<NativeProps>('RNSSheetHost', {
+```
+
+---
+
+### Incident Patch 3: `6f9f06f9` (2026-11-27)
+**Commit Message**: fix(CI): run e2e tests on main and fix the Android Argent snapshot crop (#5351)
+
+## Description
+
+Since #4756, the e2e workflows run no tests on `main`, and Android
+Argent fails everywhere. This PR fixes both.
+
+**1. No tests on pushes to `main` or manual runs.** The `changes` job
+(`dorny/paths-filter`) fails:
+
+```
+[command]/usr/bin/git branch --show-current
+fatal: not a git repository (or any of the parent directories): .git
+##[error]The process '/usr/bin/git' failed with exit code 128
+```
+
+`paths-filter` reads a pull request's changed files from the GitHub API,
+but on `push` and `workflow_dispatch` it diffs with local git, and the
+`changes` job has no checkout. `test` (Detox) and `argent` both `need`
+`changes`, so they are skipped and only `build` runs. Seen on `main` in
+runs 45700558124 (iOS) and 45700558233 (Android), and already on #4756's
+own push. The filter's outputs are only read on pull requests, so the
+filter only needs to run there.
+
+**2. Android Argent fails on the updated CI emulator.**
+`test-tabs-item-title` crops its Android snapshots on a band that ends
+above the system navigation bar, using the bottom inset read once at app
+start (`initialWindowMetrics`). The CI emu
+
+**File**: `.github/workflows/android-e2e-test-fabric.yml` (modified, +3/-0)
+```diff
+@@ -60,7 +60,10 @@ jobs:
+       detox: ${{ steps.filter.outputs.detox }}
+       argent: ${{ steps.filter.outputs.argent }}
+     steps:
++      # paths-filter reads a PR's changed files from the API, but on other
++      # events it diffs with local git, which this job has no checkout for.
+       - uses: dorny/paths-filter@v3
++        if: github.event_name == 'pull_request'
+         id: filter
+         with:
+           filters: |
+```
+
+**File**: `.github/workflows/ios-e2e-test-fabric.yml` (modified, +3/-0)
+```diff
+@@ -59,7 +59,10 @@ jobs:
+       detox: ${{ steps.filter.outputs.detox }}
+       argent: ${{ steps.filter.outputs.argent }}
+     steps:
++      # paths-filter reads a PR's changed files from the API, but on other
++      # events it diffs with local git, which this job has no checkout for.
+       - uses: dorny/paths-filter@v3
++        if: github.event_name == 'pull_request'
+         id: filter
+         with:
+           filters: |
+```
+
+**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-item-title/index.tsx` (modified, +27/-9)
+```diff
+@@ -8,21 +8,29 @@ import {
+   DEFAULT_TAB_ROUTE_OPTIONS,
+ } from '@apps/shared/containers/tabs';
+ import { Colors } from '@apps/shared/styling';
+-import { initialWindowMetrics } from 'react-native-safe-area-context';
++import {
++  SafeAreaProvider,
++  useSafeAreaInsets,
++} from 'react-native-safe-area-context';
+ 
+ // Android only: the Argent flow (.argent/flows/test-tabs-item-title.yaml) crops
+ // its snapshots on an invisible band covering the bottom third of the screen,
+ // which holds the tab bar but not the tab content text. The band ends above
+ // the system navigation bar, so emulator system UI changes (navigation mode,
+ // rounded display corners) stay out of the crop. On iOS the flow crops on the
+ // native UITabBar instead.
+-const SYSTEM_NAVIGATION_BAR_HEIGHT = initialWindowMetrics?.insets.bottom ?? 0;
++//
++// The navigation bar height is the screen's live bottom inset. A value read
++// once at app start (initialWindowMetrics) can be 0 on a freshly booted
++// emulator, which stretched the band over the navigation bar and failed the
++// snapshots on their size.
+ const LONG_TITLE_TAB_BAR_BAND_TEST_ID =
+   'test-tabs-item-title-long-title-tab-bar-band';
+ const COLOR_TAB_BAR_BAND_TEST_ID = 'test-tabs-item-title-color-tab-bar-band';
+ const FONT_TAB_BAR_BAND_TEST_ID = 'test-tabs-item-title-font-tab-bar-band';
+ 
+ function TabBarBand({ testID }: { testID: string }) {
++  const { bottom: systemNavigationBarHeight } = useSafeAreaInsets();
+   if (Platform.OS !== 'android') {
+     return null;
+   }
+@@ -31,7 +39,14 @@ function TabBarBand({ testID }: { testID: string }) {
+       testID={testID}
+       pointerEvents="none"
+       collapsable={false}
+-      style={styles.tabBarBand}
++      style={[
++        styles.tabBarBand,
++        {
++          bottom: systemNavigationBarHeight,
++          height:
++            Dimensions.get('screen').height / 3 - systemNavigationBarHeight,
++        },
++      ]}
+     />
+   );
+ }
+@@ -244,11 +259,16 @@ const ROUTE_CONFIGS: TabRouteConfig[] = [
+ ];
+ 
+ function TestTabsItemTitle() {
++  // The provider measures the insets of this screen's own view and updates
++  // them whenever they change, so the band follows the navigation bar height
++  // the system reports, not the one captured at app start.
+   return (
+-    <TabsContainerWithHostConfigContext
+-      routeConfigs={ROUTE_CONFIGS}
+-      ios={{ tabBarTintColor: Colors.GreenDark100 }}
+-    />
++    <SafeAreaProvider>
++      <TabsContainerWithHostConfigContext
++        routeConfigs={ROUTE_CONFIGS}
++        ios={{ tabBarTintColor: Colors.GreenDark100 }}
++      />
++    </SafeAreaProvider>
+   );
+ }
+ 
+@@ -264,8 +284,6 @@ const styles = StyleSheet.create({
+     position: 'absolute',
+     left: 0,
+     right: 0,
+-    bottom: SYSTEM_NAVIGATION_BAR_HEIGHT,
+-    height: Dimensions.get('screen').height / 3 - SYSTEM_NAVIGATION_BAR_HEIGHT,
+   },
+   label: {
+     fontSize: 17,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5365** (2026-11-27): fix(Android, Sheet v5): update the shadow state synchronously instead of blocking the draw (@t0maboro)
+- **PR #5359** (2026-11-27): chore(test): skip the Android bottom tabs stack-state e2e until react-freeze#44 is fixed (@LKuchno)
+- **PR #5351** (2026-11-27): fix(CI): run e2e tests on main and fix the Android Argent snapshot crop (@LKuchno)
 - **PR #5350** (2026-11-25): fix(test): remove duplicate expectTabBarItemByLabel e2e helper (@LKuchno)
 - **PR #5343** (2026-11-25): fix(Android): load native libraries with SoLoader (@kligarski)
-- **PR #5337** (2026-11-25): docs(v5): list union values per the RFC-1947 value-list rule (@Loloekk)
-- **PR #5322** (2026-11-25): refactor(iOS, Stack v5): distinguish button and custom header items by type (@kmichalikk)
-- **PR #5321** (2026-11-24): refactor(v5): give `ContainedModalOverContent` and `ContainedModalReplacingContent` their own props types (@kmichalikk)
-- **PR #5320** (2026-11-25): fix(iOS, Stack v4): hide the toolbar when recycling a stack (@Ubax)
+- **PR #5341** (2026-11-27): refactor(v5): move iOS-only props of FormSheet, PageSheet and ScrollViewMarker under the `ios` key (@Loloekk)
 
 ---
 
@@ -920,61 +943,38 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Android, Stack v4): keep a popped screen's content during its exit animation
+## X. test): skip the Android bottom tabs stack-state e2e until react-freeze#44 is fix
 
 **RULE**:
-When implementing operations in `android/src/fabric/java/com/swmansion/rnscreens/legacy/NativeProxy.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `FabricExample/e2e/example-tests/bottomTabs.e2e.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e21b804a`: Android, Stack v4): keep a popped screen's content during its exit animation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39a877a6`: test): skip the Android bottom tabs stack-state e2e until react-freeze#44 is fixed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/fabric/java/com/swmansion/rnscreens/legacy/NativeProxy.kt`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `FabricExample/e2e/example-tests/bottomTabs.e2e.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import com.facebook.react.bridge.UIManager
-import com.facebook.react.bridge.UIManagerListener
-import com.facebook.react.bridge.UiThreadUtil
-import com.facebook.react.common.annotations.UnstableReactNativeAPI
-import java.util.concurrent.ConcurrentLinkedQueue
-@OptIn(UnstableReactNativeAPI::class)
-class NativeProxy : UIManagerListener {
-        // Added by the thread that pulled the transaction removing the screen, drained on the UI
-        // thread before that transaction mounts. Shared by all proxies, because the native removal
-        // listener notifies only the most recently installed one. Never cleared: invalidating one
-        // React instance must not drop another instance's screens.
-        private val screensPendingRemovalTransition = ConcurrentLinkedQueue<WeakReference<Screen>>()
+// Skipped on Android until software-mansion/react-freeze#44 is fixed: with two
+// frozen screens (the one under the focused screen of a stack and a blurred
+// tab), react-freeze on React 19 makes React re-render and commit in a loop,
+// so the JS thread never goes idle and Detox times out. It shows up on slow
+// (CI) emulators only.
+const itUnlessAndroid = device.getPlatform() === 'android' ? it.skip : it;
 
-    // Called from native, on the thread that pulls the mounting transaction: the JS thread in
-    // the push model, the UI thread in the pull model or when rendering synchronously.
-            // The transaction removes the screen's children before the screen, so the transition
-            // must start before the transaction mounts. A transaction pulled on the UI thread can't
-            // 
+  itUnlessAndroid('should keep stack state on tab change', async () => {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-class NativeProxy {
-    // Called from native. Currently this method is called from MountingCoordinator thread,
-    // which usually is not UI thread.
-            // Fabric's mounting transaction removes the screen on a Choreographer frame callback,
-            // which can execute before `startRemovalTransition` (scheduled via `Handler.post`).
-            // To prevent `Screen.isBeingRemoved` from being read as false during teardown,
-            // we must set this flag synchronously here.
-            screen.markAsBeingRemoved()
-            val isScheduled =
-                screen.post {
-                    screen.startRemovalTransition()
-                }
-            if (!isScheduled) {
-                Log.w("[RNScreens]", "Failed to schedule removal transition start for screen with tag $screenTag")
+  it('should keep stack state on tab change', async () => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e21b804a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39a877a6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

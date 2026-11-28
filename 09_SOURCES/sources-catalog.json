@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "2b63882d",
+    "sourceVersion": "ff22a642",
     "license": "Apache-2.0",
-    "contentHash": "5afd887e05026cf1161abffc73ec693bda1867149970439c63413f345688037a",
-    "lastHarvestedAt": "2026-11-27T14:06:59.256Z",
+    "contentHash": "e95691299000e2508ffdef418e07f44dd92d82dc458c3c377f0b2307940471a2",
+    "lastHarvestedAt": "2026-11-28T17:25:22.171Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "0964b4f9",
+    "sourceVersion": "1152132c",
     "license": "Apache-2.0",
-    "contentHash": "0022859c4abd622512c8b5a3c849d400cbb61b32f0f52c2d243b5eb576931f52",
-    "lastHarvestedAt": "2026-11-27T20:01:14.501Z",
+    "contentHash": "56943b34ee4b09d20cd9338eb915da0ce861b11626eeaabb7aa221c55ca486ea",
+    "lastHarvestedAt": "2026-11-28T17:25:31.078Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -8463,10 +8463,10 @@
     "repository": "software-mansion/react-native-screens",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-screens",
-    "sourceVersion": "1b8f2fde",
+    "sourceVersion": "d9ffcbf8",
     "license": "MIT",
-    "contentHash": "3534c49f7779ab0685cd88a5ca72218d1e8afb677214f6ef044011a86ed4d695",
-    "lastHarvestedAt": "2026-11-26T11:29:01.172Z",
+    "contentHash": "d6b661a163d6151b6045e0382e71c94db500f0f694cee7f8a592689cc7347e5a",
+    "lastHarvestedAt": "2026-11-28T17:25:28.801Z",
     "learningId": "learn-github-software-mansion-react-native-screens"
   },
   "speedyapply-jobspy": {

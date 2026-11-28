@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T17:10:32.321Z",
+  "last_updated": "2026-11-28T17:25:39.495Z",
   "total_verified_learnings": 9154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27209,
+  "total_items": 27216,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -220529,8 +220529,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "0964b4f9",
-      "content_hash": "0022859c4abd622512c8b5a3c849d400cbb61b32f0f52c2d243b5eb576931f52",
+      "source_version": "1152132c",
+      "content_hash": "56943b34ee4b09d20cd9338eb915da0ce861b11626eeaabb7aa221c55ca486ea",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -220603,6 +220603,11 @@
           "number": 10958,
           "title": "Deploy L7 load-balancing related lua filters to kube-apiserver routes only and a",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11127,
+          "title": "Pin cc-utils actions to release 1.2883.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220610,7 +220615,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T20:01:14.207Z",
+      "verified_at": "2026-11-28T17:25:30.739Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220652,10 +220657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "repository": "gardener/gardener",
-      "source_version": "0964b4f9",
-      "content_hash": "7a8f71cf82d2a0d8cb5ccba450c6f27a52bebebe0715a6c4858cbf019f41ae22",
+      "source_version": "1152132c",
+      "content_hash": "a11da44f196aacf08190170d9189c794af912fada102d0726c7818d82b63cf2f",
       "domain_letter": "L",
-      "persisted_at": "2026-11-27T20:01:14.985Z"
+      "persisted_at": "2026-11-28T17:25:31.697Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener",
@@ -220664,10 +220669,10 @@
       "relative_path": "08_VERIFICATION/gardener-gardener-verification-protocol-empirical-defect-shield-for-gardener-gar.md",
       "title": "Verification Protocol: Empirical Defect Shield for gardener/gardener",
       "repository": "gardener/gardener",
-      "source_version": "0964b4f9",
-      "content_hash": "125e9cfb2e25140bfea2dfc5e217c6179b1ab9b9b099788fa0c33995e0910dda",
+      "source_version": "1152132c",
+      "content_hash": "f9991b327bf32e6f364ac622b4f31751183ba8739e49d2b0aacab45eec54c352",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T20:01:15.209Z"
+      "persisted_at": "2026-11-28T17:25:31.979Z"
     },
     "rule-8406": {
       "learning_id": "rule-8406",
@@ -220841,9 +220846,9 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "56eb26d13bd02688b418a467c0fd97c760511207973c027e876cf3ed74603598",
+      "content_hash": "039c3fbe5e3a77942ea9490b47e0dd7f3b57197aebaa6e33577160cbc83e429a",
       "domain_letter": "L",
-      "persisted_at": "2026-11-27T20:01:19.067Z"
+      "persisted_at": "2026-11-28T17:25:39.204Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings",
@@ -220853,9 +220858,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gardener-gardener-learnings",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "faebf235bcc8080684b9879d8dca16082ef312a4e0878dda7931aa30b359bd02",
+      "content_hash": "fee89fe3486df7d73b0d1344e280a1c760305df320ae0458ca5470b61fee587e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T20:01:19.284Z"
+      "persisted_at": "2026-11-28T17:25:39.495Z"
     },
     "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf": {
       "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
@@ -222578,13 +222583,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-software-mansion-react-native-",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/software-mansion-react-native-gesture-handler-learnings-verification-protocol-em.md",
-      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-gesture-handler-learnings",
-      "repository": "software-mansion-react-native-gesture-handler-learnings",
+      "relative_path": "08_VERIFICATION/software-mansion-react-native-screens-learnings-verification-protocol-empirical-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-screens-learnings",
+      "repository": "software-mansion-react-native-screens-learnings",
       "source_version": "HEAD",
-      "content_hash": "90703709200bf02bdf03cf08d68fb24f050baa1b85d3a4023e87d4c7564f39d3",
+      "content_hash": "29913609d0a8fe06c65b7123b6dbdf7b91c659dc6da0a437be806afedc27a442",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T00:59:10.085Z"
+      "persisted_at": "2026-11-28T17:25:38.111Z"
     },
     "learn-github-zeromicro-go-zero": {
       "learning_id": "learn-github-zeromicro-go-zero",
@@ -241294,8 +241299,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "2b63882d",
-      "content_hash": "5afd887e05026cf1161abffc73ec693bda1867149970439c63413f345688037a",
+      "source_version": "ff22a642",
+      "content_hash": "e95691299000e2508ffdef418e07f44dd92d82dc458c3c377f0b2307940471a2",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -241348,6 +241353,11 @@
           "number": 10913,
           "title": "add \"XSL\" and \"XSLT\" to `dictionary.dict`",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11125,
+          "title": "top dollars → top dollar",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241355,7 +241365,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T14:06:58.911Z",
+      "verified_at": "2026-11-28T17:25:21.831Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241397,10 +241407,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-quality-verification-intelligence-automattic-harper-core-invar.md",
       "title": "Quality & Verification Intelligence: Automattic/harper Core Invariants",
       "repository": "Automattic/harper",
-      "source_version": "15b85dfd",
-      "content_hash": "180be8f867f5d1aba736db344e87d6c873a225b2f6364773200c7d207234e5fc",
+      "source_version": "ff22a642",
+      "content_hash": "333b44d824ca918291500aa4346bf6327ecedb4a9455ec79fd25c75f2e7fe0f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T13:55:14.411Z"
+      "persisted_at": "2026-11-28T17:25:22.861Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper",
@@ -241409,10 +241419,10 @@
       "relative_path": "08_VERIFICATION/automattic-harper-verification-protocol-empirical-defect-shield-for-automattic-h.md",
       "title": "Verification Protocol: Empirical Defect Shield for Automattic/harper",
       "repository": "Automattic/harper",
-      "source_version": "2b63882d",
-      "content_hash": "250cef773f539f9ac8bf2b8076f2cb0d4bc3ec696ac1ace169c6e256a00b62b2",
+      "source_version": "ff22a642",
+      "content_hash": "9ed2aa175d4eceddaea58a5d724536a69f1b9516de120c83ca54ea2a18174a78",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:07:00.179Z"
+      "persisted_at": "2026-11-28T17:25:23.146Z"
     },
     "learn-github-kotest-kotest": {
       "learning_id": "learn-github-kotest-kotest",
@@ -241693,9 +241703,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for automattic-harper-learnings",
       "repository": "automattic-harper-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa5c206a25d53b9aabf8ab0fe9082f190ba121ea444a27ef835bd1aab66b18e2",
+      "content_hash": "fcae50ef0257eed309cc67ecedf614c6be5391399c1853cb0b9fbce2317afb0f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:07:04.712Z"
+      "persisted_at": "2026-11-28T17:25:36.198Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co",
@@ -272315,8 +272325,8 @@
       "slug": "software-mansion-react-native-screens",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-screens",
-      "source_version": "1b8f2fde",
-      "content_hash": "3534c49f7779ab0685cd88a5ca72218d1e8afb677214f6ef044011a86ed4d695",
+      "source_version": "d9ffcbf8",
+      "content_hash": "d6b661a163d6151b6045e0382e71c94db500f0f694cee7f8a592689cc7347e5a",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "promoted_rules": [
@@ -272339,6 +272349,11 @@
           "number": 10663,
           "title": "Android, Stack v4): keep a popped screen's content during its exit animation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11126,
+          "title": "skip the Android bottom tabs stack-state e2e until react-freeze#44 is fix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -272346,7 +272361,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T11:29:00.851Z",
+      "verified_at": "2026-11-28T17:25:28.469Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -272388,10 +272403,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-screens-technical-construction-intelligence-softwa.md",
       "title": "Technical Construction Intelligence: software-mansion/react-native-screens Core Invariants",
       "repository": "software-mansion/react-native-screens",
-      "source_version": "1b8f2fde",
-      "content_hash": "1f59748c5d1fab98f318348db03eb154aa58637b51a85e4bb145a0711cb6355d",
+      "source_version": "d9ffcbf8",
+      "content_hash": "cb2eb5d7d2824f60a6f0d4abfc4992fba574c490d9229a7547fa02de2daa66a6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T11:29:01.781Z"
+      "persisted_at": "2026-11-28T17:25:29.432Z"
     },
     "rule-8863": {
       "learning_id": "rule-8863",
@@ -272475,9 +272490,9 @@
       "title": "Technical Construction Intelligence: software-mansion-react-native-screens-learnings Core Invariants",
       "repository": "software-mansion-react-native-screens-learnings",
       "source_version": "HEAD",
-      "content_hash": "4174f63008451668109e506cef46b8e923f8cc023fb5e0201384a218ebd1fc13",
+      "content_hash": "d06266b726529ff5ba5d8cdcacb1d8013fdccff75a72308d1f1eff89ebe610ca",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T11:29:15.472Z"
+      "persisted_at": "2026-11-28T17:25:37.836Z"
     },
     "candidate_directive-helm-prevent-concurrent-chart-download-directory-conflicts": {
       "item_id": "candidate_directive-helm-prevent-concurrent-chart-download-directory-conflicts",
@@ -294300,9 +294315,9 @@
       "title": "Research & Knowledge Intelligence: automattic-harper-learnings Core Invariants",
       "repository": "automattic-harper-learnings",
       "source_version": "HEAD",
-      "content_hash": "bfc570d6d46d941970d423bd84ed9a5f447141f95ae75d4070d713a695d80074",
+      "content_hash": "6f2c06ddc15647de832a17936ed6bf5c92c840ecdc24cb8c33327a4a20f742e0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-27T14:07:04.415Z"
+      "persisted_at": "2026-11-28T17:25:35.925Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in",
@@ -374166,6 +374181,96 @@
       "content_hash": "7a2c2c656c1e5ae1fbc7ddeb6f835740dac15539b9e3b23a7df27d3f39d44fdc",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T17:10:30.864Z"
+    },
+    "rule-11125": {
+      "learning_id": "rule-11125",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11125,
+      "title": "top dollars → top dollar",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "ff22a642",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T17:25:21.831Z"
+    },
+    "candidate_directive-top-dollars-top-dollar": {
+      "item_id": "candidate_directive-top-dollars-top-dollar",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LDRZ-top-dollars-top-dollar.md",
+      "title": "top dollars → top dollar",
+      "repository": "automattic-harper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7bc329210518e07429b3a2f55cea56846aa169a766b6ade149da0d683847d1db",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T17:25:35.616Z"
+    },
+    "rule-11126": {
+      "learning_id": "rule-11126",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11126,
+      "title": "skip the Android bottom tabs stack-state e2e until react-freeze#44 is fix",
+      "source_url": "https://github.com/software-mansion/react-native-screens",
+      "source_version": "d9ffcbf8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T17:25:28.469Z"
+    },
+    "candidate_directive-skip-the-android-bottom-tabs-stack-state-e2e-until-react-freeze-44-is-fix": {
+      "item_id": "candidate_directive-skip-the-android-bottom-tabs-stack-state-e2e-until-react-freeze-44-is-fix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L8SC-skip-the-android-bottom-tabs-stack-state-e2e-until-react-freeze-44-is-fix.md",
+      "title": "skip the Android bottom tabs stack-state e2e until react-freeze#44 is fix",
+      "repository": "software-mansion/react-native-screens",
+      "source_version": "d9ffcbf8",
+      "content_hash": "9aac09c3045ffc69c6d56ab9a5997eb3845b15a941e1d1457fac7edc1c714ee5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T17:25:29.149Z"
+    },
+    "rule-11127": {
+      "learning_id": "rule-11127",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11127,
+      "title": "Pin cc-utils actions to release 1.2883.0",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "1152132c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T17:25:30.739Z"
+    },
+    "candidate_directive-pin-cc-utils-actions-to-release-1-2883-0": {
+      "item_id": "candidate_directive-pin-cc-utils-actions-to-release-1-2883-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LGBU-pin-cc-utils-actions-to-release-1-2883-0.md",
+      "title": "Pin cc-utils actions to release 1.2883.0",
+      "repository": "gardener-gardener-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3274c5c26e566f92bb5be595f9b4d9b77841798240401f1cba39f376d33dbfbd",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-28T17:25:38.927Z"
+    },
+    "candidate_directive-test-skip-the-android-bottom-tabs-stack-state-e2e-until-react-freeze-44-is-fix": {
+      "item_id": "candidate_directive-test-skip-the-android-bottom-tabs-stack-state-e2e-until-react-freeze-44-is-fix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LF9G-test-skip-the-android-bottom-tabs-stack-state-e2e-until-react-freeze-44-is-fix.md",
+      "title": "test): skip the Android bottom tabs stack-state e2e until react-freeze#44 is fix",
+      "repository": "software-mansion-react-native-screens-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2e03302d9e3b6f26e7963c2254de57c6db280be3b2088438ad49bea820d49e72",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T17:25:37.540Z"
     }
   },
   "ai-builder-brain": {

@@ -14088,3 +14088,6 @@
 | `CYCLE-20261128-182I` | `2026-11-28T17:09:55.098Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11123` | Yes (`a8842084...`) |
 | `CYCLE-20261128-19YT` | `2026-11-28T17:09:57.557Z` | `callstack/react-native-builder-bob` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11124` | Yes (`39ea9633...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T17:10:30.208Z` | `callstack-react-native-builder-bob` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F654669C` [Domain H] | Yes (`5b39b3cd...`) |
+| `CYCLE-20261128-L3EE` | `2026-11-28T17:25:22.166Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11125` | Yes (`e9569129...`) |
+| `CYCLE-20261128-L8IK` | `2026-11-28T17:25:28.796Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11126` | Yes (`d6b661a1...`) |
+| `CYCLE-20261128-LA9T` | `2026-11-28T17:25:31.073Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11127` | Yes (`56943b34...`) |

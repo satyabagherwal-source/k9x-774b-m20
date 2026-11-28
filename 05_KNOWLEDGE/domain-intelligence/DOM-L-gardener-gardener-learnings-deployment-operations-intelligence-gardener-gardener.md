@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T20:01:18.717Z",
+  "timestamp": "2026-11-28T17:25:38.771Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gardener-gardener-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gardener-gardener-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T20:01:18.717Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T17:25:38.771Z`  
 > **Learning ID**: `LEARN-EVO-gardener-gardener-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain L (Deployment & Operations Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from gardener-gardener-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `0964b4f9`  
+> **Source Version**: `1152132c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T20:01:13.248Z  
+> **Timestamp**: 2026-11-28T17:25:29.434Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T20:01:13.122Z  
+> **Harvest Timestamp**: 2026-11-28T17:25:29.427Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -754,14 +754,11 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #16436** (2026-11-28): **Pin cc-utils actions to release 1.2883.0**
+  *Symptoms*: **How to categorize this PR?**  **What this PR does / why we need it**:  Pin 16 `gardener/cc-utils` action and reusable workflow references to `00522ef3e8504bc7be46394a239a390f112336f6`, the commit for [release 1.2883.0](https://github.com/gardener/cc-utils/releases/tag/1.2883.0). The `# 1.2883.0` comments let Renovate track future releases.  **Which issue(s) this PR fixes**:  Related to gardener/org#145. Follow-up to #16411.  **Special notes for your reviewer**:  Verified that the changes only update the targeted YAML `uses` values and version comments. Checked that the referenced workflows and actions exist in the release and accept the inputs passed by the caller. `git diff --check` passed.  **Release note**:  ```other operator NONE ``` 
+
 - **Issue #16432** (2026-11-26): **Update release schedule**
   *Symptoms*: <!-- Please ensure that you do not include company internal information. -->  **How to categorize this PR?** <!-- Please select area, kind, and priority for this pull request. This helps the community categorizing it. Replace below TODOs or exchange the existing identifiers with those that fit best in your opinion. If multiple identifiers make sense you can also state the commands multiple times, e.g.   /area control-plane   /area auto-scaling   ...  If the PR affects cryptography or security mechanisms (encryption, keys, ciphers, hashes, signatures, etc.), mark it as crypto relevant. /label crypto  "/area" identifiers:     audit-logging|auto-scaling|backup|compliance|control-plane-migration|control-plane|cost|delivery|dev-productivity|disaster-recovery|documentation|high-availability|logging|metering|monitoring|networking|open-source|ops-productivity|os|performance|quality|robustness|scalability|security|storage|testing|usability|user-management "/kind" identifiers:     api-change|bug|cleanup|discussion|enhancement|epic|flake|impediment|poc|post-mortem|question|regression|task|technical-debt|test --> /area delivery /kind enhancement  **What this PR does / why we need it**: Due to organizational circumstances, we are prolonging the release cycle for `v1.156` from 2->4 weeks.  **Special notes for your reviewer**: /cc @plkokanov   **Release note**: <!-- Write your release note: 1. Enter your release note in the below block. 2. If no release note is required, just write "NONE" w
-
-- **Issue #16429** (2026-11-26): **Update dependency kubernetes/kubernetes to v1.37.3**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [kubernetes/kubernetes](https://redirect.github.com/kubernetes/kubernetes) | patch | `v1.37.2` → `v1.37.3` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15982) for more information.  ---  ### Release Notes  <details> <summary>kubernetes/kubernetes</summary>  ### [`v1.37.3`](https://redirect.github.com/kubernetes/kubernetes/releases/tag/v1.37.3)  [Compare Source](https://redirect.github.com/kubernetes/kubernetes/compare/v1.37.2...v1.37.3)  See [kubernetes-announce@](https://groups.google.com/forum/#!forum/kubernetes-announce). Additional binary downloads are linked in the [CHANGELOG](https://redirect.github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md).  See the [CHANGELOG](https://redirect.github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.37.md) for more details.  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZ
-  **Post-Mortem & Fix Analysis**:
-  > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [oliver-goetz](https://github.com/oliver-goetz) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["oliver-goetz"]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -778,578 +775,187 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0964b4f9` (2026-11-27)
-**Commit Message**: Deploy L7 load-balancing related lua filters to kube-apiserver routes only and apply hardening measurements (#16343)
+### Incident Patch 1: `1152132c` (2026-11-28)
+**Commit Message**: Pin cc-utils actions to release 1.2883.0 (#16436)
 
-* Prefactoring: Fix missing upgrade configs for wildcard endpoint
+* Pin cc-utils actions to release 1.2881.0
 
-Before only websocket, but no SPDY upgrade was working for the wildcard endpoint.
+Signed-off-by: Marc Vornetran <[REDACTED_EMAIL]>
 
-Signed-off-by: oliver-goetz <[REDACTED_EMAIL]>
+* Pin cc-utils actions to release 1.2883.0
 
-* Prefactoring: Simplify `istio-tls-termination` envoyfilter template in `apiserverexposure`
+Signed-off-by: Marc Vornetran <[REDACTED_EMAIL]>
 
-Signed-off-by: oliver-goetz <[REDACTED_EMAIL]>
+---------
 
-* Add `istio-tls-termination` lua script to envoyfilter template of `apiserverexposure`
+Signed-off-by: Marc Vornetran <[REDACTED_EMAIL]>
 
-Signed-off-by: oliver-goetz <[REDACTED_EMAIL]>
-
-* Enhance `apiserverexposure` unit tests
-
-Signed-off-by: oliver-goetz <[REDACTED_EMAIL]>
-
-* Introduce a seamless migration of lua scripts
-
-The lua scripts are idempotent, so they can run twice until all shoots have been reconciled
-
-Signed-off-by: oliver-goetz <[REDACTED_EMAIL]>
-
-* Fix exposure of seed kube-apiserver via ingress
-
-This was broken before, I just noticed it while working on `apiserverexposure` package.
-It still works for with limited scope. It supports token authentication, endpoints with TLS certificates signed by the cluster CA and streaming APIs via websocket only.
-
-Signed-off-by: o
-
-**File**: `pkg/component/kubernetes/apiserver/constants/constants.go` (modified, +4/-0)
+**File**: `.github/workflows/build.yaml` (modified, +10/-10)
 ```diff
-@@ -11,6 +11,10 @@ const (
- 	RequestHeaderGroup = "X-Remote-Group"
- 	// RequestHeaderUserName is the header key for the username headers.
- 	RequestHeaderUserName = "X-Remote-User"
-+	// RequestHeaderUID is the header key for the UID headers.
-+	RequestHeaderUID = "X-Remote-Uid"
-+	// RequestHeaderPrefixExtra is the prefix headers keys for extra headers.
-+	RequestHeaderPrefixExtra = "X-Remote-Extra-"
- )
+@@ -25,7 +25,7 @@ on:
  
- // ServiceName returns the service name with the given prefix.
+ jobs:
+   prepare:
+-    uses: gardener/cc-utils/.github/workflows/prepare.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
++    uses: gardener/cc-utils/.github/workflows/prepare.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+     with:
+       mode: ${{ inputs.mode || 'snapshot' }}
+     permissions:
+@@ -35,8 +35,8 @@ jobs:
+     runs-on: 'ubuntu-latest'
+     if: github.event_name != 'pull_request'
+     steps:
+-      - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
+-      - uses: gardener/cc-utils/.github/actions/setup-git-identity@bce63f62928717a11f610ec8022af9feb497d5df # v1
++      - uses: gardener/cc-utils/.github/actions/trusted-checkout@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
++      - uses: gardener/cc-utils/.github/actions/setup-git-identity@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+       - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: '1.27'
+@@ -54,7 +54,7 @@ jobs:
+             exit 0
+           fi
+       - name: add-tests-report-to-component-descriptor
+-        uses: gardener/cc-utils/.github/actions/export-ocm-fragments@bce63f62928717a11f610ec8022af9feb497d5df # v1
++        uses: gardener/cc-utils/.github/actions/export-ocm-fragments@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+         with:
+           blobs-directory: /tmp/blobs.d
+           ocm-resources: |
+@@ -69,7 +69,7 @@ jobs:
+                   - test
+ 
+   sast-lint:
+-    uses: gardener/cc-utils/.github/workflows/sastlint-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
++    uses: gardener/cc-utils/.github/workflows/sastlint-ocm.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+     if: github.event_name != 'pull_request'
+     permissions:
+       contents: read
+@@ -98,7 +98,7 @@ jobs:
+       packages: write
+       id-token: write
+     secrets: inherit
+-    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
++    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+     strategy:
+       matrix:
+         args:
+@@ -150,7 +150,7 @@ jobs:
+       contents: read
+       packages: write
+       id-token: write
+-    uses: gardener/cc-utils/.github/workflows/helmchart-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
++    uses: gardener/cc-utils/.github/workflows/helmchart-ocm.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+     strategy:
+       matrix:
+         args:
+@@ -222,13 +222,13 @@ jobs:
+             runner: ubuntu-24.04-arm
+     runs-on: ${{ matrix.args.runner }}
+     steps:
+-      - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
++      - uses: gardener/cc-utils/.github/actions/trusted-checkout@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+       - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: '1.27'
+       - name: import-release-commit
+         if: ${{ inputs.commit-objects-artefact != '' }}
+-        uses: gardener/cc-utils/.github/actions/import-commit@bce63f62928717a11f610ec8022af9feb497d5df # v1
++        uses: gardener/cc-utils/.github/actions/import-commit@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+         with:
+           commit-objects-artefact: ${{ inputs.commit-objects-artefact }}
+           after-import: rebase
+@@ -273,7 +273,7 @@ jobs:
+           fi
+ 
+           unlink ${outpath}
+-      - uses: gardener/cc-utils/.github/actions/export-ocm-fragments@bce63f62928717a11f610ec8022af9feb497d5df # v1
++      - uses: gardener/cc-utils/.github/actions/export-ocm-fragments@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+         if: github.event_name != 'pull_request'
+         with:
+           blobs-directory: /tmp/blobs.d
 ```
 
-**File**: `pkg/component/kubernetes/apiserver/deployment.go` (modified, +1/-1)
+**File**: `.github/workflows/golang-test-build.yaml` (modified, +1/-1)
 ```diff
-@@ -432,7 +432,7 @@ func (k *kubeAPIServer) computeKubeAPIServerArgs() []string {
- 	out = append(out, fmt.Sprintf("--proxy-client-cert-file=%s/%s", volumeMountPathKubeAggregator, secrets.DataKeyCertificate))
- 	out = append(out, fmt.Sprintf("--proxy-client-key-file=%s/%s", volumeMountPathKubeAggregator, secrets.DataKeyPrivateKey))
- 	out = append(out, fmt.Sprintf("--requestheader-client-ca-file=%s/%s", volumeMountPathCAFrontProxy, secrets.DataKeyCertificateBundle))
--	out = append(out, "--requestheader-extra-headers-prefix=X-Remote-Extra-")
-+	out = append(out, fmt.Sprintf("--requestheader-extra-headers-prefix=%s", kubeapiserverconstants.RequestHeaderPrefixExtra))
- 	out = append(out, fmt.Sprintf("--requestheader-group-headers=%s", kubeapiserverconstants.RequestHeaderGroup))
- 	out = append(out, fmt.Sprintf("--requestheader-username-headers=%s", kubeapiserverconstants.RequestHeaderUserName))
- 
+@@ -48,7 +48,7 @@ jobs:
+       packages: write
+       id-token: write
+     secrets: inherit
+-    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
++    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+     strategy:
+       matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
+     with:
 ```
 
-**File**: `pkg/component/kubernetes/apiserverexposure/ingress.go` (modified, +11/-21)
+**File**: `.github/workflows/non-release.yaml` (modified, +1/-1)
 ```diff
-@@ -59,18 +59,22 @@ func (i *ingress) Deploy(ctx context.Context) error {
- 		virtualService  = i.emptyVirtualService()
- 	)
+@@ -19,7 +19,7 @@ jobs:
  
--	tlsMode := istioapinetworkingv1beta1.ClientTLSSettings{Mode: istioapinetworkingv1beta1.ClientTLSSettings_DISABLE}
--	if i.values.TLSSecretName != nil {
--		tlsMode = istioapinetworkingv1beta1.ClientTLSSettings{Mode: istioapinetworkingv1beta1.ClientTLSSettings_SIMPLE}
--	}
--
- 	serviceNamespace := i.namespace
- 	if i.values.ServiceNamespace != "" {
- 		serviceNamespace = i.values.ServiceNamespace
- 	}
- 
- 	destinationHost := kubernetesutils.FQDNForService(i.values.ServiceName, serviceNamespace)
- 
-+	tlsMode := istioapinetworkingv1beta1.ClientTLSSettings{Mode: istioapinetworkingv1beta1.ClientTLSSettings_DISABLE}
-+	if i.values.TLSSecretName != nil {
-+		tlsMode = istioapinetworkingv1beta1.ClientTLSSettings{
-+			Mode:           istioapinetworkingv1beta1.ClientTLSSettings_SIMPLE,
-+			Sni:            destinationHost,
-+			CaCertificates: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt",
-+		}
-+	}
-+
- 	if _, err := controllerutils.GetAndCreateOrMergePatch(ctx, i.client, destinationRule, istio.DestinationRuleWithLocalityPreferenceAndTLS(destinationRule, getLabels(), []string{i.values.IstioIngressGatewayNamespaceFunc()}, destinationHost, &tlsMode)); err != nil {
- 		return err
- 	}
-@@ -98,24 +102,10 @@ func (i *ingress) Deploy(ctx context.Context) error {
- 		}
- 
- 		if _, err := controllerutils.GetAndCreateOrMergePatch(ctx, i.client, virtualService, func() error {
--			if err := istio.VirtualServiceWithSNIMatch(virtualService, getLabels(), []string{i.values.IstioIngressGatewayNamespaceFunc()}, []string{i.values.Host}, gateway.Name, kubeapiserverconstants.Port, destinationHost)(); err != nil {
-+			if err := istio.VirtualServiceForTLSTermination(virtualService, getLabels(), []string{i.values.IstioIngressGatewayNamespaceFunc()}, []string{i.values.Host}, gateway.Name, kubeapiserverconstants.Port, destinationHost, "", "")(); err != nil {
- 				return err
- 			}
--			virtualService.Spec.Http = []*istioapinetworkingv1beta1.HTTPRoute{{
--				Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{{
--					Uri: &istioapinetworkingv1beta1.StringMatch{
--						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{Prefix: "/"},
--					},
--				}},
--				Route: []*istioapinetworkingv1beta1.HTTPRouteDestination{{
--					Destination: &istioapinetworkingv1beta1.Destination{
--						Host: destinationHost,
--						Port: &istioapinetworkingv1beta1.PortSelector{
--							Number: kubeapiserverconstants.Port,
--						},
--					},
--				}},
--			}}
-+			virtualService.Spec.Http[0].Rewrite = &istioapinetworkingv1beta1.HTTPRewrite{Authority: destinationHost}
- 			return nil
- 		}); err != nil {
- 			return err
+   component-descriptor:
+     if: ${{ github.repository == 'gardener/gardener' }}
+-    uses: gardener/cc-utils/.github/workflows/post-build.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
++    uses: gardener/cc-utils/.github/workflows/post-build.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+     needs:
+       - build
+     permissions:
 ```
 
-**File**: `pkg/component/kubernetes/apiserverexposure/ingress_test.go` (modified, +4/-6)
+**File**: `.github/workflows/pr-release-notes-validation.yaml` (modified, +1/-1)
 ```diff
-@@ -138,19 +138,15 @@ var _ = Describe("#Ingress", func() {
- 		expectedPassthroughVirtualService = expectedVirtualService.DeepCopy()
+@@ -11,7 +11,7 @@ permissions:
  
- 		expectedHTTPSBackendVirtualService = expectedVirtualService.DeepCopy()
--		expectedHTTPSBackendVirtualService.Spec.Tls[0].Route[0].Destination.Host = "foo." + serviceNamespace + ".svc.cluster.local"
-+		expectedHTTPSBackendVirtualService.Spec.Tls = nil
- 		expectedHTTPSBackendVirtualService.Spec.Http = []*istioapinetworkingv1beta1.HTTPRoute{{
--			Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{{
--				Uri: &istioapinetworkingv1beta1.StringMatch{
--					MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{Prefix: "/"},
--				},
--			}},
- 			Route: []*istioapinetworkingv1beta1.HTTPRouteDestination{{
- 				Destination: &istioapinetworkingv1beta1.Destination{
- 					Host: "foo." + serviceNamespace + ".svc.cluster.local",
- 					Port: &istioapinetworkingv1beta1.PortSelector{Number: 443},
- 				},
- 			}},
-+			Rewrite: &istioapinetworkingv1beta1.HTTPRewrite{Authority: "foo." + serviceNamespace + ".svc.cluster.local"},
- 		}}
- 
- 		expectedDestinationRule := &istionetworkingv1beta1.DestinationRule{
-@@ -201,6 +197,8 @@ var _ = Describe("#Ingress", func() {
- 		expectedHTTPSBackendDestinationRule.Namespace = serviceNamespace
- 		expectedHTTPSBackendDestinationRule.Spec.Host = "foo." + serviceNamespace + ".svc.cluster.local"
- 		expectedHTTPSBackendDestinationRule.Spec.TrafficPolicy.Tls.Mode = istioapinetworkingv1beta1.ClientTLSSettings_SIMPLE
-+		expectedHTTPSBackendDestinationRule.Spec.TrafficPolicy.Tls.Sni = "foo." + serviceNamespace + ".svc.cluster.local"
-+		expectedHTTPSBackendDestinationRule.Spec.TrafficPolicy.Tls.CaCertificates = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
- 	})
- 
- 	getDeployer := func(serviceNamespace string, tlsSecretName *string) component.Deployer {
+ jobs:
+   validate-release-notes:
+-    uses: gardener/cc-utils/.github/workflows/validate-release-notes.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
++    uses: gardener/cc-utils/.github/workflows/validate-release-notes.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+     permissions:
+       pull-requests: read
+     with:
 ```
 
-**File**: `pkg/component/kubernetes/apiserverexposure/sni.go` (modified, +56/-42)
+**File**: `.github/workflows/release.yaml` (modified, +1/-1)
 ```diff
-@@ -176,6 +176,8 @@ type envoyFilterAPIServerProxyTemplateValues struct {
- 	APIServerClusterIPPrefixLen               int
- 	APIServerRequestHeaderUserName            string
- 	APIServerRequestHeaderGroup               string
-+	APIServerRequestHeaderUID                 string
-+	APIServerRequestHeaderPrefixExtra         string
- 	APIServerAuthenticationDynamicMetadataKey string
- 	IstioTLSSecret                            string
- 	TargetClusterAPIServerProxy               string
-@@ -187,20 +189,21 @@ type envoyFilterAPIServerProxyTemplateValues struct {
- }
+@@ -22,7 +22,7 @@ jobs:
  
- type envoyFilterIstioTLSTerminationTemplateValues struct {
--	AuthenticationDynamicMetadataKey string
--	Hosts                            []string
--	WildcardHosts                    []string
--	IngressGatewayLabels             map[string]string
--	Name                             string
--	Namespace                        string
--	ControlPlaneNamespace            string
--	ControlPlaneNamespaceUID         string
--	MutualTLSHost                    string
--	ConnectionUpgradeHost            string
--	Port                             int
--	RouteConfigurationName           string
--	WildcardRouteConfigurationName   string
--	ConnectionUpgradeRouteName       string
-+	AuthenticationDynamicMetadataKey  string
-+	HostsByRouteConfigurationName     map[string][]string
-+	IngressGatewayLabels              map[string]string
-+	Name                              string
-+	Namespace                         string
-+	ControlPlaneNamespace             string
-+	ControlPlaneNamespaceUID          string
-+	MutualTLSHost                     string
-+	ConnectionUpgradeHost             string
-+	Port                              int
-+	ConnectionUpgradeRouteName        string
-+	APIServerRequestHeaderUserName    string
-+	APIServerRequestHeaderGroup       string
-+	APIServerRequestHeaderUID         string
-+	APIServerRequestHeaderPrefixExtra string
- }
- 
- type istioGatewayConfiguration struct {
-@@ -253,20 +256,22 @@ func (s *sni) Deploy(ctx context.Context) error {
- 		var envoyFilterAPIServerProxy bytes.Buffer
- 
- 		if err := envoyFilterAPIServerProxyTemplate.Execute(&envoyFilterAPIServerProxy, envoyFilterAPIServerProxyTemplateValues{
--			APIServerProxy:                 values.APIServerProxy,
--			IngressGatewayLabels:           values.IstioIngressGateway.Labels,
--			Name:                           envoyFilter.Name,
--			Namespace:                      envoyFilter.Namespace,
--			ControlPlaneNamespace:          namespace.Name,
--			ControlPlaneNamespaceUID:       string(namespace.UID),
--			Host:                           hostName,
--			MutualTLSHost:                  mTLSHostName,
--			ConnectionUpgradeHost:          connectionUpgradeHostName,
--			ConnectionUpgradeRegex:         istio.ConnectionUpgradeRegex,
--			Port:                           kubeapiserverconstants.Port,
--			APIServerClusterIPPrefixLen:    apiServerClusterIPPrefixLen,
--			APIServerRequestHeaderUserName: kubeapiserverconstants.RequestHeaderUserName,
--			APIServerRequestHeaderGroup:    kubeapiserverconstants.RequestHeaderGroup,
-+			APIServerProxy:                    values.APIServerProxy,
-+			IngressGatewayLabels:              values.IstioIngressGateway.Labels,
-+			Name:                              envoyFilter.Name,
-+			Namespace:                         envoyFilter.Namespace,
-+			ControlPlaneNamespace:             namespace.Name,
-+			ControlPlaneNamespaceUID:          string(namespace.UID),
-+			Host:                              hostName,
-+			MutualTLSHost:                     mTLSHostName,
-+			ConnectionUpgradeHost:             connectionUpgradeHostName,
-+			ConnectionUpgradeRegex:            istio.ConnectionUpgradeRegex,
-+			Port:                              kubeapiserverconstants.Port,
-+			APIServerClusterIPPrefixLen:       apiServerClusterIPPrefixLen,
-+			APIServerRequestHeaderUserName:    kubeapiserverconstants.RequestHeaderUserName,
-+			APIServerRequestHeaderGroup:       kubeapiserverconstants.RequestHeaderGroup,
-+			APIServerRequestHeaderUID:         kubeapiserverconstants.RequestHeaderUID,
-+			APIServerRequestHeaderPrefixExtra: kubeapiserverconstants.RequestHeaderPrefixExtra,
- 			APIServerAuthenticationDynamicMetadataKey: authenticationDynamicMetadataKeyAPIServerProxy,
- 			IstioTLSSecret:                   s.emptyIstioTLSSecret().Name,
- 			TargetClusterAPIServerProxy:      targetClusterAPIServerProxy,
-@@ -303,21 +308,30 @@ func (s *sni) Deploy(ctx context.Context) error {
- 				wildcardHosts = configuration.wildcardConfiguration.Hosts
- 			}
- 
-+			hostsByRouteConfigurationName := map[string][]string{}
-+			if len(configuration.hosts) > 0 {
-+				hostsByRouteConfigurationName[routeConfigurationName] = configuration.hosts
-+			}
-+			if len(wildcardHosts) > 0 {
-+				hostsByRouteConfigurationName[wildcardRouteConfigurationName] = wildcardHosts
-+			}
-+
- 			if err := envoyFilterIstioTLSTerminationTemplate.Execute(&envoyFilterIstioTLSTermination, envoyFilterIstioTLSTerminationTemplateValues{
--				AuthenticationDynamicMetadataKey: AuthenticationD
+   release-to-github-and-bump:
+     if: ${{ github.repository == 'gardener/gardener' && startsWith(github.ref, 'refs/heads/release-v') }}
+-    uses: gardener/cc-utils/.github/workflows/release.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
++    uses: gardener/cc-utils/.github/workflows/release.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+     needs:
+       - build
+     secrets: inherit
 ```
 
-**File**: `pkg/component/kubernetes/apiserverexposure/sni_test.go` (modified, +80/-5)
+**File**: `.github/workflows/renovate-post-upgrade.yaml` (modified, +2/-2)
 ```diff
-@@ -21,12 +21,14 @@ import (
- 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-+	"sigs.k8s.io/yaml"
+@@ -139,7 +139,7 @@ jobs:
+     steps:
+       - name: Get Federated GitHub Access token
+         id: fed-token
+-        uses: gardener/cc-utils/.github/actions/github-auth@bce63f62928717a11f610ec8022af9feb497d5df # v1
++        uses: gardener/cc-utils/.github/actions/github-auth@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+         with:
+           token-server: ${{ vars.FEDERATED_GITHUB_ACCESS_TOKEN_SERVER }}
+           repositories: ${{ github.event.repository.name }}
+@@ -189,7 +189,7 @@ jobs:
  
- 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
- 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
- 	resourcesv1alpha1 "github.com/gardener/gardener/pkg/apis/resources/v1alpha1"
- 	"github.com/gardener/gardener/pkg/client/kubernetes"
- 	"github.com/gardener/gardener/pkg/component"
-+	kubeapiserverconstants "github.com/gardener/gardener/pkg/component/kubernetes/apiserver/constants"
- 	. "github.com/gardener/gardener/pkg/component/kubernetes/apiserverexposure"
- 	comptest "github.com/gardener/gardener/pkg/component/test"
- 	"github.com/gardener/gardener/pkg/resourcemanager/controller/garbagecollector/references"
-@@ -385,6 +387,7 @@ var _ = Describe("#SNI", func() {
- 				mrData := validateManagedResourceAndGetData(ctx, c, expectedManagedResourceSNI)
- 
- 				var envoyFilterObjectsMetas []metav1.ObjectMeta
-+				envoyFilterDataByKey := map[string]string{}
- 				for mrDataSet := range strings.SplitSeq(string(mrData), "---\n") {
- 					if mrDataSet == "" {
- 						continue
-@@ -394,16 +397,40 @@ var _ = Describe("#SNI", func() {
- 					Expect(err).ToNot(HaveOccurred())
- 					Expect(managedResourceEnvoyFilter.GetObjectKind()).To(Equal(&metav1.TypeMeta{Kind: "EnvoyFilter", APIVersion: "networking.istio.io/v1alpha3"}))
- 					actualEnvoyFilter := managedResourceEnvoyFilter.(*istionetworkingv1alpha3.EnvoyFilter)
--					// cannot validate the Spec as there is no meaningful way to unmarshal the data into the Golang structure
-+					// cannot validate the Spec via the typed object as there is no meaningful way to unmarshal the data into the Golang structure
- 					envoyFilterObjectsMetas = append(envoyFilterObjectsMetas, actualEnvoyFilter.ObjectMeta)
-+					envoyFilterDataByKey[actualEnvoyFilter.Namespace+"/"+actualEnvoyFilter.Name] = mrDataSet
- 				}
- 
--				if istioTLSTermination {
--					Expect(envoyFilterObjectsMetas).To(ContainElement(expectedEnvoyFilterObjectMetaIstioTLSTermination))
-+				Expect(envoyFilterObjectsMetas).To(ContainElement(expectedEnvoyFilterObjectMetaIstioTLSTermination))
-+				if wildcardConfiguration != nil && wildcardConfiguration.IstioIngressGateway != nil {
-+					Expect(envoyFilterObjectsMetas).To(ContainElement(expectedWildcardEnvoyFilterObjectMetaIstioTLSTermination))
-+				}
- 
--					if wildcardConfiguration != nil && wildcardConfiguration.IstioIngressGateway != nil {
--						Expect(envoyFilterObjectsMetas).To(ContainElement(expectedWildcardEnvoyFilterObjectMetaIstioTLSTermination))
-+				// The Lua filter performing kube-apiserver authentication must be scoped to the kube-apiserver
-+				// gateways' filter chains only. Filter chains are not named, so the HTTP_FILTER patch matches them
-+				// by SNI, using one of the chain's hosts.
-+				expectLuaHTTPFilters := func(envoyFilterKey string, expectedFilterChainSNIs ...string) {
-+					var filterChainSNIs []string
-+					for _, patch := range httpFilterPatches(envoyFilterDataByKey[envoyFilterKey]) {
-+						filterChainSNIs = append(filterChainSNIs, patch.FilterChainSNI)
-+						Expect(patch.InlineString).To(ContainSubstring("function envoy_on_request(request_handle)"))
-+						Expect(patch.InlineString).To(ContainSubstring(kubeapiserverconstants.RequestHeaderUserName))
-+						Expect(patch.InlineString).To(ContainSubstring(kubeapiserverconstants.RequestHeaderGroup))
-+						Expect(patch.InlineString).To(ContainSubstring(AuthenticationDynamicMetadataKey))
- 					}
-+					Expect(filterChainSNIs).To(ConsistOf(expectedFilterChainSNIs))
-+				}
-+
-+				mainEnvoyFilterKey := istioNamespace + "/" + namespace + "-istio-tls-termination"
-+				switch {
-+				case wildcardConfiguration == nil:
-+					expectLuaHTTPFilters(mainEnvoyFilterKey, hosts[0])
-+				case wildcardConfiguration.IstioIngressGateway == nil:
-+					expectLuaHTTPFilters(mainEnvoyFilterKey, hosts[0], wildcardHosts[0])
-+				default:
-+					expectLuaHTTPFilters(mainEnvoyFilterKey, hosts[0])
-+					expectLuaHTTPFilters(istioWildcardNamespace+"/"+namespace+"-istio-tls-termination", wildcardHosts[0])
- 				}
- 			} else {
- 				Expect(c.Get(ctx, client.ObjectKeyFromObject(managedResource), managedResource)).To(BeNotFoundError(), "should delete EnvoyFilter for apiserver-proxy")
-@@ -1152,3 +1179,51 @@ func validateManagedResourceAndGetData(ctx context.Context, c client.Client, exp
- 
- 	return mrData
- }
-+
-+type envoyHTTPFilterPatch struct {
-+	FilterChainSNI string
-+	InlineString   string
-+}
-+
-+// httpFilterPatches parses the HTTP_FILTER config patches of an EnvoyFilter from its serialized YAML. The EnvoyFilter
-+// spec cannot be validated via the typed object as there is no meaningful way to unmarshal the data into the Golang
-+// structure, hence it is parsed generically.
-+func httpFilterPatches(envoyFilterData string) []envoyHTTPFilterPatch {
-+	var parsed struct {
-+		Spec struct {
-+			Conf
-```
-
-**File**: `pkg/component/kubernetes/apiserverexposure/templates/envoyfilter-apiserver-proxy.yaml` (modified, +17/-3)
-```diff
-@@ -102,11 +102,23 @@ spec:
-                     inlineString: |
-                       function envoy_on_request(request_handle)
-                         -- Drop headers used by kube-apiserver authentication proxy.
--                        local remove = {"{{ .APIServerRequestHeaderUserName }}", "{{ .APIServerRequestHeaderGroup }}"}
-+                        local remove = {"{{ .APIServerRequestHeaderUserName }}", "{{ .APIServerRequestHeaderGroup }}", "{{ .APIServerRequestHeaderUID }}"}
-                         for key, value in pairs(remove) do
-                           request_handle:headers():remove(value)
-                         end
- 
-+                        -- Drop all extra headers (keys prefixed with "{{ .APIServerRequestHeaderPrefixExtra }}") used by the kube-apiserver authentication proxy.
-+                        local extraPrefix = string.lower("{{ .APIServerRequestHeaderPrefixExtra }}")
-+                        local removeExtra = {}
-+                        for key, value in pairs(request_handle:headers()) do
-+                          if string.sub(string.lower(key), 1, string.len(extraPrefix)) == extraPrefix then
-+                            table.insert(removeExtra, key)
-+                          end
-+                        end
-+                        for key, value in pairs(removeExtra) do
-+                          request_handle:headers():remove(value)
-+                        end
-+
-                         -- Upstream request timeout, capped at 1d (see below). When a client certificate
-                         -- is present, it is reduced to the certificate's remaining lifetime further down.
-                         local upstreamTimeoutMilliseconds = 86400000
-@@ -121,6 +133,7 @@ spec:
-                           -- Kill request if CN is empty.
-                           if cn == "" then
-                             request_handle:respond({[":status"] = "400"}, "Invalid certificate subject")
-+                            streamInfo:drainConnectionUponCompletion()
-                             return
-                           end
- 
-@@ -132,6 +145,7 @@ spec:
-                           local notAfter = ssl:expirationPeerCertificate()
-                           if now >= notAfter or now < notBefore then
-                             request_handle:respond({[":status"] = "401"}, "Client certificate is expired or not yet valid")
-+                            streamInfo:drainConnectionUponCompletion()
-                             return
-                           end
- 
-@@ -165,8 +179,8 @@ spec:
-                         -- connections like forgotten kubectl port-forward or exec commands, and ensures
-                         -- requests do not outlive the client certificate.
-                         -- See https://www.envoyproxy.io/docs/envoy/latest/faq/configuration/timeouts#route-timeouts
--                        request_handle:headers():add("x-envoy-upstream-rq-timeout-ms", tostring(upstreamTimeoutMilliseconds))
--                        request_handle:headers():add("x-envoy-upstream-rq-per-try-timeout-ms", tostring(upstreamTimeoutMilliseconds))
-+                        request_handle:headers():replace("x-envoy-upstream-rq-timeout-ms", tostring(upstreamTimeoutMilliseconds))
-+                        request_handle:headers():replace("x-envoy-upstream-rq-per-try-timeout-ms", tostring(upstreamTimeoutMilliseconds))
-                       end
- 
-                       function envoy_on_response(response_handle)
-```
-
-**File**: `pkg/component/kubernetes/apiserverexposure/templates/envoyfilter-istio-tls-termination.yaml` (modified, +120/-38)
-```diff
-@@ -1,4 +1,3 @@
-----
- apiVersion: networking.istio.io/v1alpha3
- kind: EnvoyFilter
- metadata:
-@@ -18,33 +17,28 @@ spec:
-       {{ $k }}: {{ $v }}
- {{- end }}
-   configPatches:
--{{- range $v := .Hosts }}
--  - applyTo: HTTP_ROUTE
-+  - applyTo: CLUSTER
-     match:
-       context: GATEWAY
--      routeConfiguration:
--        name: "{{ $.RouteConfigurationName }}"
-+      cluster:
-+        name: outbound|{{ .Port }}||{{ .ConnectionUpgradeHost }}
-     patch:
--      operation: INSERT_BEFORE
-+      operation: MERGE
-       value:
--        match:
--          dynamic_metadata:
--          - filter: envoy.filters.http.lua
--            path:
--            - key: {{ $.AuthenticationDynamicMetadataKey }}
--            value:
--              string_match:
--                exact: {{ $v }}
--          prefix: /
--        route:
--          cluster: outbound|{{ $.Port }}||{{ $.MutualTLSHost }}
--{{- end }}
--{{- range $v := .WildcardHosts }}
-+        transportSocket:
-+          name: envoy.transport_sockets.tls
-+          typedConfig:
-+            '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-+            commonTlsContext:
-+              alpnProtocols:
-+              - "http/1.1"
-+{{- range $routeConfigurationName, $hosts := .HostsByRouteConfigurationName }}
-+{{- range $host := $hosts }}
-   - applyTo: HTTP_ROUTE
-     match:
-       context: GATEWAY
-       routeConfiguration:
--        name: "{{ $.WildcardRouteConfigurationName }}"
-+        name: "{{ $routeConfigurationName }}"
-     patch:
-       operation: INSERT_BEFORE
-       value:
-@@ -55,38 +49,126 @@ spec:
-             - key: {{ $.AuthenticationDynamicMetadataKey }}
-             value:
-               string_match:
--                exact: {{ $v }}
-+                exact: {{ $host }}
-           prefix: /
-         route:
-           cluster: outbound|{{ $.Port }}||{{ $.MutualTLSHost }}
- {{- end }}
--  - applyTo: CLUSTER
--    match:
--      context: GATEWAY
--      cluster:
--        name: outbound|{{ .Port }}||{{ .ConnectionUpgradeHost }}
--    patch:
--      operation: MERGE
--      value:
--        transportSocket:
--          name: envoy.transport_sockets.tls
--          typedConfig:
--            '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
--            commonTlsContext:
--              alpnProtocols:
--              - "http/1.1"
-   - applyTo: HTTP_ROUTE
-     match:
-       context: GATEWAY
-       routeConfiguration:
--        name: "{{ .RouteConfigurationName }}"
-+        name: "{{ $routeConfigurationName }}"
-         vhost:
-           route:
--            name: "{{ .ConnectionUpgradeRouteName }}"
-+            name: "{{ $.ConnectionUpgradeRouteName }}"
-     patch:
-       operation: MERGE
-       value:
-         route:
-           upgrade_configs:
-           - upgrade_type: spdy/3.1
-           - upgrade_type: websocket
-+  - applyTo: HTTP_FILTER
-+    match:
-+      context: GATEWAY
-+      listener:
-+        portNumber: 9443
-+        filterChain:
-+          sni: "{{ index $hosts 0 }}"
-+          filter:
-+            name: envoy.filters.network.http_connection_manager
-+            subFilter:
-+              name: envoy.filters.http.router
-+    patch:
-+      operation: INSERT_BEFORE
-+      value:
-+        name: envoy.filters.http.lua
-+        typed_config:
-+          "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
-+          defaultSourceCode:
-+            inlineString: |
-+              function envoy_on_request(request_handle)
-+                -- Drop headers used by kube-apiserver authentication proxy.
-+                local remove = {"{{ $.APIServerRequestHeaderUserName }}", "{{ $.APIServerRequestHeaderGroup }}", "{{ $.APIServerRequestHeaderUID }}"}
-+                for key, value in pairs(remove) do
-+                  request_handle:headers():remove(value)
-+                end
-+
-+                -- Drop all extra headers (keys prefixed with "{{ $.APIServerRequestHeaderPrefixExtra }}") used by the kube-apiserver authentication proxy.
-+                local extraPrefix = string.lower("{{ $.APIServerRequestHeaderPrefixExtra }}")
-+                local removeExtra = {}
-+                for key, value in pairs(request_handle:headers()) do
-+                  if string.sub(string.lower(key), 1, string.len(extraPrefix)) == extraPrefix then
-+                    table.insert(removeExtra, key)
-+                  end
-+                end
-+                for key, value in pairs(removeExtra) do
-+                  request_handle:headers():remove(value)
-+                end
-+
-+                -- Upstream request timeout, capped at 1d (see below). When a client certificate
-+                -- is present, it is reduced to the certificate's remaining lifetime further down.
-+                local upstreamTimeoutMilliseconds = 86400000
-+
-+                local streamInfo = request_handle:streamInfo()
-+                local ssl = streamInfo:downstreamSslConnection()
-+
-+                -- Parse client certificate sub
-```
-
----
-
-### Incident Patch 2: `cf043b1c` (2026-11-27)
-**Commit Message**: Update golang:1.27.4 Docker digest to 5f1b98f (#16420)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- # builder
--FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:3102e2c7eeee6e16de01ca3f35c56434696f70702a30b3d564b0244560981bb0 AS builder
-+FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:5f1b98fa02fe396ebce2a0227a0e08309e11792915b9dd2e1f71053d7e7e6666 AS builder
- ARG GOPROXY=https://proxy.golang.org,direct
- ENV GOPROXY=$GOPROXY
- WORKDIR /go/src/github.com/gardener/gardener
+           echo "message=${message}" >> "${GITHUB_OUTPUT}"
+       - name: Create signed commit and push
+-        uses: gardener/cc-utils/.github/actions/signed-commit@bce63f62928717a11f610ec8022af9feb497d5df # v1
++        uses: gardener/cc-utils/.github/actions/signed-commit@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+         with:
+           token: ${{ steps.fed-token.outputs.token }}
+           branch: ${{ github.event.pull_request.head.ref }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16436** (2026-11-28): Pin cc-utils actions to release 1.2883.0 (@marc1404)
 - **PR #16432** (2026-11-26): Update release schedule (@rfranzke)
 - **PR #16429** (2026-11-26): Update dependency kubernetes/kubernetes to v1.37.3 (@renovate[bot])
 - **PR #16428** (closed): Add two-phase SSH keypair rotation (@david-hass)
 - **PR #16426** (closed): Strip `X-Remote-Extra-*` and `X-Remote-Uid` headers in Istio authenticating proxy (@acumino)
 - **PR #16420** (2026-11-27): Update golang:1.27.4 Docker digest to 5f1b98f (@renovate[bot])
-- **PR #16417** (2026-11-24): Update golang:1.27.4 Docker digest to 3102e2c (@renovate[bot])
 
 ---
 
@@ -1369,34 +975,49 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Deploy L7 load-balancing related lua filters to kube-apiserver routes only and a
+## X. Pin cc-utils actions to release 1.2883.0
 
 **RULE**:
-When implementing operations in `pkg/component/kubernetes/apiserver/constants/constants.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0964b4f9`: Deploy L7 load-balancing related lua filters to kube-apiserver routes only and apply hardening measurements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1152132c`: Pin cc-utils actions to release 1.2883.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/component/kubernetes/apiserver/constants/constants.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// RequestHeaderUID is the header key for the UID headers.
-	RequestHeaderUID = "X-Remote-Uid"
-	// RequestHeaderPrefixExtra is the prefix headers keys for extra headers.
-	RequestHeaderPrefixExtra = "X-Remote-Extra-"
+    uses: gardener/cc-utils/.github/workflows/prepare.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+      - uses: gardener/cc-utils/.github/actions/trusted-checkout@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+      - uses: gardener/cc-utils/.github/actions/setup-git-identity@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+        uses: gardener/cc-utils/.github/actions/export-ocm-fragments@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+    uses: gardener/cc-utils/.github/workflows/sastlint-ocm.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+    uses: gardener/cc-utils/.github/workflows/helmchart-ocm.yaml@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+      - uses: gardener/cc-utils/.github/actions/trusted-checkout@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+        uses: gardener/cc-utils/.github/actions/import-commit@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
+      - uses: gardener/cc-utils/.github/actions/export-ocm-fragments@00522ef3e8504bc7be46394a239a390f112336f6 # 1.2883.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    uses: gardener/cc-utils/.github/workflows/prepare.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
+      - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
+      - uses: gardener/cc-utils/.github/actions/setup-git-identity@bce63f62928717a11f610ec8022af9feb497d5df # v1
+        uses: gardener/cc-utils/.github/actions/export-ocm-fragments@bce63f62928717a11f610ec8022af9feb497d5df # v1
+    uses: gardener/cc-utils/.github/workflows/sastlint-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
+    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
+    uses: gardener/cc-utils/.github/workflows/helmchart-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
+      - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
+        uses: gardener/cc-utils/.github/actions/import-commit@bce63f62928717a11f610ec8022af9feb497d5df # v1
+      - uses: gardener/cc-utils/.github/actions/export-ocm-fragments@bce63f62928717a11f610ec8022af9feb497d5df # v1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0964b4f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1152132c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T17:09:57.567Z",
-  "total_cycles_completed": 13357,
-  "total_learnings_persisted": 13357,
-  "total_rules_promoted": 12050,
+  "last_updated": "2026-11-28T17:25:31.085Z",
+  "total_cycles_completed": 13360,
+  "total_learnings_persisted": 13360,
+  "total_rules_promoted": 12053,
   "history": [
-    {
-      "timestamp": "2026-11-27T20:19:54.514Z",
-      "repository": "Kong/kubernetes-ingress-controller",
-      "learningId": "learn-github-kong-kubernetes-ingress-controller",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T20:20:02.965Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T20:38:15.410Z",
-      "repository": "jellyfin/Swiftfin",
-      "learningId": "learn-github-jellyfin-swiftfin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T20:47:01.317Z",
       "repository": "pingcap/tidb",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T17:09:57.567Z",
       "repository": "callstack/react-native-builder-bob",
       "learningId": "learn-github-callstack-react-native-builder-bob",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T17:25:22.178Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T17:25:28.808Z",
+      "repository": "software-mansion/react-native-screens",
+      "learningId": "learn-github-software-mansion-react-native-screens",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T17:25:31.085Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

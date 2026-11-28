@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-1OAY",
-    "timestamp": "2026-11-26T20:22:53.002Z",
-    "repository": "vi/websocat",
-    "learningId": "learn-github-vi-websocat",
-    "contentHash": "8e4472c6dffc37316d98d8a121d2f8288c5afa8314a9b02477710c6a10108407",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-1Y72",
-    "timestamp": "2026-11-26T20:23:05.822Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "7cc86e05095d74a0ae3772ef03ddc6d47b0d44de117fe093a5be107560e6993d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-CY8I",
-    "timestamp": "2026-11-26T20:31:39.090Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-bigscience-bloom",
-    "contentHash": "6842696e9d15108d0a05b3c886742009d61a52c29391704af97ecc58b5eee000",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-D9JH",
     "timestamp": "2026-11-26T20:31:53.741Z",
     "repository": "Ontos-AI/knowhere",
@@ -7490,6 +7445,51 @@
     "repository": "callstack/react-native-builder-bob",
     "learningId": "learn-github-callstack-react-native-builder-bob",
     "contentHash": "39ea963371c309a95022c4a34c491a67af3b88a45ec85b93fad647d42e59f68b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-L3EE",
+    "timestamp": "2026-11-28T17:25:22.166Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "e95691299000e2508ffdef418e07f44dd92d82dc458c3c377f0b2307940471a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-L8IK",
+    "timestamp": "2026-11-28T17:25:28.796Z",
+    "repository": "software-mansion/react-native-screens",
+    "learningId": "learn-github-software-mansion-react-native-screens",
+    "contentHash": "d6b661a163d6151b6045e0382e71c94db500f0f694cee7f8a592689cc7347e5a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-LA9T",
+    "timestamp": "2026-11-28T17:25:31.073Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "56943b34ee4b09d20cd9338eb915da0ce861b11626eeaabb7aa221c55ca486ea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

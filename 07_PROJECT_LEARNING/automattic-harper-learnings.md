@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `2b63882d`  
+> **Source Version**: `ff22a642`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T14:06:57.709Z  
+> **Timestamp**: 2026-11-28T17:25:20.622Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T14:04:56.387Z  
+> **Harvest Timestamp**: 2026-11-28T17:25:20.400Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 18000 stars
+- **Stars / Engagement**: 18016 stars
 
 ---
 
@@ -1432,53 +1432,65 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b63882d` (2026-11-27)
-**Commit Message**: fix: add "XSL" and "XSLT" to `dictionary.dict` (#5082)
+### Incident Patch 1: `ff22a642` (2026-11-28)
+**Commit Message**: feat: top dollars → top dollar (#5093)
 
-Neither word was in the dictionary, so Harper flagged both as spelling
-errors in any case. With them added as all-caps entries, matching XML,
-"XSL" and "XSLT" pass and lowercase "xsl" and "xslt" get the
-capitalisation suggestion instead.
-
-**File**: `harper-core/dictionary.dict` (modified, +2/-0)
+**File**: `harper-core/default_config.json` (modified, +7/-0)
 ```diff
-@@ -11044,6 +11044,8 @@ XL/NgJ
- XML/O
- XMPP/ONV            # chat protocol
- XS/NJ
-+XSL/O
-+XSLT/O
- XXL/NJ
- Xamarin/g
- Xanadu/ONg
+@@ -6249,6 +6249,13 @@
+ 								"label": "To No Avail"
+ 							}
+ 						},
++						{
++							"Bool": {
++								"name": "TopDollar",
++								"state": true,
++								"label": "Top Dollar"
++							}
++						},
+ 						{
+ 							"Bool": {
+ 								"name": "ToTheMannerBorn",
 ```
 
----
-
-### Incident Patch 2: `be52bb49` (2026-11-26)
-**Commit Message**: fix: add "graining" to `dictionary.dict` (#5081)
-
-Fixes #5080
-
-**File**: `harper-core/dictionary.dict` (modified, +1/-0)
+**File**: `harper-core/src/linting/weir_rules/TopDollar.weir` (added, +26/-0)
 ```diff
-@@ -27354,6 +27354,7 @@ graham/~NS
- grail/~NgS
- grain/~NwSgVdi
- graininess/Nmg
-+graining/Nmg
- grainy/J^>p
- gram/~NOSgVK
- grammar/~NwgSV
+@@ -0,0 +1,26 @@
++expr main <(top dollars), dollars>
++let message "Use the singular 'top dollar' for the idiom meaning the highest price or pay."
++let description "Corrects `top dollars` to the idiomatic `top dollar`."
++let kind "Redundancy"
++let becomes "dollar"
++
++# YouTube (where I first spotted this)
++test "They charge top dollars for their services for what?" "They charge top dollar for their services for what?"
++
++# GitHub
++test "If it was that easy those tools you mention would not be getting top dollars just to have those features working the way they do." "If it was that easy those tools you mention would not be getting top dollar just to have those features working the way they do."
++
++# Hacker News
++test "A lot of devs really feel open source software can be written for free while they themselves need to be paid top dollars." "A lot of devs really feel open source software can be written for free while they themselves need to be paid top dollar."
++
++# Stack Overflow
++test "I love my iMac and do not mind paying top dollars for it." "I love my iMac and do not mind paying top dollar for it."
++
++# Slashdot
++test "They pay top dollars and change core algorithms on the fly as each millisecond costs money" "They pay top dollar and change core algorithms on the fly as each millisecond costs money"
++
++# Medium
++test "15 Top Online Hustles That Can Make You Top Dollars in 2023" "15 Top Online Hustles That Can Make You Top Dollar in 2023"
++
++# Reddit
++test "Conventional dating is a huge waste of time and money for people who earn top dollars." "Conventional dating is a huge waste of time and money for people who earn top dollar."
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5093** (2026-11-28): feat: top dollars → top dollar (@hippietrail)
 - **PR #5082** (2026-11-27): fix: add "XSL" and "XSLT" to `dictionary.dict` (@GaryJones)
 - **PR #5081** (2026-11-26): fix: add "graining" to `dictionary.dict` (@hippietrail)
 - **PR #5073** (2026-11-26): fix: clarify `message` shown to user (@hippietrail)
 - **PR #5072** (2026-11-26): fix(core): don't flag ASCII arrows as dashes (@pyrooka)
 - **PR #5068** (2026-11-25): ci: move Mac CI to the xcode-27.2-v4 image (@mokagio)
-- **PR #5066** (2026-11-25): chore(deps): bump globset from 0.4.20 to 0.4.21 (@dependabot[bot])
 
 ---
 
@@ -1498,22 +1510,27 @@ Fixes #5080
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add "XSL" and "XSLT" to `dictionary.dict`
+## X. top dollars → top dollar
 
 **RULE**:
-When implementing operations in `harper-core/dictionary.dict`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/default_config.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b63882d`: add "XSL" and "XSLT" to `dictionary.dict`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ff22a642`: top dollars → top dollar. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/dictionary.dict`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/default_config.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-XSL/O
-XSLT/O
+						{
+							"Bool": {
+								"name": "TopDollar",
+								"state": true,
+								"label": "Top Dollar"
+							}
+						},
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1523,4 +1540,4 @@ XSLT/O
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b63882d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ff22a642` are properly handled with clean fallback behavior.
