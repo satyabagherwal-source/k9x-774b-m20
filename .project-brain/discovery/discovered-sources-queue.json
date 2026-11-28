@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T15:36:47.916Z",
+  "updated_at": "2026-11-28T16:35:29.492Z",
   "stats": {
-    "total_discovered": 11020,
-    "approved_pending_harvest": 10461,
+    "total_discovered": 11021,
+    "approved_pending_harvest": 10462,
     "harvested_count": 0,
     "rejected_count": 559,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10477,
+      "COMMUNITY_AND_EXPERT": 10478,
       "OFFICIAL_DOCUMENTATION": 300,
       "STANDARDS_AND_SPECIFICATIONS": 166,
       "ENGINEERING_BLOGS": 7,
@@ -238554,6 +238554,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
         "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-C7709E56031D": {
+      "id": "SRC-C7709E56031D",
+      "url": "https://github.com/Brandon168/sweetpad/compare/sweetpad-dev:sweetpad:main...Brandon168:sweetpad:fix/appintents-input-options",
+      "title": "https://github.com/Brandon168/sweetpad/compare/sweetpad-dev:sweetpad:main...Brandon168:sweetpad:fix/appintents-input-options",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T16:35:29.491Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
+        "fileName": "sweetpad-dev-sweetpad-learnings.md"
       }
     }
   }

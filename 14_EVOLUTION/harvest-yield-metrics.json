@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T15:36:17.867Z",
-  "total_cycles_completed": 13351,
-  "total_learnings_persisted": 13351,
-  "total_rules_promoted": 12046,
+  "last_updated": "2026-11-28T16:35:24.137Z",
+  "total_cycles_completed": 13354,
+  "total_learnings_persisted": 13354,
+  "total_rules_promoted": 12048,
   "history": [
-    {
-      "timestamp": "2026-11-27T19:52:27.437Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T20:01:14.509Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T20:09:49.578Z",
-      "repository": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
-      "learningId": "learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T20:09:52.023Z",
       "repository": "Nasiko-Labs/nasiko",
@@ -1403,6 +1382,27 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T16:35:14.795Z",
+      "repository": "lapce/lapce",
+      "learningId": "learn-github-lapce-lapce",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T16:35:20.638Z",
+      "repository": "sweetpad-dev/sweetpad",
+      "learningId": "learn-github-sweetpad-dev-sweetpad",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T16:35:24.137Z",
+      "repository": "SeekStorm/SeekStorm",
+      "learningId": "learn-github-seekstorm-seekstorm",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

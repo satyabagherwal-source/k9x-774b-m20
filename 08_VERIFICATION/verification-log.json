@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-DYJL",
-    "timestamp": "2026-11-26T20:04:26.529Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "934985a2d1ffc5d107588d3a5abef5f33b992d307e3a5ee4e244edce118264be",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-E2Q6",
-    "timestamp": "2026-11-26T20:04:31.950Z",
-    "repository": "infiniflow/infinity",
-    "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "3902e251da149fb84d6021c602e79eb2c4a8e66d71e1ecce259321cdfe642123",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-E4RF",
-    "timestamp": "2026-11-26T20:04:34.587Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "3b839d981083341d954c2990c3a73e7aa8aca39ddfd6de00eececb9ea1c0b411",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-Q4MA",
     "timestamp": "2026-11-26T20:13:54.274Z",
     "repository": "zai-org/GLM-5.2",
@@ -7492,6 +7447,51 @@
     "contentHash": "0f3bd3152c70b5be47fd9fd769ae51b6ea6be5c45624bda11c484ab127a525cd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-SMVZ",
+    "timestamp": "2026-11-28T16:35:14.783Z",
+    "repository": "lapce/lapce",
+    "learningId": "learn-github-lapce-lapce",
+    "contentHash": "8ae8389478fde431518433113ccfdf0373c14b584fa4c54226572d3887d06c30",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-SREB",
+    "timestamp": "2026-11-28T16:35:20.627Z",
+    "repository": "sweetpad-dev/sweetpad",
+    "learningId": "learn-github-sweetpad-dev-sweetpad",
+    "contentHash": "b73e4e1c6129b55855128e342348ceeb774366dd25dea3b67c87454fbcc9c2b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-SU20",
+    "timestamp": "2026-11-28T16:35:24.072Z",
+    "repository": "SeekStorm/SeekStorm",
+    "learningId": "learn-github-seekstorm-seekstorm",
+    "contentHash": "74a16c8d8c334986fca61545ff07cbd93fc0ad4c53aaf0363395e4dbe2f0dcc8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

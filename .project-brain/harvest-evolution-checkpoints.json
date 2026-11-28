@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T16:12:54.374Z",
+  "last_updated": "2026-11-28T16:35:32.375Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T15:54:30.394Z",
@@ -1468,7 +1468,7 @@
       "staged_for_review": 0
     },
     "seekstorm-seekstorm-learnings.md": {
-      "processed_at": "2026-11-25T02:56:19.553Z",
+      "processed_at": "2026-11-28T16:35:30.743Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1863,7 +1863,7 @@
       "staged_for_review": 0
     },
     "sweetpad-dev-sweetpad-learnings.md": {
-      "processed_at": "2026-11-26T10:50:50.150Z",
+      "processed_at": "2026-11-28T16:35:29.394Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3523,7 +3523,7 @@
       "staged_for_review": 1
     },
     "lapce-lapce-learnings.md": {
-      "processed_at": "2026-11-19T21:24:14.629Z",
+      "processed_at": "2026-11-28T16:35:28.087Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4083,7 +4083,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5388,
+  "total_dossiers_evaluated": 5391,
   "total_canonical_promoted": 607,
-  "total_staged_for_review": 4106
+  "total_staged_for_review": 4109
 }

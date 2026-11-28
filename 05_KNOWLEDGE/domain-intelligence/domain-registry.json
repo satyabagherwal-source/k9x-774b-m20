@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T16:12:53.835Z",
-  "total_records": 2914,
+  "last_updated": "2026-11-28T16:35:31.842Z",
+  "total_records": 2916,
   "domains": {
     "A": {
       "total": 29,
@@ -79,7 +79,7 @@
       ]
     },
     "D": {
-      "total": 1063,
+      "total": 1065,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1143,7 +1143,9 @@
         "DOM-D-095C01F1",
         "DOM-D-3BCEAD45",
         "DOM-D-EA0B2006",
-        "DOM-D-3E604043"
+        "DOM-D-3E604043",
+        "domain_intelligence-research-knowledge-intelligence-sweetpad-dev-sweetpad-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants"
       ]
     },
     "E": {
@@ -22607,8 +22609,8 @@
       "title": "Search & Distribution Intelligence: SeekStorm/SeekStorm Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-seekstorm-seekstorm-search-distribution-intelligence-seekstorm-seekstorm-core-in.md",
       "repository": "SeekStorm/SeekStorm",
-      "content_hash": "1556acd86ac4255bbe92084204cf4aaefb131bba1ccbd11695c0455e02ff6b58",
-      "created_at": "2026-11-25T02:56:14.479Z"
+      "content_hash": "0d28e2cec03e64a1e8846410f60bbcd0170242a6ee8e87677662a49f0b40ce1a",
+      "created_at": "2026-11-28T16:35:24.774Z"
     },
     "DOM-H-4F755436": {
       "record_id": "DOM-H-4F755436",
@@ -22676,8 +22678,8 @@
       "title": "Search & Distribution Intelligence: seekstorm-seekstorm-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-seekstorm-seekstorm-learnings-search-distribution-intelligence-seekstorm-seeksto.md",
       "repository": "seekstorm-seekstorm-learnings",
-      "content_hash": "aaa22c32d9787a515ba165c44f5b6cb9ec3858675db916e039031623de511acf",
-      "created_at": "2026-11-25T02:56:20.181Z"
+      "content_hash": "34b28189ce9eeeabdbd55bf81accc641a55148ac6a151198787714f44dcdd9da",
+      "created_at": "2026-11-28T16:35:31.842Z"
     },
     "domain_intelligence-architecture-intelligence-llphant-llphant-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-llphant-llphant-core-invariants",
@@ -34888,8 +34890,8 @@
       "title": "Technical Construction Intelligence: lapce/lapce Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lapce-lapce-technical-construction-intelligence-lapce-lapce-core-invariants.md",
       "repository": "lapce/lapce",
-      "content_hash": "ead54fdf5a88ac39ed91bed421b299363c4e870d070baf397ce714c80e929b69",
-      "created_at": "2026-11-19T21:23:58.870Z"
+      "content_hash": "d5d5c9776e689e49c4dab8501d5986bcba81e9e18bf2592ea1ea1c1b317386e6",
+      "created_at": "2026-11-28T16:35:15.440Z"
     },
     "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-core-invariants",
@@ -34906,8 +34908,8 @@
       "title": "Technical Construction Intelligence: lapce-lapce-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lapce-lapce-learnings-technical-construction-intelligence-lapce-lapce-learnings-.md",
       "repository": "lapce-lapce-learnings",
-      "content_hash": "4ec33b2f43f8bb7b7d20e8d14fd0b0d2fd7c39972bd6c4aa7f3a2c2011531de1",
-      "created_at": "2026-11-19T21:24:15.227Z"
+      "content_hash": "82ed1de4078ca8a93efeeacb307d5879d7016b39c873750f5e457b3257a18dd3",
+      "created_at": "2026-11-28T16:35:28.809Z"
     },
     "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
@@ -49506,6 +49508,24 @@
       "repository": "matrixorigin-matrixone-learnings",
       "content_hash": "398330ecab3d905f5e338f749952b931d58621ea7b27c6dfb0d49c6ed41cc5e9",
       "created_at": "2026-11-28T15:36:47.257Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sweetpad-dev-sweetpad-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sweetpad-dev-sweetpad-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sweetpad-dev/sweetpad Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-sweetpad-dev-sweetpad-research-knowledge-intelligence-sweetpad-dev-sweetpad-core.md",
+      "repository": "sweetpad-dev/sweetpad",
+      "content_hash": "aca2caf3224aaba02de9515bb2cd63fdd451785f52fba4e551fd5fcf26fa65ed",
+      "created_at": "2026-11-28T16:35:21.266Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sweetpad-dev-sweetpad-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-sweetpad-dev-sweetpad-learnings-research-knowledge-intelligence-sweetpad-dev-swe.md",
+      "repository": "sweetpad-dev-sweetpad-learnings",
+      "content_hash": "ded98662cdc592b1b123fe0c7a6244f43c20f36bbc2d50919f630eb47d35822a",
+      "created_at": "2026-11-28T16:35:30.191Z"
     }
   }
 }

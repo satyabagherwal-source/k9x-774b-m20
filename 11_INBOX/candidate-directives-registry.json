@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T16:12:53.554Z",
+  "last_updated": "2026-11-28T16:35:31.568Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2589,15 +2589,15 @@
       "learning_id": "learn-github-bitnami-sealed-secrets"
     },
     {
-      "id": "CD-DHJ4",
+      "id": "CD-SZU2",
       "directive_title": "Update CHANGELOG.md",
-      "source_repo": "rqlite-rqlite-learnings",
+      "source_repo": "seekstorm-seekstorm-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-DHJ4-update-changelog-md.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-SZU2-update-changelog-md.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-24",
-      "domain_letter": "G"
+      "date_staged": "2026-11-28",
+      "domain_letter": "J"
     },
     {
       "id": "CD-7DBX",
@@ -76770,6 +76770,73 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-030DEA-bump-version-number.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-SXHR",
+      "directive_title": "fallback to Params::new when unwrapping incoming invalid params",
+      "source_repo": "lapce-lapce-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SXHR-fallback-to-params-new-when-unwrapping-incoming-invalid-params.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-SYJR",
+      "directive_title": "Compile CoMaps resources and preserve asset variants on Linux",
+      "source_repo": "sweetpad-dev-sweetpad-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SYJR-compile-comaps-resources-and-preserve-asset-variants-on-linux.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-SU2R",
+      "directive_title": "Update CHANGELOG.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "SeekStorm/SeekStorm",
+      "source_commit": "4bb74f4c",
+      "date_staged": "2026-11-28",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-seekstorm-seekstorm",
+      "candidateDomain": "UNASSIGNED",
+      "candidateDomainName": null,
+      "secondaryDomains": [],
+      "classificationConfidence": 0,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-REV-99109C",
+      "directive_title": "fallback to Params::new when unwrapping incoming invalid params",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "lapce-lapce",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-99109C-fallback-to-params-new-when-unwrapping-i.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-37C5F3",
+      "directive_title": "Compile CoMaps resources and preserve asset variants on Linux",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sweetpad-dev-sweetpad",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-37C5F3-compile-comaps-resources-and-preserve-as.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-E490AE",
+      "directive_title": "Update CHANGELOG.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "seekstorm-seekstorm",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E490AE-update-changelog-md.md",
       "staged_date": "2026-11-28"
     }
   ]

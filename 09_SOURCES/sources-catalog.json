@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "71e34a45",
+    "sourceVersion": "4bb74f4c",
     "license": "Apache-2.0",
-    "contentHash": "0911e5de1ff9523495058647c3321cb041cd9ab909d3f0bcdfb54011948a2ca3",
-    "lastHarvestedAt": "2026-11-26T23:11:48.279Z",
+    "contentHash": "74a16c8d8c334986fca61545ff07cbd93fc0ad4c53aaf0363395e4dbe2f0dcc8",
+    "lastHarvestedAt": "2026-11-28T16:35:24.077Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -7913,10 +7913,10 @@
     "repository": "lapce/lapce",
     "platform": "github",
     "sourceUrl": "https://github.com/lapce/lapce",
-    "sourceVersion": "9e8317c8",
+    "sourceVersion": "882119fe",
     "license": "Apache-2.0",
-    "contentHash": "57f1919f4bf96d16635785f0f970accb62c4caf96c2cc4deb8f1f2e34ef68589",
-    "lastHarvestedAt": "2026-11-19T21:23:58.467Z",
+    "contentHash": "8ae8389478fde431518433113ccfdf0373c14b584fa4c54226572d3887d06c30",
+    "lastHarvestedAt": "2026-11-28T16:35:14.788Z",
     "learningId": "learn-github-lapce-lapce"
   },
   "sindresorhus-gifski": {
@@ -10183,10 +10183,10 @@
     "repository": "sweetpad-dev/sweetpad",
     "platform": "github",
     "sourceUrl": "https://github.com/sweetpad-dev/sweetpad",
-    "sourceVersion": "685c517e",
+    "sourceVersion": "6d61e2f6",
     "license": "MIT",
-    "contentHash": "312bc5e0058300bbcf66be44e693b3256cfd5447353eb8c74360847a0ae0ce84",
-    "lastHarvestedAt": "2026-11-26T10:50:37.503Z",
+    "contentHash": "b73e4e1c6129b55855128e342348ceeb774366dd25dea3b67c87454fbcc9c2b7",
+    "lastHarvestedAt": "2026-11-28T16:35:20.631Z",
     "learningId": "learn-github-sweetpad-dev-sweetpad"
   },
   "wcandillon-react-native-skia": {

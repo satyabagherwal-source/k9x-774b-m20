@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T10:50:50.313Z",
+  "timestamp": "2026-11-28T16:35:29.741Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-sweetpad-dev-sweetpad-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sweetpad-dev-sweetpad-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T10:50:50.313Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T16:35:29.741Z`  
 > **Learning ID**: `LEARN-EVO-sweetpad-dev-sweetpad-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source**: github ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
-> **Source Version**: `685c517e`  
+> **Source Version**: `6d61e2f6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T10:50:36.368Z  
+> **Timestamp**: 2026-11-28T16:35:19.055Z  
 > **Learning ID**: `learn-github-sweetpad-dev-sweetpad`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T10:50:36.364Z  
+> **Harvest Timestamp**: 2026-11-28T16:35:19.048Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: xcodebuild for humans and agents: build, run, debug, and test iOS, macOS, tvOS, watchOS, and visionOS apps from your terminal.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 1938 stars
+- **Stars / Engagement**: 1941 stars
 
 ---
 
@@ -399,11 +399,11 @@ public typealias GenCoreDataFrameworkManagedObject = NSManagedObject
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #367** (2026-11-25): **Fix App Clip signing on Linux and verify it end to end**
-  *Symptoms*: Linux could produce a correctly signed IPA whose host was missing the entitlement that identifies its App Clip. It also accepted a device Clip that omitted its parent application identifier. Xcode rejected the same Clip.  The Linux signer now takes the host association from the selected provisioning profile during build and export. Archive and re-export also check that the Clip names exactly its containing app.  The delivery fixture includes a host, an embedded Clip, and a standalone UI test that exercises the prebuilt Linux and Xcode products. [Instructions for reproducing the checks](https://github.com/sweetpad-dev/sweetpad/blob/1c2e74210453b1c55d457bf3019361cd5fa3280e/sweetpad-lib/ci/fixture-delivery/README.md#app-clips)  ## Verification  - Built on Linux arm64 and with Xcode. Both hosts launched on an iPhone 17 Pro simulator. Each installed Clip displayed the fresh HTTPS URL supplied by XCTest, and its installed binaries matched the originals. - Compared both Release device archives and the Linux development IPA. The host and Clip entitlements matched Xcode. Apple's tools verified the signatures, and the checker matched the signing certificates to the profiles and the archive dSYMs to the executables. - Re-exported an older ad hoc archive and verified that it gained the host association. Both engines rejected a new archive missing the Clip's parent entitlement, and Linux rejected re-exporting an older archive with the same defect. - Workspace library tests passed (1,616 p
+- **Issue #370** (2026-11-28): **Match Xcode App Intents input options, output flags, and parameter summaries**
+  *Symptoms*: Fixes #369.  The Linux App Intents extractor rejected `@Parameter(inputOptions:)`, wrote incorrect `outputFlags`, and dropped plain `parameterSummary` declarations. This PR includes Brandon Elliott’s two original commits from #369 and extends their Xcode fixtures to cover string collections and summaries with omitted text.  - Encode explicitly supplied keyboard, capitalization, and Boolean options for `String`, `[String]`, and `Set<String>`. Omitted options produce no metadata entry. - Match Xcode’s output flags. `OpensIntent` sets `1`, `ShowsSnippetView` sets `2`, and `ProvidesDialog` sets `4`. `ReturnsValue` adds no bit. - Preserve repeated interpolations and the order of inline and trailing parameters. `Summary()` omits the text field, while `Summary("")` emits an empty format string. `When`, `Switch`, and custom localization tables now produce explicit errors.  ## Verification  The original #369 probe app built from the same Swift source on Linux and with Xcode 27.2 (`27B52`). The two bundles matched on `extract.actionsdata` for all 11 actions and 24 parameters, and on `version.json`. The comparison keeps each input-option key paired with its value when Xcode changes dictionary order.  The Rust workspace suite passed 2,348 tests with one ignored. All 16 App Intents tests passed on Linux, along with 35 Python CI tests and five SDK and registration checks. Formatting and workspace Clippy with `-D warnings` passed.  ## Interactive snippets and SDK coverage  The follow-up fix
 
-- **Issue #366** (2026-11-22): **Fix Linux watchOS linking, setup races, and CLI failure output**
-  *Symptoms*: ## Changes  - Fix watchOS Simulator links for dynamic SwiftPM frameworks by letting Swift Build select the linker flag for each compiler driver. Add a watchOS test project and check its framework and XCTest Mach-O binaries in the opt-in private-SDK Linux package job. - Create owner-only cache directories under umask 0002, including when the build-settings catalog writes first. Verify bundled hot-reload client bytes before reuse. - Write one-shot JSON errors to stdout so redirection captures both outcomes. Failed test runs return exit 3 and include the same error and available test report in JSON and the final NDJSON event. NDJSON retains its compact stderr diagnostic. - Serialize Swift installation and archive access across setup processes. Verify the compiler in staging before publishing the installation.  ## Verification  The macOS CLI and shared-library suites passed 1,802 tests with one ignored. Clippy and formatting passed. In the arm64 Linux VM, the packaged CLI built an iOS device app and linked the watchOS Simulator dynamic framework and XCTest bundle using an imported Apple SDK. Two concurrent setup processes shared one download, and a waiting process recovered when the downloader was interrupted. 
+- **Issue #369** (2026-11-28): **App Intents metadata: inputOptions rejected, outputFlags bits swapped, parameterSummary dropped**
+  *Symptoms*: PRs here are limited to collaborators, so filing this as an issue. A fix with tests is on a fork branch, two commits on current `main` (685c517e), ready to cherry-pick: https://github.com/Brandon168/sweetpad/compare/sweetpad-dev:sweetpad:main...Brandon168:sweetpad:fix/appintents-input-options  The App Intents registration extractor rejects or misencodes a few common declarations, compared with Xcode 27.2 (27B52) output:  1. **`inputOptions` is rejected.** Any `@Parameter` that passes `inputOptions:` (a documented `String` parameter option) stops    extraction with `unsupported App Intents parameter option 'inputOptions'`. Xcode writes one `typeSpecificMetadata` entry    per argument the source passes and omits arguments left at their defaults:    - `LNValueTypeMetadataKeyStringKeyboardType`: asciiCapable 0, numbersAndPunctuation 1, URL 2, numberPad 3, default 4    - `LNValueTypeMetadataKeyStringCapitalizationType`: none 0, words 1, sentences 2, allCharacters 3    - `LNValueTypeMetadataKeyString{Multiline,Autocorrect,SmartQuotes,SmartDashes}`: 0 or 1 2. **`outputFlags` bits.** ProvidesDialog and ShowsSnippetView were swapped and OpensIntent was ignored. Xcode writes    OpensIntent = 1, ShowsSnippetView = 2, ProvidesDialog = 4 (ReturnsValue sets no bit). The existing Files probe returns both    dialog and snippet, so its 6 hid the swap; `some IntentResult & ReturnsValue<String> & ProvidesDialog` came out as 2    instead of 4. 3. **`parameterSummary` is dropped.** Xcode writes a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -420,459 +420,1445 @@ public typealias GenCoreDataFrameworkManagedObject = NSManagedObject
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `685c517e` (2026-11-25)
-**Commit Message**: Fix App Clip signing on Linux and verify it end to end (#367)
+### Incident Patch 1: `89f52f8f` (2026-11-28)
+**Commit Message**: Compile CoMaps resources and preserve asset variants on Linux (#368)
 
-**File**: `sweetpad-cli/PLAN_LINUX.md` (modified, +8/-1)
+Build the pinned CoMaps app and widget resources on Linux. Preserve UIKit control state, adaptive layout, safe-area constraints, image direction, PDF masks and custom symbol artwork.
+
+Compare Linux catalogs and nibs against Xcode in UIKit and CoreUI. Require fixtures for all 146 observed Interface Builder combinations and 17 asset selectors.
+
+The initial CoMaps compatibility probes draw on Casper van Elteren’s comaps-ios-linux patch.
+
+**File**: `.github/workflows/sweetpad-lib.yaml` (modified, +52/-0)
 ```diff
-@@ -1110,7 +1110,14 @@ Clippy with `-D warnings`, formatting and diff checks also pass.
- - [x] App extensions and widgets: an `embeddedBinaryValidationUtility`
-       stand-in makes Xcode's checks (bundle ID prefix, matching versions);
-       a widget built here registers in the simulator
--- [ ] App Clips
-+- [x] App Clips. The [delivery fixture](../sweetpad-lib/ci/fixture-delivery/README.md#app-clips)
-+      builds a host with an embedded Clip on Linux and with Xcode. Both hosts
-+      launch on an iPhone simulator, and each installed Clip displays a fresh
-+      HTTPS invocation URL in XCTest. The Release device archives and Linux
-+      development IPA match on host/Clip entitlements and bundle metadata.
-+      Apple's tools verify both signatures, their provisioning profiles, and
-+      both archive dSYMs. Both engines reject a signed Clip missing its parent
-+      entitlement.
- - [x] Test targets: `test build` adds the selected test plan's targets, or
-       the scheme's testables, as `build-for-testing` does, and leaves the
-       testing frameworks out of the host app like Xcode 27. The bundle passes
+@@ -62,6 +62,58 @@ jobs:
+         run: cargo test --workspace --lib -- --test-threads=1
+       - name: Python regression checks
+         run: python3 -B -m unittest discover -s sweetpad-lib/ci -p 'test_*.py'
++      - name: Check out the CoMaps interface files and asset catalog
++        uses: actions/checkout@v7
++        with:
++          repository: comaps/comaps
++          ref: 27ea5a9b92b266abe6d1b690e02ad5c89bf95217
++          path: .build/comaps-source
++          persist-credentials: false
++          sparse-checkout-cone-mode: false
++          sparse-checkout: |
++            /iphone/Maps/**/*.xib
++            /iphone/Maps/**/*.storyboard
++            /iphone/Maps/**/Contents.json
++            /iphone/Maps/Images.xcassets/
++            /iphone/Maps/CoMapsWidgetExtension/Assets.xcassets/
++      - name: Require fixture coverage for every CoMaps resource combination
++        if: matrix.os == 'ubuntu-24.04'
++        run: python3 sweetpad-cli/fixtures/resource_gaps.py .build/comaps-source/iphone/Maps --require-covered
++      - name: Compile CoMaps and the resource regression fixtures on Linux
++        run: |
++          cargo build -p sweetpad-cli --bin sweetpad
++          python3 sweetpad-cli/fixtures/comaps/compile.py target/debug/sweetpad .build/comaps-source "$RUNNER_TEMP/comaps-resources"
++      - name: Export Linux-built resources for UIKit
++        if: matrix.os == 'ubuntu-24.04'
++        uses: actions/upload-artifact@v7
++        with:
++          name: comaps-resources
++          path: ${{ runner.temp }}/comaps-resources
++          if-no-files-found: error
++          retention-days: 1
++  comaps-runtime:
++    name: CoMaps and resource variants · iPhone simulator
++    needs: linux
++    runs-on: macos-latest
++    timeout-minutes: 25
++    steps:
++      - uses: actions/checkout@v7
++      - uses: actions/download-artifact@v8
++        with:
++          name: comaps-resources
++          path: ${{ runner.temp }}/comaps-resources
++      - name: Compare Linux resources with Xcode and load both in UIKit
++        run: |
++          xcodebuild -version
++          python3 sweetpad-cli/fixtures/comaps/simulator.py "$RUNNER_TEMP/comaps-resources" --reference-output "$RUNNER_TEMP/comaps-xcode"
++      - name: Save Xcode catalogs for a failed comparison
++        if: failure()
++        uses: actions/upload-artifact@v7
++        with:
++          name: comaps-xcode
++          path: ${{ runner.temp }}/comaps-xcode
++          if-no-files-found: ignore
++          retention-days: 1
+   check:
+     name: fmt · clippy · test
+     runs-on: macos-latest
 ```
 
-**File**: `sweetpad-cli/src/cli/codesign/provisioning.rs` (modified, +36/-7)
+**File**: `Cargo.lock` (modified, +54/-26)
 ```diff
-@@ -153,13 +153,7 @@ pub(super) fn answer(
-     }
-     merge(&mut entitlements, project);
-     if let Some(profile) = &profile {
--        for key in ["aps-environment", "com.apple.developer.aps-environment"] {
--            if plist::get(&entitlements, key).is_some()
--                && let Some(value) = plist::get(&profile.entitlements, key)
--            {
--                plist::set(&mut entitlements, key, value.clone());
--            }
--        }
-+        profile.apply_capabilities(&mut entitlements, mac);
-     }
-     if !mac || profile.is_some() {
-         plist::set(
-@@ -485,6 +479,21 @@ pub(super) fn check_entitlements(
-     Ok(())
- }
+@@ -2,6 +2,12 @@
+ # It is not intended for manual editing.
+ version = 4
  
-+/// A signed App Clip identifies exactly one full app, including its App ID prefix.
-+pub(crate) fn check_clip_parent(entitlements: &Plist, host_id: &str) -> Result<(), String> {
-+    let key = "com.apple.developer.parent-application-identifiers";
-+    if let Some(Plist::Array(parents)) = plist::get(entitlements, key)
-+        && let [Plist::String(parent)] = parents.as_slice()
-+        && parent == host_id
-+    {
-+        return Ok(());
-+    }
-+    Err(format!(
-+        "The {key} entitlement of an App Clip must match the application-identifier entitlement \
-+         ('{host_id}') of its containing parent app."
-+    ))
++[[package]]
++name = "ab_glyph_rasterizer"
++version = "0.1.10"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "366ffbaa4442f4684d91e2cd7c5ea7c4ed8add41959a31447066e279e432b618"
++
+ [[package]]
+ name = "adler2"
+ version = "2.0.1"
+@@ -692,9 +698,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+ 
+ [[package]]
+ name = "font-types"
+-version = "0.12.6"
++version = "0.12.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6c92d9081c7ab3bd83ef1eecdfad090f3d966e3ce74106779664114cfe1a6274"
++checksum = "835ae9d781464a79026cde387f9cbc650c9a4909d7cf7e658b127e3c35d2f35d"
+ dependencies = [
+  "bytemuck",
+ ]
+@@ -910,10 +916,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "hayro"
+-version = "0.8.0"
++version = "0.9.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4675ff5acd7ca41c0c34ccd2a3a154f5c86d8b5ec92bef0a114bfb194969e2af"
++checksum = "34d3977ae664ab6eea015be3024379c83c6a3580f67d51be6884f1992bf683ba"
+ dependencies = [
++ "ab_glyph_rasterizer",
+  "bytemuck",
+  "fearless_simd 1.1.0",
+  "hayro-interpret",
+@@ -926,68 +933,82 @@ dependencies = [
+ 
+ [[package]]
+ name = "hayro-ccitt"
+-version = "0.4.0"
++version = "0.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2866f0d976e76497480b853d5e258dab6e4b89ecfe991124e08f15dfa8fd03ad"
++checksum = "adbed896e99325bc312778bb9c9c289d795d51c12775c44dd5e4352f679c7e46"
+ 
+ [[package]]
+ name = "hayro-cmap"
+-version = "0.1.0"
++version = "0.1.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "24d285dc30731c8485de5fa732fbdf2b3affdf01e4da7c2135022ca6fa664bf6"
++checksum = "a14afde3344be69225fec4f6f44f6a219a3a492f9d8301eb25ef608fe4b7014c"
+ dependencies = [
+  "hayro-postscript",
+ ]
+ 
++[[package]]
++name = "hayro-font"
++version = "0.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "8ac7f0c78172573e9bd6eeb17f62c63f4d378b2a2d127c3ee9c2c7cc6fbdf78b"
++dependencies = [
++ "bitflags",
++ "hayro-cmap",
++ "hayro-syntax",
++ "kurbo",
++ "phf",
++ "rustc-hash",
++ "siphasher",
++ "skrifa 0.49.0",
++]
++
+ [[package]]
+ name = "hayro-interpret"
+-version = "0.8.0"
++version = "0.9.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ac9df074ff163a63864cec9b0bf640ccbff8abf4e44481df7369ce0ac172ffbe"
++checksum = "166477622df4b770a0fc5889a9e4b48c7ff8595d6ec019bf71b4297b97b55fb6"
+ dependencies = [
+  "bitflags",
+  "hayro-cmap",
++ "hayro-font",
+  "hayro-syntax",
+  "kurbo",
+  "moxcms",
+- "phf",
+  "rustc-hash",
+  "siphasher",
+- "skrifa 0.46.2",
+  "smallvec",
+- "yoke",
+ ]
+ 
+ [[package]]
+ name = "hayro-jbig2"
+-version = "0.3.1"
++version = "0.4.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "000e025850f4592ddcaee85640db70704151f2bafd43b6f431aa5b6a2c6a35a9"
++checksum = "eb5c7f3a4eb551c2bb7fa16e268f728d4bc2a5c9b090554b8dc0ee2503fb5840"
+ dependencies = [
+  "fearless_simd 1.1.0",
+  "hayro-ccitt",
+ ]
+ 
+ [[package]]
+ name = "hayro-jpeg2000"
+-version = "0.4.1"
++version = "0.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "122c5f834c37a2260b9c851bb8be685cf539b2a8b94b704a931ef7d2525d5835"
++checksum = "6e5e5f2b3de970707fc22fd956d8f44211602939d5e4588603afa919cb7b3740"
+ dependencies = [
+  "fearless_simd 1.1.0",
+ ]
+ 
+ [[package]]
+ name = "hayro-postscript"
+-version = "0.1.0"
++version = "0.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "885c5ef0654933139a9b9546fc2c69e18d37f38aa2520f079092b1be18f1fcaa"
++checksum = "bc2d80da85f31c3fdc0366431f44cfd645a9da1e242ed1f4a61f213d9765660f"
+ 
+ [[package]]
+ name = "hayro-syntax"
+-version = "0.8.0"
++version = "0.9.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6cdc818d8d265dcb42081d488f7599df4f73fb79e9d347ecedcd3c23809d2026"
++checksum = "a6ced8279487b029813f6cc05399099fa34df6fa23d8f7b0d41d972c49d5b30d"
+ dependencies = [
+  "flate2",
+  "hayro-ccitt",
+@@ -1724,13 +1745,16 @@ dependencies = [
+ 
+ [[package]]
+ name = "read-fonts"
+-version = "0.43.3"
++version = "0.46.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "005c8acf251756c478b0bf402885bfd88a1476020c4c7e6060edc1aa68da38ea"
++checksum = "bdaa4fffe9ff3ca2c353fa9729792805b9b3e324695ff5a081f860612e81b330"
+ dependencies = [
+  "bytemuck",
++ "foldhash",
+  "font-types",
+  "once_cell",
++ "smallvec",
++ "yoke",
+ ]
+ 
+ [[package]]
+@@ -2109,12 +2133,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "skrifa"
+-version = "0.46.2"
++version = "0.49.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d4febebda507fb889c545a37a135517769d1391941013561292897961d1887d6"
++checksum = "a7459fb60888ad9a5f367dd293fa2fb9df142cb451aa6bfd6cd66a7d6a9b739d"
+ dependencies = [
+  "bytemuck",
+- "read-fonts 0.43.3",
++ "once_cell",
++ "read-fonts 0.46.0",
++ "smallvec",
++ "yoke",
+ ]
+ 
+ [[pack
+```
+
+**File**: `Cargo.toml` (modified, +3/-1)
+```diff
+@@ -44,9 +44,11 @@ moxcms = "0.8.1"
+ # the usvg and roxmltree it re-exports, and svgtypes, which usvg parses
+ # with). Both are pure Rust; PDF and SVG are standard formats too large to
+ # hand-roll.
+-hayro = { version = "0.8", default-features = false }
++hayro = { version = "0.9", default-features = false }
+ resvg = { version = "0.48", default-features = false }
+ svgtypes = "0.16"
++# Keep the original precision when measuring SF Symbols' Bézier control points.
++kurbo = "0.13"
+ # The codesign stand-in signs with an identity exported from Keychain Access:
+ # RSA signatures, and the Triple DES and AES that a .p12 file's contents are
+ # encrypted with. The signature formats around them are Apple's, and
+```
+
+**File**: `sweetpad-cli/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -34,6 +34,7 @@ moxcms.workspace = true
+ hayro.workspace = true
+ resvg.workspace = true
+ svgtypes.workspace = true
++kurbo.workspace = true
+ rsa.workspace = true
+ des.workspace = true
+ aes.workspace = true
+```
+
+**File**: `sweetpad-cli/fixtures/actool/expected/back-deployed-sha256.json` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++{
++  "extensions": "a8bbcd75e97087d521c01f979c533dbffa7b411baa2b84ea9488689c98edf1a9",
++  "no-extensions": "038a6770b0d0d6768d225c8461a4e7ded243e24cc96f464bf1a8248538ba67d7",
++  "swiftui": "cafdee11310f05491f146db8b83f7489fe14e9c8d24339cd94e17daff31f89ad"
 +}
-+
- /// Whether a profile has to grant entitlement `key`.
- fn provisioned(key: &str) -> bool {
-     (key.starts_with("com.apple.developer.") && key != "com.apple.developer.team-identifier")
-@@ -636,6 +645,26 @@ impl Profile {
- }
- 
- impl Profile {
-+    /// Xcode takes the requested push environment from the profile. It also
-+    /// signs an iOS host with its registered App Clip association, even when
-+    /// the project has no entitlements file or this build embeds no Clip.
-+    pub(super) fn apply_capabilities(&self, entitlements: &mut Plist, mac: bool) {
-+        for key in ["aps-environment", "com.apple.developer.aps-environment"] {
-+            if plist::get(entitlements, key).is_some()
-+                && let Some(value) = plist::get(&self.entitlements, key)
-+            {
-+                plist::set(entitlements, key, value.clone());
-+            }
-+        }
-+        let clips = "com.apple.developer.associated-appclip-app-identifiers";
-+        if !mac
-+            && plist::get(entitlements, clips).is_none()
-+            && let Some(value) = plist::get(&self.entitlements, clips)
-+        {
-+            plist::set(entitlements, clips, value.clone());
-+        }
-+    }
-+
-     /// The application identifier it allows, with its team: exact, or a
-     /// prefix ending in `*`. A macOS profile names it with Apple's prefix.
-     pub fn application_identifier(&self) -> Option<&str> {
 ```
 
-**File**: `sweetpad-cli/src/cli/codesign/resign.rs` (modified, +9/-14)
+**File**: `sweetpad-cli/fixtures/actool/regen.py` (modified, +14/-3)
 ```diff
-@@ -127,12 +127,9 @@ pub(super) fn plan_with(
-     let app = &request.app;
-     let info = read_info(app)?;
-     let mac = app.join("Contents").is_dir();
-+    let default_platform = if mac { "macosx" } else { "iphoneos" };
-     let platform =
--        provisioning::platform(plist::string(&info, "DTPlatformName").unwrap_or(if mac {
--            "macosx"
--        } else {
--            "iphoneos"
--        }));
-+        provisioning::platform(plist::string(&info, "DTPlatformName").unwrap_or(default_platform));
-     let archived = archived(app)?;
-     let team = match (
-         &request.team,
-@@ -162,7 +159,7 @@ pub(super) fn plan_with(
-         if is_provisioned(&path) {
-             let id = bundle_id(&path)?;
-             let bundle = bundle.insert(id);
--            let archived = archived_entitlements(&path)?;
-+            let archived = signed_entitlements(&path)?;
-             // A Developer ID app embeds a profile only for what Apple grants
-             // through one, or when ExportOptions names one.
-             let provisioned = request.method != Method::DeveloperId
-@@ -184,6 +181,9 @@ pub(super) fn plan_with(
-             } else {
-                 unprovisioned(archived, &team)
-             };
-+            if path.parent() == Some(app.join("AppClips").as_path()) {
-+                provisioning::check_clip_parent(&signed, &format!("{team}.{}", bundle_id(app)?))?;
-+            }
-             let icloud = "com.apple.developer.icloud-container-environment";
-             if let Some(environment) = &request.icloud_environment
-                 && plist::get(&signed, icloud).is_some()
-@@ -387,7 +387,8 @@ fn archived(bundle: &Path) -> Result<Option<blobs::Existing>, String> {
-     Ok(layout.signature(&slice.data).and_then(blobs::read_existing))
- }
+@@ -7,6 +7,8 @@
+     python3 -I sweetpad-cli/fixtures/actool/regen.py
+ """
  
--fn archived_entitlements(bundle: &Path) -> Result<Plist, String> {
-+/// The entitlements in the code signature of a bundle's main executable.
-+pub(crate) fn signed_entitlements(bundle: &Path) -> Result<Plist, String> {
-     match archived(bundle)?.and_then(|e| e.entitlements) {
-         Some(xml) => plist::parse(&xml),
-         None => Ok(Plist::Dict(Vec::new())),
-@@ -523,13 +524,7 @@ pub(super) fn transform(
-         let allow = granted("get-task-allow").unwrap_or(Plist::Bool(false));
-         plist::set(&mut entitlements, "get-task-allow", allow);
-     }
--    for key in ["aps-environment", "com.apple.developer.aps-environment"] {
--        if plist::get(&entitlements, key).is_some()
--            && let Some(value) = granted(key)
--        {
--            plist::set(&mut entitlements, key, value);
--        }
--    }
-+    profile.apply_capabilities(&mut entitlements, mac);
-     if let Some(value) = granted("beta-reports-active") {
-         plist::set(&mut entitlements, "beta-reports-active", value);
-     }
-```
-
-**File**: `sweetpad-cli/src/cli/codesign/tests.rs` (modified, +47/-0)
-```diff
-@@ -1336,6 +1336,53 @@ fn an_export_refuses_a_profile_of_another_kind_or_a_missing_one() {
-     assert!(teams.contains("names no team"), "{teams}");
- }
- 
-+#[test]
-+fn a_signed_app_clip_must_name_exactly_its_host() {
-+    let host = "TESTTEAM01.dev.sweetpad.app";
-+    let parent = Plist::String(host.into());
-+    let other = Plist::String("TESTTEAM01.dev.sweetpad.other".into());
-+    let check = |parents| {
-+        let rights = Plist::Dict(vec![(
-+            "com.apple.developer.parent-application-identifiers".into(),
-+            Plist::Array(parents),
-+        )]);
-+        provisioning::check_clip_parent(&rights, host)
-+    };
-+    assert!(check(vec![parent.clone()]).is_ok());
-+    assert!(check(vec![other.clone()]).is_err());
-+    assert!(check(vec![parent, other]).is_err());
-+    assert!(provisioning::check_clip_parent(&Plist::Dict(vec![]), host).is_err());
-+}
-+
-+#[test]
-+fn export_restores_the_profiles_app_clip_association_to_an_ad_hoc_archive() {
-+    let mut profile =
-+        provisioning::find_named(kind_profiles(), "Sweetpad Kinds app-store").unwrap();
-+    let key = "com.apple.developer.associated-appclip-app-identifiers";
-+    let clip = Plist::Array(vec![Plist::String(
-+        "TESTTEAM01.dev.sweetpad.kinds.app.Clip".into(),
-+    )]);
-+    plist::set(&mut profile.entitlements, key, clip.clone());
-+    let export = |archived| {
-+        resign::transform(
-+            archived,
-+            &profile,
-+            "TESTTEAM01",
-+            "dev.sweetpad.kinds.app",
-+            false,
-+            resign::Method::AppStoreConnect,
-+        )
-+    };
-+    let signed = export(Plist::Dict(vec![])).unwrap();
-+    assert_eq!(plist::get(&signed, key), Some(&clip));
-+
-+    let other = Plist::Array(vec![Plist::String(
-+        "TESTTEAM01.dev.sweetpad.other.Clip".into(),
-+    )]);
-+    let mismatch = export(Plist::Dict(vec![(key.into(), other)])).unwrap_err();
-+    assert!(mismatch.contains(key), "{mismatch}");
-+}
-+
- #[test]
- #[allow(clippy::too_many_lines)] // one table of entitlements per method
- fn export_entitlements_move_to_the_profile_and_team() {
-```
-
-**File**: `sweetpad-cli/src/cli/darwin_tools/embedded_binary.rs` (modified, +18/-7)
-```diff
-@@ -2,17 +2,17 @@
- //! Info.plist> [-signing-cert <name>]`, which Swift Build runs on each app
- //! extension, App Clip or watch app it embeds in an app.
- //!
--//! It makes the checks of Xcode's that hold without signing: an error when
--//! the embedded bundle's identifier doesn't start with the app's, and a
--//! warning when its `CFBundleVersion`, or else its
--//! `CFBundleShortVersionString`, differs from the app's or is missing. The messages are
--//! Xcode's, on stderr, where Swift Build reads them.
-+//! Checks the embedded bundle's identifier and versions against its host.
-+//! A device App Clip must also name its host in its signed entitlements.
- 
- use std::path::{Path, PathBuf};
- use std::process::ExitCode;
- 
- use sweetpad_lib::derived_data::plist_strings;
- 
-+use crate::cli::codesign::{provisioning::check_clip_parent, resign::signed_entitlements};
-+use crate::cli::property_list as plist;
-+
- pub(super) fn main(args: &[String]) -> ExitCode {
-     match validate(args) {
-         Ok(warnings) => {
-@@ -36,7 +36,6 @@ fn validate(args: &[String]) -> Result<Vec<String>, String> {
-     while let Some(arg) = it.next() {
-         match arg.as_str() {
-             "-info-plist-path" => host_plist = Some(PathBuf::from(super::value(arg, &mut it)?)),
--            // Nothing is signed during the build here.
-             "-signing-cert" => {
-                 super::value(arg, &mut it)?;
-             }
-@@ -54,7 +53,19 @@ fn validate(args: &[String]) -> Result<Vec<String>, String> {
-         ));
-     }
-     let own = plist_strings(&info_plist(&embedded));
--    Ok(check(&own, &host)?.into_iter().collect())
-+    let warning = check(&own, &host)?;
-+    if embedded
-+        .parent()
-+        .is_some_and(|dir| dir.ends_with("AppClips"))
-+        && own
-+            .iter()
-+            .any(|(k, v)| k == "DTPlatformName" && v == "iphoneos")
-+        && let Some(app) = host_plist.parent()
-+        && let Some(host_id) = plist::string(&signed_entitlements(app)?, "application-identifier")
-+    {
-+        check_clip_parent(&signed_entitlements(&embedded)?, host_id)?;
-+    }
-+    Ok(warning.into_iter().collect())
- }
- 
- /// A bundle's Info.plist: at its root on iOS, in `Contents` on macOS.
-```
-
-**File**: `sweetpad-docs/docs/cli/linux/reference.md` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ sidebar_label: Support and configuration
- 
- | Operation | On Linux |
- | --- | --- |
--| Build iOS apps, extensions, and widgets | Supported. |
-+| Build iOS apps, extensions, widgets, and App Clips | Supported. App Clips embed in their host and can be exported in a development-signed IPA. |
- | Build macOS apps | Supported. Running them needs a Mac. |
- | Build tvOS, watchOS, and visionOS simulator targets | Builds and links. Running them and device signing are untested. |
- | Build Mac Catalyst targets | Untested. |
-```
-
-**File**: `sweetpad-lib/ci/check-app-clip.py` (added, +178/-0)
-```diff
-@@ -0,0 +1,178 @@
-+#!/usr/bin/env python3
-+"""Compare the delivery fixture's prebuilt App Clip products on a Mac with Xcode."""
-+import argparse
 +import hashlib
-+import json
-+import os
-+from pathlib import Path
-+import plistlib
-+import subprocess
-+import tempfile
-+
-+
-+FIXTURE = Path(__file__).resolve().parent / "fixture-delivery"
-+PARENT = "com.apple.developer.parent-application-identifiers"
-+CLIPS = "com.apple.developer.associated-appclip-app-identifiers"
-+ON_DEMAND = "com.apple.developer.on-demand-install-capable"
-+
-+
-+def run(*command, timeout=240):
-+    result = subprocess.run(command, capture_output=True, timeout=timeout)
-+    if result.returncode:
-+        raise RuntimeError(f"{command[0]} failed: {(result.stderr + result.stdout).decode(errors='replace')}")
-+    return result.stdout
-+
-+
-+def equal(what, actual, expected):
-+    if actual != expected:
-+        raise ValueError(f"{what}: expected {expected!r}, got {actual!r}")
-+
-+
-+def inspect(app, simulator):
-+    clip = app / "AppClips/DeliveryClip.app"
-+    equal("embedded Clips", list(clip.parent.glob("*.app")), [clip])
-+    metadata, rights = {}, {}
-+    for role, bundle in [("host", app), ("clip", clip)]:
-+        run("codesign", "--verify", "--deep", "--strict", bundle)
-+        info = plistlib.loads((bundle / "Info.plist").read_bytes())
-+        metadata[role] = {key: info[key] for key in (
-+            "CFBundleIdentifier", "CFBundleExecutable", "CFBundleVersion",
-+            "CFBundleShortVersionString", "MinimumOSVersion", "UIDeviceFamily", "DTPlatformName")}
-+        equal(f"{role} platform", info["DTPlatformName"], "iphonesimulator" if simulator else "iphoneos")
-+        if role == "clip":
-+            metadata[role]["NSAppClip"] = info["NSAppClip"]
-+        if simulator:
-+            # Simulator entitlements live in the Mach-O, outside the ad hoc signature.
-+            with tempfile.TemporaryDirectory() as temp:
-+                output = Path(temp) / "simulated.plist"
-+                run("xcrun", "segedit", bundle / info["CFBundleExecutable"],
-+                    "-extract", "__TEXT", "__entitlements", output)
-+                rights[role] = plistlib.loads(output.read_bytes().rstrip(b"\0"))
-+        else:
-+            rights[role] = plistlib.loads(run("codesign", "-d", "--entitlements", "-", "--xml", bundle))
-+            profile = plistlib.loads(run("security", "cms", "-D", "-i", bundle / "embedded.mobileprovision"))
-+            with tempfile.TemporaryDirectory() as temp:
-+                run("codesign", "-d", f"--extract-certificates={temp}/signer", bundle)
-+                signer = (Path(temp) / "signer0").read_bytes()
-+                if signer not in profile["DeveloperCertificates"]:
-+                    raise ValueError(f"{role} signing certificate is missing from its profile")
-+            association = (CLIPS,) if role == "host" else (PARENT, ON_DEMAND)
-+            for key in ("application-identifier", "get-task-allow", *association):
-+                equal(f"{role} signed/profile {key}", rights[role][key], profile["Entitlements"][key])
-+            equal(f"{role} development signature", rights[role]["get-task-allow"], True)
-+
-+    equal("Clip bundle ID", metadata["clip"]["CFBundleIdentifier"], metadata["host"]["CFBundleIdentifier"] + ".Clip")
-+    equal("Clip parent", rights["clip"][PARENT], [rights["host"]["application-identifier"]])
-+    equal("on-demand capability", rights["clip"][ON_DEMAND], True)
-+    if not simulator:
-+        equal("host association", rights["host"][CLIPS], [rights["clip"]["application-identifier"]])
-+    return {"info": metadata, "entitlements": rights}
-+
-+
-+def binary_hashes(app):
-+    info = plistlib.loads((app / "Info.plist").read_bytes())
-+    executable = app / info["CFBundleExecutable"]
-+    binaries = [executable]
-+    # When Xcode emits a debug launcher, the Swift code lives in this dylib.
-+    debug_dylib = app / (executable.name + ".debug.dylib")
-+    if debug_dylib.is_file():
-+        binaries.append(debug_dylib)
-+    return {binary.name: hashlib.sha256(binary.read_bytes()).hexdigest() for binary in binaries}
-+
-+
-+def install_on_simulator(udid, bundle):
-+    # CoreSimulator's install service cannot read some Linux VM mounts.
-+    with tempfile.TemporaryDirectory() as temp:
-+        local = Path(temp) / bundle.name
-+        run("ditto", bundle, local)
-+        run("xcrun", "simctl", "install", udid, local)
-+
-+
-+def simulator_check(args):
-+    reference = inspect(args.xcode, True)
-+    equal("Linux simulator product", inspect(args.linux, True), reference)
-+    host_id = reference["info"]["host"]["CFBundleIdentifier"]
-+    equal("UI test fixture identifier", host_id, "dev.example.delivery")
-+    clip_id = reference["info"]["clip"]["CFBundleIdentifier"]
-+    simctl = ("xcrun", "simctl")
-+    report = {}
-+    for label, app in [("xcode", args.xcode), ("linux", args.linux)]:
-+        install_on_simulator(args.simulator, app)
-+        try:
-+            run(*simctl, "launch", args.simulator, host_i
++import itertools
+ import json
+ import os
+ import shutil
+@@ -92,19 +94,25 @@ def main():
+     try:
+         catalog = os.path.join(work, "Probe.xcassets")
+         build(spec, catalog)
+-        for mode, flags in MODES.items():
+-            out = os.path.join(work, mode)
++        back_deployed = {}
++        for target, (mode, flags) in itertools.product(["18.2", "15.6"], MODES.items()):
++            out = os.path.join(work, f"{target}-{mode}")
+             os.makedirs(out)
+             subprocess.run(
+                 ["xcrun", "actool", catalog, "--compile", out, "--output-format", "human-readable-text",
+                  "--notices", "--warnings", "--output-partial-info-plist", os.path.join(out, "partial.plist"),
+                  "--app-icon", "AppIcon", "--accent-color", "AccentColor", "--platform", "iphonesimulator",
+-                 "--minimum-deployment-target", "18.2", "--target-device", "iphone", "--target-device", "ipad",
++                 "--minimum-deployment-target", target, "--target-device", "iphone", "--target-device", "ipad",
+                  "--bundle-identifier", "dev.sweetpad.Probe", *flags,
+                  "--generate-swift-asset-symbols", os.path.join(out, "Symbols.swift"),
+                  "--generate-objc-asset-symbols", os.path.join(out, "Symbols.h"),
+                  "--generate-asset-symbol-index", os.path.join(out, "Symbols-Index.plist")],
+                 check=True, stdout=subprocess.DEVNULL)
++            if target == "15.6":
++                # The same large catalog exercises namespace collisions and thinnable assets in both APIs.
++                with open(os.path.join(out, "Symbols.swift"), "rb") as f:
++                    back_deployed[mode] = hashlib.sha256(f.read()).hexdigest()
++                continue
+             shutil.copy(os.path.join(out, "Symbols.swift"), os.path.join(expected, f"{mode}.swift"))
+             if mode != "extensions":
+                 # The header and the index don't change with the mode.
+@@ -120,6 +128,9 @@ def main():
+             with open(os.path.join(expected, "index.json"), "w") as f:
+                 json.dump(index, f, indent=1, ensure_ascii=False)
+                 f.write("\n")
++        with open(os.path.join(expected, "back-deployed-sha256.json"), "w") as f:
++            json.dump(back_deployed, f, indent=2)
++            f.write("\n")
+     finally:
+         shutil.rmtree(work)
+ 
 ```
 
-**File**: `sweetpad-lib/ci/fixture-delivery/Delivery.xcodeproj/project.pbxproj` (modified, +317/-0)
+**File**: `sweetpad-cli/fixtures/actool/resources/CoMapsSlots.xcassets/Contents.json` (added, +6/-0)
 ```diff
-@@ -11,6 +11,7 @@
- 		1767D6861271A76B6A685D67 /* DeliveryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2857443B0F2678AE8E2E6B /* DeliveryApp.swift */; };
- 		18C3B4B68C4C7D49A656C636 /* DeliveryWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D6DB43B64FE333E4423ACF10 /* DeliveryWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
- 		28C8A9B24024AA01EC1CDF56 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787770103BFE1EEC0AA281B9 /* Assets.xcassets */; };
-+		2D7E245A315DDE12EEA0B7A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787770103BFE1EEC0AA281B9 /* Assets.xcassets */; };
- 		2F0659BA97AEEEBAB7F5C789 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787770103BFE1EEC0AA281B9 /* Assets.xcassets */; };
- 		2F920C745BA412A0F4BB88A6 /* DeliveryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1745C2A8762C8B9CEB4608 /* DeliveryWidget.swift */; };
- 		4094B33B25AE89A0F9757B40 /* DeliveryKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BB7D8BE893070FB3A27298D /* DeliveryKit.framework */; };
-@@ -20,13 +21,18 @@
- 		4E148B05AA156DC2E01D5BC8 /* DeliveryKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BB7D8BE893070FB3A27298D /* DeliveryKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
- 		4EBB519487E625CF30EF27AE /* DeliveryKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3F738A7B82970DE911D9B1 /* DeliveryKit.swift */; };
- 		51055E2CE488DC2FE207355C /* DeliveryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2857443B0F2678AE8E2E6B /* DeliveryApp.swift */; };
-+		5CD49DD94BDFF656F7C7DF31 /* DeliveryClip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = B145D1CDAFEBF029DFF75E31 /* DeliveryClip.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-+		5D76E5D70A6BB0C40D615233 /* DeliveryClipInvocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC607C42011920F61BB35F5A /* DeliveryClipInvocationTests.swift */; };
- 		61D1F00500B2972D9A98135E /* Stickers.xcstickers in Resources */ = {isa = PBXBuildFile; fileRef = 9D33BFE8597B90CB36E4C97C /* Stickers.xcstickers */; };
- 		7F95D6040E32E6B70F1374E6 /* DeliveryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1745C2A8762C8B9CEB4608 /* DeliveryWidget.swift */; };
- 		8A1EF9D22F9303B250D0D749 /* DeliveryKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B66A42A93FB081CD43CD1B60 /* DeliveryKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
- 		8D39D4D04B38808627D960BC /* DeliveryWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 5979151531102AEB88B7E8F6 /* DeliveryWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-+		A4162E428FDBCEA3F0023984 /* DeliveryClipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF5AF1040C832FE730AE8C7 /* DeliveryClipApp.swift */; };
- 		B76280CEC8B62D45615F35A0 /* DeliveryWatchExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AF48D7A1CAEC2F21D8A38498 /* DeliveryWatchExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-+		BFD831851B8A12D17915EF27 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 787770103BFE1EEC0AA281B9 /* Assets.xcassets */; };
- 		C7EF64F40FDDEE294F27BD85 /* DeliveryKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66A42A93FB081CD43CD1B60 /* DeliveryKit.framework */; };
- 		E561AFCF774A6AB4057C2100 /* DeliveryStickers.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D1287DA92E32BB492EB4CB25 /* DeliveryStickers.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-+		FAD9FE1625C7E81AB3D33C84 /* DeliveryClipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF5AF1040C832FE730AE8C7 /* DeliveryClipApp.swift */; };
- /* End PBXBuildFile section */
+@@ -0,0 +1,6 @@
++{
++  "info": {
++    "author": "xcode",
++    "version": 1
++  }
++}
+```
+
+**File**: `sweetpad-cli/fixtures/actool/resources/CoMapsSlots.xcassets/MapAccent.colorset/Contents.json` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++{
++  "info": {
++    "author": "xcode",
++    "version": 1
++  },
++  "colors": [
++    {
++      "color": {
++        "color-space": "srgb",
++        "components": {
++          "red": "0.216",
++          "green": "0.396",
++          "blue": "0.247",
++          "alpha": "1.000"
++        }
++      },
++      "idiom": "universal"
++    },
++    {
++      "color": {
++        "color-space": "srgb",
++        "components": {
++          "red": "0.396",
++          "green": "0.580",
++          "blue": "0.392",
++          "alpha": "1.000"
++        }
++      },
++      "idiom": "universal",
++      "appearances": [
++        {
++          "appearance": "luminosity",
++          "value": "dark"
++        }
++      ]
++    }
++  ]
++}
+```
+
+---
+
+### Incident Patch 2: `b2294bab` (2026-11-28)
+**Commit Message**: Match Xcode App Intents registration on Linux (#370)
+
+Fixes #369.
+
+Match Xcode’s registration for string input options, plain parameter
+summaries, interactive snippets, and results that open another intent
+with a snippet view or dialog. Compare complete native registrations
+on Linux and check SDK declarations on upgrades.
+
+Co-authored-by: Brandon Elliott <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/appintents-registration.yaml` (added, +77/-0)
+```diff
+@@ -0,0 +1,77 @@
++name: App Intents SDK and registration
++
++on:
++  pull_request:
++    paths: &paths
++      - 'sweetpad-cli/src/**'
++      - 'sweetpad-cli/fixtures/appintents/**'
++      - 'sweetpad-core/**'
++      - 'sweetpad-lib/src/**'
++      - 'sweetpad-lib/ci/bundle_comparison.py'
++      - 'Cargo.*'
++      - 'rust-toolchain.toml'
++      - '.github/workflows/appintents-registration.yaml'
++  push:
++    branches: [main]
++    paths: *paths
++  schedule:
++    - cron: '25 6 * * 1'
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++concurrency:
++  group: appintents-registration-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  sdk:
++    name: Classify the public iOS SDK
++    runs-on: macos-26
++    steps:
++      - uses: actions/checkout@v7
++      - &select-xcode
++        name: Select the newest stable installed Xcode
++        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1
++        with:
++          xcode-version: latest-stable
++      - run: xcodebuild -version
++      - run: python3 -B -I sweetpad-cli/fixtures/appintents/sdk_coverage.py --export-signatures "$RUNNER_TEMP/sdk-inventory"
++      - uses: actions/upload-artifact@v7
++        if: ${{ !cancelled() }}
++        with:
++          name: appintents-sdk-inventory
++          path: ${{ runner.temp }}/sdk-inventory
++          if-no-files-found: error
++
++  native:
++    name: Capture registration with Xcode
++    runs-on: macos-26
++    steps:
++      - uses: actions/checkout@v7
++      - *select-xcode
++      - uses: Swatinem/rust-cache@v2
++      - run: cargo build --locked -p sweetpad-cli --bin sweetpad
++      - run: command -v xcodegen || brew install xcodegen
++      - run: python3 -B -I sweetpad-cli/fixtures/appintents/regen.py --export-registration "$RUNNER_TEMP/registrations"
++      - uses: actions/upload-artifact@v7
++        with:
++          name: appintents-registrations
++          path: ${{ runner.temp }}/registrations
++          if-no-files-found: error
++
++  linux:
++    name: Compare complete registrations on Linux
++    needs: native
++    runs-on: ubuntu-24.04
++    steps:
++      - uses: actions/checkout@v7
++      - uses: Swatinem/rust-cache@v2
++      - uses: actions/download-artifact@v8
++        with:
++          name: appintents-registrations
++          path: ${{ runner.temp }}/registrations
++      - run: cargo build --locked -p sweetpad-cli --bin sweetpad
++      - run: python3 -B -I sweetpad-cli/fixtures/appintents/verify_registration.py "$RUNNER_TEMP/registrations"
++      - run: python3 -B -m unittest discover -s sweetpad-cli/fixtures/appintents -p 'test_*.py'
+```
+
+**File**: `sweetpad-cli/fixtures/appintents/InputOptionsProbe.actions.json` (added, +1286/-0)
+```diff
+@@ -0,0 +1,1286 @@
++{
++  "InputOptionsProbeIntent": {
++    "assistantDefinedSchemaTraits": [],
++    "assistantDefinedSchemas": [],
++    "authenticationPolicy": 0,
++    "availabilityAnnotations": {
++      "LNPlatformNameWildcard": {
++        "introducedVersion": "*"
++      }
++    },
++    "effectiveBundleIdentifiers": [],
++    "fullyQualifiedTypeName": "InputOptionsProbe.InputOptionsProbeIntent",
++    "identifier": "InputOptionsProbeIntent",
++    "isAuthPolExplicit": false,
++    "isDiscoverable": true,
++    "mangledTypeName": "17InputOptionsProbe0abC6IntentV",
++    "mangledTypeNameByBundleIdentifier": {},
++    "mangledTypeNameByBundleIdentifierV2": {},
++    "mangledTypeNameV2": "17InputOptionsProbe0abC6IntentV",
++    "openAppWhenRun": false,
++    "outputFlags": 0,
++    "parameters": [
++      {
++        "capabilities": 0,
++        "dynamicOptionsSupport": 0,
++        "inputConnectionBehavior": 0,
++        "isInput": false,
++        "isOptional": true,
++        "name": "allOff",
++        "resolvableInputTypes": [
++          {
++            "kindValue": 0,
++            "valueType": {
++              "primitive": {
++                "wrapper": {
++                  "typeIdentifier": 2
++                }
++              }
++            }
++          },
++          {
++            "kindValue": 0,
++            "valueType": {
++              "array": {
++                "wrapper": {
++                  "capabilities": 3,
++                  "memberValueType": {
++                    "primitive": {
++                      "wrapper": {
++                        "typeIdentifier": 2
++                      }
++                    }
++                  }
++                }
++              }
++            }
++          },
++          {
++            "kindValue": 0,
++            "valueType": {
++              "primitive": {
++                "wrapper": {
++                  "typeIdentifier": 0
++                }
++              }
++            }
++          }
++        ],
++        "title": {
++          "alternatives": [],
++          "key": "All off"
++        },
++        "typeSpecificMetadata": [
++          "LNValueTypeMetadataKeyStringAutocorrect",
++          {
++            "int": {
++              "wrapper": 0
++            }
++          },
++          "LNValueTypeMetadataKeyStringCapitalizationType",
++          {
++            "int": {
++              "wrapper": 0
++            }
++          },
++          "LNValueTypeMetadataKeyStringSmartQuotes",
++          {
++            "int": {
++              "wrapper": 0
++            }
++          },
++          "LNValueTypeMetadataKeyStringKeyboardType",
++          {
++            "int": {
++              "wrapper": 4
++            }
++          },
++          "LNValueTypeMetadataKeyStringMultiline",
++          {
++            "int": {
++              "wrapper": 0
++            }
++          },
++          "LNValueTypeMetadataKeyStringSmartDashes",
++          {
++            "int": {
++              "wrapper": 0
++            }
++          }
++        ],
++        "valueType": {
++          "primitive": {
++            "wrapper": {
++              "typeIdentifier": 0
++            }
++          }
++        }
++      },
++      {
++        "capabilities": 0,
++        "dynamicOptionsSupport": 0,
++        "inputConnectionBehavior": 0,
++        "isInput": false,
++        "isOptional": true,
++        "name": "allOn",
++        "resolvableInputTypes": [
++          {
++            "kindValue": 0,
++            "valueType": {
++              "primitive": {
++                "wrapper": {
++                  "typeIdentifier": 2
++                }
++              }
++            }
++          },
++          {
++            "kindValue": 0,
++            "valueType": {
++              "array": {
++                "wrapper": {
++                  "capabilities": 3,
++                  "memberValueType": {
++                    "primitive": {
++                      "wrapper": {
++                        "typeIdentifier": 2
++                      }
++                    }
++                  }
++                }
++              }
++            }
++          },
++          {
++            "kindValue": 0,
++            "valueType": {
++              "primitive": {
++                "wrapper": {
++                  "typeIdentifier": 0
++                }
++              }
++            }
++          }
++        ],
++        "title": {
++          "alternatives": [],
++          "key": "All on"
++        },
++        "typeSpecificMetadata": [
++          "LNValueTypeMetadataKeyStringSmartQuotes",
++          {
++            "int": {
++              "wrapper": 1
++            }
++          },
++          "LNValueTypeMetadataKeyStringAutocorrect",
++          {
++            "int": {
++              "wrapper": 1
++            }
++          },
++          "LNValueTypeMetadataKeyStringCapitalizationType",
++          {
++            "int": {
++              "wrapper": 3
++            }
++          },
++          "LNValueTypeMetadataKeyStringKeyboardType",
++          {
++            "int": {
++              "wrapper": 0
++         
+```
+
+**File**: `sweetpad-cli/fixtures/appintents/InputOptionsProbe.swift` (added, +55/-0)
+```diff
+@@ -0,0 +1,55 @@
++// Every String.IntentInputOptions argument, explicit and defaulted.
++import AppIntents
++
++struct InputOptionsProbeIntent: AppIntent {
++  static let title: LocalizedStringResource = "Input options probe"
++  static let openAppWhenRun: Bool = false
++
++  @Parameter(title: "All off", inputOptions: String.IntentInputOptions(keyboardType: .default, capitalizationType: .none, multiline: false, autocorrect: false, smartQuotes: false, smartDashes: false))
++  var allOff: String?
++  @Parameter(title: "All on", inputOptions: String.IntentInputOptions(keyboardType: .asciiCapable, capitalizationType: .allCharacters, multiline: true, autocorrect: true, smartQuotes: true, smartDashes: true))
++  var allOn: String?
++  @Parameter(title: "Empty", inputOptions: String.IntentInputOptions())
++  var empty: String?
++  @Parameter(title: "Punct", inputOptions: String.IntentInputOptions(keyboardType: .numbersAndPunctuation, capitalizationType: .words))
++  var punct: String?
++  @Parameter(title: "URL", inputOptions: String.IntentInputOptions(keyboardType: .URL, capitalizationType: .sentences))
++  var url: String?
++  @Parameter(title: "Number pad", inputOptions: String.IntentInputOptions(keyboardType: .numberPad))
++  var numberPad: String?
++  @Parameter(title: "Smart quotes only", inputOptions: String.IntentInputOptions(smartQuotes: false))
++  var quotes: String?
++  @Parameter(title: "Smart dashes only", inputOptions: String.IntentInputOptions(smartDashes: false))
++  var dashes: String?
++  @Parameter(title: "Autocorrect only", inputOptions: String.IntentInputOptions(autocorrect: false))
++  var autocorrect: String?
++  @Parameter(title: "With default", default: "hi", inputOptions: String.IntentInputOptions(multiline: true))
++  var withDefault: String
++  @Parameter(title: "Options and dialog", description: "Described", inputOptions: String.IntentInputOptions(keyboardType: .numberPad, autocorrect: false), requestValueDialog: "Which?")
++  var dialog: String
++
++  @Parameter(title: "Explicit defaults", inputOptions: String.IntentInputOptions(keyboardType: .asciiCapable, capitalizationType: .sentences, multiline: false, autocorrect: true, smartQuotes: true, smartDashes: true))
++  var explicitDefaults: String?
++
++  @Parameter(title: "Words", inputOptions: .init(keyboardType: .URL, multiline: true))
++  var words: [String]
++  @Parameter(title: "Optional words", inputOptions: .init(autocorrect: false))
++  var optionalWords: [String]?
++  @Parameter(title: "Distinct words", inputOptions: .init(smartQuotes: true))
++  var distinctWords: Set<String>
++  @Parameter(title: "User's summary", inputOptions: nil)
++  var parameterSummary: String?
++
++  @MainActor
++  func perform() async throws -> some IntentResult { .result() }
++}
++
++struct ParameterTitleProbe: AppIntent {
++  static let title: LocalizedStringResource = "Parameter titles"
++
++  @Parameter(title: "User's choice", inputOptions: nil) var ordinary: String?
++  @Parameter(title: "Custom label", description: "Extra detail", default: "ready", inputOptions: .init(multiline: true))
++  var parameterSummary: String
++
++  func perform() async throws -> some IntentResult { .result() }
++}
+```
+
+**File**: `sweetpad-cli/fixtures/appintents/OutputProbe.actions.json` (added, +866/-0)
+```diff
+@@ -0,0 +1,866 @@
++{
++  "AllOutputsProbeIntent": {
++    "assistantDefinedSchemaTraits": [],
++    "assistantDefinedSchemas": [],
++    "authenticationPolicy": 0,
++    "availabilityAnnotations": {
++      "LNPlatformNameWildcard": {
++        "introducedVersion": "*"
++      }
++    },
++    "effectiveBundleIdentifiers": [],
++    "fullyQualifiedTypeName": "OutputProbe.AllOutputsProbeIntent",
++    "identifier": "AllOutputsProbeIntent",
++    "isAuthPolExplicit": false,
++    "isDiscoverable": true,
++    "mangledTypeName": "11OutputProbe010AllOutputsB6IntentV",
++    "mangledTypeNameByBundleIdentifier": {},
++    "mangledTypeNameByBundleIdentifierV2": {},
++    "mangledTypeNameV2": "11OutputProbe010AllOutputsB6IntentV",
++    "openAppWhenRun": false,
++    "outputFlags": 7,
++    "outputType": {
++      "primitive": {
++        "wrapper": {
++          "typeIdentifier": 0
++        }
++      }
++    },
++    "parameters": [],
++    "presentationStyle": 0,
++    "requiredCapabilities": [],
++    "supportedModes": 1,
++    "systemProtocolMetadata": [],
++    "systemProtocolMetadataV2": [],
++    "systemProtocols": [],
++    "title": {
++      "alternatives": [],
++      "key": "All outputs"
++    },
++    "typeSpecificMetadata": [],
++    "visibilityMetadata": {
++      "assistantOnly": false,
++      "isDiscoverable": true
++    }
++  },
++  "DialogOnlyProbeIntent": {
++    "assistantDefinedSchemaTraits": [],
++    "assistantDefinedSchemas": [],
++    "authenticationPolicy": 0,
++    "availabilityAnnotations": {
++      "LNPlatformNameWildcard": {
++        "introducedVersion": "*"
++      }
++    },
++    "effectiveBundleIdentifiers": [],
++    "fullyQualifiedTypeName": "OutputProbe.DialogOnlyProbeIntent",
++    "identifier": "DialogOnlyProbeIntent",
++    "isAuthPolExplicit": false,
++    "isDiscoverable": true,
++    "mangledTypeName": "11OutputProbe010DialogOnlyB6IntentV",
++    "mangledTypeNameByBundleIdentifier": {},
++    "mangledTypeNameByBundleIdentifierV2": {},
++    "mangledTypeNameV2": "11OutputProbe010DialogOnlyB6IntentV",
++    "openAppWhenRun": false,
++    "outputFlags": 4,
++    "parameters": [],
++    "presentationStyle": 0,
++    "requiredCapabilities": [],
++    "supportedModes": 1,
++    "systemProtocolMetadata": [],
++    "systemProtocolMetadataV2": [],
++    "systemProtocols": [],
++    "title": {
++      "alternatives": [],
++      "key": "Dialog only"
++    },
++    "typeSpecificMetadata": [],
++    "visibilityMetadata": {
++      "assistantOnly": false,
++      "isDiscoverable": true
++    }
++  },
++  "EmptySummaryTextProbeIntent": {
++    "actionConfiguration": {
++      "actionSummary": {
++        "wrapper": {
++          "otherParameterIdentifiers": [],
++          "summaryString": {
++            "formatString": "",
++            "parameterIdentifiers": []
++          }
++        }
++      }
++    },
++    "assistantDefinedSchemaTraits": [],
++    "assistantDefinedSchemas": [],
++    "authenticationPolicy": 0,
++    "availabilityAnnotations": {
++      "LNPlatformNameWildcard": {
++        "introducedVersion": "*"
++      }
++    },
++    "effectiveBundleIdentifiers": [],
++    "fullyQualifiedTypeName": "OutputProbe.EmptySummaryTextProbeIntent",
++    "identifier": "EmptySummaryTextProbeIntent",
++    "isAuthPolExplicit": false,
++    "isDiscoverable": true,
++    "mangledTypeName": "11OutputProbe016EmptySummaryTextB6IntentV",
++    "mangledTypeNameByBundleIdentifier": {},
++    "mangledTypeNameByBundleIdentifierV2": {},
++    "mangledTypeNameV2": "11OutputProbe016EmptySummaryTextB6IntentV",
++    "openAppWhenRun": false,
++    "outputFlags": 0,
++    "parameters": [],
++    "presentationStyle": 0,
++    "requiredCapabilities": [],
++    "supportedModes": 1,
++    "systemProtocolMetadata": [],
++    "systemProtocolMetadataV2": [],
++    "systemProtocols": [],
++    "title": {
++      "alternatives": [],
++      "key": "Empty summary text"
++    },
++    "typeSpecificMetadata": [],
++    "visibilityMetadata": {
++      "assistantOnly": false,
++      "isDiscoverable": true
++    }
++  },
++  "NoSummaryTextProbeIntent": {
++    "actionConfiguration": {
++      "actionSummary": {
++        "wrapper": {
++          "otherParameterIdentifiers": []
++        }
++      }
++    },
++    "assistantDefinedSchemaTraits": [],
++    "assistantDefinedSchemas": [],
++    "authenticationPolicy": 0,
++    "availabilityAnnotations": {
++      "LNPlatformNameWildcard": {
++        "introducedVersion": "*"
++      }
++    },
++    "effectiveBundleIdentifiers": [],
++    "fullyQualifiedTypeName": "OutputProbe.NoSummaryTextProbeIntent",
++    "identifier": "NoSummaryTextProbeIntent",
++    "isAuthPolExplicit": false,
++    "isDiscoverable": true,
++    "mangledTypeName": "11OutputProbe013NoSummaryTextB6IntentV",
++    "mangledTypeNameByBundleIdentifier": {},
++    "mangledTypeNameByBundleIdentifierV2": {},
++    "mangledTypeNameV2": "11OutputProbe013NoSummaryTextB6IntentV",
++    "openAppWhenRun": false,
++    "outputFlags": 4,
++    "outputType": {
++      "primitive": {
++        "wrapper": {
++          "typeIdentifier": 0
++        }
++      }
++    }
+```
+
+**File**: `sweetpad-cli/fixtures/appintents/OutputProbe.swift` (added, +85/-0)
+```diff
+@@ -0,0 +1,85 @@
++// Output flags and parameter summaries.
++import AppIntents
++import SwiftUI
++
++struct DialogOnlyProbeIntent: AppIntent {
++  static let title: LocalizedStringResource = "Dialog only"
++  func perform() async throws -> some IntentResult & ProvidesDialog { .result(dialog: "Done") }
++}
++
++struct SnippetOnlyProbeIntent: AppIntent {
++  static let title: LocalizedStringResource = "Snippet only"
++  @MainActor
++  func perform() async throws -> some IntentResult & ShowsSnippetView { .result(view: Text("Done")) }
++}
++
++struct ValueSnippetProbeIntent: AppIntent {
++  static let title: LocalizedStringResource = "Value and snippet"
++  @MainActor
++  func perform() async throws -> some IntentResult & ReturnsValue<String> & ShowsSnippetView { .result(value: "v", view: Text("Done")) }
++}
++
++struct OpensProbeIntent: AppIntent {
++  static let title: LocalizedStringResource = "Opens"
++  func perform() async throws -> some IntentResult & OpensIntent { .result(opensIntent: DialogOnlyProbeIntent()) }
++}
++
++struct AllOutputsProbeIntent: AppIntent {
++  static let title: LocalizedStringResource = "All outputs"
++  @MainActor
++  func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog & ShowsSnippetView & OpensIntent {
++    .result(value: "v", opensIntent: DialogOnlyProbeIntent(), dialog: "Done", view: Text("Done"))
++  }
++}
++
++struct SummaryTwoProbeIntent: AppIntent {
++  static let title: LocalizedStringResource = "Summary two"
++  @Parameter(title: "First") var first: String
++  @Parameter(title: "Second") var second: Int
++  @Parameter(title: "Third", default: false) var third: Bool
++  static var parameterSummary: some ParameterSummary {
++    Summary("Send \(\.$second) to \(\.$first), then \(\.$second) again") { \.$third }
++  }
++  func perform() async throws -> some IntentResult { .result() }
++}
++
++struct SummaryBuilderProbeIntent: AppIntent {
++  static let title: LocalizedStringResource = "Summary builder"
++  @Parameter(title: "First") var first: String
++  @Parameter(title: "Second") var second: Int
++  @Parameter(title: "Third", default: false) var third: Bool
++  static var parameterSummary: some ParameterSummary {
++    Summary("Just text") {
++      \.$third
++      \.$first
++    }
++  }
++  func perform() async throws -> some IntentResult { .result() }
++}
++
++struct NoSummaryTextProbeIntent: AppIntent {
++  static let title: LocalizedStringResource = "No summary text"
++  static var parameterSummary: some ParameterSummary { Summary() }
++  func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
++    .result(value: "ok", dialog: "Done")
++  }
++}
++
++struct EmptySummaryTextProbeIntent: AppIntent {
++  static let title: LocalizedStringResource = "Empty summary text"
++  static var parameterSummary: some ParameterSummary { Summary("") }
++  func perform() async throws -> some IntentResult { .result() }
++}
++
++struct SummaryParametersOnlyProbeIntent: AppIntent {
++  static let title: LocalizedStringResource = "Summary parameters only"
++  @Parameter(title: "First") var first: String
++  @Parameter(title: "Second") var second: Int
++  static var parameterSummary: some ParameterSummary {
++    Summary {
++      \.$second
++      \.$first
++    }
++  }
++  func perform() async throws -> some IntentResult { .result() }
++}
+```
+
+**File**: `sweetpad-cli/fixtures/appintents/OutputProbe.swiftconstvalues` (added, +2007/-0)
+```diff
+@@ -0,0 +1,2007 @@
++[
++  {
++    "allConformances": [
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "AppIntents.AppIntent"
++      },
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "AppIntents.PersistentlyIdentifiable"
++      },
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "AppIntents._SupportsAppDependencies"
++      },
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "Swift.Sendable"
++      },
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "Swift.SendableMetatype"
++      },
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "Swift.BitwiseCopyable"
++      }
++    ],
++    "associatedTypeAliases": [
++      {
++        "opaqueTypeProtocolRequirements": [
++          "AppIntents.ProvidesDialog"
++        ],
++        "opaqueTypeSameTypeRequirements": [],
++        "substitutedMangledTypeName": "11OutputProbe010DialogOnlyB6IntentV7performQryYaKFQOy_Qo_",
++        "substitutedTypeName": "some AppIntents.ProvidesDialog",
++        "typeAliasName": "PerformResult"
++      },
++      {
++        "opaqueTypeProtocolRequirements": [
++          "AppIntents.ParameterSummary"
++        ],
++        "opaqueTypeSameTypeRequirements": [],
++        "substitutedMangledTypeName": "10AppIntents0A6IntentPAAE16parameterSummaryQrvpZQOy11OutputProbe010DialogOnlygC0V_Qo_",
++        "substitutedTypeName": "some AppIntents.ParameterSummary",
++        "typeAliasName": "SummaryContent"
++      }
++    ],
++    "conformances": [
++      "AppIntents.AppIntent",
++      "AppIntents.PersistentlyIdentifiable",
++      "AppIntents._SupportsAppDependencies",
++      "Swift.Sendable",
++      "Swift.SendableMetatype",
++      "Swift.BitwiseCopyable"
++    ],
++    "file": "OutputProbe.swift",
++    "kind": "struct",
++    "line": 5,
++    "mangledTypeName": "11OutputProbe010DialogOnlyB6IntentV",
++    "properties": [
++      {
++        "file": "OutputProbe.swift",
++        "isComputed": "false",
++        "isStatic": "true",
++        "label": "title",
++        "line": 6,
++        "mangledTypeName": "n/a - deprecated",
++        "type": "Foundation.LocalizedStringResource",
++        "value": "Dialog only",
++        "valueKind": "RawLiteral"
++      }
++    ],
++    "typeName": "OutputProbe.DialogOnlyProbeIntent"
++  },
++  {
++    "allConformances": [
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "AppIntents.AppIntent"
++      },
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "AppIntents.PersistentlyIdentifiable"
++      },
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "AppIntents._SupportsAppDependencies"
++      },
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "Swift.Sendable"
++      },
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "Swift.SendableMetatype"
++      },
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "Swift.BitwiseCopyable"
++      }
++    ],
++    "associatedTypeAliases": [
++      {
++        "opaqueTypeProtocolRequirements": [
++          "AppIntents.ShowsSnippetView"
++        ],
++        "opaqueTypeSameTypeRequirements": [],
++        "substitutedMangledTypeName": "11OutputProbe011SnippetOnlyB6IntentV7performQryYaKFQOy_Qo_",
++        "substitutedTypeName": "some AppIntents.ShowsSnippetView",
++        "typeAliasName": "PerformResult"
++      },
++      {
++        "opaqueTypeProtocolRequirements": [
++          "AppIntents.ParameterSummary"
++        ],
++        "opaqueTypeSameTypeRequirements": [],
++        "substitutedMangledTypeName": "10AppIntents0A6IntentPAAE16parameterSummaryQrvpZQOy11OutputProbe011SnippetOnlygC0V_Qo_",
++        "substitutedTypeName": "some AppIntents.ParameterSummary",
++        "typeAliasName": "SummaryContent"
++      }
++    ],
++    "conformances": [
++      "AppIntents.AppIntent",
++      "AppIntents.PersistentlyIdentifiable",
++      "AppIntents._SupportsAppDependencies",
++      "Swift.Sendable",
++      "Swift.SendableMetatype",
++      "Swift.BitwiseCopyable"
++    ],
++    "file": "OutputProbe.swift",
++    "kind": "struct",
++    "line": 10,
++    "mangledTypeName": "11OutputProbe011SnippetOnlyB6IntentV",
++    "properties": [
++      {
++        "file": "OutputProbe.swift",
++        "isComputed": "false",
++        "isStatic": "true",
++        "label": "title",
++        "line": 11,
++        "mangledTypeName": "n/a - deprecated",
++        "type": "Foundation.LocalizedStringResource",
++        "value": "Snippet only",
++        "valueKind": "RawLiteral"
++      }
++    ],
++    "typeName": "OutputProbe.SnippetOnlyProbeIntent"
++  },
++  {
++    "allConformances": [
++      {
++        "conformanceDefiningModule": "OutputProbe",
++        "protocolName": "AppIntents.AppIntent"
++      },
++      {
++        
+```
+
+**File**: `sweetpad-cli/fixtures/appintents/README.md` (modified, +56/-8)
+```diff
+@@ -1,23 +1,71 @@
+ # App Intents compiler captures
  
- /* Begin PBXContainerItemProxy section */
-@@ -37,6 +43,13 @@
- 			remoteGlobalIDString = EAC9D63AA5CE8D3638F64DBC;
- 			remoteInfo = "DeliveryKit-macOS";
- 		};
-+		08F1056EC823BCF23D0346EB /* PBXContainerItemProxy */ = {
-+			isa = PBXContainerItemProxy;
-+			containerPortal = 21C744D40939B74039A1F09A /* Project object */;
-+			proxyType = 1;
-+			remoteGlobalIDString = 803F0E1FDD05666ADCEA3BB6;
-+			remoteInfo = DeliveryClip;
-+		};
- 		18953895144B34320B1DA4EA /* PBXContainerItemProxy */ = {
- 			isa = PBXContainerItemProxy;
- 			containerPortal = 21C744D40939B74039A1F09A /* Project object */;
-@@ -82,6 +95,17 @@
- /* End PBXContainerItemProxy section */
+ The Swift files are synthetic probes owned by this repository.
+-`regen.py` builds both probes with Xcode through the local sweetpad binary.
++`regen.py` builds the probes with Xcode through the local sweetpad binary.
+ It requires macOS, Xcode, and XcodeGen.
  
- /* Begin PBXCopyFilesBuildPhase section */
-+		0CA75BE903753F11072AD79F /* Embed App Clips */ = {
-+			isa = PBXCopyFilesBuildPhase;
-+			buildActionMask = 2147483647;
-+			dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
-+			dstSubfolderSpec = 16;
-+			files = (
-+				5CD49DD94BDFF656F7C7DF31 /* DeliveryClip.app in Embed App Clips */,
-+			);
-+			name = "Embed App Clip
+ ```sh
+ cargo build -p sweetpad-cli --bin sweetpad
+ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer python3 -I sweetpad-cli/fixtures/appintents/regen.py
+ ```
+ 
+-The current captures use Xcode 27.2 (`27B52`).
++The checked-in Swift compiler captures use Xcode 27.2 (`27B52`).
+ The generator normalizes source paths to file names.
+-The tests normalize the generator identity and the order of resolver sets.
++The tests normalize the generator identity, the order of resolver sets,
++and the order of `typeSpecificMetadata` pairs, which Xcode writes in hash order.
+ The language-model test compares decoded phrases and negative examples.
+ It ignores native phrase order and generation timestamps.
+ 
+ Registration covers basic intents, primitive parameters, enums, entities,
+-queries, widget configuration, authentication policies, and App Shortcuts.
+-Assistant schemas, explicit supported modes, custom parameter options,
+-and dependency metadata currently stop extraction with an error.
+-Localized shortcut phrase models and availability-specific metadata need more coverage.
+-These captures establish format compatibility, not device registration or Siri behavior.
++queries, widget configuration, authentication policies, App Shortcuts,
++`String.IntentInputOptions`, output flags, and plain parameter summaries.
++The input options probe covers scalar strings, arrays, and sets. The summary
++probes cover omitted text, an explicit empty string, interpolation, and a
++trailing list of parameters. The `*.actions.json` files hold the probe actions.
++Assistant schemas, explicit supported modes, other custom parameter options,
++conditional summaries, summaries with a localization table, and dependency
++metadata currently stop extraction with an error.
++Localized shortcut phrase models and availability beyond the platform annotations
++in the snippet probe need more coverage. Device registration and Siri interaction
++require separate runtime tests.
++
++## SDK upgrade checks
++
++The iOS 27.2 checklist links each parameter option, result protocol, and summary
++form to its evidence. It also lists the two result compositions involving
++`OpensIntent`. The iOS 26.5 and 27.2 inventories record the public overloads
++within each family. Xcode 26.6 uses an earlier enum and entity schema and infers
++an instance parameter named `parameterSummary` from its name and type. Xcode
++27.2 emits the explicit wrapper options for that property.
++[SDK coverage and remaining gaps](sdk-27.2.md)
++
++On a Mac with XcodeGen, run the following from the repository root. Use an empty
++capture directory for each Xcode version. Set `DEVELOPER_DIR` to select Xcode.
++
++```sh
++cargo build --locked -p sweetpad-cli --bin sweetpad
++python3 -B -I sweetpad-cli/fixtures/appintents/sdk_coverage.py
++python3 -B -I sweetpad-cli/fixtures/appintents/regen.py --export-registration .build/intent-captures
++```
++
++Copy the capture directory to Linux, build the CLI with the same Cargo command,
++and run the replay. CI transfers the synthetic compiler inputs and registrations
++between its macOS and Linux jobs.
++
++```sh
++python3 -B -I sweetpad-cli/fixtures/appintents/verify_registration.py .build/intent-captures
++```
++
++The replay compares every field in `extract.actionsdata` and `version.json`
++for each supported probe. It checks the two generator identities separately
++and preserves the pairing of keys and values in unordered metadata. It also
++checks native controls and the named diagnostics for unsupported declarations.
++The SDK-specific fingerprints cover both documents for all seven native probes,
++including the negative cases. The replay checks the Xcode build identifier
++literally before computing fingerprints that can be compared across builds.
++
++On an SDK upgrade, inspect new declarations, overloads and registration changes.
++Add evidence to the versioned checklist, regenerate the affected fixtures, then
++run `sdk_coverage.py --update-signatures` and replay the fresh captures with
++`verify_registration.py CAPTURES --update-registrations` to record the reviewed
++baselines. The workflow performs read-only checks on PRs and weekly.
+```
+
+**File**: `sweetpad-cli/fixtures/appintents/ResultProtocols.actionsdata` (added, +721/-0)
+```diff
+@@ -0,0 +1,721 @@
++{
++  "actions": {
++    "ConfirmProbe": {
++      "assistantDefinedSchemaTraits": [],
++      "assistantDefinedSchemas": [],
++      "authenticationPolicy": 0,
++      "availabilityAnnotations": {
++        "LNPlatformNameWildcard": {
++          "introducedVersion": "*"
++        }
++      },
++      "effectiveBundleIdentifiers": [],
++      "fullyQualifiedTypeName": "ResultProtocols.ConfirmProbe",
++      "identifier": "ConfirmProbe",
++      "isAuthPolExplicit": false,
++      "isDiscoverable": true,
++      "mangledTypeName": "15ResultProtocols12ConfirmProbeV",
++      "mangledTypeNameByBundleIdentifier": {},
++      "mangledTypeNameByBundleIdentifierV2": {},
++      "mangledTypeNameV2": "15ResultProtocols12ConfirmProbeV",
++      "openAppWhenRun": false,
++      "outputFlags": 0,
++      "parameters": [
++        {
++          "capabilities": 0,
++          "dynamicOptionsSupport": 0,
++          "inputConnectionBehavior": 0,
++          "isInput": false,
++          "isOptional": true,
++          "name": "text",
++          "resolvableInputTypes": [
++            {
++              "kindValue": 0,
++              "valueType": {
++                "array": {
++                  "wrapper": {
++                    "capabilities": 3,
++                    "memberValueType": {
++                      "primitive": {
++                        "wrapper": {
++                          "typeIdentifier": 2
++                        }
++                      }
++                    }
++                  }
++                }
++              }
++            },
++            {
++              "kindValue": 0,
++              "valueType": {
++                "primitive": {
++                  "wrapper": {
++                    "typeIdentifier": 0
++                  }
++                }
++              }
++            },
++            {
++              "kindValue": 0,
++              "valueType": {
++                "primitive": {
++                  "wrapper": {
++                    "typeIdentifier": 2
++                  }
++                }
++              }
++            }
++          ],
++          "title": {
++            "alternatives": [],
++            "key": "Text"
++          },
++          "typeSpecificMetadata": [],
++          "valueType": {
++            "primitive": {
++              "wrapper": {
++                "typeIdentifier": 0
++              }
++            }
++          }
++        }
++      ],
++      "presentationStyle": 0,
++      "requiredCapabilities": [],
++      "supportedModes": 1,
++      "systemProtocolMetadata": [],
++      "systemProtocolMetadataV2": [],
++      "systemProtocols": [],
++      "title": {
++        "alternatives": [],
++        "key": "Confirm"
++      },
++      "typeSpecificMetadata": [],
++      "visibilityMetadata": {
++        "assistantOnly": false,
++        "isDiscoverable": true
++      }
++    },
++    "ConfirmationSnippet": {
++      "assistantDefinedSchemaTraits": [],
++      "assistantDefinedSchemas": [],
++      "authenticationPolicy": 0,
++      "availabilityAnnotations": {
++        "LNPlatformNameIOS": {
++          "introducedVersion": "26.0"
++        },
++        "LNPlatformNameMACOS": {
++          "introducedVersion": "26.0"
++        },
++        "LNPlatformNameTVOS": {
++          "introducedVersion": "26.0"
++        },
++        "LNPlatformNameVISIONOS": {
++          "introducedVersion": "26.0"
++        },
++        "LNPlatformNameWATCHOS": {
++          "introducedVersion": "26.0"
++        },
++        "LNPlatformNameWildcard": {
++          "introducedVersion": "*"
++        }
++      },
++      "effectiveBundleIdentifiers": [],
++      "fullyQualifiedTypeName": "ResultProtocols.ConfirmationSnippet",
++      "identifier": "ConfirmationSnippet",
++      "isAuthPolExplicit": false,
++      "isDiscoverable": false,
++      "mangledTypeName": "15ResultProtocols19ConfirmationSnippetV",
++      "mangledTypeNameByBundleIdentifier": {},
++      "mangledTypeNameByBundleIdentifierV2": {},
++      "mangledTypeNameV2": "15ResultProtocols19ConfirmationSnippetV",
++      "openAppWhenRun": false,
++      "outputFlags": 2,
++      "parameters": [],
++      "presentationStyle": 0,
++      "requiredCapabilities": [],
++      "supportedModes": 1,
++      "systemProtocolMetadata": [
++        "com.apple.link.systemProtocol.Snippet",
++        {
++          "empty": {}
++        }
++      ],
++      "systemProtocolMetadataV2": [
++        "com.apple.link.systemProtocol.Snippet",
++        {
++          "empty": {}
++        }
++      ],
++      "systemProtocols": [
++        "com.apple.link.systemProtocol.Snippet"
++      ],
++      "title": {
++        "alternatives": [],
++        "key": "Confirmation snippet"
++      },
++      "typeSpecificMetadata": [],
++      "visibilityMetadata": {
++        "assistantOnly": false,
++        "isDiscoverable": false
++      }
++    },
++    "ConnectionProbe": {
++      "assistantDefinedSchemaTraits": [],
++      "assistantDefinedSchemas": [],
++      "authenticationPolicy": 0,
++      "availabilityAnnotations": {
++        "LNPlatformNameWildcard": {
++       
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #370** (2026-11-28): Match Xcode App Intents input options, output flags, and parameter summaries (@hyzyla)
+- **PR #368** (2026-11-28): Compile CoMaps resources and preserve asset variants on Linux (@hyzyla)
 - **PR #367** (2026-11-25): Fix App Clip signing on Linux and verify it end to end (@hyzyla)
 - **PR #366** (2026-11-22): Fix Linux watchOS linking, setup races, and CLI failure output (@hyzyla)
 - **PR #365** (2026-11-21): Address 104 Dependabot alerts across SweetPad dependencies (@hyzyla)
 - **PR #364** (2026-11-21): Set up Linux builds with sweetpad's own SDK import and LLVM linker (@hyzyla)
-- **PR #362** (2026-11-15): Close most of the open Linux backlog (@hyzyla)
-- **PR #361** (2026-11-15): Fix six Linux backlog items (@hyzyla)
 
 ---
 
@@ -892,38 +1878,54 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. App Clip signing on Linux and verify it end to end
+## X. Compile CoMaps resources and preserve asset variants on Linux
 
 **RULE**:
-When implementing operations in `sweetpad-cli/PLAN_LINUX.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/sweetpad-lib.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `685c517e`: App Clip signing on Linux and verify it end to end. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `89f52f8f`: Compile CoMaps resources and preserve asset variants on Linux. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-cli/PLAN_LINUX.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/sweetpad-lib.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- [x] App Clips. The [delivery fixture](../sweetpad-lib/ci/fixture-delivery/README.md#app-clips)
-      builds a host with an embedded Clip on Linux and with Xcode. Both hosts
-      launch on an iPhone simulator, and each installed Clip displays a fresh
-      HTTPS invocation URL in XCTest. The Release device archives and Linux
-      development IPA match on host/Clip entitlements and bundle metadata.
-      Apple's tools verify both signatures, their provisioning profiles, and
-      both archive dSYMs. Both engines reject a signed Clip missing its parent
-      entitlement.
+      - name: Check out the CoMaps interface files and asset catalog
+        uses: actions/checkout@v7
+        with:
+          repository: comaps/comaps
+          ref: 27ea5a9b92b266abe6d1b690e02ad5c89bf95217
+          path: .build/comaps-source
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /iphone/Maps/**/*.xib
+            /iphone/Maps/**/*.storyboard
+            /iphone/Maps/**/Contents.json
+            /iphone/Maps/Images.xcassets/
+            /iphone/Maps/CoMapsWidgetExtension/Assets.xcassets/
+      - name: Require fixture coverage for every CoMaps resource combination
+        if: matrix.os == 'ubuntu-24.04'
+        run: python3 sweetpad-cli/fixtures/resource_gaps.py .build/comaps-source/iphone/Maps --require-covered
+      - name: Compile CoMaps and the resource regression fixtures on Linux
+        run: |
+          cargo build -p sweetpad-cli --bin sweetpad
+          python3 sweetpad-cli/fixtures/comaps/compile.py target/debug/sweetpad .build/comaps-source "$RUNNER_TEMP/comaps-resources"
+      - name: Export Linux-built resources for UIKit
+        if: matrix.os == 'ubuntu-24.04'
+        uses: actions/upl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- [ ] App Clips
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `685c517e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `89f52f8f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

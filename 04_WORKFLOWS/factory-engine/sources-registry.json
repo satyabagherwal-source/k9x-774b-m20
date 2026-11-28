@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T16:12:49.442Z",
-    "lastVerified": "2026-11-28T16:12:49.442Z",
+    "lastChecked": "2026-11-28T16:35:27.852Z",
+    "lastVerified": "2026-11-28T16:35:27.852Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -289,9 +289,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-28T15:27:50.177Z",
+    "lastChecked": "2026-11-28T16:35:20.490Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-28T15:27:50.177Z"
+    "lastVerified": "2026-11-28T16:35:20.490Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -417,22 +417,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
-    "name": "lapce",
+    "name": "lapce/lapce",
     "officialUrl": "https://github.com/lapce/lapce",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T13:36:36.898Z",
-    "lastVerified": "2026-11-27T13:36:36.898Z",
+    "lastChecked": "2026-11-28T16:35:13.047Z",
+    "lastVerified": "2026-11-28T16:35:13.047Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lapce-lapce",
-    "contentHash": "57f1919f4bf96d16635785f0f970accb62c4caf96c2cc4deb8f1f2e34ef68589",
+    "contentHash": "8ae8389478fde431518433113ccfdf0373c14b584fa4c54226572d3887d06c30",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9e8317c8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
     "name": "sentence-transformers/all-MiniLM-L6-v2",
@@ -651,8 +650,8 @@
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T19:35:38.577Z",
-    "lastVerified": "2026-11-27T19:35:38.577Z",
+    "lastChecked": "2026-11-28T16:35:13.119Z",
+    "lastVerified": "2026-11-28T16:35:13.119Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-gatekeeper",
@@ -937,9 +936,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-28T07:58:16.219Z",
+    "lastChecked": "2026-11-28T16:35:15.694Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-28T07:58:16.219Z"
+    "lastVerified": "2026-11-28T16:35:15.694Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -3879,22 +3878,21 @@
     "revisionIdentifier": "c28f8fb6"
   },
   "seekstorm-seekstorm": {
-    "name": "SeekStorm",
+    "name": "SeekStorm/SeekStorm",
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T18:17:25.279Z",
-    "lastVerified": "2026-11-27T18:17:25.279Z",
+    "lastChecked": "2026-11-28T16:35:23.289Z",
+    "lastVerified": "2026-11-28T16:35:23.289Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seekstorm-seekstorm",
-    "contentHash": "0911e5de1ff9523495058647c3321cb041cd9ab909d3f0bcdfb54011948a2ca3",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "74a16c8d8c334986fca61545ff07cbd93fc0ad4c53aaf0363395e4dbe2f0dcc8",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "71e34a45"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "kuberwastaken-claurst": {
     "name": "claurst",
@@ -12402,14 +12400,14 @@
     "officialUrl": "https://github.com/sweetpad-dev/sweetpad",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T10:50:36.364Z",
-    "lastVerified": "2026-11-26T10:50:36.364Z",
+    "lastChecked": "2026-11-28T16:35:19.048Z",
+    "lastVerified": "2026-11-28T16:35:19.048Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sweetpad-dev-sweetpad",
-    "contentHash": "312bc5e0058300bbcf66be44e693b3256cfd5447353eb8c74360847a0ae0ce84",
+    "contentHash": "b73e4e1c6129b55855128e342348ceeb774366dd25dea3b67c87454fbcc9c2b7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12777,8 +12775,8 @@
     "officialUrl": "https://github.com/tiangolo/fastapi",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-25T03:13:26.559Z",
-    "lastVerified": "2026-11-25T03:13:26.559Z",
+    "lastChecked": "2026-11-28T16:35:08.158Z",
+    "lastVerified": "2026-11-28T16:35:08.158Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fastapi-fastapi",

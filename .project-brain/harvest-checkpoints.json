@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T15:36:17.870Z",
+  "last_updated": "2026-11-28T16:35:24.141Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5151,14 +5151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seekstorm-seekstorm",
-      "content_hash": "0911e5de1ff9523495058647c3321cb041cd9ab909d3f0bcdfb54011948a2ca3",
-      "verified_at": "2026-11-26T23:11:48.306Z",
+      "content_hash": "74a16c8d8c334986fca61545ff07cbd93fc0ad4c53aaf0363395e4dbe2f0dcc8",
+      "verified_at": "2026-11-28T16:35:24.141Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T23:11:48.306Z"
+      "last_updated": "2026-11-28T16:35:24.141Z"
     },
     "serafimcloud/21st": {
       "repository": "serafimcloud/21st",
@@ -11901,14 +11901,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lapce-lapce",
-      "content_hash": "57f1919f4bf96d16635785f0f970accb62c4caf96c2cc4deb8f1f2e34ef68589",
-      "verified_at": "2026-11-19T21:23:58.476Z",
+      "content_hash": "8ae8389478fde431518433113ccfdf0373c14b584fa4c54226572d3887d06c30",
+      "verified_at": "2026-11-28T16:35:14.798Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T21:23:58.476Z"
+      "last_updated": "2026-11-28T16:35:14.798Z"
     },
     "sindresorhus/Gifski": {
       "repository": "sindresorhus/Gifski",
@@ -15321,14 +15321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sweetpad-dev-sweetpad",
-      "content_hash": "312bc5e0058300bbcf66be44e693b3256cfd5447353eb8c74360847a0ae0ce84",
-      "verified_at": "2026-11-26T10:50:37.516Z",
+      "content_hash": "b73e4e1c6129b55855128e342348ceeb774366dd25dea3b67c87454fbcc9c2b7",
+      "verified_at": "2026-11-28T16:35:20.642Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T10:50:37.516Z"
+      "last_updated": "2026-11-28T16:35:20.642Z"
     },
     "testing-library/dom-testing-library": {
       "repository": "testing-library/dom-testing-library",

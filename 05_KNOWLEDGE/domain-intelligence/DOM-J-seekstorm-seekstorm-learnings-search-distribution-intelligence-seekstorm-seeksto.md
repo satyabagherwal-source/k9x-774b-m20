@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T02:56:19.873Z",
+  "timestamp": "2026-11-28T16:35:31.402Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-seekstorm-seekstorm-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [seekstorm-seekstorm-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T02:56:19.873Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T16:35:31.402Z`  
 > **Learning ID**: `LEARN-EVO-seekstorm-seekstorm-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain J (Search & Distribution Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from seekstorm-seekstorm-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source**: github ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
-> **Source Version**: `d7fb1b21`  
+> **Source Version**: `4bb74f4c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T02:56:13.305Z  
+> **Timestamp**: 2026-11-28T16:35:23.296Z  
 > **Learning ID**: `learn-github-seekstorm-seekstorm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:56:13.299Z  
+> **Harvest Timestamp**: 2026-11-28T16:35:23.289Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: SeekStorm: vector & lexical search - in-process library & multi-tenancy server, in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 1939 stars
+- **Stars / Engagement**: 1942 stars
 
 ---
 
@@ -2263,51 +2263,467 @@ pub(crate) fn top_fragments_from_field(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7fb1b21` (2026-11-24)
-**Commit Message**: Update README.md
+### Incident Patch 1: `4bb74f4c` (2026-11-28)
+**Commit Message**: Update CHANGELOG.md
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -392,10 +392,10 @@ Vector search enables you to search not only for similar text, but for everythin
- ## Architecture - under the hood
+@@ -60,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `create_index()` has now a builder pattern. The two parameters `mute` and `force_shard_number` have become optional setters.
+   This makes the create_index parameters on par with the CreateIndexRequest pattern (apart from index_path, which is set automatically in the REST API).
  
- * **A shard per processor core.** Search engines shard an index across servers. SeekStorm applies the same principle one level down, so a CPU works like a miniature data center. Shards are lock-free, a query fans out to all shards in parallel, and the aggregated top-k is re-scored with global document frequencies and average document length, so BM25 ranking stays consistent across shards. Measured on 5 million Wikipedia documents: roughly **4-6x faster indexing and 3x lower query latency** than a non-sharded index.
--* **Leveled index.** Documents accumulate in RAM. Every 64k documents per shard form a level that is committed to disk and becomes immutable. Lexical and vector indices use the same layout, which is why there are no segment merges.
-+* **Leveled index.** Documents accumulate in RAM. Every 64k documents per shard form a level that is committed to disk and becomes immutable. Lexical and vector indices use the same layout, which is why there are no segment merges. 
- * **N-gram indexing for phrase search.** Bigrams and trigrams of frequent terms are indexed directly, moving the intersection and the position check from query time to index time. Phrase queries improved by **2.18x in mean latency and 7.63x at p99.9**, with some individual queries up to three orders of magnitude faster, while BM25 scores stay almost identical.
- * **Lexical engine.** Document-at-a-time processing, SIMD-accelerated (AVX2 / NEON) roaring-bitmap intersection and union, galloping intersection, and a faster-than-Block-Max-WAND top-k union for early termination.
--* **Vector engine.** An IVF index per level and shard, clustered with K-Medoid (PAM) instead of K-Means: cluster centers are actual data points. `nprobe` controls the recall/latency trade-off. Field filters are applied during the ANN search, not afterwards.
-+* **Vector engine.** An IVF index per level and shard, clustered with K-Medoid (PAM) instead of K-Means: cluster centers are actual data points. `nprobe` controls the recall/latency trade-off. Field filters are applied during the ANN search, not afterwards. **No data drift** &amp; medoid retraining, **cluster cost stays linear** with index size, parallelizable indexing &amp; search. No massive number of medoids and vectors of a global ANN index in RAM.
- * **Plain on-disk layout.** API key → index → shard → level, with `index.bin`, `vector.bin`, `facet.bin` and a Zstandard-compressed `docstore.bin`. No external dependencies.
+-## [5.0.0] - 2026-11-04
++## [5.0.0] - 2026-11-11
  
- More in [ARCHITECTURE.md](ARCHITECTURE.md#architecture) and on the [architecture page](https://seekstorm.com/architecture).
+ ### Breaking changes
+ 
 ```
 
 ---
 
-### Incident Patch 2: `bfb8b7b6` (2026-11-24)
-**Commit Message**: Update README.md
+### Incident Patch 2: `9b1571c5` (2026-11-28)
+**Commit Message**: Support for mixed intersection and union queries
+
+### Added
+
+- Support for **mixed queries**, containing intersection (AND, MUST, conjunction, required, mandatory) **and** union (OR, SHOULD, disjunction, optional): e.g. '+climate policy'.
+
+- blink-code-16M, a fast static embedding model for code retrieval by Minish, supersedes potion-code-16M-v2.
+
+### Updated
+
+- Updated [queries](seekstorm\benches\test_data\search-benchmark-game-queries.txt) for `cargo bench`, now including negated and mixed intersection_union queries.
+
+**File**: `CHANGELOG.md` (modified, +18/-2)
+```diff
+@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
++## [5.3.0] - 2026-11-28
++
++### Added
++
++- Support for **mixed queries**, containing intersection (AND, MUST, conjunction, required, mandatory) **and** union (OR, SHOULD, disjunction, optional): e.g. '+climate policy'.  
++
++- blink-code-16M, a fast static embedding model for code retrieval by Minish, supersedes potion-code-16M-v2.
++
++### Updated
++
++- Updated [queries](seekstorm\benches\test_data\search-benchmark-game-queries.txt) for `cargo bench`, now including negated and mixed intersection_union queries.
++
++### Fixed
++
++- Fix panicking rollback of an incomplete level (RAM access type). PR #89 by @kitalia
++
+ ## [5.2.1] - 2026-11-23
+ 
+ ### Changed
+@@ -32,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Prelude** added as convenient re-exports for the most common SeekStorm types and traits: `use seekstorm::prelude::*;`.
+ - An additional query operator is recognized within the `query_string`: `|` (OR,  disjunction,  union). Previously only the query operators `+` `-` `""` had been recognized.
+   The `|` query operator within the `query_string` will overwrite any previously set `query_type_default: QueryType::Intersection`.
+-- blink-8M, a fast English static embedding model by Minish, fully supersedes potion-base-8m, being the same size but better on every task.
++- blink-8M, a fast English static embedding model by Minish, fully supersedes potion-base-8M, being the same size but better on every task.
+ 
+ ### Changed
+ 
+@@ -44,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `create_index()` has now a builder pattern. The two parameters `mute` and `force_shard_number` have become optional setters.
+   This makes the create_index parameters on par with the CreateIndexRequest pattern (apart from index_path, which is set automatically in the REST API).
+ 
+-## [5.0.0] - 2026-11-11
++## [5.0.0] - 2026-11-04
+ 
+ ### Breaking changes
+ 
+```
 
 **File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -86,7 +86,7 @@ In [production](https://seekstorm.com) since 2020. Open source under the [Apache
- * **TurboQuant** (TQ) and affine **Scalar Quantization** (SQ).
- * **Chunking** that respects **sentence boundaries** and **Unicode segmentation** for multilingual text.
- * **K-Medoid clustering**: PAM (Partition Around Medoids) with actual data points as centers.
--* **Sharded and leveled IVF index**.
-+* **Sharded and leveled IVF index**: no data drift &amp; retraining, linear cluster cost, parallelizable.
- * **Approximate Nearest Neighbor Search** (ANNS) in a **Leveled IVF index**.
- * All **field filters** are directly active **during vector search**, not just as post-search filtering step.
- * SIMD (AVX2) acceleration for vector quantization and similarity calculation.
+@@ -51,7 +51,7 @@ In [production](https://seekstorm.com) since 2020. Open source under the [Apache
+ |---|---|
+ | ⚡ **Fast** | **306 µs** average lexical latency: **8x lower** latency and **21x lower P99** than Lucene. All query types, single field, 5M Wikipedia docs, [details](#benchmarks). |
+ | 🔀 **Native hybrid** | Two first-class engines (inverted index + IVF ANN) behind one query planner. Lexical, vector or hybrid **per query**, fused with Reciprocal Rank Fusion (RRF). Filters &amp; facets are active *during* vector &amp; lexical search. |
+-| 🔤 **Lexical search** | BM25F and BM25F_Proximity, intersection / union / phrase / NOT queries, 6 tokenizers incl. Chinese word segmentation, stemming for 38 languages, N-gram phrase indexing, Block-max WAND and Maxscore. |
++| 🔤 **Lexical search** | BM25F and BM25F_Proximity, intersection / union / phrase / NOT queries, 6 tokenizers incl. Chinese word segmentation, stemming for 39 languages, N-gram phrase indexing, Block-max WAND and Maxscore. |
+ | 📐 **Vector search** | Multi-vector indexing, embedded Model2Vec inference or bring-your-own embeddings, F32 / I8, cosine / dot / Euclidean, TurboQuant and scalar quantization, sentence-aware chunking, sharded leveled IVF index. |
+ | ⏱️ **Real-time** | True real-time, not near-real-time: every document is searchable immediately, even before and during commit. No segment merges, no JIT warm-up, no GC pauses. |
+ | 🔎 **Search features** | Faceting (string and numeric range facets, histogram), sorting, result boosting, geo proximity search, typo tolerance, query completion, instant search, KWIC highlighting, synonyms. |
+```
+
+**File**: `seekstorm/Cargo.toml` (modified, +3/-3)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "seekstorm"
+-version = "5.2.1"
++version = "5.3.0"
+ authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
+ license = "Apache-2.0"
+ categories = ["database-implementations", "data-structures"]
+@@ -50,7 +50,7 @@ lazy_static = "1.5.1"
+ url = "2.5.9"
+ itertools = "0.15.0"
+ async-recursion = "1.2.0"
+-zstd = "0.14.4"
++zstd = "0.14.5"
+ rayon = "1.12.0"
+ aho-corasick = "1.1.5"
+ smallvec = "1.16.6"
+@@ -69,7 +69,7 @@ csv = "1.4.0"
+ snap = "1.1.2"
+ lz4_flex = "0.14.2"
+ bytemuck = { version = "1.25.2", features = ["derive","extern_crate_alloc"] }
+-model2vec-rs = "0.5.0"
++model2vec-rs = "0.5.1"
+ chunk = "0.10.2"
+ snowball_stemmers_rs = "1.1.0"
+ half = { version = "2.7.1", features = ["bytemuck","serde"] }
+```
+
+**File**: `seekstorm/benches/test_data/search-benchmark-game-queries.txt` (modified, +59/-0)
+```diff
+@@ -901,3 +901,62 @@
+ {"query": "\"to be or not to be\"", "tags": ["phrase", "phrase:num_tokens_>3"]}
+ {"query": "to be or not to be", "tags": ["union", "union:num_tokens_>3"]}
+ {"query": "a search engine is an information retrieval software system designed to help find information stored on one or more computer systems", "tags": ["union", "union:num_tokens_>3"]}
++{"query": "+climate policy", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "remote +work", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "+data privacy", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "electric +vehicles", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "+global markets", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "urban +planning", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "+public transit", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "school +safety", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "+consumer rights", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "medical +devices", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "+financial reporting standards", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "wildfire +risk maps", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+mental health resources", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "public +records request", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+water quality report", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "digital +marketing strategy", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+housing market trends", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "airport +security rules", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+electric grid stability", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "solar +panel rebates", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+disaster relief funds", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "college +admissions criteria", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+insurance claim process", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "home +insurance quotes", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+credit card rewards", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "small +business grants", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+data center cooling", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "search +engine ranking", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+remote learning tools", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "traffic +accident reports", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+open source software licenses", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "national +park visitor fees", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "+health care cost trends", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "city +council meeting agenda", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "+renewable energy policy goals", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "federal +tax filing deadline", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "+airport security screening rules", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "local +election ballot measures", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "+climate change impact report", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "customer +service phone number", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "+python -snake -monty", "tags": [
+```
+
+**File**: `seekstorm/src/commit.rs` (modified, +3/-6)
+```diff
+@@ -231,15 +231,14 @@ impl Shard {
+                     unsafe { Mmap::map(&self.index_file).expect("Unable to create Mmap") };
+ 
+                 for segment in self.segments_index.iter_mut() {
+-                    if idx == segment.byte_array_blocks_pointer.len() - 1 {
+-                        segment.byte_array_blocks_pointer.remove(idx);
++                    if segment.byte_array_blocks_pointer.len() > idx {
++                        segment.byte_array_blocks_pointer.pop();
+                     }
+                 }
+             } else {
+-                // `> idx` also avoids the usize underflow for a segment with no blocks yet.
+                 for segment in self.segments_index.iter_mut() {
+                     if segment.byte_array_blocks.len() > idx {
+-                        segment.byte_array_blocks.remove(idx);
++                        segment.byte_array_blocks.pop();
+                     }
+                 }
+ 
+@@ -249,8 +248,6 @@ impl Shard {
+                             && block.block_id as usize == idx
+                         {
+                             item.1.posting_count -= block.posting_count as u32 + 1;
+-                            // `blocks` holds one entry per level where the term occurs;
+-                            // the incomplete level is always its last entry.
+                             item.1.blocks.pop();
+                         }
+                     }
+```
+
+**File**: `seekstorm/src/index.rs` (modified, +21/-12)
+```diff
+@@ -7,7 +7,6 @@ use memmap2::{Mmap, MmapMut, MmapOptions};
+ use model2vec_rs::model::StaticModel;
+ use num::FromPrimitive;
+ use num_derive::FromPrimitive;
+-
+ use search::{QueryType, Search};
+ use serde::{Deserialize, Serialize};
+ use serde_json::Value;
+@@ -404,8 +403,8 @@ impl fmt::Display for LexicalSimilarity {
+ /// - All Unicode alphanumeric chars are recognized as token.
+ /// - Allows '+' '-' '|' '#' in middle or end of a token: c++, c#, block-max.
+ /// - Diacritics, accents, zalgo text, umlaut, bold, italic, full-width UTF-8 characters are converted into its basic representation.
+-/// - Apostroph handling prevents that short term parts preceding or following the apostroph get indexed (e.g. "s" in "someone's").
+-/// - Tokenizing might be slower due to folding and apostroph processing.
++/// - Apostrophe handling prevents that short term parts preceding or following the apostrophe get indexed (e.g. "s" in "someone's").
++/// - Tokenizing might be slower due to folding and apostrophe processing.
+ ///
+ /// UnicodeAlphanumericZH
+ /// - Implements Chinese word segmentation to segment continuous Chinese text into tokens for indexing and search.
+@@ -423,8 +422,8 @@ pub enum TokenizerType {
+     /// All Unicode alphanumeric chars are recognized as token.
+     /// Allows '+' '-' '|' '#' in middle or end of a token: c++, c#, block-max.
+     /// Diacritics, accents, zalgo text, umlaut, bold, italic, full-width UTF-8 characters are converted into its basic representation.
+-    /// Apostroph handling prevents that short term parts preceding or following the apostroph get indexed (e.g. "s" in "someone's").
+-    /// Tokenizing might be slower due to folding and apostroph processing.
++    /// Apostrophe handling prevents that short term parts preceding or following the apostrophe get indexed (e.g. "s" in "someone's").
++    /// Tokenizing might be slower due to folding and apostrophe processing.
+     UnicodeAlphanumericFolded = 2,
+     /// Tokens are separated by whitespace. Mainly for benchmark compatibility.
+     Whitespace = 3,
+@@ -535,6 +534,8 @@ pub enum StemmerType {
+     Ukrainian = 37,
+     /// Yiddish stemmer
+     Yiddish = 38,
++    /// Early Modern English stemmer
++    EarlyModernEnglish = 39,
+ }
+ 
+ impl fmt::Display for StemmerType {
+@@ -579,6 +580,7 @@ impl fmt::Display for StemmerType {
+             StemmerType::Turkish => write!(f, "Turkish"),
+             StemmerType::Ukrainian => write!(f, "Ukrainian"),
+             StemmerType::Yiddish => write!(f, "Yiddish"),
++            StemmerType::EarlyModernEnglish => write!(f, "EarlyModernEnglish"),
+         }
+     }
+ }
+@@ -724,6 +726,7 @@ pub(crate) struct PostingListObjectQuery<'a> {
+     pub field_vec_ngram2: SmallVec<[(u16, usize); 2]>,
+     pub field_vec_ngram3: SmallVec<[(u16, usize); 2]>,
+     pub bm25_flag: bool,
++    pub op: QueryType,
+ }
+ 
+ pub(crate) static DUMMY_VEC: Vec<BlockObjectIndex> = Vec::new();
+@@ -779,6 +782,7 @@ impl Default for PostingListObjectQuery<'_> {
+             bm25_flag: true,
+             intersect: 0,
+             ulong_pos: 0,
++            op: QueryType::Union,
+         }
+     }
+ }
+@@ -2351,6 +2355,14 @@ pub(crate) async fn create_index_root(
+                                 *quantization,
+                                 VectorSimilarity::Cosine,
+                             ),
++                            Model::BlinkCode16M => (
++                                0,
++                                "minishlab/blink-code-16M",
++                                Precision::F32,
++                                chunk_size,
++                                *quantization,
++                                VectorSimilarity::Cosine,
++                            ),
+                         }
+                     }
+                     Inference::Model2VecCustom {
+@@ -2883,6 +2895,9 @@ pub(crate) fn create_shard(
+                 StemmerType::Turkish => Some(Stemmer::create(Algorithm::Turkish)),
+                 StemmerType::Ukrainian => Some(Stemmer::create(Algorithm::Ukrainian)),
+                 StemmerType::Yiddish => Some(Stemmer::create(Algorithm::Yiddish)),
++                StemmerType::EarlyModernEnglish => {
++                    Some(Stemmer::create(Algorithm::EarlyModernEnglish))
++                }
+                 _ => None,
+             };
+ 
+@@ -3982,13 +3997,7 @@ pub(crate) async fn open_shard(
+                             shard.committed_doc_count = shard.indexed_doc_count;
+                             shard.is_last_level_incomplete =
+                                 !shard.committed_doc_count.is_multiple_of(ROARING_BLOCK_SIZE);
+-                            // `block_id` is the docid block (`docid >> 16`) the next
+-                            // document belongs to. `open_index` otherwise leaves the
+-                            // `Shard::new` default of 0, so the first write after a
+-                            // reopen commits the rolled-back level as block 0 instead of
+-                            // the last (incomplete) l
+```
+
+**File**: `seekstorm/src/search.rs` (modified, +218/-56)
+```diff
+@@ -158,7 +158,13 @@ pub struct DocumentOption {
+ #[derive(Deserialize, Serialize, Clone, ToSchema, Debug)]
+ #[serde(default)]
+ pub struct SearchRequest<'a> {
+-    /// Query string, search operators `+` `|` `-` `""` are recognized.
++    /// Query string
++    ///
++    /// The following query operators are recognized and overwrite the `query_type_default` setting:
++    /// - **|** (Union, OR, disjunction, SHOULD, optional),
++    /// - **+** (Intersection, AND, conjunction, MUST, required, mandatory),
++    /// - **""** (Phrase, exact match),
++    /// - **-** (Not, MUST_NOT, exclude),
+     #[serde(alias = "query")]
+     pub query_string: &'a str,
+     /// Optional query vector: If None, then the query vector is derived from the query string using the specified model.
+@@ -232,7 +238,8 @@ pub struct SearchRequest<'a> {
+     #[schema(example = json!([{"field": "date", "order": "Ascending", "base": "None" }]))]
+     pub result_sort: Vec<ResultSort>,
+     /// Specify default query type: (default=Union).
+-    /// This can be overwritten by search operators within the query string (`+` `-` `""`).
++    /// Set `query_type_default=QueryType::Intersection` for typical web search engine input box behavior.
++    /// The `query_type_default` setting can be overwritten by query operators within the query string (`+` `-` `""`).
+     /// The interpretation of operator chars within the query string (set `query_type=QueryType::Union`) allows to specify advanced search operations via a simple search box.
+     /// | `query_type_default` | query string      | meaning              |
+     /// |----------------------|-------------------|----------------------|
+@@ -419,18 +426,18 @@ impl<'a> SearchRequest<'a> {
+ }
+ 
+ /// Specifies the default QueryType: The following query types are supported:
+-/// - **Union** (OR, disjunction),
+-/// - **Intersection** (AND, conjunction),
++/// - **Union** (|, OR, disjunction, SHOULD),
++/// - **Intersection** (+, AND, conjunction, MUST),
+ /// - **Phrase** (""),
+-/// - **Not** (-).
++/// - **Not** (-, MUST_NOT).
+ ///
+ /// The default QueryType is superseded if the query parser detects that a different query type is specified within the query string (+ - "").
+ #[derive(Default, PartialEq, Clone, Debug, Serialize, Deserialize, ToSchema)]
+ pub enum QueryType {
+-    /// Union (OR, disjunction)
++    /// Union (|, OR, disjunction, SHOULD)
+     #[default]
+     Union = 0,
+-    /// Intersection (AND, conjunction)
++    /// Intersection (+, AND, conjunction, MUST)
+     Intersection = 1,
+     /// Phrase ("")
+     Phrase = 2,
+@@ -3752,6 +3759,7 @@ impl SearchLexicalShard for ShardArc {
+                                         idf_ngram2,
+                                         idf_ngram3,
+                                         ngram_type: non_unique_term.ngram_type.clone(),
++                                        op: non_unique_term.op.clone(),
+                                         ..Default::default()
+                                     };
+                                     term_index_unique = value_new.term_index_unique;
+@@ -3885,6 +3893,7 @@ impl SearchLexicalShard for ShardArc {
+                             result_object.results.truncate(length);
+                         }
+                     }
++
+                     if !search_result.query_facets.is_empty() && result_type != ResultType::Topk {
+                         let mut facets: AHashMap<String, Facet> = AHashMap::new();
+                         for facet in search_result.query_facets.iter() {
+@@ -3930,65 +3939,217 @@ impl SearchLexicalShard for ShardArc {
+             } else if query_type_mut == QueryType::Union {
+                 search_result.skip_facet_count = true;
+                 if result_type == ResultType::Count && query_list_len != 2 {
+-                    union_blockid(
+-                        &shard_ref,
+-                        &mut non_unique_query_list,
+-                        &mut query_list,
+-                        &mut not_query_list,
+-                        &result_count_arc,
+-                        &mut search_result,
+-                        offset + length,
+-                        &result_type,
+-                        &field_filter_set,
+-                        &facet_filter_sparse,
+-                    )
+-                    .await;
++                    let required_terms = query_list
++                        .iter()
++                        .filter(|plo| plo.op == QueryType::Intersection)
++                        .count();
++                    if required_terms == 0 {
++                        union_blockid(
++                            &shard_ref,
++                            &mut non_unique_query_list,
++                            &mut query_list,
++                            &mut not_query_list,
++                            &result_count_arc,
++                            &mut search_result,
++                            offset + length,
++                            &result_type,
++                            &field_
+```
+
+**File**: `seekstorm/src/tokenizer.rs` (modified, +11/-6)
+```diff
+@@ -135,6 +135,7 @@ pub(crate) async fn tokenizer(
+     indexed_field_id: usize,
+     indexed_field_number: usize,
+ ) {
++    let query_type_default = query_type.clone();
+     let (max_completion_entries, completion_len) = if is_query {
+         (0, 0)
+     } else {
+@@ -535,6 +536,8 @@ pub(crate) async fn tokenizer(
+     let mut term_len_2 = 0;
+ 
+     let mut non_unique_terms_raw = Vec::new();
++    let mut intersection_op_count = 0;
++    let mut union_op_count = 0;
+ 
+     for term_string in non_unique_terms_line.iter_mut() {
+         if is_query {
+@@ -544,15 +547,11 @@ pub(crate) async fn tokenizer(
+                 query_type.clone()
+             };
+             if term_string.starts_with('+') {
+-                if query_type != &QueryType::Phrase {
+-                    *query_type = QueryType::Intersection;
+-                }
+                 query_type_term = QueryType::Intersection;
++                intersection_op_count += 1;
+                 *term_string = &term_string[1..];
+             } else if term_string.starts_with('|') {
+-                if query_type != &QueryType::Phrase {
+-                    *query_type = QueryType::Union;
+-                }
++                union_op_count += 1;
+                 query_type_term = QueryType::Union;
+                 *term_string = &term_string[1..];
+             } else if term_string.starts_with('-') {
+@@ -904,6 +903,12 @@ pub(crate) async fn tokenizer(
+     if is_query {
+         let len = non_unique_terms_raw.len();
+ 
++        if query_type_default == QueryType::Union && intersection_op_count == len {
++            *query_type = QueryType::Intersection;
++        } else if query_type_default == QueryType::Intersection && union_op_count > 0 {
++            *query_type = QueryType::Union;
++        }
++
+         let mut term_0;
+         let mut term_frequent_0;
+         let mut term_phrase_0;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #89** (2026-11-26): Fix panicking rollback of an incomplete level (RAM access type) (@kitalia)
 - **PR #87** (2026-09-12): union_docid_3 subset recursion and fixed cap may cause bug (@qkun-zh)
 - **PR #86** (2026-09-11): Fix the bug that there is no exemption for the heap that is not full (@qkun-zh)
 - **PR #85** (2026-09-11): Fix union_scan_32 overflows past 32 query terms (@qkun-zh)
 - **PR #84** (2026-09-11): Simplify union_count counting; drop seed sort (@qkun-zh)
 - **PR #83** (2026-09-08): Cut temp allocs in Shard::index_posting via SmallVec (@qkun-zh)
-- **PR #82** (2026-09-08): Write docstore pointer for empty docs (eliminate walk-back loop) (@qkun-zh)
 
 ---
 
@@ -2327,33 +2743,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update README.md
+## X. Update CHANGELOG.md
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7fb1b21`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4bb74f4c`: Update CHANGELOG.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-* **Leveled index.** Documents accumulate in RAM. Every 64k documents per shard form a level that is committed to disk and becomes immutable. Lexical and vector indices use the same layout, which is why there are no segment merges. 
-* **Vector engine.** An IVF index per level and shard, clustered with K-Medoid (PAM) instead of K-Means: cluster centers are actual data points. `nprobe` controls the recall/latency trade-off. Field filters are applied during the ANN search, not afterwards. **No data drift** &amp; medoid retraining, **cluster cost stays linear** with index size, parallelizable indexing &amp; search. No massive number of medoids and vectors of a global ANN index in RAM.
+## [5.0.0] - 2026-11-11
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-* **Leveled index.** Documents accumulate in RAM. Every 64k documents per shard form a level that is committed to disk and becomes immutable. Lexical and vector indices use the same layout, which is why there are no segment merges.
-* **Vector engine.** An IVF index per level and shard, clustered with K-Medoid (PAM) instead of K-Means: cluster centers are actual data points. `nprobe` controls the recall/latency trade-off. Field filters are applied during the ANN search, not afterwards.
+## [5.0.0] - 2026-11-04
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7fb1b21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4bb74f4c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -4,22 +4,22 @@
 {
   "source_repository": "SeekStorm/SeekStorm",
   "source_url": "https://github.com/SeekStorm/SeekStorm",
-  "source_version": "71e34a45",
+  "source_version": "4bb74f4c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T23:11:48.631Z",
+  "timestamp": "2026-11-28T16:35:24.496Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-seekstorm-seekstorm",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm) (Revision: `71e34a45`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T23:11:48.631Z`  
+> **Provenance**: Harvested from [SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm) (Revision: `4bb74f4c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T16:35:24.496Z`  
 > **Learning ID**: `learn-github-seekstorm-seekstorm`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `SeekStorm/SeekStorm` (Commit: `71e34a45`)
+- **Target Repository**: `SeekStorm/SeekStorm` (Commit: `4bb74f4c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T23:11:46.740Z  
+> **Harvest Timestamp**: 2026-11-28T16:35:23.289Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: SeekStorm: vector & lexical search - in-process library & multi-tenancy server, in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 1941 stars
+- **Stars / Engagement**: 1942 stars
 
 ---
 
@@ -2246,342 +2246,458 @@ pub(crate) fn top_fragments_from_field(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `71e34a45` (2026-11-26)
-**Commit Message**: Merge pull request #89 from kitalia/fix/ram-incomplete-level-rollback
+### Incident Patch 1: `4bb74f4c` (2026-11-28)
+**Commit Message**: Update CHANGELOG.md
 
-Fix panicking rollback of an incomplete level (RAM access type)
-
-**File**: `seekstorm/src/commit.rs` (modified, +5/-2)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -236,8 +236,9 @@ impl Shard {
-                     }
-                 }
-             } else {
-+                // `> idx` also avoids the usize underflow for a segment with no blocks yet.
-                 for segment in self.segments_index.iter_mut() {
--                    if idx == segment.byte_array_blocks.len() - 1 {
-+                    if segment.byte_array_blocks.len() > idx {
-                         segment.byte_array_blocks.remove(idx);
-                     }
-                 }
-@@ -248,7 +249,9 @@ impl Shard {
-                             && block.block_id as usize == idx
-                         {
-                             item.1.posting_count -= block.posting_count as u32 + 1;
--                            item.1.blocks.remove(idx);
-+                            // `blocks` holds one entry per level where the term occurs;
-+                            // the incomplete level is always its last entry.
-+                            item.1.blocks.pop();
-                         }
-                     }
-                     self.segments_index[key0]
-```
-
-**File**: `seekstorm/src/index.rs` (modified, +8/-0)
-```diff
-@@ -3982,6 +3982,14 @@ pub(crate) async fn open_shard(
-                             shard.committed_doc_count = shard.indexed_doc_count;
-                             shard.is_last_level_incomplete =
-                                 !shard.committed_doc_count.is_multiple_of(ROARING_BLOCK_SIZE);
-+                            // `block_id` is the docid block (`docid >> 16`) the next
-+                            // document belongs to. `open_index` otherwise leaves the
-+                            // `Shard::new` default of 0, so the first write after a
-+                            // reopen commits the rolled-back level as block 0 instead of
-+                            // the last (incomplete) level: the merged postings get
-+                            // mislabeled and `update_list_max_impact_score`/`get_max_score`
-+                            // reads an empty block for a segment without block-0 data.
-+                            shard.block_id = shard.indexed_doc_count >> 16;
+@@ -60,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `create_index()` has now a builder pattern. The two parameters `mute` and `force_shard_number` have become optional setters.
+   This makes the create_index parameters on par with the CreateIndexRequest pattern (apart from index_path, which is set automatically in the REST API).
  
-                             if shard.is_vector_indexing && !shard.vector_file_mmap.is_empty() {
-                                 shard.indexed_vector_count = 0;
-```
-
-**File**: `seekstorm/tests/rollback_incomplete_level.rs` (added, +329/-0)
-```diff
-@@ -0,0 +1,329 @@
-+//! Regression test for the RAM-mode rollback of an incomplete index level.
-+//!
-+//! `ROARING_BLOCK_SIZE` is 65,536 and is not configurable, so the test pays for
-+//! a real level boundary: 65,600 documents leave a 64-document incomplete
-+//! second level, and every later write commit merges that level back into level
-+//! 0 and rolls it back.
-+//!
-+//! Before the fix, the per-term part of that rollback in `commit_lexical_shard`
-+//! called `item.1.blocks.remove(idx)`, although `blocks` holds one entry per
-+//! level *where the term occurs* and not one entry per level id. For a term
-+//! that first occurs in the incomplete level (`len == 1`) the call panicked
-+//! with "removal index (is 1) should be < len (is 1)". The panic happened in
-+//! the spawned commit task, so `commit` only reported the `JoinError`: the
-+//! level index was left untouched while `byte_array_blocks` had already been
-+//! truncated, and every later commit died with "index out of bounds: the len is
-+//! 1 but the index is 1". The index stayed at the last full level while writes
-+//! kept reporting success.
-+//!
-+//! The panics happen in spawned tasks, so the test installs a panic hook that
-+//! records instead of printing and asserts that nothing was recorded.
-+//!
-+//! The same test covers the second defect it surfaced: `open_index` restores the
-+//! committed document count but not `Shard::block_id`, which `Shard::new` leaves
-+//! at 0. The first write after a reopen then commits the restored, incomplete
-+//! level as block 0 and the merged postings are mislabeled, which is observable
-+//! as a panic in `update_list_max_impact_score`/`get_max_score`.
-+
-+use seekstorm::prelude::*;
-+use serde_json::Value;
-+use std::sync::{Arc, Mutex};
-+use std::time::{Duration, Instant};
-+
-+/// `ROARING_BLOCK_SIZE`, the number of documents per index level.
-+const BOUNDARY: usize = 65_536;
-+/// Two levels: one full and a 64-document incomplete one.
-+const DOCUMENTS: usize = 65_600;
-+/// Documents indexed between two commits.
-+const PER_COMMIT: usize = 8;
-+
-+/// Minimal single-shard RAM configuration for the level-rollback regression.
-+/// It is built by hand so that the environment cannot switch the test to the
-+/// mmap path or to a different shard layout.
-+fn index_config() -> IndexConfig {
-+    IndexConfig {
-+        id: 0,
-+        name: "rollback_incomplete_level".into(),
-+        lexical_similarity: LexicalSimilarity::Bm25f,
-+        tokenizer: TokenizerType::UnicodeAlphanumeric,
-+        stemmer: StemmerType::None,
-+        stop_words: StopwordType::None,
-+        frequent_words: FrequentwordType::None,
-+        ngram_indexing: NgramSet::SingleTerm as u8,
-+        document_compression: DocumentCompression::None,
-+        access_type: AccessType::Ram,
-+        spelling_correction: None,
-+        query_completion: None,
-+        clustering: Clustering::None,
-+        inference: Inference::None,
-+        segment_number_bits: 10,
-+    }
-+}
-+
-+fn schema() -> Vec<SchemaField> {
-+    vec![
-+        SchemaField::new("_id").store(true).index_lexical(false),
-+        SchemaField::new("body").store(false).index_lexical(true),
-+    ]
-+}
-+
-+/// Every document carries `common`; documents past the level boundary also
-+/// carry a unique `tail{id}` that exists only in the incomplete level - the
-+/// term shape that tripped the 5.2.1 rollback.
-+fn document(id: usize) -> Document {
-+    let body = if id < BOUNDARY {
-+        "common".to_string()
-+    } else {
-+        format!("common tail{id}")
-+    };
-+    let mut document = Document::default();
-+    document.insert("_id".to_string(), Value::String(format!("doc{id}")));
-+    document.insert("body".to_string(), Value::String(body));
-+    document
-+}
-+
-+/// Indexing is spawned on the index runtime and only bounded by a per-shard
-+/// semaphore, so wait until every document reached the shard before committing.
-+async fn wait_until_indexed(index: &IndexArc, expected: usize) {
-+    let deadline = Instant::now() + Duration::from_secs(120);
-+    loop {
-+        let indexed = index.read().await.indexed_doc_count().await;
-+        if indexed >= expected {
-+            return;
-+        }
-+        assert!(
-+            Instant::now() < deadline,
-+            "indexing stalled at {indexed} of {expected} documents"
-+        );
-+        tokio::time::sleep(Duration::from_millis(5)).await;
-+    }
-+}
-+
-+async fn index_documents(index: &IndexArc, from: usize, to: usize) {
-+    index
-+        .index_documents((from..to).map(document).collect())
-+        .await;
-+    wait_until_indexed(index, to).await;
-+}
-+
-+async fn committed_documents(index: &IndexArc) -> usize {
-+    index.read().await.committed_doc_count().await
-+}
-+
-+/// Exhaustive committed count: `length: 0` with `ResultType::Count` disables
-+/// the top-k heap, so nothing is pruned.
-+async fn committed_count(index: &IndexArc, query: &str) -> usize {
-+    index
-+        .search(SearchRequest {
-+            query_string: query,
-+            enable_empty_qu
+-## [5.0.0] - 2026-11-04
++## [5.0.0] - 2026-11-11
+ 
+ ### Breaking changes
+ 
 ```
 
 ---
 
-### Incident Patch 2: `7a553815` (2026-11-26)
-**Commit Message**: Fix RAM-mode rollback of an incomplete index level
+### Incident Patch 2: `9b1571c5` (2026-11-28)
+**Commit Message**: Support for mixed intersection and union queries
 
-**File**: `seekstorm/src/commit.rs` (modified, +5/-2)
+### Added
+
+- Support for **mixed queries**, containing intersection (AND, MUST, conjunction, required, mandatory) **and** union (OR, SHOULD, disjunction, optional): e.g. '+climate policy'.
+
+- blink-code-16M, a fast static embedding model for code retrieval by Minish, supersedes potion-code-16M-v2.
+
+### Updated
+
+- Updated [queries](seekstorm\benches\test_data\search-benchmark-game-queries.txt) for `cargo bench`, now including negated and mixed intersection_union queries.
+
+**File**: `CHANGELOG.md` (modified, +18/-2)
 ```diff
-@@ -236,8 +236,9 @@ impl Shard {
+@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
++## [5.3.0] - 2026-11-28
++
++### Added
++
++- Support for **mixed queries**, containing intersection (AND, MUST, conjunction, required, mandatory) **and** union (OR, SHOULD, disjunction, optional): e.g. '+climate policy'.  
++
++- blink-code-16M, a fast static embedding model for code retrieval by Minish, supersedes potion-code-16M-v2.
++
++### Updated
++
++- Updated [queries](seekstorm\benches\test_data\search-benchmark-game-queries.txt) for `cargo bench`, now including negated and mixed intersection_union queries.
++
++### Fixed
++
++- Fix panicking rollback of an incomplete level (RAM access type). PR #89 by @kitalia
++
+ ## [5.2.1] - 2026-11-23
+ 
+ ### Changed
+@@ -32,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Prelude** added as convenient re-exports for the most common SeekStorm types and traits: `use seekstorm::prelude::*;`.
+ - An additional query operator is recognized within the `query_string`: `|` (OR,  disjunction,  union). Previously only the query operators `+` `-` `""` had been recognized.
+   The `|` query operator within the `query_string` will overwrite any previously set `query_type_default: QueryType::Intersection`.
+-- blink-8M, a fast English static embedding model by Minish, fully supersedes potion-base-8m, being the same size but better on every task.
++- blink-8M, a fast English static embedding model by Minish, fully supersedes potion-base-8M, being the same size but better on every task.
+ 
+ ### Changed
+ 
+@@ -44,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `create_index()` has now a builder pattern. The two parameters `mute` and `force_shard_number` have become optional setters.
+   This makes the create_index parameters on par with the CreateIndexRequest pattern (apart from index_path, which is set automatically in the REST API).
+ 
+-## [5.0.0] - 2026-11-11
++## [5.0.0] - 2026-11-04
+ 
+ ### Breaking changes
+ 
+```
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -51,7 +51,7 @@ In [production](https://seekstorm.com) since 2020. Open source under the [Apache
+ |---|---|
+ | ⚡ **Fast** | **306 µs** average lexical latency: **8x lower** latency and **21x lower P99** than Lucene. All query types, single field, 5M Wikipedia docs, [details](#benchmarks). |
+ | 🔀 **Native hybrid** | Two first-class engines (inverted index + IVF ANN) behind one query planner. Lexical, vector or hybrid **per query**, fused with Reciprocal Rank Fusion (RRF). Filters &amp; facets are active *during* vector &amp; lexical search. |
+-| 🔤 **Lexical search** | BM25F and BM25F_Proximity, intersection / union / phrase / NOT queries, 6 tokenizers incl. Chinese word segmentation, stemming for 38 languages, N-gram phrase indexing, Block-max WAND and Maxscore. |
++| 🔤 **Lexical search** | BM25F and BM25F_Proximity, intersection / union / phrase / NOT queries, 6 tokenizers incl. Chinese word segmentation, stemming for 39 languages, N-gram phrase indexing, Block-max WAND and Maxscore. |
+ | 📐 **Vector search** | Multi-vector indexing, embedded Model2Vec inference or bring-your-own embeddings, F32 / I8, cosine / dot / Euclidean, TurboQuant and scalar quantization, sentence-aware chunking, sharded leveled IVF index. |
+ | ⏱️ **Real-time** | True real-time, not near-real-time: every document is searchable immediately, even before and during commit. No segment merges, no JIT warm-up, no GC pauses. |
+ | 🔎 **Search features** | Faceting (string and numeric range facets, histogram), sorting, result boosting, geo proximity search, typo tolerance, query completion, instant search, KWIC highlighting, synonyms. |
+```
+
+**File**: `seekstorm/Cargo.toml` (modified, +3/-3)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "seekstorm"
+-version = "5.2.1"
++version = "5.3.0"
+ authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
+ license = "Apache-2.0"
+ categories = ["database-implementations", "data-structures"]
+@@ -50,7 +50,7 @@ lazy_static = "1.5.1"
+ url = "2.5.9"
+ itertools = "0.15.0"
+ async-recursion = "1.2.0"
+-zstd = "0.14.4"
++zstd = "0.14.5"
+ rayon = "1.12.0"
+ aho-corasick = "1.1.5"
+ smallvec = "1.16.6"
+@@ -69,7 +69,7 @@ csv = "1.4.0"
+ snap = "1.1.2"
+ lz4_flex = "0.14.2"
+ bytemuck = { version = "1.25.2", features = ["derive","extern_crate_alloc"] }
+-model2vec-rs = "0.5.0"
++model2vec-rs = "0.5.1"
+ chunk = "0.10.2"
+ snowball_stemmers_rs = "1.1.0"
+ half = { version = "2.7.1", features = ["bytemuck","serde"] }
+```
+
+**File**: `seekstorm/benches/test_data/search-benchmark-game-queries.txt` (modified, +59/-0)
+```diff
+@@ -901,3 +901,62 @@
+ {"query": "\"to be or not to be\"", "tags": ["phrase", "phrase:num_tokens_>3"]}
+ {"query": "to be or not to be", "tags": ["union", "union:num_tokens_>3"]}
+ {"query": "a search engine is an information retrieval software system designed to help find information stored on one or more computer systems", "tags": ["union", "union:num_tokens_>3"]}
++{"query": "+climate policy", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "remote +work", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "+data privacy", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "electric +vehicles", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "+global markets", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "urban +planning", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "+public transit", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "school +safety", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "+consumer rights", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "medical +devices", "tags": ["intersection_union", "global", "intersection_union:num_tokens_2"]}
++{"query": "+financial reporting standards", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "wildfire +risk maps", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+mental health resources", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "public +records request", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+water quality report", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "digital +marketing strategy", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+housing market trends", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "airport +security rules", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+electric grid stability", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "solar +panel rebates", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+disaster relief funds", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "college +admissions criteria", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+insurance claim process", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "home +insurance quotes", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+credit card rewards", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "small +business grants", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+data center cooling", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "search +engine ranking", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+remote learning tools", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "traffic +accident reports", "tags": ["intersection_union", "global", "intersection_union:num_tokens_3"]}
++{"query": "+open source software licenses", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "national +park visitor fees", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "+health care cost trends", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "city +council meeting agenda", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "+renewable energy policy goals", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "federal +tax filing deadline", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "+airport security screening rules", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "local +election ballot measures", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "+climate change impact report", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "customer +service phone number", "tags": ["intersection_union", "global", "intersection_union:num_tokens_>3"]}
++{"query": "+python -snake -monty", "tags": [
+```
+
+**File**: `seekstorm/src/commit.rs` (modified, +3/-6)
+```diff
+@@ -231,15 +231,14 @@ impl Shard {
+                     unsafe { Mmap::map(&self.index_file).expect("Unable to create Mmap") };
+ 
+                 for segment in self.segments_index.iter_mut() {
+-                    if idx == segment.byte_array_blocks_pointer.len() - 1 {
+-                        segment.byte_array_blocks_pointer.remove(idx);
++                    if segment.byte_array_blocks_pointer.len() > idx {
++                        segment.byte_array_blocks_pointer.pop();
                      }
                  }
              } else {
-+                // `> idx` also avoids the usize underflow for a segment with no blocks yet.
+-                // `> idx` also avoids the usize underflow for a segment with no blocks yet.
                  for segment in self.segments_index.iter_mut() {
--                    if idx == segment.byte_array_blocks.len() - 1 {
-+                    if segment.byte_array_blocks.len() > idx {
-                         segment.byte_array_blocks.remove(idx);
+                     if segment.byte_array_blocks.len() > idx {
+-                        segment.byte_array_blocks.remove(idx);
++                        segment.byte_array_blocks.pop();
                      }
                  }
-@@ -248,7 +249,9 @@ impl Shard {
+ 
+@@ -249,8 +248,6 @@ impl Shard {
                              && block.block_id as usize == idx
                          {
                              item.1.posting_count -= block.posting_count as u32 + 1;
--                            item.1.blocks.remove(idx);
-+                            // `blocks` holds one entry per level where the term occurs;
-+                            // the incomplete level is always its last entry.
-+                            item.1.blocks.pop();
+-                            // `blocks` holds one entry per level where the term occurs;
+-                            // the incomplete level is always its last entry.
+                             item.1.blocks.pop();
                          }
                      }
-                     self.segments_index[key0]
 ```
 
-**File**: `seekstorm/tests/rollback_incomplete_level.rs` (added, +256/-0)
+**File**: `seekstorm/src/index.rs` (modified, +21/-12)
 ```diff
-@@ -0,0 +1,256 @@
-+//! Regression test for the RAM-mode rollback of an incomplete index level.
-+//!
-+//! `ROARING_BLOCK_SIZE` is 65,536 and is not configurable, so the test pays for
-+//! a real level boundary: 65,600 documents leave a 64-document incomplete
-+//! second level, and every later write commit merges that level back into level
-+//! 0 and rolls it back.
-+//!
-+//! Before the fix, the per-term part of that rollback in `commit_lexical_shard`
-+//! called `item.1.blocks.remove(idx)`, although `blocks` holds one entry per
-+//! level *where the term occurs* and not one entry per level id. For a term
-+//! that first occurs in the incomplete level (`len == 1`) the call panicked
-+//! with "removal index (is 1) should be < len (is 1)". The panic happened in
-+//! the spawned commit task, so `commit` only reported the `JoinError`: the
-+//! level index was left untouched while `byte_array_blocks` had already been
-+//! truncated, and every later commit died with "index out of bounds: the len is
-+//! 1 but the index is 1". The index stayed at the last full level while writes
-+//! kept reporting success.
-+//!
-+//! The panics happen in spawned tasks, so the test installs a panic hook that
-+//! records instead of printing and asserts that nothing was recorded.
+@@ -7,7 +7,6 @@ use memmap2::{Mmap, MmapMut, MmapOptions};
+ use model2vec_rs::model::StaticModel;
+ use num::FromPrimitive;
+ use num_derive::FromPrimitive;
+-
+ use search::{QueryType, Search};
+ use serde::{Deserialize, Serialize};
+ use serde_json::Value;
+@@ -404,8 +403,8 @@ impl fmt::Display for LexicalSimilarity {
+ /// - All Unicode alphanumeric chars are recognized as token.
+ /// - Allows '+' '-' '|' '#' in middle or end of a token: c++, c#, block-max.
+ /// - Diacritics, accents, zalgo text, umlaut, bold, italic, full-width UTF-8 characters are converted into its basic representation.
+-/// - Apostroph handling prevents that short term parts preceding or following the apostroph get indexed (e.g. "s" in "someone's").
+-/// - Tokenizing might be slower due to folding and apostroph processing.
++/// - Apostrophe handling prevents that short term parts preceding or following the apostrophe get indexed (e.g. "s" in "someone's").
++/// - Tokenizing might be slower due to folding and apostrophe processing.
+ ///
+ /// UnicodeAlphanumericZH
+ /// - Implements Chinese word segmentation to segment continuous Chinese text into tokens for indexing and search.
+@@ -423,8 +422,8 @@ pub enum TokenizerType {
+     /// All Unicode alphanumeric chars are recognized as token.
+     /// Allows '+' '-' '|' '#' in middle or end of a token: c++, c#, block-max.
+     /// Diacritics, accents, zalgo text, umlaut, bold, italic, full-width UTF-8 characters are converted into its basic representation.
+-    /// Apostroph handling prevents that short term parts preceding or following the apostroph get indexed (e.g. "s" in "someone's").
+-    /// Tokenizing might be slower due to folding and apostroph processing.
++    /// Apostrophe handling prevents that short term parts preceding or following the apostrophe get indexed (e.g. "s" in "someone's").
++    /// Tokenizing might be slower due to folding and apostrophe processing.
+     UnicodeAlphanumericFolded = 2,
+     /// Tokens are separated by whitespace. Mainly for benchmark compatibility.
+     Whitespace = 3,
+@@ -535,6 +534,8 @@ pub enum StemmerType {
+     Ukrainian = 37,
+     /// Yiddish stemmer
+     Yiddish = 38,
++    /// Early Modern English stemmer
++    EarlyModernEnglish = 39,
+ }
+ 
+ impl fmt::Display for StemmerType {
+@@ -579,6 +580,7 @@ impl fmt::Display for StemmerType {
+             StemmerType::Turkish => write!(f, "Turkish"),
+             StemmerType::Ukrainian => write!(f, "Ukrainian"),
+             StemmerType::Yiddish => write!(f, "Yiddish"),
++            StemmerType::EarlyModernEnglish => write!(f, "EarlyModernEnglish"),
+         }
+     }
+ }
+@@ -724,6 +726,7 @@ pub(crate) struct PostingListObjectQuery<'a> {
+     pub field_vec_ngram2: SmallVec<[(u16, usize); 2]>,
+     pub field_vec_ngram3: SmallVec<[(u16, usize); 2]>,
+     pub bm25_flag: bool,
++    pub op: QueryType,
+ }
+ 
+ pub(crate) static DUMMY_VEC: Vec<BlockObjectIndex> = Vec::new();
+@@ -779,6 +782,7 @@ impl Default for PostingListObjectQuery<'_> {
+             bm25_flag: true,
+             intersect: 0,
+             ulong_pos: 0,
++            op: QueryType::Union,
+         }
+     }
+ }
+@@ -2351,6 +2355,14 @@ pub(crate) async fn create_index_root(
+                                 *quantization,
+                                 VectorSimilarity::Cosine,
+                             ),
++                            Model::BlinkCode16M => (
++                                0,
++                                "minishlab/blink-code-16M",
++                                Precision::F32,
++                                chunk_size,
++                                *quantization,
++                                VectorSimilarity::Cosine,
++                            ),
+                         }
+                     }
+                     Inference::Model2VecCustom {
+@@ -2883,6 +2895,9 @@ pub(crate) fn create_shard(
+                 StemmerType::Turkish => Some(Stemmer::create(Algorithm::Turkish)),
+                 StemmerType::Ukrainian => Some(Stemmer::create(Algorithm::Ukrainian)),
+                 StemmerType::Yiddish => Some(Stemmer::create(Algorithm::Yiddish)),
++                StemmerType::EarlyModernEnglish => {
++                    Some(Stemmer::create(Algorithm::EarlyModernEnglish))
++                }
+                 _ => None,
+             };
+ 
+@@ -3982,13 +3997,7 @@ pub(crate) async fn open_shard(
+                             shard.committed_doc_count = shard.indexed_doc_count;
+                             shard.is_last_level_incomplete =
+                                 !shard.committed_doc_count.is_multiple_of(ROARING_BLOCK_SIZE);
+-                            // `block_id` is the docid block (`docid >> 16`) the next
+-                            // document belongs to. `open_index` otherwise leaves the
+-                            // `Shard::new` default of 0, so the first write after a
+-                            // reopen commits the rolled-back level as block 0 instead of
+-                            // the last (incomplete) l
+```
+
+**File**: `seekstorm/src/search.rs` (modified, +218/-56)
+```diff
+@@ -158,7 +158,13 @@ pub struct DocumentOption {
+ #[derive(Deserialize, Serialize, Clone, ToSchema, Debug)]
+ #[serde(default)]
+ pub struct SearchRequest<'a> {
+-    /// Query string, search operators `+` `|` `-` `""` are recognized.
++    /// Query string
++    ///
++    /// The following query operators are recognized and overwrite the `query_type_default` setting:
++    /// - **|** (Union, OR, disjunction, SHOULD, optional),
++    /// - **+** (Intersection, AND, conjunction, MUST, required, mandatory),
++    /// - **""** (Phrase, exact match),
++    /// - **-** (Not, MUST_NOT, exclude),
+     #[serde(alias = "query")]
+     pub query_string: &'a str,
+     /// Optional query vector: If None, then the query vector is derived from the query string using the specified model.
+@@ -232,7 +238,8 @@ pub struct SearchRequest<'a> {
+     #[schema(example = json!([{"field": "date", "order": "Ascending", "base": "None" }]))]
+     pub result_sort: Vec<ResultSort>,
+     /// Specify default query type: (default=Union).
+-    /// This can be overwritten by search operators within the query string (`+` `-` `""`).
++    /// Set `query_type_default=QueryType::Intersection` for typical web search engine input box behavior.
++    /// The `query_type_default` setting can be overwritten by query operators within the query string (`+` `-` `""`).
+     /// The interpretation of operator chars within the query string (set `query_type=QueryType::Union`) allows to specify advanced search operations via a simple search box.
+     /// | `query_type_default` | query string      | meaning              |
+     /// |----------------------|-------------------|----------------------|
+@@ -419,18 +426,18 @@ impl<'a> SearchRequest<'a> {
+ }
+ 
+ /// Specifies the default QueryType: The following query types are supported:
+-/// - **Union** (OR, disjunction),
+-/// - **Intersection** (AND, conjunction),
++/// - **Union** (|, OR, disjunction, SHOULD),
++/// - **Intersection** (+, AND, conjunction, MUST),
+ /// - **Phrase** (""),
+-/// - **Not** (-).
++/// - **Not** (-, MUST_NOT).
+ ///
+ /// The default QueryType is superseded if the query parser detects that a different query type is specified within the query string (+ - "").
+ #[derive(Default, PartialEq, Clone, Debug, Serialize, Deserialize, ToSchema)]
+ pub enum QueryType {
+-    /// Union (OR, disjunction)
++    /// Union (|, OR, disjunction, SHOULD)
+     #[default]
+     Union = 0,
+-    /// Intersection (AND, conjunction)
++    /// Intersection (+, AND, conjunction, MUST)
+     Intersection = 1,
+     /// Phrase ("")
+     Phrase = 2,
+@@ -3752,6 +3759,7 @@ impl SearchLexicalShard for ShardArc {
+                                         idf_ngram2,
+                                         idf_ngram3,
+                                         ngram_type: non_unique_term.ngram_type.clone(),
++                                        op: non_unique_term.op.clone(),
+                                         ..Default::default()
+                                     };
+                                     term_index_unique = value_new.term_index_unique;
+@@ -3885,6 +3893,7 @@ impl SearchLexicalShard for ShardArc {
+                             result_object.results.truncate(length);
+                         }
+                     }
 +
-+use seekstorm::prelude::*;
-+use serde_json::Value;
-+use std::sync::{Arc, Mutex};
-+use std::time::{Duration, Instant};
-+
-+/// `ROARING_BLOCK_SIZE`, the number of documents per index level.
-+const BOUNDARY: usize = 65_536;
-+/// Two levels: one full and a 64-document incomplete one.
-+const DOCUMENTS: usize = 65_600;
-+/// Documents indexed between two commits.
-+const PER_COMMIT: usize = 8;
-+
-+/// Minimal single-shard RAM configuration for the level-rollback regression.
-+/// It is built by hand so that the environment cannot switch the test to the
-+/// mmap path or to a different shard layout.
-+fn index_config() -> IndexConfig {
-+    IndexConfig {
-+        id: 0,
-+        name: "rollback_incomplete_level".into(),
-+        lexical_similarity: LexicalSimilarity::Bm25f,
-+        tokenizer: TokenizerType::UnicodeAlphanumeric,
-+        stemmer: StemmerType::None,
-+        stop_words: StopwordType::None,
-+        frequent_words: FrequentwordType::None,
-+        ngram_indexing: NgramSet::SingleTerm as u8,
-+        document_compression: DocumentCompression::None,
-+        access_type: AccessType::Ram,
-+        spelling_correction: None,
-+        query_completion: None,
-+        clustering: Clustering::None,
-+        inference: Inference::None,
-+        segment_number_bits: 10,
-+    }
-+}
-+
-+fn schema() -> Vec<SchemaField> {
-+    vec![
-+        SchemaField::new("_id").store(true).index_lexical(false),
-+        SchemaField::new("body").store(false).index_lexical(true),
-+    ]
-+}
-+
-+/// Every document carries `common`; documents past the level boundary also
-+/// carry a unique `tail{id}` that exists only in the incomplete level - the
-+/// term shape that tripped the 5.2.1 rollback.
-+fn document(id: usize) -> Document {
-+    let body = if id < BOUNDARY {
-+        "common".to_string()
-+    } else {
-+        format!("common tail{id}")
-+    };
-+    let mut document = Document::default();
-+    document.insert("_id".to_string(), Value::String(format!("doc{id}")));
-+    document.insert("body".to_string(), Value::String(body));
-+    document
-+}
-+
-+/// Indexing is spawned on the index runtime and only bounded by a per-shard
-+/// semaphore, so wait until every document reached the shard before committing.
-+async fn wait_until_indexed(index: &IndexArc, expected: usize) {
-+    let deadline = Instant::now() + Duration::from_secs(120);
-+    loop {
-+        let indexed = index.read().await.indexed_doc_count().await;
-+        if indexed >= expected {
-+            return;
+                     if !search_result.query_facets.is_empty() && result_type != ResultType::Topk {
+                         let mut facets: AHashMap<String, Facet> = AHashMap::new();
+                         for facet in search_result.query_facets.iter() {
+@@ -3930,65 +3939,217 @@ impl SearchLexicalShard for ShardArc {
+             } else if query_type_mut == QueryType::Union {
+                 search_result.skip_facet_count = true;
+                 if result_type == ResultType::Count && query_list_len != 2 {
+-                    union_blockid(
+-                        &shard_ref,
+-                        &mut non_unique_query_list,
+-                        &mut query_list,
+-                        &mut not_query_list,
+-                        &result_count_arc,
+-                        &mut search_result,
+-                        offset + length,
+-                        &result_type,
+-                        &field_filter_set,
+-                        &facet_filter_sparse,
+-                    )
+-                    .await;
++                    let required_terms = query_list
++                        .iter()
++                        .filter(|plo| plo.op == QueryType::Intersection)
++                        .count();
++                    if required_terms == 0 {
++                        union_blockid(
++                            &shard_ref,
++                            &mut non_unique_query_list,
++                            &mut query_list,
++                            &mut not_query_list,
++                            &result_count_arc,
++                            &mut search_result,
++                            offset + length,
++                            &result_type,
++                            &field_
+```
+
+**File**: `seekstorm/src/tokenizer.rs` (modified, +11/-6)
+```diff
+@@ -135,6 +135,7 @@ pub(crate) async fn tokenizer(
+     indexed_field_id: usize,
+     indexed_field_number: usize,
+ ) {
++    let query_type_default = query_type.clone();
+     let (max_completion_entries, completion_len) = if is_query {
+         (0, 0)
+     } else {
+@@ -535,6 +536,8 @@ pub(crate) async fn tokenizer(
+     let mut term_len_2 = 0;
+ 
+     let mut non_unique_terms_raw = Vec::new();
++    let mut intersection_op_count = 0;
++    let mut union_op_count = 0;
+ 
+     for term_string in non_unique_terms_line.iter_mut() {
+         if is_query {
+@@ -544,15 +547,11 @@ pub(crate) async fn tokenizer(
+                 query_type.clone()
+             };
+             if term_string.starts_with('+') {
+-                if query_type != &QueryType::Phrase {
+-                    *query_type = QueryType::Intersection;
+-                }
+                 query_type_term = QueryType::Intersection;
++                intersection_op_count += 1;
+                 *term_string = &term_string[1..];
+             } else if term_string.starts_with('|') {
+-                if query_type != &QueryType::Phrase {
+-                    *query_type = QueryType::Union;
+-                }
++                union_op_count += 1;
+                 query_type_term = QueryType::Union;
+                 *term_string = &term_string[1..];
+             } else if term_string.starts_with('-') {
+@@ -904,6 +903,12 @@ pub(crate) async fn tokenizer(
+     if is_query {
+         let len = non_unique_terms_raw.len();
+ 
++        if query_type_default == QueryType::Union && intersection_op_count == len {
++            *query_type = QueryType::Intersection;
++        } else if query_type_default == QueryType::Intersection && union_op_count > 0 {
++            *query_type = QueryType::Union;
 +        }
-+        assert!(
-+            Instant::now() < deadline,
-+            "indexing stalled at {indexed} of {expected} documents"
-+        );
-+        tokio::time::sleep(Duration::from_millis(5)).await;
-+    }
-+}
 +
-+async fn index_documents(index: &IndexArc, from: usize, to: usize) {
-+    index
-+        .index_documents((from..to).map(document).collect())
-+        .await;
-+    wait_until_indexed(index, to).await;
-+}
-+
-+async fn committed_documents(index: &IndexArc) -> usize {
-+    index.read().await.committed_doc_count().await
-+}
-+
-+/// Exhaustive committed count: `length: 0` with `ResultType::Count` disables
-+/// the top-k heap, so nothing is pruned.
-+async fn committed_count(index: &IndexArc, query: &str) -> usize {
-+    index
-+        .search(SearchRequest {
-+            query_string: query,
-+            enable_empty_query: true,
-+            length: 0,
-+            result_type: ResultType::Count,
-+            include_uncommitted: false,
-+            ..SearchRequest::default()
-+        })
-+        .await
-+        .count_total
-+}
-+
-+/// A scratch index directory under the system temp dir, removed on drop.
-+struct TempDir(std::path::PathBuf);
-+
-+impl TempDir {
-+    fn new(name: &str) -> Self {
-+        let unique 
+         let mut term_0;
+         let mut term_frequent_0;
+         let mut term_phrase_0;
 ```
 
 #### Recent Merged Pull Requests:
@@ -2610,36 +2726,31 @@ Fix panicking rollback of an incomplete level (RAM access type)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in commit.rs
+## X. Update CHANGELOG.md
 
 **RULE**:
-When implementing operations in `seekstorm/src/commit.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `71e34a45`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4bb74f4c`: Update CHANGELOG.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `seekstorm/src/commit.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                // `> idx` also avoids the usize underflow for a segment with no blocks yet.
-                    if segment.byte_array_blocks.len() > idx {
-                            // `blocks` holds one entry per level where the term occurs;
-                            // the incomplete level is always its last entry.
-                            item.1.blocks.pop();
+## [5.0.0] - 2026-11-11
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                    if idx == segment.byte_array_blocks.len() - 1 {
-                            item.1.blocks.remove(idx);
+## [5.0.0] - 2026-11-04
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `71e34a45` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4bb74f4c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

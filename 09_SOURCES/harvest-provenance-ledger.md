@@ -14113,3 +14113,6 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `56989d8e` | Multi-dimensional audit evidence | 2026-11-28T15:36:15.640Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `30bfd633` | Multi-dimensional audit evidence | 2026-11-28T15:36:17.862Z |
 | `learn-dom-d-3e604043` | `project://matrixorigin-matrixone` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | 2026-11-28T15:36:46.618Z |
+| `learn-github-lapce-lapce` | `https://github.com/lapce/lapce` | `882119fe` | Multi-dimensional audit evidence | 2026-11-28T16:35:14.788Z |
+| `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `6d61e2f6` | Multi-dimensional audit evidence | 2026-11-28T16:35:20.631Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `4bb74f4c` | Multi-dimensional audit evidence | 2026-11-28T16:35:24.077Z |

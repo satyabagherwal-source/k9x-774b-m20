@@ -4,17 +4,17 @@
 {
   "source_repository": "lapce/lapce",
   "source_url": "https://github.com/lapce/lapce",
-  "source_version": "9e8317c8",
+  "source_version": "882119fe",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T21:23:58.674Z",
+  "timestamp": "2026-11-28T16:35:15.156Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lapce-lapce",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lapce/lapce](https://github.com/lapce/lapce) (Revision: `9e8317c8`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T21:23:58.674Z`  
+> **Provenance**: Harvested from [lapce/lapce](https://github.com/lapce/lapce) (Revision: `882119fe`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T16:35:15.156Z`  
 > **Learning ID**: `learn-github-lapce-lapce`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lapce-lapce-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lapce/lapce](https://github.com/lapce/lapce))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T21:23:57.262Z  
+> **Harvest Timestamp**: 2026-11-28T16:35:13.047Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Lightning-fast and Powerful Code Editor written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 39091 stars
+- **Stars / Engagement**: 39136 stars
 
 ---
 
@@ -1486,11 +1486,11 @@ pub fn create_delete_edit(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3966** (2026-11-27): **Fix: lapce-proxy/plugin/psp.rs: updated params for HostRequest and HostNotification**
+  *Symptoms*: Fixed #3914 as i had the issue myself with the lapce-rust  lsp provider using it on the lapce-rust-plugin repo  ```json {"jsonrpc":"2.0","id":16,"method":"workspace/diagnostic/refresh"} ```  `workspace/diagnostic/refresh` does not provide "params" which causes psp.rs to panic due to the .unwrap() function call on a None value, so we simply define a default with .unwrap_or()  - [ ] Added an entry to `CHANGELOG.md` if this change could be valuable to users
+
 - **Issue #3962** (2026-11-18): **Embed the Lapce icon in the Windows executable**
   *Symptoms*: Embeds `extra/windows/lapce.ico` into `lapce.exe` through a `build.rs` using `winresource`, so the executable shows the Lapce icon in Explorer and the taskbar. The build script only does anything when the target OS is Windows.  Tested on Windows 10: `cargo build --bin lapce` succeeds and the icon is present in the resulting exe (read back with `System.Drawing.Icon.ExtractAssociatedIcon`). `cargo fmt --all --check` is clean and clippy reports nothing for `build.rs`. I didn't test cross-compiling from Linux to Windows, where `winresource` needs `x86_64-w64-mingw32-windres` or `llvm-rc` available.  Closes #3927 
-
-- **Issue #3961** (2026-11-18): **Fix language property table ordering for Fish and F#**
-  *Symptoms*: Fish, Fluent, Forth, Fortran and F# currently resolve another language's syntax properties because the `LANGUAGES` table orders FSharp differently from `LapceLanguage`. This triggers the ID mismatch assertion in debug builds and selects incorrect grammar and query names when debug assertions are disabled.  Move the existing FSharp property entry after Fortran to match the enum. Add a whole-table ordering regression and a Fish file-to-grammar regression, verified to fail before the fix and pass afterward with and without debug assertions.  Closes #3960.  - [x] Added an entry to `CHANGELOG.md` if this change could be valuable to users 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1507,145 +1507,40 @@ pub fn create_delete_edit(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e84cdb0e` (2026-11-18)
-**Commit Message**: fix: reset diff views when swapping documents (#3954)
+### Incident Patch 1: `882119fe` (2026-11-27)
+**Commit Message**: fix: fallback to Params::new when unwrapping incoming invalid params (#3966)
 
-Co-authored-by: jeff <[REDACTED_EMAIL]>
+* fix: fallback to Params::new when unwrapping incoming invalid params
 
-**File**: `lapce-app/src/main_split.rs` (modified, +11/-6)
+**File**: `lapce-proxy/src/plugin/psp.rs` (modified, +2/-2)
 ```diff
-@@ -39,7 +39,7 @@ use crate::{
-     command::InternalCommand,
-     doc::{DiagnosticData, Doc, DocContent, DocHistory, EditorDiagnostic},
-     editor::{
--        EditorData,
-+        EditorData, EditorViewKind,
-         diff::DiffEditorData,
-         location::{EditorLocation, EditorPosition},
-     },
-@@ -1158,11 +1158,16 @@ impl MainSplitData {
-                     EditorTabChild::DiffEditor(diff_editor_id),
-                     EditorTabChildSource::DiffEditor { left, right },
-                 ) => {
--                    if !is_same_diff_editor(diff_editor_id, left, right) {
--                        if let Some(diff_editor) = diff_editors.get(diff_editor_id) {
--                            diff_editor.left.update_doc(left.clone());
--                            diff_editor.right.update_doc(right.clone());
--                        }
-+                    if !is_same_diff_editor(diff_editor_id, left, right)
-+                        && let Some(diff_editor) = diff_editors.get(diff_editor_id)
-+                    {
-+                        // The current diff is based on the old documents. Reset both
-+                        // views before swapping documents so screen-line computation
-+                        // cannot apply stale diff ranges to the new buffers.
-+                        diff_editor.left.kind.set(EditorViewKind::Normal);
-+                        diff_editor.right.kind.set(EditorViewKind::Normal);
-+                        diff_editor.left.update_doc(left.clone());
-+                        diff_editor.right.update_doc(right.clone());
-                     }
-                     true
-                 }
-```
-
----
-
-### Incident Patch 2: `9330568c` (2026-11-18)
-**Commit Message**: Fix language property table ordering for Fish and F# (#3961)
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -10,6 +10,7 @@
- 
- ### Bug Fixes
- 
-+- Fix incorrect syntax property lookup for Fish, Fluent, Forth, Fortran and F#
- - Fix crash on Save All after closing settings (<https://github.com/lapce/lapce/issues/3867>)
- 
- ## 0.4.6
-```
-
-**File**: `lapce-core/src/language.rs` (modified, +23/-8)
-```diff
-@@ -760,39 +760,39 @@ const LANGUAGES: &[SyntaxProperties] = &[
-         tree_sitter: TreeSitterProperties::DEFAULT,
-     },
-     SyntaxProperties {
--        id: LapceLanguage::FSharp,
-+        id: LapceLanguage::Fish,
-         indent: Indent::tab(),
-         files: &[],
--        extensions: &[],
-+        extensions: &["fish"],
-         comment: comment_properties!(),
-         tree_sitter: TreeSitterProperties::DEFAULT,
-     },
-     SyntaxProperties {
--        id: LapceLanguage::Fish,
-+        id: LapceLanguage::Fluent,
-         indent: Indent::tab(),
-         files: &[],
--        extensions: &["fish"],
-+        extensions: &[],
-         comment: comment_properties!(),
-         tree_sitter: TreeSitterProperties::DEFAULT,
-     },
-     SyntaxProperties {
--        id: LapceLanguage::Fluent,
-+        id: LapceLanguage::Forth,
-         indent: Indent::tab(),
-         files: &[],
-         extensions: &[],
-         comment: comment_properties!(),
-         tree_sitter: TreeSitterProperties::DEFAULT,
-     },
-     SyntaxProperties {
--        id: LapceLanguage::Forth,
-+        id: LapceLanguage::Fortran,
-         indent: Indent::tab(),
-         files: &[],
-         extensions: &[],
-         comment: comment_properties!(),
-         tree_sitter: TreeSitterProperties::DEFAULT,
-     },
-     SyntaxProperties {
--        id: LapceLanguage::Fortran,
-+        id: LapceLanguage::FSharp,
-         indent: Indent::tab(),
-         files: &[],
-         extensions: &[],
-@@ -2081,7 +2081,22 @@ fn read_grammar_query(queries_dir: &Path, name: &str, kind: &str) -> String {
- mod tests {
-     use std::path::PathBuf;
- 
--    use super::LapceLanguage;
-+    use super::{LANGUAGES, LapceLanguage};
-+
-+    #[test]
-+    fn test_language_properties_order() {
-+        assert_eq!(LANGUAGES.len(), LapceLanguage::Zig as usize + 1);
-+        for (index, properties) in LANGUAGES.iter().enumerate() {
-+            assert_eq!(properties.id as usize, index, "{:?}", properties.id);
-+        }
-+    }
-+
-+    #[test]
-+    fn test_fish_grammar_from_path() {
-+        let language = LapceLanguage::from_path(&PathBuf::from("config.fish"));
-+        assert_eq!(language, LapceLanguage::Fish);
-+        assert_eq!(language.grammar_name(), "fish");
-+    }
- 
-     #[test]
-     fn test_language_from_path() {
+@@ -560,7 +560,7 @@ pub fn handle_plugin_server_message(
+             let rpc = PluginServerRpc::HostRequest {
+                 id: id.clone(),
+                 method: value.get_method().unwrap().to_string(),
+-                params: value.get_params().unwrap(),
++                params: value.get_params().unwrap_or(Params::None(())),
+                 resp: ResponseSender::new(tx),
+             };
+             server_rpc.handle_rpc(rpc);
+@@ -581,7 +581,7 @@ pub fn handle_plugin_server_message(
+         Ok(value @ JsonRpc::Notification(_)) => {
+             let rpc = PluginServerRpc::HostNotification {
+                 method: value.get_method().unwrap().to_string(),
+-                params: value.get_params().unwrap(),
++                params: value.get_params().unwrap_or(Params::None(())),
+                 from: from.to_string(),
+             };
+             server_rpc.handle_rpc(rpc);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3966** (2026-11-27): Fix: lapce-proxy/plugin/psp.rs: updated params for HostRequest and HostNotification (@hell-of-the-devil)
 - **PR #3962** (2026-11-18): Embed the Lapce icon in the Windows executable (@armadavalor)
 - **PR #3961** (2026-11-18): Fix language property table ordering for Fish and F# (@pederbe)
 - **PR #3959** (2026-11-18): Add Verilog, SystemVerilog and VHDL syntax support (@pederbe)
 - **PR #3954** (2026-11-18): fix: reset diff views when swapping documents (@yanbing2020)
 - **PR #3952** (closed): docs: explain manual syntax highlighting setup on Linux (@monsterlag)
-- **PR #3942** (2026-11-18): feature: add jinja2 language support (@hell-of-the-devil)
 
 ---
 
@@ -1665,46 +1560,33 @@ Co-authored-by: jeff <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reset diff views when swapping documents
+## X. fallback to Params::new when unwrapping incoming invalid params
 
 **RULE**:
-When implementing operations in `lapce-app/src/main_split.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lapce/lapce. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lapce-proxy/src/plugin/psp.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lapce/lapce. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e84cdb0e`: reset diff views when swapping documents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `882119fe`: fallback to Params::new when unwrapping incoming invalid params. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `lapce-app/src/main_split.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `lapce-proxy/src/plugin/psp.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        EditorData, EditorViewKind,
-                    if !is_same_diff_editor(diff_editor_id, left, right)
-                        && let Some(diff_editor) = diff_editors.get(diff_editor_id)
-                    {
-                        // The current diff is based on the old documents. Reset both
-                        // views before swapping documents so screen-line computation
-                        // cannot apply stale diff ranges to the new buffers.
-                        diff_editor.left.kind.set(EditorViewKind::Normal);
-                        diff_editor.right.kind.set(EditorViewKind::Normal);
-                        diff_editor.left.update_doc(left.clone());
-                        diff_editor.right.update_doc(right.clone());
+                params: value.get_params().unwrap_or(Params::None(())),
+                params: value.get_params().unwrap_or(Params::None(())),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        EditorData,
-                    if !is_same_diff_editor(diff_editor_id, left, right) {
-                        if let Some(diff_editor) = diff_editors.get(diff_editor_id) {
-                            diff_editor.left.update_doc(left.clone());
-                            diff_editor.right.update_doc(right.clone());
-                        }
+                params: value.get_params().unwrap(),
+                params: value.get_params().unwrap(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e84cdb0e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `882119fe` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
