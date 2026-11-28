@@ -14103,3 +14103,5 @@ Every entry in this ledger must capture:
 | `learn-github-rmax-scrapy-redis` | `https://github.com/rmax/scrapy-redis` | `affd8d54` | Multi-dimensional audit evidence | 2026-11-28T14:56:26.735Z |
 | `learn-github-exyte-chat` | `https://github.com/exyte/Chat` | `a1191692` | Multi-dimensional audit evidence | 2026-11-28T14:56:30.336Z |
 | `learn-dom-d-ea0b2006` | `project://rmax-scrapy-redis` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md` | 2026-11-28T14:57:07.184Z |
+| `learn-huggingface-memtensor-memt-1-0-pro` | `https://huggingface.co/MemTensor/MemT-1.0-Pro` | `hf-memtens` | Multi-dimensional audit evidence | 2026-11-28T15:05:55.475Z |
+| `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `f5411166` | Multi-dimensional audit evidence | 2026-11-28T15:05:58.177Z |

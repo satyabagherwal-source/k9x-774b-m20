@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T14:56:30.345Z",
+  "last_updated": "2026-11-28T15:05:58.187Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18516,14 +18516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yyjeqhc-webcodex",
-      "content_hash": "d9d130e1011c87b53e9adf8079acf2ab04de68c50e6dd4ba77971b2dd0cabe23",
-      "verified_at": "2026-11-27T12:21:10.053Z",
+      "content_hash": "86562dd74c4f458516414587195a6014dea85b389ddec973a1ad949bd2402713",
+      "verified_at": "2026-11-28T15:05:58.186Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T12:21:10.053Z"
+      "last_updated": "2026-11-28T15:05:58.186Z"
     },
     "MiniMaxAI/MiniMax-H3-Image": {
       "repository": "MiniMaxAI/MiniMax-H3-Image",
@@ -20256,14 +20256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-memtensor-memt-1-0-pro",
-      "content_hash": "414d41e2e8dcfd77f638ef8243fa2b87ed3323b6e8c9b22d4577d963e42dcfa1",
-      "verified_at": "2026-11-25T02:28:41.827Z",
+      "content_hash": "646879a7fd3f6228d5fcd0f16d585b5539587bf9caac24eefd025e9992c77642",
+      "verified_at": "2026-11-28T15:05:55.484Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:28:41.827Z"
+      "last_updated": "2026-11-28T15:05:55.484Z"
     },
     "alejandrobujan/tendedero": {
       "repository": "alejandrobujan/tendedero",

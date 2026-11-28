@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source**: github ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
-> **Source Version**: `f9797ded`  
+> **Source Version**: `f5411166`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T12:21:08.787Z  
+> **Timestamp**: 2026-11-28T15:05:56.894Z  
 > **Learning ID**: `learn-github-yyjeqhc-webcodex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T12:21:08.646Z  
+> **Harvest Timestamp**: 2026-11-28T15:05:56.887Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Give cloud AI agents a real development environment on your own machines.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2528 stars
+- **Stars / Engagement**: 2535 stars
 
 ---
 
@@ -724,6 +724,8 @@ pub use environment_invitation::{InvitationRequest, InvitationResponse};
 mod managed_instructions;
 mod mcp_providers;
 mod operation_completion;
+#[cfg(test)]
+mod operation_lifecycle_tests;
 mod path_inventory;
 pub use path_inventory::{ExportInventoryRequest, OpenInventoryRequest};
 #[cfg(all(test, windows, desktop_native_smoke))]
@@ -776,6 +778,7 @@ use std::sync::{Arc, RwLock};
 use std::time::Duration;
 use tokio::sync::Mutex;
 
+const OPERATION_SLOT_TIMEOUT: Duration = Duration::from_secs(30);
 const SERVER_READY_TIMEOUT: Duration = Duration::from_secs(20);
 const STALE_LOOPBACK_PROBE_TIMEOUT: Duration = Duration::from_secs(2);
 const RUNNER_READY_TIMEOUT: Duration = Duration::from_secs(30);
@@ -814,6 +817,7 @@ pub struct AppState {
     activity: ActivityLog,
     operations: OperationController,
     refresh_lock: tokio::sync::Mutex<()>,
+    runner_settings_reader: Arc<Mutex<()>>,
     shutdown_signal: CancellationSignal,
     shutdown_started: AtomicBool,
     shutdown_complete: CancellationSignal,
@@ -872,6 +876,7 @@ impl AppState {
             connections,
             operations: OperationController::new(activity.clone()),
             refresh_lock: tokio::sync::Mutex::new(()),
+            runner_settings_reader: Arc::new(Mutex::new(())),
             activity,
             shutdown_signal: CancellationSignal::new(),
             shutdown_started: AtomicBool::new(false),
@@ -917,7 +922,16 @@ impl AppState {
             self.connections
                 .project(&mut snapshot.connections, snapshot.readiness.runtime_ready);
         }
-        snapshot.current_operation = self.operations.current();
+        match self.operations.observe() {
+            Ok(current) => snapshot.current_operation = current,
+            Err(error) => {
+                snapshot.current_operation = None;
+                snapshot
+                    .component_errors
+                    .insert(error.component(), error.clone());
+                snapshot.runtime_error = Some(error);
+            }
+        }
         snapshot.environment_setup = environment_invitation::setup_snapshot(&snapshot);
         snapshot.activity_sequence = self.activity.latest_sequence();
         if snapshot.persistent_environment.is_none()
@@ -959,8 +973,10 @@ impl AppState {
                     "Choose an existing directory that this account can access.",
                 )
             })?;
-            let canonical_roots =
-                webcodex_runner_config::paths::canonicalize_usable_allowed_roots(&effective_roots);
+            let canonical_roots = webcodex_runner_config::paths::canonicalize_usable_allowed_roots(
+                &effective_roots,
+                &canonical_project,
+            );
             Ok::<_, DesktopError>(
                 webcodex_runner_config::paths::validate_project_path_policy(
                     &canonical_project,
@@ -984,17 +1000,8 @@ impl AppState {
         if self.shutdown_signal.is_cancelled() {
             return Err(cancelled_error());
         }
-        if let Some(current) = self.operations.current() {
-            return Err(DesktopError::new(
-                "desktop_operation_busy",
-                "Another Desktop operation is still running",
-                "Wait for the current operation to finish or stop it before starting another one.",
-            )
-            .with_details(serde_json::json!({
-                "operation_id": current.id,
-                "operation_kind": current.kind.as_str(),
-            }))
-            .with_operation_context(Some(&current.id), None, None, None));
+        if let Some(current) = self.operations.observe()? {
+            return Err(crate::operation::busy_error(&current));
         }
         if self.get_state().configuration_issue.is_some() {
             return Err(DesktopError::new(
@@ -1009,17 +1016,8 @@ impl AppState {
         if self.shutdown_signal.is_cancelled() {
             return Err(cancelled_error());
         }
-        if let Some(current) = self.operations.current() {
-            return Err(DesktopError::new(
-                "desktop_operation_busy",
-                "Another Desktop operation is still running",
-                "Wait for the current operation to finish or stop it before starting another one.",
-            )
-            .with_details(serde_json::json!({
-                "operation_id": current.id,
-                "operation_kind": current.kind.as_str(),
-            }))
-            .with_operation_context(Some(&current.id), None, None, None));
+        if let Some(current) = self.operations.observe()? {
+            return Err(crate::operation::busy_error(&current));
         }
         // Coalesce overlapping background refreshes: if another refresh already
         // published a fresher snapshot while we waited, return it directly.
@@ -1050,11 +1048,7 @@ impl AppState {
         let plan = {
             let slot = self.core.lock().await;
             let Some(core) = slot.as_ref() else {
-                return Err(DesktopError::new(
-                    "desktop_operation_busy",
-                    "Desktop mutation state is already in use",
-                    "Wait for the current operation to finish.",
-                ));
+                return Err(self.operations.missing_core_error());
             };
             if let Some(environment_id) = core.config.persistent_environment.clone() {
                 RefreshPlan::Persistent { environment_id }
@@ -1068,7 +1062,22 @@ impl AppState {
                         .config
                         .runtime
                         .as_ref()
-                        .and_then(|runti
+                        .and_then(|runtime| runtime.server_env_file.clone()),
+                    project_identity: identity_from_config(&core.config),
+                    has_project: core.config.project.is_some(),
+                    autostart: runtime_autostart(&core.config),
+                }
+            } else {
+                RefreshPlan::Unconfigured
+            }
+        };
+
+        match plan {
+            RefreshPlan::QuickShare | RefreshPlan::Unconfigured => {
+                let mut slot = self.core.lock().await;
+                let Some(core) = slot.as_mut() else {
+                    return Ok(self.get_state());
+       
 ```
 
 ### Core Architecture Module: `apps/desktop/src-tauri/src/state/cloudflare_connections.rs`
@@ -1623,11 +1632,7 @@ impl AppState {
             .begin_operation(DesktopOperationKind::RunnerSettingsUpdate, false)
             .await?;
         let result = async {
-            let runtime = core
-                .config
-                .runtime
-                .clone()
-                .ok_or_else(|| desktop_state_unavailable("Configure a Runner first"))?;
+            let runtime = core.runner_settings_runtime()?;
             crate::webcodex::settings::verify_target(&runtime, &target)?;
             let mut candidate = core.coding_agents.clone();
             let candidate = tokio::task::spawn_blocking(move || {
@@ -2187,114 +2192,1011 @@ impl DesktopCore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `19edca39` (2026-11-27)
-**Commit Message**: fix(browser): prevent idle Windows native peers from busy-spinning (#1447)
+### Incident Patch 1: `f5411166` (2026-11-28)
+**Commit Message**: fix(desktop): 修复设置误报操作占用并显示实际运行的操作 (#1455)
 
-**File**: `crates/webcodex-browser/src/bridge.rs` (modified, +13/-3)
+**File**: `apps/desktop/src-tauri/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -450,9 +450,19 @@ fn serve(listener: TcpListener, config: Rendezvous, weak: Weak<State>) {
-     }
- }
- fn serve_peer(mut stream: TcpStream, config: &Rendezvous, state: &State) {
--    let _ = stream.set_read_timeout(Some(Duration::from_millis(50)));
--    let _ = stream.set_write_timeout(Some(Duration::from_millis(200)));
--    let _ = stream.set_nodelay(true);
-+    // Windows inherits the listener's nonblocking mode. Idle peer reads must
-+    // wait for their timeout, not retry WouldBlock continuously.
-+    if stream.set_nonblocking(false).is_err()
-+        || stream
-+            .set_read_timeout(Some(Duration::from_millis(50)))
-+            .is_err()
-+        || stream
-+            .set_write_timeout(Some(Duration::from_millis(200)))
-+            .is_err()
-+        || stream.set_nodelay(true).is_err()
-+    {
-+        return;
-+    }
-     let deadline = Instant::now() + Duration::from_secs(2);
-     let mut frames = FrameReader::new(4096);
-     let hello = loop {
+@@ -49,6 +49,7 @@ winreg = "0.55"
+ 
+ 
+ [dev-dependencies]
++tokio = { version = "1", features = ["test-util"] }
+ tempfile = "3"
+ 
+ [profile.dogfood]
 ```
 
-**File**: `crates/webcodex-browser/src/bridge/tests.rs` (modified, +60/-0)
+**File**: `apps/desktop/src-tauri/src/error.rs` (modified, +6/-3)
 ```diff
-@@ -111,6 +111,66 @@ fn authentication_requires_exact_version_instance_origin_and_secret() {
-     assert!(!config.accepts(&hello));
-     assert!(native::run(&["chrome-extension://wrong/".into()]).is_err());
+@@ -298,6 +298,11 @@ impl ErrorDiagnostic {
+             | "desktop_data_dir_invalid"
+             | "desktop_data_dir_unavailable"
+             | "state_io" => (Config, ManualCheck, OpenDiagnostics, false),
++            "desktop_core_unavailable" | "desktop_operation_unsettled" => {
++                (Desktop, ManualCheck, OpenActivity, false)
++            }
++            "desktop_operation_start_timeout" => (Desktop, UserAction, OpenActivity, true),
++            "desktop_state_unavailable" => (Desktop, ManualCheck, OpenDiagnostics, false),
+             "not_configured" | "setup_not_found" => (Environment, UserAction, OpenSetup, false),
+             "runtime_switch_jobs_confirmation_required"
+             | "full_trace_confirmation_required"
+@@ -318,9 +323,7 @@ impl ErrorDiagnostic {
+             "pairing_recovery_required" => (Auth, ManualCheck, ObserveBeforeRetry, false),
+ 
+             // 12. Background operation contention
+-            "desktop_operation_busy"
+-            | "desktop_state_unavailable"
+-            | "desktop_operation_not_cancellable" => {
++            "desktop_operation_busy" | "desktop_operation_not_cancellable" => {
+                 (Desktop, AutoRecovering, WaitAutoRecovery, true)
+             }
+             "desktop_operation_not_current" => (Desktop, UserAction, RefreshState, false),
+```
+
+**File**: `apps/desktop/src-tauri/src/models.rs` (modified, +1/-0)
+```diff
+@@ -323,6 +323,7 @@ impl DesktopOperationKind {
+ pub enum DesktopOperationPhase {
+     Running,
+     Cancelling,
++    Overdue,
  }
-+#[cfg(windows)]
-+#[test]
-+fn native_peer_waits_for_idle_accepted_socket_instead_of_spinning() {
-+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
-+    listener.set_nonblocking(true).unwrap();
-+    let address = listener.local_addr().unwrap();
-+    let mut client = TcpStream::connect(address).unwrap();
-+    client
-+        .set_read_timeout(Some(Duration::from_secs(3)))
-+        .unwrap();
-+    client
-+        .set_write_timeout(Some(Duration::from_secs(3)))
-+        .unwrap();
-+    let (stream, _) = listener.accept().unwrap();
-+    let probe = stream.try_clone().unwrap();
-+    // Bound this observation even if peer setup regresses. Socket mode is
-+    // shared by the clone, so this reads the real worker's configured behavior.
-+    probe
-+        .set_read_timeout(Some(Duration::from_millis(50)))
-+        .unwrap();
-+    let config = Rendezvous {
-+        version: VERSION,
-+        address,
-+        instance: "idle-peer-fixture".into(),
-+        token: "fixture-secret".into(),
-+    };
-+    let state = Arc::new(State {
-+        registry: Mutex::new(Registry::default()),
-+        stop: AtomicBool::new(false),
-+        next_channel: AtomicU64::new(1),
-+        queued: Arc::new(AtomicUsize::new(0)),
-+    });
-+    let worker_state = state.clone();
-+    let hello = json!({
-+        "version": VERSION,
-+        "instance": config.instance,
-+        "token": config.token,
-+        "extension_id": EXTENSION_ID,
-+        "parent_pid": std::process::id(),
-+    });
-+    let worker = std::thread::spawn(move || serve_peer(stream, &config, &worker_state));
-+    protocol::write_frame(&mut client, &hello, 4096, false).unwrap();
-+    let ready = protocol::read_blocking(&mut client, MAX_RESPONSE, false).unwrap();
-+    assert_eq!(ready["kind"], "ready");
+ 
+ #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+```
+
+**File**: `apps/desktop/src-tauri/src/operation.rs` (modified, +257/-49)
+```diff
+@@ -2,40 +2,46 @@ use crate::activity::{ActivityEventKind, ActivityLevel, ActivityLog};
+ use crate::error::{DesktopError, DesktopResult};
+ use crate::models::{DesktopOperationKind, DesktopOperationPhase, DesktopOperationSnapshot};
+ use std::sync::atomic::{AtomicU64, Ordering};
+-use std::sync::Mutex;
+-use std::time::{SystemTime, UNIX_EPOCH};
++use std::sync::{Mutex, MutexGuard};
++use std::time::{Duration, SystemTime, UNIX_EPOCH};
+ use tokio::time::Instant;
+ 
++// This is an outer backstop for cooperative Desktop operations, including
++// multi-step setup. Individual commands keep their shorter deadlines.
++const OPERATION_BUDGET: Duration = Duration::from_secs(10 * 60);
++const STOP_OBSERVATION_BUDGET: Duration = Duration::from_secs(30);
 +
-+    // The ready acknowledgement proves production setup finished. No further
-+    // frame is sent; on Windows blocking waits time out, whereas inherited
-+    // nonblocking mode immediately returns WouldBlock.
-+    let idle = probe.peek(&mut [0]);
-+    drop(probe);
-+    drop(client);
-+    state.stop.store(true, Ordering::Release);
-+    worker.join().unwrap();
-+    assert_eq!(
-+        idle.unwrap_err().kind(),
-+        io::ErrorKind::TimedOut,
-+        "an idle native peer must wait for its socket timeout, not busy-poll",
-+    );
+ pub(crate) use webcodex_environment::unified_update::CancellationSignal;
+ 
+ #[derive(Clone)]
+ pub(crate) struct CancellationContext {
+-    operation: Option<CancellationSignal>,
++    operation: CancellationSignal,
+     shutdown: CancellationSignal,
++    deadline: Option<Instant>,
+ }
+ 
+ impl CancellationContext {
+     pub(crate) fn new(operation: CancellationSignal, shutdown: CancellationSignal) -> Self {
+         Self {
+-            operation: Some(operation),
++            operation,
+             shutdown,
++            deadline: None,
+         }
+     }
+ 
+     #[cfg(test)]
+     pub(crate) fn never() -> Self {
+         Self {
+-            operation: None,
++            operation: CancellationSignal::new(),
+             shutdown: CancellationSignal::new(),
++            deadline: None,
+         }
+     }
+ 
+     pub(crate) fn is_cancelled(&self) -> bool {
+-        self.shutdown.is_cancelled()
+-            || self
+-                .operation
+-                .as_ref()
+-                .is_some_and(CancellationSignal::is_cancelled)
++        self.deadline.is_some_and(|at| Instant::now() >= at)
++            || self.shutdown.is_cancelled()
++            || self.operation.is_cancelled()
+     }
+ 
+     pub(crate) fn check(&self) -> DesktopResult<()> {
+@@ -47,13 +53,16 @@ impl CancellationContext {
+     }
+ 
+     pub(crate) async fn cancelled(&self) {
+-        if let Some(operation) = &self.operation {
++        let signals = async {
+             tokio::select! {
+-                _ = operation.cancelled() => {},
++                _ = self.operation.cancelled() => {},
+                 _ = self.shutdown.cancelled() => {},
+             }
++        };
++        if let Some(at) = self.deadline {
++            let _ = tokio::time::timeout_at(at, signals).await;
+         } else {
+-            self.shutdown.cancelled().await;
++            signals.await;
+         }
+     }
+ }
+@@ -66,20 +75,108 @@ pub(crate) fn cancelled_error() -> DesktopError {
+     )
+ }
+ 
++pub(crate) fn core_unavailable() -> DesktopError {
++    DesktopError::new(
++        "desktop_core_unavailable",
++        "Desktop cannot verify its internal operation state",
++        "Fully quit and reopen Desktop, then check the runtime and Activity before repeating the operation.",
++    )
++}
++
++pub(crate) fn busy_error(current: &DesktopOperationSnapshot) -> DesktopError {
++    let error = if current.phase == DesktopOperationPhase::Overdue {
++        DesktopError::new(
++            "desktop_operation_unsettled",
++            "The Desktop operation has not confirmed completion within its time budget",
++            "Check Activity and the affected service before taking further action.",
++        )
++    } else {
++        DesktopError::new(
++            "desktop_operation_busy",
++            "Another Desktop operation is still running",
++            "Check the current operation in Desktop.",
++        )
++    };
++    error
++        .with_details(serde_json::json!({
++            "operation_id": current.id,
++            "operation_kind": current.kind.as_str(),
++        }))
++        .with_operation_context(Some(&current.id), None, None, None)
++}
++
+ struct ActiveOperation {
+     snapshot: DesktopOperationSnapshot,
+     cancellation: CancellationSignal,
++    report_delay_at: Instant,
+ }
+ 
+-#[derive(Clone)]
+-pub(crate) struct OperationAdmission {
++impl ActiveOperation {
++    fn snapshot(&self) -> DesktopOperationSnapshot {
++        let mut snapshot = self.snapshot.clone();
++        if Instant::now() >= self.report_delay_at {
++            snapshot.phase = DesktopOperationPhase::Overdue;
++            // A cooperative operation's deadline or an explicit Stop has
++            // already requested cancellation. Its owner still settles effects.
++            snapshot.cancellable = false;
++        }
++        snapshot
++    }
++}
++
++enum OperationSlot {
++    Idle,
++    Active(ActiveOperation),
++    Interrupted(DesktopError),
++}
++
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum AdmissionPhase {
++    Preparing,
++    Dispatched,
++    Finished,
++}
++
++pub(crate) struct OperationAdmission<'a> {
++    controller: &'a OperationController,
+     pub(crate) id: String,
+     pub(crate) kind: DesktopOperationKind,
+-    pub(crate) cancellation: CancellationSignal,
++    cancellation: Cancellat
+```
+
+**File**: `apps/desktop/src-tauri/src/state.rs` (modified, +4/-0)
+```diff
+@@ -11,6 +11,8 @@ pub use environment_invitation::{InvitationRequest, InvitationResponse};
+ mod managed_instructions;
+ mod mcp_providers;
+ mod operation_completion;
++#[cfg(test)]
++mod operation_lifecycle_tests;
+ mod path_inventory;
+ pub use path_inventory::{ExportInventoryRequest, OpenInventoryRequest};
+ #[cfg(all(test, windows, desktop_native_smoke))]
+@@ -63,6 +65,7 @@ use std::sync::{Arc, RwLock};
+ use std::time::Duration;
+ use tokio::sync::Mutex;
+ 
++const OPERATION_SLOT_TIMEOUT: Duration = Duration::from_secs(30);
+ const SERVER_READY_TIMEOUT: Duration = Duration::from_secs(20);
+ const STALE_LOOPBACK_PROBE_TIMEOUT: Duration = Duration::from_secs(2);
+ const RUNNER_READY_TIMEOUT: Duration = Duration::from_secs(30);
+@@ -101,6 +104,7 @@ pub struct AppState {
+     activity: ActivityLog,
+     operations: OperationController,
+     refresh_lock: tokio::sync::Mutex<()>,
++    runner_settings_reader: Arc<Mutex<()>>,
+     shutdown_signal: CancellationSignal,
+     shutdown_started: AtomicBool,
+     shutdown_complete: CancellationSignal,
+```
+
+**File**: `apps/desktop/src-tauri/src/state/app_state.rs` (modified, +54/-50)
+```diff
+@@ -33,6 +33,7 @@ impl AppState {
+             connections,
+             operations: OperationController::new(activity.clone()),
+             refresh_lock: tokio::sync::Mutex::new(()),
++            runner_settings_reader: Arc::new(Mutex::new(())),
+             activity,
+             shutdown_signal: CancellationSignal::new(),
+             shutdown_started: AtomicBool::new(false),
+@@ -78,7 +79,16 @@ impl AppState {
+             self.connections
+                 .project(&mut snapshot.connections, snapshot.readiness.runtime_ready);
+         }
+-        snapshot.current_operation = self.operations.current();
++        match self.operations.observe() {
++            Ok(current) => snapshot.current_operation = current,
++            Err(error) => {
++                snapshot.current_operation = None;
++                snapshot
++                    .component_errors
++                    .insert(error.component(), error.clone());
++                snapshot.runtime_error = Some(error);
++            }
++        }
+         snapshot.environment_setup = environment_invitation::setup_snapshot(&snapshot);
+         snapshot.activity_sequence = self.activity.latest_sequence();
+         if snapshot.persistent_environment.is_none()
+@@ -147,17 +157,8 @@ impl AppState {
+         if self.shutdown_signal.is_cancelled() {
+             return Err(cancelled_error());
+         }
+-        if let Some(current) = self.operations.current() {
+-            return Err(DesktopError::new(
+-                "desktop_operation_busy",
+-                "Another Desktop operation is still running",
+-                "Wait for the current operation to finish or stop it before starting another one.",
+-            )
+-            .with_details(serde_json::json!({
+-                "operation_id": current.id,
+-                "operation_kind": current.kind.as_str(),
+-            }))
+-            .with_operation_context(Some(&current.id), None, None, None));
++        if let Some(current) = self.operations.observe()? {
++            return Err(crate::operation::busy_error(&current));
+         }
+         if self.get_state().configuration_issue.is_some() {
+             return Err(DesktopError::new(
+@@ -172,17 +173,8 @@ impl AppState {
+         if self.shutdown_signal.is_cancelled() {
+             return Err(cancelled_error());
+         }
+-        if let Some(current) = self.operations.current() {
+-            return Err(DesktopError::new(
+-                "desktop_operation_busy",
+-                "Another Desktop operation is still running",
+-                "Wait for the current operation to finish or stop it before starting another one.",
+-            )
+-            .with_details(serde_json::json!({
+-                "operation_id": current.id,
+-                "operation_kind": current.kind.as_str(),
+-            }))
+-            .with_operation_context(Some(&current.id), None, None, None));
++        if let Some(current) = self.operations.observe()? {
++            return Err(crate::operation::busy_error(&current));
+         }
+         // Coalesce overlapping background refreshes: if another refresh already
+         // published a fresher snapshot while we waited, return it directly.
+@@ -213,11 +205,7 @@ impl AppState {
+         let plan = {
+             let slot = self.core.lock().await;
+             let Some(core) = slot.as_ref() else {
+-                return Err(DesktopError::new(
+-                    "desktop_operation_busy",
+-                    "Desktop mutation state is already in use",
+-                    "Wait for the current operation to finish.",
+-                ));
++                return Err(self.operations.missing_core_error());
+             };
+             if let Some(environment_id) = core.config.persistent_environment.clone() {
+                 RefreshPlan::Persistent { environment_id }
+@@ -703,7 +691,7 @@ impl AppState {
+         kind: DesktopOperationKind,
+         cancellable: bool,
+     ) -> DesktopResult<(
+-        OperationAdmission,
++        OperationAdmission<'_>,
+         CancellationContext,
+         DesktopCore,
+         ProcessBaseline,
+@@ -720,30 +708,41 @@ impl AppState {
+                 "Open Diagnostics or explicitly restore the previous known-good configuration.",
+             ));
+         }
+-        let operation = self.operations.admit(kind, cancellable)?;
+-        let cancellation =
+-            CancellationContext::new(operation.cancellation.clone(), self.shutdown_signal.clone());
+-        let baseline = self.capture_process_baseline().await;
+-        let core = {
++        let mut operation = self.operations.admit(kind, cancellable)?;
++        let cancellation = operation.cancellation_context(self.shutdown_signal.clone());
++        // Both waits precede dispatch. Cancelling either wait cannot lose the
++        // core, leave a queued write, or skip cleanup of an external effect.
++        let start_deadline = Deadline::after(OPERATION_SLOT_TIMEOUT);
++        let prepare = async {
++            let baseline = self.capture_proc
+```
+
+**File**: `apps/desktop/src-tauri/src/state/coding_agents.rs` (modified, +1/-5)
+```diff
+@@ -34,11 +34,7 @@ impl AppState {
+             .begin_operation(DesktopOperationKind::RunnerSettingsUpdate, false)
+             .await?;
+         let result = async {
+-            let runtime = core
+-                .config
+-                .runtime
+-                .clone()
+-                .ok_or_else(|| desktop_state_unavailable("Configure a Runner first"))?;
++            let runtime = core.runner_settings_runtime()?;
+             crate::webcodex::settings::verify_target(&runtime, &target)?;
+             let mut candidate = core.coding_agents.clone();
+             let candidate = tokio::task::spawn_blocking(move || {
+```
+
+**File**: `apps/desktop/src-tauri/src/state/desktop_core.rs` (modified, +5/-1)
+```diff
+@@ -1289,7 +1289,11 @@ impl DesktopCore {
+         cancellation: &CancellationContext,
+     ) -> DesktopResult<Option<MachineEventReceiver>> {
+         cancellation.check()?;
+-        let mut supervisor = self.supervisor.lock().await;
++        let mut supervisor = tokio::select! {
++            biased;
++            _ = cancellation.cancelled() => return Err(cancelled_error()),
++            supervisor = self.supervisor.lock() => supervisor,
++        };
+         cancellation.check()?;
+         supervisor.spawn_owned(kind, command, machine_stdout).await
+     }
+```
+
+---
+
+### Incident Patch 2: `13e4e184` (2026-11-28)
+**Commit Message**: fix(windows): avoid idle WSL wakeups and preserve project identity (#1453)
+
+**File**: `apps/desktop/src-tauri/src/project_inventory.rs` (modified, +93/-38)
+```diff
+@@ -35,6 +35,14 @@ fn unavailable() -> DesktopError {
+     )
+ }
+ 
++pub(crate) fn revision_changed() -> DesktopError {
++    DesktopError::new(
++        "project_revision_changed",
++        "The project changed since confirmation",
++        "Review the current project again before removing it.",
++    )
++}
++
+ fn uncertain() -> DesktopError {
+     DesktopError::new("project_unregister_uncertain", "The unregister outcome could not be confirmed", "Refresh the Runner inventory before taking further action. No automatic retry or folder deletion was attempted.")
+ }
+@@ -67,50 +75,69 @@ pub async fn observe_many(
+             return Err(unavailable());
+         }
+     }
+-    let value = crate::workspace::post(
++    let exact = |project: &str| json!({"project":project,"limit":1,"summary_only":false});
++    let params = if projects.len() == 1 {
++        exact(&projects[0])
++    } else {
++        json!({"client_id":target.client_id,"limit":100,"summary_only":false})
++    };
++    let page = list_for_removal(runtime, params).await?;
++    let rows = page
++        .get("projects")
++        .and_then(Value::as_array)
++        .ok_or_else(unavailable)?;
++    let mut observations = Vec::with_capacity(projects.len());
++    for project in projects {
++        let exact_page;
++        let row = match rows.iter().find(|row| row["id"].as_str() == Some(project)) {
++            Some(row) => row,
++            None if projects.len() > 1 && page["truncated"].as_bool() == Some(true) => {
++                exact_page = list_for_removal(runtime, exact(project)).await?;
++                exact_page["projects"]
++                    .as_array()
++                    .and_then(|rows| rows.iter().find(|row| row["id"].as_str() == Some(project)))
++                    .ok_or_else(unavailable)?
++            }
++            None => return Err(unavailable()),
++        };
++        let revision = row
++            .get("revision")
++            .and_then(Value::as_str)
++            .filter(|s| {
++                s.len() == 71
++                    && s.starts_with("sha256:")
++                    && s[7..].bytes().all(|b| b.is_ascii_hexdigit())
++            })
++            .ok_or_else(unavailable)?;
++        let path = row
++            .get("path")
++            .and_then(Value::as_str)
++            .filter(|s| !s.is_empty())
++            .ok_or_else(unavailable)?;
++        observations.push(UnregisterObservation {
++            target: target.clone(),
++            project: project.clone(),
++            expected_revision: revision.to_owned(),
++            path: path.to_owned(),
++        });
++    }
++    Ok(observations)
++}
++
++async fn list_for_removal(runtime: &StoredRuntime, params: Value) -> DesktopResult<Value> {
++    let mut value = crate::workspace::post(
+         runtime,
+         "/api/tools/call",
+-        json!({"tool":"list_projects","params":{}}),
++        json!({"tool":"list_projects","params":params}),
+         Duration::from_secs(12),
+     )
+     .await?;
+     if value.get("success").and_then(Value::as_bool) != Some(true) {
+         return Err(unavailable());
+     }
+-    let rows = value
+-        .pointer("/output/projects")
+-        .and_then(Value::as_array)
+-        .ok_or_else(unavailable)?;
+-    projects
+-        .iter()
+-        .map(|project| {
+-            let row = rows
+-                .iter()
+-                .find(|row| row.get("id").and_then(Value::as_str) == Some(project))
+-                .ok_or_else(unavailable)?;
+-            let revision = row
+-                .get("revision")
+-                .and_then(Value::as_str)
+-                .filter(|s| {
+-                    s.len() == 71
+-                        && s.starts_with("sha256:")
+-                        && s[7..].bytes().all(|b| b.is_ascii_hexdigit())
+-                })
+-                .ok_or_else(unavailable)?;
+-            let path = row
+-                .get("path")
+-                .and_then(Value::as_str)
+-                .filter(|s| !s.is_empty())
+-                .ok_or_else(unavailable)?;
+-            Ok(UnregisterObservation {
+-                target: target.clone(),
+-                project: project.clone(),
+-                expected_revision: revision.to_owned(),
+-                path: path.to_owned(),
+-            })
+-        })
+-        .collect()
++    Ok(value["output"].take())
+ }
++
+ pub async fn unregister(
+     runtime: &StoredRuntime,
+     request: &UnregisterRequest,
+@@ -121,12 +148,37 @@ pub async fn unregister(
+     }
+     let observation = observe(runtime, &request.project).await?;
+     if observation.expected_revision != request.expected_revision {
+-        return Err(unavailable());
++        return Err(revision_changed());
+     }
+     let value = crate::workspace::post(runtime, "/api/tools/call", json!({"tool":"unregister_project", "params":{"project":request.project,"expected_revision":request.expected_revision}}), Duration::from_secs(40)).await.map_err(|_| uncertain())?;
+     if value.get("success").and_then(Value::as_bool) != Some(true) {
+-        //
+```
+
+**File**: `apps/desktop/src-tauri/src/project_inventory/tests.rs` (modified, +45/-2)
+```diff
+@@ -127,7 +127,29 @@ async fn observe_many_uses_one_inventory_request() {
+         .unwrap();
+     assert_eq!(rows.len(), 1);
+     assert_eq!(rows[0].path, "D:\\repo");
+-    assert_eq!(task.await.unwrap().len(), 1);
++    let calls = task.await.unwrap();
++    assert_eq!(calls.len(), 1);
++    assert_eq!(calls[0]["params"]["project"], "agent:mini:repo");
++}
++
++#[tokio::test]
++async fn batch_observation_finds_a_selected_registration_beyond_the_first_page() {
++    let mut page = inventory();
++    page["output"]["truncated"] = json!(true);
++    let mut exact = inventory();
++    exact["output"]["projects"][0]["id"] = json!("agent:mini:last");
++    let (url, calls) = server(vec![page, exact]).await;
++    let fixture = Fixture::new(url);
++    let rows = observe_many(
++        &fixture.runtime,
++        &["agent:mini:repo".into(), "agent:mini:last".into()],
++    )
++    .await
++    .unwrap();
++    assert_eq!(rows[1].project, "agent:mini:last");
++    let calls = calls.await.unwrap();
++    assert_eq!(calls.len(), 2);
++    assert_eq!(calls[1]["params"]["project"], "agent:mini:last");
+ }
+ 
+ #[tokio::test]
+@@ -161,7 +183,8 @@ async fn changed_revision_never_dispatches_removal() {
+     let fixture = Fixture::new(url);
+     let mut request = fixture.request();
+     request.expected_revision = format!("sha256:{}", "b".repeat(64));
+-    assert!(unregister(&fixture.runtime, &request).await.is_err());
++    let error = unregister(&fixture.runtime, &request).await.unwrap_err();
++    assert_eq!(error.code, "project_revision_changed");
+     assert_eq!(task.await.unwrap().len(), 1);
+ }
+ 
+@@ -192,6 +215,26 @@ async fn rejection_and_wrong_project_outcomes_are_not_retried() {
+     }
+ }
+ 
++#[tokio::test]
++async fn projection_failure_reports_only_an_exact_confirmed_removal() {
++    for (project, code) in [
++        ("agent:mini:repo", "project_projection_reconcile_required"),
++        ("agent:other:repo", "project_unregister_uncertain"),
++    ] {
++        let response = json!({"success":false,"output":{
++            "error":{"code":"project_projection_reconcile_required"},
++            "authoritative_outcome":"unregistered","project":project
++        }});
++        let (url, calls) = server(vec![inventory(), response]).await;
++        let fixture = Fixture::new(url);
++        let error = unregister(&fixture.runtime, &fixture.request())
++            .await
++            .unwrap_err();
++        assert_eq!(error.code, code);
++        assert_eq!(calls.await.unwrap().len(), 2);
++    }
 +}
 +
  #[test]
- fn unauthenticated_socket_cannot_offer_tabs_and_native_owner_is_exclusive() {
-     let (_temp, root) = root();
+ fn forget_only_removes_exact_runner_registration_and_clears_default() {
+     let fixture = Fixture::new("http://127.0.0.1:1".into());
+```
+
+**File**: `apps/desktop/src-tauri/src/state/app_state.rs` (modified, +4/-2)
+```diff
+@@ -120,8 +120,10 @@ impl AppState {
+                     "Choose an existing directory that this account can access.",
+                 )
+             })?;
+-            let canonical_roots =
+-                webcodex_runner_config::paths::canonicalize_usable_allowed_roots(&effective_roots);
++            let canonical_roots = webcodex_runner_config::paths::canonicalize_usable_allowed_roots(
++                &effective_roots,
++                &canonical_project,
++            );
+             Ok::<_, DesktopError>(
+                 webcodex_runner_config::paths::validate_project_path_policy(
+                     &canonical_project,
+```
+
+**File**: `apps/desktop/src-tauri/src/state/environment.rs` (modified, +30/-9)
+```diff
+@@ -378,12 +378,12 @@ pub(super) fn adopt_saved_environment(config: &mut StoredDesktopConfig) {
+                 .find(|entry| entry.path == *path)
+                 .map(|entry| format!("agent:{client}:{}", entry.id))
+         });
+-        ProjectSelection {
+-            path: path.to_string_lossy().into_owned(),
+-            allowed_root: path.to_string_lossy().into_owned(),
+-            is_git_repository: path.join(".git").exists(),
+-            runtime_project_id,
++        let mut selected = saved_project_selection(path, config.project.as_ref());
++        if webcodex_runner_config::paths::project_path_probe_allowed(path, None) {
++            selected.is_git_repository = path.join(".git").exists();
+         }
++        selected.runtime_project_id = runtime_project_id;
++        selected
+     });
+     config.persistent_environment = Some(record.environment_id);
+     config.topology = Some(RuntimeTopology {
+@@ -509,10 +509,27 @@ pub(super) fn legacy_inventory_projects(
+     Ok(projects)
+ }
+ 
++fn saved_project_selection(path: &Path, previous: Option<&ProjectSelection>) -> ProjectSelection {
++    let spelling = path.to_string_lossy().into_owned();
++    ProjectSelection {
++        path: spelling.clone(),
++        allowed_root: spelling,
++        is_git_repository: previous.is_some_and(|project| {
++            webcodex_runner_config::paths::paths_equal(Path::new(&project.path), path)
++                && project.is_git_repository
++        }),
++        runtime_project_id: None,
++    }
++}
++
+ fn same_desktop_path(left: &Path, right: &Path) -> bool {
++    use webcodex_runner_config::paths::project_path_probe_allowed;
+     if left == right {
+         return true;
+     }
++    if !project_path_probe_allowed(left, None) || !project_path_probe_allowed(right, None) {
++        return false;
++    }
+     match (std::fs::canonicalize(left), std::fs::canonicalize(right)) {
+         (Ok(a), Ok(b)) => a == b,
+         _ => false,
+@@ -1407,10 +1424,14 @@ impl DesktopCore {
+                     .cloned()
+             });
+         let project = if let Some(path) = selected.as_ref() {
+-            let mut project = self
+-                .adapter
+-                .inspect_project(&path.to_string_lossy())
+-                .await?;
++            let mut project =
++                if webcodex_runner_config::paths::project_path_probe_allowed(path, None) {
++                    self.adapter
++                        .inspect_project(&path.to_string_lossy())
++                        .await?
++                } else {
++                    saved_project_selection(path, self.config.project.as_ref())
++                };
+             if let (Some(client), Some(entry)) = (
+                 record.runner_client_id.as_deref(),
+                 record
+```
+
+**File**: `apps/desktop/src-tauri/src/state/workspace.rs` (modified, +3/-9)
+```diff
+@@ -116,7 +116,7 @@ impl AppState {
+             let observations = crate::project_inventory::observe_many(&runtime, &ids).await?;
+             for (item, observed) in request.items.iter().zip(observations.iter()) {
+                 if observed.expected_revision != item.expected_revision {
+-                    return Err(crate::workspace::unavailable());
++                    return Err(crate::project_inventory::revision_changed());
+                 }
+             }
+             let items =
+@@ -178,14 +178,8 @@ impl AppState {
+                 crate::webcodex::settings::verify_target(&runtime, &request.target)?;
+                 let observed =
+                     crate::project_inventory::observe(&runtime, &request.project).await?;
+-                if observed.expected_revision != request.expected_revision
+-                    || observed.path.is_empty()
+-                {
+-                    return Err(DesktopError::new(
+-                        "project_revision_changed",
+-                        "The project changed since confirmation",
+-                        "Review the current project again before removing it.",
+-                    ));
++                if observed.expected_revision != request.expected_revision {
++                    return Err(crate::project_inventory::revision_changed());
+                 }
+                 let store = super::environment::store()?;
+                 let mut native = webcodex_environment::NativeEnvironment::new()
+```
+
+**File**: `apps/desktop/src-tauri/src/webcodex/settings.rs` (modified, +11/-0)
+```diff
+@@ -249,6 +249,17 @@ fn validate(paths: &[String]) -> DesktopResult<()> {
+ }
+ 
+ fn validate_allowed_roots(current: &[String], roots: &[String]) -> DesktopResult<()> {
++    // A config written by the CLI can already exceed the Desktop add limit.
++    // An exact deletion preserves the spelling and order of every survivor
++    // and needs no filesystem access (including for unavailable WSL shares).
++    let mut existing = current.iter();
++    if roots.len() < current.len()
++        && roots
++            .iter()
++            .all(|root| existing.by_ref().any(|old| old == root))
++    {
++        return Ok(());
++    }
+     validate(roots)?;
+     for root in roots {
+         if current.iter().any(|existing| {
+```
+
+**File**: `apps/desktop/src-tauri/src/webcodex/settings/tests.rs` (modified, +18/-0)
+```diff
+@@ -267,6 +267,24 @@ fn file_access_can_remove_stale_roots_one_at_a_time() {
+     assert_eq!(projection.file_access.configured_roots, vec![stale_b]);
+ }
+ 
++#[test]
++fn file_access_can_revoke_from_oversized_configuration_without_adding_authority() {
++    let f = Fixture::new();
++    let original = (0..23)
++        .map(|i| {
++            f.dir
++                .join(format!("stale-{i}"))
++                .to_string_lossy()
++                .into_owned()
++        })
++        .collect::<Vec<_>>();
++    let mut remaining = original.clone();
++    remaining.remove(10);
++    validate_allowed_roots(&original, &remaining).unwrap();
++    remaining[0] = f.dir.to_string_lossy().into_owned();
++    assert!(validate_allowed_roots(&original, &remaining).is_err());
++}
++
+ #[cfg(windows)]
+ #[test]
+ fn file_access_accepts_existing_windows_drive_root() {
+```
+
+**File**: `apps/desktop/src/features/projects/ProjectsPanel.tsx` (modified, +19/-18)
+```diff
+@@ -1,3 +1,4 @@
++import { normalizeDesktopError } from "../../i18n/presentation";
+ import { useEffect, useMemo, useRef, useState } from "react";
+ import { Button, Select, TextInput } from "@mantine/core";
+ import { Search } from "lucide-react";
+@@ -50,7 +51,7 @@ export function ProjectsPanel({ onComputerSettings, onState }: { onComputerSetti
+   };
+   const [removal, setRemoval] = useState<UnregisterObservation | null>(null);
+   const [removing, setRemoving] = useState(false);
+-  const [removeError, setRemoveError] = useState(false);
++  const [removeError, setRemoveError] = useState<string | null>(null);
+   const [selected, setSelected] = useState<string[]>([]);
+   const [batchConfirm, setBatchConfirm] = useState<UnregisterObservation[] | null>(null);
+   const [batchProgress, setBatchProgress] = useState("");
+@@ -78,20 +79,20 @@ export function ProjectsPanel({ onComputerSettings, onState }: { onComputerSetti
+     setRemoval(null);
+     setBatchConfirm(null);
+     setBatchIssues([]);
+-    setRemoveError(false);
++    setRemoveError(null);
+   }, [workspace.contextKey]);
+   const canManageProjects = Boolean(onState && workspace.state.workspace_runner);
+ 
+   const prepareRemoval = async (project: WorkspaceProject) => {
+     if (!canManageProjects || removing || workspace.state.current_operation || !project.id) return;
+     const owner = beginRemoval();
+     if (!owner) return;
+-    setRemoveError(false);
++    setRemoveError(null);
+     try {
+       const observation = await desktopApi.prepareProjectUnregister(project.id);
+       if (removalOwner.current === owner) setRemoval(observation);
+-    } catch {
+-      if (removalOwner.current === owner) setRemoveError(true);
++    } catch (error) {
++      if (removalOwner.current === owner) setRemoveError(normalizeDesktopError(error).code);
+     } finally {
+       finishRemoval(owner);
+     }
+@@ -101,15 +102,15 @@ export function ProjectsPanel({ onComputerSettings, onState }: { onComputerSetti
+     if (!removal || !onState || removing || workspace.state.current_operation) return;
+     const owner = beginRemoval();
+     if (!owner) return;
+-    setRemoveError(false);
++    setRemoveError(null);
+     try {
+       const state = await desktopApi.unregisterProject(removal);
+       if (removalOwner.current === owner) {
+         onState(state);
+         workspace.removeProject(removal.project);
+       }
+-    } catch {
+-      if (removalOwner.current === owner) setRemoveError(true);
++    } catch (error) {
++      if (removalOwner.current === owner) setRemoveError(normalizeDesktopError(error).code);
+     } finally {
+       if (removalOwner.current === owner) {
+         setRemoval(null);
+@@ -125,7 +126,7 @@ export function ProjectsPanel({ onComputerSettings, onState }: { onComputerSetti
+     if (!ids.length) return;
+     const owner = beginRemoval();
+     if (!owner) return;
+-    setRemoveError(false);
++    setRemoveError(null);
+     setBatchIssues([]);
+     setBatchConfirm(null);
+     try {
+@@ -142,8 +143,8 @@ export function ProjectsPanel({ onComputerSettings, onState }: { onComputerSetti
+       // The confirmation owns these exact paths and revisions. Never replace
+       // them with a fresh inventory after the user has confirmed.
+       setBatchConfirm(observations);
+-    } catch {
+-      if (removalOwner.current === owner) setRemoveError(true);
++    } catch (error) {
++      if (removalOwner.current === owner) setRemoveError(normalizeDesktopError(error).code);
+     } finally {
+       finishRemoval(owner);
+     }
+@@ -154,7 +155,7 @@ export function ProjectsPanel({ onComputerSettings, onState }: { onComputerSetti
+     const observations = batchConfirm;
+     const owner = beginRemoval();
+     if (!owner) return;
+-    setRemoveError(false);
++    setRemoveError(null);
+     setBatchIssues([]);
+     setBatchConfirm(null);
+     try {
+@@ -173,9 +174,9 @@ export function ProjectsPanel({ onComputerSettings, onState }: { onComputerSetti
+               setSelected(current => current.filter(id => id !== observation.project));
+               completed++;
+               setBatchProgress(`${completed}/${observations.length}`);
+-            } catch {
++            } catch (error) {
+               if (removalOwner.current === owner) {
+-                setRemoveError(true);
++                setRemoveError(normalizeDesktopError(error).code);
+                 setBatchIssues([observation.project]);
+               }
+               return;
+@@ -193,13 +194,13 @@ export function ProjectsPanel({ onComputerSettings, onState }: { onComputerSetti
+           const issues = result.items.filter(item => !item.success).map(item => `${item.project}: ${item.status}`);
+           if (issues.length || result.items.length !== chunk.length) {
+             setBatchIssues(issues.length ? issues : chunk.map(item => item.project));
+-            setRemoveError(true);
++            setRemoveError("project_unregister_uncertain");
+             return;
+           }
+         }
+       }
+-    } catch {
+-      if (removalOwner.current
+```
+
+---
+
+### Incident Patch 3: `6ea6ed58` (2026-11-28)
+**Commit Message**: fix(session): reserve the WAL writer before reading revisions (#1452)
+
+**File**: `crates/webcodex-workflow-session/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -21,5 +21,6 @@ tracing = "0.1"
+ uuid = { version = "1", features = ["v4"] }
+ 
+ [dev-dependencies]
++rusqlite = { version = "0.40.2", features = ["hooks"] }
+ tempfile = "3"
+ tokio = { version = "1", features = ["sync", "time", "macros", "rt-multi-thread"] }
+```
+
+**File**: `crates/webcodex-workflow-session/src/persistence/database.rs` (modified, +11/-2)
+```diff
+@@ -3,7 +3,7 @@
+ //! The database is authoritative backing for clean cache entries, never a replay
+ //! engine. Loading history cannot dispatch a tool or change Session authority.
+ use super::*;
+-use rusqlite::{params, Connection, OptionalExtension};
++use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
+ use std::path::Path;
+ use std::sync::Mutex;
+ 
+@@ -116,7 +116,11 @@ impl SessionDatabase {
+ 
+     pub(crate) fn write(&self, writes: &[SessionWrite]) -> io::Result<u64> {
+         let mut connection = self.connection.lock().map_err(error)?;
+-        let transaction = connection.transaction().map_err(error)?;
++        // Reserve the writer before reading revisions. An intervening WAL commit
++        // would leave a deferred transaction with a snapshot it cannot promote.
++        let transaction = connection
++            .transaction_with_behavior(TransactionBehavior::Immediate)
++            .map_err(error)?;
+         let mut bytes = 0_u64;
+         for write in writes {
+             bytes = bytes.saturating_add(write_row(&transaction, write)?);
+@@ -140,6 +144,11 @@ impl SessionDatabase {
+         Ok(result)
+     }
+ 
++    #[cfg(test)]
++    pub(crate) fn connection_for_test(&self) -> std::sync::MutexGuard<'_, Connection> {
++        self.connection.lock().unwrap()
++    }
++
+     #[cfg(any(test, feature = "root-test-support"))]
+     pub(crate) fn fail_writes(&self, fail: bool) {
+         self.connection
+```
+
+**File**: `crates/webcodex-workflow-session/src/store/writer/sqlite_tests.rs` (modified, +60/-0)
+```diff
+@@ -138,6 +138,66 @@ fn latest_instruction_and_closed_identity_survive_history_and_session_churn() {
+     assert_eq!(restored.status().retained_sessions, 151);
+ }
+ 
++#[test]
++fn unrelated_wal_write_cannot_invalidate_the_session_revision_read() {
++    use rusqlite::hooks::{AuthAction, AuthContext, Authorization};
++
++    let (temporary, store) = persistent_fixture(Duration::from_secs(60));
++    let id = store.start_session(None, None).session_id;
++    store.flush_persistence();
++    let path = temporary.path().join("sessions.sqlite3");
++    let audit = rusqlite::Connection::open(&path).unwrap();
++    audit
++        .execute("CREATE TABLE audit_fixture (id INTEGER PRIMARY KEY)", [])
++        .unwrap();
++    audit.busy_timeout(Duration::ZERO).unwrap();
++    const INSERT_AUDIT: &str = "INSERT INTO audit_fixture VALUES (1)";
++
++    // Preparing the Session upsert happens after the revision SELECT has run.
++    // Attempt the independent commit at precisely that point on a second connection.
++    let (attempt, result) = std::sync::mpsc::channel();
++    let database = store
++        .inner
++        .lock()
++        .unwrap()
++        .persistence
++        .as_ref()
++        .unwrap()
++        .database
++        .clone();
++    database
++        .connection_for_test()
++        .authorizer(Some(move |context: AuthContext<'_>| {
++            if let AuthAction::Insert {
++                table_name: "workflow_sessions",
++            } = context.action
++            {
++                let _ = attempt.send(audit.execute(INSERT_AUDIT, []));
++            }
++            Authorization::Allow
++        }))
++        .unwrap();
++
++    append_read_fixture(&store, &id, 1);
++    store.flush_persistence();
++    assert_eq!(store.status().last_persist_error, None);
++    assert_eq!(
++        result.try_recv().unwrap().unwrap_err().sqlite_error_code(),
++        Some(rusqlite::ErrorCode::DatabaseBusy)
++    );
++
++    let connection = rusqlite::Connection::open(&path).unwrap();
++    assert_eq!(connection.execute(INSERT_AUDIT, []).unwrap(), 1);
++    let events: i64 = connection
++        .query_row(
++            "SELECT count(*) FROM workflow_session_events WHERE session_id=?1",
++            [&id],
++            |row| row.get(0),
++        )
++        .unwrap();
++    assert_eq!(events, 2);
++}
++
+ #[test]
+ fn stale_second_writer_fails_closed_instead_of_overwriting_a_newer_commit() {
+     let (temporary, store) = persistent_fixture(Duration::from_secs(60));
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1455** (2026-11-28): fix(desktop): 修复设置误报操作占用并显示实际运行的操作 (@yyjeqhc)
+- **PR #1453** (2026-11-28): fix(windows): avoid idle WSL wakeups and preserve project identity (@yyjeqhc)
+- **PR #1452** (2026-11-28): fix(session): reserve the WAL writer before reading revisions (@yyjeqhc)
 - **PR #1447** (2026-11-27): fix(browser): prevent idle Windows native peers from busy-spinning (@lucha0404)
 - **PR #1446** (2026-11-27): Resume v0.5.0 Workflow Sessions transparently after upgrade (@yyjeqhc)
 - **PR #1443** (2026-11-26): fix(desktop): report incompatible Cloudflare status when configuration identity is missing (@Corden404)
-- **PR #1442** (2026-11-26): fix(projects): prevent Runner inventory refresh from blocking project onboarding (@deefery)
-- **PR #1440** (2026-11-24): docs: distinguish Windows Desktop and service startup (@cloudgpuapp)
-- **PR #1437** (2026-11-23): perf(desktop): accelerate Windows status checks and acknowledge lifecycle actions (@swjnxyf)
 
 ---
 
@@ -2314,42 +3216,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. browser): prevent idle Windows native peers from busy-spinning
+## X. desktop): 修复设置误报操作占用并显示实际运行的操作
 
 **RULE**:
-When implementing operations in `crates/webcodex-browser/src/bridge.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src-tauri/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `19edca39`: browser): prevent idle Windows native peers from busy-spinning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5411166`: desktop): 修复设置误报操作占用并显示实际运行的操作. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/webcodex-browser/src/bridge.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src-tauri/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // Windows inherits the listener's nonblocking mode. Idle peer reads must
-    // wait for their timeout, not retry WouldBlock continuously.
-    if stream.set_nonblocking(false).is_err()
-        || stream
-            .set_read_timeout(Some(Duration::from_millis(50)))
-            .is_err()
-        || stream
-            .set_write_timeout(Some(Duration::from_millis(200)))
-            .is_err()
-        || stream.set_nodelay(true).is_err()
-    {
-        return;
-    }
+tokio = { version = "1", features = ["test-util"] }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    let _ = stream.set_read_timeout(Some(Duration::from_millis(50)));
-    let _ = stream.set_write_timeout(Some(Duration::from_millis(200)));
-    let _ = stream.set_nodelay(true);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `19edca39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5411166` are properly handled with clean fallback behavior.

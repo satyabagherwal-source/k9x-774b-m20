@@ -12303,10 +12303,10 @@
     "repository": "yyjeqhc/webcodex",
     "platform": "github",
     "sourceUrl": "https://github.com/yyjeqhc/webcodex",
-    "sourceVersion": "f9797ded",
+    "sourceVersion": "f5411166",
     "license": "Apache-2.0",
-    "contentHash": "d9d130e1011c87b53e9adf8079acf2ab04de68c50e6dd4ba77971b2dd0cabe23",
-    "lastHarvestedAt": "2026-11-27T12:21:10.039Z",
+    "contentHash": "86562dd74c4f458516414587195a6014dea85b389ddec973a1ad949bd2402713",
+    "lastHarvestedAt": "2026-11-28T15:05:58.177Z",
     "learningId": "learn-github-yyjeqhc-webcodex"
   },
   "hf-minimaxai-minimax-h3-image": {
@@ -13425,8 +13425,8 @@
     "sourceUrl": "https://huggingface.co/MemTensor/MemT-1.0-Pro",
     "sourceVersion": "hf-memtensor-memt-1.0-pro",
     "license": "Open-Source",
-    "contentHash": "414d41e2e8dcfd77f638ef8243fa2b87ed3323b6e8c9b22d4577d963e42dcfa1",
-    "lastHarvestedAt": "2026-11-25T02:28:41.809Z",
+    "contentHash": "646879a7fd3f6228d5fcd0f16d585b5539587bf9caac24eefd025e9992c77642",
+    "lastHarvestedAt": "2026-11-28T15:05:55.475Z",
     "learningId": "learn-huggingface-memtensor-memt-1-0-pro"
   },
   "alejandrobujan-tendedero": {

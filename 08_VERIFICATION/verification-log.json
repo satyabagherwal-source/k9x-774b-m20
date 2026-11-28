@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-ZT5G",
-    "timestamp": "2026-11-26T19:25:26.740Z",
-    "repository": "openreplay/openreplay",
-    "learningId": "learn-github-openreplay-openreplay",
-    "contentHash": "8bdd40c89fe13ccbcd72501fca944224fd86911b2468fab590a5c7199ae53a36",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-ETIH",
-    "timestamp": "2026-11-26T19:37:07.049Z",
-    "repository": "deepseek-ai/DeepSeek-V4-Pro",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-    "contentHash": "3f8e4e8b5791b2635579adfb2ac2cdd513385f6230e53f9571a02e2cd84ab344",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-F2D1",
     "timestamp": "2026-11-26T19:37:18.517Z",
     "repository": "meshery/meshery",
@@ -7490,6 +7460,36 @@
     "repository": "exyte/Chat",
     "learningId": "learn-github-exyte-chat",
     "contentHash": "a98c9a9d1e5c47e90429955deb5cc22421b64442b369bdf61dff93b1aa7277eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-LRM6",
+    "timestamp": "2026-11-28T15:05:55.470Z",
+    "repository": "MemTensor/MemT-1.0-Pro",
+    "learningId": "learn-huggingface-memtensor-memt-1-0-pro",
+    "contentHash": "646879a7fd3f6228d5fcd0f16d585b5539587bf9caac24eefd025e9992c77642",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-LTP8",
+    "timestamp": "2026-11-28T15:05:58.172Z",
+    "repository": "yyjeqhc/webcodex",
+    "learningId": "learn-github-yyjeqhc-webcodex",
+    "contentHash": "86562dd74c4f458516414587195a6014dea85b389ddec973a1ad949bd2402713",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

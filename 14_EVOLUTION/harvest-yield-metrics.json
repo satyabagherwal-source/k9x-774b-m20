@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T14:56:30.342Z",
-  "total_cycles_completed": 13342,
-  "total_learnings_persisted": 13342,
-  "total_rules_promoted": 12039,
+  "last_updated": "2026-11-28T15:05:58.183Z",
+  "total_cycles_completed": 13344,
+  "total_learnings_persisted": 13344,
+  "total_rules_promoted": 12040,
   "history": [
-    {
-      "timestamp": "2026-11-27T18:43:58.334Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T18:59:41.805Z",
-      "repository": "ClementTsang/bottom",
-      "learningId": "learn-github-clementtsang-bottom",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T19:18:15.480Z",
       "repository": "maziyarpanahi/openmed",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T14:56:30.342Z",
       "repository": "exyte/Chat",
       "learningId": "learn-github-exyte-chat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T15:05:55.481Z",
+      "repository": "MemTensor/MemT-1.0-Pro",
+      "learningId": "learn-huggingface-memtensor-memt-1-0-pro",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T15:05:58.183Z",
+      "repository": "yyjeqhc/webcodex",
+      "learningId": "learn-github-yyjeqhc-webcodex",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

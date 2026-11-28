@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T14:57:10.660Z",
+  "last_updated": "2026-11-28T15:06:09.257Z",
   "total_verified_learnings": 9153,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27171,
+  "total_items": 27173,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d8f9861c445456b90756632fba056cc2f12595bfe1c02a90050ff8f455aef96",
+      "content_hash": "77eab5cfe3d0126eb69956cc6ceafe6f3f91e176f99deaf0637b1fea0f536d9d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T10:36:20.368Z"
+      "persisted_at": "2026-11-28T15:06:09.055Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4214f125ffe54cc07de5c96a90d0ac7b52662fda7e618e0abdc16cc17de7df22",
+      "content_hash": "106bbe3721578e7135b3176bd3c28e97e01dcdca6524f63b371dd87afa524d0b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T10:36:20.581Z"
+      "persisted_at": "2026-11-28T15:06:09.257Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -261276,8 +261276,8 @@
       "slug": "yyjeqhc-webcodex",
       "platform": "github",
       "source_url": "https://github.com/yyjeqhc/webcodex",
-      "source_version": "f9797ded",
-      "content_hash": "d9d130e1011c87b53e9adf8079acf2ab04de68c50e6dd4ba77971b2dd0cabe23",
+      "source_version": "f5411166",
+      "content_hash": "86562dd74c4f458516414587195a6014dea85b389ddec973a1ad949bd2402713",
       "dossier_path": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
       "promoted_rules": [
@@ -261310,6 +261310,11 @@
           "number": 10897,
           "title": "prevent idle Windows native peers from busy-spinning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11114,
+          "title": "修复设置误报操作占用并显示实际运行的操作",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -261317,7 +261322,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T12:21:09.765Z",
+      "verified_at": "2026-11-28T15:05:57.914Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261359,10 +261364,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-technical-construction-intelligence-yyjeqhc-webcodex-core-invar.md",
       "title": "Technical Construction Intelligence: yyjeqhc/webcodex Core Invariants",
       "repository": "yyjeqhc/webcodex",
-      "source_version": "f9797ded",
-      "content_hash": "2efdb19beeb9c2d6c637ec820337a083d5705f4b22ba967f062d2c9307ab2e52",
+      "source_version": "f5411166",
+      "content_hash": "72e2dc1fe6e45be03a39dbb83460ecd7a0f89f42c580c98301cee017ef530e1b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T12:21:10.492Z"
+      "persisted_at": "2026-11-28T15:05:58.663Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex",
@@ -261371,10 +261376,10 @@
       "relative_path": "08_VERIFICATION/yyjeqhc-webcodex-verification-protocol-empirical-defect-shield-for-yyjeqhc-webco.md",
       "title": "Verification Protocol: Empirical Defect Shield for yyjeqhc/webcodex",
       "repository": "yyjeqhc/webcodex",
-      "source_version": "f9797ded",
-      "content_hash": "b0ecf3f14458a8d8bd5fa6fa48c238adfe20a932055c14041a7ce49bb9ce3c3e",
+      "source_version": "f5411166",
+      "content_hash": "4d135adc6d17b22790c46e308c24c596833b22b551119ed29c42198a227e63b6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:21:10.690Z"
+      "persisted_at": "2026-11-28T15:05:58.868Z"
     },
     "rule-8722": {
       "learning_id": "rule-8722",
@@ -261410,9 +261415,9 @@
       "title": "Technical Construction Intelligence: yyjeqhc-webcodex-learnings Core Invariants",
       "repository": "yyjeqhc-webcodex-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f58fc55fdfaadd2e32a0f9b7cb87e645a5dab67690dcd67d54f7d81105f1491",
+      "content_hash": "a931b31c05404578292858c8f99f7163d9e1eb4e04791befea9fd4d67cd65ef4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T12:21:27.376Z"
+      "persisted_at": "2026-11-28T15:06:07.615Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex-learnings",
@@ -261422,9 +261427,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yyjeqhc-webcodex-learnings",
       "repository": "yyjeqhc-webcodex-learnings",
       "source_version": "HEAD",
-      "content_hash": "8baae3551fa69821eda82ed7bdc738c182a0a0169de3ea9320e85532437476cd",
+      "content_hash": "391f1dff3e2ae374f96b0783087a12e5e48b9da9fb10314fe3f35efa7b92a4fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:21:27.593Z"
+      "persisted_at": "2026-11-28T15:06:07.829Z"
     },
     "rule-8723": {
       "learning_id": "rule-8723",
@@ -285912,13 +285917,13 @@
       "item_id": "candidate_directive-",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6548-.md",
-      "title": "修复未发布功能的导入兼容、详情缓存与配色覆盖",
-      "repository": "lingyired-status-trio-learnings",
-      "source_version": "HEAD",
-      "content_hash": "3853aeafc5ee80d0cf1068add07a9b66b55c435cc3e2299b435e95141e2f3a38",
+      "relative_path": "11_INBOX/candidate-directives/CD-LTWJ-.md",
+      "title": "修复设置误报操作占用并显示实际运行的操作",
+      "repository": "yyjeqhc/webcodex",
+      "source_version": "f5411166",
+      "content_hash": "70e5f514120a57ceaa852920d9f404f6268bc6bde9bdf20db57f55b5c555ddca",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T14:22:26.411Z"
+      "persisted_at": "2026-11-28T15:05:58.439Z"
     },
     "rule-9059": {
       "learning_id": "rule-9059",
@@ -347247,7 +347252,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MemTensor/MemT-1.0-Pro",
       "source_version": "hf-memtensor-memt-1.0-pro",
-      "content_hash": "414d41e2e8dcfd77f638ef8243fa2b87ed3323b6e8c9b22d4577d963e42dcfa1",
+      "content_hash": "646879a7fd3f6228d5fcd0f16d585b5539587bf9caac24eefd025e9992c77642",
       "dossier_path": "07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md",
       "promoted_rules": [],
@@ -347256,7 +347261,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T02:28:41.588Z",
+      "verified_at": "2026-11-28T15:05:55.188Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -347273,9 +347278,9 @@
       "title": "Research & Knowledge Intelligence: MemTensor/MemT-1.0-Pro Core Invariants",
       "repository": "MemTensor/MemT-1.0-Pro",
       "source_version": "hf-memtensor-memt-1.0-pro",
-      "content_hash": "5d7121fa660f1530fb1356e453cc9a034e1f91d8b93ec2918d6c8cfedb1c7c91",
+      "content_hash": "c8763221ef2feb65ca68d8e0e5c6dea6dc68c2e93d0772dac35e8a6db12e94d9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T02:28:42.036Z"
+      "persisted_at": "2026-11-28T15:05:55.706Z"
     },
     "rule-10432": {
       "learning_id": "rule-10432",
@@ -347375,9 +347380,9 @@
       "title": "Research & Knowledge Intelligence: hf-memtensor-memt-1.0-pro-learnings Core Invariants",
       "repository": "hf-memtensor-memt-1.0-pro-learnings",
       "source_version": "HEAD",
-      "content_hash": "5cb91689b53041681fbe792a4428ff6e7458a6fd45a9c8dc2b4708623da9df7c",
+      "content_hash": "416cd17f68e67aedf198f0a208d76502c2dbcd4ddaf5472d6fcefb9cdc4c1e17",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T02:29:34.682Z"
+      "persisted_at": "2026-11-28T15:06:08.275Z"
     },
     "domain_intelligence-search-distribution-intelligence-msasikanth-twine-learnings-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-msasikanth-twine-learnings-core-invariants",
@@ -362226,13 +362231,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Z2NR-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-M1XY-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "df5d9dd15915557ad1cff779d43d6df5a5cbe1c7e8799764c23f46e47dfeaaa1",
+      "content_hash": "69d811c99a5b816834ba436316e3e0cb9ef747d19317b0968475764aef185350",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T10:36:20.154Z"
+      "persisted_at": "2026-11-28T15:06:08.857Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -373617,6 +373622,32 @@
       "content_hash": "e2a83cf6643fe6761e4b3562f3e74b6578dbb692d426b7f8f1e4288d633c8051",
       "domain_letter": "K",
       "persisted_at": "2026-11-28T14:57:09.266Z"
+    },
+    "rule-11114": {
+      "learning_id": "rule-11114",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11114,
+      "title": "修复设置误报操作占用并显示实际运行的操作",
+      "source_url": "https://github.com/yyjeqhc/webcodex",
+      "source_version": "f5411166",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T15:05:57.914Z"
+    },
+    "candidate_directive-desktop": {
+      "item_id": "candidate_directive-desktop",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M0TT-desktop.md",
+      "title": "desktop): 修复设置误报操作占用并显示实际运行的操作",
+      "repository": "yyjeqhc-webcodex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6f7856d5f379c61dc0ad09b45dc196919e2f86425cbfe79c253551345972f8b2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T15:06:07.413Z"
     }
   },
   "ai-builder-brain": {

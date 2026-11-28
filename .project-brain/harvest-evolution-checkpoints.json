@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T14:57:10.903Z",
+  "last_updated": "2026-11-28T15:06:09.441Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T13:18:25.502Z",
@@ -18,7 +18,7 @@
       "staged_for_review": 1
     },
     "yyjeqhc-webcodex-learnings.md": {
-      "processed_at": "2026-11-27T12:21:26.826Z",
+      "processed_at": "2026-11-28T15:06:07.067Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-28T10:36:19.816Z",
+      "processed_at": "2026-11-28T15:06:08.506Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3893,8 +3893,8 @@
       "staged_for_review": 0
     },
     "hf-memtensor-memt-1.0-pro-learnings.md": {
-      "processed_at": "2026-11-25T02:29:34.368Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-28T15:06:08.030Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "checkmarx-kics-learnings.md": {
@@ -4083,7 +4083,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5370,
+  "total_dossiers_evaluated": 5373,
   "total_canonical_promoted": 606,
-  "total_staged_for_review": 4090
+  "total_staged_for_review": 4092
 }

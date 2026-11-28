@@ -1,11 +1,11 @@
 {
   "dnscontrol-dnscontrol": {
-    "name": "DNSControl/dnscontrol",
+    "name": "dnscontrol",
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T18:35:01.420Z",
-    "lastVerified": "2026-11-27T18:35:01.420Z",
+    "lastChecked": "2026-11-28T15:05:59.661Z",
+    "lastVerified": "2026-11-28T15:05:59.661Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dnscontrol-dnscontrol",
@@ -14,7 +14,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4e43910a"
   },
   "gravitl-netmaker": {
     "name": "netmaker",
@@ -57,8 +58,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-28T14:06:01.844Z",
-    "lastVerified": "2026-11-28T14:06:01.844Z",
+    "lastChecked": "2026-11-28T15:06:06.892Z",
+    "lastVerified": "2026-11-28T15:06:06.892Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T14:56:34.468Z",
-    "lastVerified": "2026-11-28T14:56:34.468Z",
+    "lastChecked": "2026-11-28T15:06:06.901Z",
+    "lastVerified": "2026-11-28T15:06:06.901Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -366,8 +367,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-28T07:03:42.329Z",
-    "lastVerified": "2026-11-28T07:03:42.329Z",
+    "lastChecked": "2026-11-28T15:06:01.973Z",
+    "lastVerified": "2026-11-28T15:06:01.973Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -3432,9 +3433,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-11-27T17:19:27.401Z",
+    "lastChecked": "2026-11-28T15:06:04.337Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-11-27T17:19:27.401Z"
+    "lastVerified": "2026-11-28T15:06:04.337Z"
   },
   "o2sh-onefetch": {
     "name": "onefetch",
@@ -9444,14 +9445,14 @@
     "officialUrl": "https://github.com/yyjeqhc/webcodex",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T12:21:08.646Z",
-    "lastVerified": "2026-11-27T12:21:08.646Z",
+    "lastChecked": "2026-11-28T15:05:56.887Z",
+    "lastVerified": "2026-11-28T15:05:56.887Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yyjeqhc-webcodex",
-    "contentHash": "d9d130e1011c87b53e9adf8079acf2ab04de68c50e6dd4ba77971b2dd0cabe23",
+    "contentHash": "86562dd74c4f458516414587195a6014dea85b389ddec973a1ad949bd2402713",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12203,9 +12204,9 @@
   "apple-sample-food-truck": {
     "name": "sample-food-truck",
     "officialUrl": "https://github.com/apple/sample-food-truck",
-    "lastChecked": "2026-11-26T09:35:37.269Z",
+    "lastChecked": "2026-11-28T15:05:57.048Z",
     "revisionIdentifier": "3954a769",
-    "lastVerified": "2026-11-26T09:35:37.269Z"
+    "lastVerified": "2026-11-28T15:05:57.048Z"
   },
   "preactjs-preact": {
     "name": "preactjs/preact",
@@ -15628,12 +15629,12 @@
     "officialUrl": "https://huggingface.co/MemTensor/MemT-1.0-Pro",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-25T02:28:41.106Z",
-    "lastVerified": "2026-11-25T02:28:41.106Z",
+    "lastChecked": "2026-11-28T15:05:54.727Z",
+    "lastVerified": "2026-11-28T15:05:54.727Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-memtensor-memt-1-0-pro",
-    "contentHash": "414d41e2e8dcfd77f638ef8243fa2b87ed3323b6e8c9b22d4577d963e42dcfa1",
+    "contentHash": "646879a7fd3f6228d5fcd0f16d585b5539587bf9caac24eefd025e9992c77642",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/MemTensor/MemT-1.0-Pro",
   "source_version": "hf-memtensor-memt-1.0-pro",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T02:28:42.036Z",
+  "timestamp": "2026-11-28T15:05:55.705Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-memtensor-memt-1-0-pro",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [MemTensor/MemT-1.0-Pro](https://huggingface.co/MemTensor/MemT-1.0-Pro) (Revision: `hf-memtens`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T02:28:42.036Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T15:05:55.705Z`  
 > **Learning ID**: `learn-huggingface-memtensor-memt-1-0-pro`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/MemTensor/MemT-1.0-Pro](https://huggingface.co/MemTensor/MemT-1.0-Pro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:28:41.106Z  
+> **Harvest Timestamp**: 2026-11-28T15:05:54.727Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 397 downloads | 98 likes
+- **Stars / Engagement**: 1718 downloads | 179 likes
 
 ---
 
