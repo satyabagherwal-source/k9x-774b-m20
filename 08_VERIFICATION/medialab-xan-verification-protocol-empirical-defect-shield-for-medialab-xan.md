@@ -4,22 +4,22 @@
 {
   "source_repository": "medialab/xan",
   "source_url": "https://github.com/medialab/xan",
-  "source_version": "93db1c80",
+  "source_version": "bc961b91",
   "license": "Unlicense",
-  "timestamp": "2026-11-26T04:47:44.049Z",
+  "timestamp": "2026-11-28T05:24:45.468Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-medialab-xan",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [medialab/xan](https://github.com/medialab/xan) (Revision: `93db1c80`).  
-> **License**: Unlicense | **Timestamp**: `2026-11-26T04:47:44.049Z`  
+> **Provenance**: Harvested from [medialab/xan](https://github.com/medialab/xan) (Revision: `bc961b91`).  
+> **License**: Unlicense | **Timestamp**: `2026-11-28T05:24:45.468Z`  
 > **Learning ID**: `learn-github-medialab-xan`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `medialab/xan` (Commit: `93db1c80`)
+- **Target Repository**: `medialab/xan` (Commit: `bc961b91`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T04:47:42.366Z  
+> **Harvest Timestamp**: 2026-11-28T05:24:43.917Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4564 stars
+- **Stars / Engagement**: 4569 stars
 
 ---
 
@@ -1596,11 +1596,10 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
 
 ### Core Architecture Module: `src/cmd/blank.rs`
 ```
-use simd_csv::ByteRecord;
+use simd_csv::{ByteRecord, Selector};
 
 use crate::CliResult;
 use crate::config::{Config, Delimiter};
-use crate::select::SelectedColumns;
 use crate::utils;
 
 // TODO: some --pivot option, that blanks hierarchically
@@ -1634,7 +1633,7 @@ Common options:
 #[derive(Deserialize)]
 struct Args {
     arg_input: Option<String>,
-    flag_select: SelectedColumns,
+    flag_select: Selector,
     flag_no_headers: bool,
     flag_delimiter: Option<Delimiter>,
     flag_output: Option<String>,
@@ -1645,21 +1644,18 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
     let args: Args = utils::get_args(USAGE, argv)?;
     let rconf = Config::new(&args.arg_input)
         .delimiter(args.flag_delimiter)
-        .no_headers(args.flag_no_headers)
-        .select(args.flag_select);
+        .no_headers(args.flag_no_headers);
 
     let redacted_string = args.flag_redact.unwrap_or("".to_string());
 
     let mut rdr = rconf.simd_reader()?;
     let mut wtr = Config::new(&args.flag_output).simd_writer()?;
 
-    let headers = rdr.byte_headers()?;
-
-    let sel = rconf.selection(headers)?;
-    let mask = sel.mask(headers.len());
+    let sel = rdr.select(&args.flag_select)?;
+    let mask = sel.mask();
 
     if !rconf.no_headers {
-        wtr.write_byte_record(headers)?;
+        wtr.write_byte_record(rdr.byte_headers()?)?;
     }
 
     let mut record = ByteRecord::new();
@@ -1952,10 +1948,10 @@ impl Args {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1245** (2026-11-20): **xan merge heap does not use file's index to compare and is therefore not stable**
+- **Issue #1255** (2026-11-27): **xan spark has issues with year/year month?**
   *Symptoms*: 
 
-- **Issue #1231** (2026-11-17): **xan explode should not flatmap by default and validate that output is either empty or a list**
+- **Issue #1245** (2026-11-20): **xan merge heap does not use file's index to compare and is therefore not stable**
   *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1973,122 +1969,101 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93db1c80` (2026-11-25)
-**Commit Message**: Documentation fixes
-
-**File**: `docs/blog/notes/simd.md` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- 
- - Historical outline wrt simd-json etc.
- - Why hasn't it happened already? (IO-bound, streaming, branching not invalidated, very good existing scalar designs)
--- copy must not happen per cell in larger swathes, see new byterecord design. check full design notes
-+- copy must not happen per cell but in larger swathes, see new byterecord design. check full design notes
- - Shuffling, PCMESTRI, LUTs and PCLMULQDQ seems globally bad in the case of CSV. simd-json searches for many more characters than what is needed in CSV
- - You cannot expect x16 or x32, that is just not realistic.
- - Branching is data-dependent and cannot be avoided.
-```
-
-**File**: `docs/cookbook/frequency_tables.md` (modified, +1/-1)
-```diff
-@@ -74,7 +74,7 @@ Here is the result:
- | meta.com      | 11    |
- | zorba.net     | 16    |
- 
--Note how this is reminiscent of SQL. The `groupby` command is able to perform a lot of different aggregations on the grouped rows. Run `xan groupby --aggs` to read the full list of what is available.
-+Note how this is reminiscent of SQL. The `groupby` command is able to perform a lot of different aggregations on the grouped rows. Run `xan help aggs` to read the full list of what is available.
- 
- And now, if we want the top 3 entries (in a real life scenario we would of course have millions of domains, not just 6), we can use the `xan top` command like so:
- 
-```
-
----
-
-### Incident Patch 2: `640727c9` (2026-11-25)
-**Commit Message**: Fixing moonblade negative string indexing
+### Incident Patch 1: `d12baddd` (2026-11-27)
+**Commit Message**: Fixing xan split -c
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -66,6 +66,7 @@ The **laminated** update.
- * Fixing performance issues when calling a command with a lot of positional arguments (e.g. 10k paths to `xan scrape`).
- * Fixing `xan explode --evaluate --drop-empty` semantics.
- * Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
-+* Fixing moonblade negative string indexing.
+@@ -71,6 +71,7 @@ The **laminated** update.
+ * Fixing moonblade negative string indexing.
+ * Commands with `--glob` flag will filter out path given to `-o/--output`.
+ * Fixing commands parsing partial dates vs. timestamps.
++* Fixing `xan split -c & --segments`.
  
  *Performance*
  
 ```
 
-**File**: `src/moonblade/functions/maps.rs` (modified, +15/-36)
+**File**: `Cargo.lock` (modified, +3/-2)
 ```diff
-@@ -1,4 +1,5 @@
- use std::borrow::Cow;
-+use std::str::from_utf8;
+@@ -2324,11 +2324,12 @@ checksum = "d66dc143e6b11c1eddc06d5c423cfc97062865baf299914ab64caa38182078fe"
  
- use crate::collections::HashMap;
+ [[package]]
+ name = "simd-csv"
+-version = "0.17.0"
++version = "0.18.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b93411d676d860426a7d53ae4691ea55612a6a9daf38d3a03a8b5a602762e126"
++checksum = "e7ff0919b975814e94f21b0c896e8a585b71510f35602af65216c739b088784b"
+ dependencies = [
+  "memchr",
++ "serde_core",
+  "simdutf8",
+ ]
  
-@@ -7,47 +8,25 @@ use crate::moonblade::types::{BoundArgument, BoundArguments, BoundContainer, Dyn
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -126,7 +126,7 @@ serde = { version = "1", features = ["rc"] }
+ serde_derive = "1"
+ serde_json = { version = "1.0", features = ["preserve_order"] }
+ shlex = "2.0.1"
+-simd-csv = { version = "0.17.0", features = ["str"]}
++simd-csv = { version = "0.18.0", features = ["str", "serde"]}
+ simd-json = "0.18.1"
+ sprintf = "0.4.1"
+ tar = { version = "0.4.46", default-features = false }
+```
+
+---
+
+### Incident Patch 2: `c721ab6c` (2026-11-27)
+**Commit Message**: Fixing commands using parse_fuzzy_temporal
+Fix #1255
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -70,6 +70,7 @@ The **laminated** update.
+ * Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
+ * Fixing moonblade negative string indexing.
+ * Commands with `--glob` flag will filter out path given to `-o/--output`.
++* Fixing commands parsing partial dates vs. timestamps.
  
- use super::FunctionResult;
+ *Performance*
  
-+fn nth_char(string: &str, index: i64) -> Option<char> {
-+    if index < 0 {
-+        string.chars().nth_back((index.unsigned_abs() - 1) as usize)
-+    } else {
-+        string.chars().nth(index as usize)
+```
+
+**File**: `src/temporal.rs` (modified, +7/-7)
+```diff
+@@ -513,20 +513,20 @@ pub fn parse_fuzzy_temporal(
+         )));
+     }
+ 
+-    // Early exit for float timestamp
+-    if parse_float {
+-        if let Ok(secs) = fast_float::parse::<f64, &[u8]>(bytes) {
+-            return Timestamp::from_secs_f64(secs).map(FuzzyTemporal::Timestamp);
+-        }
+-    }
+-
+     // Early exit for year or month
+     if bytes.len() == 4 || bytes.len() == 7 {
+         if let Some(partial_date) = parse_partial_date(bytes) {
+             return Ok(FuzzyTemporal::PartialDate(partial_date));
+         }
+     }
+ 
++    // Early exit for float timestamp
++    if parse_float {
++        if let Ok(secs) = fast_float::parse::<f64, &[u8]>(bytes) {
++            return Timestamp::from_secs_f64(secs).map(FuzzyTemporal::Timestamp);
++        }
 +    }
-+}
 +
- fn get_subroutine<'v>(
-     target: BoundContainer<'v>,
-     key: BoundArgument,
- ) -> Result<Option<Cow<'v, DynamicValue>>, EvaluationError> {
-     Ok(match target {
--        BoundContainer::String(value) => {
--            let mut index = key.try_as_i64()?;
--
--            if index < 0 {
--                index += value.len() as i64;
--            }
--
--            if index < 0 {
--                None
--            } else {
--                value
--                    .chars()
--                    .nth(index as usize)
--                    .map(DynamicValue::from)
--                    .map(Cow::Owned)
--            }
--        }
--        BoundContainer::Bytes(value) => {
--            let mut index = key.try_as_i64()?;
--
--            if index < 0 {
--                index += value.len() as i64;
--            }
--
--            if index < 0 {
--                None
--            } else {
--                let value = std::str::from_utf8(value)?;
--
--                value
--                    .chars()
--                    .nth(index as usize)
--                    .map(DynamicValue::from)
--                    .map(Cow::Owned)
--            }
--        }
-+        BoundContainer::String(value) => nth_char(value, key.try_as_i64()?)
-+            .map(DynamicValue::from)
-+            .map(Cow::Owned),
-+        BoundContainer::Bytes(value) => nth_char(from_utf8(value)?, key.try_as_i64()?)
-+            .map(DynamicValue::from)
-+            .map(Cow::Owned),
-         BoundContainer::List(list) => {
-             let mut index = key.try_as_i64()?;
+     let pieces = DEFAULT_DATETIME_PARSER.parse_pieces(&input)?;
  
+     match pieces.time() {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2117,31 +2092,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Documentation fixes
+## X. Fixing xan split -c
 
 **RULE**:
-When implementing operations in `docs/blog/notes/simd.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93db1c80`: Documentation fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d12baddd`: Fixing xan split -c. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/blog/notes/simd.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- copy must not happen per cell but in larger swathes, see new byterecord design. check full design notes
+* Fixing `xan split -c & --segments`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- copy must not happen per cell in larger swathes, see new byterecord design. check full design notes
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93db1c80` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d12baddd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

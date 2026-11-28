@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "3aef432d",
+    "sourceVersion": "aef597ae",
     "license": "MIT",
-    "contentHash": "9a4f0fbf4d62786c12b3fe2cae1e1f5b158c2f5b8d7dbf65e76718920c0e3ce4",
-    "lastHarvestedAt": "2026-11-26T16:30:57.295Z",
+    "contentHash": "c15faa173e386a05b43d4dd07f1475faf756edf21444bc7ee50ce2e03b093551",
+    "lastHarvestedAt": "2026-11-28T05:24:58.206Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "93db1c80",
+    "sourceVersion": "bc961b91",
     "license": "Unlicense",
-    "contentHash": "67f34c1283c332ef97c7ef36465dfa02cea1bd9129b37a94f51aaba7f2d374ff",
-    "lastHarvestedAt": "2026-11-26T04:47:43.705Z",
+    "contentHash": "25d5cb78c6d2e2e2cc1583c24da340b4b44c7934337964d09d78cdeae0266346",
+    "lastHarvestedAt": "2026-11-28T05:24:45.237Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {
@@ -9733,10 +9733,10 @@
     "repository": "RDFLib/rdflib",
     "platform": "github",
     "sourceUrl": "https://github.com/RDFLib/rdflib",
-    "sourceVersion": "90a67c7b",
+    "sourceVersion": "372709db",
     "license": "BSD-3-Clause",
-    "contentHash": "940e4d27821801bc0a8c2746ae157be9fe022c7f06c0a53bebbb26871e3c71a5",
-    "lastHarvestedAt": "2026-11-24T20:29:52.655Z",
+    "contentHash": "9eab1b785351206260804d0525f8fff0181f82626eaf26fa31a8160e9f1ee4af",
+    "lastHarvestedAt": "2026-11-28T05:24:47.687Z",
     "learningId": "learn-github-rdflib-rdflib"
   },
   "kartiklabhshetwar-better-shot": {

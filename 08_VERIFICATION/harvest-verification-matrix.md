@@ -13982,3 +13982,6 @@
 | `CYCLE-20261128-VKID` | `2026-11-28T04:57:41.269Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11039` | Yes (`98b763b9...`) |
 | `CYCLE-20261128-7JIL` | `2026-11-28T05:06:59.853Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11040` | Yes (`cc900e83...`) |
 | `CYCLE-20261128-J9E7` | `2026-11-28T05:16:06.607Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11041` | Yes (`813ce7f1...`) |
+| `CYCLE-20261128-UDKA` | `2026-11-28T05:24:45.226Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11042` | Yes (`25d5cb78...`) |
+| `CYCLE-20261128-UFGD` | `2026-11-28T05:24:47.677Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11043` | Yes (`9eab1b78...`) |
+| `CYCLE-20261128-UNKQ` | `2026-11-28T05:24:58.202Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11044` | Yes (`c15faa17...`) |

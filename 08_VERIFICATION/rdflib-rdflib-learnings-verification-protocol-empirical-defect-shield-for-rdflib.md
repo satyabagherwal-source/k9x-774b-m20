@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T20:30:09.010Z",
+  "timestamp": "2026-11-28T05:25:06.091Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rdflib-rdflib-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rdflib-rdflib-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T20:30:09.010Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T05:25:06.091Z`  
 > **Learning ID**: `LEARN-EVO-rdflib-rdflib-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rdflib-rdflib-learnings.md`  
 > **Source**: github ([https://github.com/RDFLib/rdflib](https://github.com/RDFLib/rdflib))  
-> **Source Version**: `90a67c7b`  
+> **Source Version**: `372709db`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T20:29:51.689Z  
+> **Timestamp**: 2026-11-28T05:24:46.526Z  
 > **Learning ID**: `learn-github-rdflib-rdflib`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rdflib-rdflib-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RDFLib/rdflib](https://github.com/RDFLib/rdflib))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T20:29:51.518Z  
+> **Harvest Timestamp**: 2026-11-28T05:24:46.521Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: RDFLib is a Python library for working with RDF, a simple yet powerful language for representing information.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2566 stars
+- **Stars / Engagement**: 2569 stars
 
 ---
 
@@ -1762,811 +1762,199 @@ except Exception as e:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce9626e3` (2026-11-23)
-**Commit Message**: fix: substitute initBindings variables in SPARQL update graph refs and data blocks (#2141) (#3728)
+### Incident Patch 1: `372709db` (2026-11-27)
+**Commit Message**: build(deps-dev): bump ruff from 0.17.5 to 0.17.6 (#3748)
 
-Co-authored-by: Nicholas Car <[REDACTED_EMAIL]>
+Bumps [ruff](https://github.com/astral-sh/ruff) from 0.17.5 to 0.17.6.
+- [Release notes](https://github.com/astral-sh/ruff/releases)
+- [Changelog](https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/astral-sh/ruff/compare/0.17.5...0.17.6)
 
-**File**: `rdflib/plugins/sparql/update.py` (modified, +42/-20)
+---
+updated-dependencies:
+- dependency-name: ruff
+  dependency-version: 0.17.6
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -4,8 +4,8 @@
+@@ -71,7 +71,7 @@ docs = [
+     "mkdocstrings[python]>=1.0.6",
+     "httpx2>=2.15.1,<3",
+ ]
+-lint = ["ruff==0.17.5"]
++lint = ["ruff==0.17.6"]
  
- from __future__ import annotations
- 
--from collections.abc import Iterator, Mapping, Sequence
--from typing import TYPE_CHECKING
-+from collections.abc import Iterable, Iterator, Mapping, Sequence
-+from typing import TYPE_CHECKING, Any
- 
- from rdflib.graph import Graph
- from rdflib.plugins.sparql.evaluate import evalBGP, evalPart
-@@ -15,11 +15,29 @@
- from rdflib.term import Identifier, URIRef, Variable
- 
- 
-+def _resolve_term(ctx: QueryContext, term: Any) -> Any:
-+    if isinstance(term, Variable):
-+        val = ctx[term]
-+        if val is not None:
-+            return val
-+    return term
-+
-+
-+def _resolve_triples(
-+    ctx: QueryContext,
-+    triples: Iterable[tuple[Identifier, Identifier, Identifier]],
-+) -> list[tuple[Identifier, Identifier, Identifier]]:
-+    return [
-+        (_resolve_term(ctx, s), _resolve_term(ctx, p), _resolve_term(ctx, o))
-+        for s, p, o in triples
-+    ]
-+
-+
- def _graphOrDefault(ctx: QueryContext, g: str) -> Graph | None:
-     if g == "DEFAULT":
-         return ctx.graph
-     else:
--        return ctx.dataset.get_context(g)
-+        return ctx.dataset.get_context(_resolve_term(ctx, g))
- 
- 
- def _graphAll(ctx: QueryContext, g: str) -> Sequence[Graph]:
-@@ -39,28 +57,28 @@ def _graphAll(ctx: QueryContext, g: str) -> Sequence[Graph]:
-     elif g == "ALL":
-         return list(ctx.dataset.contexts())
-     else:
--        return [ctx.dataset.get_context(g)]
-+        return [ctx.dataset.get_context(_resolve_term(ctx, g))]
- 
- 
- def evalLoad(ctx: QueryContext, u: CompValue) -> None:
-     """
-     http://www.w3.org/TR/sparql11-update/#load
-     """
--
-+    iri = _resolve_term(ctx, u.iri)
-     if TYPE_CHECKING:
--        assert isinstance(u.iri, URIRef)
-+        assert isinstance(iri, URIRef)
- 
-     if u.graphiri:
--        ctx.load(u.iri, default=False, into=u.graphiri)
-+        ctx.load(iri, default=False, into=_resolve_term(ctx, u.graphiri))
-     else:
--        ctx.load(u.iri, default=True)
-+        ctx.load(iri, default=True)
- 
- 
- def evalCreate(ctx: QueryContext, u: CompValue) -> None:
-     """
-     http://www.w3.org/TR/sparql11-update/#create
-     """
--    g = ctx.dataset.get_context(u.graphiri)
-+    g = ctx.dataset.get_context(_resolve_term(ctx, u.graphiri))
-     if len(g) > 0:
-         raise Exception("Graph %s already exists." % g.identifier)
-     raise Exception("Create not implemented!")
-@@ -91,13 +109,15 @@ def evalInsertData(ctx: QueryContext, u: CompValue) -> None:
-     """
-     # add triples
-     g = ctx.graph
--    g += u.triples
-+    # type error: Unsupported left operand type for + ("None")
-+    # type error: Unsupported operand types for + ("Graph" and "list[tuple[Identifier, Identifier, Identifier]]")
-+    g += _resolve_triples(ctx, u.triples)  # type: ignore[operator]
-     # add quads
-     # u.quads is a dict of graphURI=>[triples]
-     for g in u.quads:
-         # type error: Argument 1 to "get_context" of "ConjunctiveGraph" has incompatible type "Optional[Graph]"; expected "Union[IdentifiedNode, str, None]"
--        cg = ctx.dataset.get_context(g)
--        cg += u.quads[g]
-+        cg = ctx.dataset.get_context(_resolve_term(ctx, g))
-+        cg += _resolve_triples(ctx, u.quads[g])
- 
- 
- def evalDeleteData(ctx: QueryContext, u: CompValue) -> None:
-@@ -106,14 +126,16 @@ def evalDeleteData(ctx: QueryContext, u: CompValue) -> None:
-     """
-     # remove triples
-     g = ctx.graph
--    g -= u.triples
-+    # type error: Unsupported left operand type for - ("None")
-+    # type error: Unsupported operand types for - ("Graph" and "list[tuple[Identifier, Identifier, Identifier]]")
-+    g -= _resolve_triples(ctx, u.triples)  # type: ignore[operator]
- 
-     # remove quads
-     # u.quads is a dict of graphURI=>[triples]
-     for g in u.quads:
-         # type error: Argument 1 to "get_context" of "ConjunctiveGraph" has incompatible type "Optional[Graph]"; expected "Union[IdentifiedNode, str, None]"
--        cg = ctx.dataset.get_context(g)
--        cg -= u.quads[g]
-+        cg = ctx.dataset.get_context(_resolve_term(ctx, g))
-+        cg -= _resolve_triples(ctx, u.quads[g])
- 
- 
- def evalDeleteWhere(ctx: QueryContext, u: CompValue) -> None:
-@@ -123,7 +145,7 @@ def evalDeleteWhere(ctx: QueryContext, u: CompValue) -> None:
- 
-     res: Iterator[FrozenDict] = evalBGP(ctx, u.triples)
-     for g in u.quads:
--        cg = ctx.dataset.get_context(g)
-+        cg = ctx.dataset.get_context(_resolve_term(ctx, g))
-         c = ctx.pushGraph(cg)
-         res = _join(res, list(evalBGP(c, u.quads[g])))
- 
-@@ -152,10 +174,10 @@ def evalModify(ctx: QueryContext, u: CompValue) -> None:
-                     ctx = ctx.pushGraph(dg)
-                     otherDefault = True
- 
--                ctx.load(d.default, default=True)
-+                ctx.load(_resolve_term(ctx, d.default), default=True)
- 
-             elif d.named:
--                g = d.named
-+                g = _resolve_term(ctx, d.named)
-                 ctx.load(g, default=False)
- 
-     # "The WITH clause provides a convenie
+ [tool.uv]
+ # Install the tests and lint groups too, so `uv run pytest`, `uv run ruff` and
 ```
 
-**File**: `test/test_issues/test_issue2141.py` (added, +86/-0)
+**File**: `uv.lock` (modified, +22/-22)
 ```diff
-@@ -0,0 +1,86 @@
-+from __future__ import annotations
-+
-+import rdflib
-+from rdflib import Literal, URIRef, Variable
-+from rdflib.plugins.stores.memory import Memory
-+
-+
-+def test_insert_data_graph_var_init_bindings() -> None:
-+    store = Memory()
-+    graph = rdflib.Graph(identifier=URIRef("urn:example:graph"), store=store)
-+    dataset = rdflib.Dataset(store=store)
-+    dataset.add_graph(graph)
-+
-+    s = URIRef("urn:example:subject")
-+    p = URIRef("urn:example:predicate")
-+    o = Literal("another value")
-+
-+    dataset.update(
-+        """
-+        INSERT DATA {
-+            GRAPH ?g { <urn:example:subject> <urn:example:predicate> "another value" }
-+        }
-+        """,
-+        initBindings={"g": graph.identifier},
-+    )
-+
-+    graph_ids = {ctx.identifier for ctx in dataset.graphs()}
-+    assert Variable("g") not in graph_ids
-+    assert URIRef("g") not in graph_ids
-+    assert graph_ids == {graph.identifier, dataset.default_graph.identifier}
-+    assert (s, p, o) in graph
-+
-+
-+def test_delete_data_graph_var_init_bindings() -> None:
-+    dataset = rdflib.Dataset()
-+    graph = dataset.graph(URIRef("urn:example:graph"))
-+    s = URIRef("urn:example:subject")
-+    p = URIRef("urn:example:predicate")
-+    o = Literal("value")
-+    graph.add((s, p, o))
-+
-+    dataset.update(
-+        """
-+        DELETE DATA {
-+            GRAPH ?g { <urn:example:subject> <urn:example:predicate> "value" }
-+        }
-+        """,
-+        initBindings={"g": graph.identifier},
-+    )
-+
-+    assert (s, p, o) not in graph
-+
-+
-+def test_delete_where_and_modify_graph_var_init_bindings() -> None:
-+    dataset = rdflib.Dataset()
-+    graph = dataset.graph(URIRef("urn:example:graph"))
-+    other = dataset.graph(URIRef("urn:example:other"))
-+    s = URIRef("urn:example:subject")
-+    p = URIRef("urn:example:predicate")
-+    o1 = Literal("old")
-+    o2 = Literal("new")
-+    graph.add((s, p, o1))
-+    other.add((s, p, o1))
-+
-+    dataset.update(
-+        """
-+        DELETE { GRAPH ?g { ?s ?p "old" } }
-+        INSERT { GRAPH ?g { ?s ?p "new" } }
-+        WHERE { GRAPH ?g { ?s ?p "old" } }
-+        """,
-+        initBindings={"g": graph.identifier},
-+    )
-+    assert (s, p, o1) not in graph
-+    assert (s, p, o2) in graph
-+    assert (s, p, o1) in other
-+
-+    dataset.update(
-+        """
-+        DELETE WHERE {
-+            GRAPH ?g { ?s ?p ?o }
-+        }
-+        """,
-+        initBindings={"g": graph.identifier},
-+    )
-+    assert len(graph) == 0
-+    assert (s, p, o1) in other
+@@ -1398,7 +1398,7 @@ docs = [
+     { name = "typing-extensions", specifier = ">=4.11.0,<5.0.0" },
+     { name = "zensical", specifier = ">=0.0.51" },
+ ]
+-lint = [{ name = "ruff", specifier = "==0.17.5" }]
++lint = [{ name = "ruff", specifier = "==0.17.6" }]
+ tests = [
+     { name = "coverage", extras = ["toml"], specifier = ">=7.10.6,<8.0.0" },
+     { name = "pytest", specifier = ">=7.1.3,<10.0.0" },
+@@ -1439,27 +1439,27 @@ wheels = [
+ 
+ [[package]]
+ name = "ruff"
+-version = "0.17.5"
+-source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/86/cc/7b71512eb8b49926efb887cc66c74dd993642943c29eba51a877f6b85692/ruff-0.17.5.tar.gz", hash = "sha256:625e57d80cd43352d12ea81690f3eac46cddc8c0f35026d137fb0f157f94592e", size = 5368382, upload-time = "2026-11-12T17:54:55.04Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/d4/f2/61df414cb4338617290a9023ad09486e207fb9a6d09357a7be34f2e369a4/ruff-0.17.5-py3-none-linux_armv6l.whl", hash = "sha256:d511dd302982e46a285528942fa6557d57730edc4bdb9def95e86a2603d77396", size = 10231309, upload-time = "2026-11-12T17:54:09.314Z" },
+-    { url = "https://files.pythonhosted.org/packages/d1/72/8ed970f3361f7c8d3f8e1b3b1af27cf086bc4b3a6b62ec20e21a1aaaaff5/ruff-0.17.5-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:b72fbc232e328bdbb9cdddf4f1aedcd61bd1aa64d75fc012114b4add0bd7f26b", size = 10250018, upload-time = "2026-11-12T17:54:11.983Z" },
+-    { url = "https://files.pythonhosted.org/packages/dc/4b/8b10f6c9d0a18413301ae8dd2af9d180a81bb738b1b731d944a37404c523/ruff-0.17.5-py3-none-macosx_11_0_arm64.whl", hash = "sha256:6f0db748508f04a04e3fbebcc636a5c8b3bd76274f8ed28f497c44d75c2ea2d7", size = 9504737, upload-time = "2026-11-12T17:54:14.567Z" },
+-    { url = "https://files.pythonhosted.org/packages/b7/ea/1b3afa3943239dede7a0755ea139bdb51879f0f3f96f92894081d5c7d2e5/ruff-0.17.5-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6f6a7b138edf9cc402ca736a59d9525e6d766e5395760b72e7e146e6251ac963", size = 10168006, upload-time = "2026-11-12T17:54:17.195Z" },
+-    { url = "https://files.pythonhosted.org/packages/31/08/ee641daa45f83792f91274b65796cb011f1065f588911bfa3909ad9e31e7/ruff-0.17.5-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:e52622ecf3a0df9d03e796fe3eed4aa085adda65520db7e0619cbd2192a97342", size = 10043751, upload-time = "2026-11-12T17:54:19.815Z" },
+-    { url = "https://files.pythonhosted.org/packages/f8/cf/1c59fdb42d0b5671ad5b160636fab4005ee28db72cb06aef6e3f3c04f377/ruff-0.17.5-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:54c0f67d1be11b55d12c184a819fc229f5eee3ef45c16c4fcad41258e83b4882", size = 10690562, upload-time = "2026-11-12T17:54:22.789Z" },
+-    { url = "https://files.pythonhosted.org/packages/49/c5/578074716173fb0c1591e9648a9f85c469888d9530cb35b89b757dc1208b/ruff-0.17.5-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:dd0dfe7c6fe5a447fce467c58e69893be1d9a7e4378f5b9906432da33d94a97f", size = 11338465, upload-time = "2026-11-12T17:54:25.523Z" },
+-    { url = "https://files.pythonhosted.org/packages/aa/b9/d6428bcf5ed88f4dc1d6e3417ee350236ed36e7a35f9477b727c00e437bf/ruff-0.17.5-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:ec4ecf40fb4d6e1265b009dbe551727920926fc0f769070c452d6d84b422a74d", size = 10895501, upload-time = "2026-11-12T17:54:28.441Z" },
+-    { url = "https://files.pythonhosted.org/packages/f2/8a/1e29c0c3785ae7e5cd0d54ee8717a08867ef71545796340be4c653c57e24/ruff-0.17.5-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:40ca8afaac309b41a5b2e09e4e7beb1f824826b93c25697c4d74f573324fba4e", size = 10613231, upload-time = "2026-11-12T17:54:30.862Z" },
+-    { url = "https://files.pythonhosted.org/packages/32/b6/88944350c14bb90651014d678ad554e233ae2a79c14ad52101845f93d15b/ruff-0.17.5-py3-none-manylinux_2_31_riscv64.whl", hash = "sha256:8e85601bd6d9b6c3e3b95c0e0dccdbac1d23c6bcef006d187fbcddaf8225a5df", size = 10562789, upload-time = "2026-11-12T17:54:33.869Z" },
+-    { url = "https://files.pythonhosted.org/packages/6f/fd/2792e955b0bf54295cdcdddc4bb3f380c0790d7e60e789f528a9e6e48a31/ruff-0.17.5-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:f93d2b7d449ed9545304f6923699ca20d13c675b69f258481709a08ae61076db", size = 10069824, upload-time = "2026-11-12T17:54:36.663Z" },
+-    { url = "https://files.pythonhosted.org/packages/07/9c/d7cad341b4c19237948a6dd1fcea1c9c39c9d08b70f22f0e157d1236ebd6/ruff-0.17.5-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:0e5c125c5b31dc8efc948d41357496a4c4a312977565ccba740030efdff83580", size = 10038961, upload-time = "2026-11-12T17:54:39.452Z" },
+-    { url = "https://files.pythonhosted.org/packages/cc/a1/9cd0d4c371ddc70267d3bd557e718e2bdfb94c25e49d25605edfabb764bd/ruff-0.17.5-py3-none-musllinux_1_2_i686.whl", hash = "sha256:50dfc3c6b3ebd0a932f11dfd579bd42234b0b7137e68940eb6abdbfdb9d69697", size = 10385012, upload-time = "2026-11-12T17:54:
 ```
 
 ---
 
-### Incident Patch 2: `f002c38f` (2026-11-21)
-**Commit Message**: fix: type JSON-LD numbers by value and preserve numeric round trips (#3737)
+### Incident Patch 2: `e71f5030` (2026-11-27)
+**Commit Message**: build(deps-dev): bump httpx2 from 2.16.0 to 2.16.2 (#3751)
 
-* fix: type JSON-LD numbers by their value, in the parser and the serializer
+Bumps [httpx2](https://github.com/pydantic/httpx2) from 2.16.0 to 2.16.2.
+- [Release notes](https://github.com/pydantic/httpx2/releases)
+- [Changelog](https://github.com/pydantic/httpx2/blob/main/src/httpx2/CHANGELOG.md)
+- [Commits](https://github.com/pydantic/httpx2/compare/v2.16.0...v2.16.2)
 
-JSON has a single number type, and Object to RDF Conversion (JSON-LD
-1.1 Processing Algorithms and API, section 8.2.2) types a number by its
-value: a number with a non-zero fractional part, or with an absolute
-value of 10^21 or more, is an xsd:double (step 10), and any other
-number an xsd:integer (step 11). The parser typed numbers by their
-Python type instead, so 1.0 and 1.5e3 became doubles, also inside a
-value object or a list.
+---
+updated-dependencies:
+- dependency-name: httpx2
+  dependency-version: 2.16.2
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+...
 
-The serializer had the matching problem. With native types on, which
-is always the case with a context, it wrote any xsd:double as a JSON
-number, and a conforming reader such as pyld read the double 1.0 back
-as the integer 1. It also wrote NaN and infinity, which JSON lacks (as
-null with orjson, losing the triple), integers that orjson cannot write
-or that JSON parsers round, and ill-typed literals as bare values.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Add number_datatype to the shared JSON-LD utilities and use it on both
-sides. The parser types a number without a datatype by its value, and
-reads an integer beyond the range of a double as 
-
-**File**: `rdflib/plugins/parsers/jsonld.py` (modified, +25/-9)
+**File**: `uv.lock` (modified, +6/-6)
 ```diff
-@@ -33,6 +33,7 @@
- # we should consider streaming the input to deal with arbitrarily large graphs.
- from __future__ import annotations
+@@ -405,20 +405,20 @@ wheels = [
  
-+import math
- import secrets
- import warnings
- from collections.abc import Iterable
-@@ -67,6 +68,7 @@
-     VOCAB_DELIMS,
-     context_from_urlinputsource,
-     json,
-+    number_datatype,
-     orjson,
-     source_to_json,
- )
-@@ -78,6 +80,22 @@
- ALLOW_LISTS_OF_LISTS = True  # NOTE: Not allowed in JSON-LD 1.0
+ [[package]]
+ name = "httpcore2"
+-version = "2.16.0"
++version = "2.16.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "h11" },
+     { name = "truststore" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/c0/61/afa9d6b7452f9eca73f73d45324eb0bb52f098fd5e6049bf6b8263be9b4e/httpcore2-2.16.0.tar.gz", hash = "sha256:c72cd0413563b17e1cd8354677dff887466f8ec2551679759e93126534428643", size = 69886, upload-time = "2026-10-21T07:09:45.31Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/92/9d/df40b41f7db0370f82019820709244e7b660c52aa3da3c9e5c4e8141f6e6/httpcore2-2.16.2.tar.gz", hash = "sha256:6c519d0f7b44f7269fa9bbb4d2763db395a4a2370f046d8e8e0a4b38227815d2", size = 70064, upload-time = "2026-11-16T10:12:19.491Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/af/c2/ce417c397afa5181f0e3c6ff01a4d01639414e1adef08730d97571297151/httpcore2-2.16.0-py3-none-any.whl", hash = "sha256:5c4358319f2602d984ad93182c9fee5160f22e9da7babdda870a5e7c4e2dc34f", size = 85070, upload-time = "2026-10-21T07:09:42.802Z" },
++    { url = "https://files.pythonhosted.org/packages/2a/e8/009c347feac27f8960605aa98d55ed263b5870dd4fd80b82fd1d00d5716c/httpcore2-2.16.2-py3-none-any.whl", hash = "sha256:16051ae2a42f776007543f32de9349a317b23d2cbb4e1456b4bac0e88b87419a", size = 85551, upload-time = "2026-11-16T10:12:16.674Z" },
+ ]
  
+ [[package]]
+ name = "httpx2"
+-version = "2.16.0"
++version = "2.16.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "anyio", marker = "sys_platform != 'emscripten'" },
+@@ -428,9 +428,9 @@ dependencies = [
+     { name = "truststore", marker = "sys_platform != 'emscripten'" },
+     { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/43/73/5ca2cedf5e4e50423d1c258877865a6b62793633b561c58499f8aeb33b7e/httpx2-2.16.0.tar.gz", hash = "sha256:0d54c98128e8f2ff7fbbde0fca8c359e5f032edeaaaac443cdb7f31f685bcd7f", size = 103116, upload-time = "2026-10-21T07:09:46.348Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/1c/77/6515121dc5ac3c743ad1bff5afe635bcd1a3f23cc40db3c5c89f7d02917d/httpx2-2.16.2.tar.gz", hash = "sha256:748b615678f07d8e3b183efe81ad13b655ca88bfc56ce4589219b2d442860574", size = 103370, upload-time = "2026-11-16T10:12:20.49Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/7b/3d/2e4bc4fd1ef9770871669adb348d612a6e4786b303a23f9935b81c48dd60/httpx2-2.16.0-py3-none-any.whl", hash = "sha256:fd2c5d7909e8d86fe92d53020c310ca0e4e431b838c207c5754b9bbf0308d49a", size = 97880, upload-time = "2026-10-21T07:09:44.01Z" },
++    { url = "https://files.pythonhosted.org/packages/77/de/8c4306a3d6aa2495111986addf33a9e561eff4c47552e4c4b9251160d0ad/httpx2-2.16.2-py3-none-any.whl", hash = "sha256:f05c13aade4c45dbf1c9060647a1058f0acad62398fad96e741269edb33d46f5", size = 97893, upload-time = "2026-11-16T10:12:18.192Z" },
+ ]
  
-+def _number_literal(value: int | float) -> Literal:
-+    """Return the literal for a JSON number without a datatype.
-+
-+    The datatype follows the value, not the Python type: `1.0` is the
-+    integer 1 (see `number_datatype`).
-+    """
-+    if number_datatype(value) == XSD.integer:
-+        return Literal(int(value))
-+    try:
-+        return Literal(float(value), datatype=XSD.double)
-+    except OverflowError:
-+        # An integer beyond the range of a double, which a JavaScript reader
-+        # would also read as infinity.
-+        return Literal(math.inf if value > 0 else -math.inf, datatype=XSD.double)
-+
-+
- class _ContextAwareGraph(Graph):
-     """Context-aware graph view used while parsing JSON-LD into a Graph sink."""
- 
-@@ -614,15 +632,11 @@ def _to_object(
-             elif term and term.type and term.type not in (ID, VOCAB, NONE):
-                 node = {TYPE: term.type, VALUE: node}
-             else:
--                # No type mapping applies: @id and @vocab coerce strings only,
--                # and @none coerces nothing (Value Expansion, JSON-LD 1.1
--                # Processing Algorithms and API, section 5.3.2). The value is
--                # converted as under an untyped term. A string takes the term's
--                # language mapping, which only a term without a type mapping
--                # has (Create Term Definition, section 4.2.2, step 22), or the
--                # default language.
--                if isinstance(node, float):
--                    return Literal(node, datatype=XSD.double)
-+                if node is None:
-+                    # type error: Return value expected
-+                    return  # type: ignore[return-value]
-+                if isinstance(node, (int, float)) and not isinstance(node, bool):
-+                    return _number_literal(node)
- 
-                 if term and not term.type and term.language is not UNDEF:
-                     lang = term.language
-@@ -649,6 +663,8 @@ def _to_object(
-                 return Literal(value, lang=lang)
-             elif datatype:
-                 return Literal(value, datatype=context.expand(datatype))
-+            elif isinstance(value, (int, float)) and not isinstance(value, bool):
-+                return _number_literal(value)
-             else:
-                 return Literal(value)
-         else:
-```
-
-**File**: `rdflib/plugins/serializers/jsonld.py` (modified, +33/-2)
-```diff
-@@ -36,6 +36,7 @@
- 
- from __future__ import annotations
- 
-+import math
- import warnings
- from collections import Counter
- from typing import IO, Any, Optional
-@@ -47,12 +48,14 @@
- 
- from ..shared.jsonld.context import UNDEF, Context, Term
- from ..shared.jsonld.keys import CONTEXT, GRAPH, ID, LANG, LIST, SET, VOCAB
--from ..shared.jsonld.util import _HAS_ORJSON, json, orjson
-+from ..shared.jsonld.util import _HAS_ORJSON, json, number_datatype, orjson
- 
- __all__ = ["JsonLDSerializer", "from_rdf"]
- 
- 
- PLAIN_LITERAL_TYPES = {XSD.boolean, XSD.integer, XSD.double, XSD.string}
-+# The largest integer that JSON parsers agree on (RFC 8259, section 6).
-+_MAX_INTEROPERABLE_INTEGER = 2**53 - 1
- 
- 
- class JsonLDSerializer(Serializer):
-@@ -552,7 +555,11 @@ def to_raw_value(
-             return {context.id_key: context.shrink_iri(o)}
-         elif isinstance(o, Literal):
-             # TODO: if compact
--            native = self.use_native_types and o.datatype in PLAIN_LITERAL_TYPES
-+            native = (
-+                self.use_native_types
-+                and o.datatype in PLAIN_LITERAL_TYPES
-+                and self._reads_back_as_itself(o)
-+            )
-             if native:
-                 v = o.toPython()
-             else:
-@@ -572,6 +579,30 @@ def to_raw_value(
-             else:
-                 return v
- 
-+    @staticmethod
-+    def _reads_back_as_itself(o: Literal) -> bool:
-+        """Whether `o`, written as a native JSON value, is read back unchanged.
-+
-+        A reader types a JSON number by its value (see `number_datatype`): the
-+        double 1.0 would come back as the integer 1. Many JSON parsers read
-+        numbers as doubles, so an integer beyond 2^53 - 1 in magnitude would
-+        lose digits (RFC 8259, section 6). An ill-typed literal, or a number
-+        that is not finite, has no such JSON form. Any of these is written
-+        with its lexical form instead.
-+        """
-+        if o.ill_typed:
-+            return False
-+        if o.datatype in (XSD.integer, XSD.double):
-+            value = o.toPython()
-+            if isinstance(value, bool) or not isinstance(value, (int, float)):
-+                return False
-+            if number_datatype(value) != o.datatype:
-+                return False
-+            if isinstance(value, int):
-+                return abs(value) <= _MAX_INTEROPERABLE_INTEGER
-+            return math.isfinite(value)
-+        return True
-+
-     def _list_object(
-         self,
-         graph: Graph,
-```
-
-**File**: `rdflib/plugins/shared/jsonld/util.py` (modified, +27/-0)
-```diff
-@@ -31,6 +31,7 @@
-     _HAS_ORJSON = False
- 
- 
-+from rdflib.namespace import XSD
- from rdflib.parser import (
-     BytesIOWrapper,
-     InputSource,
-@@ -40,6 +41,7 @@
-     create_input_source,
- )
- from rdflib.plugins.parsers.notation3 import join
-+from rdflib.term import URIRef
- 
- 
- def source_to_json(
-@@ -308,6 +310,31 @@ def norm_url(base: str, url: str) -> str:
-     return result
- 
- 
-+def number_datatype(value: int | float) -> URIRef:
-+    """Return the datatype JSON-LD gives a JSON number.
-+
-+    Object to RDF Conversion (JSON-LD 1.1 Processing Algorithms and API,
-+    section 8.2.2) decides by the value, not by how it is written: a number
-+    with a non-zero fractional part, or with an absolute value of 10^21 or
-+    more, is an `xsd:double` (step 10), and any other number an
-+    `xsd:integer` (step 11). JSON has a single number type, so `1.0` is the
-+    integer 1. A value that is not a finite number is an `xsd:double`.
-+
-+    ```python
-+    >>> number_datatype(1.0)
-+    rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#integer')
-+    >>> number_datatype(2.5)
-+    rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#double')
-+    >>> number_datatype(10**21)
-+    rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#double')
-+
-+    ```
-+    """
-+    if value % 1 != 0 or abs(value) >= 10**21:
-+        return XSD.double
-+    return XSD.integer
-+
-+
- # type error: Missing return statement
- def context_from_urlinputsource(source: URLInputSource) -> str | None:  # type: ignore[return]
-     """
-```
-
-**File**: `test/jsonld/test_falsy_values.py` (modified, +17/-8)
-```diff
-@@ -1,9 +1,10 @@
- """
- The JSON-LD serializer joins a further value for a property to the value it
- has already written. Whether one is present is a question about the key, not
--about the truth of the value: with an active context ``0``, ``0.0``, ``""``
--and ``false`` are written as bare JSON values, and testing them for truth made
-+about the truth of the value: with an active context ``0``, ``""`` and
-+``false`` are written as bare JSON values, and testing them for truth made
- the next value for the same property replace them, so one triple was lost.
-+The double ``0.0`` is written as a typed value to preserve its datatype.
- """
- 
- from __future__ import annotations
-@@ -24,6 +25,12 @@
- LANGUAGE_SET_CONTEXT = {"p": {"@id": str(NS.p), "@container": ["@language", "@set"]}}
- 
- FALSY_VALUES = [Literal(0), Literal(0.0), Literal(""), Literal(False)]
-+FALSY_JSON_VALUES = [
-+    0,
-+    {"@type": str(XSD.double), "@value": "0.0"},
-+    "",
-+    False,
-+]
- FALSY_IDS = ["0", "0.0", "empty-string", "false"]
- 
- 
-@@ -43,23 +50,25 @@ def _round_trip(
-     return json.loads(data), g2
- 
- 
--@pytest.mark.parametrize("falsy", FALSY_VALUES, ids=FALSY_IDS)
-+@pytest.mark.parametrize(
-+    ("falsy", "expected"),
-+    list(zip(FALSY_VALUES, FALSY_JSON_VALUES, strict=True)),
-+    ids=FALSY_IDS,
-+)
- @pytest.mark.parametrize(
-     "falsy_first", [True, False], ids=["falsy-first", "falsy-second"]
- )
- def test_a_falsy_value_beside_another_value_round_trips(
--    falsy: Literal, falsy_first: bool
-+    falsy: Literal, expected: Any, falsy_first: bool
- ) -> None:
-     """The falsy value was lost when the store yielded it first."""
-     other = Literal("a")
-     g = _graph([falsy, other] if falsy_first else [other, falsy])
- 
-     doc, g2 = _round_trip(g, VOCAB_CONTEXT)
- 
--    # Compared as JSON text, so that 0, 0.0, false and "" stay apart.
--    assert sorted(map(json.dumps, doc["p"])) == sorted(
--        map(json.dumps, [falsy.toPython(), "a"])
--    )
-+    # Compare JSON text to distinguish 0 from false and preserve typed values.
-+    assert sorted(map(json.dumps, doc["p"])) == sorted(map(json.dumps, [expected, "a"]))
-     assert isomorphic(g, g2)
- 
- 
-```
-
-**File**: `test/jsonld/test_list_cell_entries.py` (modified, +23/-7)
-```diff
-@@ -18,7 +18,7 @@
- 
- import pytest
- 
--from rdflib import RDF, BNode, Graph, Literal, Namespace
-+from rdflib import RDF, XSD, BNode, Graph, Literal, Namespace
- from rdflib.collection import Collection
- from rdflib.compare import isomorphic
- from rdflib.plugins.serializers.jsonld import Converter
-@@ -34,6 +34,12 @@
- }
- 
- FALSY_MEMBERS = [Literal(0), Literal(0.0), Literal(""), Literal(False)]
-+FALSY_JSON_MEMBERS = [
-+    0,
-+    {"@type": str(XSD.double), "@value": "0.0"},
-+    "",
-+    False,
-+]
- FALSY_IDS = ["0", "0.0", "empty-string", "false"]
- 
- 
-@@ -74,29 +80,39 @@ def test_a_list_starting_with_a_falsy_member_is_written_as_a_list(
-     assert isomorphic(g, g2)
- 
- 
--@pytest.mark.parametrize("first", FALSY_MEMBERS, ids=FALSY_IDS)
-+@pytest.mark.parametrize(
-+    ("first", "expected"),
-+    list(zip(FALSY_MEMBERS, FALSY_JSON_MEMBERS, strict=True)),
-+    ids=FALSY_IDS,
-+)
- def test_a_list_starting_with_a_falsy_member_uses_a_list_container_term(
--    first: Literal,
-+    first: Literal, expected: Any
- ) -> None:
-     g, _head = _list_graph([first, Literal("a")])
- 
-     data, g2 = _round_trip(g, LIST_CONTEXT)
- 
-     (member, _a) = json.loads(data)["p"]
--    assert member == first.toPython() and type(member) is type(first.toPython())
-+    assert member == expected and type(member) is type(expected)
-     assert isomorphic(g, g2)
- 
- 
--@pytest.mark.parametrize("first", FALSY_MEMBERS, ids=FALSY_IDS)
--def test_a_list_starting_with_a_falsy_member_is_not_coerced(first: Literal) -> None:
-+@pytest.mark.parametrize(
-+    ("first", "expected"),
-+    list(zip(FALSY_MEMBERS, FALSY_JSON_MEMBERS, strict=True)),
-+    ids=FALSY_IDS,
-+)
-+def test_a_list_starting_with_a_falsy_member_is_not_coerced(
-+    first: Literal, expected: Any
-+) -> None:
-     """Once recognised, the chain must not go under a term that coerces its
-     members to IRIs. It is written as a list object under the IRI instead."""
-     g, _head = _list_graph([first, Literal("a")])
- 
-     data, g2 = _round_trip(g, COERCING_LIST_CONTEXT)
- 
-     (member, _a) = json.loads(data)[str(NS.p)]["@list"]
--    assert member == first.toPython() and type(member) is type(first.toPython())
-+    assert member == expected and type(member) is type(expected)
-     assert isomorphic(g, g2)
- 
- 
-```
-
-**File**: `test/jsonld/test_number_datatypes.py` (added, +154/-0)
-```diff
-@@ -0,0 +1,154 @@
-+"""
-+JSON-LD gives a JSON number its datatype by value, not by how it is written.
-+
-+Object to RDF Conversion (JSON-LD 1.1 Processing Algorithms and API, section
-+8.2.2): a number with a non-zero fractional part, or with an absolute value
-+of 10^21 or more, is an ``xsd:double``; any other number is an
-+``xsd:integer``. JSON has one number type, so ``1.0`` is the integer 1.
-+
-+The parser typed numbers by their Python type, so ``1.0`` became a double.
-+The serializer wrote the double ``1.0`` as the JSON number ``1.0``, which a
-+conforming reader reads back as the integer 1.
-+"""
-+
-+from __future__ import annotations
-+
-+import json
-+from typing import Any
-+
-+import pytest
-+
-+from rdflib import XSD, Graph, Literal, Namespace
-+from rdflib.collection import Collection
-+from rdflib.compare import isomorphic
-+from rdflib.plugins.parsers.jsonld import to_rdf
-+
-+EX = Namespace("http://example.org/")
-+CONTEXT = {"@vocab": str(EX)}
-+
-+NUMBERS = [
-+    pytest.param("1", Literal(1), id="integer"),
-+    pytest.param("1.0", Literal(1), id="integral-decimal"),
-+    pytest.param("1.5e3", Literal(1500), id="integral-exponent"),
-+    pytest.param("-0.0", Literal(0), id="negative-zero"),
-+    pytest.param("2.5", Literal(2.5), id="fraction"),
-+    pytest.param("1e21", Literal(1e21), id="exponent-at-10^21"),
-+    pytest.param("1000000000000000000000", Literal(1e21), id="integer-at-10^21"),
-+]
-+
-+
-+def _parse(value: Any) -> Graph:
-+    doc = {"@id": str(EX.s), str(EX.p): value}
-+    g = Graph()
-+    g.parse(data=json.dumps(doc), format="json-ld")
-+    return g
-+
-+
-+def _strict_json(data: str) -> Any:
-+    """Parse JSON that must not use NaN or Infinity, which JSON lacks."""
-+
-+    def reject(constant: str) -> None:
-+        raise ValueError(f"not JSON: {constant}")
-+
-+    return json.loads(data, parse_constant=reject)
-+
-+
-+@pytest.mark.parametrize(("number", "literal"), NUMBERS)
-+def test_a_json_number_is_typed_by_its_value(number: str, literal: Literal) -> None:
-+    (parsed,) = _parse(json.loads(number)).objects()
-+
-+    assert parsed == literal
-+
-+
-+@pytest.mark.parametrize(("number", "literal"), NUMBERS)
-+def test_a_number_value_object_is_typed_by_its_value(
-+    number: str, literal: Literal
-+) -> None:
-+    (parsed,) = _parse({"@value": json.loads(number)}).objects()
-+
-+    assert parsed == literal
-+
-+
-+@pytest.mark.parametrize(("number", "literal"), NUMBERS)
-+def test_a_number_list_member_is_typed_by_its_value(
-+    number: str, literal: Literal
-+) -> None:
-+    g = _parse({"@list": [json.loads(number)]})
-+
-+    (head,) = g.objects(EX.s, EX.p)
-+    assert list(Collection(g, head)) == [literal]
-+
-+
-+def test_an_integer_beyond_a_double_is_infinity() -> None:
-+    """A JSON number too large for a double, as a JavaScript reader reads it.
-+
-+    Passed as a Python value, as the standard json module would also give it.
-+    """
-+    g = Graph()
-+    to_rdf({"@id": str(EX.s), str(EX.p): -(10**309)}, g)
-+
-+    (parsed,) = g.objects()
-+    assert parsed == Literal(float("-inf"))
-+
-+
-+def test_an_explicitly_typed_number_keeps_its_type() -> None:
-+    """Guard: a datatype given in the document is used as before."""
-+    (parsed,) = _parse({"@value": 1.0, "@type": str(XSD.double)}).objects()
-+
-+    assert isinstance(parsed, Literal)
-+    assert parsed.datatype == XSD.double
-+
-+
-+@pytest.mark.parametrize(
-+    "literal",
-+    [
-+        pytest.param(Literal(1.0), id="integral-double"),
-+        pytest.param(Literal(0.0), id="zero-double"),
-+        pytest.param(Literal(10**21), id="integer-at-10^21"),
-+        pytest.param(Literal(2**53), id="integer-beyond-2^53"),
-+        pytest.param(Literal(2**64 + 1), id="integer-beyond-64-bits"),
-+        pytest.param(Literal(-(2**63) - 1), id="negative-beyond-64-bits"),
-+        pytest.param(Literal("abc", datatype=XSD.integer), id="ill-typed-integer"),
-+        pytest.param(Literal(True, datatype=XSD.integer), id="boolean-as-integer"),
-+        pytest.param(Literal(float("nan")), id="nan"),
-+        pytest.param(Literal(float("inf")), id="infinity"),
-+    ],
-+)
-+def test_a_value_a_reader_would_retype_is_written_with_its_type(
-+    literal: Literal,
-+) -> None:
-+    g = Graph()
-+    g.add((EX.s, EX.p, literal))
-+
-+    data = g.serialize(format="json-ld", context=CONTEXT)
-+    g2 = Graph()
-+    g2.parse(data=data, format="json-ld")
-+
-+    value = _strict_json(data)["p"]
-+    assert value == {"@type": str(literal.datatype), "@value": str(literal)}
-+    assert isomorphic(g, g2)
-+
-+
-+@pytest.mark.parametrize(
-+    ("literal", "native"),
-+    [
-+        pytest.param(Literal(2.5), 2.5, id="fractional-double"),
-+        pytest.param(Literal(5), 5, id="integer"),
-+        pytest.param(Literal(2**53 - 1), 2**53 - 1, id="largest-interoperable-integer"),
-+        pytest.param(Literal(True), True, id="boolean"),
-+        pytest.param(Literal("x"), "x", id="string"),
-+    ],
-+)
-+def test_a_value_a_reader_types_the_same_is_still_native(
-+    literal: Literal, native: Any
-+) -> None:
-+    """
-```
-
-**File**: `test/jsonld/test_onedotone.py` (modified, +0/-2)
-```diff
-@@ -118,8 +118,6 @@
-     # Investigate property issues:
-     "toRdf/pr38-in",
-     "toRdf/pr39-in",
--    # Negative zero representation?
--    "toRdf/rt01-in",
-     # Property scope with @propagate not working
-     "toRdf/so06-in",
-     # Expand string as value gives wrong number representation
+ [[package]]
 ```
 
 ---
 
-### Incident Patch 3: `a877c60e` (2026-11-22)
-**Commit Message**: fix: expose Turtle parser syntax error messages (#3480)
+### Incident Patch 3: `23798f42` (2026-11-27)
+**Commit Message**: build(deps-dev): bump pip-tools from 7.6.2 to 7.7.0 (#3749)
 
-* fix: expose Turtle parser syntax error messages
+Bumps [pip-tools](https://github.com/pypa/pip-tools) from 7.6.2 to 7.7.0.
+- [Release notes](https://github.com/pypa/pip-tools/releases)
+- [Changelog](https://github.com/pypa/pip-tools/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/pypa/pip-tools/compare/v7.6.2...v7.7.0)
 
-* style: format Turtle parser regression tests
+---
+updated-dependencies:
+- dependency-name: pip-tools
+  dependency-version: 7.7.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
 
-* test: preserve existing BadSyntax diagnostic behavior
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
----------
-
-Co-authored-by: Nicholas Car <[REDACTED_EMAIL]>
-Co-authored-by: Nicholas Car <[REDACTED_EMAIL]>
-
-**File**: `test/test_n3.py` (modified, +13/-0)
+**File**: `uv.lock` (modified, +6/-6)
 ```diff
-@@ -10,6 +10,19 @@
- from rdflib.term import Literal, URIRef
- from test import TEST_DIR
+@@ -1086,16 +1086,16 @@ wheels = [
  
-+
-+def test_bad_syntax_exposes_error_message() -> None:
-+    with pytest.raises(BadSyntax) as raised:
-+        Graph().parse(
-+            data="<urn:subject> missing:predicate <urn:object> .", format="turtle"
-+        )
-+
-+    error = raised.value
-+    assert error.msg is not None
-+    assert 'Prefix "missing:" not bound' in error.msg
-+    assert error.msg == str(error)
-+
-+
- test_data = """
- #  Definitions of terms describing the n3 model
- #
+ [[package]]
+ name = "pip"
+-version = "26.2.1"
++version = "26.3"
+ source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/ae/15/4500e320e6b101ec3b719ae85b697d9940b6cda672bc555bd6016fc60c6f/pip-26.2.1.tar.gz", hash = "sha256:f6ad667e89a1fe78046c8f13232b247200f5258d7828f3f7883d660878e0813f", size = 1848877, upload-time = "2026-08-04T22:51:14.148Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/53/c7/f8d9e2e0e7c1ed8a22a10eeb3b5bf7860bc07d8446c7a978a882c5c8214b/pip-26.3.tar.gz", hash = "sha256:6c36ae7da8695be67e3cd9f7d87919667ced53f57ce2ede75d89b5912ed2bc4c", size = 1934348, upload-time = "2026-11-02T20:34:27.738Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/f3/6e/1736e5b4ae2b778ef2f81c47d797de9f891d4d8acb047a24ca37a60294dd/pip-26.2.1-py3-none-any.whl", hash = "sha256:71138adf1f4ca900cdb7d289c21b7494329f2332b6d85f0e1c42108c0384ed3e", size = 1816632, upload-time = "2026-08-04T22:51:12.472Z" },
++    { url = "https://files.pythonhosted.org/packages/07/25/ee8c38ae72d66b844ce8eb9711ba905dba21ca1a8a0c960057c41cd23337/pip-26.3-py3-none-any.whl", hash = "sha256:f3b60b20ffaadd4415ed7957212a38ac63fa4c5fa375bd0f4a797777940fad13", size = 1950951, upload-time = "2026-11-02T20:34:25.728Z" },
+ ]
+ 
+ [[package]]
+ name = "pip-tools"
+-version = "7.6.2"
++version = "7.7.0"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "build" },
+@@ -1105,9 +1105,9 @@ dependencies = [
+     { name = "setuptools" },
+     { name = "wheel" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/e4/42/59882c1f9fc3ec7529a467dd56cc8d38071ed0b7885119a872c29d57a253/pip_tools-7.6.2.tar.gz", hash = "sha256:04dbe0e25f3b60fbdeee17d0590dac7fe20039876aa410a946fc54dc926c09ba", size = 194365, upload-time = "2026-10-07T04:41:09.104Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/8f/8f/53ebc1c4a2f9bc9c8a8dbc8d6c4ae3b5a07f7ac2bee78ee237c2c4e05de3/pip_tools-7.7.0.tar.gz", hash = "sha256:210a8939ee5ad30734731a804a57dae35ba1fe0541175a289798e95948c624b9", size = 195871, upload-time = "2026-11-16T04:49:49.831Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/4b/68/f3bd09c53ed3159bb1349e1d5859ad1ea7755b8e4cd50174290e9e8cbb47/pip_tools-7.6.2-py3-none-any.whl", hash = "sha256:f37eb4b736859c2c30230e50977312c61918b7ef931071ff7811fd067715c25f", size = 76310, upload-time = "2026-10-07T04:41:07.05Z" },
++    { url = "https://files.pythonhosted.org/packages/a0/ba/90bd38b91614d3d4fa59582dd3da1fc3d3c735a781df1ba0a700bb6b2603/pip_tools-7.7.0-py3-none-any.whl", hash = "sha256:4cee2e99ae34b37f81ae4b0947911ad462e41f07fc164e084b8f83af3f1efdad", size = 75279, upload-time = "2026-11-16T04:49:48.298Z" },
+ ]
+ 
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3751** (2026-11-27): build(deps-dev): bump httpx2 from 2.16.0 to 2.16.2 (@dependabot[bot])
+- **PR #3750** (2026-11-27): build(deps): bump berkeleydb from 18.1.18 to 18.1.19 (@dependabot[bot])
+- **PR #3749** (2026-11-27): build(deps-dev): bump pip-tools from 7.6.2 to 7.7.0 (@dependabot[bot])
+- **PR #3748** (2026-11-27): build(deps-dev): bump ruff from 0.17.5 to 0.17.6 (@dependabot[bot])
+- **PR #3747** (2026-11-27): build(deps-dev): bump zensical from 0.1.1 to 0.1.3 (@dependabot[bot])
 - **PR #3742** (2026-11-22): fix: avoid binding genid when creating a dataset graph (@mvanhorn)
-- **PR #3741** (2026-11-22): feat: parse RDF into streaming statement callbacks (@nicholascar)
-- **PR #3740** (2026-11-22): fix: clamp SPARQL slice bounds to sys.maxsize (@anubhavlal07)
-- **PR #3737** (2026-11-21): fix: type JSON-LD numbers by value and preserve numeric round trips (@nicholascar)
-- **PR #3731** (2026-11-23): fix(rdf2dot): include namespace prefixes in node labels (@vamsi3379)
-- **PR #3728** (2026-11-23): fix: substitute initBindings variables for SPARQL update graph references (@vamsi3379)
 
 ---
 
@@ -2586,77 +1974,31 @@ Co-authored-by: Nicholas Car <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. substitute initBindings variables in SPARQL update graph refs and data blocks
+## X. build(deps-dev): bump ruff from 0.17.5 to 0.17.6
 
 **RULE**:
-When implementing operations in `rdflib/plugins/sparql/update.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/rdflib. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/rdflib. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce9626e3`: substitute initBindings variables in SPARQL update graph refs and data blocks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `372709db`: build(deps-dev): bump ruff from 0.17.5 to 0.17.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `rdflib/plugins/sparql/update.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from collections.abc import Iterable, Iterator, Mapping, Sequence
-from typing import TYPE_CHECKING, Any
-def _resolve_term(ctx: QueryContext, term: Any) -> Any:
-    if isinstance(term, Variable):
-        val = ctx[term]
-        if val is not None:
-            return val
-    return term
-
-
-def _resolve_triples(
-    ctx: QueryContext,
-    triples: Iterable[tuple[Identifier, Identifier, Identifier]],
-) -> list[tuple[Identifier, Identifier, Identifier]]:
-    return [
-        (_resolve_term(ctx, s), _resolve_term(ctx, p), _resolve_term(ctx, o))
-        for s, p, o in triples
-    ]
-
-
-        return ctx.dataset.get_context(_resolve_term(ctx, g))
-        return [ctx.dataset.get_context(_resolve_term(ctx, g))]
-    iri = _resolve_term(ctx, u.iri)
-        assert isinstance(iri, URIRef)
-        ctx.load(iri, default=False, into=_resolve_term(ctx, u.graphiri))
-        ctx.load(iri, default=True)
-    g = ctx.dataset.get_context(_resolve_term(ctx, u.graphiri))
-    # type error: Unsupported left operand type for + ("None")
-    # type error: Unsupported operand types for + ("Graph" and "list[tuple[Identifier, Identifier, Identifier]]")
-    g += _resolve_triples(ctx, u.triples)  # type: ignore[operato
+lint = ["ruff==0.17.6"]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-from collections.abc import Iterator, Mapping, Sequence
-from typing import TYPE_CHECKING
-        return ctx.dataset.get_context(g)
-        return [ctx.dataset.get_context(g)]
-
-        assert isinstance(u.iri, URIRef)
-        ctx.load(u.iri, default=False, into=u.graphiri)
-        ctx.load(u.iri, default=True)
-    g = ctx.dataset.get_context(u.graphiri)
-    g += u.triples
-        cg = ctx.dataset.get_context(g)
-        cg += u.quads[g]
-    g -= u.triples
-        cg = ctx.dataset.get_context(g)
-        cg -= u.quads[g]
-        cg = ctx.dataset.get_context(g)
-                ctx.load(d.default, default=True)
-                g = d.named
+lint = ["ruff==0.17.5"]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce9626e3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `372709db` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

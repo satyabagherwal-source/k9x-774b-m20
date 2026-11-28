@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T22:30:16.459Z",
+  "timestamp": "2026-11-28T05:25:01.868Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-medialab-xan-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [medialab-xan-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T22:30:16.459Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T05:25:01.868Z`  
 > **Learning ID**: `LEARN-EVO-medialab-xan-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `dfbb3093`  
+> **Source Version**: `bc961b91`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T22:30:06.575Z  
+> **Timestamp**: 2026-11-28T05:24:44.035Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:30:06.324Z  
+> **Harvest Timestamp**: 2026-11-28T05:24:43.917Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4562 stars
+- **Stars / Engagement**: 4569 stars
 
 ---
 
@@ -424,6 +424,40 @@ pub fn errif_greater_one_stdin(inps: &[Config]) -> Result<(), String> {
     Ok(())
 }
 
+pub fn glob_but_for<E>(
+    pattern: &str,
+    excluded_path_opt: Option<&str>,
+) -> Result<impl Iterator<Item = Result<String, E>>, E>
+where
+    E: From<io::Error> + From<glob::PatternError>,
+{
+    let excluded_path_opt = excluded_path_opt
+        .map(|path| Path::new(path).canonicalize())
+        .transpose()?;
+
+    Ok(
+        glob::glob(pattern)?.filter_map(move |result| -> Option<Result<String, E>> {
+            if let Ok(path) = result {
+                let string_path = path.to_string_lossy().into_owned();
+
+                if let (Ok(canonicalized_path), Some(output)) =
+                    (path.canonicalize(), &excluded_path_opt)
+                {
+                    if output != &canonicalized_path {
+                        Some(Ok(string_path))
+                    } else {
+                        None
+                    }
+                } else {
+                    Some(Ok(string_path))
+                }
+            } else {
+                None
+            }
+        }),
+    )
+}
+
 pub type Idx = Option<usize>;
 
 pub fn range(start: Idx, end: Idx, len: Idx, index: Idx) -> Result<(usize, usize), String> {
@@ -531,48 +565,7 @@ pub fn acquire_stty_size() -> Option<termsize::Size> {
         let parts = text.split_whitespace().take(2).collect::<Vec<_>>();
 
         if parts.len() < 2 {
-            return None;
-        }
-
-        let cols: u16 = if let Ok(c) = parts[1].parse() {
-            c
-        } else {
-            return None;
-        };
-
-        let rows: u16 = if let Ok(r) = parts[0].parse() {
-            r
-        } else {
-            return None;
-        };
-
-        return Some(termsize::Size { cols, rows });
-    }
-
-    None
-}
-
-// NOTE: some terminals (e.g. pseudo-terminals without a window size) report
-// a size of 0x0, which must be considered as unknown.
-fn acquire_term_size() -> Option<termsize::Size> {
-    termsize::get()
-        .or_else(acquire_stty_size)
-        .filter(|size| size.cols > 0 && size.rows > 0)
-}
-
-pub fn acquire_term_cols(cols_override: &Option<usize>) -> usize {
-    match cols_override {
-        None => match acquire_term_size() {
-            None => 80,
-            Some(size) => size.cols as usize,
-        },
-        Some(c) => *c,
-    }
-}
-
-pub fn acquire_term_rows(rows_override: &Option<usize>) -> usize {
-    match rows_override {
-        None => match a
+            re
 ```
 
 ### Core Architecture Module: `src/cmd/agg.rs`
@@ -1620,11 +1613,10 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
 
 ### Core Architecture Module: `src/cmd/blank.rs`
 ```
-use simd_csv::ByteRecord;
+use simd_csv::{ByteRecord, Selector};
 
 use crate::CliResult;
 use crate::config::{Config, Delimiter};
-use crate::select::SelectedColumns;
 use crate::utils;
 
 // TODO: some --pivot option, that blanks hierarchically
@@ -1658,7 +1650,7 @@ Common options:
 #[derive(Deserialize)]
 struct Args {
     arg_input: Option<String>,
-    flag_select: SelectedColumns,
+    flag_select: Selector,
     flag_no_headers: bool,
     flag_delimiter: Option<Delimiter>,
     flag_output: Option<String>,
@@ -1669,21 +1661,18 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
     let args: Args = utils::get_args(USAGE, argv)?;
     let rconf = Config::new(&args.arg_input)
         .delimiter(args.flag_delimiter)
-        .no_headers(args.flag_no_headers)
-        .select(args.flag_select);
+        .no_headers(args.flag_no_headers);
 
     let redacted_string = args.flag_redact.unwrap_or("".to_string());
 
     let mut rdr = rconf.simd_reader()?;
     let mut wtr = Config::new(&args.flag_output).simd_writer()?;
 
-    let headers = rdr.byte_headers()?;
-
-    let sel = rconf.selection(headers)?;
-    let mask = sel.mask(headers.len());
+    let sel = rdr.select(&args.flag_select)?;
+    let mask = sel.mask();
 
     if !rconf.no_headers {
-        wtr.write_byte_record(headers)?;
+        wtr.write_byte_record(rdr.byte_headers()?)?;
     }
 
     let mut record = ByteRecord::new();
@@ -1900,7 +1889,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
 }
 
 impl Args {
-    fn paths(&self) -> CliResult<Box<dyn Iterator<Item = CliResult<String>>>> {
+    fn paths(&self) -> CliResult<Box<dyn Iterator<Item = CliResult<String>> + '_>> {
         let modes = self.flag_paths.is_some() as u8
             + !self.arg_inputs.is_empty() as u8
             + self.flag_glob.is_some() as u8;
@@ -1914,9 +1903,10 @@ impl Args {
         if let Some(paths_path) = self.flag_paths.as_ref() {
             Config::new(&Some(paths_path.clone())).lines(&self.flag_path_column)
         } else if let Some(pattern) = self.flag_glob.as_ref() {
-            Ok(Box::new(glob::glob(pattern)?.map(|result| {
-                Ok(result.unwrap().to_string_lossy().into_owned())
-            })))
+            Ok(Box::new(utils::glob_but_for(
+                pattern,
+                self.flag_output.as_deref(),
+            )?))
         } else {
             Ok(Box::new(self.arg_inputs.clone().into_iter().map(Ok)))
         }
@@ -1966,7 +1956,7 @@ impl Args {
 
     fn cat_rows(&self) -> CliResult<()> {
         let mut record = ByteRecord::new();
-        let mut wtr = Config::new(&self.flag_outp
+        let mut wtr = Config::new(&self.flag_output).sim
 ```
 
 
@@ -1975,10 +1965,10 @@ impl Args {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1245** (2026-11-20): **xan merge heap does not use file's index to compare and is therefore not stable**
+- **Issue #1255** (2026-11-27): **xan spark has issues with year/year month?**
   *Symptoms*: 
 
-- **Issue #1231** (2026-11-17): **xan explode should not flatmap by default and validate that output is either empty or a list**
+- **Issue #1245** (2026-11-20): **xan merge heap does not use file's index to compare and is therefore not stable**
   *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1996,221 +1986,110 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dfbb3093` (2026-11-24)
-**Commit Message**: Adding seekable zst support
-Related to #902
+### Incident Patch 1: `d12baddd` (2026-11-27)
+**Commit Message**: Fixing xan split -c
 
-**File**: `Cargo.lock` (modified, +14/-4)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -3330,6 +3330,7 @@ dependencies = [
-  "url",
-  "uuid",
-  "xan_docopt",
-+ "zeekstd",
-  "zmij",
-  "zstd",
- ]
-@@ -3369,6 +3370,15 @@ dependencies = [
-  "synstructure 0.14.0",
- ]
+@@ -71,6 +71,7 @@ The **laminated** update.
+ * Fixing moonblade negative string indexing.
+ * Commands with `--glob` flag will filter out path given to `-o/--output`.
+ * Fixing commands parsing partial dates vs. timestamps.
++* Fixing `xan split -c & --segments`.
  
-+[[package]]
-+name = "zeekstd"
-+version = "0.6.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "8feb00c783a66abad34c225271e18b59ac7d09f6f294a90c8643262a2c49d2c1"
-+dependencies = [
-+ "zstd-safe",
-+]
-+
- [[package]]
- name = "zerocopy"
- version = "0.8.27"
-@@ -3494,18 +3504,18 @@ dependencies = [
- 
- [[package]]
- name = "zstd-safe"
--version = "8.0.0"
-+version = "8.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ae42c0555055784c70058d19ba8e275528e8a99a706684868ace5da4e716a4ab"
-+checksum = "5a9ea9cc2576c2fcc104e9cec04f46e3ede564f4fbc206831e4ef7e859a4140d"
- dependencies = [
-  "zstd-sys",
- ]
- 
- [[package]]
- name = "zstd-sys"
--version = "2.1.0+zstd.1.5.7"
-+version = "2.1.3+zstd.1.5.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0ef0a8027ec3ee71300ab3bcbcd0393f434aa72b91ca6d635a39941deae8eea0"
-+checksum = "f729a06d0257428fd9d997ac8db7e1407bd0262ab016b085b36bc52957c0052d"
- dependencies = [
-  "cc",
-  "pkg-config",
-```
-
-**File**: `Cargo.toml` (modified, +1/-0)
-```diff
-@@ -142,6 +142,7 @@ unicode-segmentation = "1.13.3"
- unicode-width = "0.2.2"
- url = "2.5.8"
- uuid = { version = "1.26.1", features = ["v4"] }
-+zeekstd = "0.6.3"
- zmij = "1.0.23"
- zstd = "0.14.0"
+ *Performance*
  
 ```
 
-**File**: `src/config.rs` (modified, +32/-17)
+**File**: `Cargo.lock` (modified, +3/-2)
 ```diff
-@@ -198,7 +198,10 @@ pub struct Config {
+@@ -2324,11 +2324,12 @@ checksum = "d66dc143e6b11c1eddc06d5c423cfc97062865baf299914ab64caa38182078fe"
  
- impl Config {
-     pub fn has_known_extension(path: &str) -> bool {
--        let uncompressed_path = path.strip_suffix(".gz").unwrap_or(path);
-+        let uncompressed_path = path
-+            .strip_suffix(".gz")
-+            .or_else(|| path.strip_suffix(".zst"))
-+            .unwrap_or(path);
+ [[package]]
+ name = "simd-csv"
+-version = "0.17.0"
++version = "0.18.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b93411d676d860426a7d53ae4691ea55612a6a9daf38d3a03a8b5a602762e126"
++checksum = "e7ff0919b975814e94f21b0c896e8a585b71510f35602af65216c739b088784b"
+ dependencies = [
+  "memchr",
++ "serde_core",
+  "simdutf8",
+ ]
  
-         [
-             ".csv", ".tsv", ".tab", ".ssv", ".scsv", ".psv", ".cdx", ".ndjson", ".jsonl", ".vcf",
-@@ -215,6 +218,10 @@ impl Config {
- 
-         if path.ends_with(".gz") {
-             Self::new(&Some(path.to_string())).has_seekable_index()
-+        } else if path.ends_with(".zst") {
-+            Self::new(&Some(path.to_string()))
-+                .seekable_io_reader()
-+                .is_ok()
-         } else {
-             true
-         }
-@@ -600,24 +607,32 @@ impl Config {
-             None => Err(error_msg)?,
-             Some(ref p) => match fs::File::open(p) {
-                 Ok(mut x) => {
--                    if let Some(Compression::Gzip) = self.compression {
--                        if let Some(index_path) =
--                            self.compression.unwrap().index_path(p.to_str().unwrap())
--                        {
--                            let reader = BGZFReader::new(x)?;
--                            let index = BGZFIndex::from_reader(fs::File::open(index_path)?)?;
--                            let mut indexed_reader = IndexedBGZFReader::new(reader, index)?;
--
--                            self.process_typical_headers_seek(&mut indexed_reader)?;
-+                    match self.compression {
-+                        Some(compression @ Compression::Gzip) => {
-+                            if let Some(index_path) = compression.index_path(p.to_str().unwrap()) {
-+                                let reader = BGZFReader::new(x)?;
-+                                let index = BGZFIndex::from_reader(fs::File::open(index_path)?)?;
-+                                let mut indexed_reader = IndexedBGZFReader::new(reader, index)?;
-+
-+                                self.process_typical_headers_seek(&mut indexed_reader)?;
-+
-+                                return Ok(Box::new(indexed_reader));
-+                            } else {
-+                                Err(error_msg)?;
-+                            }
-+                        }
-+                        Some(Compression::Zstd) => {
-+                            if let Ok(mut decoder) = zeekstd::Decoder::new(x) {
-+                                self.process_typical_headers_seek(&mut decoder)?;
- 
--                            return Ok(Box::new(indexed_reader));
--                        } else {
--                            Err(error_msg)?;
-+                                return Ok(Box::new(decoder));
-+                            } else {
-+                                return Err(error_msg)?;
-+                            }
-+                        }
-+                        None => {
-+                            self.process_typical_headers_seek(&mut x)?;
-                         }
--                    } else if self.compression.is_some() {
--                        Err(error_msg)?;
--                    } else {
--                        self.process_typical_headers_seek(&mut x)?;
-                     }
- 
-                     match x.borrow().stream_position() {
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -126,7 +126,7 @@ serde = { version = "1", features = ["rc"] }
+ serde_derive = "1"
+ serde_json = { version = "1.0", features = ["preserve_order"] }
+ shlex = "2.0.1"
+-simd-csv = { version = "0.17.0", features = ["str"]}
++simd-csv = { version = "0.18.0", features = ["str", "serde"]}
+ simd-json = "0.18.1"
+ sprintf = "0.4.1"
+ tar = { version = "0.4.46", default-features = false }
 ```
 
 ---
 
-### Incident Patch 2: `68b092c8` (2026-11-24)
-**Commit Message**: Improving performance of EmojiSanitizer::sanitize
+### Incident Patch 2: `c721ab6c` (2026-11-27)
+**Commit Message**: Fixing commands using parse_fuzzy_temporal
+Fix #1255
 
-**File**: `src/cmd/view.rs` (modified, +4/-4)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -618,13 +618,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-                         }
-                     }
-                     _ => {
--                        let mut cell = utils::sanitize_text_for_single_line_printing(cell);
-+                        let cell = utils::sanitize_text_for_single_line_printing(cell);
+@@ -70,6 +70,7 @@ The **laminated** update.
+ * Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
+ * Fixing moonblade negative string indexing.
+ * Commands with `--glob` flag will filter out path given to `-o/--output`.
++* Fixing commands parsing partial dates vs. timestamps.
  
-                         if let Some(sanitizer) = &emoji_sanitizer_opt {
--                            cell = sanitizer.sanitize(&cell);
-+                            processed_record.push_field(&sanitizer.sanitize(&cell));
-+                        } else {
-+                            processed_record.push_field(&cell);
-                         }
--
--                        processed_record.push_field(&cell);
-                     }
-                 };
-             }
+ *Performance*
+ 
 ```
 
-**File**: `src/utils.rs` (modified, +12/-14)
+**File**: `src/temporal.rs` (modified, +7/-7)
 ```diff
-@@ -817,21 +817,19 @@ impl EmojiSanitizer {
-         EmojiSanitizer { pattern }
+@@ -513,20 +513,20 @@ pub fn parse_fuzzy_temporal(
+         )));
      }
  
--    pub fn sanitize(&self, string: &str) -> String {
--        self.pattern
--            .replace_all(string, |caps: &Captures| {
--                format!(
--                    ":{}:",
--                    match emojis::get(&caps[0]) {
-+    pub fn sanitize<'s>(&self, string: &'s str) -> Cow<'s, str> {
-+        self.pattern.replace_all(string, |caps: &Captures| {
-+            format!(
-+                ":{}:",
-+                match emojis::get(&caps[0]) {
-+                    None => "unknown_emoji",
-+                    Some(emoji) => match emoji.shortcode() {
-                         None => "unknown_emoji",
--                        Some(emoji) => match emoji.shortcode() {
--                            None => "unknown_emoji",
--                            Some(shortcode) => shortcode,
--                        },
--                    }
--                )
--            })
--            .to_string()
-+                        Some(shortcode) => shortcode,
-+                    },
-+                }
-+            )
-+        })
+-    // Early exit for float timestamp
+-    if parse_float {
+-        if let Ok(secs) = fast_float::parse::<f64, &[u8]>(bytes) {
+-            return Timestamp::from_secs_f64(secs).map(FuzzyTemporal::Timestamp);
+-        }
+-    }
+-
+     // Early exit for year or month
+     if bytes.len() == 4 || bytes.len() == 7 {
+         if let Some(partial_date) = parse_partial_date(bytes) {
+             return Ok(FuzzyTemporal::PartialDate(partial_date));
+         }
      }
- }
  
++    // Early exit for float timestamp
++    if parse_float {
++        if let Ok(secs) = fast_float::parse::<f64, &[u8]>(bytes) {
++            return Timestamp::from_secs_f64(secs).map(FuzzyTemporal::Timestamp);
++        }
++    }
++
+     let pieces = DEFAULT_DATETIME_PARSER.parse_pieces(&input)?;
+ 
+     match pieces.time() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1251** (closed): Count chars, not bytes, for negative string indices in get (@mansur-akhmadi)
 - **PR #1247** (closed): Document bivariate heatmaps and regex highlighting (@rayw-lab)
 - **PR #1246** (closed): Add xan view --plain aligned output (@mvanhorn)
 - **PR #1239** (2026-11-16): Added --combinations flag to xan explode (@clothilde-ml)
 - **PR #1224** (closed): Add a plain aligned table preset to xan view (@mvanhorn)
 - **PR #1223** (2026-11-04): Xml highlight (Issue #1215) (@clothilde-ml)
-- **PR #1222** (closed): Add a plain theme to xan view (@mvanhorn)
 
 ---
 
@@ -2230,47 +2109,31 @@ Related to #902
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Adding seekable zst support
+## X. Fixing xan split -c
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dfbb3093`: Adding seekable zst support. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d12baddd`: Fixing xan split -c. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "zeekstd",
-[[package]]
-name = "zeekstd"
-version = "0.6.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8feb00c783a66abad34c225271e18b59ac7d09f6f294a90c8643262a2c49d2c1"
-dependencies = [
- "zstd-safe",
-]
-
-version = "8.3.0"
-checksum = "5a9ea9cc2576c2fcc104e9cec04f46e3ede564f4fbc206831e4ef7e859a4140d"
-version = "2.1.3+zstd.1.5.7"
-checksum = "f729a06d0257428fd9d997ac8db7e1407bd0262ab016b085b36bc52957c0052d"
+* Fixing `xan split -c & --segments`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "8.0.0"
-checksum = "ae42c0555055784c70058d19ba8e275528e8a99a706684868ace5da4e716a4ab"
-version = "2.1.0+zstd.1.5.7"
-checksum = "0ef0a8027ec3ee71300ab3bcbcd0393f434aa72b91ca6d635a39941deae8eea0"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dfbb3093` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d12baddd` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

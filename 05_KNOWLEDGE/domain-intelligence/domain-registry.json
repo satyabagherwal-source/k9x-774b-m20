@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T05:16:13.367Z",
+  "last_updated": "2026-11-28T05:25:07.359Z",
   "total_records": 2877,
   "domains": {
     "A": {
@@ -20067,8 +20067,8 @@
       "title": "Technical Construction Intelligence: VectifyAI/PageIndex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-technical-construction-intelligence-vectifyai-pageindex-core.md",
       "repository": "VectifyAI/PageIndex",
-      "content_hash": "e40bdbf7e2eb1b1c3a12f07f70f759b5d4066689d54270629f9d680db320e72a",
-      "created_at": "2026-11-24T19:44:57.466Z"
+      "content_hash": "477ea0d63bcfa1421a06b34c26406031b32e8ba7e2c0d643dff5296a364f50c0",
+      "created_at": "2026-11-28T05:24:58.617Z"
     },
     "DOM-D-1DE3F011": {
       "record_id": "DOM-D-1DE3F011",
@@ -34094,8 +34094,8 @@
       "title": "Technical Construction Intelligence: vectifyai-pageindex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-learnings-technical-construction-intelligence-vectifyai-page.md",
       "repository": "vectifyai-pageindex-learnings",
-      "content_hash": "a14feae952113a13002cae0425d06afce64f2574cba5ae94ff5ebb3740878138",
-      "created_at": "2026-11-24T19:45:03.722Z"
+      "content_hash": "f5755399f7f860467263759e7cd7c69e581aee1e93e89afd504f2fac1725d177",
+      "created_at": "2026-11-28T05:25:07.359Z"
     },
     "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-core-invariants",
@@ -37354,8 +37354,8 @@
       "title": "Research & Knowledge Intelligence: RDFLib/rdflib Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-rdflib-rdflib-research-knowledge-intelligence-rdflib-rdflib-core-invariants.md",
       "repository": "RDFLib/rdflib",
-      "content_hash": "f773b09bb43672b7e8ec5a9dacbc2b2d9bfd0bdf82c29a7f886c4ea37ca7134f",
-      "created_at": "2026-11-20T21:25:45.657Z"
+      "content_hash": "b55ab3de62cb77adb946c5f9aa7cb0b860a5e7b3657c17f9b973204e9e15c9a9",
+      "created_at": "2026-11-28T05:24:48.101Z"
     },
     "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-learnings-core-invariants",
@@ -37363,8 +37363,8 @@
       "title": "Research & Knowledge Intelligence: rdflib-rdflib-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-rdflib-rdflib-learnings-research-knowledge-intelligence-rdflib-rdflib-learnings-.md",
       "repository": "rdflib-rdflib-learnings",
-      "content_hash": "3f1633e0eed3cf94737ae848927ba27a8ea7aee31c146a459d2b5c21b077c666",
-      "created_at": "2026-11-20T21:25:55.771Z"
+      "content_hash": "51b1949e46224e65075ebb602b47d0f7bbf23585010c0dd587706d9746b3f951",
+      "created_at": "2026-11-28T05:25:06.416Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-inkling-2-mini-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-inkling-2-mini-gguf-core-invariants",
@@ -43683,8 +43683,8 @@
       "title": "Architecture Intelligence: medialab/xan Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-medialab-xan-architecture-intelligence-medialab-xan-core-invariants.md",
       "repository": "medialab/xan",
-      "content_hash": "2e34e128bbe22b573f85b708a588efe2d3d946fd9abbd6a22f598123a48c5e18",
-      "created_at": "2026-11-24T22:30:08.648Z"
+      "content_hash": "1c89ea5c548f69df80fc10a3f1ecf06d89683e8be48e0458fcf301da413ad9ff",
+      "created_at": "2026-11-28T05:24:45.654Z"
     },
     "domain_intelligence-architecture-intelligence-kotest-kotest-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kotest-kotest-core-invariants",
@@ -43701,8 +43701,8 @@
       "title": "Architecture Intelligence: medialab-xan-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-medialab-xan-learnings-architecture-intelligence-medialab-xan-learnings-core-inv.md",
       "repository": "medialab-xan-learnings",
-      "content_hash": "8a09d5fd488ad95b452a8a167c52c61c5bc26e2842fddc6ab03b32733e5befda",
-      "created_at": "2026-11-24T22:30:16.858Z"
+      "content_hash": "a576f11ad1361ea11209c162f6be3e75524ca7ad4c14aff296396c203b4f65d3",
+      "created_at": "2026-11-28T05:25:02.185Z"
     },
     "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants",

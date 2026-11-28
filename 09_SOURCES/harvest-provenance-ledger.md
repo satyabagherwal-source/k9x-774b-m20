@@ -14015,3 +14015,6 @@ Every entry in this ledger must capture:
 | `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `943134a1` | Multi-dimensional audit evidence | 2026-11-28T04:57:41.282Z |
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `695a517d` | Multi-dimensional audit evidence | 2026-11-28T05:06:59.858Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `abf63e92` | Multi-dimensional audit evidence | 2026-11-28T05:16:06.613Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `bc961b91` | Multi-dimensional audit evidence | 2026-11-28T05:24:45.237Z |
+| `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `372709db` | Multi-dimensional audit evidence | 2026-11-28T05:24:47.687Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `aef597ae` | Multi-dimensional audit evidence | 2026-11-28T05:24:58.206Z |

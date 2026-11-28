@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-NX52",
-    "timestamp": "2026-11-26T16:00:14.726Z",
-    "repository": "appwrite/appwrite",
-    "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "4632466ee123c5dd45f8969167c3705f169165b32ea6fae2e27d968e4e8c110a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-1DFB",
-    "timestamp": "2026-11-26T16:10:42.359Z",
-    "repository": "briaai/RMBG-3.0",
-    "learningId": "learn-huggingface-briaai-rmbg-3-0",
-    "contentHash": "3b1323226ed7e18930cb4e1d0ddff2135f71767681400c110b741a4c55e0d646",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-1LDL",
-    "timestamp": "2026-11-26T16:10:52.665Z",
-    "repository": "laurent22/joplin",
-    "learningId": "learn-github-laurent22-joplin",
-    "contentHash": "6e114cfcc23a4c497d781bd1ddfbd7a8b8ea0266ed080fdc7d8bfdada86a1793",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-1NDV",
     "timestamp": "2026-11-26T16:10:55.267Z",
     "repository": "DefGuard/defguard",
@@ -7490,6 +7445,51 @@
     "repository": "milvus-io/milvus",
     "learningId": "learn-github-milvus-io-milvus",
     "contentHash": "813ce7f1e4cac4839602956d5665fbfcc1d92b742c5da5d0fc34d33524b1ad63",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-UDKA",
+    "timestamp": "2026-11-28T05:24:45.226Z",
+    "repository": "medialab/xan",
+    "learningId": "learn-github-medialab-xan",
+    "contentHash": "25d5cb78c6d2e2e2cc1583c24da340b4b44c7934337964d09d78cdeae0266346",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-UFGD",
+    "timestamp": "2026-11-28T05:24:47.677Z",
+    "repository": "RDFLib/rdflib",
+    "learningId": "learn-github-rdflib-rdflib",
+    "contentHash": "9eab1b785351206260804d0525f8fff0181f82626eaf26fa31a8160e9f1ee4af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-UNKQ",
+    "timestamp": "2026-11-28T05:24:58.202Z",
+    "repository": "VectifyAI/PageIndex",
+    "learningId": "learn-github-vectifyai-pageindex",
+    "contentHash": "c15faa173e386a05b43d4dd07f1475faf756edf21444bc7ee50ce2e03b093551",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

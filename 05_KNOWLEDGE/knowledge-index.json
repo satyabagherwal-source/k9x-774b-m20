@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T05:16:13.756Z",
+  "last_updated": "2026-11-28T05:25:07.539Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26968,
+  "total_items": 26975,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -246009,8 +246009,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "3aef432d",
-      "content_hash": "9a4f0fbf4d62786c12b3fe2cae1e1f5b158c2f5b8d7dbf65e76718920c0e3ce4",
+      "source_version": "aef597ae",
+      "content_hash": "c15faa173e386a05b43d4dd07f1475faf756edf21444bc7ee50ce2e03b093551",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -246053,6 +246053,11 @@
           "number": 10725,
           "title": "docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11044,
+          "title": "pyproject.toml carries the released version, and publish checks the tag m",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -246060,7 +246065,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T16:30:56.949Z",
+      "verified_at": "2026-11-28T05:24:57.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246102,10 +246107,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-technical-construction-intelligence-vectifyai-pageindex-core.md",
       "title": "Technical Construction Intelligence: VectifyAI/PageIndex Core Invariants",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "d6b4a0a3",
-      "content_hash": "e40bdbf7e2eb1b1c3a12f07f70f759b5d4066689d54270629f9d680db320e72a",
+      "source_version": "aef597ae",
+      "content_hash": "477ea0d63bcfa1421a06b34c26406031b32e8ba7e2c0d643dff5296a364f50c0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:44:57.466Z"
+      "persisted_at": "2026-11-28T05:24:58.617Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex",
@@ -246114,10 +246119,10 @@
       "relative_path": "08_VERIFICATION/vectifyai-pageindex-verification-protocol-empirical-defect-shield-for-vectifyai-.md",
       "title": "Verification Protocol: Empirical Defect Shield for VectifyAI/PageIndex",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "3aef432d",
-      "content_hash": "1d50ded1c9f7aff9101f899ae7c2eebd607a6ab667068bfeb16a334ef8b238df",
+      "source_version": "aef597ae",
+      "content_hash": "69176516bf147ba276e216f129cbf568efd8447f9911bdd603505cf34f351e07",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:30:58.214Z"
+      "persisted_at": "2026-11-28T05:24:58.793Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning",
@@ -258028,8 +258033,8 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "93db1c80",
-      "content_hash": "67f34c1283c332ef97c7ef36465dfa02cea1bd9129b37a94f51aaba7f2d374ff",
+      "source_version": "bc961b91",
+      "content_hash": "25d5cb78c6d2e2e2cc1583c24da340b4b44c7934337964d09d78cdeae0266346",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
@@ -258077,6 +258082,11 @@
           "number": 10599,
           "title": "Documentation fixes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11042,
+          "title": "Fixing xan split -c",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -258084,7 +258094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T04:47:43.431Z",
+      "verified_at": "2026-11-28T05:24:44.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -258138,10 +258148,10 @@
       "relative_path": "08_VERIFICATION/medialab-xan-verification-protocol-empirical-defect-shield-for-medialab-xan.md",
       "title": "Verification Protocol: Empirical Defect Shield for medialab/xan",
       "repository": "medialab/xan",
-      "source_version": "93db1c80",
-      "content_hash": "1d04765f6553b42b45b831d274543761b43199a80a7839807d2d291af153d81c",
+      "source_version": "bc961b91",
+      "content_hash": "4800ed57489ce7c7c9adae7214c2371f04eba7cc71ca1526d575dfa4bf081594",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:47:44.527Z"
+      "persisted_at": "2026-11-28T05:24:45.837Z"
     },
     "learn-github-rickclephas-kmp-nativecoroutines": {
       "learning_id": "learn-github-rickclephas-kmp-nativecoroutines",
@@ -258272,9 +258282,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for medialab-xan-learnings",
       "repository": "medialab-xan-learnings",
       "source_version": "HEAD",
-      "content_hash": "f699476533a2fd8b70d6d60b6c8189dc31425c232390414aa81eebe1e3f4607d",
+      "content_hash": "3975e12f7c39e68ab20243f0c188554203f5893f222ac5d34e5a3d57b1d8fc83",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:47:54.259Z"
+      "persisted_at": "2026-11-28T05:25:02.371Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants",
@@ -262521,9 +262531,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vectifyai-pageindex-learnings",
       "repository": "vectifyai-pageindex-learnings",
       "source_version": "HEAD",
-      "content_hash": "701c2afa790370247826555ebae7dc01a8107ba692400ef4f9b330114b9526b3",
+      "content_hash": "c55f4c653baf817a4e449bb98f2feaf8712e1889aae874ac1f99393221a6e3c1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:45:03.924Z"
+      "persisted_at": "2026-11-28T05:25:07.539Z"
     },
     "rule-8746": {
       "learning_id": "rule-8746",
@@ -301881,9 +301891,9 @@
       "title": "Technical Construction Intelligence: vectifyai-pageindex-learnings Core Invariants",
       "repository": "vectifyai-pageindex-learnings",
       "source_version": "HEAD",
-      "content_hash": "a14feae952113a13002cae0425d06afce64f2574cba5ae94ff5ebb3740878138",
+      "content_hash": "f5755399f7f860467263759e7cd7c69e581aee1e93e89afd504f2fac1725d177",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:45:03.722Z"
+      "persisted_at": "2026-11-28T05:25:07.359Z"
     },
     "rule-9375": {
       "learning_id": "rule-9375",
@@ -313884,14 +313894,19 @@
       "slug": "rdflib-rdflib",
       "platform": "github",
       "source_url": "https://github.com/RDFLib/rdflib",
-      "source_version": "90a67c7b",
-      "content_hash": "940e4d27821801bc0a8c2746ae157be9fe022c7f06c0a53bebbb26871e3c71a5",
+      "source_version": "372709db",
+      "content_hash": "9eab1b785351206260804d0525f8fff0181f82626eaf26fa31a8160e9f1ee4af",
       "dossier_path": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
       "promoted_rules": [
         {
           "number": 10354,
           "title": "substitute initBindings variables in SPARQL update graph refs and data blocks",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11043,
+          "title": "build(deps-dev): bump ruff from 0.17.5 to 0.17.6",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -313900,7 +313915,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T20:29:52.470Z",
+      "verified_at": "2026-11-28T05:24:47.438Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -313928,10 +313943,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-rdflib-rdflib-research-knowledge-intelligence-rdflib-rdflib-core-invariants.md",
       "title": "Research & Knowledge Intelligence: RDFLib/rdflib Core Invariants",
       "repository": "RDFLib/rdflib",
-      "source_version": "a0a00f55",
-      "content_hash": "f773b09bb43672b7e8ec5a9dacbc2b2d9bfd0bdf82c29a7f886c4ea37ca7134f",
+      "source_version": "372709db",
+      "content_hash": "b55ab3de62cb77adb946c5f9aa7cb0b860a5e7b3657c17f9b973204e9e15c9a9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T21:25:45.657Z"
+      "persisted_at": "2026-11-28T05:24:48.101Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rdflib-rdflib": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rdflib-rdflib",
@@ -313940,10 +313955,10 @@
       "relative_path": "08_VERIFICATION/rdflib-rdflib-verification-protocol-empirical-defect-shield-for-rdflib-rdflib.md",
       "title": "Verification Protocol: Empirical Defect Shield for RDFLib/rdflib",
       "repository": "RDFLib/rdflib",
-      "source_version": "90a67c7b",
-      "content_hash": "7a12bc92787e70ee643bf4b29646b7c33105d0cc55a4ba7aac24f517eee7b33d",
+      "source_version": "372709db",
+      "content_hash": "a60bab7b49104250f8ded139fd4bbffe4221d3ca01e99f0beab78404f2b09f8e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T20:29:53.222Z"
+      "persisted_at": "2026-11-28T05:24:48.304Z"
     },
     "rule-9642": {
       "learning_id": "rule-9642",
@@ -313979,9 +313994,9 @@
       "title": "Research & Knowledge Intelligence: rdflib-rdflib-learnings Core Invariants",
       "repository": "rdflib-rdflib-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f1633e0eed3cf94737ae848927ba27a8ea7aee31c146a459d2b5c21b077c666",
+      "content_hash": "51b1949e46224e65075ebb602b47d0f7bbf23585010c0dd587706d9746b3f951",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T21:25:55.771Z"
+      "persisted_at": "2026-11-28T05:25:06.416Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rdflib-rdflib-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rdflib-rdflib-learnings",
@@ -313991,9 +314006,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rdflib-rdflib-learnings",
       "repository": "rdflib-rdflib-learnings",
       "source_version": "HEAD",
-      "content_hash": "8e14e4398b03490cedd7f06c9c95451d4e3817c8ead1cbefd0702c8bc98967bc",
+      "content_hash": "1b4d5a7fbc2393004b25e52c6aa07d5afd07cef92f6f1ed8ea810cb65bda94c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T20:30:09.434Z"
+      "persisted_at": "2026-11-28T05:25:06.596Z"
     },
     "candidate_directive-webview-add-a-webkitgtk-editor-for-clap-and-vst3-on-linux": {
       "item_id": "candidate_directive-webview-add-a-webkitgtk-editor-for-clap-and-vst3-on-linux",
@@ -344228,10 +344243,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-medialab-xan-architecture-intelligence-medialab-xan-core-invariants.md",
       "title": "Architecture Intelligence: medialab/xan Core Invariants",
       "repository": "medialab/xan",
-      "source_version": "dfbb3093",
-      "content_hash": "2e34e128bbe22b573f85b708a588efe2d3d946fd9abbd6a22f598123a48c5e18",
+      "source_version": "bc961b91",
+      "content_hash": "1c89ea5c548f69df80fc10a3f1ecf06d89683e8be48e0458fcf301da413ad9ff",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T22:30:08.648Z"
+      "persisted_at": "2026-11-28T05:24:45.654Z"
     },
     "rule-10371": {
       "learning_id": "rule-10371",
@@ -344279,9 +344294,9 @@
       "title": "Architecture Intelligence: medialab-xan-learnings Core Invariants",
       "repository": "medialab-xan-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a09d5fd488ad95b452a8a167c52c61c5bc26e2842fddc6ab03b32733e5befda",
+      "content_hash": "a576f11ad1361ea11209c162f6be3e75524ca7ad4c14aff296396c203b4f65d3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T22:30:16.858Z"
+      "persisted_at": "2026-11-28T05:25:02.185Z"
     },
     "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants",
@@ -370593,6 +370608,96 @@
       "content_hash": "08ce7db06764c03a88875dc051434709b6e961140cffe0b603fff7452388f70f",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T05:16:10.764Z"
+    },
+    "rule-11042": {
+      "learning_id": "rule-11042",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11042,
+      "title": "Fixing xan split -c",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "bc961b91",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T05:24:44.984Z"
+    },
+    "candidate_directive-fixing-xan-split-c": {
+      "item_id": "candidate_directive-fixing-xan-split-c",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UQHZ-fixing-xan-split-c.md",
+      "title": "Fixing xan split -c",
+      "repository": "medialab-xan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b149a157726e7be4bf4eaf344e9c2fe70ae027d982445c044fef1a52f52685f8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T05:25:01.995Z"
+    },
+    "rule-11043": {
+      "learning_id": "rule-11043",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11043,
+      "title": "build(deps-dev): bump ruff from 0.17.5 to 0.17.6",
+      "source_url": "https://github.com/RDFLib/rdflib",
+      "source_version": "372709db",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T05:24:47.438Z"
+    },
+    "candidate_directive-build-deps-dev-bump-ruff-from-0-17-5-to-0-17-6": {
+      "item_id": "candidate_directive-build-deps-dev-bump-ruff-from-0-17-5-to-0-17-6",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UTRE-build-deps-dev-bump-ruff-from-0-17-5-to-0-17-6.md",
+      "title": "build(deps-dev): bump ruff from 0.17.5 to 0.17.6",
+      "repository": "rdflib-rdflib-learnings",
+      "source_version": "HEAD",
+      "content_hash": "16f8c1c1b6679b173e6ca3eb4f30ff0ec68b267710da42646b490c7ddc2460ab",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T05:25:06.221Z"
+    },
+    "rule-11044": {
+      "learning_id": "rule-11044",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11044,
+      "title": "pyproject.toml carries the released version, and publish checks the tag m",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "aef597ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T05:24:57.957Z"
+    },
+    "candidate_directive-pyproject-toml-carries-the-released-version-and-publish-checks-the-tag-m": {
+      "item_id": "candidate_directive-pyproject-toml-carries-the-released-version-and-publish-checks-the-tag-m",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UNR4-pyproject-toml-carries-the-released-version-and-publish-checks-the-tag-m.md",
+      "title": "pyproject.toml carries the released version, and publish checks the tag m",
+      "repository": "VectifyAI/PageIndex",
+      "source_version": "aef597ae",
+      "content_hash": "d27a1e9f2462227be1e8afb75e0a26eb25cb6d7fafdf2195ec25ecbb3c6e1552",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T05:24:58.435Z"
+    },
+    "candidate_directive-build-pyproject-toml-carries-the-released-version-and-publish-checks-the-tag-m": {
+      "item_id": "candidate_directive-build-pyproject-toml-carries-the-released-version-and-publish-checks-the-tag-m",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UUHE-build-pyproject-toml-carries-the-released-version-and-publish-checks-the-tag-m.md",
+      "title": "build: pyproject.toml carries the released version, and publish checks the tag m",
+      "repository": "vectifyai-pageindex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "373d94bea0b37a7507069f613a0e87f217f7f051d6ef4b159698252afb39a689",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T05:25:07.156Z"
     }
   },
   "ai-builder-brain": {

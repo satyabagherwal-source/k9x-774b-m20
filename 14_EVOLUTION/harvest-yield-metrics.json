@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T05:16:06.619Z",
-  "total_cycles_completed": 13267,
-  "total_learnings_persisted": 13267,
-  "total_rules_promoted": 11961,
+  "last_updated": "2026-11-28T05:24:58.211Z",
+  "total_cycles_completed": 13270,
+  "total_learnings_persisted": 13270,
+  "total_rules_promoted": 11964,
   "history": [
-    {
-      "timestamp": "2026-11-27T11:14:30.682Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T11:24:50.810Z",
-      "repository": "msasikanth/twine",
-      "learningId": "learn-github-msasikanth-twine",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T11:25:06.462Z",
-      "repository": "topoteretes/cognee",
-      "learningId": "learn-github-topoteretes-cognee",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T11:33:45.883Z",
       "repository": "nguyenphutrong/quotio",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T05:16:06.619Z",
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T05:24:45.242Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T05:24:47.692Z",
+      "repository": "RDFLib/rdflib",
+      "learningId": "learn-github-rdflib-rdflib",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T05:24:58.211Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

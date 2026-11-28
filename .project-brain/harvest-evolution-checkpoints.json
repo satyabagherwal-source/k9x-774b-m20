@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T05:16:13.964Z",
+  "last_updated": "2026-11-28T05:25:07.696Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T05:16:11.416Z",
@@ -1258,7 +1258,7 @@
       "staged_for_review": 1
     },
     "medialab-xan-learnings.md": {
-      "processed_at": "2026-11-26T04:47:53.400Z",
+      "processed_at": "2026-11-28T05:25:01.637Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3168,7 +3168,7 @@
       "staged_for_review": 0
     },
     "vectifyai-pageindex-learnings.md": {
-      "processed_at": "2026-11-24T19:45:03.140Z",
+      "processed_at": "2026-11-28T05:25:06.781Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3628,7 +3628,7 @@
       "staged_for_review": 0
     },
     "rdflib-rdflib-learnings.md": {
-      "processed_at": "2026-11-24T20:30:08.306Z",
+      "processed_at": "2026-11-28T05:25:02.558Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4063,7 +4063,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 5259,
+  "total_dossiers_evaluated": 5262,
   "total_canonical_promoted": 593,
-  "total_staged_for_review": 3988
+  "total_staged_for_review": 3991
 }

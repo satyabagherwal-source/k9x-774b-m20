@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T21:25:55.447Z",
+  "timestamp": "2026-11-28T05:25:06.091Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rdflib-rdflib-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rdflib-rdflib-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T21:25:55.447Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T05:25:06.091Z`  
 > **Learning ID**: `LEARN-EVO-rdflib-rdflib-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rdflib-rdflib-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rdflib-rdflib-learnings.md`  
 > **Source**: github ([https://github.com/RDFLib/rdflib](https://github.com/RDFLib/rdflib))  
-> **Source Version**: `a0a00f55`  
+> **Source Version**: `372709db`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T21:25:44.429Z  
+> **Timestamp**: 2026-11-28T05:24:46.526Z  
 > **Learning ID**: `learn-github-rdflib-rdflib`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rdflib-rdflib-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RDFLib/rdflib](https://github.com/RDFLib/rdflib))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T21:25:40.127Z  
+> **Harvest Timestamp**: 2026-11-28T05:24:46.521Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: RDFLib is a Python library for working with RDF, a simple yet powerful language for representing information.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2565 stars
+- **Stars / Engagement**: 2569 stars
 
 ---
 
@@ -433,6 +433,7 @@ except ImportError:
     _HAS_ORJSON = False
 
 
+from rdflib.namespace import XSD
 from rdflib.parser import (
     BytesIOWrapper,
     InputSource,
@@ -442,6 +443,7 @@ from rdflib.parser import (
     create_input_source,
 )
 from rdflib.plugins.parsers.notation3 import join
+from rdflib.term import URIRef
 
 
 def source_to_json(
@@ -663,10 +665,7 @@ def norm_url(base: str, url: str) -> str:
         return (base or "").split("#", 1)[0] + url
 
     # An absolute IRI is not resolved, and neither is a value whose part after
-    # the first colon begins with "//" (JSON-LD 1.1 API, IRI Expansion, step
-    # 6.2).
-    colon = url.find(":", 1)
-    if _SCH
+    # the first colon begins with "//" (JSON-LD 1.1 API, IRI Expa
 ```
 
 ### Core Architecture Module: `rdflib/plugins/sparql/evalutils.py`
@@ -1766,616 +1765,199 @@ except Exception as e:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e775564d` (2026-11-20)
-**Commit Message**: fix: promote numeric types in SPARQL multiplication and division (#3694)
+### Incident Patch 1: `372709db` (2026-11-27)
+**Commit Message**: build(deps-dev): bump ruff from 0.17.5 to 0.17.6 (#3748)
 
-MultiplicativeExpression turned the first operand into a Decimal and
-only switched to float when a later operand was a float, and it typed
-the result by its Python type. So 2 * 3 was an xsd:decimal, 1.5e0 * 2
-a decimal instead of a double, and 1e308 * 10 a decimal rounded to 28
-digits instead of infinity. Dividing a double by zero was an error, and
-an ill-typed operand could give a wrong value.
+Bumps [ruff](https://github.com/astral-sh/ruff) from 0.17.5 to 0.17.6.
+- [Release notes](https://github.com/astral-sh/ruff/releases)
+- [Changelog](https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/astral-sh/ruff/compare/0.17.5...0.17.6)
 
-Promote the operands with type_promotion, as AdditiveExpression does
-and as op:numeric-multiply and op:numeric-divide require (SPARQL 1.1,
-section 17.3; XPath 3.1 Functions and Operators, section 4.2). Integer
-division gives a decimal, and a float or double divided by zero gives
-INF, -INF or NaN; integer and decimal division by zero stay errors. An
-ill-typed operand is a type error, an integer too large for a double is
-INF or -INF next to a double, and overflows are SPARQL errors. Add an
-upgrade note for the changed result types.
+---
+updated-dependencies:
+- dependency-name: ruff
+  dependency-version: 0.17.6
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+...
 
-Signed-off-by: jdsika <[REDACTED_EMAIL]>
-Co-authored-by: Nicholas Car <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `docs/upgrade7to8.md` (modified, +18/-0)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -31,6 +31,24 @@ these operations are constant-time, especially in loops over large or remote
- datasets. A dataset containing only empty named graphs has length zero and is
- false, even though those graph names remain present.
+@@ -71,7 +71,7 @@ docs = [
+     "mkdocstrings[python]>=1.0.6",
+     "httpx2>=2.15.1,<3",
+ ]
+-lint = ["ruff==0.17.5"]
++lint = ["ruff==0.17.6"]
  
-+## SPARQL multiplication and division
-+
-+SPARQL `*` and `/` now give the result the promoted type of their operands, as
-+XPath's `op:numeric-multiply` and `op:numeric-divide` define it and as `+` and
-+`-` already did:
-+
-+- An integer times an integer is an `xsd:integer`, and exact for large values.
-+  It was an `xsd:decimal`, rounded to 28 digits.
-+- A product or quotient with an `xsd:float` or `xsd:double` operand is a float
-+  or double, also when that operand comes first, so `toPython()` gives a
-+  Python `float` where it gave a `Decimal`.
-+- A float or double divided by zero is `INF`, `-INF` or `NaN` instead of an
-+  error. Integer and decimal division by zero are still errors.
-+- An ill-typed operand, such as `"abc"^^xsd:integer`, is an error.
-+
-+`DATATYPE()`, `sameTerm()`, `DISTINCT` and joins on such computed values change
-+accordingly.
-+
- ## Infinite and NaN doubles
- 
- A [`Literal`][rdflib.term.Literal] made from an infinite or NaN float, or
+ [tool.uv]
+ # Install the tests and lint groups too, so `uv run pytest`, `uv run ruff` and
 ```
 
-**File**: `rdflib/plugins/sparql/operators.py` (modified, +52/-14)
+**File**: `uv.lock` (modified, +22/-22)
 ```diff
-@@ -16,7 +16,7 @@
- import uuid
- import warnings
- from collections.abc import Callable
--from decimal import ROUND_HALF_DOWN, ROUND_HALF_UP, Decimal, InvalidOperation
-+from decimal import ROUND_HALF_DOWN, ROUND_HALF_UP, Decimal
- from functools import reduce
- from typing import Any, NoReturn, Union, overload
- from urllib.parse import quote
-@@ -758,23 +758,61 @@ def MultiplicativeExpression(
-     # we sometimes have nothing to do
-     if other is None:
-         return expr
--    try:
--        res: Union[Decimal, float]
--        res = Decimal(numeric(expr))
--        for op, f in zip(e.op, other):
--            f = numeric(f)
--
--            if type(f) == float:  # noqa: E721
--                res = float(res)
+@@ -1398,7 +1398,7 @@ docs = [
+     { name = "typing-extensions", specifier = ">=4.11.0,<5.0.0" },
+     { name = "zensical", specifier = ">=0.0.51" },
+ ]
+-lint = [{ name = "ruff", specifier = "==0.17.5" }]
++lint = [{ name = "ruff", specifier = "==0.17.6" }]
+ tests = [
+     { name = "coverage", extras = ["toml"], specifier = ">=7.10.6,<8.0.0" },
+     { name = "pytest", specifier = ">=7.1.3,<10.0.0" },
+@@ -1439,27 +1439,27 @@ wheels = [
  
--            if op == "*":
--                res *= f
-+    # The operands are promoted to a common type, as op:numeric-multiply and
-+    # op:numeric-divide do (SPARQL 1.1, section 17.3; XPath 3.1 Functions and
-+    # Operators, section 4.2), and the result has that type. As in
-+    # AdditiveExpression, xsd:float values are computed in double precision.
-+    res: Union[int, Decimal, float] = _number(expr)
-+    dt = expr.datatype
-+    try:
-+        for op, term in zip(e.op, other):
-+            n = _number(term)
-+            dt = type_promotion(dt, term.datatype)
-+            if dt in (XSD.float, XSD.double):
-+                res, n = _to_float(res), _to_float(n)
-+                res = res * n if op == "*" else _float_divide(res, n)
-+            elif op == "*":
-+                res = res * n
-             else:
--                res /= f
--    except (InvalidOperation, ZeroDivisionError):
-+                # Dividing integers gives a decimal.
-+                res = Decimal(res) / Decimal(n)
-+                dt = XSD.decimal
-+        return Literal(res, datatype=dt)
-+    except ZeroDivisionError:
-         raise SPARQLError("divide by 0")
-+    except (ArithmeticError, ValueError) as error:
-+        raise SPARQLError("numeric overflow or invalid operation: %r" % error)
-+
- 
--    return Literal(res)
-+def _number(term: Literal) -> Any:
-+    """The value of a numeric literal, or a type error if it is ill-typed."""
-+    value = numeric(term)
-+    if not isinstance(value, (int, Decimal, float)):
-+        raise SPARQLTypeError("%r is not a valid %s" % (term, term.datatype))
-+    return value
-+
-+
-+def _to_float(value: Union[int, Decimal, float]) -> float:
-+    """Cast to xs:double; an integer too large for a double is INF or -INF."""
-+    try:
-+        return float(value)
-+    except OverflowError:
-+        return math.inf if value > 0 else -math.inf
-+
-+
-+def _float_divide(dividend: float, divisor: float) -> float:
-+    """Divide two floats as op:numeric-divide does for xs:float and xs:double.
-+
-+    Dividing by zero gives INF, -INF or NaN (XPath 3.1 Functions and
-+    Operators, section 4.2.4), where Python raises an exception.
-+    """
-+    try:
-+        return dividend / divisor
-+    except ZeroDivisionError:
-+        if dividend == 0 or math.isnan(dividend):
-+            return math.nan
-+        return math.copysign(math.inf, dividend) * math.copysign(1.0, divisor)
- 
- 
- # type error: Missing return statement
-```
-
-**File**: `test/test_sparql/test_expressions.py` (modified, +72/-1)
-```diff
-@@ -1,7 +1,11 @@
-+import math
-+from decimal import Decimal
- from functools import partial
- 
-+import pytest
-+
- import rdflib.plugins.sparql.parser as p
--from rdflib import Literal, Variable
-+from rdflib import XSD, Literal, URIRef, Variable
- from rdflib.plugins.sparql.algebra import translatePName, traverse
- from rdflib.plugins.sparql.operators import simplify
- from rdflib.plugins.sparql.sparql import Prologue, QueryContext, SPARQLError
-@@ -63,6 +67,73 @@ def test_arithmetic():
-     eq(_eval(_translate(p.Expression.parse_string("(2+4)/2")[0])).value, 3)
- 
- 
-+FLOAT = f"<{XSD.float}>"
-+INT = f"<{XSD.int}>"
-+SHORT = f"<{XSD.short}>"
-+
-+
-+@pytest.mark.parametrize(
-+    ("expression", "value", "datatype"),
-+    [
-+        pytest.param("2*3", 6, XSD.integer, id="integer"),
-+        pytest.param(f'"3"^^{INT}*"2"^^{SHORT}', 6, XSD.integer, id="integer-subtypes"),
-+        pytest.param(
-+            "123456789012345678901234567890*3",
-+            370370367037037036703703703670,
-+            XSD.integer,
-+            id="large-integer",
-+        ),
-+        pytest.param("2*1.5", Decimal("3.0"), XSD.decimal, id="decimal"),
-+        pytest.param("1.5e0*2", 3.0, XSD.double, id="double-first"),
-+        pytest.param("1.5e0*2*3", 9.0, XSD.double, id="double-chain"),
-+        pytest.param(f'"2.5"^^{FLOAT}*2', 5.0, XSD.float, id="float"),
-+        pytest.param("7/2", Decimal("3.5"), XSD.decimal, id="integer-division"),
-+        pytest.param("7e0/2", 3.5, XSD.double, id="double-division"),
-+        pytest.param("1e308*10", math.inf, XSD.double, id="overflow"),
-+        pytest.param("-1e308*10", -math.inf, XSD.double, id="negative-overflow"),
-+        pytest.param(f"1{'0' * 400}*1e0", math.inf, XSD.double, id="huge-integer"),
-+        pytest.param("1e0/0", math.inf, XSD.double, id="divide-by-zero"),
-+        pytest.param("-1e0/0", -math.inf, XSD.double, id="negative-by-zero"),
-+        pytest.param("1e0/-0e0", -math.inf, XSD.double, id="by-negative-zero"),
-+        pytest.param(f'"2"^^{FLOAT}/0', math.inf, XSD.float, id="float-by-zero"),
-+    ],
-+)
-+def test_multiplication_and_division_promote_numeric_types(
-+    expression: str, value: object, datatype: URIRef
-+) -> None:
-+    """The result has the promoted type of the operands, as in XPath 3.1
-+    Functions and Operators, section 4.2: integer times double is a double,
-+    and a double divided by zero is infinite."""
-+    result = _eval(_translate(p.Expression.parse_string(expression)[0]))
-+
-+    assert (result.value, result.datatype) == (value, datatype)
-+
-+
-+def test_zero_divided_by_zero_is_nan_for_doubles() -> None:
-+    result = _eval(_translate(p.Expression.parse_string("0e0/0")[0]))
-+
-+    assert math.isnan(result.value) and result.datatype == XSD.double
-+
-+
-+@pytest.mark.parametrize(
-+    "expression",
-+    [
-+        pytest.param("1/0", id="integer-by-zero"),
-+        pytest.param("1.0/0", id="decimal-by-zero"),
-+        pytest.param(f'"abc"^^<{XSD.integer}>*2', id="ill-typed-integer"),
-+        pytest.param(f'2*"abc"^^<{XSD.decimal}>', id="ill-typed-decimal"),
-+        pytest.param(f'"1.5"^^<{XSD.integer}>*3', id="ill-typed-fraction"),
-+        pytest.param(f'"abc"^^<{XSD.double}>*2', id="ill-typed-double"),
-+        pytest.param(f'2e0*"abc"^^<{XSD.integer}>', id="ill-typed-with-double"),
-+        pytest.param(f"1{'0' * 2200}*1{'0' * 2200}", id="too-many-digits"),
-+    ],
-+)
-+def test_multiplication_and_division_errors(expression: str) -> None:
-+    """Integer and decimal division by zero, ill-typed operands, and an integer
-+    too long to write are errors, not crashes or strings."""
-+    assert _eval(_translate(p.Expression.parse_string(expression)[0])) is False
-+
-+
- def test_arithmetic_var():
-     ctx = QueryContext()
-     ctx[Variable("x")] = Literal(2)
+ [[package]]
+ name = "ruff"
+-version = "0.17.5"
+-source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/86/cc/7b71512eb8b49926efb887cc66c74dd993642943c29eba51a877f6b85692/ruff-0.17.5.tar.gz", hash = "sha256:625e57d80cd43352d12ea81690f3eac46cddc8c0f35026d137fb0f157f94592e", size = 5368382, upload-time = "2026-11-12T17:54:55.04Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/d4/f2/61df414cb4338617290a9023ad09486e207fb9a6d09357a7be34f2e369a4/ruff-0.17.5-py3-none-linux_armv6l.whl", hash = "sha256:d511dd302982e46a285528942fa6557d57730edc4bdb9def95e86a2603d77396", size = 10231309, upload-time = "2026-11-12T17:54:09.314Z" },
+-    { url = "https://files.pythonhosted.org/packages/d1/72/8ed970f3361f7c8d3f8e1b3b1af27cf086bc4b3a6b62ec20e21a1aaaaff5/ruff-0.17.5-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:b72fbc232e328bdbb9cdddf4f1aedcd61bd1aa64d75fc012114b4add0bd7f26b", size = 10250018, upload-time = "2026-11-12T17:54:11.983Z" },
+-    { url = "https://files.pythonhosted.org/packages/dc/4b/8b10f6c9d0a18413301ae8dd2af9d180a81bb738b1b731d944a37404c523/ruff-0.17.5-py3-none-macosx_11_0_arm64.whl", hash = "sha256:6f0db748508f04a04e3fbebcc636a5c8b3bd76274f8ed28f497c44d75c2ea2d7", size = 9504737, upload-time = "2026-11-12T17:54:14.567Z" },
+-    { url = "https://files.pythonhosted.org/packages/b7/ea/1b3afa3943239dede7a0755ea139bdb51879f0f3f96f92894081d5c7d2e5/ruff-0.17.5-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6f6a7b138edf9cc402ca736a59d9525e6d766e5395760b72e7e146e6251ac963", size = 10168006, upload-time = "2026-11-12T17:54:17.195Z" },
+-    { url = "https://files.pythonhosted.org/packages/31/08/ee641daa45f83792f91274b65796cb011f1065f588911bfa3909ad9e31e7/ruff-0.17.5-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:e52622ecf3a0df9d03e796fe3eed4aa085adda65520db7e0619cbd2192a97342", size = 10043751, upload-time = "2026-11-12T17:54:19.815Z" },
+-    { url = "https://files.pythonhosted.org/packages/f8/cf/1c59fdb42d0b5671ad5b160636fab4005ee28db72cb06aef6e3f3c04f377/ruff-0.17.5-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:54c0f67d1be11b55d12c184a819fc229f5eee3ef45c16c4fcad41258e83b4882", size = 10690562, upload-time = "2026-11-12T17:54:22.789Z" },
+-    { url = "https://files.pythonhosted.org/packages/49/c5/578074716173fb0c1591e9648a9f85c469888d9530cb35b89b757dc1208b/ruff-0.17.5-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:dd0dfe7c6fe5a447fce467c58e69893be1d9a7e4378f5b9906432da33d94a97f", size = 11338465, upload-time = "2026-11-12T17:54:25.523Z" },
+-    { url = "https://files.pythonhosted.org/packages/aa/b9/d6428bcf5ed88f4dc1d6e3417ee350236ed36e7a35f9477b727c00e437bf/ruff-0.17.5-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:ec4ecf40fb4d6e1265b009dbe551727920926fc0f769070c452d6d84b422a74d", size = 10895501, upload-time = "2026-11-12T17:54:28.441Z" },
+-    { url = "https://files.pythonhosted.org/packages/f2/8a/1e29c0c3785ae7e5cd0d54ee8717a08867ef71545796340be4c653c57e24/ruff-0.17.5-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:40ca8afaac309b41a5b2e09e4e7beb1f824826b93c25697c4d74f573324fba4e", size = 10613231, upload-time = "2026-11-12T17:54:30.862Z" },
+-    { url = "https://files.pythonhosted.org/packages/32/b6/88944350c14bb90651014d678ad554e233ae2a79c14ad52101845f93d15b/ruff-0.17.5-py3-none-manylinux_2_31_riscv64.whl", hash = "sha256:8e85601bd6d9b6c3e3b95c0e0dccdbac1d23c6bcef006d187fbcddaf8225a5df", size = 10562789, upload-time = "2026-11-12T17:54:33.869Z" },
+-    { url = "https://files.pythonhosted.org/packages/6f/fd/2792e955b0bf54295cdcdddc4bb3f380c0790d7e60e789f528a9e6e48a31/ruff-0.17.5-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:f93d2b7d449ed9545304f6923699ca20d13c675b69f258481709a08ae61076db", size = 10069824, upload-time = "2026-11-12T17:54:36.663Z" },
+-    { url = "https://files.pythonhosted.org/packages/07/9c/d7cad341b4c19237948a6dd1fcea1c9c39c9d08b70f22f0e157d1236ebd6/ruff-0.17.5-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:0e5c125c5b31dc8efc948d41357496a4c4a312977565ccba740030efdff83580", size = 10038961, upload-time = "2026-11-12T17:54:39.452Z" },
+-    { url = "https://files.pythonhosted.org/packages/cc/a1/9cd0d4c371ddc70267d3bd557e718e2bdfb94c25e49d25605edfabb764bd/ruff-0.17.5-py3-none-musllinux_1_2_i686.whl", hash = "sha256:50dfc3c6b3ebd0a932f11dfd579bd42234b0b7137e68940eb6abdbfdb9d69697", size = 10385012, upload-time = "2026-11-12T17:54:
 ```
 
 ---
 
-### Incident Patch 2: `663b2ac0` (2026-11-18)
-**Commit Message**: fix: write infinite and NaN doubles as INF, -INF and NaN (#3691)
+### Incident Patch 2: `e71f5030` (2026-11-27)
+**Commit Message**: build(deps-dev): bump httpx2 from 2.16.0 to 2.16.2 (#3751)
 
-* fix: write infinite and NaN doubles as INF, -INF and NaN
+Bumps [httpx2](https://github.com/pydantic/httpx2) from 2.16.0 to 2.16.2.
+- [Release notes](https://github.com/pydantic/httpx2/releases)
+- [Changelog](https://github.com/pydantic/httpx2/blob/main/src/httpx2/CHANGELOG.md)
+- [Commits](https://github.com/pydantic/httpx2/compare/v2.16.0...v2.16.2)
 
-A float literal took its lexical form from str(), so infinity and NaN
-became "inf" and "nan", which are not in the lexical space of xsd:double
-or xsd:float (XML Schema 1.1 Part 2, sections 3.3.4.2 and 3.3.5.2). Only
-Turtle and N3 output corrected them. N-Triples, N-Quads, RDF/XML and
-SPARQL wrote the Python spelling, and normalizing a parsed "INF" turned
-it into "inf". Give a float value its canonical XSD form when the
-literal is made, and add an upgrade note for the change.
+---
+updated-dependencies:
+- dependency-name: httpx2
+  dependency-version: 2.16.2
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+...
 
-Signed-off-by: jdsika <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* fix: write an unnormalized INF or NaN in n3() with _float_lexical
-
-_literal_n3 replaced "inf" and "nan" in the lexical form of a special
-value, so "infinity" became "INFinity", and "INFINITY" and "NAN" were
-written as they were; none of these is a valid xsd:double. Write the
-canonical form from _float_lexical instead when the lexical form is a
-Python spelling: not in the xsd:double lexical space and without
-digits, so that valid forms such as "+INF", and numerals that overflow
-such as "1e400", are kept. This covers Turtle, N3, TriG and the oth
-
-**File**: `docs/upgrade7to8.md` (modified, +26/-0)
+**File**: `uv.lock` (modified, +6/-6)
 ```diff
-@@ -30,3 +30,29 @@ Results are not cached, so repeated checks repeat the work. Avoid assuming
- these operations are constant-time, especially in loops over large or remote
- datasets. A dataset containing only empty named graphs has length zero and is
- false, even though those graph names remain present.
-+
-+## Infinite and NaN doubles
-+
-+A [`Literal`][rdflib.term.Literal] made from an infinite or NaN float, or
-+parsed as an infinite or NaN `xsd:double` or `xsd:float`, now has the lexical
-+form `INF`, `-INF` or `NaN`, the canonical XML Schema forms. RDFLib 7 used
-+Python's spelling, `inf`, `-inf` and `nan`, which is not a valid `xsd:double`
-+or `xsd:float`. Turtle and N3 output already used the new forms; `str()`,
-+N-Triples, N-Quads, RDF/XML, TriX, HexT, Patch and SPARQL results change.
-+
-+- A literal made with `normalize=False` keeps its lexical form. Only `n3()`,
-+  and so Turtle, N3, TriG and the SPARQL stores, writes a special value spelled
-+  as Python does, such as `infinity`, `INFINITY` or `NAN`, in its XSD form, as
-+  it already did for `inf` and `nan`; a numeral is kept, even when it
-+  overflows. Comparisons that use `n3()`, such as
-+  [`isomorphic`][rdflib.compare.isomorphic], treat such a literal as equal to
-+  the canonical one.
-+- Such a literal no longer equals one made with `normalize=False` from the old
-+  spelling, such as `Literal("inf", datatype=XSD.double, normalize=False)`.
-+  Literals in SPARQL queries aren't normalized, so a query that spells the
-+  value `"inf"^^xsd:double` no longer matches, and `"INF"^^xsd:double` now does.
-+- A persistent store that indexes literals by their lexical form, such as the
-+  BerkeleyDB store, keeps the old spelling for data written by RDFLib 7.
-+  RDFLib 8 reads such data back as `INF` and `NaN`, but can't find or remove
-+  it by value. To migrate such a store, export its data with RDFLib 8 and load
-+  it into a new store.
-```
-
-**File**: `rdflib/term.py` (modified, +41/-9)
-```diff
-@@ -1713,14 +1713,16 @@ def _literal_n3(
-             if datatype in _NUMERIC_INF_NAN_LITERAL_TYPES:
-                 try:
-                     v = float(self)
--                    if math.isinf(v):
--                        # py string reps: float: 'inf', Decimal: 'Infinity"
--                        # both need to become "INF" in xsd datatypes
--                        encoded = encoded.replace("inf", "INF").replace(
--                            "Infinity", "INF"
--                        )
--                    if math.isnan(v):
--                        encoded = encoded.replace("nan", "NaN")
-+                    # A special value spelled as Python does, such as "inf",
-+                    # "Infinity" (also a Decimal's lexical form) or "nan", is
-+                    # written in its XSD form. A numeral that overflows to
-+                    # infinity is kept as it is.
-+                    if (
-+                        (math.isinf(v) or math.isnan(v))
-+                        and not _XSD_DOUBLE_LEXICAL.fullmatch(self)
-+                        and not any(c.isdigit() for c in self)
-+                    ):
-+                        encoded = f'"{_float_lexical(v)}"'
-                 except ValueError:
-                     # if we can't cast to float something is wrong, but we can
-                     # still serialize. Warn user about it
-@@ -1865,6 +1867,36 @@ def _writeXML(  # noqa: N802
-     return s
+@@ -405,20 +405,20 @@ wheels = [
  
+ [[package]]
+ name = "httpcore2"
+-version = "2.16.0"
++version = "2.16.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "h11" },
+     { name = "truststore" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/c0/61/afa9d6b7452f9eca73f73d45324eb0bb52f098fd5e6049bf6b8263be9b4e/httpcore2-2.16.0.tar.gz", hash = "sha256:c72cd0413563b17e1cd8354677dff887466f8ec2551679759e93126534428643", size = 69886, upload-time = "2026-10-21T07:09:45.31Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/92/9d/df40b41f7db0370f82019820709244e7b660c52aa3da3c9e5c4e8141f6e6/httpcore2-2.16.2.tar.gz", hash = "sha256:6c519d0f7b44f7269fa9bbb4d2763db395a4a2370f046d8e8e0a4b38227815d2", size = 70064, upload-time = "2026-11-16T10:12:19.491Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/af/c2/ce417c397afa5181f0e3c6ff01a4d01639414e1adef08730d97571297151/httpcore2-2.16.0-py3-none-any.whl", hash = "sha256:5c4358319f2602d984ad93182c9fee5160f22e9da7babdda870a5e7c4e2dc34f", size = 85070, upload-time = "2026-10-21T07:09:42.802Z" },
++    { url = "https://files.pythonhosted.org/packages/2a/e8/009c347feac27f8960605aa98d55ed263b5870dd4fd80b82fd1d00d5716c/httpcore2-2.16.2-py3-none-any.whl", hash = "sha256:16051ae2a42f776007543f32de9349a317b23d2cbb4e1456b4bac0e88b87419a", size = 85551, upload-time = "2026-11-16T10:12:16.674Z" },
+ ]
  
-+# The lexical space of xsd:double and xsd:float (XML Schema 1.1 Part 2,
-+# sections 3.3.4.2 and 3.3.5.2). _literal_n3 also uses it for xsd:decimal,
-+# whose lexical space has no special values, to keep valid forms as they are.
-+_XSD_DOUBLE_LEXICAL = compile(
-+    r"(\+|-)?([0-9]+(\.[0-9]*)?|\.[0-9]+)([Ee](\+|-)?[0-9]+)?|(\+|-)?INF|NaN"
-+)
-+
-+
-+def _float_lexical(value: float) -> str:
-+    """The lexical form of a float as an `xsd:double` or `xsd:float`.
-+
-+    The special values are written in their canonical forms, `INF`, `-INF` and
-+    `NaN` (XML Schema 1.1 Part 2, appendix E.1, `specialRepCanonicalMap`).
-+    Python's `inf` and `nan` are not in the lexical space of these types
-+    (sections 3.3.4.2 and 3.3.5.2). Other values keep the form that `str()`
-+    gives them.
-+
-+    Args:
-+        value: The float.
-+
-+    Returns:
-+        The lexical form.
-+    """
-+    if math.isnan(value):
-+        return "NaN"
-+    if math.isinf(value):
-+        return "INF" if value > 0 else "-INF"
-+    return str(value)
-+
-+
- def _unhexlify(value: str | bytes | Literal) -> bytes:
-     # In Python 3.2, unhexlify does not support str (only bytes)
-     if isinstance(value, str):
-@@ -2147,7 +2179,7 @@ def _castPythonToLiteral(  # noqa: N802
-     tuple[type[Any], tuple[Callable[[Any], str | bytes] | None, str | None]]
- ] = [
-     (str, (None, None)),
--    (float, (None, _XSD_DOUBLE)),
-+    (float, (_float_lexical, _XSD_DOUBLE)),
-     (bool, (lambda i: str(i).lower(), _XSD_BOOLEAN)),
-     (int, (None, _XSD_INTEGER)),
-     (long_type, (None, _XSD_INTEGER)),
-```
-
-**File**: `test/test_literal/test_special_doubles.py` (added, +168/-0)
-```diff
-@@ -0,0 +1,168 @@
-+"""
-+Infinite and NaN doubles and floats have the lexical forms `INF`, `-INF` and
-+`NaN`.
-+
-+These are the canonical forms of the special values of `xsd:double` and
-+`xsd:float` (XML Schema 1.1 Part 2, appendix E.1). A literal took its lexical
-+form from Python's `str()` instead, `inf` and `nan`, which are not in the
-+lexical space of these types at all. Only Turtle and N3 output corrected that
-+(#658). N-Triples, N-Quads, RDF/XML and SPARQL wrote the Python spelling, and
-+reading a valid `"INF"^^xsd:double` turned it into `"inf"`.
-+"""
-+
-+from __future__ import annotations
-+
-+import math
-+
-+import pytest
-+
-+from rdflib import XSD, Dataset, Graph, Literal, URIRef, Variable
-+
-+S = URIRef("http://example.org/s")
-+P = URIRef("http://example.org/p")
-+
-+
-+@pytest.mark.parametrize(
-+    ("literal", "lexical"),
-+    [
-+        pytest.param(Literal(math.inf), "INF", id="float-inf"),
-+        pytest.param(Literal(-math.inf), "-INF", id="float-minus-inf"),
-+        pytest.param(Literal(math.nan), "NaN", id="float-nan"),
-+        pytest.param(Literal(-math.nan), "NaN", id="float-minus-nan"),
-+        pytest.param(Literal(math.inf, datatype=XSD.float), "INF", id="inf-as-float"),
-+        pytest.param(Literal("INF", datatype=XSD.double), "INF", id="typed-INF"),
-+        pytest.param(Literal("+INF", datatype=XSD.double), "INF", id="typed-plus-INF"),
-+        pytest.param(
-+            Literal("-INF", datatype=XSD.double), "-INF", id="typed-minus-INF"
-+        ),
-+        pytest.param(Literal("NaN", datatype=XSD.double), "NaN", id="typed-NaN"),
-+        pytest.param(Literal("INF", datatype=XSD.float), "INF", id="typed-float-INF"),
-+        pytest.param(
-+            Literal("inf", datatype=XSD.double, normalize=False).normalize(),
-+            "INF",
-+            id="normalized",
-+        ),
-+    ],
-+)
-+def test_a_special_value_has_its_xsd_lexical_form(
-+    literal: Literal, lexical: str
-+) -> None:
-+    assert str(literal) == lexical
-+    assert literal == Literal(lexical, datatype=literal.datatype)
-+
-+
-+@pytest.mark.parametrize(
-+    "format", ["nt", "nquads", "xml", "pretty-xml", "trix", "hext", "patch"]
-+)
-+def test_special_values_are_written_in_their_xsd_lexical_forms(format: str) -> None:
-+    g = Dataset() if format in ("nquads", "patch") else Graph()
-+    for value in (math.inf, -math.inf, math.nan):
-+        g.add((S, P, Literal(value)))
-+
-+    data = g.serialize(format=format)
-+
-+    for lexical in ("INF", "-INF", "NaN"):
-+        assert f'"{lexical}"' in data or f">{lexical}<" in data
-+    for python_form in ("inf", "-inf", "nan"):
-+        assert f'"{python_form}"' not in data and f">{python_form}<" not in data
-+
-+
-+def test_special_values_round_trip_through_n_triples_unchanged() -> None:
-+    data = "".join(
-+        f'<{S}> <{P}> "{lexical}"^^<{datatype}> .\n'
-+        for lexical in ("INF", "-INF", "NaN")
-+        for datatype in (XSD.double, XSD.float)
-+    )
-+
-+    g = Graph().parse(data=data, format="nt")
-+
-+    assert sorted(g.serialize(format="nt").splitlines()) == sorted(data.splitlines())
-+
-+
-+def test_a_sparql_pattern_with_a_special_value_matches_parsed_data() -> None:
-+    g = Graph().parse(
-+        data=f'<{S}> <{P}> "INF"^^<{XSD.double}>, "NaN"^^<{XSD.double}> .',
-+        format="turtle",
-+    )
-+    query = 'SELECT ?s { ?s ?p "INF"^^xsd:double , "NaN"^^xsd:double }'
-+
-+    assert g.query(query, initNs={"xsd": XSD}).bindings == [{Variable("s"): S}]
-+
-+
-+def test_sparql_str_of_a_special_value_is_its_xsd_lexical_form() -> None:
-+    query = (
-+        'SELECT (STR(xsd:double("INF")) AS ?inf) (STR(xsd:double("NaN")) AS ?nan) {}'
-+    )
-+
-+    (binding,) = Graph().query(query, initNs={"xsd": XSD}).bindings
-+
-+    assert {str(name): str(value) for name, value in binding.items()} == {
-+        "inf": "INF",
-+        "nan": "NaN",
-+    }
-+
-+
-+@pytest.mark.parametrize(
-+    ("literal", "lexical"),
-+    [
-+        pytest.param(Literal(1.5), "1.5", id="fraction"),
-+        pytest.param(Literal(1e-07), "1e-07", id="small"),
-+        pytest.param(Literal(-0.0), "-0.0", id="negative-zero"),
-+        pytest.param(Literal(1e300), "1e+300", id="large"),
-+        pytest.param(
-+            Literal("inf", datatype=XSD.double, normalize=False),
-+            "inf",
-+            id="not-normalized",
-+        ),
-+        pytest.param(Literal("inf"), "inf", id="plain-string"),
-+    ],
-+)
-+def test_other_lexical_forms_are_unchanged(literal: Literal, lexical: str) -> None:
-+    """Guard: finite values, unnormalized literals and strings keep their form."""
-+    assert str(literal) == lexical
-+
-+
-+@pytest.mark.parametrize(
-+    ("lexical", "written"),
-+    [
-+        pytest.param("infinity", "INF", id="infinity"),
-+        pytest.param("INFINITY", "INF", id="uppercase-infinity"),
-+        pytest.param("-Infinity", "-INF", id="minus-infinity"),
-+        pytest.param("NAN", "NaN", id="uppercase-nan"),
-+        pytest.param("inf", "INF", id="inf"),
-+        pytest.param("+INF", "+INF", id="plus-INF-kept"
+ [[package]]
+ name = "httpx2"
+-version = "2.16.0"
++version = "2.16.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "anyio", marker = "sys_platform != 'emscripten'" },
+@@ -428,9 +428,9 @@ dependencies = [
+     { name = "truststore", marker = "sys_platform != 'emscripten'" },
+     { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/43/73/5ca2cedf5e4e50423d1c258877865a6b62793633b561c58499f8aeb33b7e/httpx2-2.16.0.tar.gz", hash = "sha256:0d54c98128e8f2ff7fbbde0fca8c359e5f032edeaaaac443cdb7f31f685bcd7f", size = 103116, upload-time = "2026-10-21T07:09:46.348Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/1c/77/6515121dc5ac3c743ad1bff5afe635bcd1a3f23cc40db3c5c89f7d02917d/httpx2-2.16.2.tar.gz", hash = "sha256:748b615678f07d8e3b183efe81ad13b655ca88bfc56ce4589219b2d442860574", size = 103370, upload-time = "2026-11-16T10:12:20.49Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/7b/3d/2e4bc4fd1ef9770871669adb348d612a6e4786b303a23f9935b81c48dd60/httpx2-2.16.0-py3-none-any.whl", hash = "sha256:fd2c5d7909e8d86fe92d53020c310ca0e4e431b838c207c5754b9bbf0308d49a", size = 97880, upload-time = "2026-10-21T07:09:44.01Z" },
++    { url = "https://files.pythonhosted.org/packages/77/de/8c4306a3d6aa2495111986addf33a9e561eff4c47552e4c4b9251160d0ad/httpx2-2.16.2-py3-none-any.whl", hash = "sha256:f05c13aade4c45dbf1c9060647a1058f0acad62398fad96e741269edb33d46f5", size = 97893, upload-time = "2026-11-16T10:12:18.192Z" },
+ ]
+ 
+ [[package]]
 ```
 
 ---
 
-### Incident Patch 3: `2af41ffb` (2026-11-18)
-**Commit Message**: fix: csv2rdf crashed on -i and rejected --ident, --default, --col<N> and --prop<N> (#3712)
+### Incident Patch 3: `23798f42` (2026-11-27)
+**Commit Message**: build(deps-dev): bump pip-tools from 7.6.2 to 7.7.0 (#3749)
 
-Co-authored-by: Nicholas Car <[REDACTED_EMAIL]>
+Bumps [pip-tools](https://github.com/pypa/pip-tools) from 7.6.2 to 7.7.0.
+- [Release notes](https://github.com/pypa/pip-tools/releases)
+- [Changelog](https://github.com/pypa/pip-tools/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/pypa/pip-tools/compare/v7.6.2...v7.7.0)
 
-**File**: `rdflib/tools/csv2rdf.py` (modified, +13/-4)
+---
+updated-dependencies:
+- dependency-name: pip-tools
+  dependency-version: 7.7.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `uv.lock` (modified, +6/-6)
 ```diff
-@@ -132,7 +132,7 @@ def csv_reader(csv_data, dialect=csv.excel, **kwargs):
+@@ -1086,16 +1086,16 @@ wheels = [
  
- def prefixuri(x, prefix, class_: URIRef | None = None):
-     if prefix:
--        r = rdflib.URIRef(prefix + quote(x.encode("utf8").replace(" ", "_"), safe=""))
-+        r = rdflib.URIRef(prefix + quote(x.replace(" ", "_"), safe=""))
-     else:
-         r = rdflib.URIRef(x)
-     uris[x] = (r, class_)
-@@ -377,8 +377,8 @@ def convert(self, csvreader):
-                     uri = self.BASE[
-                         "_".join(
-                             [
--                                # type error: "int" has no attribute "encode"
--                                quote(x.encode("utf8").replace(" ", "_"), safe="")  # type: ignore[attr-defined]
-+                                # type error: "int" has no attribute "replace"
-+                                quote(x.replace(" ", "_"), safe="")  # type: ignore[attr-defined]
-                                 # type error: Argument 2 to "index" has incompatible type "Union[tuple[str, ...], str]"; expected "tuple[int, ...]"
-                                 for x in index(l_, self.IDENT)  # type: ignore[arg-type]
-                             ]
-@@ -457,6 +457,13 @@ def main():
-     csv2rdf = CSV2RDF()
+ [[package]]
+ name = "pip"
+-version = "26.2.1"
++version = "26.3"
+ source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/ae/15/4500e320e6b101ec3b719ae85b697d9940b6cda672bc555bd6016fc60c6f/pip-26.2.1.tar.gz", hash = "sha256:f6ad667e89a1fe78046c8f13232b247200f5258d7828f3f7883d660878e0813f", size = 1848877, upload-time = "2026-08-04T22:51:14.148Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/53/c7/f8d9e2e0e7c1ed8a22a10eeb3b5bf7860bc07d8446c7a978a882c5c8214b/pip-26.3.tar.gz", hash = "sha256:6c36ae7da8695be67e3cd9f7d87919667ced53f57ce2ede75d89b5912ed2bc4c", size = 1934348, upload-time = "2026-11-02T20:34:27.738Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/f3/6e/1736e5b4ae2b778ef2f81c47d797de9f891d4d8acb047a24ca37a60294dd/pip-26.2.1-py3-none-any.whl", hash = "sha256:71138adf1f4ca900cdb7d289c21b7494329f2332b6d85f0e1c42108c0384ed3e", size = 1816632, upload-time = "2026-08-04T22:51:12.472Z" },
++    { url = "https://files.pythonhosted.org/packages/07/25/ee8c38ae72d66b844ce8eb9711ba905dba21ca1a8a0c960057c41cd23337/pip-26.3-py3-none-any.whl", hash = "sha256:f3b60b20ffaadd4415ed7957212a38ac63fa4c5fa375bd0f4a797777940fad13", size = 1950951, upload-time = "2026-11-02T20:34:25.728Z" },
+ ]
  
-     opts: Union[dict[str, str], list[tuple[str, str]]]
-+    # --col<N> and --prop<N> take a different name per column, so declare the
-+    # ones that were actually given
-+    column_opts = [
-+        m.group(1) + "="
-+        for m in (re.match(r"--((?:col|prop)\d+)", str(a)) for a in sys.argv[1:])
-+        if m
-+    ]
-     opts, files = getopt.getopt(
-         sys.argv[1:],
-         "hc:b:p:i:o:Cf:l:s:d:D:",
-@@ -466,11 +473,13 @@ def main():
-             "delim=",
-             "propbase=",
-             "class=",
--            "default=ident=",
-+            "default=",
-+            "ident=",
-             "label=",
-             "skip=",
-             "defineclass",
-             "help",
-+            *column_opts,
-         ],
-     )
-     opts = dict(opts)
-```
-
-**File**: `test/test_tools/test_csv2rdf.py` (modified, +31/-0)
-```diff
-@@ -107,3 +107,34 @@ def test_csv2rdf_config_file_opened(self, config_mock):
-                 csv2rdf.main()
-                 # Check that we've "opened" the right file
-                 open_mock.assert_called_once_with(config_file)
-+
-+
-+class TestCSV2RDFOptions:
-+    def _run(self, *args: str) -> subprocess.CompletedProcess:
-+        return subprocess.run(
-+            [sys.executable, "-m", "rdflib.tools.csv2rdf", *args],
-+            capture_output=True,
-+            text=True,
-+        )
-+
-+    def test_ident_short_option(self):
-+        """-i builds instance URIs from the given columns."""
-+        completed = self._run("-i", "(0,)", str(REALESTATE_FILE_PATH))
-+        assert completed.returncode == 0, completed.stderr
-+        assert "<http://example.org/instances/3526_HIGH_ST>" in completed.stdout
-+
-+    def test_long_options(self):
-+        """--ident, --default, --col<N> and --prop<N> are accepted."""
-+        completed = self._run(
-+            "--ident=(0,)",
-+            "--default=ignore",
-+            "--col2=int()",
-+            "--prop2=http://example.org/props/postcode",
-+            str(REALESTATE_FILE_PATH),
-+        )
-+        assert completed.returncode == 0, completed.stderr
-+        assert "<http://example.org/instances/3526_HIGH_ST>" in completed.stdout
-+        assert (
-+            '<http://example.org/props/postcode> "95838"^^'
-+            "<http://www.w3.org/2001/XMLSchema#integer>"
-+        ) in completed.stdout
+ [[package]]
+ name = "pip-tools"
+-version = "7.6.2"
++version = "7.7.0"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "build" },
+@@ -1105,9 +1105,9 @@ dependencies = [
+     { name = "setuptools" },
+     { name = "wheel" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/e4/42/59882c1f9fc3ec7529a467dd56cc8d38071ed0b7885119a872c29d57a253/pip_tools-7.6.2.tar.gz", hash = "sha256:04dbe0e25f3b60fbdeee17d0590dac7fe20039876aa410a946fc54dc926c09ba", size = 194365, upload-time = "2026-10-07T04:41:09.104Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/8f/8f/53ebc1c4a2f9bc9c8a8dbc8d6c4ae3b5a07f7ac2bee78ee237c2c4e05de3/pip_tools-7.7.0.tar.gz", hash = "sha256:210a8939ee5ad30734731a804a57dae35ba1fe0541175a289798e95948c624b9", size = 195871, upload-time = "2026-11-16T04:49:49.831Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/4b/68/f3bd09c53ed3159bb1349e1d5859ad1ea7755b8e4cd50174290e9e8cbb47/pip_tools-7.6.2-py3-none-any.whl", hash = "sha256:f37eb4b736859c2c30230e50977312c61918b7ef931071ff7811fd067715c25f", size = 76310, upload-time = "2026-10-07T04:41:07.05Z" },
++    { url = "https://files.pythonhosted.org/packages/a0/ba/90bd38b91614d3d4fa59582dd3da1fc3d3c735a781df1ba0a700bb6b2603/pip_tools-7.7.0-py3-none-any.whl", hash = "sha256:4cee2e99ae34b37f81ae4b0947911ad462e41f07fc164e084b8f83af3f1efdad", size = 75279, upload-time = "2026-11-16T04:49:48.298Z" },
+ ]
+ 
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3719** (2026-11-18): build(deps-dev): bump zensical from 0.1.0 to 0.1.1 (@dependabot[bot])
-- **PR #3718** (2026-11-18): build(deps-dev): bump ruff from 0.17.4 to 0.17.5 (@dependabot[bot])
-- **PR #3717** (2026-11-18): build(deps): bump berkeleydb from 18.1.17 to 18.1.18 (@dependabot[bot])
-- **PR #3716** (2026-11-17): Support Python 3.15 (@nicholascar)
-- **PR #3715** (2026-11-17): fix: keep the label of a TriG blank-node graph name used once as an object (@kushaldave002)
-- **PR #3714** (2026-11-18): fix: handle NotImplemented in Literal comparisons for Python 3.14 (@yarrrly)
+- **PR #3751** (2026-11-27): build(deps-dev): bump httpx2 from 2.16.0 to 2.16.2 (@dependabot[bot])
+- **PR #3750** (2026-11-27): build(deps): bump berkeleydb from 18.1.18 to 18.1.19 (@dependabot[bot])
+- **PR #3749** (2026-11-27): build(deps-dev): bump pip-tools from 7.6.2 to 7.7.0 (@dependabot[bot])
+- **PR #3748** (2026-11-27): build(deps-dev): bump ruff from 0.17.5 to 0.17.6 (@dependabot[bot])
+- **PR #3747** (2026-11-27): build(deps-dev): bump zensical from 0.1.1 to 0.1.3 (@dependabot[bot])
+- **PR #3742** (2026-11-22): fix: avoid binding genid when creating a dataset graph (@mvanhorn)
 
 ---
 
@@ -2395,48 +1977,31 @@ Co-authored-by: Nicholas Car <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. promote numeric types in SPARQL multiplication and division
+## X. build(deps-dev): bump ruff from 0.17.5 to 0.17.6
 
 **RULE**:
-When implementing operations in `docs/upgrade7to8.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/rdflib. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/rdflib. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e775564d`: promote numeric types in SPARQL multiplication and division. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `372709db`: build(deps-dev): bump ruff from 0.17.5 to 0.17.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/upgrade7to8.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-## SPARQL multiplication and division
-
-SPARQL `*` and `/` now give the result the promoted type of their operands, as
-XPath's `op:numeric-multiply` and `op:numeric-divide` define it and as `+` and
-`-` already did:
-
-- An integer times an integer is an `xsd:integer`, and exact for large values.
-  It was an `xsd:decimal`, rounded to 28 digits.
-- A product or quotient with an `xsd:float` or `xsd:double` operand is a float
-  or double, also when that operand comes first, so `toPython()` gives a
-  Python `float` where it gave a `Decimal`.
-- A float or double divided by zero is `INF`, `-INF` or `NaN` instead of an
-  error. Integer and decimal division by zero are still errors.
-- An ill-typed operand, such as `"abc"^^xsd:integer`, is an error.
-
-`DATATYPE()`, `sameTerm()`, `DISTINCT` and joins on such computed values change
-accordingly.
-
+lint = ["ruff==0.17.6"]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+lint = ["ruff==0.17.5"]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e775564d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `372709db` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

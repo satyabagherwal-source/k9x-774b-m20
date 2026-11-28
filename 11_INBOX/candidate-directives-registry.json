@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T05:16:13.111Z",
+  "last_updated": "2026-11-28T05:25:07.156Z",
   "directives": [
     {
       "id": "CD-001",
@@ -74770,6 +74770,68 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9EE1E9-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
       "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-UQHZ",
+      "directive_title": "Fixing xan split -c",
+      "source_repo": "medialab-xan-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UQHZ-fixing-xan-split-c.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-UTRE",
+      "directive_title": "build(deps-dev): bump ruff from 0.17.5 to 0.17.6",
+      "source_repo": "rdflib-rdflib-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UTRE-build-deps-dev-bump-ruff-from-0-17-5-to-0-17-6.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-UNR4",
+      "directive_title": "pyproject.toml carries the released version, and publish checks the tag m",
+      "source_repo": "VectifyAI/PageIndex",
+      "source_commit": "aef597ae",
+      "staged_file": "11_INBOX/candidate-directives/CD-UNR4-pyproject-toml-carries-the-released-version-and-publish-checks-the-tag-m.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-4B4402",
+      "directive_title": "Fixing xan split -c",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "medialab-xan",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4B4402-fixing-xan-split-c.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-797F67",
+      "directive_title": "build(deps-dev): bump ruff from 0.17.5 to 0.17.6",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rdflib-rdflib",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-797F67-build-deps-dev-bump-ruff-from-0-17-5-to-.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-UUHE",
+      "directive_title": "build: pyproject.toml carries the released version, and publish checks the tag m",
+      "source_repo": "vectifyai-pageindex-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UUHE-build-pyproject-toml-carries-the-released-version-and-publish-checks-the-tag-m.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
     }
   ]
 }

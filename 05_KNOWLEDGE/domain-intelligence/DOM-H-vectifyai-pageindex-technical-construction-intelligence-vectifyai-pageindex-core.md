@@ -4,24 +4,24 @@
 {
   "source_repository": "VectifyAI/PageIndex",
   "source_url": "https://github.com/VectifyAI/PageIndex",
-  "source_version": "d6b4a0a3",
+  "source_version": "aef597ae",
   "license": "MIT",
-  "timestamp": "2026-11-24T19:44:57.247Z",
+  "timestamp": "2026-11-28T05:24:58.432Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vectifyai-pageindex",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `d6b4a0a3`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T19:44:57.247Z`  
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `aef597ae`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T05:24:58.432Z`  
 > **Learning ID**: `learn-github-vectifyai-pageindex`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from VectifyAI/PageIndex:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T19:44:55.748Z  
+> **Harvest Timestamp**: 2026-11-28T05:24:57.038Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40771 stars
+- **Stars / Engagement**: 40822 stars
 
 ---
 
@@ -1397,13 +1397,15 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #697** (2026-11-24): **feat: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning**
-  *Symptoms*: ## Summary  `PageSearchClient` and `PageExtractClient` expose their `PageIndexClient` as `client.documents`. Docs now read `client.documents.page_image(doc_id, 5)` and `client.documents.create_collection(...)` instead of `client.pageindex...`, whose name said nothing about what it is for. `documents` is also what the old `pageindex-search` / `pageindex-extract` SDKs called this namespace.  `client.pageindex` keeps working: it returns the same object and raises a `DeprecationWarning` saying it will be removed in a future release.  ## Test plan  - [x] `pytest tests/test_client.py -k "own_older_key or cloud_only"`: key resolution reads `.documents`, and `.pageindex` warns and returns the same object as `.documents`, for both clients (8 passed)
-
-- **Issue #696** (2026-11-21): **docs(cookbook): the citations notebook asks with cite_with_boxes and resolves with resolve_citations(), as the docs do**
-  *Symptoms*: The citations notebook still taught block citations, which the docs no longer describe. It now runs the [citations cookbook](https://pageindex.ai/docs/cookbook/citations) step by step, so the Colab link on that page opens the same code.  ## Changes  - **Ask.** `chat(..., citations="cite_with_boxes")` in one call, in place of `citations=True` with a streamed Responses call. - **Resolve.** `resolve_citations()` in place of `get_citations()`, as the [Chat page](https://pageindex.ai/docs/sdk/chat#citations) teaches. - **Highlight.** `highlight_region(..., scale=1)` draws the citation's `box`, in fractions of the page, in place of a block's `bbox`. - **Model.** `gpt-6.2-sol`, as on the page. - **Cost section removed.** The page has none, and its prices were for gpt-5.6.  The website page changes with it: VectifyAI/homepage#186.  ## Verification  - Ran the whole notebook with pageindex 0.7.4 from PyPI in a clean Python 3.12 environment and a real OpenAI key. The answer cites page 51 with a box, `resolve_citations()` returns its `doc_id`, page and box, and the highlight frames the Revenue row of the income statement. - The pip cell was skipped, since that environment already had the packages, so it has no output. - The five code cells match the five code blocks on the website page character for character. 
+- **Issue #706** (2026-11-27): **build: pyproject.toml carries the released version, and publish checks the tag matches it instead of writing it in**
+  *Symptoms*: Installs from source now report the real version instead of 0.2.10. pyproject.toml held a stale placeholder, 0.2.10, that publish.yml overwrote from the tag at build time, so PyPI artifacts were right but every `pip install git+...` or `pip install .` reported 0.2.10, including in the `clientInfo` the SDK sends to the cloud MCP server.  The version now lives in the repo and is bumped per release, as openai, openai-agents, anthropic, litellm and our JS, MCP, search and extract packages do. **Release flow change:** set `version` in pyproject.toml on the commit you tag; publish fails at its first step, before the tests run, if the tag and pyproject.toml disagree.  ## Changes  - `pyproject.toml`: `version` is 0.7.5, the latest release. - `publish.yml`: the `sed` that wrote the tag into pyproject.toml is replaced by a check that the tag matches it. The check is the first step of each test leg, so a missed bump fails in seconds instead of after the live-key test matrix. The header's release steps say to set the version first.  ## Verification  - Ran the new check step locally: `v0.7.5` passes; `v0.7.6`, `v0.7.5.dev1` and `vjunk` stop with the mismatch error. - `pip wheel .` builds `pageindex-0.7.5-py3-none-any.whl`. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"5051436b0d933e2b0f4f006d1edd65263ca8ae24","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"5051436b0d933e2b0f4f006d1edd65263ca8ae24","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"5051436b0d933e2b0f4f006d1edd65263ca8ae24","mergeGateEnabled":false,"pullRequestNumber":696,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-21T09:07:54.958463Z">2026-11-21T09:07:54.958463Z</relative-time> | `5051436` | PR opened | | 🔒
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"ce7cc2703884722fdee3edc7e09659d979c7769b","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"ce7cc2703884722fdee3edc7e09659d979c7769b","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"ce7cc2703884722fdee3edc7e09659d979c7769b","mergeGateEnabled":false,"pullRequestNumber":706,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-27T20:30:49.239626Z">2026-11-27T20:30:49.239626Z</relative-time> | `ce7cc27` | New commits | | 
+
+- **Issue #705** (2026-11-27): **revert(client): outline(doc_id, structure) leaves main until its open questions are settled (#702)**
+  *Symptoms*: `outline(doc_id, structure)` (#702) is on main but in no release, and three questions about its interface are still open: uploads can't ask for a hierarchical outline, `build_outline_index()` and `outline()` overlap, and `structure` also names the document's tree. A release ships main whole, so the next one (Page Classify, #704) would ship `outline()` as it is, and settling those questions afterwards would break its callers. This reverts #702 so main stays releasable. Status and open items: https://github.com/VectifyAI/PageIndex/pull/702#issuecomment-7227074364  ## Changes  - Reverts 9684e87: removes `PageIndexClient.outline()`, `CloudAPI.get_outline()`, the `structure` argument of `CloudAPI.build_outline_index()`, and the outline test. The code is again as it was after #698.  ## Bringing it back  A new PR reverts this revert, which restores #702's code as it was, and makes the changes on top once the questions are settled.  ## Verification  - The tree equals main at 3aef432 (#698), the commit before #702. - `pytest tests` locally: 1275 passed, 7 skipped. The 2 failures are the LiteLLM version tests, which fail with the local LiteLLM 1.105.3, below the floor. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"3dee5fa3ec5b979f733e4e04ca6751b34d7d5b0c","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"3dee5fa3ec5b979f733e4e04ca6751b34d7d5b0c","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"3dee5fa3ec5b979f733e4e04ca6751b34d7d5b0c","mergeGateEnabled":false,"pullRequestNumber":705,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-27T20:07:45.560204Z">2026-11-27T20:07:45.560204Z</relative-time> | `3dee5fa` | PR opened | | 🔒
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1420,284 +1422,432 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d6b4a0a3` (2026-11-24)
-**Commit Message**: feat: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning (#697)
+### Incident Patch 1: `aef597ae` (2026-11-27)
+**Commit Message**: build: pyproject.toml carries the released version, and publish checks the tag matches it instead of writing it in (#706)
 
-* feat: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning
+* build: pyproject.toml carries the released version, and publish checks the tag matches it instead of writing it in
 
-* fix: the deprecated .pageindex can still be assigned and deleted, so mock.patch.object and monkeypatch on it keep working
+pyproject.toml held a stale placeholder, 0.2.10, that publish.yml overwrote
+from the tag at build time. PyPI artifacts were right, but every install from
+source (pip install git+..., or pip install . from a clone) reported 0.2.10,
+including in the clientInfo the SDK sends when it connects to the cloud MCP
+server.
 
-As a getter-only property, .pageindex raised AttributeError ("no setter" / "no deleter") on assignment, del, mock.patch.object and monkeypatch.setattr, all of which worked while it was a plain attribute. One shared _pageindex_alias() now builds the property for both clients: reading, assigning and deleting each warn and go through .documents. The test patches .pageindex with mock.patch.object and checks the warning points at the caller's line.
+Keeping the version in the repo and bumping it per release is what openai,
+openai-agents, anthropic, litellm and our own JS, MCP, search and extract
+packages do. A release now sets `version` on the commit it tags; publish.yml
+stops with an error when the tag and pyproject.toml disagree, so a missed
+bump fails before anything uploads.
 
-**File**: `pageindex/client.py` (modified, +22/-0)
+pyproject.toml starts at 0.7.5, the latest release.
+
+* build(publish): the tag check runs first in each test leg, so a missed version bump fails in seconds
+
+It ran in the publish job, after the four live-key test legs (up to 15 minutes each), so a tag pushed without bumping pyproject.toml failed only afte
+
+**File**: `.github/workflows/publish.yml` (modified, +11/-12)
 ```diff
-@@ -3423,3 +3423,25 @@ def _cloud_client(api_key: Optional[str], client: Optional[PageIndexClient],
-         f"{name} is cloud-only — the client given is in local mode. Pass one "
-         "created with an api_key.")
-     return client
-+
-+
-+def _pageindex_alias(name: str) -> property:
-+    """``.pageindex``, the deprecated name of a cloud-only client's ``.documents``."""
-+    def warn() -> None:
-+        warnings.warn(f"{name}.pageindex is now .documents; .pageindex will be "
-+                      "removed in a future release.", DeprecationWarning,
-+                      stacklevel=3)
-+
-+    def get(self) -> PageIndexClient:
-+        warn()
-+        return self.documents
-+
-+    def set_(self, client: PageIndexClient) -> None:
-+        warn()
-+        self.documents = client
-+
-+    def delete(self) -> None:
-+        warn()
-+        del self.documents
-+
-+    return property(get, set_, delete)
+@@ -1,12 +1,13 @@
+ name: Publish to PyPI
+ 
+-# Release flow (the git tag IS the version — nothing to bump in the repo):
+-#   1. git tag -a v0.2.9 -m "Release 0.2.9"
+-#   2. git push origin v0.2.9
+-#   3. This workflow derives the version from the tag, injects it into
+-#      pyproject.toml, builds, publishes to PyPI via OIDC trusted publishing
+-#      (no stored secret), and creates a GitHub Release with generated notes
+-#      (dev tags publish to PyPI only — no GitHub Release).
++# Release flow:
++#   1. Set `version` in pyproject.toml to the new version on the commit you tag.
++#   2. git tag -a v0.2.9 -m "Release 0.2.9"
++#   3. git push origin v0.2.9
++#   4. This workflow checks the tag matches pyproject.toml, builds, publishes
++#      to PyPI via OIDC trusted publishing (no stored secret), and creates a
++#      GitHub Release with generated notes (dev tags publish to PyPI only — no
++#      GitHub Release).
+ #
+ # The tag must be a PEP 440 version with a leading `v`:
+ #   v0.2.9   v0.2.9rc1   v0.2.9.dev1
+@@ -43,6 +44,8 @@ jobs:
+     timeout-minutes: 15
+     steps:
+       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
++      - name: Check the tag matches pyproject.toml
++        run: grep -qxF "version = \"${GITHUB_REF_NAME#v}\"" pyproject.toml || { echo "::error::Tag $GITHUB_REF_NAME does not match the version in pyproject.toml"; exit 1; }
+       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+         with:
+           python-version: ${{ matrix.python-version }}
+@@ -71,7 +74,7 @@ jobs:
+         with:
+           python-version: "3.12"
+ 
+-      - name: Set version from tag and build
++      - name: Check version and build
+         run: |
+           set -euo pipefail
+           python -m pip install --upgrade build packaging
+@@ -80,10 +83,6 @@ jobs:
+           # Fail early on a malformed tag instead of publishing a junk version.
+           export VERSION
+           python -c "import os; from packaging.version import Version; Version(os.environ['VERSION'])"
+-          # The git tag is the single source of truth; overwrite the static
+-          # placeholder in [tool.poetry] so the built artifacts carry $VERSION.
+-          sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
+-          grep '^version = ' pyproject.toml
+           python -m build
+ 
+       - name: Publish to PyPI
 ```
 
-**File**: `pageindex/page_extract.py` (modified, +17/-15)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@
- import time
- from typing import Any, Optional, Union
- 
--from .client import PageIndexClient, _cloud_client
-+from .client import PageIndexClient, _cloud_client, _pageindex_alias
- from .errors import PageIndexAPIError
- 
- COLLECTION = "Page Extract"
-@@ -20,7 +20,7 @@ class PageExtractClient:
-     A PDF given by its path is uploaded to the "Page Extract" collection,
-     with no outline index built. The documents are the ones
-     ``PageIndexClient`` and ``PageSearchClient`` see with the same key;
--    ``client.pageindex`` is that ``PageIndexClient``, for listing and
-+    ``client.documents`` is that ``PageIndexClient``, for listing and
-     deleting them.
- 
-     Args:
-@@ -33,10 +33,12 @@ class PageExtractClient:
- 
-     def __init__(self, api_key: Optional[str] = None, *,
-                  client: Optional[PageIndexClient] = None):
--        self.pageindex = _cloud_client(api_key, client, "PageExtractClient",
-+        self.documents = _cloud_client(api_key, client, "PageExtractClient",
-                                        "PAGEINDEX_EXTRACT_API_KEY")
-         self._collections: dict[str, str] = {}
- 
-+    pageindex = _pageindex_alias("PageExtractClient")
-+
-     def extract(
-         self,
-         document: Union[str, os.PathLike],
-@@ -102,7 +104,7 @@ def extract(
-             as ``{"/rows/0": {"page": 3}}``) and 'usage' ({'pages',
-             'credits'}); failed, 'error_message'.
-         """
--        api = self.pageindex._api
-+        api = self.documents._api
-         if isinstance(schema, dict):
-             data_schema = schema
-         elif hasattr(schema, "model_json_schema"):
-@@ -130,15 +132,15 @@ def extract(
-                 # No job started: the file is stored already and not ready, or
-                 # the server is older than extraction on upload.
-                 try:
--                    self.pageindex._wait_until_ready(
-+                    self.documents._wait_until_ready(
-                         stored["doc_id"], deadline - time.monotonic())
-                     break
-                 except PageIndexAPIError as exc:
-                     # The job it was stored with did not complete, and failed
-                     # it, or it was deleted: the file is uploaded again.
-                     if last or not (
-                             exc.status_code == 404
--                            or self.pageindex.get_document(
-+                            or self.documents.get_document(
-                                 stored["doc_id"]).get("status") == "failed"):
-                         raise
-             document = stored["doc_id"]
-@@ -149,14 +151,14 @@ def extract(
-         except PageIndexAPIError as exc:
-             if not wait or exc.status_code != 409:
-                 raise
--            self.pageindex._wait_until_ready(document, deadline - time.monotonic())
-+            self.documents._wait_until_ready(document, deadline - time.monotonic())
-             job = api.create_extract(configuration, doc_id=document)
-         return self._done(job, deadline, timeout) if wait else job
- 
-     def _store(self, file_path: str, collection: Optional[str],
-                configuration: dict) -> dict:
-         def upload():
--            return self.pageindex._upload(
-+            return self.documents._upload(
-                 file_path, False, collection_id=self._collection(collection),
-                 index=False, extract=configuration)
- 
-@@ -171,7 +173,7 @@ def upload():
-     def _collection(self, collection: Optional[str]) -> Optional[str]:
-         if collection is None or collection in self._collections:
-             return self._collections.get(collection)
--        api = self.pageindex._api
-+        api = self.documents._api
- 
-         name = collection.strip().casefold()
- 
-@@ -198,7 +200,7 @@ def stored():
- 
-     def _done(self, job: dict, deadline: float, timeout: float) -> dict:
-         import requests
--        api = self.pageindex._api
-+        api = self.documents._api
-         while job["status"] in ("pending", "running"):
-             if time.monotonic() > deadline:
-                 raise PageIndexAPIError(
-@@ -230,15 +232,15 @@ def wait_extract(self, job_id: str, timeout: float = 3600.0) -> dict[str, Any]:
-         running).
-         """
-         return self._done(
--            self.pageindex._api.get_extract(job_id),
-+            self.documents._api.get_extract(job_id),
-             time.monotonic() + timeout, timeout)
- 
-     def get_extract(self, job_id: str) -> dict[str, Any]:
-         """
-         Get an extract job, with its result once it is completed: the dict
-         ``extract()`` returns.
-         """
--        return self.pageindex._api.get_extract(job_id=job_id)
-+        return self.documents._api.get_extract(job_id=job_id)
- 
-     def list_extracts(self, limit: int = 20,
-                       after: Optional[str] = None) -> dict[str, Any]:
-@@ -254,7 +256,7 @@ def list_extracts(self, limit: int = 20,
-             dict: {'jobs': [...], 'next'}; 'next' is the id t
+@@ -1,6 +1,6 @@
+ [tool.poetry]
+ name = "pageindex"
+-version = "0.2.10"
++version = "0.7.5"
+ description = "Python SDK for PageIndex — reasoning-based, vectorless document retrieval, cloud and local"
+ readme = "README.md"
+ license = "MIT"
 ```
 
-**File**: `pageindex/page_search.py` (modified, +8/-6)
+---
+
+### Incident Patch 2: `9684e873` (2026-11-27)
+**Commit Message**: feat(client): outline(doc_id, structure) returns a cloud document's flat or hierarchical outline, building it when missing (#702)
+
+* feat(client): build_outline_index(outline_mode=...) gives a cloud document a sequential or parallel outline, rebuilding one of the other mode
+
+* feat(client): outline(doc_id, structure) returns a cloud document's flat or hierarchical outline as title, level and page, building it first when the document lacks it; build_outline_index takes no outline_mode
+
+* fix(client): outline() that waits for the build answers with the build's usage, not the free ask that fetched the outline
+
+* feat(client): outline() reads the built outline with GET /doc/{doc_id}?type=outline, so waiting for a build never asks the API to build again
+
+* feat(client): outline() raises when the built outline's structure is not the one asked for, as after a failed build that kept the previous outline
+
+**File**: `pageindex/client.py` (modified, +53/-0)
 ```diff
-@@ -2,7 +2,7 @@
- import time
- from typing import Any, Optional, Union
+@@ -1202,6 +1202,59 @@ def build_outline_index(self, doc_id: str, wait: bool = True,
+                 f"index_status: {built['index_status']}).")
+         return built
  
--from .client import PageIndexClient, _cloud_client
-+from .client import PageIndexClient, _cloud_client, _pageindex_alias
- from .errors import PageIndexAPIError
- 
- 
-@@ -16,7 +16,7 @@ class PageSearchClient:
- 
-     ``upload()`` stores a document's pages and builds no outline index. The
-     documents are the ones ``PageIndexClient`` and ``PageExtractClient`` see
--    with the same key; ``client.pageindex`` is that ``PageIndexClient``, for
-+    with the same key; ``client.documents`` is that ``PageIndexClient``, for
-     listing and deleting them, collections and metadata.
- 
-     Args:
-@@ -29,9 +29,11 @@ class PageSearchClient:
- 
-     def __init__(self, api_key: Optional[str] = None, *,
-                  client: Optional[PageIndexClient] = None):
--        self.pageindex = _cloud_client(api_key, client, "PageSearchClient",
-+        self.documents = _cloud_client(api_key, client, "PageSearchClient",
-                                        "PAGEINDEX_SEARCH_API_KEY")
- 
-+    pageindex = _pageindex_alias("PageSearchClient")
++    def outline(self, doc_id: str, structure: Literal["flat", "hierarchical"],
++                wait: bool = True, timeout: float = 1800.0) -> dict[str, Any]:
++        """
++        Get a cloud document's outline, building it if the document lacks it.
++        "flat" lists the headings at one level, at $1 per 1,000 pages;
++        "hierarchical" nests them, each with its level, at $2 per 1,000 pages,
++        or $1 for a document with a flat outline. An outline the document has
++        is free, and a hierarchical one serves as the flat one.
++        Cloud-only: local mode raises PageIndexAPIError.
 +
-     def upload(
-         self,
-         file_path: str,
-@@ -61,7 +63,7 @@ def upload(
++        Args:
++            doc_id (str): Document ID. One still processing raises
++                PageIndexAPIError (HTTP 409).
++            structure (str): "flat" or "hierarchical".
++            wait (bool): Return once the outline is built (default), up to
++                ``timeout`` seconds; raises PageIndexAPIError if it could not
++                be built or is not done in time (it goes on in the cloud).
++                False returns at once.
++
++        Returns:
++            dict: {'doc_id', 'index_status', 'usage', 'pages', 'outline'}:
++            'outline' lists the headings in reading order, each {'title',
++            'level', 'page'}, without 'level' when flat. 'pages' and 'outline'
++            are there once 'index_status' is "completed". 'usage' is what the
++            outline costs, for a caller who pays in credits.
++        """
++        api = self._require_cloud(
++            "outline is cloud-only — a local document is indexed when it is "
++            "submitted.")
++        answer = api.build_outline_index(doc_id, structure)
++        deadline = time.monotonic() + timeout
++        while wait and answer["index_status"] in ("queued", "processing"):
++            if time.monotonic() >= deadline:
++                raise PageIndexAPIError(
++                    f"Timed out after {int(timeout)}s waiting for the outline "
++                    f"(doc_id: {doc_id}, index_status: "
++                    f"{answer['index_status']}). It goes on being built in the "
++                    "cloud — call outline() again.")
++            time.sleep(2)
++            answer["index_status"] = api.get_outline(doc_id)["index_status"]
++        if wait and answer["index_status"] != "completed":
++            raise PageIndexAPIError(
++                f"The outline could not be built (doc_id: {doc_id}, "
++                f"index_status: {answer['index_status']}).")
++        if answer["index_status"] == "completed":
++            read = api.get_outline(doc_id)
++            if read["structure"] not in (structure, "hierarchical"):
++                raise PageIndexAPIError(
++                    f"The {structure} outline could not be built (doc_id: "
++                    f"{doc_id}); the document keeps the outline it had.")
++            answer |= read["result"]
++        return answer
++
+     def is_retrieval_ready(self, doc_id: str) -> bool:
+         """
+         Check if a document is ready for retrieval. API errors (including a
+```
+
+**File**: `pageindex/cloud_api.py` (modified, +25/-2)
+```diff
+@@ -287,16 +287,39 @@ def get_tree(self, doc_id: str, node_summary: bool = False,
+                 status_code=response.status_code)
+         return response.json()
+ 
+-    def build_outline_index(self, doc_id: str) -> Dict[str, Any]:
++    def get_outline(self, doc_id: str) -> Dict[str, Any]:
+         """
+-        Build the tree of a document stored without one.
++        Get a document's outline.
++
++        Returns:
++            dict: API response with 'index_status', 'structure' ("flat",
++            "hierarchical" or None) and, as 'result', {'pages', 'outline'}.
++        """
++        response = self._http.get(
++            f"{self.BASE_URL}/doc/{_enc(doc_id)}/?type=outline",
++            headers=self._headers(),
++            timeout=30
++        )
++        if response.status_code != 200:
++            raise PageIndexAPIError(
++                f"Failed to get outline: {response.text}",
++                status_code=response.status_code)
++        return response.json()
++
++    def build_outline_index(self, doc_id: str,
++                            structure: Optional[str] = None) -> Dict[str, Any]:
++        """
++        Build the tree of a document stored without one, or, with
++        ``structure`` ("flat" or "hierarchical"), build that outline unless
++        the document has it.
+ 
          Returns:
-             dict: {'doc_id': ..., 'name': ...}.
+             dict: {'doc_id', 'index_status'}.
          """
--        return self.pageindex._upload(
-+        return self.documents._upload(
-             file_path, wait, timeout, metadata=metadata,
-             collection_id=collection, index=False)
- 
-@@ -141,7 +143,7 @@ def search(
-             'billable_documents', 'pages', 'billable_pages', 'questions',
-             'credits', 'balance'}: what the search cost and what is left.
-         """
--        api = self.pageindex._api
-+        api = self.documents._api
-         questions = [questions] if isinstance(questions, str) else list(questions)
-         across = recursive or any(value is not None for value in (
-             documents, collection, folder, filter, max_documents, document_top_k))
-@@ -287,7 +289,7 @@ def search_documents(
-             not judged. 'usage' is {'documents', 'questions',
-             'billable_documents', 'credits', 'balance'}.
-         """
--        return self.pageindex._api.search_documents(
-+        return self.documents._api.search_documents(
-             [questions] if isinstance(questions, str) else list(questions),
-             document_ids=document_ids, collection_id=collection,
-             folder_id=folder, recursive=recursive, metadata_filter=filter,
+         response = self._http.post(
+             f"{self.BASE_URL}/doc/{_enc(doc_id)}/index",
+             headers=self._headers(),
++            json={"structure": structure} if structure else None,
+             timeout=30
+         )
+         if response.status_code != 200:
 ```
 
-**File**: `tests/test_client.py` (modified, +17/-8)
+**File**: `tests/test_client.py` (modified, +32/-0)
 ```diff
-@@ -11,6 +11,7 @@
- import sys
- import types
- from pathlib import Path
-+from unittest import mock
- 
- import httpx
- import pytest
-@@ -243,14 +244,14 @@ def test_a_product_s_client_reads_its_own_older_key_before_the_other_s(monkeypat
-     # A person's two keys may belong to two accounts.
-     monkeypatch.delenv("PAGEINDEX_API_KEY", raising=False)
-     monkeypatch.setenv("PAGEINDEX_SEARCH_API_KEY", "pis_live_x")
--    assert PageExtractClient().pageindex.api_key == "pis_live_x"  # the only one set
-+    assert PageExtractClient().documents.api_key == "pis_live_x"  # the only one set
-     monkeypatch.setenv("PAGEINDEX_EXTRACT_API_KEY", "pie_live_x")
--    assert PageSearchClient().pageindex.api_key == "pis_live_x"
--    assert PageExtractClient().pageindex.api_key == "pie_live_x"
-+    assert PageSearchClient().documents.api_key == "pis_live_x"
-+    assert PageExtractClient().documents.api_key == "pie_live_x"
-     monkeypatch.setenv("PAGEINDEX_API_KEY", "pi-env")
--    assert PageSearchClient().pageindex.api_key == "pi-env"
--    assert PageExtractClient().pageindex.api_key == "pi-env"
--    assert PageExtractClient("pi-given").pageindex.api_key == "pi-given"
-+    assert PageSearchClient().documents.api_key == "pi-env"
-+    assert PageExtractClient().documents.api_key == "pi-env"
-+    assert PageExtractClient("pi-given").documents.api_key == "pi-given"
+@@ -2170,6 +2170,38 @@ def serve(*replies):
+     assert raised.value.status_code == 402
  
  
- def test_mode_words_normalize_like_the_label(monkeypatch):
-@@ -2074,8 +2075,16 @@ def test_page_search_and_extract_clients_are_cloud_only(cls, local_client, monke
-         cls("secret", client=PageIndexClient(api_key="secret"))
++def test_outline_builds_the_structure_asked_for_and_returns_it_once_built(served, monkeypatch):
++    client, calls, answers = served
++    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
++    def serve(*replies):
++        del calls[:]
++        replies = iter(replies)
++        answers.to = lambda method, path, kw: next(replies)
++    queued = {"doc_id": "pi/1", "index_status": "queued", "usage": {"credits": 0.4}}
++    outline = {"pages": 2, "outline": [{"title": "Intro", "level": 1, "page": 1}]}
++
++    serve(dict(queued), {"index_status": "processing"}, {"index_status": "completed"},
++          {"index_status": "completed", "structure": "hierarchical", "result": outline})
++    assert client.outline("pi/1", "hierarchical") == {
++        **queued, "index_status": "completed", **outline}
++    assert [c["method"] for c in calls] == ["POST", "GET", "GET", "GET"]
++    assert calls[0]["json"] == {"structure": "hierarchical"}
++    assert calls[3]["path"].endswith("?type=outline")
++
++    serve(dict(queued))
++    assert client.outline("pi/1", "flat", wait=False) == queued
++    serve(dict(queued), {"index_status": "failed"})
++    with pytest.raises(PageIndexAPIError, match="could not be built"):
++        client.outline("pi/1", "flat")
++    serve(dict(queued), {"index_status": "completed"},
++          {"index_status": "completed", "structure": "flat", "result": outline})
++    with pytest.raises(PageIndexAPIError, match="keeps the outline it had"):
++        client.outline("pi/1", "hierarchical")
++    serve(dict(queued))
++    with pytest.raises(PageIndexAPIError, match="Timed out"):
++        client.outline("pi/1", "flat", timeout=-1)
++
++
+ def test_get_tree_of_a_document_without_an_outline_index_says_how_to_build_it(served):
+     client, _, answers = served
+     answers.to = lambda method, path, kw: {
+```
+
+---
+
+### Incident Patch 3: `d6e9df04` (2026-11-27)
+**Commit Message**: revert(client): outline(doc_id, structure) leaves main until its open questions are settled (#702) (#705)
+
+Revert "feat(client): outline(doc_id, structure) returns a cloud document's flat or hierarchical outline, building it when missing (#702)"
+
+This reverts commit 9684e873f97423a22df6cfed33eb9cd8a818ed7f.
+
+**File**: `pageindex/client.py` (modified, +0/-53)
+```diff
+@@ -1202,59 +1202,6 @@ def build_outline_index(self, doc_id: str, wait: bool = True,
+                 f"index_status: {built['index_status']}).")
+         return built
  
-     monkeypatch.setenv("PAGEINDEX_API_KEY", "from-env")
--    assert cls().pageindex._api.api_key == "from-env"
--    assert cls("given").pageindex._api.api_key == "given"
-+    assert cls().documents._api.api_key == "from-env"
-+    client = cls("given")
-+    assert client.documents._api.api_key == "given"
-+    documents, other = client.documents, PageIndexClient(api_key="other")
-+    with pytest.warns(DeprecationWarning, match=r"\.documents") as record:
-+        assert client.pageindex is documents
-+        with mock.patch.object(client, "pageindex", other):
-+            assert client.documents is other
-+    assert client.documents is documents
-+    assert record[0].filename == __file__
-     monkeypatch.setenv("PAGEINDEX_API_KEY", "")
-     with pytest.raises(PageIndexAPIError, match="API key"):
-         cls()
+-    def outline(self, doc_id: str, structure: Literal["flat", "hierarchical"],
+-                wait: bool = True, timeout: float = 1800.0) -> dict[str, Any]:
+-        """
+-        Get a cloud document's outline, building it if the document lacks it.
+-        "flat" lists the headings at one level, at $1 per 1,000 pages;
+-        "hierarchical" nests them, each with its level, at $2 per 1,000 pages,
+-        or $1 for a document with a flat outline. An outline the document has
+-        is free, and a hierarchical one serves as the flat one.
+-        Cloud-only: local mode raises PageIndexAPIError.
+-
+-        Args:
+-            doc_id (str): Document ID. One still processing raises
+-                PageIndexAPIError (HTTP 409).
+-            structure (str): "flat" or "hierarchical".
+-            wait (bool): Return once the outline is built (default), up to
+-                ``timeout`` seconds; raises PageIndexAPIError if it could not
+-                be built or is not done in time (it goes on in the cloud).
+-                False returns at once.
+-
+-        Returns:
+-            dict: {'doc_id', 'index_status', 'usage', 'pages', 'outline'}:
+-            'outline' lists the headings in reading order, each {'title',
+-            'level', 'page'}, without 'level' when flat. 'pages' and 'outline'
+-            are there once 'index_status' is "completed". 'usage' is what the
+-            outline costs, for a caller who pays in credits.
+-        """
+-        api = self._require_cloud(
+-            "outline is cloud-only — a local document is indexed when it is "
+-            "submitted.")
+-        answer = api.build_outline_index(doc_id, structure)
+-        deadline = time.monotonic() + timeout
+-        while wait and answer["index_status"] in ("queued", "processing"):
+-            if time.monotonic() >= deadline:
+-                raise PageIndexAPIError(
+-                    f"Timed out after {int(timeout)}s waiting for the outline "
+-                    f"(doc_id: {doc_id}, index_status: "
+-                    f"{answer['index_status']}). It goes on being built in the "
+-                    "cloud — call outline() again.")
+-            time.sleep(2)
+-            answer["index_status"] = api.get_outline(doc_id)["index_status"]
+-        if wait and answer["index_status"] != "completed":
+-            raise PageIndexAPIError(
+-                f"The outline could not be built (doc_id: {doc_id}, "
+-                f"index_status: {answer['index_status']}).")
+-        if answer["index_status"] == "completed":
+-            read = api.get_outline(doc_id)
+-            if read["structure"] not in (structure, "hierarchical"):
+-                raise PageIndexAPIError(
+-                    f"The {structure} outline could not be built (doc_id: "
+-                    f"{doc_id}); the document keeps the outline it had.")
+-            answer |= read["result"]
+-        return answer
+-
+     def is_retrieval_ready(self, doc_id: str) -> bool:
+         """
+         Check if a document is ready for retrieval. API errors (including a
+```
+
+**File**: `pageindex/cloud_api.py` (modified, +2/-25)
+```diff
+@@ -287,39 +287,16 @@ def get_tree(self, doc_id: str, node_summary: bool = False,
+                 status_code=response.status_code)
+         return response.json()
+ 
+-    def get_outline(self, doc_id: str) -> Dict[str, Any]:
++    def build_outline_index(self, doc_id: str) -> Dict[str, Any]:
+         """
+-        Get a document's outline.
+-
+-        Returns:
+-            dict: API response with 'index_status', 'structure' ("flat",
+-            "hierarchical" or None) and, as 'result', {'pages', 'outline'}.
+-        """
+-        response = self._http.get(
+-            f"{self.BASE_URL}/doc/{_enc(doc_id)}/?type=outline",
+-            headers=self._headers(),
+-            timeout=30
+-        )
+-        if response.status_code != 200:
+-            raise PageIndexAPIError(
+-                f"Failed to get outline: {response.text}",
+-                status_code=response.status_code)
+-        return response.json()
+-
+-    def build_outline_index(self, doc_id: str,
+-                            structure: Optional[str] = None) -> Dict[str, Any]:
+-        """
+-        Build the tree of a document stored without one, or, with
+-        ``structure`` ("flat" or "hierarchical"), build that outline unless
+-        the document has it.
++        Build the tree of a document stored without one.
+ 
+         Returns:
+             dict: {'doc_id', 'index_status'}.
+         """
+         response = self._http.post(
+             f"{self.BASE_URL}/doc/{_enc(doc_id)}/index",
+             headers=self._headers(),
+-            json={"structure": structure} if structure else None,
+             timeout=30
+         )
+         if response.status_code != 200:
+```
+
+**File**: `tests/test_client.py` (modified, +0/-32)
+```diff
+@@ -2170,38 +2170,6 @@ def serve(*replies):
+     assert raised.value.status_code == 402
+ 
+ 
+-def test_outline_builds_the_structure_asked_for_and_returns_it_once_built(served, monkeypatch):
+-    client, calls, answers = served
+-    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
+-    def serve(*replies):
+-        del calls[:]
+-        replies = iter(replies)
+-        answers.to = lambda method, path, kw: next(replies)
+-    queued = {"doc_id": "pi/1", "index_status": "queued", "usage": {"credits": 0.4}}
+-    outline = {"pages": 2, "outline": [{"title": "Intro", "level": 1, "page": 1}]}
+-
+-    serve(dict(queued), {"index_status": "processing"}, {"index_status": "completed"},
+-          {"index_status": "completed", "structure": "hierarchical", "result": outline})
+-    assert client.outline("pi/1", "hierarchical") == {
+-        **queued, "index_status": "completed", **outline}
+-    assert [c["method"] for c in calls] == ["POST", "GET", "GET", "GET"]
+-    assert calls[0]["json"] == {"structure": "hierarchical"}
+-    assert calls[3]["path"].endswith("?type=outline")
+-
+-    serve(dict(queued))
+-    assert client.outline("pi/1", "flat", wait=False) == queued
+-    serve(dict(queued), {"index_status": "failed"})
+-    with pytest.raises(PageIndexAPIError, match="could not be built"):
+-        client.outline("pi/1", "flat")
+-    serve(dict(queued), {"index_status": "completed"},
+-          {"index_status": "completed", "structure": "flat", "result": outline})
+-    with pytest.raises(PageIndexAPIError, match="keeps the outline it had"):
+-        client.outline("pi/1", "hierarchical")
+-    serve(dict(queued))
+-    with pytest.raises(PageIndexAPIError, match="Timed out"):
+-        client.outline("pi/1", "flat", timeout=-1)
+-
+-
+ def test_get_tree_of_a_document_without_an_outline_index_says_how_to_build_it(served):
+     client, _, answers = served
+     answers.to = lambda method, path, kw: {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #706** (2026-11-27): build: pyproject.toml carries the released version, and publish checks the tag matches it instead of writing it in (@rejojer)
+- **PR #705** (2026-11-27): revert(client): outline(doc_id, structure) leaves main until its open questions are settled (#702) (@rejojer)
+- **PR #703** (closed): docs(client): submit_document says the PageIndex cloud refuses mode="flash" with HTTP 400 (@BukeLy)
+- **PR #702** (2026-11-27): feat(client): outline(doc_id, structure) returns a cloud document's flat or hierarchical outline, building it when missing (@BukeLy)
+- **PR #698** (2026-11-26): docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10 a page) included (@rejojer)
 - **PR #697** (2026-11-24): feat: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning (@rejojer)
-- **PR #696** (2026-11-21): docs(cookbook): the citations notebook asks with cite_with_boxes and resolves with resolve_citations(), as the docs do (@rejojer)
-- **PR #695** (2026-11-21): docs(readme): lead with the November launches and OCR-free Cloud, sho… (@zmtomorrow)
-- **PR #694** (2026-11-20): docs(readme): usage guide fold titles and group labels end with a colon, and streaming comes before citations (@rejojer)
-- **PR #693** (2026-11-20): docs(readme): a self-contained local usage guide, since the docs site now covers only the cloud (@rejojer)
-- **PR #692** (2026-11-19): feat: PageIndexClient.collection_context() gives the collection targeting text for an agent you run yourself (@rejojer)
 
 ---
 
@@ -1717,52 +1867,52 @@ As a getter-only property, .pageindex raised AttributeError ("no setter" / "no d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. PageSearchClient and PageExtractClient give their PageIndexClient as .documents,
+## X. build: pyproject.toml carries the released version, and publish checks the tag m
 
 **RULE**:
-When implementing operations in `pageindex/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d6b4a0a3`: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aef597ae`: build: pyproject.toml carries the released version, and publish checks the tag matches it instead of writing it in. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/client.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-
-
-def _pageindex_alias(name: str) -> property:
-    """``.pageindex``, the deprecated name of a cloud-only client's ``.documents``."""
-    def warn() -> None:
-        warnings.warn(f"{name}.pageindex is now .documents; .pageindex will be "
-                      "removed in a future release.", DeprecationWarning,
-                      stacklevel=3)
-
-    def get(self) -> PageIndexClient:
-        warn()
-        return self.documents
-
-    def set_(self, client: PageIndexClient) -> None:
-        warn()
-        self.documents = client
-
-    def delete(self) -> None:
-        warn()
-        del self.documents
-
-    return property(get, set_, delete)
+# Release flow:
+#   1. Set `version` in pyproject.toml to the new version on the commit you tag.
+#   2. git tag -a v0.2.9 -m "Release 0.2.9"
+#   3. git push origin v0.2.9
+#   4. This workflow checks the tag matches pyproject.toml, builds, publishes
+#      to PyPI via OIDC trusted publishing (no stored secret), and creates a
+#      GitHub Release with generated notes (dev tags publish to PyPI only — no
+#      GitHub Release).
+      - name: Check the tag matches pyproject.toml
+        run: grep -qxF "version = \"${GITHUB_REF_NAME#v}\"" pyproject.toml || { echo "::error::Tag $GITHUB_REF_NAME does not match the version in pyproject.toml"; exit 1; }
+      - name: Check version and build
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+# Release flow (the git tag IS the version — nothing to bump in the repo):
+#   1. git tag -a v0.2.9 -m "Release 0.2.9"
+#   2. git push origin v0.2.9
+#   3. This workflow derives the version from the tag, injects it into
+#      pyproject.toml, builds, publishes to PyPI via OIDC trusted publishing
+#      (no stored secret), and creates a GitHub Release with generated notes
+#      (dev tags publish to PyPI only — no GitHub Release).
+      - name: Set version from tag and build
+          # The git tag is the single source of truth; overwrite the static
+          # placeholder in [tool.poetry] so the built artifacts carry $VERSION.
+          sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
+          grep '^version = ' pyproject.toml
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d6b4a0a3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aef597ae` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
