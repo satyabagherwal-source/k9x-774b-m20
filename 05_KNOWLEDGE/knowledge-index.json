@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T17:43:23.394Z",
+  "last_updated": "2026-11-28T17:52:12.875Z",
   "total_verified_learnings": 9154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "00a603091f31e0841e9ab66424275cc6ba38345234b2c53bbbadc5b91341e061",
+      "content_hash": "32e20134fe65429b435fa488cb05b1134870ef86d367e772d4e80183da2535ae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T17:34:22.898Z"
+      "persisted_at": "2026-11-28T17:52:12.875Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f64f1a6914db195afad47f42178fda1482df7aaf322adda3e861ee947a179b7b",
+      "content_hash": "b882206965a738256d1343788be8cf26ce43951bbdac15e859c82a78a6181852",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T17:01:03.498Z"
+      "persisted_at": "2026-11-28T17:52:11.450Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8cbd046801fe55268fb3ad30f70c241d918a3ac40ff4ef4af569c8d683f1451d",
+      "content_hash": "b18a4fd6102e4aee49e27915174b941b27df185b4f6ea3bac82bcf49d8604838",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T17:01:03.818Z"
+      "persisted_at": "2026-11-28T17:52:11.666Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219857,9 +219857,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "20cc4cac5a8adbac882fdfc6909bf90c322e22bcb793492e915359f82ec30500",
+      "content_hash": "d7805a22889b7ccbc789a4331ead4e1fbca0433952197158747e4af8c7627c45",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T17:01:02.007Z"
+      "persisted_at": "2026-11-28T17:52:10.441Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219869,9 +219869,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "487c2da2614fd3708f1e8a600b15d060f65ede1f0cb03467b4d7767a66725555",
+      "content_hash": "58de75bc06e03044322b0e82014f9016c6a3d93160ed4c61085d794736e575e6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T17:01:02.324Z"
+      "persisted_at": "2026-11-28T17:52:10.664Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -351378,13 +351378,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-89CA-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JK6I-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-bootsplash-learnings",
+      "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fcfbee3d5b013488849e263f49976d9eedcbf2f68328f37267aa99625914ddb",
+      "content_hash": "68f0b786cd463686a6545c4e1ac447f11c9d4bd6515dd07f19a2089a14cf42ad",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T17:43:22.954Z"
+      "persisted_at": "2026-11-28T17:52:10.219Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -359394,13 +359394,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-WO9H-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JLVQ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "8208d8e5ddb55b384602b69433ab80739804cb72402cf2e1447cb8ddacef98fe",
+      "content_hash": "22c80950630f613ee77fc9bdd67ed6f5ec4b5aa0bb5882c48e58289bcd47f330",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T17:34:22.426Z"
+      "persisted_at": "2026-11-28T17:52:12.425Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -359410,9 +359410,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b077c8e4afe6b8dd58e7737e72821591a52377f98991b1cafaf55bb8ae3bb92",
+      "content_hash": "24ff726fffed35c5fc6565268680e0a32f76f6cef76b9e82d10ee1f3ee547c27",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T17:34:22.685Z"
+      "persisted_at": "2026-11-28T17:52:12.655Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362301,13 +362301,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PTMU-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JKYC-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1bc81a4ab8295676d742888e9899f5bc51fb48223f74905a9ecc0e5abf9cf015",
+      "content_hash": "371bbe4daf53a2dfb456a4c46828e7e659371bbf02f36b8c4c6549cb0cd514ac",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T17:01:03.188Z"
+      "persisted_at": "2026-11-28T17:52:11.224Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",

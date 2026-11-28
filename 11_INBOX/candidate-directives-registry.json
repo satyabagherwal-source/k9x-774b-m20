@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T17:43:22.954Z",
+  "last_updated": "2026-11-28T17:52:12.425Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-89CA",
+      "id": "CD-JK6I",
       "directive_title": "Bump version number",
-      "source_repo": "zoontek-react-native-bootsplash-learnings",
+      "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-89CA-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-JK6I-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-WO9H",
+      "id": "CD-JLVQ",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-WO9H-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-JLVQ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -68059,11 +68059,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-PTMU",
+      "id": "CD-JKYC",
       "directive_title": "renderer): refuse last-error reads off the engine owner thread",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-PTMU-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-JKYC-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -77070,6 +77070,33 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7F7C8D-bump-version-number.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-9F8BE6",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9F8BE6-bump-version-number.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-28F49D",
+      "directive_title": "renderer): refuse last-error reads off the engine owner thread",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-28F49D-renderer-refuse-last-error-reads-off-the.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-12004D",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-12004D-markdown-fix-image-syntax-for-unpreviewa.md",
       "staged_date": "2026-11-28"
     }
   ]
