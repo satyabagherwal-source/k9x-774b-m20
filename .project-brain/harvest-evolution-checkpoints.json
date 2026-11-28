@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T07:40:50.142Z",
+  "last_updated": "2026-11-28T07:49:45.175Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T07:31:27.011Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-28T05:55:45.554Z",
+      "processed_at": "2026-11-28T07:49:44.044Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3873,8 +3873,8 @@
       "staged_for_review": 1
     },
     "hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md": {
-      "processed_at": "2026-11-24T23:25:39.381Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-28T07:49:42.120Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "str4d-rage-learnings.md": {
@@ -3898,7 +3898,7 @@
       "staged_for_review": 0
     },
     "checkmarx-kics-learnings.md": {
-      "processed_at": "2026-11-26T20:59:48.030Z",
+      "processed_at": "2026-11-28T07:49:42.657Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4068,7 +4068,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5304,
+  "total_dossiers_evaluated": 5307,
   "total_canonical_promoted": 596,
-  "total_staged_for_review": 4030
+  "total_staged_for_review": 4032
 }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-10MZ",
-    "timestamp": "2026-11-26T17:06:25.019Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "9a6b42f17a8c1b842af6b30e920298534296e38b4763a8923c891b0483e8113d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-BULV",
-    "timestamp": "2026-11-26T17:14:50.419Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "df009af6ef6635fce892e982019b24d30a7d5de014213e98e10d15d50c00106d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-BWOB",
     "timestamp": "2026-11-26T17:14:53.099Z",
     "repository": "Kuddev/pebrel",
@@ -7490,6 +7460,36 @@
     "repository": "octodns/octodns",
     "learningId": "learn-github-octodns-octodns",
     "contentHash": "2136da9b58e978d83255379c18cf3ade3d2b99093cda3aaab2314ead6b19b0cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-0HLF",
+    "timestamp": "2026-11-28T07:49:28.467Z",
+    "repository": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf",
+    "contentHash": "3141d971f2d26668bd5c128133526f9ccfcc3a0986b3580a08479b01a0351212",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-0PD7",
+    "timestamp": "2026-11-28T07:49:38.539Z",
+    "repository": "Checkmarx/kics",
+    "learningId": "learn-github-checkmarx-kics",
+    "contentHash": "bd77c3097d70dd5be47626346b1eb74a8ff7989ff209d9a2131ad60bb2715c6a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T07:40:15.309Z",
-  "total_cycles_completed": 13292,
-  "total_learnings_persisted": 13292,
-  "total_rules_promoted": 11983,
+  "last_updated": "2026-11-28T07:49:38.550Z",
+  "total_cycles_completed": 13294,
+  "total_learnings_persisted": 13294,
+  "total_rules_promoted": 11984,
   "history": [
-    {
-      "timestamp": "2026-11-27T13:23:10.865Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T13:36:47.414Z",
-      "repository": "darrylmorley/whatcable",
-      "learningId": "learn-github-darrylmorley-whatcable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T13:36:53.817Z",
       "repository": "alibaba/zvec",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T07:40:15.309Z",
       "repository": "octodns/octodns",
       "learningId": "learn-github-octodns-octodns",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T07:49:28.478Z",
+      "repository": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T07:49:38.550Z",
+      "repository": "Checkmarx/kics",
+      "learningId": "learn-github-checkmarx-kics",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T07:40:49.934Z",
+  "last_updated": "2026-11-28T07:49:44.970Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27025,
+  "total_items": 27028,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230536,9 +230536,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b83f6eff01830100a4c1a544f8093920b80ccd892de8b026f9e233db455a107",
+      "content_hash": "8fc2e36d1b2c1e92d71b1b057f08dde7e0670fbe95ec83e2712c92a053cf91f5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T05:55:46.228Z"
+      "persisted_at": "2026-11-28T07:49:44.745Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230548,9 +230548,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "8617a1036ab53c17c577d7e0046d3a634ec3fb99dce7992c65541373485928e2",
+      "content_hash": "9d5f114e765693afbdbbd13faf6364506a9a14bc82ed40b9dbbc8f87197839e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T05:55:46.442Z"
+      "persisted_at": "2026-11-28T07:49:44.970Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -344840,7 +344840,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
       "source_version": "hf-prism-ml-ternary-bonsai-2.5-27b-gguf",
-      "content_hash": "e4bb34d8ace894efe8c23fd0d499dfc4120d8f1e5ec348459b18507ac03b08bd",
+      "content_hash": "3141d971f2d26668bd5c128133526f9ccfcc3a0986b3580a08479b01a0351212",
       "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md",
       "promoted_rules": [],
@@ -344849,7 +344849,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:24:39.453Z",
+      "verified_at": "2026-11-28T07:49:28.173Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -344866,9 +344866,9 @@
       "title": "Research & Knowledge Intelligence: prism-ml/Ternary-Bonsai-2.5-27B-GGUF Core Invariants",
       "repository": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
       "source_version": "hf-prism-ml-ternary-bonsai-2.5-27b-gguf",
-      "content_hash": "34401e164c3559331a2e58f495cb45f9a14f901b3dbb52c258d3f9b19643bb22",
+      "content_hash": "571d168e916b7b6336fa4ed56936305477968cbf1a794e58a338f25b1737b29d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T23:24:40.153Z"
+      "persisted_at": "2026-11-28T07:49:28.730Z"
     },
     "rule-10381": {
       "learning_id": "rule-10381",
@@ -344942,9 +344942,9 @@
       "title": "Research & Knowledge Intelligence: hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings Core Invariants",
       "repository": "hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0c15881dc98f19e4a00388d41271577fa62012f39b7d512cf734a4aaf82e9e3",
+      "content_hash": "7ecac38ea516fe140f38117594ccfe490d4e7dbc0377a5e0047fa5b94f7e651a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T23:25:39.812Z"
+      "persisted_at": "2026-11-28T07:49:42.395Z"
     },
     "candidate_directive-minify-close-more-one-pass-minifier-gaps-to-terser-and-fix-wrong-output": {
       "item_id": "candidate_directive-minify-close-more-one-pass-minifier-gaps-to-terser-and-fix-wrong-output",
@@ -347275,8 +347275,8 @@
       "slug": "checkmarx-kics",
       "platform": "github",
       "source_url": "https://github.com/Checkmarx/kics",
-      "source_version": "452b4d01",
-      "content_hash": "fad9b6f699620008acfac0d399202833efab6eacae2a0970bc577b495d4d053a",
+      "source_version": "39fc33be",
+      "content_hash": "bd77c3097d70dd5be47626346b1eb74a8ff7989ff209d9a2131ad60bb2715c6a",
       "dossier_path": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "promoted_rules": [
@@ -347289,6 +347289,11 @@
           "number": 10777,
           "title": "detect string boolean values in Docker Compose \"Privileged Containers En",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11063,
+          "title": "terraform aws network acl with unrestricted access to rdp/ssh",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -347296,7 +347301,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T20:59:41.234Z",
+      "verified_at": "2026-11-28T07:49:38.249Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -347338,10 +347343,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-checkmarx-kics-research-knowledge-intelligence-checkmarx-kics-core-invariants.md",
       "title": "Research & Knowledge Intelligence: Checkmarx/kics Core Invariants",
       "repository": "Checkmarx/kics",
-      "source_version": "452b4d01",
-      "content_hash": "917fb44bcd75a86f2e1855c703eefbed39092d04409ee34fc606b087c9e059fa",
+      "source_version": "39fc33be",
+      "content_hash": "57c159d09d0a4072913f415ad74e84603d160c37a19be7013cf8631848870593",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T20:59:42.177Z"
+      "persisted_at": "2026-11-28T07:49:39.015Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-checkmarx-kics": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-checkmarx-kics",
@@ -347350,10 +347355,10 @@
       "relative_path": "08_VERIFICATION/checkmarx-kics-verification-protocol-empirical-defect-shield-for-checkmarx-kics.md",
       "title": "Verification Protocol: Empirical Defect Shield for Checkmarx/kics",
       "repository": "Checkmarx/kics",
-      "source_version": "452b4d01",
-      "content_hash": "f2e11782f3b4191faf1b6a9609d8ee8b069b34ff231025ed51f22c9bc5458b33",
+      "source_version": "39fc33be",
+      "content_hash": "0ee5245a2e456ed1ac7f96face36be328b452634a60420377574d11d5259a17b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:59:42.445Z"
+      "persisted_at": "2026-11-28T07:49:39.234Z"
     },
     "candidate_directive-update-readme-md": {
       "item_id": "candidate_directive-update-readme-md",
@@ -347375,9 +347380,9 @@
       "title": "Research & Knowledge Intelligence: checkmarx-kics-learnings Core Invariants",
       "repository": "checkmarx-kics-learnings",
       "source_version": "HEAD",
-      "content_hash": "c2da59488a480ed402bd591efdb811541a634cfb6b18ca85e24a834a90bbadfa",
+      "content_hash": "9a1081256ddfed2fe1d088ae4ab7771e7b40ed0329a7996aa39e795a8e28a63c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T20:59:48.974Z"
+      "persisted_at": "2026-11-28T07:49:43.576Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-checkmarx-kics-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-checkmarx-kics-learnings",
@@ -347387,9 +347392,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for checkmarx-kics-learnings",
       "repository": "checkmarx-kics-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e317036131ae95baa45cd23e8d8c0a0441b4b82a95179840ed299352a32579e",
+      "content_hash": "9b6b9902b242b74ff3958f2c671a187f773818db3ef79abc897895c141aa84dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:59:49.257Z"
+      "persisted_at": "2026-11-28T07:49:43.820Z"
     },
     "rule-10440": {
       "learning_id": "rule-10440",
@@ -351058,13 +351063,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-KZDR-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0TYO-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "81744c9ca774b82a3625650ec2be98f5dd80bc0f504472db8c24b1058e851b7a",
+      "content_hash": "3c22be444059042228d92d7f2d705041946390aed76d2cdb1935ac61ccb3088c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T06:13:26.175Z"
+      "persisted_at": "2026-11-28T07:49:44.497Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -371431,6 +371436,44 @@
       "content_hash": "e4f434816d916a7892c8b8da692a1a59ddbf6b061466f56c3aed3d4f6c4e7bef",
       "domain_letter": "D",
       "persisted_at": "2026-11-28T07:40:49.482Z"
+    },
+    "rule-11063": {
+      "learning_id": "rule-11063",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11063,
+      "title": "terraform aws network acl with unrestricted access to rdp/ssh",
+      "source_url": "https://github.com/Checkmarx/kics",
+      "source_version": "39fc33be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T07:49:38.249Z"
+    },
+    "candidate_directive-terraform-aws-network-acl-with-unrestricted-access-to-rdp-ssh": {
+      "item_id": "candidate_directive-terraform-aws-network-acl-with-unrestricted-access-to-rdp-ssh",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0PKD-terraform-aws-network-acl-with-unrestricted-access-to-rdp-ssh.md",
+      "title": "terraform aws network acl with unrestricted access to rdp/ssh",
+      "repository": "Checkmarx/kics",
+      "source_version": "39fc33be",
+      "content_hash": "ec6ee9c505a3aa1a6cd0353bb63bc2eac17aa1337ba15a55fa8b96c7b4490ad6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T07:49:38.801Z"
+    },
+    "candidate_directive-query-terraform-aws-network-acl-with-unrestricted-access-to-rdp-ssh": {
+      "item_id": "candidate_directive-query-terraform-aws-network-acl-with-unrestricted-access-to-rdp-ssh",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0T2S-query-terraform-aws-network-acl-with-unrestricted-access-to-rdp-ssh.md",
+      "title": "query): terraform aws network acl with unrestricted access to rdp/ssh",
+      "repository": "checkmarx-kics-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fe98fe086fb48c700f9f7a64f4b6ea624b39c533bdd96365eb20f92f806eac26",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T07:49:43.353Z"
     }
   },
   "ai-builder-brain": {

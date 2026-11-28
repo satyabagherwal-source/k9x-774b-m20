@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T07:40:15.312Z",
+  "last_updated": "2026-11-28T07:49:38.553Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8376,14 +8376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-checkmarx-kics",
-      "content_hash": "fad9b6f699620008acfac0d399202833efab6eacae2a0970bc577b495d4d053a",
-      "verified_at": "2026-11-26T20:59:41.586Z",
+      "content_hash": "bd77c3097d70dd5be47626346b1eb74a8ff7989ff209d9a2131ad60bb2715c6a",
+      "verified_at": "2026-11-28T07:49:38.553Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T20:59:41.586Z"
+      "last_updated": "2026-11-28T07:49:38.553Z"
     },
     "olric-data/olric": {
       "repository": "olric-data/olric",
@@ -20241,14 +20241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf",
-      "content_hash": "e4bb34d8ace894efe8c23fd0d499dfc4120d8f1e5ec348459b18507ac03b08bd",
-      "verified_at": "2026-11-24T23:24:39.865Z",
+      "content_hash": "3141d971f2d26668bd5c128133526f9ccfcc3a0986b3580a08479b01a0351212",
+      "verified_at": "2026-11-28T07:49:28.480Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:24:39.865Z"
+      "last_updated": "2026-11-28T07:49:28.481Z"
     },
     "MemTensor/MemT-1.0-Pro": {
       "repository": "MemTensor/MemT-1.0-Pro",

@@ -14010,3 +14010,5 @@
 | `CYCLE-20261128-OIR6` | `2026-11-28T07:40:10.098Z` | `vitejs/vite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/vitejs-vite-learnings.md` | Yes (`f6266253...`) |
 | `CYCLE-20261128-OMRN` | `2026-11-28T07:40:15.299Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11062` | Yes (`2136da9b...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T07:40:47.218Z` | `vitejs-vite` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-095C01F1` [Domain D] | Yes (`df1294b7...`) |
+| `CYCLE-20261128-0HLF` | `2026-11-28T07:49:28.467Z` | `prism-ml/Ternary-Bonsai-2.5-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md` | Yes (`3141d971...`) |
+| `CYCLE-20261128-0PD7` | `2026-11-28T07:49:38.539Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11063` | Yes (`bd77c309...`) |

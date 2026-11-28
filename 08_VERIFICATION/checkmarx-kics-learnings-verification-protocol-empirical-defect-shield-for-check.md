@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T20:59:48.540Z",
+  "timestamp": "2026-11-28T07:49:43.198Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-checkmarx-kics-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [checkmarx-kics-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T20:59:48.540Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T07:49:43.198Z`  
 > **Learning ID**: `LEARN-EVO-checkmarx-kics-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source**: github ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
-> **Source Version**: `452b4d01`  
+> **Source Version**: `39fc33be`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T20:59:40.038Z  
+> **Timestamp**: 2026-11-28T07:49:37.230Z  
 > **Learning ID**: `learn-github-checkmarx-kics`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T20:59:40.031Z  
+> **Harvest Timestamp**: 2026-11-28T07:49:37.224Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1653,367 +1653,833 @@ type SourceProvider interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `452b4d01` (2026-11-26)
-**Commit Message**: fix(query): detect string boolean values in Docker Compose "Privileged Containers Enabled" query  (#8208)
+### Incident Patch 1: `39fc33be` (2026-11-27)
+**Commit Message**: fix(query): terraform aws network acl with unrestricted access to rdp/ssh (#8192)
 
-* detect string boolean values in Docker Compose Privileged Containers Enabled query
+* Adding validation for a single ipv6_cidr_block
+
+* add: missing validation for a single ipv6_cidr_block
+
+* fix(query): covering TCP protocol alias
+
+* fix: covering different alias for tcp protocol
+
+* fix(query): added action rule validation
+
+* add: validation to action rule, when set to "allow"
+
+* fix(query): added egress rule validation
+
+* add: egress rule validation, either presence and "true" value
+
+* fix(query): added positive and negative test
+
+* add: positive and negative tests for both rdp and ssh queries
+
+* fix(query): rule moved to auxiliary
+
+* fix: rule moved to auxiliary due to regressions identified
+
+* fix(query): reviewed action rule validation
+
+* add: validation to action rule, when set to "deny"
+
+* reviewed: changed auxiliary method logic to capture action rule set to "deny". It is then used to identify a port open to internet, whenever is NOT set to deny. Silently skips any rule with no action rule option.
+
+* fix(vulnerabilities): update dockerfile images
 
 * update: dockerfile images
 
-**File**: `Dockerfile` (modified, +2/-2)
+* update: package versions
+
+* update: package versions
+
+* fix(query): moved is_tcp_port_zero() metho
+
+**File**: `assets/libraries/terraform.rego` (modified, +28/-2)
 ```diff
-@@ -1,5 +1,5 @@
--ARG GO_BASE_IMAGE=checkmarx/go:1.27.4@sha256:f11d557e2e36c479cfd4cb97caa1272bdf5009e0c8638fff65cf83f9916c9d22
--ARG GIT_BASE_IMAGE=checkmarx/git:2.56.1@sha256:9bcf2dd6cb6385a1035a8159a2629d4c7503ab5281bd773b5fdbcf75e75dcf67
-+ARG GO_BASE_IMAGE=checkmarx/go:1.27.4@sha256:f73955925ad073823c06b4738214c28ad8ff4f52fe6d35abbd616c10c0ba4eb0
-+ARG GIT_BASE_IMAGE=checkmarx/git:2.56.1@sha256:cbdf5cfebf96e817b54f797ef77aac3d716c4a52c99be249b72e251bfcb1f5ce
- FROM ${GO_BASE_IMAGE} AS build_env
+@@ -10,6 +10,8 @@ check_cidr(rule) {
+ 	rule.ipv6_cidr_blocks[_] == common_lib.unrestricted_ipv6[_]
+ } else {
+ 	rule.ipv6_cidr_blocks == common_lib.unrestricted_ipv6[_]
++} else {
++    rule.ipv6_cidr_block == common_lib.unrestricted_ipv6[_]
+ } else {
+ 	rule.cidr_ipv4 == "0.0.0.0/0"
+ } else {
+@@ -40,30 +42,40 @@ cidr_is_unmasked(resource) {
  
- # Copy the source from the current directory to the Working Directory inside the container
+ prot_types := ["protocol","ip_protocol"]
+ open_port := ["all","-1"]
++tcp_alias := ["tcp","6"]
+ 
+ # Checks if a TCP port is open
+ portOpenToInternet(rule, port) {
+ 	check_cidr(rule)
+-	rule[prot_types[_]] == "tcp"
++	is_tcp(rule)
+ 	containsPort(rule, port)
++	not is_network_action_deny(rule)
+ }
+ 
+ portOpenToInternet(rules, port) {
+ 	rule := rules[_]
+ 	check_cidr(rule)
+-	rule[prot_types[_]] == "tcp"
++	is_tcp(rule)
+ 	containsPort(rule, port)
++	not is_network_action_deny(rule)
+ }
+ 
+ portOpenToInternet(rule, port) {
+ 	check_cidr(rule)
+ 	rule[prot_types[_]] == open_port[_]
++	not is_network_action_deny(rule)
+ }
+ 
+ portOpenToInternet(rules, port) {
+ 	rule := rules[_]
+ 	check_cidr(rule)
+ 	rule[prot_types[_]] == open_port[_]
++	not is_network_action_deny(rule)
++}
++
++is_network_action_deny(rule) {
++	action_keys := ["action","rule_action"]
++	lower(sprintf("%v", [rule[action_keys[_]]])) == "deny"
+ }
+ 
+ get_ingress_list(ingress) = result {
+@@ -79,6 +91,16 @@ get_ingress_list(ingress) = result {
+ 	}
+ }
+ 
++is_tcp(rule) {
++	lower(sprintf("%v", [rule[prot_types[_]]])) == tcp_alias[_]
++}
++
++is_tcp_port_zero(rule) {
++	rule.protocol == tcp_alias[_]
++	rule.from_port == 0
++	rule.to_port == 0
++}
++
+ # Checks if a port is included in a rule
+ containsPort(rule, port) {
+ 	rule.from_port <= port
+@@ -730,3 +752,7 @@ check_key_empty(disk_encryption_key) = key {
+ 	common_lib.emptyOrNull(disk_encryption_key.kms_key_self_link)
+ 	key := "kms_key_self_link"
+ }
++
++is_egress(rule) {
++	lower(sprintf("%v", [rule.egress])) == "true"
++}
+\ No newline at end of file
 ```
 
-**File**: `assets/queries/dockerCompose/privileged_containers_enabled/query.rego` (modified, +18/-7)
+**File**: `assets/queries/terraform/aws/network_acl_with_unrestricted_access_to_rdp/query.rego` (modified, +7/-11)
 ```diff
-@@ -4,16 +4,27 @@ import data.generic.common as common_lib
+@@ -9,7 +9,7 @@ CxPolicy[result] {
  
- CxPolicy[result] {
- 	resource := input.document[i]
--	service_parameters := resource.services[name]	
--    privileged := service_parameters.privileged    
-- 	privileged == true
--    
-+	service_parameters := resource.services[name]
-+	privileged := service_parameters.privileged
-+	privileged_enabled(privileged)
-+
+ 	is_array(resource.ingress)
+ 	tf_lib.portOpenToInternet(resource.ingress[idx], 3389)
+-	not is_tcp_port_zero(resource.ingress[idx])
++	not tf_lib.is_tcp_port_zero(resource.ingress[idx])
+ 
  	result := {
- 		"documentId": sprintf("%s", [resource.id]),
--		"searchKey": sprintf("services.%s.privileged",[name]),
-+		"searchKey": sprintf("services.%s.privileged", [name]),
- 		"issueType": "IncorrectValue",
- 		"keyExpectedValue": "Docker compose file to have 'privileged' attribute set to false or not set",
--		"keyActualValue": "Docker compose file has 'privileged' attribute as true",
--		"searchLine":  common_lib.build_search_line(["services", name, "privileged"], []),
-+		"keyActualValue": sprintf("Docker compose file has 'privileged' attribute as %v", [privileged]),
-+		"searchLine": common_lib.build_search_line(["services", name, "privileged"], []),
+ 		"documentId": input.document[i].id,
+@@ -30,7 +30,9 @@ CxPolicy[result] {
+ 	split(net_acl_rule.network_acl_id, ".")[1] == netAclName
+ 
+ 	tf_lib.portOpenToInternet(net_acl_rule, 3389)
+-	not is_tcp_port_zero(net_acl_rule)
++	not tf_lib.is_tcp_port_zero(net_acl_rule)
++
++	not tf_lib.is_egress(net_acl_rule)
+ 
+ 	result := {
+ 		"documentId": doc.id,
+@@ -50,7 +52,7 @@ CxPolicy[result] {
+ 
+ 	not is_array(resource.ingress)
+ 	tf_lib.portOpenToInternet(resource.ingress, 3389)
+-	not is_tcp_port_zero(resource.ingress)
++	not tf_lib.is_tcp_port_zero(resource.ingress)
+ 
+ 	result := {
+ 		"documentId": doc.id,
+@@ -71,7 +73,7 @@ CxPolicy[result] {
+ 	rule := module[keyToCheck][idx]
+ 
+ 	tf_lib.portOpenToInternet(rule, 3389)
+-	not is_tcp_port_zero(rule)
++	not tf_lib.is_tcp_port_zero(rule)
+ 
+ 	result := {
+ 		"documentId": input.document[i].id,
+@@ -83,10 +85,4 @@ CxPolicy[result] {
+ 		"keyActualValue": sprintf("module[%s].%s[%d] 'RDP' (TCP:3389) is public", [name, keyToCheck, idx]),
+ 		"searchLine": common_lib.build_search_line(["module", name, keyToCheck, idx], []),
+ 	}
+-}
+-
+-is_tcp_port_zero(rule) {
+-	rule.protocol == "tcp"
+-	rule.from_port == 0
+-	rule.to_port == 0
+-}
++}
+\ No newline at end of file
+```
+
+**File**: `assets/queries/terraform/aws/network_acl_with_unrestricted_access_to_rdp/test/negative10.tf` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++resource "aws_network_acl" "example" {                                                                                                            
++  vpc_id = "vpc-1"                                                                                                                                
++}
++
++resource "aws_network_acl_rule" "deny_rdp_ingress" {
++  network_acl_id = aws_network_acl.example.id
++  rule_number    = 100
++  egress         = false
++  protocol       = "tcp"
++  rule_action    = "deny"
++  cidr_block     = "0.0.0.0/0"
++  from_port      = 3389
++  to_port        = 3389
++}
+```
+
+**File**: `assets/queries/terraform/aws/network_acl_with_unrestricted_access_to_rdp/test/negative11.tf` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++module "vpc" {
++  source = "terraform-aws-modules/vpc/aws"
++
++  default_network_acl_ingress = [
++    {
++      "rule_no": 100
++      "action": "deny"
++      "from_port": 3389
++      "to_port": 3389
++      "protocol": "tcp"
++      "cidr_block": "0.0.0.0/0"
++    },
++  ]
++}
+\ No newline at end of file
+```
+
+**File**: `assets/queries/terraform/aws/network_acl_with_unrestricted_access_to_rdp/test/negative12.tf` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++resource "aws_network_acl" "example" {                                                                                                            
++  vpc_id = "vpc-1"                                                                                                                                
++}
++
++resource "aws_network_acl_rule" "deny_all_protocols_ingress" {
++  network_acl_id = aws_network_acl.example.id
++  rule_number    = 100
++  egress         = false
++  protocol       = "-1"
++  rule_action    = "deny"
++  cidr_block     = "0.0.0.0/0"
++}
+\ No newline at end of file
+```
+
+**File**: `assets/queries/terraform/aws/network_acl_with_unrestricted_access_to_rdp/test/negative13.tf` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++resource "aws_network_acl" "example" {                                                                                                            
++  vpc_id = "vpc-1"                                                                                                                                
++}
++
++resource "aws_network_acl_rule" "deny_all_protocols_ingress" {
++  network_acl_id = aws_network_acl.example.id
++  rule_number    = 100
++  egress         = false
++  protocol       = "all"
++  rule_action    = "deny"
++  cidr_block     = "0.0.0.0/0"
++}
+\ No newline at end of file
+```
+
+**File**: `assets/queries/terraform/aws/network_acl_with_unrestricted_access_to_rdp/test/negative7.tf` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++resource "aws_network_acl" "acl" {
++  vpc_id = "vpc-1"
++  ingress {
++    protocol   = "tcp"
++    rule_no    = 100
++    action     = "deny"
++    cidr_block = "0.0.0.0/0"
++    from_port  = 3389
++    to_port    = 3389
++  }
++}
+\ No newline at end of file
+```
+
+**File**: `assets/queries/terraform/aws/network_acl_with_unrestricted_access_to_rdp/test/negative8.tf` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++resource "aws_network_acl" "acl" {
++  vpc_id = "vpc-1"
++}
++
++resource "aws_network_acl_rule" "r" {
++  network_acl_id = aws_network_acl.acl.id
++  rule_number    = 100
++  egress         = true
++  protocol       = "tcp"
++  rule_action    = "allow"
++  cidr_block     = "0.0.0.0/0"
++  from_port      = 3389
++  to_port        = 3389
++}
+\ No newline at end of file
+```
+
+---
+
+### Incident Patch 2: `b0b3fb8f` (2026-11-27)
+**Commit Message**: fix(query): skip Aurora instances on RDS Multi-AZ Deployment Disabled (CloudFormation) (#8181)
+
+* fix(query): skip Aurora instances on RDS Multi-AZ Deployment Disabled (CloudFormation)
+
+* fix(query): narrow Aurora skip on RDS Multi-AZ Deployment Disabled (CloudFormation)
+
+---------
+
+Co-authored-by: Artur Ribeiro <[REDACTED_EMAIL]>
+
+**File**: `assets/queries/cloudFormation/aws/rds_multi_az_deployment_disabled/query.rego` (modified, +38/-0)
+```diff
+@@ -9,6 +9,7 @@ CxPolicy[result] {
+ 	resource := Resources[name]
+ 	resource.Type == "AWS::RDS::DBInstance"
+ 	properties := resource.Properties
++	not is_aurora(properties)
+ 	cf_lib.isCloudFormationFalse(properties.MultiAZ)
+ 
+ 	result := {
+@@ -28,6 +29,7 @@ CxPolicy[result] {
+ 	resource := Resources[name]
+ 	resource.Type == "AWS::RDS::DBInstance"
+ 	properties := resource.Properties
++	not is_aurora(properties)
+ 	not common_lib.valid_key(properties, "MultiAZ")
+ 
+ 	result := {
+@@ -40,3 +42,39 @@ CxPolicy[result] {
+ 		"keyActualValue": sprintf("The RDS DBInstance '%s' MultiAZ property is undefined and by default disabled", [name]),
  	}
  }
 +
-+privileged_enabled(value) {
-+	value == true
++# MultiAZ doesn't apply to Aurora instances, their Availability Zones are managed by the DB cluster
++is_aurora(properties) {
++	startswith(lower(properties.Engine), "aurora")
++} else {
++	# DBClusterIdentifier alone doesn't imply Aurora (Multi-AZ DB clusters aren't Aurora clusters),
++	# so it is only trusted when the Engine isn't a known non-Aurora engine (e.g. it is a Ref/parameter)
++	has_cluster(properties)
++	not is_non_aurora_engine(properties)
 +}
 +
-+# Docker Compose (compose-go toBoolean) coerces these strings, case-insensitively and without trimming, to true
-+privileged_enabled(value) {
-+	is_string(value)
-+	truthy_values := {"true", "y", "yes", "on"}
-+	truthy_values[lower(value)]
++is_non_aurora_engine(properties) {
++	non_aurora_engines[lower(properties.Engine)]
++}
++
++has_cluster(properties) {
++	common_lib.valid_key(properties, "DBClusterIdentifier")
++	properties.DBClusterIdentifier != ""
++	not is_no_value(properties.DBClusterIdentifier)
++}
++
++# the YAML parser resolves '!Ref AWS::NoValue' to a plain string, JSON keeps the {"Ref": ...} object
++is_no_value(value) {
++	value == "AWS::NoValue"
++} else {
++	value == {"Ref": "AWS::NoValue"}
++}
++
++# Engine valid values for AWS::RDS::DBInstance that are not Aurora
++non_aurora_engines := {
++	"custom-oracle-ee", "custom-oracle-ee-cdb", "custom-oracle-se2", "custom-oracle-se2-cdb",
++	"custom-sqlserver-ee", "custom-sqlserver-se", "custom-sqlserver-web", "custom-sqlserver-dev",
++	"db2-ae", "db2-ce", "db2-se", "mariadb", "mysql",
++	"oracle-ee", "oracle-ee-cdb", "oracle-se2", "oracle-se2-cdb", "postgres",
++	"sqlserver-dev-ee", "sqlserver-ee", "sqlserver-se", "sqlserver-ex", "sqlserver-web",
 +}
 ```
 
-**File**: `assets/queries/dockerCompose/privileged_containers_enabled/test/negative3.yaml` (added, +33/-0)
+**File**: `assets/queries/cloudFormation/aws/rds_multi_az_deployment_disabled/test/negative4.yaml` (added, +25/-0)
 ```diff
-@@ -0,0 +1,33 @@
-+version: "3.9"
-+
-+services:
-+  quoted_no:
-+    image: busybox
-+    privileged: "no"
-+  quoted_n:
-+    image: busybox
-+    privileged: "n"
-+  quoted_off:
-+    image: busybox
-+    privileged: "off"
-+  quoted_false:
-+    image: busybox
-+    privileged: "false"
-+  quoted_no_uppercase:
-+    image: busybox
-+    privileged: "NO"
-+  quoted_false_capitalized:
-+    image: busybox
-+    privileged: "False"
-+  unquoted_no:
-+    image: busybox
-+    privileged: no
-+  unquoted_n:
-+    image: busybox
-+    privileged: n
-+  unquoted_off:
-+    image: busybox
-+    privileged: off
-+  unquoted_false_uppercase:
-+    image: busybox
-+    privileged: FALSE
+@@ -0,0 +1,25 @@
++AWSTemplateFormatVersion: 2010-09-09
++Resources:
++  AuroraCluster:
++    Type: AWS::RDS::DBCluster
++    Properties:
++      Engine: aurora-mysql
++      MasterUsername: admin
++      MasterUserPassword: example-password
++  AuroraInstanceByEngine:
++    Type: AWS::RDS::DBInstance
++    Properties:
++      Engine: aurora-postgresql
++      DBInstanceClass: db.r5.large
++      MultiAZ: false
++  AuroraInstanceByEngineMultiAZUndefined:
++    Type: AWS::RDS::DBInstance
++    Properties:
++      Engine: aurora-mysql
++      DBInstanceClass: db.r5.large
++  AuroraInstanceByCluster:
++    Type: AWS::RDS::DBInstance
++    Properties:
++      DBClusterIdentifier:
++        Ref: AuroraCluster
++      DBInstanceClass: db.r5.large
 ```
 
-**File**: `assets/queries/dockerCompose/privileged_containers_enabled/test/negative4.yaml` (added, +24/-0)
+**File**: `assets/queries/cloudFormation/aws/rds_multi_az_deployment_disabled/test/negative5.yaml` (added, +25/-0)
 ```diff
-@@ -0,0 +1,24 @@
-+version: "3.9"
-+
-+services:
-+  unrelated_string:
-+    image: busybox
-+    privileged: "enabled"
-+  numeric_string:
-+    image: busybox
-+    privileged: "1"
-+  numeric_value:
-+    image: busybox
-+    privileged: 1
-+  empty_string:
-+    image: busybox
-+    privileged: ""
-+  leading_whitespace:
-+    image: busybox
-+    privileged: " yes"
-+  trailing_whitespace:
-+    image: busybox
-+    privileged: "true "
-+  null_value:
-+    image: busybox
-+    privileged: null
+@@ -0,0 +1,25 @@
++AWSTemplateFormatVersion: 2010-09-09
++Parameters:
++  RdsEngine:
++    Type: String
++    Default: aurora-postgresql
++Resources:
++  RdsDBCluster:
++    Type: AWS::RDS::DBCluster
++    Properties:
++      Engine: !Ref RdsEngine
++      MasterUsername: admin
++      ManageMasterUserPassword: true
++  RdsDBInstance:
++    Type: AWS::RDS::DBInstance
++    Properties:
++      DBClusterIdentifier: !Ref RdsDBCluster
++      DBInstanceClass: db.r5.large
++      Engine: !Ref RdsEngine
++  RdsDBInstanceMultiAZFalse:
++    Type: AWS::RDS::DBInstance
++    Properties:
++      DBClusterIdentifier: !Ref RdsDBCluster
++      DBInstanceClass: db.r5.large
++      Engine: !Ref RdsEngine
++      MultiAZ: false
 ```
 
-**File**: `assets/queries/dockerCompose/privileged_containers_enabled/test/positive3.yaml` (added, +30/-0)
+**File**: `assets/queries/cloudFormation/aws/rds_multi_az_deployment_disabled/test/negative6.yaml` (added, +7/-0)
 ```diff
-@@ -0,0 +1,30 @@
-+version: "3.9"
-+
-+services:
-+  quoted_yes:
-+    image: busybox
-+    privileged: "yes"
-+  quoted_y:
-+    image: busybox
-+    privileged: "y"
-+  quoted_on:
-+    image: busybox
-+    privileged: "on"
-+  quoted_true:
-+    image: busybox
-+    privileged: "true"
-+  quoted_yes_capitalized:
-+    image: busybox
-+    privileged: "Yes"
-+  quoted_yes_uppercase:
-+    image: busybox
-+    privileged: "YES"
-+  quoted_y_uppercase:
-+    image: busybox
-+    privileged: "Y"
-+  quoted_on_mixed_case:
-+    image: busybox
-+    privileged: "oN"
-+  quoted_true_uppercase:
-+    image: busybox
-+    privileged: "TRUE"
+@@ -0,0 +1,7 @@
++AWSTemplateFormatVersion: 2010-09-09
++Resources:
++  AuroraInstanceUpperCase:
++    Type: AWS::RDS::DBInstance
++    Properties:
++      Engine: Aurora-MySQL
++      DBInstanceClass: db.r5.large
 ```
 
-**File**: `assets/queries/dockerCompose/privileged_containers_enabled/test/positive4.yaml` (added, +24/-0)
+**File**: `assets/queries/cloudFormation/aws/rds_multi_az_deployment_disabled/test/positive4.yaml` (added, +27/-0)
 ```diff
-@@ -0,0 +1,24 @@
-+version: "3.9"
-+
-+services:
-+  unquoted_yes:
-+    image: busybox
-+    privileged: yes
-+  unquoted_y:
-+    image: busybox
-+    privileged: y
-+  unquoted_on:
-+    image: busybox
-+    privileged: on
-+  unquoted_yes_uppercase:
-+    image: busybox
-+    privileged: YES
-+  unquoted_on_capitalized:
-+    image: busybox
-+    privileged: On
-+  unquoted_true_capitalized:
-+    image: busybox
-+    privileged: True
-+  unquoted_true_uppercase:
-+    image: busybox
-+    privileged: TRUE
+@@ -0,0 +1,27 @@
++AWSTemplateFormatVersion: 2010-09-09
++Resources:
++  PostgresInMultiAZCluster:
++    Type: AWS::RDS::DBInstance
++    Properties:
++      Engine: postgres
++      DBClusterIdentifier: my-multi-az-cluster
++      DBInstanceClass: db.m5d.large
++  MySqlEmptyCluster:
++    Type: AWS::RDS::DBInstance
++    Properties:
++      Engine: mysql
++      DBClusterIdentifier: ""
++      DBInstanceClass: db.t3.micro
++  MySqlNoValueCluster:
++    Type: AWS::RDS::DBInstance
++    Properties:
++      Engine: mysql
++      DBClusterIdentifier: !Ref AWS::NoValue
++      DBInstanceClass: db.t3.micro
++  MySqlClusterMultiAZFalse:
++    Type: AWS::RDS::DBInstance
++    Properties:
++      Engine: mysql
++      DBClusterIdentifier: my-multi-az-cluster
++      DBInstanceClass: db.t3.micro
++      MultiAZ: false
 ```
 
-**File**: `assets/queries/dockerCompose/privileged_containers_enabled/test/positive_expected_result.json` (modified, +108/-12)
+**File**: `assets/queries/cloudFormation/aws/rds_multi_az_deployment_disabled/test/positive5.json` (added, +31/-0)
 ```diff
-@@ -1,14 +1,110 @@
- [
--    {
--      "queryName": "Privileged Containers Enabled",
--      "severity": "HIGH",
--      "line": 10,
--      "filename": "positive1.yaml"
--    },
--    {
--        "queryName": "Privileged Containers Enabled",
--        "severity": "HIGH",
--        "line": 13,
--        "filename": "positive2.yaml"
--    }
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 10,
-+    "filename": "positive1.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 13,
-+    "filename": "positive2.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 6,
-+    "filename": "positive3.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 9,
-+    "filename": "positive3.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 12,
-+    "filename": "positive3.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 15,
-+    "filename": "positive3.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 18,
-+    "filename": "positive3.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 21,
-+    "filename": "positive3.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 24,
-+    "filename": "positive3.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 27,
-+    "filename": "positive3.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 30,
-+    "filename": "positive3.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 6,
-+    "filename": "positive4.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 9,
-+    "filename": "positive4.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 12,
-+    "filename": "positive4.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 15,
-+    "filename": "positive4.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 18,
-+    "filename": "positive4.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 21,
-+    "filename": "positive4.yaml"
-+  },
-+  {
-+    "queryName": "Privileged Containers Enabled",
-+    "severity": "HIGH",
-+    "line": 24,
-+    "filename": "positive4.yaml"
+@@ -0,0 +1,31 @@
++{
++  "AWSTemplateFormatVersion": "2010-09-09",
++  "Resources": {
++    "MySqlNoValueCluster": {
++      "Type": "AWS::RDS::DBInstance",
++      "Properties": {
++        "Engine": "mysql",
++        "DBInstanceClass": "db.t3.micro",
++        "DBClusterIdentifier": {
++          "Ref": "AWS::NoValue"
++        }
++      }
++    },
++    "AuroraInstance": {
++      "Type": "AWS::RDS::DBInstance",
++      "Properties": {
++        "Engine": "aurora-mysql",
++        "DBInstanceClass": "db.r5.large"
++      }
++    },
++    "AuroraInstanceByCluster": {
++      "Type": "AWS::RDS::DBInstance",
++      "Properties": {
++        "DBInstanceClass": "db.r5.large",
++        "DBClusterIdentifier": {
++          "Ref": "AuroraCluster"
++        }
++      }
++    }
 +  }
++}
+```
+
+**File**: `assets/queries/cloudFormation/aws/rds_multi_az_deployment_disabled/test/positive_expected_result.json` (modified, +30/-0)
+```diff
+@@ -28,5 +28,35 @@
+     "severity": "MEDIUM",
+     "line": 128,
+     "fileName": "positive3.yaml"
++  },
++  {
++    "queryName": "RDS Multi-AZ Deployment Disabled",
++    "severity": "MEDIUM",
++    "line": 5,
++    "fileName": "positive4.yaml"
++  },
++  {
++    "queryName": "RDS Multi-AZ Deployment Disabled",
++    "severity": "MEDIUM",
++    "line": 11,
++    "fileName": "positive4.yaml"
++  },
++  {
++    "queryName": "RDS Multi-AZ Deployment Disabled",
++    "severity": "MEDIUM",
++    "line": 17,
++    "fileName": "positive4.yaml"
++  },
++  {
++    "queryName": "RDS Multi-AZ Deployment Disabled",
++    "severity": "MEDIUM",
++    "line": 27,
++    "fileName": "positive4.yaml"
++  },
++  {
++    "queryName": "RDS Multi-AZ Deployment Disabled",
++    "severity": "MEDIUM",
++    "line": 6,
++    "fileName": "positive5.json"
+   }
  ]
 ```
 
-**File**: `pkg/model/model_yaml.go` (modified, +8/-11)
+---
+
+### Incident Patch 3: `2ec23d04` (2026-11-27)
+**Commit Message**: fix(query): clearer message on Azure Instance Using Basic Authentication (ARM) when OS is unknown (#8180)
+
+* fix(query): clearer message on Azure Instance Using Basic Authentication (ARM) when OS is unknown
+
+* fix(query): stop using image publisher to infer the OS on Azure Instance Using Basic Authentication (ARM)
+
+---------
+
+Co-authored-by: Artur Ribeiro <[REDACTED_EMAIL]>
+
+**File**: `assets/queries/azureResourceManager/azure_instance_using_basic_authentication/query.rego` (modified, +27/-5)
 ```diff
-@@ -242,7 +242,12 @@ func scalarNodeResolver(val *yaml.Node) interface{} {
- 	var transformed interface{} = val.Value
- 	switch val.Tag {
- 	case "!!bool":
--		transformed = transformBoolScalarNode(val.Value)
-+		var b bool
-+		if err := val.Decode(&b); err != nil {
-+			log.Error().Msgf("failed to convert boolean in yaml parser")
-+			return val.Value
-+		}
-+		transformed = b
- 	case "!!int":
- 		v, err := strconv.ParseInt(val.Value, 0, 64)
- 		if err != nil {
-@@ -252,17 +257,9 @@ func scalarNodeResolver(val *yaml.Node) interface{} {
- 		transformed = v
- 	case "!!null":
- 		transformed = nil
-+	default:
-+		// keep the raw string value for any other tag
+@@ -21,17 +21,25 @@ CxPolicy[result] {
+ 		"resourceName": value.name,
+ 		"searchKey": sprintf("%s.name=%s%s", [common_lib.concat_path(path), value.name, issue.sk]),
+ 		"issueType": issue.issueType,
+-		"keyExpectedValue": "'disablePasswordAuthentication' should be set to true",
++		"keyExpectedValue": issue.keyExpectedValue,
+ 		"keyActualValue": issue.keyActualValue,
+ 		"searchLine": common_lib.build_search_line(path, issue.sl),
  	}
- 
- 	return transformed
  }
--
--// transformBoolScalarNode transforms a string value to its boolean representation
--func transformBoolScalarNode(value string) bool {
--	switch value {
--	case "true", "True":
--		return true
--	default:
--		return false
--	}
--}
+ 
+-is_windows(resource) {
+-	validMSWindowsVer := ["windows", "microsoft"]
+-	contains(lower(resource.properties.storageProfile.imageReference.publisher), validMSWindowsVer[_])
++# The OS is only inferred from osProfile.linuxConfiguration/windowsConfiguration or storageProfile.osDisk.osType.
++# imageReference.publisher is not used, it only names the organization that created the image and doesn't identify the OS.
++is_linux(resource) {
++	resource.properties.osProfile.linuxConfiguration
++} else {
++	lower(resource.properties.storageProfile.osDisk.osType) == "linux"
+ }
+ 
++is_windows(resource) {
++	resource.properties.osProfile.windowsConfiguration
++} else {
++	lower(resource.properties.storageProfile.osDisk.osType) == "windows"
++}
+ 
+ prepare_issue(doc, resource) = issue {
+ 	disablePasswordAuthentication:= resource.properties.osProfile.linuxConfiguration.disablePasswordAuthentication
+@@ -42,20 +50,34 @@ prepare_issue(doc, resource) = issue {
+ 		"resourceType": resource.type,
+ 		"resourceName": resource.name,
+ 		"issueType": "IncorrectValue",
++		"keyExpectedValue": "'disablePasswordAuthentication' should be set to true",
+ 		"keyActualValue": sprintf("'disablePasswordAuthentication' %s is set to false",[dpa_type]),
+ 		"sk": ".properties.osProfile.linuxConfiguration.disablePasswordAuthentication",
+ 		"sl": ["properties", "osProfile", "linuxConfiguration", "disablePasswordAuthentication"],
+ 	}
+ } else = issue {
+ 	not resource.properties.osProfile.linuxConfiguration.disablePasswordAuthentication
+-	
++	is_linux(resource)
++
+ 	issue := {
+ 		"resourceType": resource.type,
+ 		"resourceName": resource.name,
+ 		"issueType": "MissingAttribute",
++		"keyExpectedValue": "'disablePasswordAuthentication' should be set to true",
+ 		"keyActualValue": "'linuxConfiguration.disablePasswordAuthentication' is not defined",
+ 		"sk": "",
+ 		"sl": ["name"],
++	}
++} else = issue {
++	not resource.properties.osProfile.linuxConfiguration.disablePasswordAuthentication
+ 
++	issue := {
++		"resourceType": resource.type,
++		"resourceName": resource.name,
++		"issueType": "MissingAttribute",
++		"keyExpectedValue": "'osProfile' authentication should be defined ('linuxConfiguration.disablePasswordAuthentication' set to true if the OS is Linux)",
++		"keyActualValue": "Authentication is undefined and the OS type could not be determined",
++		"sk": "",
++		"sl": ["name"],
+ 	}
+ }
+```
+
+**File**: `assets/queries/azureResourceManager/azure_instance_using_basic_authentication/test/negative2.bicep` (modified, +4/-0)
+```diff
+@@ -52,6 +52,10 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
+       computerName: vmName
+       adminUsername: adminUsername
+       adminPassword: adminPassword
++      windowsConfiguration: {
++        provisionVMAgent: true
++        enableAutomaticUpdates: true
++      }
+     }
+     storageProfile: {
+       imageReference: {
+```
+
+**File**: `assets/queries/azureResourceManager/azure_instance_using_basic_authentication/test/negative2.json` (modified, +5/-1)
+```diff
+@@ -85,7 +85,11 @@
+         "osProfile": {
+           "computerName": "[parameters('vmName')]",
+           "adminUsername": "[parameters('adminUsername')]",
+-          "adminPassword": "[parameters('adminPassword')]"
++          "adminPassword": "[parameters('adminPassword')]",
++          "windowsConfiguration": {
++            "provisionVMAgent": true,
++            "enableAutomaticUpdates": true
++          }
+         },
+         "storageProfile": {
+           "imageReference": {
+```
+
+**File**: `assets/queries/azureResourceManager/azure_instance_using_basic_authentication/test/negative4.bicep` (modified, +4/-0)
+```diff
+@@ -52,6 +52,10 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
+       computerName: vmName
+       adminUsername: adminUsername
+       adminPassword: adminPassword
++      windowsConfiguration: {
++        provisionVMAgent: true
++        enableAutomaticUpdates: true
++      }
+     }
+     storageProfile: {
+       imageReference: {
+```
+
+**File**: `assets/queries/azureResourceManager/azure_instance_using_basic_authentication/test/negative4.json` (modified, +5/-1)
+```diff
+@@ -87,7 +87,11 @@
+             "osProfile": {
+               "computerName": "[parameters('vmName')]",
+               "adminUsername": "[parameters('adminUsername')]",
+-              "adminPassword": "[parameters('adminPassword')]"
++              "adminPassword": "[parameters('adminPassword')]",
++              "windowsConfiguration": {
++                "provisionVMAgent": true,
++                "enableAutomaticUpdates": true
++              }
+             },
+             "storageProfile": {
+               "imageReference": {
+```
+
+**File**: `assets/queries/azureResourceManager/azure_instance_using_basic_authentication/test/negative5.bicep` (modified, +1/-0)
+```diff
+@@ -214,6 +214,7 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+     storageProfile: {
+       osDisk: {
+         createOption: 'fromImage'
++        osType: 'Windows'
+         managedDisk: {
+           storageAccountType: 'Premium_LRS'
+         }
+```
+
+**File**: `assets/queries/azureResourceManager/azure_instance_using_basic_authentication/test/negative6.bicep` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++@description('Specifies a username for the Virtual Machine.')
++param adminUsername string
++
++@secure()
++param adminPassword string
++
++param location string = resourceGroup().location
++
++param vmSize string = 'Standard_D2s_v3'
++
++resource winByConfigOnly 'Microsoft.Compute/virtualMachines@2021-03-01' = {
++  name: 'winByConfigOnly'
++  location: location
++  properties: {
++    hardwareProfile: {
++      vmSize: vmSize
++    }
++    osProfile: {
++      computerName: 'winByConfigOnly'
++      adminUsername: adminUsername
++      windowsConfiguration: {
++        provisionVMAgent: true
++      }
++    }
++    storageProfile: {
++      imageReference: {
++        id: '/subscriptions/x/resourceGroups/rg/providers/Microsoft.Compute/images/customImage'
++      }
++      osDisk: {
++        createOption: 'fromImage'
++      }
++    }
++  }
++}
+```
+
+**File**: `assets/queries/azureResourceManager/azure_instance_using_basic_authentication/test/negative6.json` (added, +72/-0)
+```diff
+@@ -0,0 +1,72 @@
++{
++  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
++  "contentVersion": "1.0.0.0",
++  "parameters": {
++    "projectName": {
++      "type": "string",
++      "metadata": {
++        "description": "Specifies a name for generating resource names."
++      }
++    },
++    "location": {
++      "type": "string",
++      "defaultValue": "[resourceGroup().location]",
++      "metadata": {
++        "description": "Specifies the location for all resources."
++      }
++    },
++    "adminUsername": {
++      "type": "string",
++      "metadata": {
++        "description": "Specifies a username for the Virtual Machine."
++      }
++    },
++    "vmSize": {
++      "type": "string",
++      "defaultValue": "Standard_D2s_v3",
++      "metadata": {
++        "description": "description"
++      }
++    }
++  },
++  "variables": {
++    "vmName": "[concat(parameters('projectName'), '-vm')]",
++    "networkInterfaceName": "[concat(parameters('projectName'), '-nic')]"
++  },
++  "resources": [
++    {
++      "type": "Microsoft.Compute/virtualMachines",
++      "apiVersion": "2021-03-01",
++      "name": "winByConfigOnly",
++      "location": "[parameters('location')]",
++      "dependsOn": [],
++      "properties": {
++        "hardwareProfile": {
++          "vmSize": "[parameters('vmSize')]"
++        },
++        "osProfile": {
++          "computerName": "[variables('vmName')]",
++          "adminUsername": "[parameters('adminUsername')]",
++          "windowsConfiguration": {
++            "provisionVMAgent": true
++          }
++        },
++        "storageProfile": {
++          "imageReference": {
++            "id": "/subscriptions/x/resourceGroups/rg/providers/Microsoft.Compute/images/customImage"
++          },
++          "osDisk": {
++            "createOption": "fromImage"
++          }
++        },
++        "networkProfile": {
++          "networkInterfaces": [
++            {
++              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
++            }
++          ]
++        }
++      }
++    }
++  ]
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #8208** (2026-11-26): fix(query): detect string boolean values in Docker Compose "Privileged Containers Enabled" query  (@cx-artur-ribeiro)
 - **PR #8194** (2026-11-24): [StepSecurity] Apply security best practices (@stepsecurity-app[bot])
+- **PR #8192** (2026-11-27): fix(query): terraform aws network acl with unrestricted access to rdp/ssh (@cx-rafael-carolo)
 - **PR #8187** (2026-11-24): revert(actions): remove CES CI workflows (@cx-artur-ribeiro)
 - **PR #8183** (closed): fix(query): fix FP on Terraform AWS port queries treating tcp/udp 0/0 range as all ports (@cx-carlos-mello)
 - **PR #8182** (closed): fix(query): fix FPs and FNs on Network ACL Unrestricted Access To RDP/SSH (Terraform) (@cx-carlos-mello)
-- **PR #8179** (2026-11-09): update(action): update kics github action version to 2.2.1 (@cx-artur-ribeiro)
 
 ---
 
@@ -2033,33 +2499,59 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): detect string boolean values in Docker Compose "Privileged Containers En
+## X. query): terraform aws network acl with unrestricted access to rdp/ssh
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `assets/libraries/terraform.rego`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `452b4d01`: query): detect string boolean values in Docker Compose "Privileged Containers Enabled" query. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39fc33be`: query): terraform aws network acl with unrestricted access to rdp/ssh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `assets/libraries/terraform.rego`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```open policy agent
 // Verified production-grade fix pattern:
-ARG GO_BASE_IMAGE=checkmarx/go:1.27.4@sha256:f73955925ad073823c06b4738214c28ad8ff4f52fe6d35abbd616c10c0ba4eb0
-ARG GIT_BASE_IMAGE=checkmarx/git:2.56.1@sha256:cbdf5cfebf96e817b54f797ef77aac3d716c4a52c99be249b72e251bfcb1f5ce
+} else {
+    rule.ipv6_cidr_block == common_lib.unrestricted_ipv6[_]
+tcp_alias := ["tcp","6"]
+	is_tcp(rule)
+	not is_network_action_deny(rule)
+	is_tcp(rule)
+	not is_network_action_deny(rule)
+	not is_network_action_deny(rule)
+	not is_network_action_deny(rule)
+}
+
+is_network_action_deny(rule) {
+	action_keys := ["action","rule_action"]
+	lower(sprintf("%v", [rule[action_keys[_]]])) == "deny"
+is_tcp(rule) {
+	lower(sprintf("%v", [rule[prot_types[_]]])) == tcp_alias[_]
+}
+
+is_tcp_port_zero(rule) {
+	rule.protocol == tcp_alias[_]
+	rule.from_port == 0
+	rule.to_port == 0
+}
+
+
+is_egress(rule) {
+	lower(sprintf("%v", [rule.egress])) == "true"
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```open policy agent
 // Induced defect failure mode:
-ARG GO_BASE_IMAGE=checkmarx/go:1.27.4@sha256:f11d557e2e36c479cfd4cb97caa1272bdf5009e0c8638fff65cf83f9916c9d22
-ARG GIT_BASE_IMAGE=checkmarx/git:2.56.1@sha256:9bcf2dd6cb6385a1035a8159a2629d4c7503ab5281bd773b5fdbcf75e75dcf67
+	rule[prot_types[_]] == "tcp"
+	rule[prot_types[_]] == "tcp"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `452b4d01` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39fc33be` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

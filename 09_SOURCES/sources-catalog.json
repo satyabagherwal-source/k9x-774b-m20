@@ -5503,10 +5503,10 @@
     "repository": "Checkmarx/kics",
     "platform": "github",
     "sourceUrl": "https://github.com/Checkmarx/kics",
-    "sourceVersion": "452b4d01",
+    "sourceVersion": "39fc33be",
     "license": "Apache-2.0",
-    "contentHash": "fad9b6f699620008acfac0d399202833efab6eacae2a0970bc577b495d4d053a",
-    "lastHarvestedAt": "2026-11-26T20:59:41.559Z",
+    "contentHash": "bd77c3097d70dd5be47626346b1eb74a8ff7989ff209d9a2131ad60bb2715c6a",
+    "lastHarvestedAt": "2026-11-28T07:49:38.544Z",
     "learningId": "learn-github-checkmarx-kics"
   },
   "olric-data-olric": {
@@ -13415,8 +13415,8 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2.5-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "e4bb34d8ace894efe8c23fd0d499dfc4120d8f1e5ec348459b18507ac03b08bd",
-    "lastHarvestedAt": "2026-11-24T23:24:39.844Z",
+    "contentHash": "3141d971f2d26668bd5c128133526f9ccfcc3a0986b3580a08479b01a0351212",
+    "lastHarvestedAt": "2026-11-28T07:49:28.472Z",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf"
   },
   "hf-memtensor-memt-1.0-pro": {

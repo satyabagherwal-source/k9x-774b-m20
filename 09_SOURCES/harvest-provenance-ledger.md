@@ -14043,3 +14043,5 @@ Every entry in this ledger must capture:
 | `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `7d0c054f` | Multi-dimensional audit evidence | 2026-11-28T07:40:10.109Z |
 | `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `31bb4d3b` | Multi-dimensional audit evidence | 2026-11-28T07:40:15.304Z |
 | `learn-dom-d-095c01f1` | `project://vitejs-vite` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md` | 2026-11-28T07:40:47.218Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-28T07:49:28.472Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `39fc33be` | Multi-dimensional audit evidence | 2026-11-28T07:49:38.544Z |

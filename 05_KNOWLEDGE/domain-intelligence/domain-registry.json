@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T07:40:49.709Z",
+  "last_updated": "2026-11-28T07:49:44.745Z",
   "total_records": 2882,
   "domains": {
     "A": {
@@ -15673,8 +15673,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "5b83f6eff01830100a4c1a544f8093920b80ccd892de8b026f9e233db455a107",
-      "created_at": "2026-11-28T05:55:46.228Z"
+      "content_hash": "8fc2e36d1b2c1e92d71b1b057f08dde7e0670fbe95ec83e2712c92a053cf91f5",
+      "created_at": "2026-11-28T07:49:44.745Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -43778,8 +43778,8 @@
       "title": "Research & Knowledge Intelligence: prism-ml/Ternary-Bonsai-2.5-27B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-5-27b-gguf-research-knowledge-intelligence-prism-ml.md",
       "repository": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
-      "content_hash": "34401e164c3559331a2e58f495cb45f9a14f901b3dbb52c258d3f9b19643bb22",
-      "created_at": "2026-11-24T23:24:40.153Z"
+      "content_hash": "571d168e916b7b6336fa4ed56936305477968cbf1a794e58a338f25b1737b29d",
+      "created_at": "2026-11-28T07:49:28.730Z"
     },
     "DOM-D-C22BA2DB": {
       "record_id": "DOM-D-C22BA2DB",
@@ -43829,8 +43829,8 @@
       "title": "Research & Knowledge Intelligence: hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-5-27b-gguf-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings",
-      "content_hash": "d0c15881dc98f19e4a00388d41271577fa62012f39b7d512cf734a4aaf82e9e3",
-      "created_at": "2026-11-24T23:25:39.812Z"
+      "content_hash": "7ecac38ea516fe140f38117594ccfe490d4e7dbc0377a5e0047fa5b94f7e651a",
+      "created_at": "2026-11-28T07:49:42.395Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-rollup-rollup-core-invariants",
@@ -44390,8 +44390,8 @@
       "title": "Research & Knowledge Intelligence: Checkmarx/kics Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-checkmarx-kics-research-knowledge-intelligence-checkmarx-kics-core-invariants.md",
       "repository": "Checkmarx/kics",
-      "content_hash": "917fb44bcd75a86f2e1855c703eefbed39092d04409ee34fc606b087c9e059fa",
-      "created_at": "2026-11-26T20:59:42.177Z"
+      "content_hash": "57c159d09d0a4072913f415ad74e84603d160c37a19be7013cf8631848870593",
+      "created_at": "2026-11-28T07:49:39.015Z"
     },
     "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-learnings-core-invariants",
@@ -44399,8 +44399,8 @@
       "title": "Research & Knowledge Intelligence: checkmarx-kics-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-checkmarx-kics-learnings-research-knowledge-intelligence-checkmarx-kics-learning.md",
       "repository": "checkmarx-kics-learnings",
-      "content_hash": "c2da59488a480ed402bd591efdb811541a634cfb6b18ca85e24a834a90bbadfa",
-      "created_at": "2026-11-26T20:59:48.974Z"
+      "content_hash": "9a1081256ddfed2fe1d088ae4ab7771e7b40ed0329a7996aa39e795a8e28a63c",
+      "created_at": "2026-11-28T07:49:43.576Z"
     },
     "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-xcodesorg-xcodesapp-core-invariants",

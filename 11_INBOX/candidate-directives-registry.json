@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T07:40:49.482Z",
+  "last_updated": "2026-11-28T07:49:44.497Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-KZDR",
+      "id": "CD-0TYO",
       "directive_title": "Bump version number",
-      "source_repo": "zoontek-react-native-permissions-learnings",
+      "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-KZDR-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0TYO-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -75394,6 +75394,37 @@
       "source_repo": "octodns-octodns",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AC13CA-empirical-invariant-guard-in-8429ba637f9.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-0PKD",
+      "directive_title": "terraform aws network acl with unrestricted access to rdp/ssh",
+      "source_repo": "Checkmarx/kics",
+      "source_commit": "39fc33be",
+      "staged_file": "11_INBOX/candidate-directives/CD-0PKD-terraform-aws-network-acl-with-unrestricted-access-to-rdp-ssh.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-0T2S",
+      "directive_title": "query): terraform aws network acl with unrestricted access to rdp/ssh",
+      "source_repo": "checkmarx-kics-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0T2S-query-terraform-aws-network-acl-with-unrestricted-access-to-rdp-ssh.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-9BA232",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9BA232-bump-version-number.md",
       "staged_date": "2026-11-28"
     }
   ]
