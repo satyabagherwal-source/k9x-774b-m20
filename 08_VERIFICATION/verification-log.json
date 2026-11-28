@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-CW6G",
-    "timestamp": "2026-11-26T19:07:37.576Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "c19ef42d7c3f92f9bcc569c7424c2919576778d0d39fdc851b34b41c432a3eb3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-D508",
-    "timestamp": "2026-11-26T19:07:49.016Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "f60a5d370f63a03f06714579537ae80084aec6a00b9c53b135a5c0057f07512b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-NTOU",
-    "timestamp": "2026-11-26T19:16:07.566Z",
-    "repository": "kandinskylab/Kandinsky-ImageSR-2.0",
-    "learningId": "learn-huggingface-kandinskylab-kandinsky-imagesr-2-0",
-    "contentHash": "ff57166043015aedef0e9f1c8ab2f6a9dcc5671b48b84ba7e24e8f5c85ea06b6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-NVPG",
     "timestamp": "2026-11-26T19:16:10.180Z",
     "repository": "MiniMaxAI/MiniMax-H3",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "605727ce53f4f6a599cefdedcc0de4bf1533895756f8235a26b89edc9024a028",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-WZM8",
+    "timestamp": "2026-11-28T14:46:39.440Z",
+    "repository": "vercel-labs/agent-desktop",
+    "learningId": "learn-github-vercel-labs-agent-desktop",
+    "contentHash": "d70139f2fc186189634da0df6f36bdf1639c3596db6c8a41cf4234c7cfe43e4e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-X201",
+    "timestamp": "2026-11-28T14:46:42.529Z",
+    "repository": "faker-js/faker",
+    "learningId": "learn-github-faker-js-faker",
+    "contentHash": "89d57ba8dd1e2f916aee7cbe825742dbd3a621fc2def26d128322b1a23615e1d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-X96E",
+    "timestamp": "2026-11-28T14:46:51.830Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "ba6875d2d9123bd29ac884092c11efeb1ed1e76700e2d5756a000c9571b5043a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

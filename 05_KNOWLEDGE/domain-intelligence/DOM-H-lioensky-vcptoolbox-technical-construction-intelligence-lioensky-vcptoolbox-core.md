@@ -4,24 +4,24 @@
 {
   "source_repository": "lioensky/VCPToolBox",
   "source_url": "https://github.com/lioensky/VCPToolBox",
-  "source_version": "ff2624ee",
+  "source_version": "1ee3f4cb",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-26T03:13:13.439Z",
+  "timestamp": "2026-11-28T14:46:52.175Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lioensky-vcptoolbox",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `ff2624ee`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-26T03:13:13.439Z`  
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `1ee3f4cb`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-28T14:46:52.175Z`  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lioensky/VCPToolBox:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T03:13:12.031Z  
+> **Harvest Timestamp**: 2026-11-28T14:46:50.288Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2456 stars
+- **Stars / Engagement**: 2459 stars
 
 ---
 
@@ -1799,13 +1799,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #645** (2026-11-25): **RiverMemo V6.1：用拓扑虫洞与路线态 Ω 运输查询方向**
-  *Symptoms*: ## 改动 用已发布 CSR 和实际首跳流计算路线态 Ω，运输候选共用的查询方向，替代读出时的 XW SQL 见证与专项加分。全网 Ω、普通 Hop-1 代理、Sense、召回及资产格式不变。更新读出文档并包含旋转不变量单测。本 PR 仅提交源码与文档；使用新读出需重新构建或加载对应原生模块，无须重训资产。  ## 验证 - Windows x64 实验构建已通过三查询 × 两轨的 LightMemo 冒烟检查，六个有序召回池与基线一致。 - 维护者定向人工评测：30 组虫洞查询整体有可辨提升，未完全达到预期；抽测 10 组常规黄金基准未观察到退行，其中 1 组第 6、7 名互换，判断略优。非随机样本，不据此推算普遍胜率。 - 实验工作区 Rust 单测 267 通过；两项依赖私有夹具的测试未随 PR 提交。
+- **Issue #675** (2026-11-28): **fix(ssh): 槽位租约化并发加固 + 探针防重入锁修复**
+  *Symptoms*: ## SSHManager 并发槽位租约化 - 槽位计数改为原子租约 Set 派生，消灭 activeConnections 手工加减漂移与 TOCTOU 超卖 - 跳板机前置解析 + 环路检测，避免跳板机/目标机互抢槽位自死锁 - executeSSH 监听底层 close 快速失败，不再傻等 30s timeout - disconnectAll 拒绝全部排队等待者并销毁所有活跃 client，杜绝 Promise 悬挂  ## 修复 7 个并发/边界缺陷 - _evictOldestConnection 同毫秒漏淘汰（oldestTime 由 Date.now() 改 Infinity，比较改 <=） - conn.on('close') 未归还跳板机 activeTunnels，导致跳板机被永久判忙无法回收 - conn.on('error') 未校验 client 身份，旧连接迟到报错会覆写新连接状态 - 非池化脏连接超时仅 end()，网络黑洞下租约永久占用（改 destroy() + 立即 releaseSlot） - _tryEvictForPendingWaiters 改为复用 LRU 淘汰，不再按 Map 插入顺序误踢热连接 - 跳板机等待槽位/主机锁期间新增 pendingTunnels 判忙保护；重试前校验 isConnected 防死引用 - releaseConnectionSlot 跳过已 settled 条目，settle 拒收时回收租约，避免泄漏与漏唤醒 - 默认 maxConcurrentConnections 兜底值 5 -> 10，与 hosts.json 对齐  ## LinuxShellExecutor 探针防重入 - inFlightTaskProbes 由 Set 改 Map<runId, Symbol>，finally 做 owner 校验，旧探针不得误删新锁 - _stopTaskProbeLoop 不再强删在途标记（原实现会撬开正在飞的探针锁，stop+reschedule 即破防） - AbortSignal 全链路透传；脱钩包装脚本通道超时自愈（disconnectOnCommandTimeout: true）  ## 其他 - Plugin/LinuxShellExecutor/ssh/SSHManager.js 618 行独立实现改为转发垫片，消除双实现屎山 （LinuxLogMonitor 顶层 require 该路径，不可删除，故保留垫片）  ## 测试与验证 新增 tests/sshManagerQueueRobustness.test.js：UT-01~UT-11 + IT-09/IT-10 共 13 用例 - eggs-1 (Debian 13) 单元 13/13 - eggs-1 真机 sshd E2E 25/25 - eggs-1 压测 50 主机 50/50，peakActive=10，超卖 0，LEAK-FREE - eggs-1 8 任务并发探针 90s：重叠事件 0，activeConnections 峰值 8/10，超卖 0 - 反向验证：摘除跳板机隧道释放修复后 UT-10 立即红灯，证明用例可捕获该缺陷
 
-- **Issue #644** (2026-11-25): **feat(context): 基于上游用量的 token 计量与出站前上下文预算检查**
-  *Symptoms*: ## 背景  - 管理面板「最终上下文」的 token 数用 cl100k_base 计算，对中文偏大约一半。 - `contextTokenLimit` 的裁剪发生在展开（Agent 变量、RAG、预处理器、角色分割）之前，按字符数估算，量到的不是模型真正收到的体积；工具循环里再次请求上游时完全没有检查，单次工具结果很大时会直接撞上游的上下文上限。  ## 改动  **计量** - 新增 `modules/contextBudget.js` 作为统一估算入口：汉字按 2、其余按 1，除以 3；图片按固定值，不把 Base64 当文本数。请求路径上不跑分词器（实测同步分词每 MB 文本 130~380ms，会卡住事件循环）。 - 用上游返回的 `usage.prompt_tokens` 按请求、按模型持续校准估算（很小的请求不参与校准；Anthropic 风格用量把缓存读写部分加回）。 - 流式请求默认带 `stream_options.include_usage`（`UpstreamStreamIncludeUsage`，上游不支持时自动回退）。 - 「最终上下文」面板只显示一个 Token 数：有上游用量用上游的，没有就用本地估算。  **出站前预算检查**（`ContextBudgetGuard=off|observe|enforce`，默认 `observe`，默认行为与现在一致，只多一行日志） - 检查点在所有展开完成之后、发往上游之前；工具循环每次再发上游之前也检查一次。 - `enforce` 下超预算时，先把当前轮之前的工具结果压成「开头 + 省略说明 + 结尾」（循环内的工具回执和历史 assistant 正文里的工具结果块都处理，按起止标记配对扫描，代码围栏里的示例不动，保留调用记录编号），仍超才拒绝：非流式返回 400 `context_length_exceeded`，流式返回带说明的 SSE 块，说明里列出系统提示、历史、本轮、工具定义各自的估算。工具循环中仍超则停止循环并告知用户。 - 新增可选的 `ContextBudgetHardCap`：服务端硬上限，与请求里的 `contextTokenLimit` 取小，请求没带上限时也生效。 - 非法的上限（负数、非数字）视为没有。  **裁剪**（仍受 `ContextPruneEnabled` 控制，默认关闭） - 挪到展开之后执行，按 token 而不是字符估算。 - 工具调用和它的结果作为一个单元同进同退；当前轮（最后一条用户发言到末尾）完整保留；裁剪后开头不留没有对应提问的回复。 - 新增 `ContextPruneTargetRatio`（默认 1，行为不变）：调低后按固定档位成批删除，对话在同一档内增长时保留的前缀不变，对上游提示缓存更友好。  ## 兼容性  - 默认配置下不改变任何请求的内容：`ContextBudgetGuard=observe`、`ContextPruneEnabled=false`、`ContextBudgetHardCap` 为空。 - `fetchWithRetry` 本体未改，`include_usage` 通过外层包装注入。  ## 测试  - 新增 `tests/contextBudget.test.js`、`tests/streamUsageOption.test.js`、`tests/finalContextStoreTokens.test.js`；连同原有的 `tests/jevContextPrune.test.js
-  **Post-Mortem & Fix Analysis**:
-  > cl100k_base 无法对claude gpt gemini的任何模型进行实际有效的token统计，这个pr前提不成立。
+- **Issue #674** (2026-11-28): **fix(plugins): 统一补齐 5 个内置插件的 USE_PUBLIC_URL 斜杠规整化与回退逻辑并完善跨平台单测**
+  *Symptoms*: ## 背景与问题 #662 为 16 个内置插件补齐了 `USE_PUBLIC_URL` 与 `VarHttpsUrl` 规范，但早先已引入 `USE_PUBLIC_URL` 的 5 个内置媒体插件仍存在多处 URL 拼接不一致与边界缺陷： 1. **`NanoBananaGen2` 未读取 `VarHttpsUrl`**：开启 `USE_PUBLIC_URL=true` 时仍使用 `VarHttpUrl` 拼接，公网 HTTPS 反代地址未生效，且未兼容 `USE_PUBLIC_URL=1`。 2. **`ZImageTurboGen` 空值裸拼与双斜杠**：未对 `VarHttpsUrl` / `VarHttpUrl` 剥离末尾 `/`（根 `config.env.example` 默认 `VarHttpsUrl=https://your-domain.com/` 带末尾斜杠时会拼出 `//pw=`）；且当 `USE_PUBLIC_URL=true` 而 `VarHttpsUrl` 未填时直接输出 `undefined/pw=...`，未回退无端口 `VarHttpUrl`。 3. **`AgnesGen` / `AgnesVideoGen` / `GPTImageGen` 缺少末尾斜杠规整化与统一布尔解析**：未执行 `.trim().replace(/\/+$/, '')`，`AgnesVideoGen` 未兼容 `'1'` 与大小写空白裁剪，`AgnesGen` / `ZImageTurboGen` 在 `USE_PUBLIC_URL=true` 下仍强依赖本地 `SERVER_PORT`。 4. **`tests/pluginPublicUrl.test.js` 跨平台与插件启用态假设偏差**：硬编码读取 `.json.block`（用户启用插件重命名为 `plugin-manifest.json` 后测试直接 `ENOENT`）以及硬编码调用 `python3`（Windows 环境常为 `python`）。  ## 修改内容 - **统一 5 个插件的 `USE_PUBLIC_URL` 规整化契约**（`AgnesGen`、`AgnesVideoGen`、`ZImageTurboGen`、`GPTImageGen`、`NanoBananaGen2`）：   - 统一识别 `['true', '1']`（含 `trim().toLowerCase()`）；   - `USE_PUBLIC_URL=true` 时优先取 `VarHttpsUrl`，为空时平滑回退无端口 `VarHttpUrl`；   - 公网与局域网基地址统一剥除末尾斜杠，消除 `//pw=` 双斜杠；   - 默认 `USE_PUBLIC_URL=false` 行为 100% 保持不变。 - **升级 `tests/pluginPublicUrl.test.js`**：   - 静态契约扫描扩展至全部 **21 个内置插件**，新增对裸 `{VAR_HTTPS_URL}/pw=` 未剥斜杠写法的拦截断言；   - 动态兼容 `plugin-manifest.json` 与 `plugin-manifest.json.block`，跨平台探测 `python3` / `python`；   - 新增 `GPTImageGen` 与 `NanoBananaGen2` 子进程端到端回归用例，覆盖末尾多斜杠剥离与空 `VarHttpsUrl` 无端口回退。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1822,870 +1820,694 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0868bc6d` (2026-11-25)
-**Commit Message**: fix(context): recognise role-split tool results, keep observe read-only, tiered slimming
+### Incident Patch 1: `68523d75` (2026-11-27)
+**Commit Message**: fix(toolExecutor): expose structured error result to AI model view
 
-Follow-up to the review of this branch.
+Align ToolExecutor._createErrorResult with Plugin.js error reporting contract:
+1. When a plugin reports a business failure with { status: 'error', result },
+   the structured result payload was previously captured into 'raw' but hidden
+   from the AI model view (contentForAI).
+2. Support standard rich/content array parts in error results directly, or format
+   structured objects as formatted text blocks.
+3. Preserve approval feedback notes (__vcpApprovalFeedback) when attaching structured
+   error content for AI.
 
-- tool results that the role divider splits out of earlier replies are
-  recognised as tool results: they stay in one unit with the call that
-  produced them, do not count as the start of the current turn, and are
-  slimmed block by block
-- the current turn starts at the last message the user actually wrote;
-  continue prompts and other system-authored user messages do not count
-- observe / off never rewrite message content, also when pruning is on
-- code fences are tracked with a line-based state machine (4+ backticks,
-  tildes, inline backticks); cuts never split a surrogate pair
-- slimming is tiered by distance: older history becomes a compact stub,
-  the last few turns keep a roomier head and tail, earlier steps of the
-  current turn come last; sizes are configurable
-- the prune boundary is remembered per conversation in memory and only
-  moves forward, so a small drop in size does not bring dropped messages
-  back
-- usage calibration and the include_usage channel memory follow the model
-  that actually answered after a fallback; image-heavy request
-
-**File**: `AdminPanel-Vue/src/views/FinalContextViewer.vue` (modified, +4/-2)
+**File**: `modules/vcpLoop/toolExecutor.js` (modified, +18/-0)
 ```diff
-@@ -1059,7 +1059,7 @@ function formatNumber(value: number | undefined): string {
- }
+@@ -596,10 +596,28 @@ class ToolExecutor {
+       }
+     }
  
- // 只展示一个 Token 总数：上游返回了 usage 就用它，否则用本地计数，界面不区分来源。
--// 分块只展示占比，分项数字和总数口径不同，并列显示会造成误读。
-+// 分块展示占比和按占比折算的大约数量：折算以上面这个总数为准，各块加起来与总数一致。
- function contextTokens(summary: { totalTokenCount?: number; upstreamUsage?: FinalContextUpstreamUsage | null } | undefined): number {
-   return summary?.upstreamUsage?.promptTokens || summary?.totalTokenCount || 0
- }
-@@ -1068,7 +1068,9 @@ function formatShare(tokenCount: number | undefined): string {
-   const total = snapshot.value?.summary.totalTokenCount || 0
-   if (!total || !tokenCount) return '0%'
-   const percent = (tokenCount / total) * 100
--  return `${percent >= 10 ? percent.toFixed(0) : percent.toFixed(1)}%`
-+  const share = `${percent >= 10 ? percent.toFixed(0) : percent.toFixed(1)}%`
-+  const approx = Math.round((tokenCount / total) * contextTokens(snapshot.value?.summary))
-+  return approx > 0 ? `${share}（约 ${formatNumber(approx)}）` : share
- }
- 
- function blockToSearchText(block: FinalContextBlockSummary): string {
-```
-
-**File**: `config.env.example` (modified, +14/-0)
-```diff
-@@ -872,8 +872,20 @@ UpstreamStreamIncludeUsage=true
- #   enforce  超出上限时先把历史里较早的工具结果压缩成摘要（保留开头结尾和调用记录编号，当前轮不动）；
- #            压缩后仍超出的请求不再发往上游，直接返回说明（含估算值、上限和各部分占用）；
- #            工具循环中同样先压缩，仍超出才停止循环并告知用户
-+# 注意：默认的 observe 不提供任何保护，只用来观察。要真正防止请求撞上游的上下文上限，需要改成 enforce。
-+# observe / off 不改写任何消息内容，与下面的 ContextPruneEnabled 互不影响。
- # 建议先用 observe 看一段时间日志，确认各 Agent 的 contextTokenLimit 不是遗留的小数值再改成 enforce。
- ContextBudgetGuard=observe
-+# 压缩工具结果时保留多少（字符）。只在 enforce 且超出上限时生效，未超出时一个字都不动。
-+#   远的历史压成紧凑存根：开头 ContextSlimHeadChars + 结尾 ContextSlimTailChars，短于 ContextSlimMinChars 的不压；
-+#   最近 ContextSlimRecentTurns 轮的历史先留宽一些（ContextSlimRecentHeadChars + ContextSlimRecentTailChars），
-+#   还不够才压成紧凑存根。消息条数、角色顺序、用户和助手说的话都不变。
-+ContextSlimHeadChars=500
-+ContextSlimTailChars=200
-+ContextSlimMinChars=1500
-+ContextSlimRecentTurns=3
-+ContextSlimRecentHeadChars=6000
-+ContextSlimRecentTailChars=2000
- # 服务端硬上限（token，留空 = 不设）。与请求里的 contextTokenLimit 取小；请求没带上限时就用它。
- # 适合填成所用模型里最小的上下文窗口减去输出预留，这样群聊、外部客户端等不带上限的请求，
- # 以及把上限填得比模型窗口还大的 Agent，也都在检查范围内。
-@@ -887,6 +899,8 @@ ContextPruneEnabled=false
- # 裁剪步长（0.5~1）。默认 1 = 刚好不超就停，对话每长一点裁剪边界就往后挪一点。
- # 调低（如 0.8）后按「上限 × 0.2」为一档成档地删：对话在同一档内增长时删掉的是同一批最老的消息，
- # 发给上游的前缀保持不变，对上游提示缓存更友好。
-+# 裁剪边界在内存里按对话记住、只进不退：总量小幅回落时不会把上一轮删掉的消息放回来（重启后重新对齐一次）。
-+# 多数超限是旧的工具结果撑出来的，优先用上面的 ContextBudgetGuard=enforce 压缩它们；裁剪是删整条消息，留作最后的手段。
- ContextPruneTargetRatio=1
- 
- # --- Jev 上下文剪枝（仅在 ContextPruneEnabled=true 且请求带 contextTokenLimit 时生效）---
-```
-
-**File**: `modules/chatCompletionHandler.js` (modified, +14/-5)
-```diff
-@@ -489,6 +489,13 @@ async function fetchWithRetry(
-         signal: attemptController.signal,
-       });
-       cleanup();
-+      // 容灾链在重试时会换模型：把这次实际请求的模型记在响应上，用量校准和渠道记忆按它归属。
-+      if (Array.isArray(modelFallbackCandidates) && modelFallbackCandidates.length > 0) {
-+        const attemptModel = modelFallbackCandidates[Math.min(i, modelFallbackCandidates.length - 1)];
-+        if (attemptModel) {
-+          try { Object.defineProperty(response, 'vcpAttemptModel', { value: attemptModel, configurable: true }); } catch (_) { }
-+        }
++    let contentForAI;
++    const errorResult = parsedPayload?.result;
++    if (errorResult && typeof errorResult === 'object') {
++      const richContent = Array.isArray(errorResult) ? errorResult : (errorResult.data?.content || errorResult.content);
++      if (Array.isArray(richContent) && richContent.length > 0) {
++        contentForAI = richContent;
++      } else {
++        contentForAI = [{ type: 'text', text: JSON.stringify(errorResult, null, 2) }];
 +      }
-       if (timelineTrace) {
-         timelineTrace.responses.set(response, attempt);
-         timelineTrace.emit('upstream_headers_received', { attempt, status: response.status });
-@@ -1272,15 +1279,17 @@ class ChatCompletionHandler {
-         requestId: req.body.requestId || req.body.messageId || null
-       });
-       const pruningEnabled = contextManager.isPruningEnabled();
--      if (budgetGuard.limit !== null && Array.isArray(processedMessages) && (budgetGuard.enforcing || pruningEnabled)) {
--        // 第一步：超预算时先把历史里较早的工具结果压成摘要（当前轮不动）。它们通常占了绝大部分体积，
--        // 压掉之后多数请求就不需要删消息、也不需要拒绝了。
-+      if (budgetGuard.enforcing && Array.isArray(processedMessages)) {
-+        // 第一步（仅 enforce）：超预算时先把历史里较早的工具结果压成摘要（当前轮不动）。它们通常占了
-+        // 绝大部分体积，压掉之后多数请求就不需要删消息、也不需要拒绝了。
-+        // observe / off 不改写任何消息内容，即使服务端开了裁剪也一样。
-         const draftBody = () => ({ ...originalBody, messages: processedMessages });
-         const isOverBudget = () => budgetGuard.estimate(draftBody()) > budgetGuard.limit;
-         if (isOverBudget()) {
-           const slimmedMessages = copyArrayMetadata(processedMessages, processedMessages.slice());
-           const beforeSlim = budgetGuard.estimate(draftBody());
--          const slimmedCount = contextBudget.slimEarlierToolResults(slimmedMessages, contextBudget.lastRealUserIndex(slimmedMessages));
-+          const slimmedCount = contextBudget.slimToFit(slimmedMessages, undefined,
-+            () => budgetGuard.estimate({ ...originalBody, messages: slimmedMessages }) > budgetGuard.limit);
-           if (slimmedCount > 0) {
-             processedMessages = slimmedMessages;
-             console.warn(`[ContextBudget] 超预算，已压缩历史中 ${slimmedCount} 条消息里的工具结果: ${beforeSlim} -> ${budgetGuard.estimate(draftBody())} / ${budgetGuard.limit}`);
-@@ -1338,7 +1347,7 @@ class ChatCompletionHandler {
-         const budgetBreakdown = budgetGuard.breakdown(finalUpstreamBody);
-         throw Object.assign(new Error(contextBudget.exceededMessage(budgetCheck, 'outbound', budgetBreakdown)), {
-           name: 'ContextBudgetExceededError',
--          budget: { estimated: budgetCheck.estimated, limit: budgetCheck.limit, breakdown: budgetBreakdown }
-+          budget: { stage: 'outbound', estimated: budgetCheck.estimated, limit: budgetCheck.limit, breakdown: budgetBreakdown }
-         });
-       }
-       budgetGuard.noteRequest(finalUpstreamBody);
-```
-
-**File**: `modules/contextBudget.js` (modified, +187/-40)
-```diff
-@@ -22,15 +22,46 @@ const MAX_RATIO = 2.5;
- const RATIO_SMOOTHING = 0.3;
- const MAX_TRACKED_MODELS = 200;
- 
--const SLIM_MIN_CHARS = 1500;
--const SLIM_HEAD_CHARS = 500;
--const SLIM_TAIL_CHARS = 200;
-+// 压缩较早的工具结果时保留的开头 / 结尾字符数，以及多长的结果才压缩。
-+// 可用 ContextSlimHeadChars / ContextSlimTailChars / ContextSlimMinChars 调整。
-+function slimSetting(name, fallback, min, max) {
-+    const value = Number(process.env[name]);
-+    return Number.isInteger(value) && value >= min && value <= max ? value : fallback;
-+}
-+const slimHeadChars = () => slimSetting('ContextSlimHeadChars', 500, 100, 100000);
-+const slimTailChars = () => slimSetting('ContextSlimTailChars', 200, 0, 100000);
-+const slimMinChars = () => Math.max(
-+    slimSetting('ContextSlimMinChars', 1500, 500, 1000000),
-+    slimHeadChars() + slimTailChars() + 200
-+);
-+/** 紧凑档：离现在远的历史。 */
-+const compactSizes = () => ({ head: slimHeadChars(), tail: slimTailChars(), min: slimMinChars() });
-+/** 宽裕档：最近几轮的历史，留得多一些，模型回头看刚读过的内容时不必再调一次工具。 */
-+function recentSizes() {
-+    const head = slimSetting('ContextSlimRecentHeadChars', 6000, 100, 100000);
-+    const tail = slimSetting('ContextSlimRecentTailChars', 2000, 0, 100000);
-+    return { head, tail, min: head + tail + 1000 };
-+}
-+const slimRecentTurns = () => slimSetting('ContextSlimRecentTurns', 3, 0, 1000);
-+/** 当前轮里较早几步的工具结果：先用这一档，与跨话题引用的截断尺寸一致。 */
-+const CURRENT_TURN_SIZES = { head: 18000, tail: 6000, min: 25000 };
- const TOOL_PAYLOAD_HEADER = '<!-- VCP_TOOL_PAYLOAD -->';
- const TOOL_PAYLOAD_FOOTER = '<!-- VCP_TOOL_PAYLOAD_END -->';
- // 历史消息里持久化的工具结果块（写在 assistant 正文中）。
- const RESULT_BLOCK_START = '[[VCP调用结果信息汇总:';
- const RESULT_BLOCK_END = 'VCP调用结果结束]]';
- const RECORD_ID_PATTERN = /tcr-[0-9A-Za-z-]{8,}/;
-+// 角色分割把历史回复里的工具批次拆成独立 user 消息后，外面可能还带着这些壳。
-+const BATCH_SHELL_PATTERNS = [
-+    /^<<<\[VCP_TOOL_BATCH_START:[^\]\r\n]+\]>>>\s*/,
-+    /\s*<<<\[VCP_TOOL_BATCH_END:[^\]\r\n]+\]>>>$/,
-+    /^【工具返回批次开始[^】\r\n]*】\s*/,
-+    /\s*【工具返回批次结束[^】\r\n]*】$/,
-+];
-+const BATCH_SUMMARY_START = '[本轮工具调用摘要:]';
-+// 由系统替用户说的话（续写提示、话题唤醒、邀请指令），不是一轮对话的起点。
-+const VIRTUAL_USER_PREFIXES = ['[系统提示:]', '[系统邀请指令:]'];
-+const IMAGE_HEAVY_SHARE = 0.25;
- // 本地估算太小时不拿它校准：固定开销占比大，算出来的比例没有代表性。
- const MIN_CALIBRATION_ESTIMATE = 2000;
- 
-@@ -134,6 +165,17 @@ function estimateBodyTokens(body) {
-     return total;
- }
- 
-+function countImageParts(body) {
-+    let count = 0;
-+    for (const message of Array.isArray(body?.messages) ? body.messages : []) {
-+        if (!Array.isArray(message?.content)) continue;
-+        for (const part of message.content) {
-+            if (part && (part.type === 'image_url' || part.type === 'image' || part.type === 'input_image')) count++;
-+        }
-+    }
-+    return count;
-+}
-+
- function clampRatio(ratio) {
-     return Math.min(MAX_RATIO, Math.max(MIN_RATIO, ratio));
- }
-@@ -154,11 +196,47 @@ function isToolPayloadText(text) {
-     return typeof text === 'string' && text.trimStart().startsWith(TOOL_PAYLOAD_HEADER);
- }
- 
-+/**
-+ * 历史回复里持久化的工具批次，被角色分割拆出来之后的样子：一条 user 消息，
-+ * 去掉批次外壳和尾部的调用摘要后，从头到尾就是一个或多个工具结果块。
-+ */
-+function isPersistedToolBatchText(text) {
-+    if (typeof text !== 'string' || !text.includes(RESULT_BLOCK_START)) return false;
-+    let body = text.trim();
-+    for (const pattern of BATCH_SHELL_PATTERNS) body = body.replace(pattern, '');
-+    const summaryAt = body.lastIndexOf(BATCH_SUMMARY_START);
-+    if (summaryAt > 0 && body.lastIndexOf(RESULT_BLOCK_END) < summaryAt) body = body.slice(0, summaryAt);
-+    body = body.trim();
-+    return body.startsWith(RESULT_BLOCK_START) && body.endsWith(RESULT_BLOCK_END);
-+}
-+
-+function firstText(message) {
-+    if (typeof message.content === 'string') return message.content;
-+    return Array.isArray(message.content) && typeof message.content[0]?.text === 'string' ? message.content[0].text : null;
-+}
-+
-+function isRuntimeToolPayloadMessage(message) {
-+    return isToolPayloadText(firstText(message));
-+}
-+
- function isToolResultMessage(message) {
-     if (!message || typeof message !== 'object') return false;
-     if (message.role === 'tool' || message.role === 'function') return true;
--    if (typeof message.content === 'string') return isToolPayloadText(message.content);
--    return Array.isArray(message.content) && isToolPayloadText(message.content[0]?.text);
-+    const text = firstText(message);
-+    if (isToolPayloadText(text)) return true;
-+    return message.role === 'user' && isPersistedToolBatchText(text);
-+}
-+
-+/** 一条 user 消息是不是用户真正说的话（不是工具结果，也不是系统替用户说的提示）。 */
-+function isRealUserMessage(message) {
-+    if (!message || message.role !== 'user' || message.__vcpMetaThinkingV3__) return false;
-+    if (isToolResultMessage(message)) return false;
-+    const text = firstText(message);
-+    if (typeof text === 'string') {
-+        const trimmed = text.trimStart();
-+        if (VIRTUAL_USER_PREFIXES.some(prefix => trimmed.startsWith(prefix))) return false;
-+    }
-+    return true;
- }
- 
- function omissionNotice(omitted, recordId) {
-@@ -169,29 +247,54 @@ function defuseMarkers(fragme
-```
-
-**File**: `modules/contextManager.js` (modified, +65/-13)
-```diff
-@@ -60,11 +60,9 @@ function computeMustKeepIndices(messages) {
-     // --- 规则 4: 当前轮完整保留 ---
-     // 从最后一条真正的用户发言（不是工具回执）到末尾，是模型正在处理的这一轮；
-     // 工具链进行到一半时，末尾可能是好几条工具结果，只保最后两条会把发起调用的那条删掉。
--    for (let i = totalLen - 1; i >= 0; i--) {
--        mustKeepIndices.add(i);
--        const msg = messages[i];
--        if (msg && msg.role === 'user' && !contextBudget.isToolResultMessage(msg)) break;
--    }
-+    // 起点的判定和出站压缩共用一处：续写提示这类系统替用户说的话不算一轮的开始。
-+    const turnStart = contextBudget.lastRealUserIndex(messages);
-+    for (let i = totalLen - 1; i >= Math.max(0, turnStart); i--) mustKeepIndices.add(i);
- 
-     return mustKeepIndices;
- }
-@@ -95,22 +93,63 @@ function computeDeletableUnits(messages, mustKeepIndices) {
-     return units;
- }
- 
-+// --- 裁剪水位：同一段对话的裁剪边界只进不退 ---
-+// 客户端每次都带完整历史，而每轮的总量会小幅波动（记忆注入长短不一、估算比例在校准）。
-+// 只按当轮总量算「删多少」的话，边界会在档位附近来回跳：上一轮删掉的消息下一轮又回来，
-+// 上游的提示缓存连续失效。这里在内存里按对话记住上次的边界，下一轮至少删到同一位置。
-+// 不落盘：进程重启后最多重新对齐一次。对话被改写（边界消息找不到了）或明显变短时自动作废。
-+const MAX_TRACKED_CONVERSATIONS = 200;
-+const WATERMARK_RELEASE_RATIO = 0.7;
-+const pruneWatermarks = new Map();
-+
-+function messageHead(message, size) {
-+    const text = jevContextPruner.extractText(message && message.content) || '';
-+    return `${message && message.role}|${text.slice(0, size)}`;
-+}
-+
-+function conversationKey(messages) {
-+    const first = messages.find(msg => msg && msg.role !== 'system');
-+    return first ? messageHead(first, 200) : null;
-+}
-+
-+/** 边界 = 留下来的第一条非系统消息；用它和下一条的开头一起当指纹，避免「好的」这类短句重复。 */
-+function boundaryFingerprint(messages, index) {
-+    return `${messageHead(messages[index], 120)}\u0000${messageHead(messages[index + 1], 120)}`;
-+}
-+
-+function findWatermarkIndex(messages, fingerprint) {
-+    for (let i = 0; i < messages.length - 1; i++) {
-+        if (messages[i] && messages[i].role !== 'system' && boundaryFingerprint(messages, i) === fingerprint) return i;
-+    }
-+    return -1;
-+}
-+
-+function rememberWatermark(key, fingerprint) {
-+    pruneWatermarks.delete(key);
-+    pruneWatermarks.set(key, fingerprint);
-+    if (pruneWatermarks.size > MAX_TRACKED_CONVERSATIONS) pruneWatermarks.delete(pruneWatermarks.keys().next().value);
-+}
-+
-+function resetPruneWatermarks() {
-+    pruneWatermarks.clear();
-+}
-+
- /**
-  * 按给定顺序删除单元，直到估算不超过上限；返回被删下标集合。
-- * 请求是无状态的（客户端每次都带完整历史），所以「删多少」只由当前总量决定：
-- * 把超出量向上取整到档位的整数倍，同一档内每次算出的删除量相同，裁剪边界就不动。
-+ * 「删多少」把超出量向上取整到档位的整数倍，一次腾出一档；floorIndex（上次的裁剪边界）
-+ * 之前的单元无论如何都删，保证边界不后退。
-  */
--function dropUnitsUntilFits(messages, orderedUnits, limit, mustKeepIndices) {
-+function dropUnitsUntilFits(messages, orderedUnits, limit, mustKeepIndices, floorIndex = -1) {
-     const weights = messages.map(msg => estimateTokens([msg]));
-     const total = weights.reduce((sum, w) => sum + w, 0);
-     const dropped = new Set();
--    if (total <= limit) return dropped;
-+    if (total <= limit && floorIndex <= 0) return dropped;
-     const step = limit * (1 - pruneTargetRatio());
--    const over = total - limit;
-+    const over = Math.max(0, total - limit);
-     const required = step >= 1 ? Math.ceil(over / step) * step : over;
-     let removed = 0;
-     for (const unit of orderedUnits) {
--        if (removed >= required) break;
-+        if (removed >= required && unit[unit.length - 1] >= floorIndex) break;
-         for (const index of unit) {
-             dropped.add(index);
-             removed += weights[index];
-@@ -151,10 +190,22 @@ function pruneMessages(messages, limit, debugMode = false) {
- 
-     const mustKeepIndices = computeMustKeepIndices(messages);
-     const units = computeDeletableUnits(messages, mustKeepIndices);
-+    // 上次的裁剪边界：对话没被改写、也没有明显变短时沿用。
-+    const total = estimateTokens(messages);
-+    const key = conversationKey(messages);
-+    let floorIndex = -1;
-+    if (key && pruneWatermarks.has(key)) {
-+        floorIndex = total > limit * WATERMARK_RELEASE_RATIO ? findWatermarkIndex(messages, pruneWatermarks.get(key)) : -1;
-+        if (floorIndex === -1) pruneWatermarks.delete(key);
-+    }
-     // 位置规则：从最老的单元开始删。
--    const dropped = dropUnitsUntilFits(messages, units, limit, mustKeepIndices);
-+    const dropped = dropUnitsUntilFits(messages, units, limit, mustKeepIndices, floorIndex);
-+    if (key && dropped.size > 0) {
-+        const boundary = messages.findIndex((msg, i) => !dropped.has(i) && msg && msg.role !== 'system');
-+        if (boundary !== -1 && boundary < messages.length - 1) rememberWatermark(key, boundaryFingerprint(messages, boundary));
-+    }
-     if (debugMode) {
--        console.log(`[ContextManager] 估算 ${estimateTokens(messages)}，限制 ${limit}，移除 ${dropped.size} 条消息`);
-+        console.log(`[ContextManager] 估算 ${total}，限制 ${limit}，移除 ${dropped.size} 条消息`);
-     }
-     if (dropped.size === 0) return messages;
-     return messages.filter((msg, i) => !dropped.has(i));
-@@ -257,6 +308,7 @@ async function pruneMessagesSmart(messages, limit, debugMode = false, options =
- 
- module.exports = {
-     isPruningEnabled,
-+    resetPruneWatermarks,
-     pruneMessages,
-     pruneMessagesSmart,
-     computeMustK
-```
-
-**File**: `modules/finalContextStore.js` (modified, +2/-4)
-```diff
-@@ -12,8 +12,7 @@
- // - 分块数字是本地估算：汉字按 2 个字符、其余按 1 个字符计，再除以 3。只用于看各块占比，
- //   不再用 cl100k_base（GPT-4 旧词表对中文多算约 1.5 倍）。
- const TOKEN_METHOD = 'estimate:cjk2/3';
--const { promptTokensFromUsage } = require('./contextBudget.js');
--const ESTIMATED_TOKEN_CHAR_DIVISOR = 3;
-+const { promptTokensFromUsage, estimateTextTokens } = require('./contextBudget.js');
- 
- const MAX_SNAPSHOTS = 5;
- const snapshots = []; // 数组首位为最新快照（unshift 写入）
-@@ -35,8 +34,7 @@ function safeClone(value) {
- }
- 
- function estimateTokensForText(text) {
--  const chineseChars = (text.match(/[\u4e00-\u9fff]/g) || []).length;
--  return Math.ceil((chineseChars * 2 + text.length - chineseChars) / ESTIMATED_TOKEN_CHAR_DIVISOR);
-+  return estimateTextTokens(text);
- }
- 
- function countTokensForText(text) {
-```
-
-**File**: `modules/handlers/nonStreamHandler.js` (modified, +1/-1)
-```diff
-@@ -288,7 +288,7 @@ class NonStreamHandler {
-       try {
-         const usage = JSON.parse(responseText)?.usage;
-         if (isInitial) finalContextStore.recordUpstreamUsage(originalBody.requestId || originalBody.messageId, usage);
--        budgetGuard?.noteUsage(usage);
-+        budgetGuard?.noteUsage(usage, isInitial ? firstAiAPIResponse?.vcpAttemptModel : undefined);
-       } catch (_) { /* 非 JSON 响应没有 usage，面板保留本地估算 */ }
-     };
-     noteUpstreamUsage(aiResponseText, true);
-```
-
-**File**: `modules/handlers/streamHandler.js` (modified, +2/-2)
-```diff
-@@ -243,7 +243,7 @@ class StreamHandler {
-           // 首个上游调用的 usage 就是「最终上下文」快照那份请求体的真实计数。
-           if (isInitialCall && parsedData?.usage) finalContextStore.recordUpstreamUsage(id, parsedData.usage);
-           // 每一轮的真实用量都用来校准下一轮的预算估算。
--          if (parsedData?.usage) budgetGuard?.noteUsage(parsedData.usage);
-+          if (parsedData?.usage) budgetGuard?.noteUsage(parsedData.usage, aiResponse?.vcpAttemptModel);
-           if (parsedData?.error) {
-             invalidPayload = true;
-             hasPayloadError = true;
-@@ -631,7 +631,7 @@ class StreamHandler {
-               created: Math.floor(Date.now() / 1000),
-               model: originalBody.model || 'unknown',
-               vcp_incomplete: true,
--              vcp_context_budget: { estimated: check.estimated, limit: check.limit },
-+              vcp_context_budget: { stage: 'tool_loop', estimated: check.estimated, limit: check.limit },
-               choices: [{ index: 0, delta: {
-                 content: `\n\n> [!WARNING]\n> ${contextBudget.exceededMessage(check, 'tool_loop', budgetGuard.breakdown(body))}\n`
-               }, finish_reason: 'stop' }],
-```
-
----
-
-### Incident Patch 2: `32322037` (2026-11-25)
-**Commit Message**: Merge pull request #642 from infinite-vector/fix/plugin-stdout-regex-hang-and-request-activity-timeout
-
-fix(core,FileOperator): 根治同步stdio插件大输出正则回溯死锁，引入活跃请求双轨续期并消除FileOperator双倍Base64膨胀
-
-**File**: `Plugin.js` (modified, +95/-43)
-```diff
-@@ -1761,11 +1761,68 @@ class PluginManager extends EventEmitter {
-             });
- 
- 
--            let outputBuffer = ''; // Buffer to accumulate data chunks
-+            const outputChunks = []; // 收集 stdout 分块，避免同步插件大输出时反复触发 ConsString 扁平化与正则回溯
-             let errorOutput = '';
-             let processExited = false;
-             let initialResponseSent = false; // Flag for async plugins
-             const isAsyncPlugin = plugin.pluginType === 'asynchronous';
-+
-+            // 线性 O(N) 括号深度平衡扫描器：支持嵌套对象、格式化换行与前置杂音日志，零正则回溯
-+            const extractFirstStatusJsonObject = (text) => {
-+                if (!text || typeof text !== 'string') return null;
-+                const len = text.length;
-+                let searchFrom = 0;
-+                while (searchFrom < len) {
-+                    const startIdx = text.indexOf('{', searchFrom);
-+                    if (startIdx === -1) return null;
-+                    let depth = 0;
-+                    let inString = false;
-+                    let escape = false;
-+                    let endIdx = -1;
-+                    for (let i = startIdx; i < len; i++) {
-+                        const ch = text.charCodeAt(i);
-+                        if (inString) {
-+                            if (escape) {
-+                                escape = false;
-+                            } else if (ch === 92) { // '\\'
-+                                escape = true;
-+                            } else if (ch === 34) { // '"'
-+                                inString = false;
-+                            }
-+                            continue;
-+                        }
-+                        if (ch === 34) { // '"'
-+                            inString = true;
-+                        } else if (ch === 123) { // '{'
-+                            depth++;
-+                        } else if (ch === 125) { // '}'
-+                            depth--;
-+                            if (depth === 0) {
-+                                endIdx = i;
-+                                break;
-+                            }
-+                        }
-+                    }
-+                    if (endIdx === -1) {
-+                        // 当前顶层 '{' 尚未闭合，等待后续 chunk 或尝试下一个 '{'（防止前置日志含孤立 '{'）
-+                        const nextBrace = text.indexOf('{', startIdx + 1);
-+                        if (nextBrace === -1) return null;
-+                        searchFrom = startIdx + 1;
-+                        continue;
-+                    }
-+                    const candidate = text.slice(startIdx, endIdx + 1);
-+                    try {
-+                        const parsed = JSON.parse(candidate);
-+                        if (parsed && typeof parsed === 'object' && (parsed.status === 'success' || parsed.status === 'error')) {
-+                            return parsed;
-+                        }
-+                    } catch {
-+                        // 非合法 JSON，继续从下一个 '{' 扫描
-+                    }
-+                    searchFrom = startIdx + 1;
-+                }
-+                return null;
-+            };
-             const isArcheryNoReply = isAsyncPlugin && executionOptions?.archeryNoReply === true;
-             const noReplyGraceMs = Number.isFinite(Number(executionOptions?.archeryNoReplyGraceMs))
-                 ? Math.max(0, Number(executionOptions.archeryNoReplyGraceMs))
-@@ -1820,47 +1877,33 @@ class PluginManager extends EventEmitter {
-             pluginProcess.stdout.on('data', (data) => {
-                 if (processExited || (isAsyncPlugin && initialResponseSent)) {
-                     // If async and initial response sent, or process exited, ignore further stdout for this Promise.
--                    // The plugin's background task might still log to its own stdout, but we don't collect it here.
-                     if (this.debugMode && isAsyncPlugin && initialResponseSent) console.log(`[PluginManager executePlugin Internal] Async plugin ${pluginName} (initial response sent) produced more stdout: ${data.substring(0, 100)}...`);
-                     return;
-                 }
--                outputBuffer += data;
--                try {
--                    // Try to parse a complete JSON object from the buffer.
--                    // This is a simple check; for robust streaming JSON, a more complex parser is needed.
--                    // We assume the first complete JSON is the one we want for async initial response.
--                    const potentialJsonMatch = outputBuffer.match(/(\{[\s\S]*?\})(?:\s|$)/);
--                    if (potentialJsonMatch && potentialJsonMatch[1]) {
--                        const jsonString = potentialJsonMatch[1];
--                        const parsedOutput = JSON.parse(jsonString);
--
--                        if (parsedOutput && (parsedOutput.status === "success" || parsedOutput.status === "error")) {
--                            if (isAsyncPlugin) {
-```
-
-**File**: `Plugin/FileOperator/FileOperator.js` (modified, +8/-1)
-```diff
-@@ -1937,11 +1937,18 @@ function convertToVCPFormat(response) {
-       }
-     }
- 
-+    // 避免 data.content（如多模态图片 Base64）在 result.content 与 result.details.content 中双份重复造成 200% 载荷膨胀
-+    let sanitizedDetails = data;
-+    if (data && typeof data === 'object' && !Array.isArray(data) && Object.prototype.hasOwnProperty.call(data, 'content')) {
-+      sanitizedDetails = { ...data };
-+      delete sanitizedDetails.content;
++      const feedbackNote = typeof parsedPayload?.__vcpApprovalFeedback === 'string'
++        ? parsedPayload.__vcpApprovalFeedback.trim()
++        : '';
++      if (feedbackNote && !contentForAI.some(part => part?.type === 'text' && typeof part.text === 'string' && part.text.includes(feedbackNote))) {
++        contentForAI = [{ type: 'text', text: `【用户审核留言：已允许工具 "${toolName}" 调用】\n${feedbackNote}` }, ...contentForAI];
++      }
 +    }
 +
      return {
-       status: 'success',
-       result: {
-         content: contentArray,
--        details: data
-+        details: sanitizedDetails
-       },
+       success: false,
+       error: message,
+       content: [{ type: 'text', text: `[错误] ${displayText}` }],
++      ...(contentForAI ? { contentForAI } : {}),
+       ...(parsedPayload ? { raw: parsedPayload } : {})
      };
-   } else {
+   }
 ```
 
-**File**: `WebSocketServer.js` (modified, +7/-3)
+**File**: `tests/toolExecutorErrorResult.test.js` (added, +91/-0)
 ```diff
-@@ -1,4 +1,4 @@
--// WebSocketServer.js
-+﻿// WebSocketServer.js
- const WebSocket = require('ws');
- const url = require('url');
- const fs = require('fs').promises;
-@@ -160,7 +160,11 @@ function initialize(httpServer, config) {
-         console.warn('[WebSocketServer] VCP_Key not set. WebSocket connections will not be authenticated if default path is used.');
-     }
- 
--    wssInstance = new WebSocket.Server({ noServer: true });
-+    const configuredMaxPayloadMB = Number(process.env.WEBSOCKET_MAX_PAYLOAD_MB);
-+    const maxPayloadBytes = (Number.isFinite(configuredMaxPayloadMB) && configuredMaxPayloadMB > 0
-+        ? configuredMaxPayloadMB
-+        : 256) * 1024 * 1024;
-+    wssInstance = new WebSocket.Server({ noServer: true, maxPayload: maxPayloadBytes });
- 
-     upgradeHandler = (request, socket, head) => {
-         if (isDraining) {
-@@ -936,7 +940,7 @@ function rejectPendingToolRequestsForServer(serverId) {
- async function executeDistributedTool(serverIdOrName, toolName, toolArgs, timeout) {
-     // 优先从插件 manifest 获取超时设置
-     const plugin = pluginManager.getPlugin(toolName);
--    const defaultTimeout = plugin?.communication?.timeout || 60000;
-+    const defaultTimeout = plugin?.communication?.timeout || 180000;
-     const effectiveTimeout = timeout ?? defaultTimeout;
- 
-     let targetServerId = serverIdOrName;
-```
-
-**File**: `config.env.example` (modified, +13/-4)
-```diff
-@@ -19,19 +19,23 @@ API_URL=NEWAPI_URL_SUCH_AS_http://127.0.0.1:3000
- 
- PORT=6005
- Key=YOUR_KEY_SUCH_AS_aBcDeFgHiJkLmNoP
-+Image_Key=YOUR_IMAGE_KEY_SUCH_AS_Images_aBcDeFgHiJk
-+File_Key=YOUR_FILE_KEY_SUCH_AS_123456
-+# VCP服务器WebSocket鉴权，用于VCP面板和分布式服务器之间的实时通信。
-+VCP_Key=YOUR_VCP_KEY_SUCH_AS_aBcDeFgHiJkLmNoP
+@@ -0,0 +1,91 @@
++'use strict';
 +
- # Optional read-only RiverMemo API (POST /v1/memory/search). Empty = not registered.
- # Use dedicated random bearer tokens, never Key. Store only each token's lowercase SHA-256 digest here.
- # MEMORY_READ_GRANTS='{"<64 hex digest>":["ExampleDiary"]}'
- # HTTPS request: Authorization: Bearer <read token>; JSON: {"query":"what did we decide?","diaries":["ExampleDiary"],"k":5}
- # Response: {"direct":[{"diary":"ExampleDiary","file":"note.md","text":"...","score":0.8,"scoreSource":"retrieval"}]}
- MEMORY_READ_GRANTS=
--Image_Key=YOUR_IMAGE_KEY_SUCH_AS_Images_aBcDeFgHiJk
--File_Key=YOUR_FILE_KEY_SUCH_AS_123456
--# VCP服务器WebSocket鉴权，用于VCP面板和分布式服务器之间的实时通信。
--VCP_Key=YOUR_VCP_KEY_SUCH_AS_aBcDeFgHiJkLmNoP
++const test = require('node:test');
++const assert = require('node:assert/strict');
++const ToolExecutor = require('../modules/vcpLoop/toolExecutor');
 +
- # WebSocket 协议级心跳。开启后每 60 秒向所有已连接客户端发送一个零载荷 Ping 控制帧，
- # 用于维持隧道、反向代理及 NAT 场景中的空闲连接；默认关闭。
- WEBSOCKET_HEARTBEAT_ENABLED=false
-+# WebSocket 单帧最大允许载荷（单位 MB，默认 256；防止分布式工具批量返回 4K 原图 Base64 时触发 1009 断连）。
-+WEBSOCKET_MAX_PAYLOAD_MB=256
- 
- # 引入网络波动重试机制
- ApiRetries=3
-@@ -40,6 +44,11 @@ ApiRetryDelay=200
- ApiConnectionTimeoutMs=900000
- # 插件调用本机 VCP chat 总线的超时（毫秒）。AgentAssistant 会使用该值；建议不低于 ApiConnectionTimeoutMs。
- PLUGIN_COMMUNICATION_TIMEOUT=900000
-+# 活跃请求（流式与非流式多轮 VCP 工具循环共用）无推进空闲超时（毫秒）。
-+# 只要上游仍在流式输出、或工具循环仍在活跃执行/轮次推进，空闲计时器会自动续期；默认 1800000 = 30分钟。
-+ActiveRequestIdleTimeoutMs=1800000
-+# 单个活跃请求跨所有工具循环轮次的总寿命硬上限（毫秒）。防止异常循环无限驻留；默认 7200000 = 120分钟。
-+ActiveRequestMaxLifetimeMs=7200000
- 
- # DEFAULT_TIMEZONE: 定义服务器的默认时区，用于时间相关的操作和日志记录。
- # VCPSleep 打盹插件睡醒后也会使用该时区报告当前日期、时分秒与 UTC 偏移。
-```
-
-**File**: `modules/chatCompletionHandler.js` (modified, +14/-1)
-```diff
-@@ -859,11 +859,13 @@ class ChatCompletionHandler {
-       if (isOriginalRequestStreaming && !res.headersSent) {
-         res.setHeader('x-vcp-tool-loop-handoff', '1');
-       }
-+      const initialRequestNow = Date.now();
-       activeRequests.set(id, {
-         req,
-         res,
-         abortController,
--        timestamp: Date.now(),
-+        timestamp: initialRequestNow,
-+        lastActivityAt: initialRequestNow,
-         aborted: false, // 修复 Bug #4: 添加中止标志
-         abortReason: null,
-         handoffGate
-@@ -1425,9 +1427,20 @@ class ChatCompletionHandler {
-         res.setHeader('x-vcp-tool-loop-handoff', '1');
-         res.flushHeaders?.();
-       }
-+      let lastActivityTouchMs = 0;
-+      const touchRequestActivity = () => {
-+        if (!id) return;
-+        const now = Date.now();
-+        if (now - lastActivityTouchMs < 1000) return;
-+        lastActivityTouchMs = now;
-+        const reqEntry = activeRequests.get(id);
-+        if (reqEntry) reqEntry.lastActivityAt = now;
-+      };
++function makeExecutor() {
++  const stub = Object.create(ToolExecutor.prototype);
++  stub.webSocketServer = { broadcast: () => {} };
++  stub.debugMode = false;
++  return stub;
++}
 +
-       const context = {
-         ...this.config,
-         handoffGate,
-+        touchRequestActivity,
-         toolExecutor: this.toolExecutor,
-         ToolCallParser,
-         abortController,
-```
-
-**File**: `modules/handlers/nonStreamHandler.js` (modified, +14/-2)
-```diff
-@@ -179,6 +179,7 @@ class NonStreamHandler {
-       roleDividerSwitches,
-       roleDividerScanSwitches,
-       roleDividerRemoveDisabledTags,
-+      touchRequestActivity,
-       toolExecutor,
-       ToolCallParser,
-       abortController,
-@@ -326,11 +327,12 @@ class NonStreamHandler {
-     let currentMessagesForNonStreamLoop = originalBody.messages ? JSON.parse(JSON.stringify(originalBody.messages)) : [];
- 
-     do {
--      // 检查中止信号
-+      // 检查中止信号并刷新非流式多轮工具循环活性时间戳
-       if (abortController && abortController.signal.aborted) {
-         if (DEBUG_MODE) console.log('[VCP NonStream Loop] Abort detected, exiting loop.');
-         break;
-       }
-+      touchRequestActivity?.();
- 
-       let anyToolProcessedInCurrentIteration = false;
-       conversationHistoryForClient.push(currentAIContentForClient);
-@@ -455,7 +457,17 @@ class NonStreamHandler {
-         }
-         currentMessagesForNonStreamLoop.push(...assistantMessages);
- 
--        const toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForNonStreamLoop);
-+        const nonStreamActivityTimer = setInterval(() => {
-+          touchRequestActivity?.();
-+        }, 5000);
-+        nonStreamActivityTimer.unref?.();
-+        let toolResults;
-+        try {
-+          toolResults = await toolExecutor.executeAll(normalCalls, clientIp, currentMessagesForNonStreamLoop);
-+        } finally {
-+          clearInterval(nonStreamActivityTimer);
-+          touchRequestActivity?.();
-+        }
-         const normalCallLogs = (() => {
-           let logs = [];
-           if (writeChatLog) {
-```
-
-**File**: `modules/handlers/streamHandler.js` (modified, +5/-1)
-```diff
-@@ -77,6 +77,7 @@ class StreamHandler {
-       roleDividerSwitches,
-       roleDividerScanSwitches,
-       roleDividerRemoveDisabledTags,
-+      touchRequestActivity,
-       toolExecutor,
-       ToolCallParser,
-       abortController,
-@@ -457,6 +458,7 @@ class StreamHandler {
-         aiResponse.body.on('data', chunk => {
-           if (streamSettled || streamAborted) return;
-           resetChunkIdleTimer(); // 每收到一个 chunk 就重置空闲计时器
-+          touchRequestActivity?.();
- 
-           const chunkString = decoder.write(chunk);
-           sseLineBuffer += chunkString;
-@@ -890,8 +892,10 @@ class StreamHandler {
-         break;
-       }
- 
--      // 执行普通调用（启动 SSE 保活心跳，防止长耗时工具/RAG刷新/下轮首字等待期间连接空闲断开）
-+      // 执行普通调用（启动 SSE 保活心跳并刷新请求活性时间戳，防止长耗时工具/RAG刷新/下轮首字等待期间连接被误判为空闲）
-+      touchRequestActivity?.();
-       const loopKeepAliveTimer = setInterval(() => {
-+        touchRequestActivity?.();
-         if (!res.writableEnded && !res.destroyed) {
-           try {
-             res.write(': vcp-tool-keepalive\n\n');
-```
-
-**File**: `server.js` (modified, +53/-5)
-```diff
-@@ -363,16 +363,64 @@ async function abortAllActiveRequests(reason = '服务器正在关闭') {
-     }
- }
- 
--// 新增：定时清理 activeRequests 防止内存泄漏
-+// 活跃请求（流式与非流式多轮工具循环共用）超时配置：
-+// ActiveRequestIdleTimeoutMs：无推进空闲超时（默认 30 分钟；上游流输出或工具循环推进时自动续期）
-+// ActiveRequestMaxLifetimeMs：单请求跨所有循环轮次的总寿命硬上限（默认 120 分钟；防止异常循环无限驻留）
-+const ACTIVE_REQUEST_IDLE_TIMEOUT_MS = Math.max(
-+    60 * 1000,
-+    parseInt(process.env.ActiveRequestIdleTimeoutMs, 10) || 30 * 60 * 1000
-+);
-+const ACTIVE_REQUEST_MAX_LIFETIME_MS = Math.max(
-+    ACTIVE_REQUEST_IDLE_TIMEOUT_MS,
-+    parseInt(process.env.ActiveRequestMaxLifetimeMs, 10) || 120 * 60 * 1000
-+);
++test('toolExecutor._createErrorResult: plain string errors retain content and omit contentForAI', () => {
++  const executor = makeExecutor();
++  const res = executor._createErrorResult('DemoTool', 'Network request timeout');
++  assert.equal(res.success, false);
++  assert.equal(res.error, 'Network request timeout');
++  assert.deepEqual(res.content, [{ type: 'text', text: '[错误] Network request timeout' }]);
++  assert.equal(res.contentForAI, undefined);
++  assert.equal(res.raw, undefined);
++});
 +
-+// 定时清理 activeRequests 防止内存泄漏，同时兼顾长耗时多轮工具活跃续期与总寿命硬上限
- setInterval(() => {
-     const now = Date.now();
-     for (const [id, context] of activeRequests.entries()) {
--        // 30分钟超时
--        if (now - (context.timestamp || 0) > 30 * 60 * 1000) {
--            console.log(`[Request Cleanup] Aborting and removing timed-out request: ${id}`);
--            if (context.abortController) {
-+        const createdAt = context.timestamp || now;
-+        const lastActivityAt = context.lastActivityAt || createdAt;
-+        const totalElapsedMs = now - createdAt;
-+        const idleElapsedMs = now - lastActivityAt;
-+        const isMaxLifetimeExceeded = totalElapsedMs > ACTIVE_REQUEST_MAX_LIFETIME_MS;
-+        const isIdleTimedOut = idleElapsedMs > ACTIVE_REQUEST_IDLE_TIMEOUT_MS;
++test('toolExecutor._createErrorResult: approval rejection retains readable content and omits contentForAI when result is absent', () => {
++  const executor = makeExecutor();
++  const payload = JSON.stringify({
++    plugin_error: 'Execution rejected by admin.',
++    user_feedback: 'Unsafe command',
++    error_type: 'approval_rejected'
++  });
++  const res = executor._createErrorResult('DemoTool', '执行错误: ' + payload);
++  assert.equal(res.success, false);
++  assert.match(res.content[0].text, /Execution rejected by admin/);
++  assert.match(res.content[0].text, /用户反馈: Unsafe command/);
++  assert.equal(res.contentForAI, undefined);
++  assert.equal(res.raw.error_type, 'approval_rejected');
++});
 +
-+        if (isMaxLifetimeExceeded || isIdleTimedOut) {
-+            const reason = isMaxLifetimeExceeded
-+                ? `request_max_lifetime_timeout (${Math.round(totalElapsedMs / 60000)}min > ${Math.round(ACTIVE_REQUEST_MAX_LIFETIME_MS / 60000)}min)`
-+                : `request_idle_timeout (idle ${Math.round(idleElapsedMs / 60000)}min > ${Math.round(ACTIVE_REQUEST_IDLE_TIMEOUT_MS / 60000)}min)`;
-+            console.log(`[Request Cleanup] Aborting and removing timed-out request: ${id} [${reason}]`);
-+            context.aborted = true;
-+            context.abortReason = reason;
-+            if (context.abortController && !context.abortController.signal.aborted) {
-                 context.abortController.abort();
-             }
-+            if (context.res && !context.res.writableEnded && !context.res.destroyed) {
-+                try {
-+                    if (context.res.headersSent && String(context.res.getHeader('Content-Type') || '').includes('text/event-stream')) {
-+                        const timeoutNotice = isMaxLifetimeExceeded
-+                            ? `\n\n> [!WARNING]\n> **请求总时长已达硬上限 (${Math.round(ACTIVE_REQUEST_MAX_LIFETIME_MS / 60000)} 分钟)，流已安全中止**。\n`
-+                            : `\n\n> [!WARNING]\n> **请求连续空闲超过 ${Math.round(ACTIVE_REQUEST_IDLE_TIMEOUT_MS / 60000)} 分钟无推进，流已安全中止**。\n`;
-+                        context.res.write(`data: ${JSON.stringify({
-+                            id: `chatcmpl-VCP-request-timeout-${now}`,
-+                            object: 'chat.completion.chunk',
-+                            created: Math.floor(now / 1000),
-+                            model: context.req?.body?.model || 'unknown',
-+                            choices: [{ index: 0, delta: { content: timeoutNotice }, finish_reason: 'stop' }]
-+                        })}\n\n`);
-+                        context.res.write('data: [DONE]\n\n');
-+                        context.res.end();
-+                    } else if (!context.res.headersSent) {
-+                        context.res.status(504).json({
-+                            error: 'Gateway Timeout',
-+                            message: `Request timed out: ${reason}`
-+                        });
-+                    }
-+                } catch {
-+                    try { context.res.destroy(); } catch { /* ignore */ }
-+                }
-+            }
-             activeRequests.delete(id);
-         }
-     }
++test('toolExecutor._createErrorResult: structured error result object is exposed to contentForAI', () => {
++  const executor = makeExecutor();
++  const businessErrorResult = {
++    exitCode: 7,
++    stderr: 'command not found',
++    retryable: false,
++    diagnostics: { host: 'node-1' }
++  };
++  const payload = JSON.stringify({
++    plugin_error: 'Process terminated with non-zero exit code.',
++    result: businessErrorResult
++  });
++  const res = executor._createErrorResult('DemoTool', '执行错误: ' + payload);
++  assert.equal(res.success, false);
++  assert.match(res.content[0].text, /Process terminated with non-zero exit code/);
++  assert.ok(Array.isArray(res.contentForAI));
++  assert.equal(res.contentForAI.length, 1);
++  assert.equal(res.contentForAI[0].type, 'text');
++  const parsedForAI = JSON.parse(res.contentForAI[0].text);
++  assert.deepEqual(parsedForAI, businessErrorResult);
++  assert.deepEqual(res.raw.result, businessErrorResult);
++});
++
++test('toolExecutor._createErrorResult: standard content array in result is passed verbatim to contentForAI', () => {
++  const executor = makeExecutor();
++  const errorParts = [
++    { type: 'text', text: '[header]\n{"tool": "Run", "status": "error", "exitCode": 1}' },
++    { type: 'text', text: '[output]\nSyntaxError: Unexpected token' }
++  ];
++  const payload = JSON.stringify({
++    plugin_error: 'Task execution failed.',
++    result: { content: errorParts }
++  });
++  const res = executor._createErrorResult('DemoTool', '执行错误: ' + payload);
++  assert.equal(res.success, false);
++  assert.deepEqual(res.contentForAI, errorParts);
++});
++
++test('toolExecutor._createErrorResult: approval feedback note is preserved when structured result exists', () => {
++  const executor = makeExecutor();
++  const businessErrorResult = { status: 'failed', code: 'PERMISSION_DENIED' };
++  const payload = JSON.stringify({
++    plugin_error: 'Operation not permitted.',
++    __vcpApprovalFeedback: '请检查只读目录',
++    result: businessErrorResult
++  });
++  const res = executor._createErrorResult('DemoTool', '执行错误: ' + payload);
++  assert.equal(res.success, false);
++  assert.match(res.content[0].text, /请检查只读目录/);
++  assert.ok(res.contentForAI.length >= 2);
++  assert.match(res.contentForAI[0].text, /请检查只读目录/);
++  assert.deepEqual(JSON.parse(res.contentForAI[1].text), businessErrorResult);
++});
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 3: `ff2624ee` (2026-11-25)
-**Commit Message**: fix
+### Incident Patch 2: `d333a636` (2026-11-28)
+**Commit Message**: fix(plugins): add USE_PUBLIC_URL support to 16 built-in plugins
 
-**File**: `README.md` (modified, +4/-4)
+Add USE_PUBLIC_URL (default: false) and VarHttpsUrl support to all 16 built-in plugins that previously hardcoded ${VAR_HTTP_URL}:${SERVER_PORT}/pw=..., matching the existing convention in ZImageTurboGen, AgnesGen, AgnesVideoGen, and GPTImageGen (#647).
+
+- Default behavior (USE_PUBLIC_URL=false / unset) remains 100% backward compatible, preserving VarHttpUrl:PORT.
+- When USE_PUBLIC_URL=true (or 1), returns VarHttpsUrl (falling back to VarHttpUrl) without appending :PORT and strips trailing slashes to avoid //pw= URLs.
+- Covers BilibiliFetch, UrlFetch, DailyNote, DMXDoubaoGen, DoubaoGen, FluxGen, GeminiImageGen (.js/.mjs), MagiAgent, MediaRenderer, QwenImageGen, TarotDivination, ToolCallRecordQuery, VCPForum, ComfyUIGen, FileListGenerator, and ZImageGen2.
+- Declares USE_PUBLIC_URL in each plugin manifest configSchema, existing config.env.example templates, and root config.env.example (default false).
+- Adds regression tests in tests/pluginPublicUrl.test.js.
+
+**File**: `Plugin/BilibiliFetch/BilibiliFetch.py` (modified, +10/-3)
 ```diff
-@@ -2,7 +2,9 @@
- 
- ![VCP Logo](docs/image/VCPLogo.png)
- 
--**VCP官网：[通过官网迅速了解 VCP | VCPToolBox.com](https://www.vcptoolbox.com)**
-+**VCP 官网：[VCPToolBox.com](https://www.vcptoolbox.com)**
+@@ -776,14 +776,20 @@ def sanitize_filename(name: str, max_length: int = 80) -> str:
+ def get_accessible_url(local_path: str) -> str:
+     """Constructs an accessible URL for the image server."""
+     var_http_url = get_config_priority('VarHttpUrl', ['VAR_HTTP_URL', 'VarHttpUrl'], 'http://localhost')
++    var_https_url = get_config_priority('VarHttpsUrl', ['VAR_HTTPS_URL', 'VarHttpsUrl'], '')
++    use_public_url = str(get_config_priority('USE_PUBLIC_URL', ['USE_PUBLIC_URL'], 'false')).strip().lower() in ('true', '1')
+     server_port = get_config_priority('PORT', ['SERVER_PORT', 'PORT'], '6005')
+     image_key = get_config_priority('Image_Key', ['IMAGESERVER_IMAGE_KEY', 'Image_Key'])
+     project_base_path = get_config_priority('PROJECT_BASE_PATH', ['PROJECT_BASE_PATH'])
+     if not project_base_path:
+         script_dir = os.path.dirname(os.path.abspath(__file__))
+         project_base_path = os.path.abspath(os.path.join(script_dir, '..', '..'))
+-    
+-    if all([var_http_url, server_port, image_key, project_base_path]):
 +
-+VCP 由四个仓库组成，每天都有新进展。官网汇总了各仓库的[更新日志](https://www.vcptoolbox.com/?page=changelog)，也提供了查阅整个 VCP 项目[技术文档](https://www.vcptoolbox.com/?page=learn-vcp)的统一入口。
++    public_base = str(var_https_url or var_http_url or '').strip().rstrip('/')
++    base_url = str(var_http_url or '').strip().rstrip('/')
++    has_base_config = bool(public_base) if use_public_url else bool(base_url and server_port)
++
++    if has_base_config and image_key and project_base_path:
+         # Calculate relative path from PROJECT_BASE_PATH/image/
+         try:
+             norm_local = os.path.abspath(os.path.normpath(local_path))
+@@ -797,8 +803,9 @@ def get_accessible_url(local_path: str) -> str:
+             # URL 路径必须按 UTF-8 百分号编码；仅保留目录分隔符。
+             encoded_rel_path = urllib.parse.quote(rel_path, safe='/')
+             encoded_image_key = urllib.parse.quote(str(image_key), safe='')
+-            base_url = str(var_http_url).rstrip('/')
  
- [English](README_en.md) | [日本語](README_ja.md) | [Русский](README_ru.md)
- 
-@@ -177,9 +179,7 @@ VCP 的终极愿景，从来不是"让人类更高效地使用 AI"。而是构
- >
- > 想快速扫一遍技术地图，请看 [VCP 技术 Lite 索引](docs/TECHNICAL_LITE.md)。
- >
--> 工程实现细节、API、配置、运维，请见 [完整文档体系](docs/DOCUMENTATION_INDEX.md)。
-->
--> 了解VCP动向、更新内容，请见 [VCP更新日志](https://www.vcptoolbox.com/?page=changelog)。
-+> 查阅 VCPToolBox 的工程实现、API、配置与运维说明，请见[本仓库文档索引](docs/DOCUMENTATION_INDEX.md)。
- 
- ---
++            if use_public_url:
++                return f"{public_base}/pw={encoded_image_key}/images/{encoded_rel_path}"
+             return f"{base_url}:{server_port}/pw={encoded_image_key}/images/{encoded_rel_path}"
+         except Exception as e:
+             logging.error(f"Error calculating relative path for URL: {e}")
+```
+
+**File**: `Plugin/BilibiliFetch/plugin-manifest.json` (modified, +2/-1)
+```diff
+@@ -15,7 +15,8 @@
+     "timeout": 60000
+   },
+   "configSchema": {
+-    "BILIBILI_COOKIE": "string"
++    "BILIBILI_COOKIE": "string",
++    "USE_PUBLIC_URL": "string(可选)，是否使用公网地址返回图片/文件URL，true 使用 VarHttpsUrl（不带端口，适用于反代），false 使用 VarHttpUrl:端口（局域网），默认 false"
+   },
+   "capabilities": {
+     "invocationCommands": [
+```
+
+**File**: `Plugin/ComfyUIGen/ComfyUIGen.js` (modified, +15/-4)
+```diff
+@@ -60,6 +60,10 @@ async function loadConfiguration() {
+     config.SERVER_PORT = process.env.SERVER_PORT;
+     config.IMAGESERVER_IMAGE_KEY = process.env.IMAGESERVER_IMAGE_KEY;
+     config.VAR_HTTP_URL = process.env.VarHttpUrl;
++    config.VAR_HTTPS_URL = process.env.VarHttpsUrl || '';
++    config.USE_PUBLIC_URL = ['true', '1'].includes(
++        String(process.env.USE_PUBLIC_URL ?? config.userSettings?.usePublicUrl ?? 'false').trim().toLowerCase()
++    );
+     
+     return config;
+ }
+@@ -608,7 +612,10 @@ async function saveImagesToLocal(images, config) {
+         
+         // 构建访问URL
+         const relativeServerPathForUrl = path.join('comfyuigen', generatedFileName).replace(/\\/g, '/');
+-        const accessibleImageUrl = `${config.VAR_HTTP_URL}:${config.SERVER_PORT}/pw=${config.IMAGESERVER_IMAGE_KEY}/images/${relativeServerPathForUrl}`;
++        const serverBaseUrl = config.USE_PUBLIC_URL
++            ? String(config.VAR_HTTPS_URL || config.VAR_HTTP_URL || '').trim().replace(/\/+$/, '')
++            : `${String(config.VAR_HTTP_URL || '').trim().replace(/\/+$/, '')}:${config.SERVER_PORT}`;
++        const accessibleImageUrl = `${serverBaseUrl}/pw=${config.IMAGESERVER_IMAGE_KEY}/images/${relativeServerPathForUrl}`;
+         
+         savedImages.push({
+             filename: generatedFileName,
+@@ -644,11 +651,15 @@ async function generateImageAndSave(args) {
+     if (!config.PROJECT_BASE_PATH) {
+         throw new Error("ComfyUI Plugin Error: PROJECT_BASE_PATH environment variable is required.");
+     }
+-    if (!config.SERVER_PORT || !config.IMAGESERVER_IMAGE_KEY || !config.VAR_HTTP_URL) {
++    const hasServerBase = config.USE_PUBLIC_URL
++        ? Boolean(String(config.VAR_HTTPS_URL || config.VAR_HTTP_URL || '').trim())
++        : Boolean(config.SERVER_PORT && config.VAR_HTTP_URL);
++    if (!config.IMAGESERVER_IMAGE_KEY || !hasServerBase) {
+         const missing = [];
+-        if (!config.SERVER_PORT) missing.push('SERVER_PORT');
++        if (!config.USE_PUBLIC_URL && !config.SERVER_PORT) missing.push('SERVER_PORT');
+         if (!config.IMAGESERVER_IMAGE_KEY) missing.push('IMAGESERVER_IMAGE_KEY');
+-        if (!config.VAR_HTTP_URL) missing.push('VAR_HTTP_URL');
++        if (config.USE_PUBLIC_URL && !String(config.VAR_HTTPS_URL || config.VAR_HTTP_URL || '').trim()) missing.push('VarHttpsUrl/VarHttpUrl');
++        if (!config.USE_PUBLIC_URL && !config.VAR_HTTP_URL) missing.push('VAR_HTTP_URL');
+         throw new Error(`ComfyUI Plugin Error: Missing environment variables: ${missing.join(', ')}. Available env vars: ${Object.keys(process.env).filter(k => k.includes('HTTP') || k.includes('PORT') || k.includes('IMAGE')).join(', ')}`);
+     }
  
 ```
 
+**File**: `Plugin/ComfyUIGen/config.env.example` (modified, +4/-1)
+```diff
+@@ -32,4 +32,7 @@
+ # - 工作流模板选择
+ # - 生成参数（尺寸、采样器等）
+ # - 负面提示词设置
+-# ==========================================
+\ No newline at end of file
++# ==========================================
++
++# 可选 - 是否使用公网地址返回图片/文件 URL（true=VarHttpsUrl 不带端口，false=VarHttpUrl:端口，默认 false）
++USE_PUBLIC_URL=false
+```
+
+**File**: `Plugin/ComfyUIGen/plugin-manifest.json.block` (modified, +5/-0)
+```diff
+@@ -34,6 +34,11 @@
+       "type": "number",
+       "description": "ComfyUI 处于活跃排队或生图推进时的最大兜底等待分钟数（默认30分钟，长视频工作流可调至60-120，设为0则只要进程活跃永不超时）",
+       "default": 30
++    },
++    "USE_PUBLIC_URL": {
++      "type": "string",
++      "description": "（可选）是否使用公网地址返回图片/文件 URL：true=使用 VarHttpsUrl（不带端口，适用于反代），false=使用 VarHttpUrl:端口（局域网），默认 false",
++      "default": "false"
+     }
+   },
+   "capabilities": {
+```
+
+**File**: `Plugin/DMXDoubaoGen/DoubaoGen.js` (modified, +23/-8)
+```diff
+@@ -14,7 +14,16 @@ const PROJECT_BASE_PATH = process.env.PROJECT_BASE_PATH;
+ const SERVER_PORT = process.env.SERVER_PORT;
+ const IMAGESERVER_IMAGE_KEY = process.env.IMAGESERVER_IMAGE_KEY; // Key for our own image server
+ const VAR_HTTP_URL = process.env.VarHttpUrl; // Read VarHttpUrl from env
+-const VAR_HTTPS_URL = process.env.VarHttpsUrl; // Read VarHttps Url from env
++const VAR_HTTPS_URL = process.env.VarHttpsUrl || ''; // Read VarHttpsUrl from env
++const USE_PUBLIC_URL = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
++
++function buildServerBaseUrl() {
++    if (USE_PUBLIC_URL) {
++        return String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    }
++    const localBase = String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    return localBase && SERVER_PORT ? `${localBase}:${SERVER_PORT}` : '';
++}
+ 
+ // API specific configurations for DMXAPI
+ const DMX_API_CONFIG = {
+@@ -312,14 +321,20 @@ async function generateImageAndSave(args) {
+     if (!PROJECT_BASE_PATH) {
+         throw new Error("DoubaoGen Plugin Error: PROJECT_BASE_PATH environment variable is required for saving images.");
+     }
+-    if (!SERVER_PORT) {
+-        throw new Error("DoubaoGen Plugin Error: SERVER_PORT environment variable is required for constructing image URL.");
+-    }
+     if (!IMAGESERVER_IMAGE_KEY) {
+         throw new Error("DoubaoGen Plugin Error: IMAGESERVER_IMAGE_KEY environment variable is required for constructing image URL.");
+     }
+-    if (!VAR_HTTP_URL) {
+-        throw new Error("DoubaoGen Plugin Error: VarHttpUrl environment variable is required for constructing image URL.");
++    if (USE_PUBLIC_URL) {
++        if (!String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim()) {
++            throw new Error("DoubaoGen Plugin Error: VarHttpsUrl or VarHttpUrl environment variable is required when USE_PUBLIC_URL=true.");
++        }
++    } else {
++        if (!SERVER_PORT) {
++            throw new Error("DoubaoGen Plugin Error: SERVER_PORT environment variable is required for constructing image URL.");
++        }
++        if (!VAR_HTTP_URL) {
++            throw new Error("DoubaoGen Plugin Error: VarHttpUrl environment variable is required for constructing image URL.");
++        }
+     }
+ 
+     args = normalizeDoubaoArgs(args);
+@@ -493,8 +508,8 @@ async function generateImageAndSave(args) {
+     // console.error(`[DoubaoGen Plugin] Image saved to: ${localImageServerPath}`);
+ 
+     const relativeServerPathForUrl = path.join('doubaogen', generatedFileName).replace(/\\\\/g, '/');
+-    const accessibleImageUrl = `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPathForUrl}`;
+-    // const accessibleImageUrl = `${VAR_HTTPS_URL}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPathForUrl}`;
++    const serverBaseUrl = buildServerBaseUrl();
++    const accessibleImageUrl = `${serverBaseUrl}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPathForUrl}`;
+ 
+     const altText = args.prompt ? args.prompt.substring(0, 80) + (args.prompt.length > 80 ? "..." : "") : (generatedFileName || "生成的图片");
+     const imageHtml = `<img src="${accessibleImageUrl}" alt="${altText}" width="300">`;
+```
+
+**File**: `Plugin/DMXDoubaoGen/config.env.example` (modified, +4/-1)
+```diff
+@@ -1,3 +1,6 @@
+ # .env
+ 
+-VOLCENGINE_API_KEY=your dmx key
+\ No newline at end of file
++VOLCENGINE_API_KEY=your dmx key
++
++# 可选 - 是否使用公网地址返回图片/文件 URL（true=VarHttpsUrl 不带端口，false=VarHttpUrl:端口，默认 false）
++USE_PUBLIC_URL=false
+```
+
+**File**: `Plugin/DMXDoubaoGen/plugin-manifest.json` (modified, +2/-1)
+```diff
+@@ -14,7 +14,8 @@
+     "protocol": "stdio"
+   },
+   "configSchema": {
+-    "VOLCENGINE_API_KEY": "string"
++    "VOLCENGINE_API_KEY": "string",
++    "USE_PUBLIC_URL": "string(可选)，是否使用公网地址返回图片/文件URL，true 使用 VarHttpsUrl（不带端口，适用于反代），false 使用 VarHttpUrl:端口（局域网），默认 false"
+   },
+   "capabilities": {
+     "invocationCommands": [
+```
+
+---
+
+### Incident Patch 3: `1ee3f4cb` (2026-11-28)
+**Commit Message**: Merge pull request #674 from infinite-vector/fix/legacy-plugins-public-url-normalization
+
+fix(plugins): 统一补齐 5 个内置插件的 USE_PUBLIC_URL 斜杠规整化与回退逻辑并完善跨平台单测
+
+**File**: `Plugin/AgnesGen/AgnesGen.mjs` (modified, +13/-7)
+```diff
+@@ -12,8 +12,16 @@ const PROJECT_BASE_PATH = process.env.PROJECT_BASE_PATH;
+ const SERVER_PORT = process.env.SERVER_PORT;
+ const IMAGESERVER_IMAGE_KEY = process.env.IMAGESERVER_IMAGE_KEY;
+ const VAR_HTTP_URL = process.env.VarHttpUrl;
+-const VAR_HTTPS_URL = process.env.VarHttpsUrl;
+-const USE_PUBLIC_URL = process.env.USE_PUBLIC_URL === 'true' || process.env.USE_PUBLIC_URL === '1';
++const VAR_HTTPS_URL = process.env.VarHttpsUrl || '';
++const USE_PUBLIC_URL = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
++
++function buildServerBaseUrl() {
++    if (USE_PUBLIC_URL) {
++        return String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    }
++    const localBase = String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    return localBase && SERVER_PORT ? `${localBase}:${SERVER_PORT}` : '';
++}
+ const HTTP_PROXY = process.env.HTTP_PROXY || process.env.http_proxy || process.env.HTTPS_PROXY || process.env.https_proxy;
+ 
+ const API_ENDPOINT = process.env.AGNES_API_ENDPOINT || 'https://apihub.agnes-ai.com/v1/images/generations';
+@@ -287,9 +295,7 @@ async function imageResultToBuffer(imageData) {
+ 
+ function buildAccessibleImageUrl(fileName) {
+     const relativePathForUrl = path.join('agnesgen', fileName).replace(/\\/g, '/');
+-    return USE_PUBLIC_URL && VAR_HTTPS_URL
+-        ? `${VAR_HTTPS_URL}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`
+-        : `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
++    return `${buildServerBaseUrl()}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
+ }
+ 
+ // --- Core Request ---
+@@ -300,8 +306,8 @@ async function processApiRequest(rawArgs) {
+     if (!API_KEY) {
+         throw new Error("AgnesGen Plugin Error: AGNES_API_KEY environment variable is required.");
+     }
+-    if (!PROJECT_BASE_PATH || !SERVER_PORT || !IMAGESERVER_IMAGE_KEY || !VAR_HTTP_URL) {
+-        throw new Error("AgnesGen Plugin Error: Missing one or more required environment variables (PROJECT_BASE_PATH, SERVER_PORT, IMAGESERVER_IMAGE_KEY, VarHttpUrl).");
++    if (!PROJECT_BASE_PATH || !IMAGESERVER_IMAGE_KEY || !buildServerBaseUrl()) {
++        throw new Error("AgnesGen Plugin Error: Missing one or more required environment variables (PROJECT_BASE_PATH, SERVER_PORT, IMAGESERVER_IMAGE_KEY, VarHttpUrl/VarHttpsUrl).");
+     }
+     if (!isValidArgs(args)) {
+         throw new Error(`AgnesGen Plugin Error: Invalid arguments provided: ${JSON.stringify(rawArgs)}.`);
+```
+
+**File**: `Plugin/AgnesVideoGen/AgnesVideoGen.mjs` (modified, +5/-4)
+```diff
+@@ -50,7 +50,7 @@ const IMAGESERVER_FILE_KEY = process.env.IMAGESERVER_FILE_KEY || '';
+ const VAR_HTTP_URL         = process.env.VarHttpUrl           || 'http://localhost';
+ const VAR_HTTPS_URL        = process.env.VarHttpsUrl          || '';
+ // 决定返回的链接用"对外地址"还是"内网地址"，统一在主 config.env 里设置。
+-const USE_PUBLIC_URL = process.env.USE_PUBLIC_URL === 'true';
++const USE_PUBLIC_URL = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
+ 
+ // ============================================================
+ // 工具函数
+@@ -71,9 +71,10 @@ function outputAndExit(result) {
+  * @param {string} relPath 形如 "agnesvideogen/xxx.mp4"
+  */
+ function buildFilesUrl(relPath) {
+-    return (USE_PUBLIC_URL && VAR_HTTPS_URL)
+-        ? `${VAR_HTTPS_URL}/pw=${IMAGESERVER_FILE_KEY}/files/${relPath}`
+-        : `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_FILE_KEY}/files/${relPath}`;
++    const base = USE_PUBLIC_URL
++        ? String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '')
++        : `${String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '')}:${SERVER_PORT}`;
++    return `${base}/pw=${IMAGESERVER_FILE_KEY}/files/${relPath}`;
+ }
+ 
+ /**
+```
+
+**File**: `Plugin/GPTImageGen/GPTImageGen.js` (modified, +11/-5)
+```diff
+@@ -61,8 +61,16 @@ const SERVER_PORT = process.env.SERVER_PORT || '5000';
+ const IMAGESERVER_IMAGE_KEY = process.env.IMAGESERVER_IMAGE_KEY || '';
+ const VAR_HTTP_URL = process.env.VarHttpUrl || 'http://localhost';
+ // 与 ZImageTurboGen / AgnesGen 一致：USE_PUBLIC_URL=true 时返回 VarHttpsUrl 公网地址（不带端口）
+-const USE_PUBLIC_URL = process.env.USE_PUBLIC_URL === 'true' || process.env.USE_PUBLIC_URL === '1';
+-const VAR_HTTPS_URL = process.env.VarHttpsUrl || VAR_HTTP_URL;
++const USE_PUBLIC_URL = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
++const VAR_HTTPS_URL = process.env.VarHttpsUrl || '';
++
++function buildServerBaseUrl() {
++    if (USE_PUBLIC_URL) {
++        return String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    }
++    const localBase = String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    return SERVER_PORT ? `${localBase}:${SERVER_PORT}` : localBase;
++}
+ 
+ // ============================================================
+ // 工具函数
+@@ -1124,9 +1132,7 @@ function saveImageToLocal(imageBuffer, index = 0, contentType = '') {
+     // 构建可访问的 HTTP URL
+     const relativeServerPath = `gptimagegen/${fileName}`;
+     const serverPath = `image/gptimagegen/${fileName}`;
+-    const accessibleUrl = USE_PUBLIC_URL
+-        ? `${VAR_HTTPS_URL}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPath}`
+-        : `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPath}`;
++    const accessibleUrl = `${buildServerBaseUrl()}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPath}`;
+ 
+     return {
+         localPath,
+```
+
+**File**: `Plugin/NanoBananaGen2/NanoBananaGen.mjs` (modified, +5/-3)
+```diff
+@@ -21,6 +21,7 @@ const {
+     SERVER_PORT,
+     IMAGESERVER_IMAGE_KEY,
+     VAR_HTTP_URL,
++    VAR_HTTPS_URL,
+     USE_PUBLIC_URL
+ } = (() => {
+     // ─── 渠道解析 ───
+@@ -67,7 +68,7 @@ const {
+     const distServers = (process.env.DIST_IMAGE_SERVERS || '').split(',').map(s => s.trim()).filter(Boolean);
+ 
+     // ─── 解析 USE_PUBLIC_URL 环境变量 ───
+-    const usePublicUrl = (process.env.USE_PUBLIC_URL || 'false').toLowerCase() === 'true';
++    const usePublicUrl = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
+ 
+     return {
+         CHANNELS: channels,
+@@ -78,6 +79,7 @@ const {
+         SERVER_PORT: process.env.SERVER_PORT,
+         IMAGESERVER_IMAGE_KEY: process.env.IMAGESERVER_IMAGE_KEY || process.env.Image_Key || process.env.IMAGE_KEY || process.env.ImageServerKey || '',
+         VAR_HTTP_URL: process.env.VarHttpUrl,
++        VAR_HTTPS_URL: process.env.VarHttpsUrl || '',
+         USE_PUBLIC_URL: usePublicUrl
+     };
+ })();
+@@ -344,8 +346,8 @@ async function processApiResponseAndSaveImage(message, originalArgs, showBase64)
+     // ─── 动态决定输出的 URL 格式 ───
+     let accessibleImageUrl;
+     const base = USE_PUBLIC_URL
+-        ? String(VAR_HTTP_URL).replace(/\/+$/, '')
+-        : `${String(VAR_HTTP_URL).replace(/\/+$/, '')}:${SERVER_PORT}`;
++        ? String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '')
++        : `${String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '')}:${SERVER_PORT}`;
+     accessibleImageUrl = `${base}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
+ 
+     const modelResponseText = cleanTextContent || "图片已成功处理！";
+```
+
+**File**: `Plugin/ZImageTurboGen/ZImageTurboGen.mjs` (modified, +14/-10)
+```diff
+@@ -11,8 +11,16 @@ const PROJECT_BASE_PATH = process.env.PROJECT_BASE_PATH;
+ const SERVER_PORT = process.env.SERVER_PORT;
+ const IMAGESERVER_IMAGE_KEY = process.env.IMAGESERVER_IMAGE_KEY;
+ const VAR_HTTP_URL = process.env.VarHttpUrl;
+-const VAR_HTTPS_URL = process.env.VarHttpsUrl;
+-const USE_PUBLIC_URL = process.env.USE_PUBLIC_URL === 'true' || process.env.USE_PUBLIC_URL === '1';
++const VAR_HTTPS_URL = process.env.VarHttpsUrl || '';
++const USE_PUBLIC_URL = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
++
++function buildServerBaseUrl() {
++    if (USE_PUBLIC_URL) {
++        return String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    }
++    const localBase = String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    return localBase && SERVER_PORT ? `${localBase}:${SERVER_PORT}` : '';
++}
+ const HTTP_PROXY = process.env.HTTP_PROXY || process.env.http_proxy || process.env.HTTPS_PROXY || process.env.https_proxy;
+ 
+ const API_ENDPOINT = 'https://ai.gitee.com/v1/images/generations';
+@@ -135,8 +143,8 @@ async function processApiRequest(rawArgs) {
+ 
+     const args = normalizeArgs(rawArgs);
+ 
+-    if (!PROJECT_BASE_PATH || !SERVER_PORT || !IMAGESERVER_IMAGE_KEY || !VAR_HTTP_URL) {
+-        throw new Error("Plugin Error: Missing one or more required environment variables (PROJECT_BASE_PATH, SERVER_PORT, etc).");
++    if (!PROJECT_BASE_PATH || !IMAGESERVER_IMAGE_KEY || !buildServerBaseUrl()) {
++        throw new Error("Plugin Error: Missing one or more required environment variables (PROJECT_BASE_PATH, SERVER_PORT, IMAGESERVER_IMAGE_KEY, VarHttpUrl/VarHttpsUrl).");
+     }
+     if (!isValidArgs(args)) {
+         throw new Error(`Plugin Error: Invalid arguments provided: ${JSON.stringify(rawArgs)}.`);
+@@ -299,9 +307,7 @@ async function processApiRequest(rawArgs) {
+     await fs.writeFile(localImagePath, imageBuffer);
+ 
+     const relativePathForUrl = path.join('zimageturbogen', generatedFileName).replace(/\\/g, '/');
+-    const accessibleImageUrl = USE_PUBLIC_URL
+-        ? `${VAR_HTTPS_URL}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`
+-        : `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
++    const accessibleImageUrl = `${buildServerBaseUrl()}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
+ 
+     const content = [
+         {
+@@ -525,9 +531,7 @@ async function processEditRequest(args, showBase64) {
+     await fs.writeFile(localImagePath, imageBuffer);
+ 
+     const relativePathForUrl = path.join('zimageturbogen', generatedFileName).replace(/\\/g, '/');
+-    const accessibleImageUrl = USE_PUBLIC_URL
+-        ? `${VAR_HTTPS_URL}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`
+-        : `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
++    const accessibleImageUrl = `${buildServerBaseUrl()}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
+ 
+     const content = [
+         {
+```
+
+**File**: `tests/pluginPublicUrl.test.js` (modified, +143/-9)
+```diff
+@@ -1,9 +1,10 @@
+ const test = require('node:test');
+ const assert = require('node:assert/strict');
+ const fs = require('node:fs');
++const http = require('node:http');
+ const path = require('node:path');
+ const os = require('node:os');
+-const { execFileSync } = require('node:child_process');
++const { execFileSync, spawn } = require('node:child_process');
+ 
+ const REPO_ROOT = path.resolve(__dirname, '..');
+ 
+@@ -24,19 +25,63 @@ const TARGET_PLUGINS = [
+     { name: 'ComfyUIGen', files: ['ComfyUIGen.js'], manifest: 'plugin-manifest.json.block' },
+     { name: 'FileListGenerator', files: ['file-list-generator.js'], manifest: 'plugin-manifest.json.block' },
+     { name: 'ZImageGen2', files: ['ZImageGen.mjs'], manifest: 'plugin-manifest.json.block' },
++    { name: 'AgnesGen', files: ['AgnesGen.mjs'], manifest: 'plugin-manifest.json' },
++    { name: 'AgnesVideoGen', files: ['AgnesVideoGen.mjs'], manifest: 'plugin-manifest.json' },
++    { name: 'ZImageTurboGen', files: ['ZImageTurboGen.mjs'], manifest: 'plugin-manifest.json' },
++    { name: 'GPTImageGen', files: ['GPTImageGen.js'], manifest: 'plugin-manifest.json' },
++    { name: 'NanoBananaGen2', files: ['NanoBananaGen.mjs'], manifest: 'plugin-manifest.json' },
+ ];
+ 
+-test('all 16 built-in plugins declare USE_PUBLIC_URL in manifest and avoid unconditional :PORT/pw= hardcoding', () => {
++function resolveManifestPath(pluginDir, preferred) {
++    for (const candidate of [preferred, 'plugin-manifest.json', 'plugin-manifest.json.block']) {
++        if (!candidate) continue;
++        const full = path.join(pluginDir, candidate);
++        if (fs.existsSync(full)) return full;
++    }
++    throw new Error(`No plugin manifest found in ${pluginDir}`);
++}
++
++function resolvePythonBin() {
++    const candidates = process.platform === 'win32' ? ['python', 'python3'] : ['python3', 'python'];
++    for (const cmd of candidates) {
++        try {
++            execFileSync(cmd, ['--version'], { stdio: 'ignore' });
++            return cmd;
++        } catch (_) {
++            // try next
++        }
++    }
++    return null;
++}
++
++function runStdioPlugin(scriptPath, args, env) {
++    return new Promise((resolve, reject) => {
++        const child = spawn(process.execPath, [scriptPath], { env: { ...process.env, ...env } });
++        let stdout = '';
++        let stderr = '';
++        child.stdout.setEncoding('utf8').on('data', chunk => { stdout += chunk; });
++        child.stderr.setEncoding('utf8').on('data', chunk => { stderr += chunk; });
++        child.on('error', reject);
++        child.on('close', code => {
++            if (code !== 0) return reject(new Error(stderr || stdout || `Exited with ${code}`));
++            try { resolve(JSON.parse(stdout)); } catch (err) { reject(err); }
++        });
++        child.stdin.end(JSON.stringify(args));
++    });
++}
++
++test('all 21 built-in plugins declare USE_PUBLIC_URL in manifest and normalize base URLs without raw :PORT/pw= or VAR_HTTPS_URL/pw=', () => {
+     const hardcodedPortPwPattern = /:\$\{[^}]*(?:PORT|port)[^}]*\}\/pw=|:\{server_port\}\/pw=/;
++    const rawHttpsSlashPattern = /\$\{\s*VAR_HTTPS_URL\s*\}\/(?:pw=|images\/|files\/)/;
+ 
+     for (const plugin of TARGET_PLUGINS) {
+         const pluginDir = path.join(REPO_ROOT, 'Plugin', plugin.name);
+-        const manifestPath = path.join(pluginDir, plugin.manifest);
++        const manifestPath = resolveManifestPath(pluginDir, plugin.manifest);
+         const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8').replace(/^\uFEFF/, ''));
+ 
+         assert.ok(
+             manifest.configSchema && Object.prototype.hasOwnProperty.call(manifest.configSchema, 'USE_PUBLIC_URL'),
+-            `${plugin.name}/${plugin.manifest} must declare USE_PUBLIC_URL in configSchema`
++            `${plugin.name}/${path.basename(manifestPath)} must declare USE_PUBLIC_URL in configSchema`
+         );
+ 
+         for (const relFile of plugin.files) {
+@@ -49,6 +94,11 @@ test('all 16 built-in plugins declare USE_PUBLIC_URL in manifest and avoid uncon
+                 content.includes('VarHttpsUrl'),
+                 `${plugin.name}/${relFile} must support VarHttpsUrl`
+             );
++            assert.doesNotMatch(
++                content,
++                rawHttpsSlashPattern,
++                `${plugin.name}/${relFile} must strip trailing slashes on VAR_HTTPS_URL before appending /pw=`
++            );
+ 
+             // Allow BilibiliFetch.py's else-branch fallback (`return f"{base_url}:{server_port}/pw=..."`)
+             // which is explicitly guarded by `if use_public_url:`.
+@@ -107,19 +157,16 @@ test('ToolCallRecordQuery formatter respects USE_PUBLIC_URL=false (default) and
+             ]
+         });
+ 
+-        // 1. Default (USE_PUBLIC_URL unset / false): local URL with port
+         delete process.env.USE_PUBLIC_URL;
+         const localReport = formatQueryReport(makePayload(), {}, { migrateMultimodal: true });
+         assert.match(localReport.markdown, /http:\/\/localhost:6005\/pw=demo-key\/images
+```
+
 #### Recent Merged Pull Requests:
-- **PR #645** (2026-11-25): RiverMemo V6.1：用拓扑虫洞与路线态 Ω 运输查询方向 (@lioensky)
-- **PR #644** (2026-11-25): feat(context): 基于上游用量的 token 计量与出站前上下文预算检查 (@RoxyAsahi)
-- **PR #642** (2026-11-25): fix(core,FileOperator): 根治同步stdio插件大输出正则回溯死锁，引入活跃请求双轨续期并消除FileOperator双倍Base64膨胀 (@infinite-vector)
-- **PR #640** (2026-11-24): feat(tdb): 升级 triviumdb 至 0.9.3 原生双曲版本并接入 Pelorus 检索入口 (@infinite-vector)
-- **PR #639** (closed): fix(vcpLoop): intercept hallucinated tool payload turn-bleed and support guillemet fuzzy delimiters (@silk2onion)
-- **PR #638** (2026-11-24): feat(meta-thinking): 新增 MetaThinking V3 纯张量三体动态思考引擎 (@Ldl-h)
+- **PR #675** (closed): fix(ssh): 槽位租约化并发加固 + 探针防重入锁修复 (@awei807-wei)
+- **PR #674** (2026-11-28): fix(plugins): 统一补齐 5 个内置插件的 USE_PUBLIC_URL 斜杠规整化与回退逻辑并完善跨平台单测 (@infinite-vector)
+- **PR #669** (2026-11-28): docs: add Turkish README translation (README_tr.md) (@Burakceliks)
+- **PR #668** (2026-11-28): docs(TVStxt): 优化 VchatRendering 主题自适应指引，兼容浅色白天模式并避免暗底混用主题文字变量 (@InSciTech)
+- **PR #667** (2026-11-28): fix(knowledge-base): 标签一致性修复支持重试并复用向量 (@miaotouy)
+- **PR #666** (2026-11-28): feat(BilibiliFetch): 分段获取弹幕并按时间采样 (@miaotouy)
 
 ---
 
@@ -2705,35 +2527,48 @@ fix(core,FileOperator): 根治同步stdio插件大输出正则回溯死锁，引
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. context): recognise role-split tool results, keep observe read-only, tiered slim
+## X. toolExecutor): expose structured error result to AI model view
 
 **RULE**:
-When implementing operations in `AdminPanel-Vue/src/views/FinalContextViewer.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `modules/vcpLoop/toolExecutor.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0868bc6d`: context): recognise role-split tool results, keep observe read-only, tiered slimming. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68523d75`: toolExecutor): expose structured error result to AI model view. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AdminPanel-Vue/src/views/FinalContextViewer.vue`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `modules/vcpLoop/toolExecutor.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-// 分块展示占比和按占比折算的大约数量：折算以上面这个总数为准，各块加起来与总数一致。
-  const share = `${percent >= 10 ? percent.toFixed(0) : percent.toFixed(1)}%`
-  const approx = Math.round((tokenCount / total) * contextTokens(snapshot.value?.summary))
-  return approx > 0 ? `${share}（约 ${formatNumber(approx)}）` : share
+    let contentForAI;
+    const errorResult = parsedPayload?.result;
+    if (errorResult && typeof errorResult === 'object') {
+      const richContent = Array.isArray(errorResult) ? errorResult : (errorResult.data?.content || errorResult.content);
+      if (Array.isArray(richContent) && richContent.length > 0) {
+        contentForAI = richContent;
+      } else {
+        contentForAI = [{ type: 'text', text: JSON.stringify(errorResult, null, 2) }];
+      }
+      const feedbackNote = typeof parsedPayload?.__vcpApprovalFeedback === 'string'
+        ? parsedPayload.__vcpApprovalFeedback.trim()
+        : '';
+      if (feedbackNote && !contentForAI.some(part => part?.type === 'text' && typeof part.text === 'string' && part.text.includes(feedbackNote))) {
+        contentForAI = [{ type: 'text', text: `【用户审核留言：已允许工具 "${toolName}" 调用】\n${feedbackNote}` }, ...contentForAI];
+      }
+    }
+
+      ...(contentForAI ? { contentForAI } : {}),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-// 分块只展示占比，分项数字和总数口径不同，并列显示会造成误读。
-  return `${percent >= 10 ? percent.toFixed(0) : percent.toFixed(1)}%`
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0868bc6d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68523d75` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

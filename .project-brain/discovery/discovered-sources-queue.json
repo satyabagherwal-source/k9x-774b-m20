@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T14:29:45.085Z",
+  "updated_at": "2026-11-28T14:47:35.315Z",
   "stats": {
-    "total_discovered": 10978,
-    "approved_pending_harvest": 10426,
+    "total_discovered": 10988,
+    "approved_pending_harvest": 10436,
     "harvested_count": 0,
     "rejected_count": 552,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10436,
+      "COMMUNITY_AND_EXPERT": 10446,
       "OFFICIAL_DOCUMENTATION": 299,
       "STANDARDS_AND_SPECIFICATIONS": 166,
       "ENGINEERING_BLOGS": 7,
@@ -237679,6 +237679,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-D2C9B27DD33C": {
+      "id": "SRC-D2C9B27DD33C",
+      "url": "https://app.netlify.com/projects/fakerjs/deploys/6b058df463a18d5e8552bc6a",
+      "title": "https://app.netlify.com/projects/fakerjs/deploys/6b058df463a18d5e8552bc6a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T14:47:32.897Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-E10EDABC962E": {
+      "id": "SRC-E10EDABC962E",
+      "url": "https://deploy-preview-4286.fakerjs.dev/",
+      "title": "https://deploy-preview-4286.fakerjs.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T14:47:33.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-9C7D770A7DA9": {
+      "id": "SRC-9C7D770A7DA9",
+      "url": "https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTQyODYuZmFrZXJqcy5kZXYifQ.9eRcrQvrEmIk3493Qwcs2aM6FjdDNGmYNFvtdKDTl7A",
+      "title": "https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTQyODYuZmFrZXJqcy5kZXYifQ.9eRcrQvrEmIk3493Qwcs2aM6FjdDNGmYNFvtdKDTl7A",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T14:47:33.130Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-9F8014C3807C": {
+      "id": "SRC-9F8014C3807C",
+      "url": "https://app.codecov.io/gh/faker-js/faker/pull/4286?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/faker-js/faker/pull/4286?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T14:47:33.247Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-86797519F684": {
+      "id": "SRC-86797519F684",
+      "url": "https://app.codecov.io/gh/faker-js/faker/commit/1092e61c525323571e1f884dd867ab5231632fe1?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/faker-js/faker/commit/1092e61c525323571e1f884dd867ab5231632fe1?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T14:47:33.359Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-813CBD9C2638": {
+      "id": "SRC-813CBD9C2638",
+      "url": "https://app.codecov.io/gh/faker-js/faker/commit/9dae0c09bf070040114121d64758c8da4c12d5c5?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/faker-js/faker/commit/9dae0c09bf070040114121d64758c8da4c12d5c5?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T14:47:33.472Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-3BB591E2D27C": {
+      "id": "SRC-3BB591E2D27C",
+      "url": "https://github.com/fent/randexp.js",
+      "title": "https://github.com/fent/randexp.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T14:47:33.591Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-EA803A02EA99": {
+      "id": "SRC-EA803A02EA99",
+      "url": "https://your-domain.com/%60",
+      "title": "https://your-domain.com/%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T14:47:35.022Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-460FCDC167FE": {
+      "id": "SRC-460FCDC167FE",
+      "url": "https://apihub.agnes-ai.com/v1/images/generations",
+      "title": "https://apihub.agnes-ai.com/v1/images/generations",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T14:47:35.196Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-2F79BAD4B204": {
+      "id": "SRC-2F79BAD4B204",
+      "url": "https://ai.gitee.com/v1/images/generations",
+      "title": "https://ai.gitee.com/v1/images/generations",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T14:47:35.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
       }
     }
   }

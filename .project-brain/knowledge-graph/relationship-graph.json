@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T09:34:51.725Z",
+  "updated_at": "2026-11-28T14:47:32.610Z",
   "statistics": {
-    "total_nodes": 604,
-    "total_edges": 240,
+    "total_nodes": 605,
+    "total_edges": 241,
     "domain_distribution": {
       "D": 358,
       "M": 1,
       "H": 120,
       "J": 23,
-      "K": 36,
+      "K": 37,
       "L": 9,
       "G": 1,
       "F": 33,
@@ -22,7 +22,7 @@
       "A": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 236,
+      "CONSTRAINED_BY_ARCHITECTURE": 237,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -13474,6 +13474,29 @@
       ],
       "created_at": "2026-11-28T09:34:51.725Z",
       "updated_at": "2026-11-28T09:34:51.725Z"
+    },
+    "DOM-K-F963465A": {
+      "id": "DOM-K-F963465A",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "test: fix test timeouts in CI",
+      "summary": "Prevents defects observed in production commit `56242050`: test: fix test timeouts in CI. Unvalidated execution paths cause runtime exceptio -> When implementing operations in `test/faker.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memor",
+      "confidence": 0.7,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://faker-js-faker/faker-js-faker-learnings.md",
+        "source_version": "56242050",
+        "observed_at": "2026-11-28T14:46:40.972Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (faker-js-faker)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-28T14:47:32.609Z",
+      "updated_at": "2026-11-28T14:47:32.609Z"
     }
   },
   "edges": [
@@ -15876,6 +15899,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-174E1CF1 [D] with Domain M",
       "created_at": "2026-11-28T04:48:52.968Z"
+    },
+    {
+      "id": "EDGE-92565BEDE515",
+      "sourceId": "DOM-K-F963465A",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-K-F963465A [K] with Domain G",
+      "created_at": "2026-11-28T14:47:32.609Z"
     }
   ]
 }

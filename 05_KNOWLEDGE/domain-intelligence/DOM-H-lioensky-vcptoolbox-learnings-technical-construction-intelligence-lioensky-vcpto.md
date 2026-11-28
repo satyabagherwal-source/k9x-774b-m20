@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T06:45:58.192Z",
+  "timestamp": "2026-11-28T14:47:35.544Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-lioensky-vcptoolbox-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lioensky-vcptoolbox-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T06:45:58.192Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T14:47:35.544Z`  
 > **Learning ID**: `LEARN-EVO-lioensky-vcptoolbox-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lioensky-vcptoolbox-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `d824df3c`  
+> **Source Version**: `1ee3f4cb`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T06:45:53.472Z  
+> **Timestamp**: 2026-11-28T14:46:50.295Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T06:45:53.467Z  
+> **Harvest Timestamp**: 2026-11-28T14:46:50.288Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2455 stars
+- **Stars / Engagement**: 2459 stars
 
 ---
 
@@ -1813,13 +1813,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #634** (2026-11-22): **feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口**
-  *Symptoms*: 外部 agent 可以通过 `POST /v1/memory/search` 使用已有的浪潮记忆检索，不需要 VCP 主 Key，也不需要直接访问索引。  - 默认不注册；管理员用 `MEMORY_READ_GRANTS` 将独立只读令牌的 SHA-256 摘要映射到允许读取的日记库。鉴权和全量范围检查均在嵌入与检索之前。已有 API 的鉴权不变。 - 发送 `Authorization: Bearer <read-token>` 和 `{"query":"会议决定了什么？","diaries":["ExampleDiary"],"k":5}`。返回 `direct` 命中数组，仅包含库名、文件名、正文和分数信息。 - 复用 RAGDiaryPlugin 的 `getContextBridge().embedText/retrieveDiary`；不另建索引、不改检索算法、不引入客户端依赖。  验证：`node --test tests/memorySearch.test.js tests/memoSingleTrack.test.js tests/timelineRiverMemo.test.js`（16 passed，0 skipped）。路由测试使用回环 Express 和合成检索结果，不依赖线上凭证或私有日记库。
-  **Post-Mortem & Fix Analysis**:
-  > 这个是走的管理员账号密码的router鉴权吗？
+- **Issue #675** (2026-11-28): **fix(ssh): 槽位租约化并发加固 + 探针防重入锁修复**
+  *Symptoms*: ## SSHManager 并发槽位租约化 - 槽位计数改为原子租约 Set 派生，消灭 activeConnections 手工加减漂移与 TOCTOU 超卖 - 跳板机前置解析 + 环路检测，避免跳板机/目标机互抢槽位自死锁 - executeSSH 监听底层 close 快速失败，不再傻等 30s timeout - disconnectAll 拒绝全部排队等待者并销毁所有活跃 client，杜绝 Promise 悬挂  ## 修复 7 个并发/边界缺陷 - _evictOldestConnection 同毫秒漏淘汰（oldestTime 由 Date.now() 改 Infinity，比较改 <=） - conn.on('close') 未归还跳板机 activeTunnels，导致跳板机被永久判忙无法回收 - conn.on('error') 未校验 client 身份，旧连接迟到报错会覆写新连接状态 - 非池化脏连接超时仅 end()，网络黑洞下租约永久占用（改 destroy() + 立即 releaseSlot） - _tryEvictForPendingWaiters 改为复用 LRU 淘汰，不再按 Map 插入顺序误踢热连接 - 跳板机等待槽位/主机锁期间新增 pendingTunnels 判忙保护；重试前校验 isConnected 防死引用 - releaseConnectionSlot 跳过已 settled 条目，settle 拒收时回收租约，避免泄漏与漏唤醒 - 默认 maxConcurrentConnections 兜底值 5 -> 10，与 hosts.json 对齐  ## LinuxShellExecutor 探针防重入 - inFlightTaskProbes 由 Set 改 Map<runId, Symbol>，finally 做 owner 校验，旧探针不得误删新锁 - _stopTaskProbeLoop 不再强删在途标记（原实现会撬开正在飞的探针锁，stop+reschedule 即破防） - AbortSignal 全链路透传；脱钩包装脚本通道超时自愈（disconnectOnCommandTimeout: true）  ## 其他 - Plugin/LinuxShellExecutor/ssh/SSHManager.js 618 行独立实现改为转发垫片，消除双实现屎山 （LinuxLogMonitor 顶层 require 该路径，不可删除，故保留垫片）  ## 测试与验证 新增 tests/sshManagerQueueRobustness.test.js：UT-01~UT-11 + IT-09/IT-10 共 13 用例 - eggs-1 (Debian 13) 单元 13/13 - eggs-1 真机 sshd E2E 25/25 - eggs-1 压测 50 主机 50/50，peakActive=10，超卖 0，LEAK-FREE - eggs-1 8 任务并发探针 90s：重叠事件 0，activeConnections 峰值 8/10，超卖 0 - 反向验证：摘除跳板机隧道释放修复后 UT-10 立即红灯，证明用例可捕获该缺陷
 
-- **Issue #633** (2026-11-22): **[Bug] Memo 几何训练在小语料下整体失败：标签共现覆盖度不足时 warped 场构建硬报错，导致整轮训练被判 failed**
-  *Symptoms*: ## 问题现象  Memo 几何训练在**标签数量较少**的语料下会整体失败，训练任务被标记为 `failed`，并且失败信息完全没有指向真正的原因。  通过管理面板 `/admin_api/rag-active-full-training` 触发全量训练，任务状态为：  ```json {   "status": "failed",   "phase": "failed",   "failedPhase": "warped-tags",   "error": "MEMO_WARPED_PREPARATION_FAILED: base artifact d8a63ddd3f1b83503cb0ec93419a59c6c51934c7ddbc8354 already published; warped insufficient joint coverage" } ```  关键点：报错里的 `warped insufficient joint coverage` 只是**下游症状**，不是根因。真正的原因是语料里的标签共现关系太少，导致所有标签的「内在残差」都算不出来。  ## 复现（两种语料规模对照）  同一套代码、同一份 `rag_params.json`，只改变语料标签数量：  ### A. 3 个标签 —— 失败  ```json {"status": "failed", "phase": "failed", "failedPhase": "warped-tags",  "error": "MEMO_WARPED_PREPARATION_FAILED: ... warped insufficient joint coverage"} ```  此时 `VectorStore/knowledge_base.sqlite` 中：  ``` tag_intrinsic_residuals:  0 行 tag_intrinsic_residual_status: 3 行   tag_id=1 status=insufficient_neighbors neighbor_count=2   tag_id=2 status=insufficient_neighbors neighbor_count=2   tag_id=3 status=insufficient_neighbors neighbor_count=2 ```  ### B. 14 个标签 —— 成功  ``` status: completed | phase: completed | failedPhase: null computed residuals: 12 status breakdown: [{"status":"insufficient_neighbors","c":2}] ```  ### C. 仓库自身 dailynote 语料（15 个标签）—— 成功  ``` status: completed | phase: completed | failedPhase: null computed residuals: 15 status breakdown: [] ```  即：**只要语料标签数够多就完全正常；小语料 / 新装环境必然失败。**  ## 根因链路  ### 1. 邻居数不足 → 残差不算  `rag_params.json:163`  ```json "geometry": { "local": { "maxNeighbors": 96, "minNei
+- **Issue #674** (2026-11-28): **fix(plugins): 统一补齐 5 个内置插件的 USE_PUBLIC_URL 斜杠规整化与回退逻辑并完善跨平台单测**
+  *Symptoms*: ## 背景与问题 #662 为 16 个内置插件补齐了 `USE_PUBLIC_URL` 与 `VarHttpsUrl` 规范，但早先已引入 `USE_PUBLIC_URL` 的 5 个内置媒体插件仍存在多处 URL 拼接不一致与边界缺陷： 1. **`NanoBananaGen2` 未读取 `VarHttpsUrl`**：开启 `USE_PUBLIC_URL=true` 时仍使用 `VarHttpUrl` 拼接，公网 HTTPS 反代地址未生效，且未兼容 `USE_PUBLIC_URL=1`。 2. **`ZImageTurboGen` 空值裸拼与双斜杠**：未对 `VarHttpsUrl` / `VarHttpUrl` 剥离末尾 `/`（根 `config.env.example` 默认 `VarHttpsUrl=https://your-domain.com/` 带末尾斜杠时会拼出 `//pw=`）；且当 `USE_PUBLIC_URL=true` 而 `VarHttpsUrl` 未填时直接输出 `undefined/pw=...`，未回退无端口 `VarHttpUrl`。 3. **`AgnesGen` / `AgnesVideoGen` / `GPTImageGen` 缺少末尾斜杠规整化与统一布尔解析**：未执行 `.trim().replace(/\/+$/, '')`，`AgnesVideoGen` 未兼容 `'1'` 与大小写空白裁剪，`AgnesGen` / `ZImageTurboGen` 在 `USE_PUBLIC_URL=true` 下仍强依赖本地 `SERVER_PORT`。 4. **`tests/pluginPublicUrl.test.js` 跨平台与插件启用态假设偏差**：硬编码读取 `.json.block`（用户启用插件重命名为 `plugin-manifest.json` 后测试直接 `ENOENT`）以及硬编码调用 `python3`（Windows 环境常为 `python`）。  ## 修改内容 - **统一 5 个插件的 `USE_PUBLIC_URL` 规整化契约**（`AgnesGen`、`AgnesVideoGen`、`ZImageTurboGen`、`GPTImageGen`、`NanoBananaGen2`）：   - 统一识别 `['true', '1']`（含 `trim().toLowerCase()`）；   - `USE_PUBLIC_URL=true` 时优先取 `VarHttpsUrl`，为空时平滑回退无端口 `VarHttpUrl`；   - 公网与局域网基地址统一剥除末尾斜杠，消除 `//pw=` 双斜杠；   - 默认 `USE_PUBLIC_URL=false` 行为 100% 保持不变。 - **升级 `tests/pluginPublicUrl.test.js`**：   - 静态契约扫描扩展至全部 **21 个内置插件**，新增对裸 `{VAR_HTTPS_URL}/pw=` 未剥斜杠写法的拦截断言；   - 动态兼容 `plugin-manifest.json` 与 `plugin-manifest.json.block`，跨平台探测 `python3` / `python`；   - 新增 `GPTImageGen` 与 `NanoBananaGen2` 子进程端到端回归用例，覆盖末尾多斜杠剥离与空 `VarHttpsUrl` 无端口回退。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1836,188 +1834,694 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d824df3c` (2026-11-22)
-**Commit Message**: Merge pull request #634 from Lutra23/feat/scoped-memory-search
+### Incident Patch 1: `68523d75` (2026-11-27)
+**Commit Message**: fix(toolExecutor): expose structured error result to AI model view
 
-feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口
+Align ToolExecutor._createErrorResult with Plugin.js error reporting contract:
+1. When a plugin reports a business failure with { status: 'error', result },
+   the structured result payload was previously captured into 'raw' but hidden
+   from the AI model view (contentForAI).
+2. Support standard rich/content array parts in error results directly, or format
+   structured objects as formatted text blocks.
+3. Preserve approval feedback notes (__vcpApprovalFeedback) when attaching structured
+   error content for AI.
 
-**File**: `config.env.example` (modified, +6/-0)
+**File**: `modules/vcpLoop/toolExecutor.js` (modified, +18/-0)
 ```diff
-@@ -19,6 +19,12 @@ API_URL=NEWAPI_URL_SUCH_AS_http://127.0.0.1:3000
+@@ -596,10 +596,28 @@ class ToolExecutor {
+       }
+     }
  
- PORT=6005
- Key=YOUR_KEY_SUCH_AS_aBcDeFgHiJkLmNoP
-+# Optional read-only RiverMemo API (POST /v1/memory/search). Empty = not registered.
-+# Use dedicated random bearer tokens, never Key. Store only each token's lowercase SHA-256 digest here.
-+# MEMORY_READ_GRANTS='{"<64 hex digest>":["ExampleDiary"]}'
-+# HTTPS request: Authorization: Bearer <read token>; JSON: {"query":"what did we decide?","diaries":["ExampleDiary"],"k":5}
-+# Response: {"direct":[{"diary":"ExampleDiary","file":"note.md","text":"...","score":0.8,"scoreSource":"retrieval"}]}
-+MEMORY_READ_GRANTS=
- Image_Key=YOUR_IMAGE_KEY_SUCH_AS_Images_aBcDeFgHiJk
- File_Key=YOUR_FILE_KEY_SUCH_AS_123456
- # VCP服务器WebSocket鉴权，用于VCP面板和分布式服务器之间的实时通信。
++    let contentForAI;
++    const errorResult = parsedPayload?.result;
++    if (errorResult && typeof errorResult === 'object') {
++      const richContent = Array.isArray(errorResult) ? errorResult : (errorResult.data?.content || errorResult.content);
++      if (Array.isArray(richContent) && richContent.length > 0) {
++        contentForAI = richContent;
++      } else {
++        contentForAI = [{ type: 'text', text: JSON.stringify(errorResult, null, 2) }];
++      }
++      const feedbackNote = typeof parsedPayload?.__vcpApprovalFeedback === 'string'
++        ? parsedPayload.__vcpApprovalFeedback.trim()
++        : '';
++      if (feedbackNote && !contentForAI.some(part => part?.type === 'text' && typeof part.text === 'string' && part.text.includes(feedbackNote))) {
++        contentForAI = [{ type: 'text', text: `【用户审核留言：已允许工具 "${toolName}" 调用】\n${feedbackNote}` }, ...contentForAI];
++      }
++    }
++
+     return {
+       success: false,
+       error: message,
+       content: [{ type: 'text', text: `[错误] ${displayText}` }],
++      ...(contentForAI ? { contentForAI } : {}),
+       ...(parsedPayload ? { raw: parsedPayload } : {})
+     };
+   }
 ```
 
-**File**: `routes/memorySearch.js` (added, +48/-0)
+**File**: `tests/toolExecutorErrorResult.test.js` (added, +91/-0)
 ```diff
-@@ -0,0 +1,48 @@
+@@ -0,0 +1,91 @@
 +'use strict';
 +
-+const { createHash } = require('node:crypto');
-+const path = require('node:path');
++const test = require('node:test');
++const assert = require('node:assert/strict');
++const ToolExecutor = require('../modules/vcpLoop/toolExecutor');
 +
-+const digest = value => createHash('sha256').update(value).digest('hex');
-+
-+function mountMemorySearch(app, { grants, serverKey, getBridge }) {
-+    if (!grants) return;
-+    const config = JSON.parse(grants);
-+    if (!config || Array.isArray(config) || typeof config !== 'object') throw new Error('Invalid MEMORY_READ_GRANTS');
-+    const scopes = new Map();
-+    for (const [key, names] of Object.entries(config)) {
-+        if (!/^[a-f0-9]{64}$/.test(key) || (serverKey && digest(serverKey) === key) ||
-+            !Array.isArray(names) || !names.length || names.some(name => typeof name !== 'string' || !name || name.trim() !== name)) {
-+            throw new Error('Invalid MEMORY_READ_GRANTS entry');
-+        }
-+        scopes.set(key, new Set(names));
-+    }
-+    if (!scopes.size) return;
-+
-+    app.post('/v1/memory/search', async (req, res) => {
-+        res.set('Cache-Control', 'no-store');
-+        const bearer = /^Bearer ([^\s]+)$/i.exec(req.get('authorization') || '');
-+        const scope = bearer && scopes.get(digest(bearer[1]));
-+        if (!scope) return res.sendStatus(401);
-+        const { query, diaries, k = 10 } = req.body || {};
-+        if (typeof query !== 'string' || !query.trim() || !Array.isArray(diaries) || !diaries.length ||
-+            diaries.some(name => typeof name !== 'string' || !name.trim()) || !Number.isSafeInteger(k) || k < 1) return res.sendStatus(400);
-+        if (diaries.some(name => !scope.has(name))) return res.sendStatus(403);
-+        const requested = new Set(diaries);
-+        try {
-+            const bridge = getBridge();
-+            if (!bridge) return res.sendStatus(503);
-+            const vector = await bridge.embedText(query);
-+            if (!vector?.length) return res.sendStatus(503);
-+            const { results } = await bridge.retrieveDiary({ diaryNames: [...requested], queryText: query, queryVector: vector, k, engine: 'rivermemo', fallback: 'none' });
-+            const direct = results.filter(row => requested.has(row.diaryName)).map(row => ({
-+                diary: row.diaryName, file: path.win32.basename(row.sourceFile || ''), text: row.text, score: row.score, scoreSource: 'retrieval'
-+            }));
-+            return res.json({ direct });
-+        } catch {
-+            return res.status(503).json({ error: 'Memory search unavailable' });
-+        }
-+    });
++function makeExecutor() {
++  const stub = Object.create(ToolExecutor.prototype);
++  stub.webSocketServer = { broadcast: () => {} };
++  stub.debugMode = false;
++  return stub;
 +}
 +
-+module.exports = { mountMemorySearch };
-```
-
-**File**: `server.js` (modified, +7/-0)
-```diff
-@@ -868,6 +868,13 @@ app.use('/AdminPanel', (req, res) => {
- // Image server logic is now handled by the ImageServer plugin.
- 
- 
-+// The scoped read credential terminates at this route; leave the global API guard unchanged.
-+require('./routes/memorySearch').mountMemorySearch(app, {
-+    grants: process.env.MEMORY_READ_GRANTS,
-+    serverKey,
-+    getBridge: () => pluginManager.messagePreprocessors.get('RAGDiaryPlugin')?.getContextBridge()
++test('toolExecutor._createErrorResult: plain string errors retain content and omit contentForAI', () => {
++  const executor = makeExecutor();
++  const res = executor._createErrorResult('DemoTool', 'Network request timeout');
++  assert.equal(res.success, false);
++  assert.equal(res.error, 'Network request timeout');
++  assert.deepEqual(res.content, [{ type: 'text', text: '[错误] Network request timeout' }]);
++  assert.equal(res.contentForAI, undefined);
++  assert.equal(res.raw, undefined);
 +});
 +
- // General API authentication (Bearer token) - This was the original one, now adminAuth handles its paths
- app.use((req, res, next) => {
-     // Skip bearer token check for admin panel API and static files, as they use basic auth or no auth
-```
-
-**File**: `tests/memorySearch.test.js` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+'use strict';
-+const { test } = require('node:test');
-+const assert = require('node:assert/strict');
-+const { createHash, randomBytes } = require('node:crypto');
-+const { once } = require('node:events');
-+const express = require('express');
-+const { mountMemorySearch } = require('../routes/memorySearch');
-+
-+const token = randomBytes(32).toString('hex');
-+const hash = createHash('sha256').update(token).digest('hex');
-+const grants = JSON.stringify({ [hash]: ['notes', 'other'] });
-+
-+test('opt-in only; invalid policy and reuse of the server key are rejected at startup', () => {
-+    const app = { post: () => assert.fail('route should not be mounted') };
-+    for (const empty of [undefined, '', '{}']) mountMemorySearch(app, { grants: empty });
-+    for (const invalid of ['[]', '{"raw-token":["notes"]}', JSON.stringify({ [hash]: [] })]) {
-+        assert.throws(() => mountMemorySearch(app, { grants: invalid }), /Invalid MEMORY_READ_GRANTS/);
-+    }
-+    assert.throws(() => mountMemorySearch(app, { grants, serverKey: token }), /Invalid MEMORY_READ_GRANTS/);
++test('toolExecutor._createErrorResult: approval rejection retains readable content and omits contentForAI when result is absent', () => {
++  const executor = makeExecutor();
++  const payload = JSON.stringify({
++    plugin_error: 'Execution rejected by admin.',
++    user_feedback: 'Unsafe command',
++    error_type: 'approval_rejected'
++  });
++  const res = executor._createErrorResult('DemoTool', '执行错误: ' + payload);
++  assert.equal(res.success, false);
++  assert.match(res.content[0].text, /Execution rejected by admin/);
++  assert.match(res.content[0].text, /用户反馈: Unsafe command/);
++  assert.equal(res.contentForAI, undefined);
++  assert.equal(res.raw.error_type, 'approval_rejected');
 +});
 +
-+test('scoped RiverMemo HTTP search', async t => {
-+    const app = express();
-+    app.use(express.json());
-+    const calls = [];
-+    let bridge = {
-+        embedText: async text => { calls.push(text); return [1]; },
-+        retrieveDiary: async options => {
-+            calls.push(options);
-+            return { results: [
-+                { diaryName: 'notes', sourceFile: 'folder/note.md', text: 'fixture', score: 0.8, vector: [1] },
-+                { diaryName: 'other', text: 'authorized but not requested' },
-+                { diaryName: 'outside', text: 'out of scope' }
-+            ] };
-+        }
-+    };
-+    mountMemorySearch(app, { grants, getBridge() { calls.push('bridge'); return bridge; } });
-+    const server = app.listen(0, '127.0.0.1');
-+    await once(server, 'listening');
-+    t.after(() => new Promise(resolve => server.close(resolve)));
-+    const post = (body, credential = token) => fetch(`http://127.0.0.1:${server.address().port}/v1/memory/search`, {
-+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + credential }, body: JSON.stringify(body)
-+    });
-+    const query = { query: 'fixture', diaries: ['notes', 'notes'], k: 3 };
-+    assert.equal((await post(query, 'not-the-read-token')).status, 401);
-+    assert.equal((await post({ ...query, diaries: ['notes', 'outside'] })).status, 403);
-+    for (const malformed of [{ ...query, diaries: [] }, { ...query, k: 0 }, { ...query, query: ' ' }]) {
-+        assert.equal((await post(malformed)).status, 400);
-+    }
-+    assert.deepEqual(calls, []);
-+    const res = await post(query);
-+    assert.equal(res.status, 200);
-+    assert.equal(res.headers.get('cache-control'), 'no-store');
-+    assert.deepEqual(await res.json(), { direct: [{ diary: 'notes', file: 'note.md', text: 'fixture', score: 0.8, scoreSource: 'retrieval' }] });
-+    assert.deepEqual(calls, ['bridge', 'fixture', { diaryNames: ['notes'], queryText: 'fixture', queryVector: [1], k: 3, engine: 'rivermemo', fallback: 'none' }]);
-+    bridge = null;
-+    assert.equal((await post(query)).status, 503);
++test('toolExecutor._createErrorResult: structured error result object is exposed to contentForAI', () => {
++  const executor = makeExecutor();
++  const businessErrorResult = {
++    exitCode: 7,
++    stderr: 'command not found',
++    retryable: false,
++    diagnostics: { host: 'node-1' }
++  };
++  const payload = JSON.stringify({
++    plugin_error: 'Process terminated with non-zero exit code.',
++    result: businessErrorResult
++  });
++  const res = executor._createErrorResult('DemoTool', '执行错误: ' + payload);
++  assert.equal(res.success, false);
++  assert.match(res.content[0].text, /Process terminated with non-zero exit code/);
++  assert.ok(Array.isArray(res.contentForAI));
++  assert.equal(res.contentForAI.length, 1);
++  assert.equal(res.contentForAI[0].type, 'text');
++  const parsedForAI = JSON.parse(res.contentForAI[0].text);
++  assert.deepEqual(parsedForAI, businessErrorResult);
++  assert.deepEqual(res.raw.result, businessErrorResult);
 +});
++
++test('toolExecutor._createErrorResult: standard content array in result is passed verbatim to contentForAI', () => {
++  const executor = makeExecutor();
++  const errorParts = [
++    { type: 'text', text: '[header]\n{"tool": "Run", "status": "error", "exitCode": 1}' },
++    { type: 'text', text: '[output]\nSyntaxError: Unexpected token' }
++  ];
++  const payload = JSON.stringify({
++    plugin_error: 'Task execution failed.',
++    result: { content: errorParts }
++  });
++  const res = executor._createErrorResult('DemoTool', '执行错误: ' + payload);
++  assert.equal(res.success, false);
++  assert.deepEqual(res.contentForAI, errorParts);
++});
++
++test('toolExecutor._createErrorResult: approval feedback note is preserved when structured result exists', () => {
++  const executor = makeExecutor();
++  const businessErrorResult = { status: 'failed', code: 'PERMISSION_DENIED' };
++  const payload = JSON.stringify({
++    plugin_error: 'Operation not permitted.',
++    __vcpApprovalFeedback: '请检查只读目录',
++    result: businessErrorResult
++  });
++  const res = executor._createErrorResult('DemoTool', '执行错误: ' + payload);
++  assert.equal(res.success, false);
++  assert.match(res.content[0].text, /请检查只读目录/);
++  assert.ok(res.contentForAI.length >= 2);
++  assert.match(res.contentForAI[0].text, /请检查只读目录/);
++  assert.deepEqual(JSON.parse(res.contentForAI[1].text), businessErrorResult);
++});
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 2: `b973cc2c` (2026-11-22)
-**Commit Message**: fix
+### Incident Patch 2: `d333a636` (2026-11-28)
+**Commit Message**: fix(plugins): add USE_PUBLIC_URL support to 16 built-in plugins
 
-**File**: `Plugin/DoubaoGen/DoubaoGen.js` (modified, +1/-2)
+Add USE_PUBLIC_URL (default: false) and VarHttpsUrl support to all 16 built-in plugins that previously hardcoded ${VAR_HTTP_URL}:${SERVER_PORT}/pw=..., matching the existing convention in ZImageTurboGen, AgnesGen, AgnesVideoGen, and GPTImageGen (#647).
+
+- Default behavior (USE_PUBLIC_URL=false / unset) remains 100% backward compatible, preserving VarHttpUrl:PORT.
+- When USE_PUBLIC_URL=true (or 1), returns VarHttpsUrl (falling back to VarHttpUrl) without appending :PORT and strips trailing slashes to avoid //pw= URLs.
+- Covers BilibiliFetch, UrlFetch, DailyNote, DMXDoubaoGen, DoubaoGen, FluxGen, GeminiImageGen (.js/.mjs), MagiAgent, MediaRenderer, QwenImageGen, TarotDivination, ToolCallRecordQuery, VCPForum, ComfyUIGen, FileListGenerator, and ZImageGen2.
+- Declares USE_PUBLIC_URL in each plugin manifest configSchema, existing config.env.example templates, and root config.env.example (default false).
+- Adds regression tests in tests/pluginPublicUrl.test.js.
+
+**File**: `Plugin/BilibiliFetch/BilibiliFetch.py` (modified, +10/-3)
 ```diff
-@@ -801,8 +801,7 @@ async function handleCompose(args) {
-         size: resolution,
-         watermark: args.watermark,
-         output_format: args.output_format,
--        response_format: DEFAULT_RESPONSE_FORMAT,
--        sequential_image_generation: 'disabled'
-+        response_format: DEFAULT_RESPONSE_FORMAT
-     };
+@@ -776,14 +776,20 @@ def sanitize_filename(name: str, max_length: int = 80) -> str:
+ def get_accessible_url(local_path: str) -> str:
+     """Constructs an accessible URL for the image server."""
+     var_http_url = get_config_priority('VarHttpUrl', ['VAR_HTTP_URL', 'VarHttpUrl'], 'http://localhost')
++    var_https_url = get_config_priority('VarHttpsUrl', ['VAR_HTTPS_URL', 'VarHttpsUrl'], '')
++    use_public_url = str(get_config_priority('USE_PUBLIC_URL', ['USE_PUBLIC_URL'], 'false')).strip().lower() in ('true', '1')
+     server_port = get_config_priority('PORT', ['SERVER_PORT', 'PORT'], '6005')
+     image_key = get_config_priority('Image_Key', ['IMAGESERVER_IMAGE_KEY', 'Image_Key'])
+     project_base_path = get_config_priority('PROJECT_BASE_PATH', ['PROJECT_BASE_PATH'])
+     if not project_base_path:
+         script_dir = os.path.dirname(os.path.abspath(__file__))
+         project_base_path = os.path.abspath(os.path.join(script_dir, '..', '..'))
+-    
+-    if all([var_http_url, server_port, image_key, project_base_path]):
++
++    public_base = str(var_https_url or var_http_url or '').strip().rstrip('/')
++    base_url = str(var_http_url or '').strip().rstrip('/')
++    has_base_config = bool(public_base) if use_public_url else bool(base_url and server_port)
++
++    if has_base_config and image_key and project_base_path:
+         # Calculate relative path from PROJECT_BASE_PATH/image/
+         try:
+             norm_local = os.path.abspath(os.path.normpath(local_path))
+@@ -797,8 +803,9 @@ def get_accessible_url(local_path: str) -> str:
+             # URL 路径必须按 UTF-8 百分号编码；仅保留目录分隔符。
+             encoded_rel_path = urllib.parse.quote(rel_path, safe='/')
+             encoded_image_key = urllib.parse.quote(str(image_key), safe='')
+-            base_url = str(var_http_url).rstrip('/')
  
-     if (args.seed !== undefined && args.seed !== -1 && args.seed !== null) {
++            if use_public_url:
++                return f"{public_base}/pw={encoded_image_key}/images/{encoded_rel_path}"
+             return f"{base_url}:{server_port}/pw={encoded_image_key}/images/{encoded_rel_path}"
+         except Exception as e:
+             logging.error(f"Error calculating relative path for URL: {e}")
+```
+
+**File**: `Plugin/BilibiliFetch/plugin-manifest.json` (modified, +2/-1)
+```diff
+@@ -15,7 +15,8 @@
+     "timeout": 60000
+   },
+   "configSchema": {
+-    "BILIBILI_COOKIE": "string"
++    "BILIBILI_COOKIE": "string",
++    "USE_PUBLIC_URL": "string(可选)，是否使用公网地址返回图片/文件URL，true 使用 VarHttpsUrl（不带端口，适用于反代），false 使用 VarHttpUrl:端口（局域网），默认 false"
+   },
+   "capabilities": {
+     "invocationCommands": [
+```
+
+**File**: `Plugin/ComfyUIGen/ComfyUIGen.js` (modified, +15/-4)
+```diff
+@@ -60,6 +60,10 @@ async function loadConfiguration() {
+     config.SERVER_PORT = process.env.SERVER_PORT;
+     config.IMAGESERVER_IMAGE_KEY = process.env.IMAGESERVER_IMAGE_KEY;
+     config.VAR_HTTP_URL = process.env.VarHttpUrl;
++    config.VAR_HTTPS_URL = process.env.VarHttpsUrl || '';
++    config.USE_PUBLIC_URL = ['true', '1'].includes(
++        String(process.env.USE_PUBLIC_URL ?? config.userSettings?.usePublicUrl ?? 'false').trim().toLowerCase()
++    );
+     
+     return config;
+ }
+@@ -608,7 +612,10 @@ async function saveImagesToLocal(images, config) {
+         
+         // 构建访问URL
+         const relativeServerPathForUrl = path.join('comfyuigen', generatedFileName).replace(/\\/g, '/');
+-        const accessibleImageUrl = `${config.VAR_HTTP_URL}:${config.SERVER_PORT}/pw=${config.IMAGESERVER_IMAGE_KEY}/images/${relativeServerPathForUrl}`;
++        const serverBaseUrl = config.USE_PUBLIC_URL
++            ? String(config.VAR_HTTPS_URL || config.VAR_HTTP_URL || '').trim().replace(/\/+$/, '')
++            : `${String(config.VAR_HTTP_URL || '').trim().replace(/\/+$/, '')}:${config.SERVER_PORT}`;
++        const accessibleImageUrl = `${serverBaseUrl}/pw=${config.IMAGESERVER_IMAGE_KEY}/images/${relativeServerPathForUrl}`;
+         
+         savedImages.push({
+             filename: generatedFileName,
+@@ -644,11 +651,15 @@ async function generateImageAndSave(args) {
+     if (!config.PROJECT_BASE_PATH) {
+         throw new Error("ComfyUI Plugin Error: PROJECT_BASE_PATH environment variable is required.");
+     }
+-    if (!config.SERVER_PORT || !config.IMAGESERVER_IMAGE_KEY || !config.VAR_HTTP_URL) {
++    const hasServerBase = config.USE_PUBLIC_URL
++        ? Boolean(String(config.VAR_HTTPS_URL || config.VAR_HTTP_URL || '').trim())
++        : Boolean(config.SERVER_PORT && config.VAR_HTTP_URL);
++    if (!config.IMAGESERVER_IMAGE_KEY || !hasServerBase) {
+         const missing = [];
+-        if (!config.SERVER_PORT) missing.push('SERVER_PORT');
++        if (!config.USE_PUBLIC_URL && !config.SERVER_PORT) missing.push('SERVER_PORT');
+         if (!config.IMAGESERVER_IMAGE_KEY) missing.push('IMAGESERVER_IMAGE_KEY');
+-        if (!config.VAR_HTTP_URL) missing.push('VAR_HTTP_URL');
++        if (config.USE_PUBLIC_URL && !String(config.VAR_HTTPS_URL || config.VAR_HTTP_URL || '').trim()) missing.push('VarHttpsUrl/VarHttpUrl');
++        if (!config.USE_PUBLIC_URL && !config.VAR_HTTP_URL) missing.push('VAR_HTTP_URL');
+         throw new Error(`ComfyUI Plugin Error: Missing environment variables: ${missing.join(', ')}. Available env vars: ${Object.keys(process.env).filter(k => k.includes('HTTP') || k.includes('PORT') || k.includes('IMAGE')).join(', ')}`);
+     }
+ 
+```
+
+**File**: `Plugin/ComfyUIGen/config.env.example` (modified, +4/-1)
+```diff
+@@ -32,4 +32,7 @@
+ # - 工作流模板选择
+ # - 生成参数（尺寸、采样器等）
+ # - 负面提示词设置
+-# ==========================================
+\ No newline at end of file
++# ==========================================
++
++# 可选 - 是否使用公网地址返回图片/文件 URL（true=VarHttpsUrl 不带端口，false=VarHttpUrl:端口，默认 false）
++USE_PUBLIC_URL=false
+```
+
+**File**: `Plugin/ComfyUIGen/plugin-manifest.json.block` (modified, +5/-0)
+```diff
+@@ -34,6 +34,11 @@
+       "type": "number",
+       "description": "ComfyUI 处于活跃排队或生图推进时的最大兜底等待分钟数（默认30分钟，长视频工作流可调至60-120，设为0则只要进程活跃永不超时）",
+       "default": 30
++    },
++    "USE_PUBLIC_URL": {
++      "type": "string",
++      "description": "（可选）是否使用公网地址返回图片/文件 URL：true=使用 VarHttpsUrl（不带端口，适用于反代），false=使用 VarHttpUrl:端口（局域网），默认 false",
++      "default": "false"
+     }
+   },
+   "capabilities": {
+```
+
+**File**: `Plugin/DMXDoubaoGen/DoubaoGen.js` (modified, +23/-8)
+```diff
+@@ -14,7 +14,16 @@ const PROJECT_BASE_PATH = process.env.PROJECT_BASE_PATH;
+ const SERVER_PORT = process.env.SERVER_PORT;
+ const IMAGESERVER_IMAGE_KEY = process.env.IMAGESERVER_IMAGE_KEY; // Key for our own image server
+ const VAR_HTTP_URL = process.env.VarHttpUrl; // Read VarHttpUrl from env
+-const VAR_HTTPS_URL = process.env.VarHttpsUrl; // Read VarHttps Url from env
++const VAR_HTTPS_URL = process.env.VarHttpsUrl || ''; // Read VarHttpsUrl from env
++const USE_PUBLIC_URL = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
++
++function buildServerBaseUrl() {
++    if (USE_PUBLIC_URL) {
++        return String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    }
++    const localBase = String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    return localBase && SERVER_PORT ? `${localBase}:${SERVER_PORT}` : '';
++}
+ 
+ // API specific configurations for DMXAPI
+ const DMX_API_CONFIG = {
+@@ -312,14 +321,20 @@ async function generateImageAndSave(args) {
+     if (!PROJECT_BASE_PATH) {
+         throw new Error("DoubaoGen Plugin Error: PROJECT_BASE_PATH environment variable is required for saving images.");
+     }
+-    if (!SERVER_PORT) {
+-        throw new Error("DoubaoGen Plugin Error: SERVER_PORT environment variable is required for constructing image URL.");
+-    }
+     if (!IMAGESERVER_IMAGE_KEY) {
+         throw new Error("DoubaoGen Plugin Error: IMAGESERVER_IMAGE_KEY environment variable is required for constructing image URL.");
+     }
+-    if (!VAR_HTTP_URL) {
+-        throw new Error("DoubaoGen Plugin Error: VarHttpUrl environment variable is required for constructing image URL.");
++    if (USE_PUBLIC_URL) {
++        if (!String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim()) {
++            throw new Error("DoubaoGen Plugin Error: VarHttpsUrl or VarHttpUrl environment variable is required when USE_PUBLIC_URL=true.");
++        }
++    } else {
++        if (!SERVER_PORT) {
++            throw new Error("DoubaoGen Plugin Error: SERVER_PORT environment variable is required for constructing image URL.");
++        }
++        if (!VAR_HTTP_URL) {
++            throw new Error("DoubaoGen Plugin Error: VarHttpUrl environment variable is required for constructing image URL.");
++        }
+     }
+ 
+     args = normalizeDoubaoArgs(args);
+@@ -493,8 +508,8 @@ async function generateImageAndSave(args) {
+     // console.error(`[DoubaoGen Plugin] Image saved to: ${localImageServerPath}`);
+ 
+     const relativeServerPathForUrl = path.join('doubaogen', generatedFileName).replace(/\\\\/g, '/');
+-    const accessibleImageUrl = `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPathForUrl}`;
+-    // const accessibleImageUrl = `${VAR_HTTPS_URL}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPathForUrl}`;
++    const serverBaseUrl = buildServerBaseUrl();
++    const accessibleImageUrl = `${serverBaseUrl}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPathForUrl}`;
+ 
+     const altText = args.prompt ? args.prompt.substring(0, 80) + (args.prompt.length > 80 ? "..." : "") : (generatedFileName || "生成的图片");
+     const imageHtml = `<img src="${accessibleImageUrl}" alt="${altText}" width="300">`;
+```
+
+**File**: `Plugin/DMXDoubaoGen/config.env.example` (modified, +4/-1)
+```diff
+@@ -1,3 +1,6 @@
+ # .env
+ 
+-VOLCENGINE_API_KEY=your dmx key
+\ No newline at end of file
++VOLCENGINE_API_KEY=your dmx key
++
++# 可选 - 是否使用公网地址返回图片/文件 URL（true=VarHttpsUrl 不带端口，false=VarHttpUrl:端口，默认 false）
++USE_PUBLIC_URL=false
+```
+
+**File**: `Plugin/DMXDoubaoGen/plugin-manifest.json` (modified, +2/-1)
+```diff
+@@ -14,7 +14,8 @@
+     "protocol": "stdio"
+   },
+   "configSchema": {
+-    "VOLCENGINE_API_KEY": "string"
++    "VOLCENGINE_API_KEY": "string",
++    "USE_PUBLIC_URL": "string(可选)，是否使用公网地址返回图片/文件URL，true 使用 VarHttpsUrl（不带端口，适用于反代），false 使用 VarHttpUrl:端口（局域网），默认 false"
+   },
+   "capabilities": {
+     "invocationCommands": [
+```
+
+---
+
+### Incident Patch 3: `1ee3f4cb` (2026-11-28)
+**Commit Message**: Merge pull request #674 from infinite-vector/fix/legacy-plugins-public-url-normalization
+
+fix(plugins): 统一补齐 5 个内置插件的 USE_PUBLIC_URL 斜杠规整化与回退逻辑并完善跨平台单测
+
+**File**: `Plugin/AgnesGen/AgnesGen.mjs` (modified, +13/-7)
+```diff
+@@ -12,8 +12,16 @@ const PROJECT_BASE_PATH = process.env.PROJECT_BASE_PATH;
+ const SERVER_PORT = process.env.SERVER_PORT;
+ const IMAGESERVER_IMAGE_KEY = process.env.IMAGESERVER_IMAGE_KEY;
+ const VAR_HTTP_URL = process.env.VarHttpUrl;
+-const VAR_HTTPS_URL = process.env.VarHttpsUrl;
+-const USE_PUBLIC_URL = process.env.USE_PUBLIC_URL === 'true' || process.env.USE_PUBLIC_URL === '1';
++const VAR_HTTPS_URL = process.env.VarHttpsUrl || '';
++const USE_PUBLIC_URL = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
++
++function buildServerBaseUrl() {
++    if (USE_PUBLIC_URL) {
++        return String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    }
++    const localBase = String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    return localBase && SERVER_PORT ? `${localBase}:${SERVER_PORT}` : '';
++}
+ const HTTP_PROXY = process.env.HTTP_PROXY || process.env.http_proxy || process.env.HTTPS_PROXY || process.env.https_proxy;
+ 
+ const API_ENDPOINT = process.env.AGNES_API_ENDPOINT || 'https://apihub.agnes-ai.com/v1/images/generations';
+@@ -287,9 +295,7 @@ async function imageResultToBuffer(imageData) {
+ 
+ function buildAccessibleImageUrl(fileName) {
+     const relativePathForUrl = path.join('agnesgen', fileName).replace(/\\/g, '/');
+-    return USE_PUBLIC_URL && VAR_HTTPS_URL
+-        ? `${VAR_HTTPS_URL}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`
+-        : `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
++    return `${buildServerBaseUrl()}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
+ }
+ 
+ // --- Core Request ---
+@@ -300,8 +306,8 @@ async function processApiRequest(rawArgs) {
+     if (!API_KEY) {
+         throw new Error("AgnesGen Plugin Error: AGNES_API_KEY environment variable is required.");
+     }
+-    if (!PROJECT_BASE_PATH || !SERVER_PORT || !IMAGESERVER_IMAGE_KEY || !VAR_HTTP_URL) {
+-        throw new Error("AgnesGen Plugin Error: Missing one or more required environment variables (PROJECT_BASE_PATH, SERVER_PORT, IMAGESERVER_IMAGE_KEY, VarHttpUrl).");
++    if (!PROJECT_BASE_PATH || !IMAGESERVER_IMAGE_KEY || !buildServerBaseUrl()) {
++        throw new Error("AgnesGen Plugin Error: Missing one or more required environment variables (PROJECT_BASE_PATH, SERVER_PORT, IMAGESERVER_IMAGE_KEY, VarHttpUrl/VarHttpsUrl).");
+     }
+     if (!isValidArgs(args)) {
+         throw new Error(`AgnesGen Plugin Error: Invalid arguments provided: ${JSON.stringify(rawArgs)}.`);
+```
+
+**File**: `Plugin/AgnesVideoGen/AgnesVideoGen.mjs` (modified, +5/-4)
+```diff
+@@ -50,7 +50,7 @@ const IMAGESERVER_FILE_KEY = process.env.IMAGESERVER_FILE_KEY || '';
+ const VAR_HTTP_URL         = process.env.VarHttpUrl           || 'http://localhost';
+ const VAR_HTTPS_URL        = process.env.VarHttpsUrl          || '';
+ // 决定返回的链接用"对外地址"还是"内网地址"，统一在主 config.env 里设置。
+-const USE_PUBLIC_URL = process.env.USE_PUBLIC_URL === 'true';
++const USE_PUBLIC_URL = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
+ 
+ // ============================================================
+ // 工具函数
+@@ -71,9 +71,10 @@ function outputAndExit(result) {
+  * @param {string} relPath 形如 "agnesvideogen/xxx.mp4"
+  */
+ function buildFilesUrl(relPath) {
+-    return (USE_PUBLIC_URL && VAR_HTTPS_URL)
+-        ? `${VAR_HTTPS_URL}/pw=${IMAGESERVER_FILE_KEY}/files/${relPath}`
+-        : `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_FILE_KEY}/files/${relPath}`;
++    const base = USE_PUBLIC_URL
++        ? String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '')
++        : `${String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '')}:${SERVER_PORT}`;
++    return `${base}/pw=${IMAGESERVER_FILE_KEY}/files/${relPath}`;
+ }
+ 
+ /**
+```
+
+**File**: `Plugin/GPTImageGen/GPTImageGen.js` (modified, +11/-5)
+```diff
+@@ -61,8 +61,16 @@ const SERVER_PORT = process.env.SERVER_PORT || '5000';
+ const IMAGESERVER_IMAGE_KEY = process.env.IMAGESERVER_IMAGE_KEY || '';
+ const VAR_HTTP_URL = process.env.VarHttpUrl || 'http://localhost';
+ // 与 ZImageTurboGen / AgnesGen 一致：USE_PUBLIC_URL=true 时返回 VarHttpsUrl 公网地址（不带端口）
+-const USE_PUBLIC_URL = process.env.USE_PUBLIC_URL === 'true' || process.env.USE_PUBLIC_URL === '1';
+-const VAR_HTTPS_URL = process.env.VarHttpsUrl || VAR_HTTP_URL;
++const USE_PUBLIC_URL = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
++const VAR_HTTPS_URL = process.env.VarHttpsUrl || '';
++
++function buildServerBaseUrl() {
++    if (USE_PUBLIC_URL) {
++        return String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    }
++    const localBase = String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    return SERVER_PORT ? `${localBase}:${SERVER_PORT}` : localBase;
++}
+ 
+ // ============================================================
+ // 工具函数
+@@ -1124,9 +1132,7 @@ function saveImageToLocal(imageBuffer, index = 0, contentType = '') {
+     // 构建可访问的 HTTP URL
+     const relativeServerPath = `gptimagegen/${fileName}`;
+     const serverPath = `image/gptimagegen/${fileName}`;
+-    const accessibleUrl = USE_PUBLIC_URL
+-        ? `${VAR_HTTPS_URL}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPath}`
+-        : `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPath}`;
++    const accessibleUrl = `${buildServerBaseUrl()}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativeServerPath}`;
+ 
+     return {
+         localPath,
+```
+
+**File**: `Plugin/NanoBananaGen2/NanoBananaGen.mjs` (modified, +5/-3)
+```diff
+@@ -21,6 +21,7 @@ const {
+     SERVER_PORT,
+     IMAGESERVER_IMAGE_KEY,
+     VAR_HTTP_URL,
++    VAR_HTTPS_URL,
+     USE_PUBLIC_URL
+ } = (() => {
+     // ─── 渠道解析 ───
+@@ -67,7 +68,7 @@ const {
+     const distServers = (process.env.DIST_IMAGE_SERVERS || '').split(',').map(s => s.trim()).filter(Boolean);
+ 
+     // ─── 解析 USE_PUBLIC_URL 环境变量 ───
+-    const usePublicUrl = (process.env.USE_PUBLIC_URL || 'false').toLowerCase() === 'true';
++    const usePublicUrl = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
+ 
+     return {
+         CHANNELS: channels,
+@@ -78,6 +79,7 @@ const {
+         SERVER_PORT: process.env.SERVER_PORT,
+         IMAGESERVER_IMAGE_KEY: process.env.IMAGESERVER_IMAGE_KEY || process.env.Image_Key || process.env.IMAGE_KEY || process.env.ImageServerKey || '',
+         VAR_HTTP_URL: process.env.VarHttpUrl,
++        VAR_HTTPS_URL: process.env.VarHttpsUrl || '',
+         USE_PUBLIC_URL: usePublicUrl
+     };
+ })();
+@@ -344,8 +346,8 @@ async function processApiResponseAndSaveImage(message, originalArgs, showBase64)
+     // ─── 动态决定输出的 URL 格式 ───
+     let accessibleImageUrl;
+     const base = USE_PUBLIC_URL
+-        ? String(VAR_HTTP_URL).replace(/\/+$/, '')
+-        : `${String(VAR_HTTP_URL).replace(/\/+$/, '')}:${SERVER_PORT}`;
++        ? String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '')
++        : `${String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '')}:${SERVER_PORT}`;
+     accessibleImageUrl = `${base}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
+ 
+     const modelResponseText = cleanTextContent || "图片已成功处理！";
+```
+
+**File**: `Plugin/ZImageTurboGen/ZImageTurboGen.mjs` (modified, +14/-10)
+```diff
+@@ -11,8 +11,16 @@ const PROJECT_BASE_PATH = process.env.PROJECT_BASE_PATH;
+ const SERVER_PORT = process.env.SERVER_PORT;
+ const IMAGESERVER_IMAGE_KEY = process.env.IMAGESERVER_IMAGE_KEY;
+ const VAR_HTTP_URL = process.env.VarHttpUrl;
+-const VAR_HTTPS_URL = process.env.VarHttpsUrl;
+-const USE_PUBLIC_URL = process.env.USE_PUBLIC_URL === 'true' || process.env.USE_PUBLIC_URL === '1';
++const VAR_HTTPS_URL = process.env.VarHttpsUrl || '';
++const USE_PUBLIC_URL = ['true', '1'].includes(String(process.env.USE_PUBLIC_URL || 'false').trim().toLowerCase());
++
++function buildServerBaseUrl() {
++    if (USE_PUBLIC_URL) {
++        return String(VAR_HTTPS_URL || VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    }
++    const localBase = String(VAR_HTTP_URL || '').trim().replace(/\/+$/, '');
++    return localBase && SERVER_PORT ? `${localBase}:${SERVER_PORT}` : '';
++}
+ const HTTP_PROXY = process.env.HTTP_PROXY || process.env.http_proxy || process.env.HTTPS_PROXY || process.env.https_proxy;
+ 
+ const API_ENDPOINT = 'https://ai.gitee.com/v1/images/generations';
+@@ -135,8 +143,8 @@ async function processApiRequest(rawArgs) {
+ 
+     const args = normalizeArgs(rawArgs);
+ 
+-    if (!PROJECT_BASE_PATH || !SERVER_PORT || !IMAGESERVER_IMAGE_KEY || !VAR_HTTP_URL) {
+-        throw new Error("Plugin Error: Missing one or more required environment variables (PROJECT_BASE_PATH, SERVER_PORT, etc).");
++    if (!PROJECT_BASE_PATH || !IMAGESERVER_IMAGE_KEY || !buildServerBaseUrl()) {
++        throw new Error("Plugin Error: Missing one or more required environment variables (PROJECT_BASE_PATH, SERVER_PORT, IMAGESERVER_IMAGE_KEY, VarHttpUrl/VarHttpsUrl).");
+     }
+     if (!isValidArgs(args)) {
+         throw new Error(`Plugin Error: Invalid arguments provided: ${JSON.stringify(rawArgs)}.`);
+@@ -299,9 +307,7 @@ async function processApiRequest(rawArgs) {
+     await fs.writeFile(localImagePath, imageBuffer);
+ 
+     const relativePathForUrl = path.join('zimageturbogen', generatedFileName).replace(/\\/g, '/');
+-    const accessibleImageUrl = USE_PUBLIC_URL
+-        ? `${VAR_HTTPS_URL}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`
+-        : `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
++    const accessibleImageUrl = `${buildServerBaseUrl()}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
+ 
+     const content = [
+         {
+@@ -525,9 +531,7 @@ async function processEditRequest(args, showBase64) {
+     await fs.writeFile(localImagePath, imageBuffer);
+ 
+     const relativePathForUrl = path.join('zimageturbogen', generatedFileName).replace(/\\/g, '/');
+-    const accessibleImageUrl = USE_PUBLIC_URL
+-        ? `${VAR_HTTPS_URL}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`
+-        : `${VAR_HTTP_URL}:${SERVER_PORT}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
++    const accessibleImageUrl = `${buildServerBaseUrl()}/pw=${IMAGESERVER_IMAGE_KEY}/images/${relativePathForUrl}`;
+ 
+     const content = [
+         {
+```
+
+**File**: `tests/pluginPublicUrl.test.js` (modified, +143/-9)
+```diff
+@@ -1,9 +1,10 @@
+ const test = require('node:test');
+ const assert = require('node:assert/strict');
+ const fs = require('node:fs');
++const http = require('node:http');
+ const path = require('node:path');
+ const os = require('node:os');
+-const { execFileSync } = require('node:child_process');
++const { execFileSync, spawn } = require('node:child_process');
+ 
+ const REPO_ROOT = path.resolve(__dirname, '..');
+ 
+@@ -24,19 +25,63 @@ const TARGET_PLUGINS = [
+     { name: 'ComfyUIGen', files: ['ComfyUIGen.js'], manifest: 'plugin-manifest.json.block' },
+     { name: 'FileListGenerator', files: ['file-list-generator.js'], manifest: 'plugin-manifest.json.block' },
+     { name: 'ZImageGen2', files: ['ZImageGen.mjs'], manifest: 'plugin-manifest.json.block' },
++    { name: 'AgnesGen', files: ['AgnesGen.mjs'], manifest: 'plugin-manifest.json' },
++    { name: 'AgnesVideoGen', files: ['AgnesVideoGen.mjs'], manifest: 'plugin-manifest.json' },
++    { name: 'ZImageTurboGen', files: ['ZImageTurboGen.mjs'], manifest: 'plugin-manifest.json' },
++    { name: 'GPTImageGen', files: ['GPTImageGen.js'], manifest: 'plugin-manifest.json' },
++    { name: 'NanoBananaGen2', files: ['NanoBananaGen.mjs'], manifest: 'plugin-manifest.json' },
+ ];
+ 
+-test('all 16 built-in plugins declare USE_PUBLIC_URL in manifest and avoid unconditional :PORT/pw= hardcoding', () => {
++function resolveManifestPath(pluginDir, preferred) {
++    for (const candidate of [preferred, 'plugin-manifest.json', 'plugin-manifest.json.block']) {
++        if (!candidate) continue;
++        const full = path.join(pluginDir, candidate);
++        if (fs.existsSync(full)) return full;
++    }
++    throw new Error(`No plugin manifest found in ${pluginDir}`);
++}
++
++function resolvePythonBin() {
++    const candidates = process.platform === 'win32' ? ['python', 'python3'] : ['python3', 'python'];
++    for (const cmd of candidates) {
++        try {
++            execFileSync(cmd, ['--version'], { stdio: 'ignore' });
++            return cmd;
++        } catch (_) {
++            // try next
++        }
++    }
++    return null;
++}
++
++function runStdioPlugin(scriptPath, args, env) {
++    return new Promise((resolve, reject) => {
++        const child = spawn(process.execPath, [scriptPath], { env: { ...process.env, ...env } });
++        let stdout = '';
++        let stderr = '';
++        child.stdout.setEncoding('utf8').on('data', chunk => { stdout += chunk; });
++        child.stderr.setEncoding('utf8').on('data', chunk => { stderr += chunk; });
++        child.on('error', reject);
++        child.on('close', code => {
++            if (code !== 0) return reject(new Error(stderr || stdout || `Exited with ${code}`));
++            try { resolve(JSON.parse(stdout)); } catch (err) { reject(err); }
++        });
++        child.stdin.end(JSON.stringify(args));
++    });
++}
++
++test('all 21 built-in plugins declare USE_PUBLIC_URL in manifest and normalize base URLs without raw :PORT/pw= or VAR_HTTPS_URL/pw=', () => {
+     const hardcodedPortPwPattern = /:\$\{[^}]*(?:PORT|port)[^}]*\}\/pw=|:\{server_port\}\/pw=/;
++    const rawHttpsSlashPattern = /\$\{\s*VAR_HTTPS_URL\s*\}\/(?:pw=|images\/|files\/)/;
+ 
+     for (const plugin of TARGET_PLUGINS) {
+         const pluginDir = path.join(REPO_ROOT, 'Plugin', plugin.name);
+-        const manifestPath = path.join(pluginDir, plugin.manifest);
++        const manifestPath = resolveManifestPath(pluginDir, plugin.manifest);
+         const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8').replace(/^\uFEFF/, ''));
+ 
+         assert.ok(
+             manifest.configSchema && Object.prototype.hasOwnProperty.call(manifest.configSchema, 'USE_PUBLIC_URL'),
+-            `${plugin.name}/${plugin.manifest} must declare USE_PUBLIC_URL in configSchema`
++            `${plugin.name}/${path.basename(manifestPath)} must declare USE_PUBLIC_URL in configSchema`
+         );
+ 
+         for (const relFile of plugin.files) {
+@@ -49,6 +94,11 @@ test('all 16 built-in plugins declare USE_PUBLIC_URL in manifest and avoid uncon
+                 content.includes('VarHttpsUrl'),
+                 `${plugin.name}/${relFile} must support VarHttpsUrl`
+             );
++            assert.doesNotMatch(
++                content,
++                rawHttpsSlashPattern,
++                `${plugin.name}/${relFile} must strip trailing slashes on VAR_HTTPS_URL before appending /pw=`
++            );
+ 
+             // Allow BilibiliFetch.py's else-branch fallback (`return f"{base_url}:{server_port}/pw=..."`)
+             // which is explicitly guarded by `if use_public_url:`.
+@@ -107,19 +157,16 @@ test('ToolCallRecordQuery formatter respects USE_PUBLIC_URL=false (default) and
+             ]
+         });
+ 
+-        // 1. Default (USE_PUBLIC_URL unset / false): local URL with port
+         delete process.env.USE_PUBLIC_URL;
+         const localReport = formatQueryReport(makePayload(), {}, { migrateMultimodal: true });
+         assert.match(localReport.markdown, /http:\/\/localhost:6005\/pw=demo-key\/images
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #634** (2026-11-22): feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口 (@Lutra23)
-- **PR #630** (closed): fix(stream): 截停模型续写的工具回执 (@CI-IISATO)
-- **PR #623** (2026-11-21): feat(ComfyUIGen,RAGDiaryPlugin): 支持 ComfyUI 进程跟随式活性超时检测与 ::Base64Memo 超栈路径溯源及自适应图像压缩 (@infinite-vector)
-- **PR #621** (2026-11-20): fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题 (@InSciTech)
-- **PR #620** (2026-11-20): fix(plugins): 修正多处插件 Manifest 示例工具名、参数大小写及格式错误 (@InSciTech)
-- **PR #619** (2026-11-19): fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞 (@infinite-vector)
+- **PR #675** (closed): fix(ssh): 槽位租约化并发加固 + 探针防重入锁修复 (@awei807-wei)
+- **PR #674** (2026-11-28): fix(plugins): 统一补齐 5 个内置插件的 USE_PUBLIC_URL 斜杠规整化与回退逻辑并完善跨平台单测 (@infinite-vector)
+- **PR #669** (2026-11-28): docs: add Turkish README translation (README_tr.md) (@Burakceliks)
+- **PR #668** (2026-11-28): docs(TVStxt): 优化 VchatRendering 主题自适应指引，兼容浅色白天模式并避免暗底混用主题文字变量 (@InSciTech)
+- **PR #667** (2026-11-28): fix(knowledge-base): 标签一致性修复支持重试并复用向量 (@miaotouy)
+- **PR #666** (2026-11-28): feat(BilibiliFetch): 分段获取弹幕并按时间采样 (@miaotouy)
 
 ---
 
@@ -2037,26 +2541,38 @@ feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in config.env.example
+## X. toolExecutor): expose structured error result to AI model view
 
 **RULE**:
-When implementing operations in `config.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `modules/vcpLoop/toolExecutor.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d824df3c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68523d75`: toolExecutor): expose structured error result to AI model view. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `config.env.example`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `modules/vcpLoop/toolExecutor.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-# Optional read-only RiverMemo API (POST /v1/memory/search). Empty = not registered.
-# Use dedicated random bearer tokens, never Key. Store only each token's lowercase SHA-256 digest here.
-# MEMORY_READ_GRANTS='{"<64 hex digest>":["ExampleDiary"]}'
-# HTTPS request: Authorization: Bearer <read token>; JSON: {"query":"what did we decide?","diaries":["ExampleDiary"],"k":5}
-# Response: {"direct":[{"diary":"ExampleDiary","file":"note.md","text":"...","score":0.8,"scoreSource":"retrieval"}]}
-MEMORY_READ_GRANTS=
+    let contentForAI;
+    const errorResult = parsedPayload?.result;
+    if (errorResult && typeof errorResult === 'object') {
+      const richContent = Array.isArray(errorResult) ? errorResult : (errorResult.data?.content || errorResult.content);
+      if (Array.isArray(richContent) && richContent.length > 0) {
+        contentForAI = richContent;
+      } else {
+        contentForAI = [{ type: 'text', text: JSON.stringify(errorResult, null, 2) }];
+      }
+      const feedbackNote = typeof parsedPayload?.__vcpApprovalFeedback === 'string'
+        ? parsedPayload.__vcpApprovalFeedback.trim()
+        : '';
+      if (feedbackNote && !contentForAI.some(part => part?.type === 'text' && typeof part.text === 'string' && part.text.includes(feedbackNote))) {
+        contentForAI = [{ type: 'text', text: `【用户审核留言：已允许工具 "${toolName}" 调用】\n${feedbackNote}` }, ...contentForAI];
+      }
+    }
+
+      ...(contentForAI ? { contentForAI } : {}),
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2066,7 +2582,7 @@ MEMORY_READ_GRANTS=
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d824df3c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68523d75` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

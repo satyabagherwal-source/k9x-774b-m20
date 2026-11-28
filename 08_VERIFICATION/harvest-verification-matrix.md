@@ -14063,3 +14063,7 @@
 | `CYCLE-20261128-ATB3` | `2026-11-28T14:29:24.831Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11107` | Yes (`c2727bdd...`) |
 | `CYCLE-20261128-AV50` | `2026-11-28T14:29:27.204Z` | `rafsoh/dimeApp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11108` | Yes (`91f76c07...`) |
 | `CYCLE-20261128-B2AK` | `2026-11-28T14:29:36.476Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11109` | Yes (`605727ce...`) |
+| `CYCLE-20261128-WZM8` | `2026-11-28T14:46:39.440Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11110` | Yes (`d70139f2...`) |
+| `CYCLE-20261128-X201` | `2026-11-28T14:46:42.529Z` | `faker-js/faker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11111` | Yes (`89d57ba8...`) |
+| `CYCLE-20261128-X96E` | `2026-11-28T14:46:51.830Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11112` | Yes (`ba6875d2...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T14:47:32.613Z` | `faker-js-faker` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-F963465A` [Domain K] | Yes (`0b4024cc...`) |

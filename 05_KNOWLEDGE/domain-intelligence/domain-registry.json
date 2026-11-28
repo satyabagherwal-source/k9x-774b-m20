@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T14:29:45.572Z",
-  "total_records": 2904,
+  "last_updated": "2026-11-28T14:47:36.023Z",
+  "total_records": 2905,
   "domains": {
     "A": {
       "total": 27,
@@ -2737,7 +2737,7 @@
       ]
     },
     "K": {
-      "total": 189,
+      "total": 190,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2927,7 +2927,8 @@
         "domain_intelligence-quality-verification-intelligence-maziyarpanahi-openmed-core-invariants",
         "domain_intelligence-quality-verification-intelligence-maziyarpanahi-openmed-learnings-core-invariant",
         "domain_intelligence-quality-verification-intelligence-lxml-lxml-learnings-core-invariants",
-        "DOM-K-287B8757"
+        "DOM-K-287B8757",
+        "DOM-K-F963465A"
       ]
     },
     "L": {
@@ -13162,8 +13163,8 @@
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "repository": "lioensky/VCPToolBox",
-      "content_hash": "bfbad30caa57bc0278910bbf47ec123e0b6acc921a7d1f0e7d7ce2787abcc3a0",
-      "created_at": "2026-11-26T03:13:13.634Z"
+      "content_hash": "961c197486c4b29a89e6f84965d9ead08b27c7132067a0e448a05e3e66ec1461",
+      "created_at": "2026-11-28T14:46:52.462Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
@@ -22282,8 +22283,8 @@
       "title": "Technical Construction Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-learnings-technical-construction-intelligence-lioensky-vcpto.md",
       "repository": "lioensky-vcptoolbox-learnings",
-      "content_hash": "887542488d68b27eb507947bb8f7bc5ac8aec1d4883a1bb08930f38d78067561",
-      "created_at": "2026-11-23T06:45:58.481Z"
+      "content_hash": "c33c29804cd1ae318663a9b8e35b0ba5f3b70099b056a3930d6067f8f3a87414",
+      "created_at": "2026-11-28T14:47:36.023Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i",
@@ -23128,8 +23129,8 @@
       "title": "Technical Construction Intelligence: vercel-labs/agent-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vercel-labs-agent-desktop-technical-construction-intelligence-vercel-labs-agent-.md",
       "repository": "vercel-labs/agent-desktop",
-      "content_hash": "f8537f47a7c76f408961b4576c271945b948908fcce8813b4a1e5557b92a171c",
-      "created_at": "2026-11-24T01:37:59.616Z"
+      "content_hash": "bbe7aaeff6e148c3a5b47c3e99117ebbe86f7cf0b4d8bffc6d9e2dfe901d5626",
+      "created_at": "2026-11-28T14:46:40.104Z"
     },
     "DOM-H-0A98A103": {
       "record_id": "DOM-H-0A98A103",
@@ -23179,8 +23180,8 @@
       "title": "Technical Construction Intelligence: vercel-labs-agent-desktop-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vercel-labs-agent-desktop-learnings-technical-construction-intelligence-vercel-l.md",
       "repository": "vercel-labs-agent-desktop-learnings",
-      "content_hash": "53ffcc4280f13252fce9a943054613aba6c201743632708e9131e4e3957684fd",
-      "created_at": "2026-11-24T01:38:06.548Z"
+      "content_hash": "b2fca412be3a22b4362f8f99251da1e4881e9a6e83f33098487933fcb5f4d0f0",
+      "created_at": "2026-11-28T14:46:56.507Z"
     },
     "DOM-D-E9AE08D3": {
       "record_id": "DOM-D-E9AE08D3",
@@ -27698,8 +27699,8 @@
       "title": "Architecture Intelligence: faker-js/faker Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-architecture-intelligence-faker-js-faker-core-invariants.md",
       "repository": "faker-js/faker",
-      "content_hash": "6ca6c1c544b477be77d2949f936defdfc4a7cfe3647ac24c5de103351da46fe7",
-      "created_at": "2026-11-25T02:10:26.752Z"
+      "content_hash": "79972f6496e7bcbe22648f8462a68dc5bfcca9bd39bb66cdb1463a6aa0ab7e1a",
+      "created_at": "2026-11-28T14:46:43.198Z"
     },
     "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants",
@@ -27767,8 +27768,8 @@
       "title": "Architecture Intelligence: faker-js-faker-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-learnings-architecture-intelligence-faker-js-faker-learnings-core.md",
       "repository": "faker-js-faker-learnings",
-      "content_hash": "7bc55e0357376abd41c4e3655c715800ddd0baabd00ff25384d06dd52d013d49",
-      "created_at": "2026-11-25T02:10:35.873Z"
+      "content_hash": "1204cc507ef114d8af5cf27ed6020a6b2596961ee801efbab9abe13f118f8146",
+      "created_at": "2026-11-28T14:47:34.285Z"
     },
     "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria",
@@ -49307,6 +49308,48 @@
       "repository": "dubzzz-fast-check-learnings",
       "content_hash": "993900a89f35a1f78a5e1e29140154f834fce8e8e00a4b34d44e11173bb45a84",
       "created_at": "2026-11-28T14:29:42.938Z"
+    },
+    "DOM-K-F963465A": {
+      "record_id": "DOM-K-F963465A",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "test: fix test timeouts in CI",
+      "content": "When implementing operations in `test/faker.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in faker-js/faker. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "0b4024cc80b57c714429bb590d9a5726e36aeb596a2c2bf57aa707e82c1d25b1",
+      "summary": "Prevents defects observed in production commit `56242050`: test: fix test timeouts in CI. Unvalidated execution paths cause runtime exceptio -> When implementing operations in `test/faker.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memor",
+      "provenance": {
+        "source_uri": "project://faker-js-faker/faker-js-faker-learnings.md",
+        "source_version": "56242050",
+        "observed_at": "2026-11-28T14:46:40.972Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (faker-js-faker)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of faker-js-faker"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.7,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T14:47:32.565Z"
     }
   }
 }

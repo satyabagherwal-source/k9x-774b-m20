@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T14:29:45.759Z",
+  "last_updated": "2026-11-28T14:47:36.332Z",
   "total_verified_learnings": 9152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27156,
+  "total_items": 27164,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218965,8 +218965,8 @@
       "slug": "vercel-labs-agent-desktop",
       "platform": "github",
       "source_url": "https://github.com/vercel-labs/agent-desktop",
-      "source_version": "ce2ddf07",
-      "content_hash": "2788014381cb458329e1b417547d74e35ffc673bc1e9c5c6f249a67d47761761",
+      "source_version": "e3d65c25",
+      "content_hash": "d70139f2fc186189634da0df6f36bdf1639c3596db6c8a41cf4234c7cfe43e4e",
       "dossier_path": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "promoted_rules": [
@@ -218999,6 +218999,11 @@
           "number": 10170,
           "title": "Use the Vercel Labs lockup in the docs header",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11110,
+          "title": "keep the user's window in front and identify twin refs across platforms",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219006,7 +219011,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T01:37:58.920Z",
+      "verified_at": "2026-11-28T14:46:39.112Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219060,10 +219065,10 @@
       "relative_path": "08_VERIFICATION/vercel-labs-agent-desktop-verification-protocol-empirical-defect-shield-for-verc.md",
       "title": "Verification Protocol: Empirical Defect Shield for vercel-labs/agent-desktop",
       "repository": "vercel-labs/agent-desktop",
-      "source_version": "ce2ddf07",
-      "content_hash": "0a3c95e31a1f74e5978f18b0a53496c034f89e2d373fae29e80db6a2256fe7d1",
+      "source_version": "e3d65c25",
+      "content_hash": "4c38d183e35fe65d2f2ab7b2f99c48541b5ba11774a218b2ea14d9c1691216ff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:37:59.801Z"
+      "persisted_at": "2026-11-28T14:46:40.385Z"
     },
     "learn-github-nginx-kubernetes-ingress": {
       "learning_id": "learn-github-nginx-kubernetes-ingress",
@@ -219228,9 +219233,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vercel-labs-agent-desktop-learnings",
       "repository": "vercel-labs-agent-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "69cb0e317003452f33f04cc2aa8027ab726baf1805af1f254363f7582c735615",
+      "content_hash": "861620a9992bc262302141be6489444009f501f1921ad5b86059abad9722d205",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:38:06.739Z"
+      "persisted_at": "2026-11-28T14:46:56.782Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant",
@@ -223004,8 +223009,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "699ed4b3",
-      "content_hash": "076087547e61c0881f241b5f3f87db46b51e7d6fdff4492e200759da70fc30c0",
+      "source_version": "1ee3f4cb",
+      "content_hash": "ba6875d2d9123bd29ac884092c11efeb1ed1e76700e2d5756a000c9571b5043a",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -223068,6 +223073,11 @@
           "number": 10932,
           "title": "drop orphan list files when rebuilding generated lists",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11112,
+          "title": "expose structured error result to AI model view",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223075,7 +223085,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T17:01:53.662Z",
+      "verified_at": "2026-11-28T14:46:51.506Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223117,10 +223127,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "ff2624ee",
-      "content_hash": "bfbad30caa57bc0278910bbf47ec123e0b6acc921a7d1f0e7d7ce2787abcc3a0",
+      "source_version": "1ee3f4cb",
+      "content_hash": "961c197486c4b29a89e6f84965d9ead08b27c7132067a0e448a05e3e66ec1461",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T03:13:13.634Z"
+      "persisted_at": "2026-11-28T14:46:52.462Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox",
@@ -223129,10 +223139,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "699ed4b3",
-      "content_hash": "2d4e18c75ac915886aad631a6ee127730fe860d96e5411502d2fec51ea49335c",
+      "source_version": "1ee3f4cb",
+      "content_hash": "c3f8851a0cd37279d7aa4eb6984c63d4d5237af824694a89004cafe5afce47eb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T17:01:54.568Z"
+      "persisted_at": "2026-11-28T14:46:52.744Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -252459,9 +252469,9 @@
       "title": "Technical Construction Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "887542488d68b27eb507947bb8f7bc5ac8aec1d4883a1bb08930f38d78067561",
+      "content_hash": "c33c29804cd1ae318663a9b8e35b0ba5f3b70099b056a3930d6067f8f3a87414",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T06:45:58.481Z"
+      "persisted_at": "2026-11-28T14:47:36.023Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox-learnings",
@@ -252471,9 +252481,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lioensky-vcptoolbox-learnings",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "872f3b4147c71aafa3fc5936f555a6dcdbdeb0ba50914faede2012058bb4911f",
+      "content_hash": "3283b1a7aa2e8fd74b452a79d67613d44e0ff6e8b529524323cdb5c7c5083969",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T17:02:00.242Z"
+      "persisted_at": "2026-11-28T14:47:36.332Z"
     },
     "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
@@ -255508,10 +255518,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vercel-labs-agent-desktop-technical-construction-intelligence-vercel-labs-agent-.md",
       "title": "Technical Construction Intelligence: vercel-labs/agent-desktop Core Invariants",
       "repository": "vercel-labs/agent-desktop",
-      "source_version": "ce2ddf07",
-      "content_hash": "f8537f47a7c76f408961b4576c271945b948908fcce8813b4a1e5557b92a171c",
+      "source_version": "e3d65c25",
+      "content_hash": "bbe7aaeff6e148c3a5b47c3e99117ebbe86f7cf0b4d8bffc6d9e2dfe901d5626",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T01:37:59.616Z"
+      "persisted_at": "2026-11-28T14:46:40.104Z"
     },
     "agent_contract-agent-contract-vercel-labs-agent-desktop-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vercel-labs-agent-desktop-autonomous-specialist-persona",
@@ -255533,9 +255543,9 @@
       "title": "Technical Construction Intelligence: vercel-labs-agent-desktop-learnings Core Invariants",
       "repository": "vercel-labs-agent-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "53ffcc4280f13252fce9a943054613aba6c201743632708e9131e4e3957684fd",
+      "content_hash": "b2fca412be3a22b4362f8f99251da1e4881e9a6e83f33098487933fcb5f4d0f0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T01:38:06.548Z"
+      "persisted_at": "2026-11-28T14:46:56.507Z"
     },
     "agent_contract-agent-contract-vercel-labs-agent-desktop-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vercel-labs-agent-desktop-learnings-autonomous-specialist-persona",
@@ -277698,8 +277708,8 @@
       "slug": "faker-js-faker",
       "platform": "github",
       "source_url": "https://github.com/faker-js/faker",
-      "source_version": "1092e61c",
-      "content_hash": "6463b4ea7293827afec042a0a6dfcfc4952bc099861f1a5bf465032507dbc485",
+      "source_version": "56242050",
+      "content_hash": "89d57ba8dd1e2f916aee7cbe825742dbd3a621fc2def26d128322b1a23615e1d",
       "dossier_path": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
       "promoted_rules": [
@@ -277712,6 +277722,11 @@
           "number": 10429,
           "title": "replace Gwangju and South Jeolla with the Jeonnam-Gwangju special city",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11111,
+          "title": "fix test timeouts in CI",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -277719,7 +277734,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T02:10:26.099Z",
+      "verified_at": "2026-11-28T14:46:42.205Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277735,10 +277750,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-architecture-intelligence-faker-js-faker-core-invariants.md",
       "title": "Architecture Intelligence: faker-js/faker Core Invariants",
       "repository": "faker-js/faker",
-      "source_version": "1092e61c",
-      "content_hash": "6ca6c1c544b477be77d2949f936defdfc4a7cfe3647ac24c5de103351da46fe7",
+      "source_version": "56242050",
+      "content_hash": "79972f6496e7bcbe22648f8462a68dc5bfcca9bd39bb66cdb1463a6aa0ab7e1a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T02:10:26.752Z"
+      "persisted_at": "2026-11-28T14:46:43.198Z"
     },
     "rule-8940": {
       "learning_id": "rule-8940",
@@ -277889,9 +277904,9 @@
       "title": "Architecture Intelligence: faker-js-faker-learnings Core Invariants",
       "repository": "faker-js-faker-learnings",
       "source_version": "HEAD",
-      "content_hash": "7bc55e0357376abd41c4e3655c715800ddd0baabd00ff25384d06dd52d013d49",
+      "content_hash": "1204cc507ef114d8af5cf27ed6020a6b2596961ee801efbab9abe13f118f8146",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T02:10:35.873Z"
+      "persisted_at": "2026-11-28T14:47:34.285Z"
     },
     "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria",
@@ -317327,10 +317342,10 @@
       "relative_path": "08_VERIFICATION/faker-js-faker-verification-protocol-empirical-defect-shield-for-faker-js-faker.md",
       "title": "Verification Protocol: Empirical Defect Shield for faker-js/faker",
       "repository": "faker-js/faker",
-      "source_version": "1092e61c",
-      "content_hash": "5015f1cc7e64553699dfb02e2f9e81d6421e5b406506b7f8bd1b97aec037265e",
+      "source_version": "56242050",
+      "content_hash": "bbd992a1cc418cc58ed8746492a6b392e7f890324171d402e48dfa891c128eef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T02:10:26.929Z"
+      "persisted_at": "2026-11-28T14:46:43.471Z"
     },
     "rule-9711": {
       "learning_id": "rule-9711",
@@ -317416,9 +317431,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for faker-js-faker-learnings",
       "repository": "faker-js-faker-learnings",
       "source_version": "HEAD",
-      "content_hash": "0989fcda555205eb5e472ff200523c0f638a0c4ad11ffb1a51f17be7f490e64f",
+      "content_hash": "9643ce4f7a103e05556be12afdcdb0226eaeedee81a2e5e217b80588b2005a76",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T02:10:36.050Z"
+      "persisted_at": "2026-11-28T14:47:34.596Z"
     },
     "candidate_directive-steps-privacy-lock-s-close-out-turn-ran-the-build-live-py-48-of-48-the-previ": {
       "item_id": "candidate_directive-steps-privacy-lock-s-close-out-turn-ran-the-build-live-py-48-of-48-the-previ",
@@ -373393,6 +373408,108 @@
       "content_hash": "dc0a6001242be78ca81840b0110007e8c243d429a3ce8398cd540609587868e5",
       "domain_letter": "G",
       "persisted_at": "2026-11-28T14:29:45.382Z"
+    },
+    "rule-11110": {
+      "learning_id": "rule-11110",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11110,
+      "title": "keep the user's window in front and identify twin refs across platforms",
+      "source_url": "https://github.com/vercel-labs/agent-desktop",
+      "source_version": "e3d65c25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T14:46:39.112Z"
+    },
+    "candidate_directive-keep-the-user-s-window-in-front-and-identify-twin-refs-across-platforms": {
+      "item_id": "candidate_directive-keep-the-user-s-window-in-front-and-identify-twin-refs-across-platforms",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XCJX-keep-the-user-s-window-in-front-and-identify-twin-refs-across-platforms.md",
+      "title": "keep the user's window in front and identify twin refs across platforms",
+      "repository": "vercel-labs-agent-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1c1f724d6091d80301ff193c650ef5c0c9eb76039eaa6d6f13ed990f21dfac4b",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-28T14:46:56.212Z"
+    },
+    "rule-11111": {
+      "learning_id": "rule-11111",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11111,
+      "title": "fix test timeouts in CI",
+      "source_url": "https://github.com/faker-js/faker",
+      "source_version": "56242050",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T14:46:42.205Z"
+    },
+    "candidate_directive-fix-test-timeouts-in-ci": {
+      "item_id": "candidate_directive-fix-test-timeouts-in-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X29O-fix-test-timeouts-in-ci.md",
+      "title": "fix test timeouts in CI",
+      "repository": "faker-js/faker",
+      "source_version": "56242050",
+      "content_hash": "babfa605d61da3fb238538ad3776ec5dfcbff68930e519c5cceb9feb3c29ef42",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T14:46:42.877Z"
+    },
+    "rule-11112": {
+      "learning_id": "rule-11112",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11112,
+      "title": "expose structured error result to AI model view",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "1ee3f4cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T14:46:51.506Z"
+    },
+    "candidate_directive-expose-structured-error-result-to-ai-model-view": {
+      "item_id": "candidate_directive-expose-structured-error-result-to-ai-model-view",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X9FZ-expose-structured-error-result-to-ai-model-view.md",
+      "title": "expose structured error result to AI model view",
+      "repository": "lioensky/VCPToolBox",
+      "source_version": "1ee3f4cb",
+      "content_hash": "edfea1be569eab1e33b45285680240558578eb8ab9987dd1b2d5a0cc1e3be4f4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T14:46:52.183Z"
+    },
+    "candidate_directive-test-fix-test-timeouts-in-ci": {
+      "item_id": "candidate_directive-test-fix-test-timeouts-in-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y5P2-test-fix-test-timeouts-in-ci.md",
+      "title": "test: fix test timeouts in CI",
+      "repository": "faker-js-faker-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f97f231cc303e04c068d870354c8cdedf82c8f18aac8ff6a83d6b85f2fbf6a71",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T14:47:33.974Z"
+    },
+    "candidate_directive-toolexecutor-expose-structured-error-result-to-ai-model-view": {
+      "item_id": "candidate_directive-toolexecutor-expose-structured-error-result-to-ai-model-view",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y718-toolexecutor-expose-structured-error-result-to-ai-model-view.md",
+      "title": "toolExecutor): expose structured error result to AI model view",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a258316f4e19c5886cdc9926baaae4803278c24cb8be3508e8661a7b99329df4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T14:47:35.721Z"
     }
   },
   "ai-builder-brain": {

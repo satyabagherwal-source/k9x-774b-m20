@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T14:29:36.485Z",
-  "total_cycles_completed": 13337,
-  "total_learnings_persisted": 13337,
-  "total_rules_promoted": 12035,
+  "last_updated": "2026-11-28T14:46:51.842Z",
+  "total_cycles_completed": 13340,
+  "total_learnings_persisted": 13340,
+  "total_rules_promoted": 12038,
   "history": [
-    {
-      "timestamp": "2026-11-27T18:26:15.314Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T18:34:59.620Z",
-      "repository": "nsh07/Tomato",
-      "learningId": "learn-github-nsh07-tomato",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T18:35:02.686Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T18:35:04.930Z",
       "repository": "nolabs-ai/nono",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T14:29:36.485Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T14:46:39.453Z",
+      "repository": "vercel-labs/agent-desktop",
+      "learningId": "learn-github-vercel-labs-agent-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T14:46:42.541Z",
+      "repository": "faker-js/faker",
+      "learningId": "learn-github-faker-js-faker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T14:46:51.842Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

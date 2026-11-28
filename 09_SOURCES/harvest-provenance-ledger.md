@@ -14096,3 +14096,7 @@ Every entry in this ledger must capture:
 | `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `2240fb54` | Multi-dimensional audit evidence | 2026-11-28T14:29:24.835Z |
 | `learn-github-rafsoh-dimeapp` | `https://github.com/rafsoh/dimeApp` | `700ce940` | Multi-dimensional audit evidence | 2026-11-28T14:29:27.209Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ca34987a` | Multi-dimensional audit evidence | 2026-11-28T14:29:36.480Z |
+| `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `e3d65c25` | Multi-dimensional audit evidence | 2026-11-28T14:46:39.446Z |
+| `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `56242050` | Multi-dimensional audit evidence | 2026-11-28T14:46:42.534Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `1ee3f4cb` | Multi-dimensional audit evidence | 2026-11-28T14:46:51.835Z |
+| `learn-dom-k-f963465a` | `project://faker-js-faker` | `56242050` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md` | 2026-11-28T14:47:32.613Z |

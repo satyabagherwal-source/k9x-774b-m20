@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "699ed4b3",
+    "sourceVersion": "1ee3f4cb",
     "license": "NOASSERTION",
-    "contentHash": "076087547e61c0881f241b5f3f87db46b51e7d6fdff4492e200759da70fc30c0",
-    "lastHarvestedAt": "2026-11-27T17:01:53.920Z",
+    "contentHash": "ba6875d2d9123bd29ac884092c11efeb1ed1e76700e2d5756a000c9571b5043a",
+    "lastHarvestedAt": "2026-11-28T14:46:51.835Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -10283,10 +10283,10 @@
     "repository": "faker-js/faker",
     "platform": "github",
     "sourceUrl": "https://github.com/faker-js/faker",
-    "sourceVersion": "1092e61c",
+    "sourceVersion": "56242050",
     "license": "NOASSERTION",
-    "contentHash": "6463b4ea7293827afec042a0a6dfcfc4952bc099861f1a5bf465032507dbc485",
-    "lastHarvestedAt": "2026-11-25T02:10:26.326Z",
+    "contentHash": "89d57ba8dd1e2f916aee7cbe825742dbd3a621fc2def26d128322b1a23615e1d",
+    "lastHarvestedAt": "2026-11-28T14:46:42.534Z",
     "learningId": "learn-github-faker-js-faker"
   },
   "storybookjs-storybook": {
@@ -11633,10 +11633,10 @@
     "repository": "vercel-labs/agent-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/vercel-labs/agent-desktop",
-    "sourceVersion": "ce2ddf07",
+    "sourceVersion": "e3d65c25",
     "license": "Apache-2.0",
-    "contentHash": "2788014381cb458329e1b417547d74e35ffc673bc1e9c5c6f249a67d47761761",
-    "lastHarvestedAt": "2026-11-24T01:37:59.154Z",
+    "contentHash": "d70139f2fc186189634da0df6f36bdf1639c3596db6c8a41cf4234c7cfe43e4e",
+    "lastHarvestedAt": "2026-11-28T14:46:39.446Z",
     "learningId": "learn-github-vercel-labs-agent-desktop"
   },
   "hf-efficient-large-model-open-h3-regenerate-2k": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T14:29:36.488Z",
+  "last_updated": "2026-11-28T14:46:51.846Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "076087547e61c0881f241b5f3f87db46b51e7d6fdff4492e200759da70fc30c0",
-      "verified_at": "2026-11-27T17:01:53.928Z",
+      "content_hash": "ba6875d2d9123bd29ac884092c11efeb1ed1e76700e2d5756a000c9571b5043a",
+      "verified_at": "2026-11-28T14:46:51.845Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T17:01:53.928Z"
+      "last_updated": "2026-11-28T14:46:51.845Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -15441,14 +15441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-faker-js-faker",
-      "content_hash": "6463b4ea7293827afec042a0a6dfcfc4952bc099861f1a5bf465032507dbc485",
-      "verified_at": "2026-11-25T02:10:26.342Z",
+      "content_hash": "89d57ba8dd1e2f916aee7cbe825742dbd3a621fc2def26d128322b1a23615e1d",
+      "verified_at": "2026-11-28T14:46:42.544Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:10:26.342Z"
+      "last_updated": "2026-11-28T14:46:42.544Z"
     },
     "storybookjs/storybook": {
       "repository": "storybookjs/storybook",
@@ -17511,14 +17511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vercel-labs-agent-desktop",
-      "content_hash": "2788014381cb458329e1b417547d74e35ffc673bc1e9c5c6f249a67d47761761",
-      "verified_at": "2026-11-24T01:37:59.163Z",
+      "content_hash": "d70139f2fc186189634da0df6f36bdf1639c3596db6c8a41cf4234c7cfe43e4e",
+      "verified_at": "2026-11-28T14:46:39.456Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T01:37:59.163Z"
+      "last_updated": "2026-11-28T14:46:39.456Z"
     },
     "Efficient-Large-Model/Open-H3-Regenerate-2K": {
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",

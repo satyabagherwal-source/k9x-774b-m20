@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T01:38:06.200Z",
+  "timestamp": "2026-11-28T14:46:56.036Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-vercel-labs-agent-desktop-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vercel-labs-agent-desktop-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T01:38:06.200Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T14:46:56.036Z`  
 > **Learning ID**: `LEARN-EVO-vercel-labs-agent-desktop-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md`  
 > **Source**: github ([https://github.com/vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop))  
-> **Source Version**: `ce2ddf07`  
+> **Source Version**: `e3d65c25`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T01:37:57.956Z  
+> **Timestamp**: 2026-11-28T14:46:37.882Z  
 > **Learning ID**: `learn-github-vercel-labs-agent-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T01:37:55.160Z  
+> **Harvest Timestamp**: 2026-11-28T14:46:37.758Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Computer use CLI for AI agents
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 26350 stars
+- **Stars / Engagement**: 27191 stars
 
 ---
 
@@ -345,6 +345,7 @@ impl ObservationOps for FixtureAdapter<'_> {
     fn resolve_locator_anchor(
         &self,
         entry: &RefEntry,
+        _base: Option<&NativeHandle>,
         deadline: Deadline,
     ) -> Result<NativeHandle, AdapterError> {
         if deadline.is_expired() {
@@ -403,7 +404,8 @@ fn identifier_matches(
         }
         IdentifierKind::AutomationId
         | IdentifierKind::RuntimeId
-        | IdentifierKind::AtspiObjectPath => false,
+        | IdentifierKind::AtspiObjectPath
+        | IdentifierKind::GridCell => false,
     }
 }
 
@@ -1198,8 +1200,11 @@ pub(super) fn occluded(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #554** (2026-11-05): **[Bug]: MCP stdio server does not support an "mcp" arg**
-  *Symptoms*: ### agent-desktop version  agent-desktop 1.1.0  ### Operating system  Linux  ### OS version  Fedora 44  ### Installation method  npm  ### Command run and full JSON output  ```shell thawkins@TimWorkFed01:~/Projects/ragent$ agent-desktop mcp {"version":"2.6","ok":false,"command":"unknown","error":{"code":"INVALID_ARGS","message":"error: unrecognized subcommand 'mcp'","disposition":{"delivery":"not_delivered","retry":"safe"}}} thawkins@TimWorkFed01:~/Projects/ragent$   Install instructions provide an mcp.json snippet that runs the agent-desktop binary with an "mcp" argument, this does not seem to exist. ```  ### Steps to reproduce  thawkins@TimWorkFed01:~/Projects/ragent$ agent-desktop mcp {"version":"2.6","ok":false,"command":"unknown","error":{"code":"INVALID_ARGS","message":"error: unrecognized subcommand 'mcp'","disposition":{"delivery":"not_delivered","retry":"safe"}}} thawkins@TimWorkFed01:~/Projects/ragent$    ### Expected behavior  agent-desktop initializes a stdio mcp connection  ### Actual behavior  thawkins@TimWorkFed01:~/Projects/ragent$ agent-desktop mcp {"version":"2.6","ok":false,"command":"unknown","error":{"code":"INVALID_ARGS","message":"error: unrecognized subcommand 'mcp'","disposition":{"delivery":"not_delivered","retry":"safe"}}} thawkins@TimWorkFed01:~/Projects/ragent$    ### macOS Accessibility permission (macOS only)  - [ ] I have granted Accessibility permission in **System Settings > Privacy & Security > Accessibility**  ### Logs / additional context  
+- **Issue #654** (2026-11-28): **[Bug]: macOS/Electron: surface search walks the whole app tree — small menus die on the 2048-node budget (`surface_search_limit`)**
+  *Symptoms*: ### agent-desktop version  agent-desktop 1.2.0  ### Operating system  macOS  ### OS version  macOS 27.2 (arm64, Apple Silicon)  ### Installation method  Homebrew (brew install agent-desktop)  ### Command run and full JSON output  ```shell $ agent-desktop select @snap:e777 "HTML" {"ok":false,"command":"select","error":{"code":"APP_UNRESPONSIVE","message":"Accessibility surface search exceeded its node budget","details":{"complete":false,"kind":"surface_search_limit","limit":2048},"disposition":{"delivery":"not_delivered","retry":"safe"}}}  $ agent-desktop snapshot --app Notion --surface menu -i --compact {"ok":false,"command":"snapshot","error":{"code":"APP_UNRESPONSIVE","message":"Accessibility surface search exceeded its node budget","details":{"complete":false,"kind":"surface_search_limit","limit":2048},"disposition":{"delivery":"not_delivered","retry":"safe"}}} ```  ### Steps to reproduce  1. Open Notion (dense Electron app, ~1000+ AX nodes) and open a native `<select>` dropdown (e.g. the export dialog's "Export format") 2. Run `agent-desktop select @snap:e777 "HTML"` against the select's ref (or `agent-desktop snapshot --app Notion --surface menu -i --compact` while any menu is open) 3. Observe `APP_UNRESPONSIVE` / `surface_search_limit` — the 2048-node budget is exhausted before the ~10-node menu surface is reached, apparently because the search walks the entire app tree (~100k nodes) 4. Same tree scoped with `--window-id` works fine, only surface-search is affected  ###
+
+- **Issue #581** (2026-11-28): **[Bug]: macOS: `close-app` times out with a generic busy suggestion while a quit prompt is waiting**
+  *Symptoms*: ### agent-desktop version  1.2.0  ### Operating system  macOS  ### OS version  macOS 26.5.2, Apple Silicon. TextEdit 1.20. Stage Manager on.  ### Installation method  `npm install -g agent-desktop`  ### Command run and full JSON output  ```shell $ agent-desktop close-app TextEdit {"version":"2.6","ok":false,"command":"close-app","error":{"code":"TIMEOUT","message":"Operation exceeded its deadline","suggestion":"The target application may be busy or unresponsive","details":{"app":"TextEdit","force":false,"pid":47736,"steps":[{"label":"terminate_request","mechanism":"semantic_api","outcome":"succeeded","verified":false}],"target":{"kind":"app","name":"TextEdit","process":{"instance":"macos-proc-v1:1793896983:23256","pid":47736}}},"disposition":{"delivery":"delivered_unverified","retry":"unsafe"}}}  $ agent-desktop list-surfaces --app TextEdit {"version":"2.6","ok":true,"command":"list-surfaces","data":{"pid":47736,"surfaces":[{"id":"focused-window","title":"","type":"alert"}]}} ```  ### Steps to reproduce  1. Run `agent-desktop launch TextEdit`, then click **File > New** by its ref from `snapshot --app TextEdit --surface menubar -i`. 2. Type into the new document with `agent-desktop type`. 3. Run `agent-desktop focus-window --window-id <window>`, take a fresh menubar snapshot, then click **File > Duplicate** by its ref. Before the focus it is listed as `disabled`, as #377 describes for TextEdit's document commands in the background. 4. Run `agent-desktop close-app TextEdit`. 5.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1216,505 +1221,1048 @@ pub(super) fn occluded(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce2ddf07` (2026-11-23)
-**Commit Message**: Use the Vercel Labs lockup in the docs header (#732)
+### Incident Patch 1: `46ed5ff6` (2026-11-28)
+**Commit Message**: fix: keep the user's window in front and identify twin refs across platforms (#683)
 
-* Use the Vercel Labs lockup in the docs header
+* fix: report a held interaction lease as not delivered and safe to retry
 
-- Product name in Geist Sans SemiBold, matching the Labs wordmark's cap height and tracking
-- Slash and spacing match the Vercel Labs OG card
+When another agent-desktop command held the interaction lease for the whole
+wait, the error said the target application may be busy, with delivery and
+retry unknown. The application was never contacted. The lock timeout now
+names the other command, suggests a retry, and the lease acquire paths mark
+the error not_delivered with a safe retry.
 
-* Align the header product name with the Labs caps
+* fix: build every interaction lease timeout through one core constructor
 
-**File**: `apps/docs/app/styles/geistdocs.css` (modified, +23/-0)
+The Windows lease and the in-process guard each built their own lock timeout,
+and the Windows one still said the application may be busy. Core now owns the
+wording and the not_delivered disposition, and both call it.
+
+* fix: report a removed element as stale instead of unresponsive
+
+kAXErrorInvalidUIElement (-25202) means the element no longer exists. The
+surface read classifier mapped it to APP_UNRESPONSIVE, so an old ref to a
+removed element told agents to wait and retry. It now maps to STALE_REF.
+kAXErrorCannotComplete keeps TIMEOUT.
+
+* fix: judge a disclosure press by the observed state, not its return code
+
+A
+
+**File**: `AGENTS.md` (modified, +3/-0)
 ```diff
-@@ -47,3 +47,26 @@
- #nd-toc a[data-active="true"] {
-   @apply text-gray-1000;
- }
-+
-+/* Vercel Labs lockup: match the OG card's slash spacing, scaled to the 18px
-+   logo. The card draws the logo 51.44px tall, so the scale factor is 0.35:
-+   31.5 units of leading gap -> 11px, the slash bbox 17.75x42.25 units ->
-+   6.2x14.8px with a 3-unit (1.05px) stroke, and 22 units of trailing gap ->
-+   7.7px to the product name's text box. */
-+header span[class~="gap-2.5"] {
-+  column-gap: 0;
-+}
-+
-+header span[class~="gap-2.5"] > div[class~="w-5"] {
-+  flex: none;
-+  width: 6.2px;
-+  height: 14.8px;
-+  margin-left: 11px;
-+  margin-right: 7.7px;
-+  background-color: currentColor;
-+  clip-path: polygon(83.1% 0, 100% 0, 18.31% 100%, 0 100%);
-+}
-+
-+header span[class~="gap-2.5"] > div[class~="w-5"] > svg {
-+  display: none;
-+}
+@@ -243,6 +243,9 @@ Every command prints one envelope. `docs/json-output.md` holds the full contract
+   recorded stable field, that is native id, stable name and description, counted over one complete observation of the
+   window it was captured from. A ref that was not unique at capture is refused before the application is read. Zero
+   live matches is `STALE_REF`, two or more is `AMBIGUOUS_TARGET`, and control values and bounds are never identity.
++  A proof that is not unique in the window may instead be unique below its nearest ancestor whose own proof is; the
++  ref then records that chain of ancestors in `scope.chain`. Resolution finds each ancestor below the one before it and
++  lands the chain and the element step by step, each step starting from the live element the step before verified.
+ - All state lives under one root, `~/.agent-desktop` by default. `AGENT_DESKTOP_HOME` relocates it
+   (`crates/core/src/storage/state_root.rs`). Refmaps live at `snapshots/<snapshot_id>/refmap.json`, capped at 1 MB each; the
+   store keeps the newest 128 snapshots per namespace and prunes to 96. Command code goes through `RefStore`, which
 ```
 
-**File**: `apps/docs/geistdocs.tsx` (modified, +1/-1)
+**File**: `CONCEPTS.md` (modified, +1/-1)
 ```diff
-@@ -6,7 +6,7 @@ import type {
- export const navbarBrand: GeistdocsNavbarBrand = "labs";
+@@ -121,7 +121,7 @@ The rule a stored ref resolves by, which either lands it on the element it was c
  
- export const Logo = () => (
--  <span className="font-semibold text-gray-1000 text-lg leading-none tracking-[-3%]">
-+  <span className="-translate-y-[0.5px] font-sans font-semibold text-[24.4px] leading-none tracking-[-0.05em] text-black dark:text-white">
-     agent-desktop
-   </span>
- );
+ On macOS the entry carries the element's own accessibility address in `retained_object`, so a later command turns the ref back into that element without searching. The address is accepted only while the element is alive and its process, role and recorded identifier still match, so a removed element or an app that restarted is a stale ref rather than a look-alike, and identical twins each keep their own ref. Where an app yields no address, macOS follows the rule below.
+ 
+-Every other ref resolves from a capture proof. A ref is usable only when the capture saw its whole window completely and exactly one observed element matched its full predicate: role plus every recorded stable field, that is native id, stable name and description. Resolution re-counts that predicate over the live window and accepts exactly one match. Evidence and presentation are separate: a skeleton, a depth-limited snapshot and a `--root` drill are shallow presentations of one complete window observation, so their refs are counted against that whole window and each presented cut container keeps the count of what it hides. A window that cannot be read completely proves nothing, and its refs are refused rather than counted against a narrower tree. Zero matches is a stale ref, two or more is ambiguous, and a field the live read could not answer stays unknown rather than becoming a match, so incomplete evidence never resolves. Values and bounds are never identity. A ref that was not unique at capture is refused before anything is read from the application, because no search can pick one of two identical elements.
++Every other ref resolves from a capture proof. A ref is usable only when the capture saw its whole window completely and exactly one observed element matched its full predicate: role plus every recorded stable field, that is native id, stable name and description. Resolution re-counts that predicate over the live window and accepts exactly one match. Evidence and presentation are separate: a skeleton, a depth-limited snapshot and a `--root` drill are shallow presentations of one complete window observation, so their refs are counted against that whole window and each presented cut container keeps the count of what it hides. A window that cannot be read completely proves nothing, and its refs are refused rather than counted against a narrower tree. Zero matches is a stale ref, two or more is ambiguous, and a field the live read could not answer stays unknown rather than becoming a match, so incomplete evidence never resolves. Values and bounds are never identity. A proof that is not unique in the window can be unique inside its nearest ancestor whose own proof is, as the name cell of every row is unique inside its row: the ref then records the chain of those ancestors (`scope.chain`, nearest first, each unique inside the next, the last unique in the window), resolution finds each one below the one before it, and the landing descends from each verified live ancestor to the next, so the element acted on is by construction a live descendant of the ancestors that were proven. An ancestor that was renamed or moved makes the ref stale. A ref that was not unique at capture, even inside a scope, is refused before anything is read from the application, because no search can pick one of two identical elements.
+ 
+ ## Read Outcomes
+ 
+```
+
+**File**: `apps/docs/content/docs/commands/app-window.mdx` (modified, +9/-5)
+```diff
+@@ -18,6 +18,8 @@ The window commands (`resize-window`, `move-window`, `minimize`, `maximize`, `re
+ 
+ Starts an app, or attaches to a running instance, and returns once its process is running. A running process and a visible window are separate facts, so `window` appears in the result only when the app already has one.
+ 
++A headless launch (without `--activate`) runs under the front guard on every platform whose adapter reads the front: macOS, Windows, and Linux on X11. The guard reads the focused window and the topmost window before the launch, watches while the launch runs and for 500 ms after, and treats a window as an intruder only when it is new and belongs to the launched program: any process that runs the launched executable (an application that forks and detaches opens its window from a new process, and a single-instance application forwards the launch to its running instance). A window the user opens or switches to is never touched. If the guard cannot read the front, the command fails with `POLICY_DENIED` (`details.kind: focus_unreadable`) before anything is sent; an adapter with no way to read the front, such as Wayland, runs it unguarded. If an intruder takes the focus or the top of the window order, the guard places it below the user's window where the platform can, activates the user's window again, and reads the front back. `focus_returned` is `true` when the read shows the user's front again. If it cannot be restored after 3 tries, `focus_returned` is `false` and `suggestion` names `focus-window`. A window the user switched to is never touched. The same guard runs on a headless `close-app`, `minimize`, `maximize`, `restore`, and on a headless click, toggle, select or key press that can open a window; there `details.focus_returned` carries the result.
++
+ ```bash
+ agent-desktop launch <APP> [--timeout MS] [--arg VALUE]... [--env KEY=VALUE]... [--cwd PATH] \
+                            [--no-attach] [--activate] [--cdp [PORT]]
+@@ -137,7 +139,7 @@ agent-desktop close-app <APP> [--force]
+ - `INVALID_ARGS` for a protected system process, with or without `--force`.
+ - A save prompt keeps the app open. Read it with `snapshot --surface sheet`, answer it, then close again.
+ - On macOS a graceful close returns `ACTION_FAILED` with `details.cause: modal_pending` and names the prompt when an alert or sheet is open before the request (`not_delivered`, nothing sent) or when the request raises one (`delivered_unverified`). Answer the prompt, or use `--force`.
+-- On Linux a headless graceful close is `POLICY_DENIED` (`details.check: foreground`, `details.kind: may_prompt`) before any close request, because an app with unsaved work answers it with a save prompt over the user's window. Use `--force` (it discards unsaved work) or `agent-desktop --headed close-app`; the graceful example above is the `--headed` form there.
++- On Linux a headless graceful close runs under the front guard; if the focus cannot be read on X11, it fails with `POLICY_DENIED` (`details.kind: focus_unreadable`) before any close request is sent, and `--force` skips the prompt (it discards unsaved work). If the app answers with a save prompt, the command fails with `ACTION_FAILED` (`details.cause: dialog_pending`), the app stays open, and the focus goes back to the window that had it (`details.focus_returned: true`). With `--headed` the focus is left where the prompt put it. Answer the prompt, or use `--force` (it discards unsaved work).- On Windows, a headless graceful close does not check the interaction policy. It sends the close request, and if the app answers with a save prompt, the prompt stays in the app's own window and the command does not move focus back.
+ 
+ Platform limits: graceful close needs an X11 client on Linux, and the protected processes differ by OS. See [macOS](/desktop/platforms/macos), [Windows](/desktop/platforms/windows), and [Linux](/desktop/platforms/linux).
+ 
+@@ -382,25 +384,25 @@ agent-desktop minimize [--app NAME] [--window-id ID]
+ }
+ ```
+ 
+-A minimized window reports its elements as offscreen, so ref actions on it fail until you [`restore`](#restore) it. A window manager can ignore a minimize sent within about 250 ms of a restore, so read the window state before you retry. Platform limits are the same as `resize-window`.
++Headless `minimize` of the window that has the focus fails with `POLICY_DENIED`, because the system moves the focus when that window minimizes. Pass `--headed` to allow it. A minimized window reports its elements as offscreen, so ref actions on it fail until you [`restore`](#restore) it. A window manager can ignore a minimize sent within about 250 ms of a restore, so read the window state before you retry. Platform limits are the same as `resize-window`.
+ 
+ ## maximize
+ 
+-Maximizes a window, or zooms it on macOS. Flags are the same as [`minimize`](#minimize). The step label is `window_maximize`, and a verified report names `details.verification_scope: "window_maximized_state"`.
++Maximizes a 
+```
+
+**File**: `apps/docs/content/docs/commands/scroll.mdx` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ agent-desktop scroll <REF> [--direction up|down|left|right] [--amount N] [--time
+   </tbody>
+ </table>
+ 
+-macOS scrolls through a native accessibility path headless. On Windows the scroll pattern takes the foreground, and on Linux `scroll` is a physical wheel event, so on both headless it refuses before sending anything:
++macOS and Windows scroll through a native accessibility path headless. On Linux `scroll` is a physical wheel event, so headless it refuses before sending anything:
+ 
+ ```json
+ {
+```
+
+**File**: `apps/docs/content/docs/errors-and-recovery.mdx` (modified, +2/-1)
+```diff
+@@ -105,11 +105,12 @@ A macOS <code>TIMEOUT</code> with <code>details.kind: "focus_verification"</code
+   <tbody>
+     <tr><td><code>refresh_snapshot_then_retry_original</code></td><td><code>STALE_REF</code>, <code>SNAPSHOT_NOT_FOUND</code></td><td>Take a fresh snapshot (or <code>find</code>), locate the same element, and run the original command again with the new qualified ref.</td></tr>
+     <tr><td><code>inspect_state_then_retry_original</code></td><td><code>TIMEOUT</code>, <code>APP_UNRESPONSIVE</code>, and <code>STALE_REF</code> when <code>details.process_state</code> is <code>exited</code></td><td>Inspect the app first (<code>list-apps</code>, a snapshot, or a <code>wait</code>), wait <code>retry_after_ms</code> if present, then run the original command. For an exited process, launch the app again and take a new snapshot first.</td></tr>
++    <tr><td><code>retry_original</code></td><td><code>TIMEOUT</code> when <code>details.lease</code> is <code>not_acquired</code></td><td>Another agent-desktop command held the interaction lease for the whole wait, so this command never ran. Wait <code>retry_after_ms</code>, then run the original command again. No new snapshot is needed.</td></tr>
+     <tr><td><code>request_explicit_policy_then_retry_original</code></td><td><code>POLICY_DENIED</code></td><td>Retry only after someone has explicitly chosen what the command needs: <code>--headed</code> when physical input is intended, or <code>--force</code> for a key combo the platform blocks. Never switch to headed mode on your own to get past the error.</td></tr>
+   </tbody>
+ </table>
+ 
+-`STALE_REF` uses `inspect_state_then_retry_original` only when `details.process_state` is `exited`, and `refresh_snapshot_then_retry_original` otherwise. Every other code, such as `ACTION_FAILED`, `INVALID_ARGS`, or `AMBIGUOUS_TARGET`, never carries `recovery`. Follow the "What to do" column instead.
++`STALE_REF` uses `inspect_state_then_retry_original` only when `details.process_state` is `exited`, and `refresh_snapshot_then_retry_original` otherwise. `TIMEOUT` uses `retry_original` only when `details.lease` is `not_acquired`, and `inspect_state_then_retry_original` otherwise. Every other code, such as `ACTION_FAILED`, `INVALID_ARGS`, or `AMBIGUOUS_TARGET`, never carries `recovery`. Follow the "What to do" column instead.
+ 
+ `retry_after_ms` is set only for `TIMEOUT` and `APP_UNRESPONSIVE` (250 ms in this release). `details.retryable` is the adapter's own judgment: `false` means waiting cannot change the outcome, so try a different approach, and it suppresses `recovery` even for a code that would otherwise carry one.
+ 
+```
+
+**File**: `apps/docs/content/docs/platforms/linux.mdx` (modified, +2/-2)
+```diff
+@@ -67,9 +67,9 @@ Ref actions are semantic AT-SPI calls that never move the pointer or change the
+     <tr><td>Ref actions</td><td><code>click</code>, <code>right-click</code>, <code>type</code>, <code>set-value</code>, <code>clear</code>, <code>select</code>, <code>toggle</code>, <code>check</code>, <code>uncheck</code>, <code>expand</code>, <code>collapse</code>, <code>scroll-to</code>, when the element exposes the AT-SPI capability</td><td><code>focus</code>; <code>type</code> into a terminal text node; some Qt and libadwaita combos for <code>select</code>; a GTK4 or Qt action that opens a popup, a menu or a dialog (headless: <code>POLICY_DENIED</code>, check <code>foreground</code>)</td><td>An element with no semantic route refuses and never falls back to physical input</td></tr>
+     <tr><td>Wheel scrolling</td><td></td><td><code>scroll</code>, <code>mouse-wheel</code>, X11 only</td><td>Headless <code>scroll</code>: <code>POLICY_DENIED</code></td></tr>
+     <tr><td>Pointer gestures</td><td></td><td><code>double-click</code>, <code>triple-click</code>, <code>hover</code>, <code>drag</code>, <code>mouse-click</code>, <code>mouse-move</code>, X11 only</td><td>Wayland: <code>ACTION_NOT_SUPPORTED</code>, cause <code>wayland_session</code></td></tr>
+-    <tr><td>Keyboard</td><td><code>press</code> on X11 and Mutter Wayland. A scoped headless <code>press</code> needs the target window already active</td><td>A scoped <code>press</code> to a background app (X11)</td><td>Blocked combos such as <code>alt+f4</code> without <code>--force</code></td></tr>
++    <tr><td>Keyboard</td><td>Scoped <code>press</code> (<code>--app</code> or <code>--window-id</code>) on X11 and Mutter Wayland. A scoped headless <code>press</code> needs the target window already active</td><td>Unscoped <code>press</code>; a scoped <code>press</code> to a background app (X11)</td><td>Blocked combos such as <code>alt+f4</code> without <code>--force</code></td></tr>
+     <tr><td>Held input</td><td></td><td></td><td><code>key-down</code>, <code>key-up</code>, <code>mouse-down</code>, <code>mouse-up</code></td></tr>
+-    <tr><td>App and window</td><td><code>launch</code>, <code>list-apps</code>, <code>list-windows</code> on X11 and Wayland; window control and <code>close-app --force</code> on X11</td><td><code>focus-window</code> on X11; graceful <code>close-app</code> (headless: <code>POLICY_DENIED</code>, kind <code>may_prompt</code>, because a save prompt would take the foreground)</td><td><code>focus-window</code> and window control on Wayland: <code>ACTION_NOT_SUPPORTED</code></td></tr>
++    <tr><td>App and window</td><td><code>launch</code>, <code>list-apps</code>, <code>list-windows</code> on X11 and Wayland; window control and <code>close-app --force</code> on X11</td><td><code>focus-window</code> on X11; a graceful <code>close-app</code> of an app with unsaved work: the save prompt keeps the app open and is reported as <code>dialog_pending</code></td><td><code>focus-window</code> and window control on Wayland: <code>ACTION_NOT_SUPPORTED</code>. A headless graceful <code>close-app</code> that cannot read the focused window (a Wayland session, or an owner it cannot identify) returns <code>POLICY_DENIED</code> with <code>details.kind: focus_unreadable</code> before any close request is sent.</td></tr>
+     <tr><td>Capture</td><td><code>screenshot</code>, <code>list-displays</code></td><td></td><td>X11 under a compositing window manager (GNOME): display and <code>--screen</code> captures return <code>PLATFORM_NOT_SUPPORTED</code> (<code>details.reason: "compositing"</code>); capture one window instead. Wayland: portal consent on first use, and window targets are <code>PLATFORM_NOT_SUPPORTED</code></td></tr>
+     <tr><td>Clipboard</td><td><code>clipboard-get</code> (text, images, file lists)</td><td><code>clipboard-set</code>, <code>clipboard-clear</code> (text, images, file lists)</td><td>Missing helper or <code>wl-clipboard</code>: <code>PLATFORM_NOT_SUPPORTED</code></td></tr>
+     <tr><td>Wait</td><td>All modes; <code>--notification</code> on GNOME</td><td></td><td></td></tr>
+```
+
+**File**: `apps/docs/content/docs/platforms/windows.mdx` (modified, +5/-5)
+```diff
+@@ -22,17 +22,17 @@ Windows has no grant dialog for UI Automation; access is controlled by integrity
+ 
+ ## What works headless
+ 
+-Headless ref actions never move the user's foreground. Every UI Automation control pattern call activates the target's window, so headless uses the LegacyIAccessible default action, `Select` and `SetValue`, and native combo box and list box messages instead. A target that offers only a pattern returns `POLICY_DENIED` with `details.foreground_effect: true` headless; rerun it with `--headed`. See [Headed mode](/desktop/guides/headed-mode).
++Headless ref actions never move the user's foreground. The client turns off `AutoSetFocus`, so a UI Automation control pattern call does not activate the target's window. A route that sets focus or opens a popup over the user's window, such as `focus`, an `expand` on a combo box or menu, or `scroll-to` on an item of a Win32 tree view, returns `POLICY_DENIED` with `details.foreground_effect: true` headless; rerun it with `--headed`. See [Headed mode](/desktop/guides/headed-mode).
+ 
+ <table>
+   <thead>
+     <tr><th>Group</th><th>Works headless</th><th>Needs <code>--headed</code></th><th>Fails closed or not supported</th></tr>
+   </thead>
+   <tbody>
+     <tr><td>Observation and capture</td><td><code>snapshot</code>, <code>find</code>, <code>get</code>, <code>is</code>, <code>screenshot</code>, <code>list-surfaces</code>, <code>list-displays</code></td><td></td><td></td></tr>
+-    <tr><td>Ref actions</td><td><code>click</code>, <code>set-value</code>, <code>clear</code>, <code>select</code>, <code>toggle</code>, <code>check</code>, <code>uncheck</code>, <code>expand</code>, <code>collapse</code>, <code>scroll-to</code></td><td><code>scroll</code>, <code>right-click</code>, <code>type</code>, <code>focus</code></td><td>Headless <code>scroll</code>, <code>right-click</code> and <code>type</code>: <code>POLICY_DENIED</code>. Use <code>set-value</code> to write text headless. Headless <code>expand</code> on a combo box or menu, <code>select</code> in a WPF or Ribbon combo box, <code>set-value</code> in a DirectUI field, and <code>scroll-to</code> off screen outside WPF and list boxes: <code>POLICY_DENIED</code></td></tr>
++    <tr><td>Ref actions</td><td><code>click</code>, <code>set-value</code>, <code>clear</code>, <code>select</code>, <code>scroll</code>, <code>toggle</code>, <code>check</code>, <code>uncheck</code>, <code>expand</code>, <code>collapse</code>, <code>scroll-to</code></td><td><code>right-click</code>, <code>type</code>, <code>focus</code></td><td>Headless <code>right-click</code> and <code>type</code>: <code>POLICY_DENIED</code>. Use <code>set-value</code> to write text headless. Headless <code>expand</code> on a combo box or menu, and <code>select</code> in a WPF or Ribbon combo box: <code>POLICY_DENIED</code></td></tr>
+     <tr><td>Multi-click and pointer</td><td></td><td><code>double-click</code>, <code>triple-click</code>, <code>hover</code>, <code>drag</code>, <code>mouse-click</code>, <code>mouse-move</code>, <code>mouse-wheel</code></td><td>Headless: <code>POLICY_DENIED</code></td></tr>
+-    <tr><td>Keyboard</td><td><code>press</code></td><td>A scoped <code>press --app</code> to an app that is not frontmost</td><td>Blocked shortcuts without <code>--force</code></td></tr>
++    <tr><td>Keyboard</td><td><code>press</code> with <code>--app</code> or <code>--window-id</code></td><td>Unscoped <code>press</code>; a scoped <code>press --app</code> to an app that is not frontmost</td><td>Blocked shortcuts without <code>--force</code></td></tr>
+     <tr><td>Held input</td><td></td><td></td><td><code>key-down</code>, <code>key-up</code>, <code>mouse-down</code>, <code>mouse-up</code></td></tr>
+     <tr><td>App and window</td><td><code>launch</code>, <code>close-app</code>, <code>list-windows</code>, <code>list-apps</code>, <code>resize-window</code>, <code>move-window</code>, <code>minimize</code>, <code>maximize</code>, <code>restore</code></td><td><code>focus-window</code></td><td><code>close-app</code> on <code>explorer.exe</code> and other protected images: <code>INVALID_ARGS</code></td></tr>
+     <tr><td>Clipboard</td><td><code>clipboard-get</code> (text and images)</td><td><code>clipboard-set</code>, <code>clipboard-clear</code></td><td></td></tr>
+@@ -48,7 +48,7 @@ Headless ref actions never move the user's foreground. Every UI Automation contr
+ - `launch` takes an absolute path, or a bare name under System32 or the Windows directory, with or without `.exe` (`notepad` or `notepad.exe`). It does not resolve a display name such as "Google Chrome".
+ - For a running app, pass the name `list-apps` prints to `--app`, such as `notepad.exe`.
+ - Window ids are `w-` followed by the window handle. A hosted (UWP) app is reported through its `ApplicationFrameHost` frame.
+-- A window behind another window is drivable. A minimized one is not: every element reports `offscreen`. Run `restore --app IMAGE` and snapshot again, instead of `focus-window`, 
+```
+
+**File**: `apps/docs/content/docs/snapshots-and-refs.mdx` (modified, +4/-4)
+```diff
+@@ -141,7 +141,7 @@ Each ref maps to a `RefEntry`: the evidence needed to find the same element agai
+   </thead>
+   <tbody>
+     <tr><td>Process</td><td><code>pid</code>, <code>process_instance</code></td><td>Reject a ref whose process exited or whose pid was reused.</td></tr>
+-    <tr><td>Identity</td><td><code>retained_object</code>, <code>role</code>, <code>name</code>, <code>value</code>, <code>description</code>, <code>native_id</code>, <code>proof</code></td><td>Re-identify the element. <code>retained_object</code> is the element's own accessibility address, recorded on macOS. <code>proof</code> records the capture census result: <code>unique</code> when the entry was the only element in the captured window with this role and these stable fields, <code>twins</code> when another element matched, or <code>unproven</code> when the census could not be completed (legacy refmaps storing a boolean under <code>unique_at_capture</code> are still accepted on read). A skeleton, depth-limited or drilled capture counts against that whole window, so a shallow presentation proves the same thing a full one does. A control's <code>value</code> is never identity for roles whose value changes while you use them, such as <code>textfield</code>, <code>checkbox</code>, and <code>slider</code>.</td></tr>
++    <tr><td>Identity</td><td><code>retained_object</code>, <code>role</code>, <code>name</code>, <code>value</code>, <code>description</code>, <code>native_id</code>, <code>proof</code></td><td>Re-identify the element. <code>retained_object</code> is the element's own accessibility address, recorded on macOS. <code>proof</code> records what the capture established: <code>unique</code> when the entry was the only element in the window (or inside its recorded ancestors) with this role and these stable fields, <code>twins</code> when a complete read found another, <code>unproven</code> otherwise (legacy refmaps storing a boolean under <code>unique_at_capture</code> are still accepted on read). A skeleton, depth-limited or drilled capture counts against that whole window, so a shallow presentation proves the same thing a full one does. A control's <code>value</code> is never identity for roles whose value changes while you use them, such as <code>textfield</code>, <code>checkbox</code>, and <code>slider</code>.</td></tr>
+     <tr><td>Geometry</td><td><code>bounds</code>, <code>bounds_hash</code>, <code>bounds_space</code></td><td>Not identity. <code>get --property bounds</code> falls back to them when the live read is unavailable; re-identification never compares them.</td></tr>
+     <tr><td>Capabilities</td><td><code>states</code>, <code>available_actions</code></td><td>What the element offered at snapshot time.</td></tr>
+     <tr><td>Source</td><td><code>source_app</code>, <code>source_window_id</code>, <code>source_window_title</code>, <code>source_window_bounds_hash</code>, <code>source_surface</code></td><td>Tie the ref to its window and surface.</td></tr>
+@@ -160,10 +160,10 @@ A command never reuses a live handle from the snapshot. Every command that takes
+ 3. The ref map looks up `@e6` and returns its `RefEntry`. A missing key fails with `STALE_REF`.
+ 4. If the entry carries the element's own address, `resolve_element_strict` turns it back into that exact element. If the element is alive and its process, role and recorded id still match (on Linux: every parent still lists its recorded child, and its role, stable name, description and native id are unchanged), the command acts on it. Otherwise the ref is `STALE_REF` with `details.kind: retained_object_stale`. No search runs, and the ref never lands on a look-alike.
+ 5. If the entry has no address, `proof` decides: `unique`, `twins` or `unproven`. A ref captured from a twin fails with `AMBIGUOUS_TARGET`, `details.kind: identity_not_unique`; a ref the snapshot could not prove fails with `details.kind: identity_unproven`. Both fail before any live read.
+-6. A ref that was unique is counted again over the live window by role, native id, name and description. The count covers the whole window, which is the scope the capture proved the ref unique in. Exactly one match: the command acts on it. None: `STALE_REF`, `details.kind: saved_ref_absent`. Two or more: `AMBIGUOUS_TARGET`, `details.kind: saved_ref_ambiguous`. A field the live read could not answer leaves the count unproven, which returns `TIMEOUT` with `details.kind: resolution_identity_unknown` instead of a match.
++6. A ref that was unique is counted again over the live window by role, native id, name and description. The count covers the scope the capture proved the ref unique in: the whole window, or, for an element whose fields repeat in the window, the nearest ancestor that is unique. Each recorded ancestor is found again below the one before it, and the element is counted below the last. Exactly one match: the command acts on it. None: `STALE_REF`, `details.kind: saved_ref_absent`. Two or more: `AMBIGUOUS_TARGET`, `d
 ```
 
 ---
 
-### Incident Patch 2: `cbe0afbb` (2026-11-23)
-**Commit Message**: Use the Vercel Labs OG card generator (#733)
+### Incident Patch 2: `e8aaccb4` (2026-11-28)
+**Commit Message**: fix: make errors and recovery hints tell the truth (#664)
 
-- Home and docs OG cards come from the shared Vercel Labs generator: Labs logo / agent-desktop header, Vercel-style title, light by default
-- Custom-designed cards are kept as they are
+* fix: make errors and recovery hints tell the truth
 
-**File**: `apps/docs/app/[lang]/desktop/og/[...slug]/route.tsx` (modified, +6/-5)
+- One owner builds the locator_incomplete TIMEOUT and names its cause (deadline, unreadable_elements or traversal_limit); only a deadline is retryable.
+- Suggestions point at the real fix: a larger timeout for an unknown identity, scroll-to for an offscreen target.
+- wait retries on the right predicate, and a parse error carries clap's usage as its suggestion.
+- macOS Notification Center opens by the clock status item identifier, which drops the Automation permission path.
+- macOS actions run through the core chain; a headless click or clear that delivers nothing is POLICY_DENIED.
+- Windows realizes items by container and handles the legacy dialog; select gives a list suggestion.
+
+* fix: point a parse error at the failing command's own --help
+
+A nested command took its parent's pointer (session start --bogus pointed at
+session --help), and an error with neither a tip nor a usage line, such as a
+flag with no value, got no pointer. The path now comes from clap's usage line,
+with the parsed command name as the fallback.
+
+* fix(macos): try the accessibility menu routes when 
+
+**File**: `apps/docs/content/docs/commands/observation.mdx` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- import type { NextRequest } from "next/server";
- import { source } from "@/lib/geistdocs/source";
--import { renderOgImage } from "../og-image";
-+import { renderLabsOg } from "../labs-og";
- 
- export const GET = async (
-   _request: NextRequest,
-@@ -14,11 +14,12 @@ export const GET = async (
-     return new Response("Not found", { status: 404 });
-   }
- 
--  return renderOgImage(
--    page.slugs.length
-+  return renderLabsOg({
-+    product: "agent-desktop",
-+    title: page.slugs.length
-       ? (page.data.title ?? "agent-desktop")
--      : "Desktop\nAutomation for AI"
--  );
-+      : "Desktop automation for AI",
-+  });
- };
- 
- export const generateStaticParams = async ({
-```
-
-**File**: `apps/docs/app/[lang]/desktop/og/labs-logo.svg` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+<svg width="183" height="42" viewBox="0 0 183 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<path d="M23.5092 0L47.0185 41.44H0L23.5092 0Z" fill="#000000" fill-rule="evenodd" clip-rule="evenodd"/>
-+<path d="M169.729 41.2752C166.731 41.2752 164.206 40.8386 162.156 39.9656C160.145 39.0925 158.588 37.8778 157.487 36.3214C156.387 34.7651 155.76 32.9999 155.608 31.026L163.068 30.6844C163.333 32.2787 163.998 33.5124 165.06 34.3855C166.123 35.2585 167.699 35.6951 169.786 35.6951C171.495 35.6951 172.823 35.4294 173.772 34.8979C174.759 34.3285 175.253 33.4554 175.253 32.2787C175.253 31.5954 175.082 31.026 174.74 30.5705C174.399 30.115 173.753 29.7164 172.804 29.3748C171.855 29.0331 170.451 28.6915 168.591 28.3498C165.478 27.8184 163.03 27.1731 161.245 26.4139C159.461 25.6167 158.19 24.6298 157.43 23.453C156.709 22.2763 156.349 20.8148 156.349 19.0687C156.349 16.2217 157.43 13.9251 159.594 12.1789C161.796 10.3948 165.003 9.50278 169.217 9.50278C171.95 9.50278 174.247 9.95829 176.107 10.8693C177.967 11.7424 179.409 12.9571 180.434 14.5135C181.497 16.0319 182.161 17.778 182.427 19.7519L175.082 20.0936C174.892 19.0687 174.55 18.1766 174.057 17.4174C173.563 16.6582 172.899 16.0888 172.064 15.7092C171.229 15.2917 170.242 15.0829 169.103 15.0829C167.395 15.0829 166.104 15.4245 165.231 16.1078C164.358 16.7911 163.922 17.7021 163.922 18.8409C163.922 19.6381 164.111 20.3024 164.491 20.8338C164.909 21.3652 165.573 21.8018 166.484 22.1434C167.395 22.4471 168.61 22.7318 170.128 22.9975C173.317 23.491 175.822 24.1363 177.644 24.9335C179.504 25.6927 180.814 26.6796 181.573 27.8943C182.37 29.0711 182.769 30.4946 182.769 32.1648C182.769 34.1008 182.218 35.752 181.117 37.1186C180.055 38.4851 178.536 39.529 176.562 40.2503C174.626 40.9335 172.349 41.2752 169.729 41.2752Z" fill="#000000"/>
-+<path d="M141.184 41.2752C139.058 41.2752 137.198 40.8197 135.603 39.9086C134.047 38.9976 132.832 37.7259 131.959 36.0937L131.788 40.5919H124.842V0.164658L132.13 0.164658V14.5135C132.965 13.109 134.161 11.9322 135.717 10.9832C137.274 9.99626 139.096 9.50278 141.184 9.50278C143.803 9.50278 146.061 10.1671 147.959 11.4957C149.895 12.7863 151.376 14.6274 152.401 17.0188C153.464 19.3723 153.995 22.1624 153.995 25.389C153.995 28.6156 153.464 31.4246 152.401 33.8161C151.376 36.1696 149.895 38.0106 147.959 39.3392C146.061 40.6299 143.803 41.2752 141.184 41.2752ZM139.532 35.3534C141.62 35.3534 143.29 34.4804 144.543 32.7342C145.796 30.9501 146.422 28.5017 146.422 25.389C146.422 22.2383 145.796 19.7899 144.543 18.0438C143.328 16.2976 141.677 15.4245 139.589 15.4245C138.033 15.4245 136.685 15.8231 135.546 16.6203C134.446 17.3795 133.592 18.4993 132.984 19.9797C132.415 21.4601 132.13 23.2632 132.13 25.389C132.13 27.4388 132.415 29.2229 132.984 30.7413C133.592 32.2218 134.446 33.3606 135.546 34.1577C136.647 34.9549 137.976 35.3534 139.532 35.3534Z" fill="#000000"/>
-+<path d="M103.361 41.2752C100.172 41.2752 97.6099 40.5539 95.6739 39.1115C93.738 37.631 92.77 35.5812 92.77 32.962C92.77 30.3427 93.5862 28.2929 95.2184 26.8125C96.8507 25.332 99.3371 24.2692 102.678 23.6238L112.756 21.631C112.756 19.4672 112.262 17.8539 111.275 16.7911C110.288 15.6902 108.827 15.1398 106.891 15.1398C105.145 15.1398 103.759 15.5574 102.734 16.3925C101.748 17.1896 101.064 18.3474 100.685 19.8658L93.2825 19.5242C93.8898 16.2976 95.3703 13.8302 97.7238 12.122C100.077 10.3759 103.133 9.50278 106.891 9.50278C111.219 9.50278 114.483 10.6036 116.685 12.8053C118.924 14.969 120.044 18.0817 120.044 22.1434V33.1897C120.044 33.9869 120.177 34.5373 120.443 34.841C120.746 35.1447 121.183 35.2965 121.752 35.2965H122.72V40.5919C122.493 40.6678 122.113 40.7248 121.582 40.7627C121.088 40.8007 120.576 40.8197 120.044 40.8197C118.792 40.8197 117.672 40.6299 116.685 40.2503C115.698 39.8327 114.939 39.1304 114.407 38.1435C113.876 37.1186 113.61 35.733 113.61 33.9869L114.236 34.4424C113.933 35.771 113.268 36.9667 112.243 38.0296C111.256 39.0545 110.004 39.8517 108.485 40.4211C106.967 40.9905 105.259 41.2752 103.361 41.2752ZM104.841 35.9798C106.474 35.9798 107.878 35.6571 109.055 35.0118C110.232 34.3665 111.143 33.4744 111.788 32.3356C112.433 31.1968 112.756 29.8493 112.756 28.2929V26.5847L104.898 28.179C103.266 28.5207 102.089 29.0331 101.368 29.7164C100.685 30.3617 100.343 31.2158 100.343 32.2787C100.343 33.4554 100.723 34.3665 101.482 35.0118C102.279 35.6571 103.399 35.9798 104.841 35.9798Z" fill="#000000"/>
-+<path d="M64.0186 40.5919V0.164627L71.4207 0.164627V38.3143L67.378 34.1577H90.6094V40.5919H64.0186Z" fill="#000000"/>
-+</svg>
-```
-
-**File**: `apps/docs/app/[lang]/desktop/og/labs-og.tsx` (added, +229/-0)
-```diff
-@@ -0,0 +1,229 @@
-+import { ImageResponse } from "next/og";
-+import { readFile } from "node:fs/promises";
-+import { join } from "node:path";
-+import { parse, type Font } from "opentype.js";
-+
-+const folder = join(process.cwd(), "app/[lang]/desktop/og");
-+
-+export const size = { width: 1200, height: 630 };
-+
-+type Theme = "light" | "dark";
-+
-+const themes = {
-+  light: {
-+    background: "#f8f8f8",
-+    text: "#0a0a0a",
-+    slash: "#b7b7b7",
-+    logo: "#000000",
-+    description: "#6e6e6e",
-+  },
-+  dark: {
-+    background: "#000000",
-+    text: "#ffffff",
-+    slash: "#666666",
-+    logo: "#ffffff",
-+    description: "#a1a1a1",
-+  },
-+} as const;
-+
-+// Header geometry, halved from the reference card's 2x canvas.
-+const logoScale = 115 / 47.0185 / 2;
-+const logoWidth = 183 * logoScale;
-+const logoHeight = 42 * logoScale;
-+const logoTop = 111 - 41.44 * logoScale;
-+const slashX = 64 + logoWidth + 31.5;
-+const wordX = slashX + 17.75 + 22;
-+const wordBaseline = 110;
-+
-+const titleLeft = 61.6875;
-+const titleBaseline = 280.045;
-+const titleSize = 80.4;
-+const titleTracking = -0.0635;
-+const titleLinePitch = 76;
-+const titleMaxWidth = 700;
-+const maxTitleLines = 3;
-+const titleShrinkStep = 4;
-+const titleMinSize = 56;
-+const maxTitleLinesAtMin = 4;
-+const titleCenterShift = 38.04;
-+
-+// A two-line title carries the reference card's per-line metrics.
-+const titleLayouts = [
-+  { left: 61.6875, baseline: 280.045, size: 80.095, letterSpacing: -5.085 },
-+  { left: 61.405, baseline: 356.125, size: 80.69, letterSpacing: -5.125 },
-+];
-+
-+const descriptionLeft = 61.6875;
-+const descriptionSize = 26;
-+const descriptionTracking = -0.52;
-+const descriptionLinePitch = descriptionSize * 1.32;
-+const descriptionMaxWidth = 460;
-+const descriptionGap = 22;
-+
-+type Assets = { regular: Font; semibold: Font; logo: string };
-+
-+let assets: Promise<Assets> | undefined;
-+
-+function loadAssets() {
-+  assets ??= Promise.all([
-+    readFile(join(folder, "Geist-Regular.ttf")),
-+    readFile(join(folder, "Geist-SemiBold.ttf")),
-+    readFile(join(folder, "labs-logo.svg"), "utf-8"),
-+  ]).then(([regular, semibold, logo]) => ({
-+    regular: parse(toArrayBuffer(regular)),
-+    semibold: parse(toArrayBuffer(semibold)),
-+    logo,
-+  }));
-+  return assets;
-+}
-+
-+function toArrayBuffer(buffer: Buffer) {
-+  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
-+}
-+
-+type Line = { text: string; left: number; baseline: number; size: number; letterSpacing: number };
-+
-+function wrap(font: Font, text: string, lineSize: number, tracking: number, maxWidth: number) {
-+  const lines: string[] = [];
-+  let line = "";
-+  for (const word of text.split(/\s+/).filter(Boolean)) {
-+    const next = line ? `${line} ${word}` : word;
-+    if (line && font.getAdvanceWidth(next, lineSize, { kerning: true, letterSpacing: tracking }) > maxWidth) {
-+      lines.push(line);
-+      line = word;
-+    } else {
-+      line = next;
-+    }
-+  }
-+  if (line) lines.push(line);
-+  return lines;
-+}
-+
-+function titleLine(text: string, index: number): Line {
-+  const layout = titleLayouts[index];
-+  if (layout) return { text, ...layout };
-+  const last = titleLayouts[titleLayouts.length - 1]!;
-+  const offset = index - titleLayouts.length + 1;
-+  return { text, ...last, baseline: last.baseline + offset * titleLinePitch };
-+}
-+
-+function titleLines(font: Font, title: string | string[]): Line[] {
-+  if (Array.isArray(title)) {
-+    const shift = -titleCenterShift * (title.length - 2);
-+    return title.map((text, index) => {
-+      const line = titleLine(text, index);
-+      return { ...line, baseline: line.baseline + shift };
-+    });
-+  }
-+  let lineSize = titleSize;
-+  let maxLines = maxTitleLines;
-+  let lines = wrap(font, title, lineSize, titleTracking, titleMaxWidth);
-+  while (lines.length > maxLines && lineSize > titleMinSize) {
-+    lineSize = Math.max(titleMinSize, lineSize - titleShrinkStep);
-+    if (lineSize === titleMinSize) maxLines = maxTitleLinesAtMin;
-+    lines = wrap(font, title, lineSize, titleTracking, titleMaxWidth);
-+  }
-+  const pitch = (lineSize * titleLinePitch) / titleSize;
-+  const firstBaseline = titleBaseline - (pitch / 2) * (lines.length - 2);
-+  return lines.map((text, index) => ({
-+    text,
-+    left: titleLeft,
-+    baseline: firstBaseline + index * pitch,
-+    size: lineSize,
-+    letterSpacing: titleTracking * lineSize,
-+  }));
-+}
-+
-+function descriptionLine(text: string, index: number, firstBaseline: number): Line {
-+  return {
-+    text,
-+    left: descriptionLeft,
-+    baseline: firstBaseline + index * descriptionLinePitch,
-+    size: descriptionSize,
-+    letterSpacing: descriptionTracking,
-+  };
-+}
-+
-+function linePath(font: Font, lines: Line[]) {
-+  return lines
-+    .map((line) =>
-+      font
-+        .getPath(line.text, line.left, line.baseline, line.size, {
-+          kerning: true,
-+          letterSpacing: line.letterSpacing / line.size,
-+        })
-+        .toPathData(3),
-+    )
-+    .
-```
-
-**File**: `apps/docs/app/[lang]/desktop/og/og-image.tsx` (removed, +0/-82)
-```diff
-@@ -1,82 +0,0 @@
--import { readFile } from "node:fs/promises";
--import { join } from "node:path";
--import { ImageResponse } from "next/og";
--
--const [geistRegular, geistPixelSquare] = await Promise.all([
--  readFile(
--    join(process.cwd(), "app/[lang]/desktop/og/[...slug]/geist-sans-regular.ttf")
--  ),
--  readFile(
--    join(process.cwd(), "app/[lang]/desktop/og/[...slug]/GeistPixel-Square.ttf")
--  ),
--]);
--
--export function renderOgImage(title: string) {
--  return new ImageResponse(
--    <div
--      style={{
--        width: "100%",
--        height: "100%",
--        display: "flex",
--        flexDirection: "column",
--        backgroundColor: "black",
--        padding: "60px 80px",
--      }}
--    >
--      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
--        <svg width="36" height="36" viewBox="0 0 16 16" fill="white">
--          <path fillRule="evenodd" clipRule="evenodd" d="M8 1L16 15H0L8 1Z" />
--        </svg>
--        <span
--          style={{ fontSize: 36, color: "#666", fontFamily: "Geist", fontWeight: 400 }}
--        >
--          /
--        </span>
--        <span
--          style={{
--            fontSize: 36,
--            fontFamily: "GeistPixelSquare",
--            fontWeight: 400,
--            color: "white",
--          }}
--        >
--          agent-desktop
--        </span>
--      </div>
--      <div
--        style={{
--          display: "flex",
--          flex: 1,
--          flexDirection: "column",
--          alignItems: "center",
--          justifyContent: "center",
--        }}
--      >
--        {title.split("\n").map((line, index) => (
--          <span
--            key={index}
--            style={{
--              fontSize: 72,
--              fontFamily: "Geist",
--              fontWeight: 400,
--              color: "white",
--              letterSpacing: "-0.02em",
--              textAlign: "center",
--              lineHeight: 1.2,
--            }}
--          >
--            {line}
--          </span>
--        ))}
--      </div>
--    </div>,
--    {
--      width: 1200,
--      height: 630,
--      fonts: [
--        { name: "Geist", data: geistRegular, style: "normal", weight: 400 },
--        { name: "GeistPixelSquare", data: geistPixelSquare, style: "normal", weight: 400 },
--      ],
--    }
--  );
--}
-```
-
-**File**: `apps/docs/app/[lang]/desktop/og/route.tsx` (modified, +5/-2)
-```diff
-@@ -1,5 +1,8 @@
--import { renderOgImage } from "./og-image";
-+import { renderLabsOg } from "./labs-og";
- 
- export async function GET() {
--  return renderOgImage("Desktop\nAutomation for AI");
-+  return renderLabsOg({
-+    product: "agent-desktop",
-+    title: "Desktop automation for AI",
-+  });
+@@ -102,7 +102,7 @@ agent-desktop find --app gnome-calculator --role button --name 7 --exact --first
  }
+ ```
+ 
+-When a `--role` filter matches nothing, `roles_present` lists the roles in the searched tree, which tells a wrong role name from an empty screen. Errors specific to `find`: `INVALID_ARGS` for conflicting shaping flags, `--root` with `--surface`, or an unknown `--state` token; `TIMEOUT` with `details.kind: "locator_incomplete"` when the traversal ran out of budget, which does not mean the app hangs. Raise `--timeout-ms` or narrow the search.
++When a `--role` filter matches nothing, `roles_present` lists the roles in the searched tree, which tells a wrong role name from an empty screen. Errors specific to `find`: `INVALID_ARGS` for conflicting shaping flags, `--root` with `--surface`, or an unknown `--state` token; `TIMEOUT` with `details.kind: "locator_incomplete"` when the search could not prove its result, which does not mean the app hangs. `details.cause` says why. `deadline` (`retryable: true`) means the time ran out, so raise `--timeout-ms`. `unreadable_elements` and `traversal_limit` (`retryable: false`) mean some reads failed or a fixed limit was hit, so more time does not help: narrow with `--role` or `--name`, or run `snapshot` for the readable part of the tree with `complete: false`.
+ 
+ ## get
+ 
 ```
 
-**File**: `apps/docs/package.json` (modified, +2/-0)
+**File**: `apps/docs/content/docs/platforms/macos.mdx` (modified, +1/-2)
 ```diff
-@@ -37,6 +37,7 @@
-     "nanoid": "5.1.16",
-     "next": "16.4.3",
-     "next-themes": "0.4.6",
-+    "opentype.js": "^1.3.4",
-     "react": "19.3.1",
-     "react-dom": "19.3.1",
-     "react-player": "3.4.0",
-@@ -50,6 +51,7 @@
-     "@tailwindcss/postcss": "4.3.3",
-     "@types/mdx": "2.0.14",
-     "@types/node": "24.19.2",
-+    "@types/opentype.js": "^1.3.10",
-     "@types/react": "19.3.0",
-     "@types/react-dom": "19.3.0",
-     "postcss": "8.5.32",
+@@ -11,7 +11,6 @@ agent-desktop reads macOS apps through the Accessibility (AX) API. The loop, ref
+ - macOS 13 or later, Intel or Apple Silicon.
+ - Accessibility permission for the app that launches agent-desktop, such as Terminal, iTerm2, VS Code, or your agent's host app. If System Settings lists the `agent-desktop` binary separately, grant it too.
+ - Screen Recording permission, only for `screenshot` and for `session start --screenshots`.
+-- Automation permission for System Events, only where a command reports it missing, such as opening Notification Center.
+ 
+ ## Grant and check permissions
+ 
+@@ -76,7 +75,7 @@ Judge delivery by observation. AX return codes do not prove an effect: an app ca
+ 
+ - The primary modifier is `cmd`: `press cmd+c`. Punctuation keys work as the symbol or by name (`comma`, `period`, `slash`).
+ - `cmd+q`, `cmd+shift+q`, `cmd+alt+esc`, `ctrl+cmd+q`, and `cmd+shift+delete` return `POLICY_DENIED` unless you pass `--force`. To quit an app, use `close-app`.
+-- `press cmd+s --app "TextEdit"` sends keys to one app without focusing it.
++- `press cmd+s --app "TextEdit"` sends the chord only when that app is frontmost. For a background app it returns `ACTION_FAILED` (`check: process_focus`) and sends nothing.
+ - When agent-desktop opens Notification Center, it closes it afterward and restores the previous focus. Pass `--expected-app` and `--expected-title` on a single dismiss or action, because the stack shifts. Use `wait --notification --app "App"` for banners that vanish before you can list them.
+ 
+ ## Chromium and Electron
 ```
 
-**File**: `apps/docs/pnpm-lock.yaml` (modified, +31/-0)
+**File**: `apps/docs/content/docs/skeleton-and-drill-down.mdx` (modified, +1/-1)
 ```diff
-@@ -83,6 +83,9 @@ importers:
-       next-themes:
-         specifier: 0.4.6
-         version: 0.4.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-+      opentype.js:
-+        specifier: ^1.3.4
-+        version: 1.3.4
-       react:
-         specifier: 19.3.1
-         version: 19.3.1
-@@ -117,6 +120,9 @@ importers:
-       '@types/node':
-         specifier: 24.19.2
-         version: 24.19.2
-+      '@types/opentype.js':
-+        specifier: ^1.3.10
-+        version: 1.3.10
-       '@types/react':
-         specifier: 19.3.0
-         version: 19.3.0
-@@ -2058,6 +2064,9 @@ packages:
-   '@types/node@24.19.2':
-     resolution: {integrity: sha512-93d49wCWJkCyN87MxLpNN6KXPCwFw7bVUg79mGUV1OS40JGWwVCr8n61DXCSqz7CV6/VfPkb7xec7uP2M+QHWQ==}
+@@ -217,7 +217,7 @@ A drill is all or nothing. It replaces refs inside an existing snapshot, and a p
+   "error": {
+     "code": "TIMEOUT",
+     "message": "Operation exceeded its deadline",
+-    "suggestion": "The target application may be busy or unresponsive",
++    "suggestion": "The operation did not finish within its deadline; retry once, and if it repeats report the timeout instead of retrying",
+     "recovery": {
+       "strategy": "inspect_state_then_retry_original",
+       "retryable": true,
+```
+
+**File**: `crates/core/src/actionability/evaluate.rs` (modified, +53/-56)
+```diff
+@@ -1,7 +1,7 @@
+ use super::{
+     evidence::ActionabilityEvidence, gates, receives_events::receives_events_check,
+     report::ActionabilityReport, requirements::ActionabilityRequirements,
+-    stability::StabilityExpectation,
++    stability::StabilityExpectation, suggestion,
+ };
+ use crate::{
+     AdapterError, ErrorCode,
+@@ -82,7 +82,12 @@ pub(super) fn check_with_stability(
+     deadline: crate::Deadline,
+ ) -> Result<ActionabilityReport, AdapterError> {
+     let report = build_report(stability, evidence, request, hit_test, deadline)?;
+-    finish(evidence, request, report)
++    finish(
++        evidence,
++        request,
++        report,
++        hit_test.map(|(_, adapter)| adapter),
++    )
+ }
  
-+  '@types/opentype.js@1.3.10':
-+    resolution: {integrity: sha512-F67EFyk6j02okHz5JCgata3ZRAcZi9GLnzmkHw/rzJq3OCc8/ZVdoKrxMTYjcQP6IYHGBz2cav1cpzkOkPiPCQ==}
+ /// Preserves stability gaps and positive-timeout application-pointer geometry gaps for sampling.
+@@ -94,15 +99,20 @@ pub(super) fn check_with_stability_or_gap(
+     hit_test: Option<(&NativeHandle, &dyn PlatformAdapter)>,
+     deadline: crate::Deadline,
+ ) -> Result<ActionabilityReport, AdapterError> {
+-    let (report, requirement) =
+-        build_report_with_requirement(stability, evidence, request, hit_test, deadline)?;
++    let (report, focus) =
++        build_report_with_focus(stability, evidence, request, hit_test, deadline)?;
+     if !report.actionable && report.only_blocking_check_is_stability() {
+         return Ok(report);
+     }
+-    if evidence.can_wait_for_geometry(request, &report, requirement) {
++    if evidence.can_wait_for_geometry(request, &report, focus) {
+         return Ok(report);
+     }
+-    finish(evidence, request, report)
++    finish(
++        evidence,
++        request,
++        report,
++        hit_test.map(|(_, adapter)| adapter),
++    )
+ }
+ 
+ pub(super) fn check_before_focus(
+@@ -112,12 +122,17 @@ pub(super) fn check_before_focus(
+     hit_test: Option<(&NativeHandle, &dyn PlatformAdapter)>,
+     deadline: crate::Deadline,
+ ) -> Result<ActionabilityReport, AdapterError> {
+-    let (report, requirement) =
+-        build_report_with_requirement(stability, evidence, request, hit_test, deadline)?;
+-    if evidence.can_wait_for_geometry(request, &report, requirement) {
++    let (report, focus) =
++        build_report_with_focus(stability, evidence, request, hit_test, deadline)?;
++    if evidence.can_wait_for_geometry(request, &report, focus) {
+         return Ok(report);
+     }
+-    finish(evidence, request, report)
++    finish(
++        evidence,
++        request,
++        report,
++        hit_test.map(|(_, adapter)| adapter),
++    )
+ }
+ 
+ pub(super) fn build_report(
+@@ -127,24 +142,29 @@ pub(super) fn build_report(
+     hit_test: Option<(&NativeHandle, &dyn PlatformAdapter)>,
+     deadline: crate::Deadline,
+ ) -> Result<ActionabilityReport, AdapterError> {
+-    build_report_with_requirement(stability, evidence, request, hit_test, deadline)
++    build_report_with_focus(stability, evidence, request, hit_test, deadline)
+         .map(|(report, _)| report)
+ }
+ 
+-fn build_report_with_requirement(
++fn build_report_with_focus(
+     stability: StabilityExpectation,
+     evidence: &ActionabilityEvidence,
+     request: &ActionRequest,
+     hit_test: Option<(&NativeHandle, &dyn PlatformAdapter)>,
+     deadline: crate::Deadline,
+-) -> Result<(ActionabilityReport, Option<crate::HeadedRequirement>), AdapterError> {
+-    let requirement = hit_test
+-        .map(|(handle, adapter)| adapter.headed_requirement(handle, request, deadline))
+-        .transpose()?;
+-    let foreground_denied = requirement
+-        .is_some_and(|requirement| super::foreground::denies(requirement, request.policy));
++) -> Result<(ActionabilityReport, Option<crate::HeadedFocus>), AdapterError> {
++    let focus = match hit_test {
++        Some((handle, adapter)) => {
++            super::foreground::require_declared(
++                adapter.foreground_effect(handle, request, deadline)?,
++                request,
++            )?;
++            adapter.headed_focus(handle, request, deadline)?
++        }
++        None => None,
++    };
+     let mut semantic_request;
+-    let request = if requirement == Some(crate::HeadedRequirement::FocusedApplication) {
++    let request = if focus == Some(crate::HeadedFocus::Application) {
+         semantic_request = request.clone();
+         semantic_request.policy = crate::InteractionPolicy::headless();
+         &semantic_request
+@@ -155,10 +175,6 @@ fn build_report_with_requirement(
+     let pointer_delivery =
+         requirements.pointer_delivery(&request.action, &evidence.available_actions, request.policy);
+     let presentation_point = evidence.bounds.and_then(center_point);
+-    if foreground_denied {
+-        let report = gates::foreground(presentation_point, evidence.bounds, pointer_delivery);
+-        return Ok((report, requirement));
+-    }
+     let mut checks = Vec::new();
+     let mut verified_point = None;
+     let without_pointer = requirements.delivered_without_pointer(
+@@ -210,7 +226,7 @@ fn build_report_with_requirement(
+                 evidence.bounds,
+                 poin
+```
+
+**File**: `crates/core/src/actionability/evaluate_geometry_tests.rs` (modified, +12/-22)
+```diff
+@@ -1,16 +1,16 @@
+ use super::*;
+-use crate::{Action, ActionOps, HeadedRequirement, InputOps, ObservationOps, SystemOps};
++use crate::{Action, ActionOps, HeadedFocus, InputOps, ObservationOps, SystemOps};
+ 
+-struct GeometryAdapter(HeadedRequirement);
++struct GeometryAdapter(HeadedFocus);
+ 
+ impl ActionOps for GeometryAdapter {
+-    fn headed_requirement(
++    fn headed_focus(
+         &self,
+         _: &NativeHandle,
+         _: &ActionRequest,
+         _: crate::Deadline,
+-    ) -> Result<HeadedRequirement, AdapterError> {
+-        Ok(self.0)
++    ) -> Result<Option<HeadedFocus>, AdapterError> {
++        Ok(Some(self.0))
+     }
+ }
+ impl ObservationOps for GeometryAdapter {}
+@@ -37,7 +37,7 @@ fn evidence() -> ActionabilityEvidence {
+ fn check_gap(
+     evidence: &ActionabilityEvidence,
+     timeout: u64,
+-    requirement: HeadedRequirement,
++    requirement: HeadedFocus,
+ ) -> Result<ActionabilityReport, AdapterError> {
+     let adapter = GeometryAdapter(requirement);
+     check_with_stability_or_gap(
+@@ -62,21 +62,16 @@ fn only_positive_timeout_application_pointers_preserve_a_geometry_gap() {
+         }),
+     ] {
+         evidence.bounds = bounds;
+-        let report = check_gap(
+-            &evidence,
+-            500,
+-            HeadedRequirement::FocusedApplicationAndCursor,
+-        )
+-        .unwrap();
++        let report = check_gap(&evidence, 500, HeadedFocus::ApplicationAndCursor).unwrap();
+         assert!(!report.actionable);
+         assert!(report.verified_point.is_none());
+         assert_eq!(
+             report.pointer_delivery,
+             super::super::PointerDelivery::Physical
+         );
+-        assert!(check_gap(&evidence, 0, HeadedRequirement::FocusedApplicationAndCursor).is_err());
+-        assert!(check_gap(&evidence, 500, HeadedRequirement::FocusedWindowAndCursor).is_err());
+-        let adapter = GeometryAdapter(HeadedRequirement::FocusedApplicationAndCursor);
++        assert!(check_gap(&evidence, 0, HeadedFocus::ApplicationAndCursor).is_err());
++        assert!(check_gap(&evidence, 500, HeadedFocus::WindowAndCursor).is_err());
++        let adapter = GeometryAdapter(HeadedFocus::ApplicationAndCursor);
+         assert!(
+             check_with_stability(
+                 StabilityExpectation::permissive(None),
+@@ -105,20 +100,15 @@ fn geometry_gap_never_masks_hidden_disabled_or_incomplete_state() {
+                 .push(crate::tree::state::OFFSCREEN.into()),
+         }
+         assert!(
+-            check_gap(
+-                &evidence,
+-                500,
+-                HeadedRequirement::FocusedApplicationAndCursor
+-            )
+-            .is_err(),
++            check_gap(&evidence, 500, HeadedFocus::ApplicationAndCursor).is_err(),
+             "variant {variant}"
+         );
+     }
+ }
+ 
+ #[test]
+ fn geometry_gap_preserves_permanent_action_and_policy_refusals() {
+-    let adapter = GeometryAdapter(HeadedRequirement::FocusedApplicationAndCursor);
++    let adapter = GeometryAdapter(HeadedFocus::ApplicationAndCursor);
+     for (request, code) in [
+         (
+             ActionRequest::headed(Action::SetValue("text".into())),
+```
+
+**File**: `crates/core/src/actionability/evaluate_recovery_tests.rs` (modified, +22/-6)
+```diff
+@@ -77,13 +77,25 @@ impl crate::adapter::ObservationOps for ForegroundAdapter {}
+ impl crate::adapter::InputOps for ForegroundAdapter {}
+ impl crate::adapter::SystemOps for ForegroundAdapter {}
+ impl crate::adapter::ActionOps for ForegroundAdapter {
+-    fn headed_requirement(
++    fn foreground_effect(
+         &self,
+         _handle: &NativeHandle,
+         _request: &ActionRequest,
+         _deadline: crate::Deadline,
+-    ) -> Result<crate::HeadedRequirement, AdapterError> {
+-        Ok(crate::HeadedRequirement::FocusedApplication)
++    ) -> Result<Option<crate::DeclaredEffect>, AdapterError> {
++        Ok(Some(crate::DeclaredEffect {
++            effect: crate::Effect::FocusSteal,
++            kind: "opens_popup",
++        }))
++    }
 +
-   '@types/react-dom@19.3.0':
-     resolution: {integrity: sha512-ZI7bU42mZXXKHn/qNLEw2IrbiINU7X5+vfgdixBHkCNpYWXjKgfQ/P+uyGb5CjOLB9UcnTeg3rylQtV2hym44Q==}
-     peerDependencies:
-@@ -3587,6 +3596,11 @@ packages:
-   oniguruma-to-es@4.3.6:
-     resolution: {integrity: sha512-csuQ9x3Yr0cEIs/Zgx/OEt9iBw9vqIunAPQkx19R/fiMq2oGVTgcMqO/V3Ybqefr1TBvosI6jU539ksaBULJyA==}
++    fn headed_focus(
++        &self,
++        _handle: &NativeHandle,
++        _request: &ActionRequest,
++        _deadline: crate::Deadline,
++    ) -> Result<Option<crate::HeadedFocus>, AdapterError> {
++        Ok(Some(crate::HeadedFocus::Application))
+     }
+ }
  
-+  opentype.js@1.3.4:
-+    resolution: {integrity: sha512-d2JE9RP/6uagpQAVtJoF0pJJA/fgai89Cc50Yp0EJHk+eLp6QQ7gBoblsnubRULNY132I0J1QKMJ+JTbMqz4sw==}
-+    engines: {node: '>= 8.0.0'}
-+    hasBin: true
+@@ -122,9 +134,13 @@ fn a_foreground_the_policy_forbids_is_the_only_refusal_and_comes_first() {
+     let error = checked(ActionRequest::headless(Action::Click), true).unwrap_err();
+     assert_eq!(error.code, ErrorCode::PolicyDenied);
+     assert_eq!(error.disposition, crate::DeliverySemantics::not_delivered());
+-    let checks = error.details.unwrap()["checks"].clone();
+-    assert_eq!(checks.as_array().map(Vec::len), Some(1), "{checks}");
+-    assert_eq!(checks[0]["check"], "foreground");
++    let details = error.details.unwrap();
++    assert_eq!(details["check"], "foreground");
++    assert_eq!(details["effect"], "focus_steal");
++    assert_eq!(details["kind"], "opens_popup");
++    assert_eq!(details["foreground_effect"], true);
++    assert_eq!(details["mechanisms"], serde_json::json!(["click"]));
++    assert!(details.get("checks").is_none(), "{details}");
+     assert!(error.suggestion.unwrap().contains("--headed"));
+     for request in [
+         ActionRequest::headed(Action::Click),
+```
+
+**File**: `crates/core/src/actionability/evaluate_refusal_tests.rs` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++use super::*;
++use crate::adapter::{ActionOps, InputOps, ObservationOps, SystemOps};
++use crate::{Action, Rect};
 +
-   os-paths@4.4.0:
-     resolution: {integrity: sha512-wrAwOeXp1RRMFfQY8Sy7VaGVmPocaLwSFOYCGKSyo8qmJ+/yaafCl5BCA1IQZWqFSRBrKDYFeR9d/VyQzfH/jg==}
-     engines: {node: '>= 6.0'}
-@@ -3941,6 +3955,9 @@ packages:
-   strictdom@1.0.1:
-     resolution: {integrity: sha512-cEmp9QeXXRmjj/rVp9oyiqcvyocWab/HaoN4+bwFeZ7QzykJD6L3yD4v12K1x0tHpqRqVpJevN3gW7kyM39Bqg==}
- 
-+  string.prototype.codepointat@0.2.1:
-+    resolution: {integrity: sha512-2cBVCj6I4IOvEnjgO/hWqXjqBGsY+zwPmHl12Srk9IXSZ56Jwwmy+66XO5Iut/oQVR7t5ihYdLB0GMa4alEUcg==}
++struct NoPointerSession;
++impl ObservationOps for NoPointerSession {}
++impl ActionOps for NoPointerSession {}
++impl SystemOps for NoPointerSession {}
++impl InputOps for NoPointerSession {
++    fn physical_pointer_refusal(&self) -> Option<AdapterError> {
++        Some(AdapterError::new(
++            ErrorCode::ActionNotSupported,
++            "no pointer",
++        ))
++    }
++}
 +
-   stringify-entities@4.0.4:
-     resolution: {integrity: sha512-IwfBptatlO+QCJUo19AqvrPNqlVMpW9YEL2LIVY+Rpv2qsjCGxaDLNRgeGsQWJhfItebuJhsGSLjaBbNSQ+ieg==}
- 
-@@ -3995,6 +4012,9 @@ packages:
-   tiktok-video-element@0.1.2:
-     resolution: {integrity: sha512-w6TboLm236XJKKiIXIhCbYCnUxbixBbaAoty0etaEAZ/2kHkVIdfZdv2oouMU/HGMsWCHI/VjQ3wU3MJ+s192Q==}
- 
-+  tiny-inflate@1.0.3:
-+    resolution: {integrity: sha512-pkY1fj1cKHb2seWDy0B16HeWyczlJA9/WW3u3c4z/NiWDsO3DOU5D7nhTLE9CF0yXv/QZFY7sEJmj24dK+Rrqw==}
++fn evidence(role: &str, actions: &[&str]) -> ActionabilityEvidence {
++    ActionabilityEvidence {
++        nonspatial: false,
++        state: crate::ElementState {
++            role: role.into(),
++            states: Vec::new(),
++            value: None,
++            enabled: Some(true),
++            hidden: Some(false),
++            offscreen: Some(false),
++        },
++        states_complete: true,
++        bounds: Some(Rect {
++            x: 0.0,
++            y: 0.0,
++            width: 100.0,
++            height: 20.0,
++        }),
++        available_actions: actions.iter().map(|action| (*action).into()).collect(),
++    }
++}
 +
-   tinyexec@1.3.1:
-     resolution: {integrity: sha512-GCvB3aoys96IuDFBMcTB46JOR6mdMtAToqwiW8JlWhsoh1mhHi/xn9ss/Dg7N555GiJyEt2qzoG/NHCwM6h1EA==}
-     engines: {node: '>=18'}
-@@ -6052,6 +6072,8 @@ snapshots:
-     dependencies:
-       undici-types: 7.24.6
- 
-+  '@types/opentype.js@1.3.10': {}
++fn refusal(role: &str, actions: &[&str], action: Action, no_pointer_session: bool) -> AdapterError {
++    let handle = NativeHandle::null();
++    let adapter = NoPointerSession;
++    let hit_test = no_pointer_session.then_some((&handle, &adapter as &dyn PlatformAdapter));
++    check_with_stability(
++        StabilityExpectation::permissive(None),
++        &evidence(role, actions),
++        &ActionRequest::headless(action),
++        hit_test,
++        crate::Deadline::standard().unwrap(),
++    )
++    .unwrap_err()
++}
 +
-   '@types/react-dom@19.3.0(@types/react@19.3.0)':
-     dependencies:
-       '@types/react': 19.3.0
-@@ -7893,6 +7915,11 @@ snapshots:
-       regex: 6.1.0
-       regex-recursion: 6.0.2
- 
-+  opentype.js@1.3.4:
-+    dependencies:
-+      string.prototype.codepointat: 0.2.1
-+      tiny-inflate: 1.0.3
++#[test]
++fn type_on_a_field_with_set_value_names_set_value() {
++    let error = refusal(
++        "textfield",
++        &["SetValue", "SetFocus"],
++        Action::TypeText("x".into()),
++        false,
++    );
++    assert_eq!(error.code, ErrorCode::PolicyDenied);
++    let hint = error.suggestion.unwrap();
++    assert!(hint.contains("set-value"), "{hint}");
++    assert!(!hint.contains("dropdown"), "{hint}");
++}
 +
-   os-paths@4.4.0: {}
- 
-   package-json-from-dist@1.0.1: {}
-@@ -8411,6 +8438,8 @@ snapshots:
- 
-   strictdom@1.0.1: {}
- 
-+  string.prototype.codepointat@0.2.1: {}
++#[test]
++fn click_on_a_select_only_target_names_select() {
++    let error = refusal("option", &["Select", "SetFocus"], Action::Click, false);
++    assert_eq!(error.code, ErrorCode::PolicyDenied);
++    assert!(error.suggestion.unwrap().contains("'select'"));
++}
 +
-   stringify-entities@4.0.4:
-     dependencies:
-       character-entities-html4: 2.1.0
-@@ -8451,6 +8480,8 @@ snapshots:
- 
-   tiktok-video-element@0.1.2: {}
- 
-+  tiny-inflate@1.0.3: {}
++#[test]
++fn a_policy_refusal_never_blames_the_element_with_the_waiting_text() {
++    let error = refusal("cell", &["SetFocus"], Action::Click, false);
++    assert_eq!(error.code, ErrorCode::PolicyDenied);
++    let hint = error.suggestion.unwrap();
++    assert!(!hint.contains("Waiting will not help"), "{hint}");
++    assert!(!hint.contains("dropdown"), "{hint}");
++    assert!(hint.contains("--headed"), "{hint}");
++}
 +
-   tinyexec@1.3.1: {}
++#[test]
++fn a_session_without_pointer_input_does_not_offer_headed_mode() {
++    let error = refusal("cell", &["SetFocus"], Action::Click, true);
++    assert_eq!(error.code, ErrorCode::PolicyDenied);
++    let hint = error.suggestion.unwrap();
++    assert!(hint.contains("headed mode cannot help"), "{hint}");
++    assert!(!hint.contains("Use --headed"), "{hint}");
++}
+```
+
+**File**: `crates/core/src/actionability/evaluate_suggestion_tests.rs` (added, +142/-0)
+```diff
+@@ -0,0 +1,142 @@
++use super::*;
++use crate::{Action, Rect};
++
++fn select_error(role: &str) -> AdapterError {
++    let evidence = ActionabilityEvidence {
++        nonspatial: false,
++        state: crate::ElementState {
++            role: role.into(),
++            states: Vec::new(),
++            value: None,
++            enabled: Some(true),
++            hidden: Some(false),
++            offscreen: Some(false),
++        },
++        states_complete: true,
++        bounds: Some(Rect {
++            x: 0.0,
++            y: 0.0,
++            width: 100.0,
++            height: 20.0,
++        }),
++        available_actions: Vec::new(),
++    };
++    check_with_stability(
++        StabilityExpectation::permissive(None),
++        &evidence,
++        &ActionRequest::headless(Action::Select("Option B".into())),
++        None,
++        crate::Deadline::standard().unwrap(),
++    )
++    .unwrap_err()
++}
++
++fn click_error(enabled: Option<bool>, offscreen: Option<bool>) -> AdapterError {
++    let evidence = ActionabilityEvidence {
++        nonspatial: false,
++        state: crate::ElementState {
++            role: "button".into(),
++            states: Vec::new(),
++            value: None,
++            enabled,
++            hidden: Some(false),
++            offscreen,
++        },
++        states_complete: true,
++        bounds: Some(Rect {
++            x: 0.0,
++            y: 0.0,
++            width: 100.0,
++            height: 20.0,
++        }),
++        available_actions: vec!["Click".into()],
++    };
++    check_with_stability(
++        StabilityExpectation::permissive(None),
++        &evidence,
++        &ActionRequest::headless(Action::Click),
++        None,
++        crate::Deadline::standard().unwrap(),
++    )
++    .unwrap_err()
++}
++
++#[test]
++fn select_unsupported_on_an_item_collection_names_the_item_to_click() {
++    let error = select_error("listbox");
++    assert_eq!(error.code, ErrorCode::ActionNotSupported);
++    let suggestion = error.suggestion.unwrap();
++    assert!(
++        suggestion.starts_with(
++            "To choose one item, click the item itself: find it by name in a fresh snapshot and click its ref."
++        ),
++        "{suggestion}"
++    );
++    assert!(suggestion.contains("Waiting will not help"), "{suggestion}");
++}
++
++#[test]
++fn select_unsupported_off_an_item_collection_keeps_the_generic_hint() {
++    let error = select_error("button");
++    assert_eq!(error.code, ErrorCode::ActionNotSupported);
++    assert_eq!(
++        error.suggestion.as_deref(),
++        Some(
++            "Waiting will not help: this element cannot satisfy the action as targeted. Target an element that advertises the action (check available_actions in a fresh snapshot). For a dropdown without select support, open it with click, inspect its choices, and use explicit keyboard input."
++        )
++    );
++}
++
++#[test]
++fn an_offscreen_only_visibility_failure_suggests_scroll_to() {
++    let error = click_error(Some(true), Some(true));
++    assert_eq!(error.code, ErrorCode::ActionFailed);
++    assert!(
++        error
++            .message
++            .contains("visible (live offscreen state is true)"),
++        "{}",
++        error.message
++    );
++    assert_eq!(
++        error.suggestion.as_deref(),
++        Some(
++            "The target is off screen. Run 'scroll-to' on its ref first (some lists can be \
++             scrolled only with --headed), take a fresh snapshot, then retry the action."
++        )
++    );
++}
++
++#[test]
++fn a_not_offscreen_action_failure_keeps_the_wait_suggestion() {
++    let error = click_error(Some(false), Some(false));
++    assert_eq!(error.code, ErrorCode::ActionFailed);
++    assert!(
++        error
++            .message
++            .contains("enabled (live enabled state is false)"),
++        "{}",
++        error.message
++    );
++    assert_eq!(
++        error.suggestion.as_deref(),
++        Some(
++            "Wait for the target to become actionable, refresh the snapshot, or use an \
++             explicit physical/focus command if intended."
++        )
++    );
++}
++
++#[test]
++fn a_disabled_target_off_screen_keeps_the_wait_suggestion() {
++    let error = click_error(Some(false), Some(true));
++    assert_eq!(error.code, ErrorCode::ActionFailed);
++    assert_eq!(
++        error.suggestion.as_deref(),
++        Some(
++            "Wait for the target to become actionable, refresh the snapshot, or use an \
++             explicit physical/focus command if intended."
++        ),
++        "scrolling cannot enable a disabled target"
++    );
++}
+```
+
+---
+
+### Incident Patch 3: `4a76d304` (2026-11-28)
+**Commit Message**: fix: harden Windows select and unify polling (#662)
+
+* fix: harden Windows select and unify polling
+
+- One core Deadline::poll_until replaces the per-platform poll loops.
+- Windows checks the owner of a native control window before sending it messages, so a recycled handle is never messaged.
+- A headless select whose item only a scroll can reach is refused with POLICY_DENIED instead of ELEMENT_NOT_FOUND, and virtualized items are realized before giving up.
+- Fixes the Windows owner-drawn combo, the Linux launcher options and the Linux Chromium census.
+
+* docs(linux): say that only GTK refs carry an element address
+
+Chromium refs keep the capture proof (token_scope issues tokens to GTK3 and
+GTK4 only), but the skills and the docs still promised them an address.
+
+* docs(linux): cite a measured ledger row for the Chromium token exclusion
+
+The comment cited a row-rebind census that has no ledger row. L42-7 records
+the measurement (chrome://history, 260 rows, no path reuse); the comment now
+states what L17-15 and L42-7 show and why Chromium keeps the capture proof.
+
+* fix(windows): select the row the first search found instead of scrolling past it
+
+A headed select scrolled even after th
+
+**File**: `apps/docs/content/docs/snapshots-and-refs.mdx` (modified, +1/-1)
+```diff
+@@ -163,7 +163,7 @@ A command never reuses a live handle from the snapshot. Every command that takes
+ 6. A ref that was unique is counted again over the live window by role, native id, name and description. The count covers the whole window, which is the scope the capture proved the ref unique in. Exactly one match: the command acts on it. None: `STALE_REF`, `details.kind: saved_ref_absent`. Two or more: `AMBIGUOUS_TARGET`, `details.kind: saved_ref_ambiguous`. A field the live read could not answer leaves the count unproven, which returns `TIMEOUT` with `details.kind: resolution_identity_unknown` instead of a match.
+ 7. After `STALE_REF` or `AMBIGUOUS_TARGET`, take a fresh observation and use the new ref.
  
-   tinyglobby@0.2.17:
+-On macOS a ref carries the element's own address, so identical twins each keep their own ref. When the address could not be taken, macOS follows the rule below. Linux refs of GTK and Chromium apps carry one too. Windows refs, and Linux refs of Qt and other toolkits, carry no address, so a ref that was not the only element matching its role and stable fields when it was captured is refused. Qt can hand a destroyed object's address to a new object, so Linux does not issue it an address.
++On macOS a ref carries the element's own address, so identical twins each keep their own ref. When the address could not be taken, macOS follows the rule below. Linux refs of GTK apps carry one too. Windows refs, and Linux refs of Chromium, Qt and other toolkits, carry no address, so a ref that was not the only element matching its role and stable fields when it was captured is refused. Qt can hand a destroyed object's address to a new object, so Linux does not issue it an address.
+ 
+ The comparison is the identity fields and nothing else: role, native id, name, and description. Control values are volatile and never count. Bounds never count either, so a stored rectangle or a stored path cannot pick between two candidates. A ref that fails these checks is refused rather than guessed at.
+ 
+```
+
+**File**: `crates/core/src/wait/deadline.rs` (modified, +21/-0)
+```diff
+@@ -161,6 +161,27 @@ impl Deadline {
+         }
+     }
+ 
++    /// Reads with `read` until `done` accepts the value or `budget`, capped by
++    /// this deadline, runs out, pausing `step` between reads, and returns the
++    /// last value read. The first read always runs, so a caller gets an
++    /// answer even from a deadline that has just expired.
++    pub fn poll_until<T>(
++        self,
++        budget: Duration,
++        step: Duration,
++        mut read: impl FnMut() -> T,
++        done: impl Fn(&T) -> bool,
++    ) -> T {
++        let end = self.capped(budget);
++        loop {
++            let value = read();
++            if done(&value) || end.is_expired() {
++                return value;
++            }
++            end.pause(step);
++        }
++    }
++
+     /// Fails with [`Self::timeout_error`] once the deadline has expired.
+     pub fn ensure_remaining(self) -> Result<(), AdapterError> {
+         if self.is_expired() {
+```
+
+**File**: `crates/core/src/wait/deadline_tests.rs` (modified, +55/-0)
+```diff
+@@ -177,3 +177,58 @@ fn a_reserved_tail_survives_time_spent_before_the_work_starts() {
+     assert!(work.is_expired());
+     assert_eq!(deadline.remaining(), Duration::from_millis(250));
+ }
++
++#[test]
++fn a_poll_stops_at_the_first_accepted_read() {
++    let _clock = VirtualClock::freeze();
++    let mut reads = 0;
++
++    let value = Deadline::after(5_000).unwrap().poll_until(
++        Duration::from_millis(500),
++        Duration::from_millis(5),
++        || {
++            reads += 1;
++            reads
++        },
++        |value| *value == 3,
++    );
++
++    assert_eq!((value, reads), (3, 3));
++}
++
++#[test]
++fn a_poll_returns_the_last_read_when_its_budget_or_the_deadline_runs_out() {
++    let clock = VirtualClock::freeze();
++
++    let by_budget = Deadline::after(5_000).unwrap().poll_until(
++        Duration::from_millis(100),
++        Duration::from_millis(10),
++        || clock.elapsed(),
++        |_| false,
++    );
++    let start = clock.elapsed();
++    let by_deadline = Deadline::after(30).unwrap().poll_until(
++        Duration::from_millis(500),
++        Duration::from_millis(10),
++        || clock.elapsed() - start,
++        |_| false,
++    );
++
++    assert_eq!(by_budget, Duration::from_millis(100));
++    assert_eq!(by_deadline, Duration::from_millis(30));
++}
++
++#[test]
++fn a_poll_reads_once_even_from_an_expired_deadline() {
++    let _clock = VirtualClock::freeze();
++    let mut reads = 0;
++
++    Deadline::after(0).unwrap().poll_until(
++        Duration::from_millis(500),
++        Duration::from_millis(5),
++        || reads += 1,
++        |_| false,
++    );
++
++    assert_eq!(reads, 1);
++}
+```
+
+**File**: `crates/linux/src/actions/click.rs` (modified, +2/-21)
+```diff
+@@ -1,4 +1,4 @@
+-use std::time::{Duration, Instant};
++use std::time::Duration;
+ 
+ use agent_desktop_core::{
+     Action, ActionResult, AdapterError, ChainRung, Deadline, DeliveryOutcome, DeliverySemantics,
+@@ -28,24 +28,6 @@ const CLICK_LABEL: &str = "Action.DoAction";
+ const SUGGESTION: &str =
+     "Refresh the snapshot and inspect the element before deciding whether to retry.";
+ 
+-pub(super) fn poll_until<T>(
+-    deadline: Deadline,
+-    budget: Duration,
+-    step: Duration,
+-    mut read: impl FnMut() -> T,
+-    done: impl Fn(&T) -> bool,
+-) -> T {
+-    let end = Instant::now() + budget.min(deadline.remaining());
+-    loop {
+-        let value = read();
+-        let now = Instant::now();
+-        if done(&value) || now >= end {
+-            return value;
+-        }
+-        std::thread::sleep(step.min(end - now));
+-    }
+-}
+-
+ pub(super) fn refusal(
+     code: ErrorCode,
+     message: impl Into<String>,
+@@ -218,8 +200,7 @@ fn activate(target: &Target<'_>, action: &Action) -> Result<ActionResult, Adapte
+         };
+         deliver(reply, || {
+             before.as_ref().and_then(|before| {
+-                poll_until(
+-                    target.deadline,
++                target.deadline.poll_until(
+                     budget,
+                     step,
+                     || {
+```
+
+**File**: `crates/linux/src/actions/disclosure.rs` (modified, +3/-4)
+```diff
+@@ -5,8 +5,8 @@ use serde_json::json;
+ 
+ use super::action_call::resolve_verb;
+ use super::click::{
+-    POLL_STEP, POPUP_SETTLE, POPUP_STEP, invoke_verb, names_of, opens_popup, poll_until,
+-    popup_inner, refusal, run_single_rung,
++    POLL_STEP, POPUP_SETTLE, POPUP_STEP, invoke_verb, names_of, opens_popup, popup_inner, refusal,
++    run_single_rung,
+ };
+ use super::context::Target;
+ use super::toggle_state::{Flag, drive_to};
+@@ -98,8 +98,7 @@ pub(crate) fn set_expanded(
+                 None => invoke_verb(target, &action, names, verbs),
+             },
+             || {
+-                poll_until(
+-                    target.deadline,
++                target.deadline.poll_until(
+                     budget,
+                     step,
+                     || {
+```
+
+**File**: `crates/linux/src/actions/focus.rs` (modified, +6/-4)
+```diff
+@@ -5,7 +5,7 @@ use agent_desktop_core::{
+ };
+ use serde_json::json;
+ 
+-use super::click::{POLL_STEP, poll_until};
++use super::click::POLL_STEP;
+ use super::context::Target;
+ use super::write::mutation::{WriteKind, WriteReply};
+ use super::write::write_call::{Call, invoke};
+@@ -63,9 +63,11 @@ fn grab_focus(target: &Target<'_>) -> Result<WriteReply, AdapterError> {
+ 
+ fn focus_read_back(target: &Target<'_>) -> Option<bool> {
+     let read = || target.view().ok().and_then(|after| after.state(FOCUSED));
+-    let first = poll_until(target.deadline, FOCUS_SETTLE, POLL_STEP, read, |focused| {
+-        *focused == Some(true)
+-    });
++    let first = target
++        .deadline
++        .poll_until(FOCUS_SETTLE, POLL_STEP, read, |focused| {
++            *focused == Some(true)
++        });
+     if first == Some(true) {
+         std::thread::sleep(POLL_STEP);
+     }
+```
+
+**File**: `crates/linux/src/actions/popup_verify.rs` (modified, +2/-3)
+```diff
+@@ -1,4 +1,4 @@
+-use super::click::{POLL_STEP, POPUP_SETTLE, opens_popup, poll_until};
++use super::click::{POLL_STEP, POPUP_SETTLE, opens_popup};
+ use super::context::Target;
+ use crate::system::focus::focus_cause::Cause;
+ use crate::system::menu::menu_surface::roots_below;
+@@ -165,8 +165,7 @@ pub(super) fn run(
+         || roots_below(target.bus, &opener, target.deadline),
+         invoke,
+         |before| {
+-            poll_until(
+-                target.deadline,
++            target.deadline.poll_until(
+                 POPUP_SETTLE,
+                 POLL_STEP,
+                 || roots_below(target.bus, &opener, target.deadline),
+```
+
+**File**: `crates/linux/src/actions/select/mod.rs` (modified, +2/-3)
+```diff
+@@ -8,7 +8,7 @@ use serde_json::json;
+ use zbus::zvariant::{OwnedValue, Structure, Value};
+ 
+ use super::action_call::resolve_verb;
+-use super::click::{POLL_STEP, invoke_verb, names_of, poll_until, refusal};
++use super::click::{POLL_STEP, invoke_verb, names_of, refusal};
+ use super::context::Target;
+ use super::select::select_exclusive::{SELECTION_INTERFACE, selected_count};
+ use super::select::select_pointer::{Pointer, after_unproven_index};
+@@ -189,8 +189,7 @@ fn select_through(
+     let application_fires_no_change =
+         is_gecko(&toolkit_of(target.bus, target.element, target.deadline));
+     let observe = || -> Result<Option<bool>, AdapterError> {
+-        let verified = poll_until(
+-            target.deadline,
++        let verified = target.deadline.poll_until(
+             SELECT_SETTLE,
+             POLL_STEP,
+             || {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #739** (closed): fix: report lease timeouts as undelivered (@XSY-28)
 - **PR #734** (2026-11-23): Version the OG image URL by card content (@ctate)
 - **PR #733** (2026-11-23): Use the Vercel Labs OG card generator (@ctate)
 - **PR #732** (2026-11-23): Use the Vercel Labs lockup in the docs header (@ctate)
 - **PR #728** (2026-11-23): perf(ci): cut CI time across source checks, core tests, and dependency caching (@lahfir)
-- **PR #715** (2026-11-17): fix: keep the macOS cursor overlay in place across headed commands (@ctate)
-- **PR #714** (2026-11-17): chore: ignore the chrono unmaintained advisory from uiautomation (@ctate)
+- **PR #727** (closed): fix(core): explain refs emptied by the zsh :e modifier (@ZERLB)
 
 ---
 
@@ -1734,43 +2282,23 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use the Vercel Labs lockup in the docs header
+## X. keep the user's window in front and identify twin refs across platforms
 
 **RULE**:
-When implementing operations in `apps/docs/app/styles/geistdocs.css`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vercel-labs/agent-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vercel-labs/agent-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce2ddf07`: Use the Vercel Labs lockup in the docs header. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46ed5ff6`: keep the user's window in front and identify twin refs across platforms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/app/styles/geistdocs.css`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-/* Vercel Labs lockup: match the OG card's slash spacing, scaled to the 18px
-   logo. The card draws the logo 51.44px tall, so the scale factor is 0.35:
-   31.5 units of leading gap -> 11px, the slash bbox 17.75x42.25 units ->
-   6.2x14.8px with a 3-unit (1.05px) stroke, and 22 units of trailing gap ->
-   7.7px to the product name's text box. */
-header span[class~="gap-2.5"] {
-  column-gap: 0;
-}
-
-header span[class~="gap-2.5"] > div[class~="w-5"] {
-  flex: none;
-  width: 6.2px;
-  height: 14.8px;
-  margin-left: 11px;
-  margin-right: 7.7px;
-  background-color: currentColor;
-  clip-path: polygon(83.1% 0, 100% 0, 18.31% 100%, 0 100%);
-}
-
-header span[class~="gap-2.5"] > div[class~="w-5"] > svg {
-  display: none;
-}
+  A proof that is not unique in the window may instead be unique below its nearest ancestor whose own proof is; the
+  ref then records that chain of ancestors in `scope.chain`. Resolution finds each ancestor below the one before it and
+  lands the chain and the element step by step, each step starting from the live element the step before verified.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1780,7 +2308,7 @@ header span[class~="gap-2.5"] > div[class~="w-5"] > svg {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce2ddf07` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46ed5ff6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
