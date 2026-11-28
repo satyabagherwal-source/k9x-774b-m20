@@ -14083,3 +14083,5 @@
 | `CYCLE-20261128-SMVZ` | `2026-11-28T16:35:14.783Z` | `lapce/lapce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11121` | Yes (`8ae83894...`) |
 | `CYCLE-20261128-SREB` | `2026-11-28T16:35:20.627Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11122` | Yes (`b73e4e1c...`) |
 | `CYCLE-20261128-SU20` | `2026-11-28T16:35:24.072Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`74a16c8d...`) |
+| `CYCLE-20261128-OUPQ` | `2026-11-28T17:00:17.918Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md` | Yes (`3467d973...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T17:00:59.560Z` | `wcandillon-react-native-skia` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-77E7EEF6` [Domain H] | Yes (`3dc935f0...`) |

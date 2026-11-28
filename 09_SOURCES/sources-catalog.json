@@ -10193,10 +10193,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/wcandillon/react-native-skia",
-    "sourceVersion": "d0e4075f",
+    "sourceVersion": "caa24586",
     "license": "MIT",
-    "contentHash": "381414aa49d4c9aa188b2c33c3057e31b854175bfc9ab3f90b3684bc11cf7a1d",
-    "lastHarvestedAt": "2026-11-26T11:03:51.285Z",
+    "contentHash": "3467d9736c4f985c6fdcd16873c2c6016ca062e27d03aa36f20bb55b91825578",
+    "lastHarvestedAt": "2026-11-28T17:00:17.923Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "testing-library-dom-testing-library": {

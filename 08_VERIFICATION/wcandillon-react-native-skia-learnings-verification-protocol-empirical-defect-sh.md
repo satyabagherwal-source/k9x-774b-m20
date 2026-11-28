@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T11:03:56.276Z",
+  "timestamp": "2026-11-28T17:00:59.942Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-wcandillon-react-native-skia-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [wcandillon-react-native-skia-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T11:03:56.276Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T17:00:59.942Z`  
 > **Learning ID**: `LEARN-EVO-wcandillon-react-native-skia-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md`  
 > **Source**: github ([https://github.com/wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia))  
-> **Source Version**: `d0e4075f`  
+> **Source Version**: `caa24586`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T11:03:49.624Z  
+> **Timestamp**: 2026-11-28T17:00:17.126Z  
 > **Learning ID**: `learn-github-wcandillon-react-native-skia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T11:03:49.617Z  
+> **Harvest Timestamp**: 2026-11-28T17:00:16.888Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1715,498 +1715,501 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `13bdf30c` (2026-11-25)
-**Commit Message**: fix(🍏): don't name build stamps .signature (ITMS-91063) (#4540)
+### Incident Patch 1: `caa24586` (2026-11-26)
+**Commit Message**: feat(🚨): add named Skia errors and raise them from native code (#4533)
 
-* fix(🍏): don't name build stamps .signature (ITMS-91063)
+* feat(🚨): add named Skia errors and raise them from native code
 
-Xcode collects *.signature files from build products into the archive,
-so App Store Connect validated our incremental-build stamps as XCFramework
-code signatures and rejected the upload. Use a .stamp extension and remove
-stamps left behind by previous builds.
+First step of the v3 error handling RFC: one family of named errors,
+modelled on WebGPU's error types, that every public API will throw or
+reject with.
 
-Fixes #4539
+- SkiaError and its subclasses (SkiaDecodeError, SkSLCompilationError,
+  SkiaValidationError, SkiaOutOfMemoryError, SkiaGPUUnavailableError,
+  SkiaInternalError), plus the NotSupportedError, AbortError and
+  NotFoundError names WebGPU uses, and isSkiaError() to recognize them by
+  name on any runtime.
+- RNJsi::NamedError: a C++ exception that becomes the JS error of its name
+  where it crosses into JS, in every host function the NativeObject
+  installers create and in promises (executor, settle, reject). The JS
+  errors are built with the constructors the package registers on the React
+  Native runtime, so instanceof holds there; a worklet runtime gets an Error
+  with the same name and extra field.
+- The web backend throws NotSupportedError for the APIs it does not have.
+- An Errors documentation page.
 
-* test(🍏): guard against *.signature files in Apple build products
+No public API changes its behaviour yet: the factories and promises move
+to these errors in 
 
-A unit test runs the assembly and staging steps of the Xcode phase and
-fails if they leave a *.signature file behind, and the iOS CI job checks
-the real build products after xcodebuild.
-
-* ci(🍏): skip react-native-webgpu's stamp until it ships the fix
-
-The example installs a react-native-webgpu release that still writes
-.rnwgpu-dawn.signature; wcandillon/react-native-webgpu#655 fixes it.
-
-**File**: `.github/workflows/ci.yml` (modified, +16/-0)
+**File**: `apps/docs/docs/errors.md` (added, +77/-0)
 ```diff
-@@ -597,6 +597,22 @@ jobs:
-               exit 1
-             }
+@@ -0,0 +1,77 @@
++---
++id: errors
++title: Errors
++sidebar_label: Errors
++slug: /errors
++---
++
++React Native Skia reports failures the way WebGPU does: a call that fails throws an error with a name, a promise that fails rejects with one, and `null` is only ever a result, never a failure.
++
++## The rules
++
++| Situation | Outcome |
++| --- | --- |
++| A wrong argument type, a missing argument | Throws a `TypeError` |
++| Data that cannot be decoded, parsed or compiled | Throws a `SkiaDecodeError` or an `SkSLCompilationError` |
++| A GPU or CPU allocation that fails | Throws a `SkiaOutOfMemoryError` or a `SkiaValidationError` |
++| No GPU on the device | Throws a `SkiaGPUUnavailableError` (see [`Skia.gpu`](/docs/webgpu#the-gpu-device)) |
++| No drawing surface in the browser | Throws a `SkiaSurfaceUnavailableError` |
++| A valid call without a result (a path operation with an empty outcome, the end of an iteration) | Returns `null` |
++| Asynchronous work that fails | Rejects with a named error |
++| An API the platform does not have | Throws an error named `NotSupportedError` |
++
++## Error classes
++
++Every error React Native Skia raises extends `SkiaError`, which extends `Error`.
++
++| Class | Raised when | Extra field |
++| --- | --- | --- |
++| `SkiaDecodeError` | Bytes or text cannot be decoded: an image, an SVG, a font, a Lottie file, a picture, an SVG path string. | `format`: what was being decoded. |
++| `SkSLCompilationError` | A shader fails to compile. | `messages`: the diagnostics, each with `type`, `message`, `lineNum` and `linePos`, like WebGPU's `GPUCompilationMessage`. |
++| `SkiaValidationError` | A call is invalid in a way the types cannot catch: a surface of size zero, pixel data shorter than its image info. | |
++| `SkiaOutOfMemoryError` | An allocation fails. | |
++| `SkiaGPUUnavailableError` | The device has no GPU Skia can render with. The message is `Skia.gpu.error`. | |
++| `SkiaSurfaceUnavailableError` | On the web, the browser will not give a drawing surface: no WebGL context (WebGL disabled or blocked, too many contexts on the page), no graphics context on top of it, or no 2D context to present through. | `context`: `"webgl"`, `"graphics"` or `"2d"`. |
++| `SkiaInternalError` | Skia or the graphics driver fails on its own. | |
++
++Three more names follow the `DOMException` names WebGPU uses, as plain `SkiaError`s: `NotSupportedError`, `AbortError` and `NotFoundError`.
++
++## Handling errors
++
++```tsx
++import { Skia, SkSLCompilationError } from "react-native-skia";
++
++try {
++  const effect = Skia.RuntimeEffect.Make(source);
++} catch (e) {
++  if (e instanceof SkSLCompilationError) {
++    for (const { lineNum, linePos, message } of e.messages) {
++      console.log(`${lineNum}:${linePos} ${message}`);
++    }
++  }
++}
++```
++
++`instanceof` holds on the React Native runtime (and on the web). A worklet runtime receives errors that keep their `name`, message and extra field, but not their class. In code that may run in a worklet, use `isSkiaError`: it recognizes the errors React Native Skia raised by a marker they carry, so an error of the same name from elsewhere (the `AbortError` of an aborted `fetch`) does not match.
++
++```tsx
++import { isSkiaError } from "react-native-skia";
++
++const onError = (e: unknown) => {
++  "worklet";
++  if (isSkiaError(e, "AbortError")) {
++    // The GPU device was lost while the work was pending.
++  }
++};
++```
++
++### An unavailable drawing surface on the web
++
++A browser can refuse a view its drawing surface: WebGL turned off or blocked, or too many WebGL contexts on the page. Catch it with an error boundary and show an empty state. Check the class, not the message, which may change:
++
++```tsx
++import { SkiaSurfaceUnavailableError } from "react-native-skia";
++
++const isSurfaceUnavailable = (error: unknown) =>
++  error instanceof SkiaSurfaceUnavailableError;
++```
+```
+
+**File**: `apps/docs/sidebars.js` (modified, +5/-0)
+```diff
+@@ -31,6 +31,11 @@ const sidebars = {
+       label: "WebGPU",
+       id: "webgpu",
+     },
++    {
++      type: "doc",
++      label: "Errors",
++      id: "errors",
++    },
+     {
+       collapsed: true,
+       type: "category",
+```
+
+**File**: `packages/skia/cpp/api/JsiSkNativeObjects.h` (modified, +19/-13)
+```diff
+@@ -213,8 +213,10 @@ class JsiSkNativeObject : public RNJsi::NativeObject<Derived> {
+         runtime, jsi::PropNameID::forUtf8(runtime, name), 0,
+         [method](jsi::Runtime &rt, const jsi::Value &thisValue,
+                  const jsi::Value *arguments, size_t count) -> jsi::Value {
+-          auto native = fromThis(rt, thisValue);
+-          return ((*native).*method)(rt, thisValue, arguments, count);
++          return RNJsi::guardNamedErrors(rt, [&]() -> jsi::Value {
++            auto native = fromThis(rt, thisValue);
++            return ((*native).*method)(rt, thisValue, arguments, count);
++          });
+         });
+     prototype.setProperty(runtime, name, func);
+   }
+@@ -233,10 +235,12 @@ class JsiSkNativeObject : public RNJsi::NativeObject<Derived> {
+         runtime, jsi::PropNameID::forUtf8(runtime, name), sizeof...(Args),
+         [method](jsi::Runtime &rt, const jsi::Value &thisValue,
+                  const jsi::Value *args, size_t count) -> jsi::Value {
+-          auto native = fromThis(rt, thisValue);
+-          invokeChainable(native.get(), method, rt, args,
+-                          std::index_sequence_for<Args...>{}, count);
+-          return jsi::Value(rt, thisValue);
++          return RNJsi::guardNamedErrors(rt, [&]() -> jsi::Value {
++            auto native = fromThis(rt, thisValue);
++            invokeChainable(native.get(), method, rt, args,
++                            std::index_sequence_for<Args...>{}, count);
++            return jsi::Value(rt, thisValue);
++          });
+         });
+     prototype.setProperty(runtime, name, func);
+   }
+@@ -254,10 +258,13 @@ class JsiSkNativeObject : public RNJsi::NativeObject<Derived> {
+         runtime, jsi::PropNameID::forUtf8(runtime, name), sizeof...(Args),
+         [method](jsi::Runtime &rt, const jsi::Value &thisValue,
+                  const jsi::Value *args, size_t count) -> jsi::Value {
+-          auto native = fromThis(rt, thisValue);
+-          invokeChainableWithRuntime(native.get(), method, rt, args,
+-                                     std::index_sequence_for<Args...>{}, count);
+-          return jsi::Value(rt, thisValue);
++          return RNJsi::guardNamedErrors(rt, [&]() -> jsi::Value {
++            auto native = fromThis(rt, thisValue);
++            invokeChainableWithRuntime(native.get(), method, rt, args,
++                                       std::index_sequence_for<Args...>{},
++                                       count);
++            return jsi::Value(rt, thisValue);
++          });
+         });
+     prototype.setProperty(runtime, name, func);
+   }
+@@ -279,9 +286,8 @@ class JsiSkNativeObject : public RNJsi::NativeObject<Derived> {
+       Derived *obj, ReturnType (Derived::*method)(jsi::Runtime &, Args...),
+       jsi::Runtime &runtime, const jsi::Value *args, std::index_sequence<Is...>,
+       size_t count) {
+-    (obj->*method)(runtime,
+-                   RNJsi::JSIConverter<std::decay_t<Args>>::fromJSI(
+-                       runtime, args[Is], Is >= count)...);
++    (obj->*method)(runtime, RNJsi::JSIConverter<std::decay_t<Args>>::fromJSI(
++                                runtime, args[Is], Is >= count)...);
+   }
  
-+      # Xcode collects *.signature files from build products into the archive,
-+      # and App Store Connect rejects any that is not an XCFramework code
-+      # signature (ITMS-91063, #4539). No build phase may leave one there.
-+      # The react-native-webgpu release the example installs still writes
-+      # .rnwgpu-dawn.signature (fixed in wcandillon/react-native-webgpu#655):
-+      # drop the exclusion once the example is on a release with that fix.
-+      - name: Check build products for *.signature files
-+        run: |
-+          signatures=$(find "$DERIVED_DATA/Build/Products" -name '*.signature' \
-+            -not -path '*/ReactNativeWebGPUBinaries/*')
-+          if [ -n "$signatures" ]; then
-+            echo "::error::Build products contain *.signature files, which App Store Connect rejects (ITMS-91063):"
-+            echo "$signatures"
-+            exit 1
-+          fi
-+
-       # React Native's prebuilt core, which the example installs since 0.88, is
-       # compiled with Metro on 8081: an RCT_METRO_PORT build setting no longer
-       # reaches it.
+   std::shared_ptr<RNSkPlatformContext> _context;
 ```
 
-**File**: `packages/skia/scripts/__tests__/prepare-apple-binaries.spec.ts` (added, +93/-0)
+**File**: `packages/skia/cpp/jsi/JsiPromises.cpp` (modified, +11/-2)
 ```diff
-@@ -0,0 +1,93 @@
-+import { execFileSync } from "child_process";
-+import fs from "fs";
-+import os from "os";
-+import path from "path";
-+
-+const script = path.join(__dirname, "..", "prepare-apple-binaries.sh");
-+
-+// Every file below `directory`, relative to it.
-+const walk = (directory: string): string[] =>
-+  fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-+    const file = path.join(directory, entry.name);
-+    return entry.isDirectory()
-+      ? walk(file).map((child) => path.join(entry.name, child))
-+      : [entry.name];
-+  });
-+
-+// Runs the assembly and linker staging steps of the Xcode phase against a
-+// local archive. The macOS-only ditto and plutil are stubbed so the test also
-+// runs on Linux.
-+const prepare = (root: string) =>
-+  execFileSync(
-+    "/bin/bash",
-+    [
-+      "-c",
-+      `set -Eeuo pipefail
-+source "$1"
-+ditto() { mkdir -p "$2"; cp -R "$1"/. "$2"; }
-+json_strings() { echo arm64; }
-+WORK_DIR="$2/work"; mkdir -p "$WORK_DIR"; TEMP_PATHS=()
-+SDK=iphoneos VERSION=0.0.0 SOURCE_SIGNATURE=source MODULE=skia
-+MODULE_LIBRARIES=(libskia.a) META_IDENTIFIER=ios-arm64 META_ARCHS=arm64
-+SOURCE_DIRECTORY="$2/source" CONTAINERS="$2/assembly" OUTPUT="$2/output"
-+assemble_module
-+CONTAINER_ROOT="$CONTAINERS/$MODULE"
-+stage_module`,
-+      "prepare",
-+      script,
-+      root,
-+    ],
-+    { stdio: "pipe" }
-+  );
-+
-+// Xcode collects *.signature files from build products into the archive, and
-+// App Store Connect rejects any that is not an XCFramework code signature
-+// (ITMS-91063, #4539). Build bookkeeping must never use that extension.
-+describe("prepare-apple-binaries.sh", () => {
-+  let root: string;
-+
-+  beforeEach(() => {
-+    root = fs.mkdtempSync(path.join(os.tmpdir(), "rnskia-prepare-"));
-+    fs.mkdirSync(path.join(root, "source"));
-+    fs.writeFileSync(path.join(root, "source", "libskia.a"), "archive");
-+    fs.writeFileSync(
-+      path.join(root, "source", "metadata.json"),
-+      '{"architectures":["arm64"]}'
-+    );
-+  });
-+
-+  afterEach(() => fs.rmSync(root, { recursive: true, force: true }));
-+
-+  const signatures = () =>
-+    ["output", "assembly"].flatMap((directory) =>
-+      walk(path.join(root, directory))
-+        .filter((file) => file.endsWith(".signature"))
-+        .map((file) => path.join(directory, file))
-+    );
-+
-+  it("stages the library without writing *.signature files", () => {
-+    prepare(root);
-+    expect(
-+      fs.readFileSync(path.join(root, "output", "librnskia_skia.a"), "utf8")
-+    ).toBe("archive");
-+    expect(signatures()).toEqual([]);
-+    // An incremental build reuses the stamps and still writes none.
-+    prepare(root);
-+    expect(signatures()).toEqual([]);
-+  });
-+
-+  it("removes the *.signature stamps of earlier releases", () => {
-+    // Archive build folders persist, so 3.12 stamps would still be uploaded.
-+    fs.mkdirSync(path.join(root, "output"));
-+    fs.writeFileSync(path.join(root, "output", ".rnskia-skia.signature"), "");
-+    fs.mkdirSync(path.join(root, "assembly", "skia", ".slices"), {
-+      recursive: true,
-+    });
-+    fs.writeFileSync(
-+      path.join(root, "assembly", "skia", ".slices", "iphoneos.signature"),
-+      ""
-+    );
-+    prepare(root);
-+    expect(signatures()).toEqual([]);
-+  });
-+});
-```
-
-**File**: `packages/skia/scripts/prepare-apple-binaries.sh` (modified, +9/-3)
-```diff
-@@ -212,7 +212,7 @@ copy_library() {
- # The caller holds the assembly lock across both assembly and linker staging.
- assemble_module() {
-   local root="$CONTAINERS/$MODULE" library existing=true temporary previous='' old_archs platform variant ignored deployment
--  local signature_file="$CONTAINERS/$MODULE/.slices/$SDK.signature"
-+  local signature_file="$CONTAINERS/$MODULE/.slices/$SDK.stamp"
-   CONTAINER_ROOT="$root"
-   for library in "${MODULE_LIBRARIES[@]}"; do
-     if [[ ! -f "$root/${library%.a}.xcframework/$META_IDENTIFIER/$library" || ! -f "$root/${library%.a}.xcframework/Info.plist" ]]; then existing=false; fi
-@@ -228,6 +228,7 @@ assemble_module() {
-     previous="$platform-$(printf '%s\n' "$old_archs" | LC_ALL=C sort | paste -sd _ -)${variant:+-$variant}"
-   fi
-   mkdir -p "$temporary/.slices"
-+  rm -f "$temporary/.slices/$SDK.signature"
-   cp "$SOURCE_DIRECTORY/metadata.json" "$temporary/.slices/$SDK.json"
-   for library in "${MODULE_LIBRARIES[@]}"; do
-     local container="$temporary/${library%.a}.xcframework"
-@@ -236,7 +237,7 @@ assemble_module() {
-     copy_library "$SOURCE_DIRECTORY/$library" "$container/$META_IDENTIFIER/$library"
-     write_xcframework_plist "$container" "$library" "$temporary/.slices"
-   done
--  printf '%s\n' "$SOURCE_SIGNATURE" > "$temporary/.slices/$SDK.signature"
-+  printf '%s\n' "$SOURCE_SIGNATURE" > "$temporary/.slices/$SDK.stamp"
-   replace_directory "$temporary" "$root"
-   note "Prepared $SDK XCFramework slices ($(printf '%s' "$META_ARCHS" | tr '\n' ' '))"
+@@ -21,6 +21,10 @@ void JsiPromises::Promise::reject(const jsi::JSError &error) {
+   reject_.call(runtime_, error.value());
  }
-@@ -248,10 +249,15 @@ assemble_module() {
- # rather than dynamic frameworks copied into the app's Frameworks directory.
- # Build-product stamps include SDK/version/source identity, avoiding equal-size
- # archives from another platform and unnecessary copies on incremental builds.
-+# Stamps must never use the .signature extension: Xcode collects *.signature
-+# files from build products into the archive, and App Store Connect rejects
-+# them as invalid XCFramework code signatures (ITMS-91063).
- stage_module() {
--  local library destination temporary stamp="$OUTPUT/.rnskia-$MODULE.signature"
-+  local library destination temporary stamp="$OUTPUT/.rnskia-$MODULE.stamp"
-   local signature="$SDK:$VERSION:$SOURCE_SIGNATURE" name
-   mkdir -p "$OUTPUT"
-+  # Archive build folders persist across runs; drop stamps from older releases.
-+  rm -f "$OUTPUT/.rnskia-$MODULE.signature"
-   for library in "${MODULE_LIBRARIES[@]}"; do
-     name="${library#lib}"
-     destination="$OUTPUT/librnskia_$name"
+ 
++void JsiPromises::Promise::reject(const NamedError &error) {
++  reject_.call(runtime_, error.toValue(runtime_));
++}
++
+ jsi::Value
+ JsiPromises::createPromiseAsJSIValue(jsi::Runtime &rt,
+                                      PromiseSetupFunctionType &&func) {
+@@ -33,8 +37,13 @@ JsiPromises::createPromiseAsJSIValue(jsi::Runtime &rt,
+         jsi::Function reject = args[1].getObject(rt2).getFunction(rt2);
+         auto wrapper = std::make_shared<Promise>(rt2, std::move(resolve),
+                                                  std::move(reject));
+-        func(rt2, wrapper);
+-        return jsi::Value::undefined();
++        // A NamedError thrown before the work started rejects the promise
++        // with the error of its name (the Promise constructor turns the
++        // executor's exception into the rejection).
++        return guardNamedErrors(rt2, [&]() -> jsi::Value {
++          func(rt2, wrapper);
++          return jsi::Value::undefined();
++        });
+       });
+ 
+   return JSPromise.callAsConstructor(rt, fn);
 ```
 
----
-
-### Incident Patch 2: `d0e4075f` (2026-11-26)
-**Commit Message**: fix(🔤): accept a TypefaceFontProvider wherever a FontMgr is expected (#4541)
-
-Skia.SVG.MakeFromString and MakeFromData document useFonts() as their
-font manager, and SkTypefaceFontProvider extends SkFontMgr in the types,
-on the web and in Skia itself. On iOS and Android, JsiSkFontMgr::fromValue
-only accepted a JsiSkFontMgr, so passing a provider threw "Expected FontMgr
-but got different type".
-
-fromValue now also unwraps a JsiSkTypefaceFontProvider; anything else still
-goes through the strict check.
-
-**File**: `packages/skia/cpp/api/JsiSkFontMgr.h` (modified, +6/-0)
+**File**: `packages/skia/cpp/jsi/JsiPromises.h` (modified, +3/-0)
 ```diff
-@@ -10,6 +10,7 @@
- #include "JsiSkFontStyle.h"
- #include "JsiSkNativeObjects.h"
- #include "JsiSkTypeface.h"
-+#include "JsiSkTypefaceFontProvider.h"
- #include "utils/RNSkLog.h"
+@@ -7,6 +7,7 @@
  #include <jsi/jsi.h>
  
-@@ -71,6 +72,11 @@ class JsiSkFontMgr
+ #include "api/third_party/base64.h"
++#include "jsi/NamedError.h"
  
-   static sk_sp<SkFontMgr> fromValue(jsi::Runtime &runtime,
-                                     const jsi::Value &obj) {
-+    // A TypefaceFontProvider (what useFonts returns) is an SkFontMgr too.
-+    if (auto provider =
-+            tryGetJsiObject<JsiSkTypefaceFontProvider>(runtime, obj)) {
-+      return provider->getObject();
-+    }
-     return objectFromValue(runtime, obj);
-   }
+ namespace RNJsi {
+ namespace jsi = facebook::jsi;
+@@ -37,6 +38,8 @@ class JsiPromises {
+     void reject(const std::string &error);
+     /** Rejects with the JS error `error` carries, as thrown. */
+     void reject(const jsi::JSError &error);
++    /** Rejects with the JS error of the name `error` carries. */
++    void reject(const NamedError &error);
  
+     jsi::Runtime &runtime_;
+     jsi::Function resolve_;
 ```
 
-**File**: `packages/skia/src/renderer/__tests__/e2e/SVG.spec.tsx` (modified, +92/-1)
+**File**: `packages/skia/cpp/jsi/NamedError.h` (added, +121/-0)
 ```diff
-@@ -3,7 +3,9 @@ import fs from "fs";
- import React from "react";
- 
- import { checkImage, docPath, itRunsE2eOnly } from "../../../__tests__/setup";
--import { importSkia, surface } from "../setup";
-+import { importSkia, resolveFile, surface } from "../setup";
-+import { AlphaType, ColorType } from "../../../skia/types";
-+import type { SkFontMgr } from "../../../skia/types";
- import {
-   Blur,
-   ColorMatrix,
-@@ -40,6 +42,14 @@ const tiger = new SVGAsset(
-   800
- );
- 
-+const RobotoRegular = Array.from(
-+  resolveFile("skia/__tests__/assets/Roboto-Regular.ttf")
-+);
+@@ -0,0 +1,121 @@
++#pragma once
 +
-+const robotoText = `<svg viewBox='0 0 64 32' width="64" height="32" xmlns='http://www.w3.org/2000/svg'>
-+<text x="2" y="26" font-family="Roboto" font-size="24" fill="black">Hi</text>
-+</svg>`;
++#include <functional>
++#include <stdexcept>
++#include <string>
++#include <utility>
 +
- const svgWithoutSize = new SVGAsset(
-   `<svg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
- <circle cx='10' cy='10' r='10' fill='#00FFFF'/>
-@@ -209,4 +219,85 @@ describe("Displays SVGs", () => {
-     );
-     await checkImage(image, docPath("svg.png"));
-   });
++#include <jsi/jsi.h>
 +
-+  itRunsE2eOnly(
-+    "should accept a TypefaceFontProvider as the font manager",
-+    async () => {
-+      const result = await surface.eval(
-+        (Skia, ctx) => {
-+          const roboto = Skia.Typeface.MakeFromData(
-+            Skia.Data.fromBytes(new Uint8Array(ctx.RobotoRegular))
-+          )!;
-+          const provider = Skia.TypefaceFontProvider.Make();
-+          provider.registerFont(roboto, "Roboto");
-+          const fromString = Skia.SVG.MakeFromString(ctx.svg, provider)!;
-+          const fromData = Skia.SVG.MakeFromData(
-+            Skia.Data.fromBytes(new Uint8Array(ctx.svgBytes)),
-+            provider
-+          )!;
-+          const fromSystem = Skia.SVG.MakeFromString(
-+            ctx.svg,
-+            Skia.FontMgr.System()
-+          );
-+          const offscreen = Skia.Surface.MakeOffscreen(64, 32)!;
-+          const canvas = offscreen.getCanvas();
-+          canvas.drawColor(Skia.Color("white"));
-+          canvas.drawSvg(fromString);
-+          return canvas
-+            .readPixels(0, 0, {
-+              width: 64,
-+              height: 32,
-+              colorType: ctx.colorType,
-+              alphaType: ctx.alphaType,
-+            })
-+            .then((pixels) => {
-+              let inked = 0;
-+              for (let i = 0; i < pixels!.length; i += 4) {
-+                if (pixels![i] < 128) {
-+                  inked++;
-+                }
-+              }
-+              return {
-+                fromString: [fromString.width(), fromString.height()],
-+                fromData: [fromData.width(), fromData.height()],
-+                fromSystem: fromSystem !== null,
-+                inked,
-+              };
-+            });
-+        },
-+        {
-+          RobotoRegular,
-+          svg: robotoText,
-+          svgBytes: Array.from(Buffer.from(robotoText)),
-+          colorType: ColorType.RGBA_8888,
-+          alphaType: AlphaType.Unpremul,
++namespace RNJsi {
++
++namespace jsi = facebook::jsi;
++
++/**
++ A failure that reaches JS as an error of a given name: a SkiaDecodeError,
++ an AbortError, a TypeError. Native code throws it anywhere, on any thread;
++ it becomes a JS error where it crosses into JS (a host function, see
++ guardNamedErrors, or a promise, see JsiPromises::Promise::reject).
++
++ The JS error is built by the constructor registered for its name in the
++ global `__RNSkiaErrors` (see src/skia/types/Errors.ts), so `instanceof`
++ holds on the runtime that registered them. A runtime without the registry
++ (a worklet runtime) gets an Error with the same name, message and extra
++ field.
++ */
++class NamedError : public std::runtime_error {
++public:
++  /** Builds the value of the error's extra field on the runtime. */
++  using Extra = std::function<jsi::Value(jsi::Runtime &)>;
++
++  NamedError(std::string name, const std::string &message)
++      : std::runtime_error(message), _name(std::move(name)) {}
++
++  /**
++   An error that carries one more field, named `extraKey` (the `format` of a
++   SkiaDecodeError, the `messages` of an SkSLCompilationError).
++   */
++  NamedError(std::string name, const std::string &message, std::string extraKey,
++             Extra extra)
++      : std::runtime_error(message), _name(std::move(name)),
++        _extraKey(std::move(extraKey)), _extra(std::move(extra)) {}
++
++  const std::string &name() const { return _name; }
++
++  /** The JS error, built on `runtime`. */
++  jsi::Value toValue(jsi::Runtime &runtime) const {
++    auto message = jsi::String::createFromUtf8(runtime, what());
++    auto extra = _extra ? _extra(runtime) : jsi::Value::undefined();
++    auto global = runtime.global();
++    // The built-in errors (TypeError, RangeError) are built as such.
++    if (_name == "TypeError" || _name == "RangeError") {
++      auto ctor = global.getProperty(runtime, _name.c_str());
++      if (ctor.isObject() && ctor.asObject(runtime).isFunction(runtime)) {
++        return ctor.asObject(runtime).asFunction(runtime).callAsConstructor(
++            runtime, message);
++      }
++    }
++    auto registry = global.getProperty(runtime, "__RNSkiaErrors");
++    if (registry.isObject()) {
++      auto errors = registry.asObject(runtime);
++      // The errors of the generic class take their name as an argument.
++      bool generic = !errors.hasProperty(runtime, _name.c_str());
++      auto factory =
++          errors.getProperty(runtime, generic ? "SkiaError" : _name.c_str());
++      if (factory.isObject() && factory.asObject(runtime).isFunction(runtime)) {
++        auto fn = factory.asObject(runtime).asFunction(runtime);
++        if (generic) {
++          return fn.call(runtime, message,
++                         jsi::String::createFromUtf8(runtime, _name));
 +        }
-+      );
-+      expect(result.fromString).toEqual([64, 32]);
-+      expect(result.fromData).toEqual([64, 32]);
-+      expect(result.fromSystem).toBe(true);
-+      expect(result.inked).toBeGreaterThan(0);
++        return fn.call(runtime, message, extra);
++      }
 +    }
-+  );
++    // No registry: an Error that keeps the name and the extra field, and
++    // carries the brand the classes set (SkiaErrorBrand in Errors.ts), so
++    // that isSkiaError recognizes it.
++    auto error = global.getPropertyAsFunction(runtime, "Error")
++                     .callAsConstructor(runtime, message)
++                     .asObject(runtime);
++    error.setProperty(runtime, "name",
++                      jsi::String::createFromUtf8(runtime, _name));
++    if (!_extraKey.empty()) {
++      error.setProperty(runtime, _extraKey.c_str(), extra);
++    }
++    auto descriptor = jsi::Object(runtime);
++    descriptor.setProperty(runtime, "value", true);
++    global.getPropertyAsObject(runtime, "Object")
++        .getPropertyAsFunction(runtime, "defineProperty")
++        .call(runtime, error, kBrand, descriptor);
++    return jsi::Value(runtime, error);
++  }
 +
-+  itRunsE2eOnly(
-+    "should reject a font manager of a different type",
-+    async () => {
-+      const message = await surface.eval(
-+        (Skia, ctx) => {
-+          try {
-+            Skia.SVG.MakeFromString(
-+              ctx.svg,
-+              Skia.Paint() as unknown as SkFontMgr
-+            );
-+            return "did not throw";
-+          } catch (e) {
-+            return (e as Error).message;
-+          }
-+        },
-+        { svg: robotoText }
-+      );
-+      expect(message).toContain("Expected FontMgr but got different type");
-+    }
-+  );
- });
++  /** The JS error, as a JSError to throw on `runtime`. */
++  jsi::JSError toJSError(jsi::Runtime &runtime) const {
++    return jsi::JSError(runtime, toValue(runtime));
++  }
++
++private:
++  /** SkiaErrorBrand in src/skia/types/Errors.ts. */
++  static constexpr const char *kBrand = "__rnskiaError";
++
++  std::string _name;
++  std::string _extraKey;
++  Extra _extra;
++};
++
++/**
++ Runs `body`, the work of a host function, and turns a NamedError it throws
++ into the JS error of that name. Other exceptions pass through as they are:
++ the runtime turns a std::exception into an Error with its message.
++ */
++template <typename Body>
++auto guardNamedErrors(jsi::Runtime &runtime, Body &&body) -> decltype(body()) {
++  try {
++    return body();
++  } catch (const NamedError &error) {
++    throw error.toJSError(runtime);
++  }
++}
++
++} // namespace RNJsi
 ```
 
----
-
-### Incident Patch 3: `af44efce` (2026-11-25)
-**Commit Message**: fix(🐛): log lost surface recordings and keep outputImage without a snapshot (#4531)
-
-submitRecording() now logs a recording Graphite could not snap or submit
-(only a rejected insert was logged), and its result accounts for the
-submit. makeImageSnapshot() no longer replaces the content of outputImage
-when no snapshot could be made.
-
-**File**: `packages/skia/cpp/api/JsiSkSurface.h` (modified, +3/-1)
+**File**: `packages/skia/cpp/jsi/NativeObject.h` (modified, +53/-38)
 ```diff
-@@ -125,7 +125,9 @@ class JsiSkSurface
-     if (auto *recorder = surface->recorder()) {
-       DawnContext::getInstance().submitRecording(recorder);
-     }
--    if (count > 1 && arguments[1].isObject()) {
-+    // Without a snapshot (e.g. bounds outside of the surface), outputImage
-+    // keeps its previous content and the image returned is a null one.
-+    if (image != nullptr && count > 1 && arguments[1].isObject()) {
-       auto jsiImage = getJsiObject<JsiSkImage>(runtime, arguments[1]);
-       jsiImage->setObject(image);
-       return jsi::Value(runtime, arguments[1]);
-```
-
-**File**: `packages/skia/cpp/rnskia/RNDawnContext.h` (modified, +14/-6)
-```diff
-@@ -457,7 +457,8 @@ class DawnContext {
-    generation()) is dropped: nothing can run it, and the device in use would
-    refuse its resources. Called on the recorder's thread. Returns whether
-    the recording runs: false when there was nothing to run, when it was
--   dropped, or when Graphite rejected it (which is logged).
-+   dropped, or when Graphite could not snap, insert or submit it (which is
-+   logged).
-    */
-   bool submitRecording(
-       skgpu::graphite::Recorder *recorder,
-@@ -469,15 +470,17 @@ class DawnContext {
-     // the warmup stays behind (see RNSkGpuActivity), as is the run.
-     RNSkGpuActivity::Scope activity;
-     auto recording = recorder->snap();
--    if (recording == nullptr) {
--      return false;
--    }
-     std::lock_guard<std::mutex> lock(_mutex);
-     auto *current = _current.load(std::memory_order_acquire);
-     if (generationOf(recorder) != current->id ||
-         current->lost.load(std::memory_order_acquire)) {
-       return false;
-     }
-+    // After the check above: a snap failing for a lost device is a drop.
-+    if (recording == nullptr) {
-+      RNSkLogger::logToConsole("Graphite could not snap a recording");
-+      return false;
-+    }
-     skgpu::graphite::InsertRecordingInfo info;
-     info.fRecording = recording.get();
-     auto status = current->context->insertRecording(info);
-@@ -490,8 +493,13 @@ class DawnContext {
-               static_cast<skgpu::graphite::InsertStatus::V>(status)),
-           status.message().c_str());
-     }
--    current->context->submit(syncToCpu);
--    return inserted;
-+    // Submitted either way, for the work other recordings inserted.
-+    const bool submitted = current->context->submit(syncToCpu);
-+    // Unless the device was lost meanwhile: its work is dropped, as above.
-+    if (!submitted && !current->lost.load(std::memory_order_acquire)) {
-+      RNSkLogger::logToConsole("Graphite could not submit a recording");
-+    }
-+    return inserted && submitted;
+@@ -16,6 +16,7 @@
+ 
+ #include "jsi/BoxedNativeObject.h"
+ #include "jsi/JSICache.h"
++#include "jsi/NamedError.h"
+ 
+ // Forward declare to avoid circular dependency
+ namespace RNJsi {
+@@ -368,9 +369,11 @@ class NativeObject : public NativeObjectBase,
+         runtime, jsi::PropNameID::forUtf8(runtime, name), sizeof...(Args),
+         [method](jsi::Runtime &rt, const jsi::Value &thisVal,
+                  const jsi::Value *args, size_t count) -> jsi::Value {
+-          auto native = NativeObject<Derived>::fromValue(rt, thisVal);
+-          return callMethod(native.get(), method, rt, args,
+-                            std::index_sequence_for<Args...>{}, count);
++          return RNJsi::guardNamedErrors(rt, [&]() -> jsi::Value {
++            auto native = NativeObject<Derived>::fromValue(rt, thisVal);
++            return callMethod(native.get(), method, rt, args,
++                              std::index_sequence_for<Args...>{}, count);
++          });
+         });
+     prototype.setProperty(runtime, name, func);
    }
- 
-   /**
+@@ -388,10 +391,12 @@ class NativeObject : public NativeObjectBase,
+         runtime, jsi::PropNameID::forUtf8(runtime, name), sizeof...(Args),
+         [method](jsi::Runtime &rt, const jsi::Value &thisVal,
+                  const jsi::Value *args, size_t count) -> jsi::Value {
+-          auto native = NativeObject<Derived>::fromValue(rt, thisVal);
+-          return callMethodWithRuntime(native.get(), method, rt, args,
+-                                       std::index_sequence_for<Args...>{},
+-                                       count);
++          return RNJsi::guardNamedErrors(rt, [&]() -> jsi::Value {
++            auto native = NativeObject<Derived>::fromValue(rt, thisVal);
++            return callMethodWithRuntime(native.get(), method, rt, args,
++                                         std::index_sequence_for<Args...>{},
++                                         count);
++          });
+         });
+     prototype.setProperty(runtime, name, func);
+   }
+@@ -427,15 +432,17 @@ class NativeObject : public NativeObjectBase,
+         0,
+         [getter](jsi::Runtime &rt, const jsi::Value &thisVal,
+                  const jsi::Value *args, size_t count) -> jsi::Value {
+-          auto native = NativeObject<Derived>::fromValue(rt, thisVal);
+-          if constexpr (std::is_same_v<ReturnType, void>) {
+-            (native.get()->*getter)();
+-            return jsi::Value::undefined();
+-          } else {
+-            ReturnType result = (native.get()->*getter)();
+-            return RNJsi::JSIConverter<std::decay_t<ReturnType>>::toJSI(
+-                rt, std::move(result));
+-          }
++          return RNJsi::guardNamedErrors(rt, [&]() -> jsi::Value {
++            auto native = NativeObject<Derived>::fromValue(rt, thisVal);
++            if constexpr (std::is_same_v<ReturnType, void>) {
++              (native.get()->*getter)();
++              return jsi::Value::undefined();
++            } else {
++              ReturnType result = (native.get()->*getter)();
++              return RNJsi::JSIConverter<std::decay_t<ReturnType>>::toJSI(
++                  rt, std::move(result));
++            }
++          });
+         });
+     defineGetter(runtime, prototype, name, std::move(getterFunc));
+   }
+@@ -454,8 +461,10 @@ class NativeObject : public NativeObjectBase,
+         0,
+         [getter](jsi::Runtime &rt, const jsi::Value &thisVal,
+                  const jsi::Value *args, size_t count) -> jsi::Value {
+-          auto native = NativeObject<Derived>::fromValue(rt, thisVal);
+-          return (native.get()->*getter)(rt);
++          return RNJsi::guardNamedErrors(rt, [&]() -> jsi::Value {
++            auto native = NativeObject<Derived>::fromValue(rt, thisVal);
++            return (native.get()->*getter)(rt);
++          });
+         });
+     defineGetter(runtime, prototype, name, std::move(getterFunc));
+   }
+@@ -472,14 +481,16 @@ class NativeObject : public NativeObjectBase,
+         1,
+         [setter](jsi::Runtime &rt, const jsi::Value &thisVal,
+                  const jsi::Value *args, size_t count) -> jsi::Value {
+-          if (count < 1) {
+-            throw jsi::JSError(rt, "Setter requires a value argument");
+-          }
+-          auto native = NativeObject<Derived>::fromValue(rt, thisVal);
+-          auto value = RNJsi::JSIConverter<std::decay_t<ValueType>>::fromJSI(
+-              rt, args[0], false);
+-          (native.get()->*setter)(std::move(value));
+-          return jsi::Value::undefined();
++          return RNJsi::guardNamedErrors(rt, [&]() -> jsi::Value {
++            if (count < 1) {
++              throw jsi::JSError(rt, "Setter requires a value argument");
++            }
++            auto native = NativeObject<Derived>::fromValue(rt, thisVal);
++            auto value = RNJsi::JSIConverter<std::decay_t<ValueType>>::fromJSI(
++                rt, args[0], false);
++            (native.get()->*setter)(std::move(value));
++            return jsi::Value::undefined();
++          });
+         }
 ```
 
-**File**: `packages/skia/src/renderer/__tests__/e2e/Surfaces.spec.tsx` (modified, +21/-0)
+**File**: `packages/skia/cpp/rnskia/RNSkAsync.h` (modified, +4/-0)
 ```diff
-@@ -69,4 +69,25 @@ describe("Surfaces", () => {
-     expect(result.draw).toContain("surface was disposed");
-     expect(result.getCanvas).toContain("disposed object");
-   });
-+
-+  ["GPU", "raster"].forEach((kind) => {
-+    it(`makeImageSnapshot() keeps outputImage without a snapshot (${kind})`, async () => {
-+      const result = await surface.eval(
-+        (Skia, ctx) => {
-+          const sf = ctx.gpu
-+            ? Skia.Surface.MakeOffscreen(16, 16)!
-+            : Skia.Surface.MakeRaster(16, 16)!;
-+          sf.getCanvas().drawColor(Skia.Color("cyan"));
-+          sf.flush();
-+          const output = Skia.Image.MakeNull();
-+          sf.makeImageSnapshot(undefined, output);
-+          // Outside of the surface: there is no snapshot to make.
-+          sf.makeImageSnapshot(Skia.XYWHRect(100, 100, 5, 5), output);
-+          return [output.width(), output.height()];
-+        },
-+        { gpu: kind === "GPU" }
-+      );
-+      expect(result).toEqual([16, 16]);
-+    });
-+  });
- });
-```
-
-**File**: `packages/skia/src/skia/types/Surface/Surface.ts` (modified, +3/-0)
-```diff
-@@ -19,6 +19,9 @@ export interface SkSurface extends SkJSIInstance<"Surface"> {
- 
-       @param bounds A rectangle specifying the subset of the surface that
-    is of interest.
-+      @param outputImage An image to update in place instead of returning a
-+   new one. It keeps its previous content when the snapshot cannot be
-+   created (e.g. `bounds` is outside of the surface).
-       @return  Image initialized with Surface contents
- 
-       example: https://fiddle.skia.org/c/@Surface_makeImageSnapshot
-```
-
-**File**: `packages/skia/src/skia/web/JsiSkSurface.ts` (modified, +4/-1)
-```diff
-@@ -72,7 +72,10 @@ export class JsiSkSurface
-         ? Array.from(JsiSkRect.fromValue(this.CanvasKit, bounds))
-         : undefined
-     );
--    if (outputImage) {
-+    // Typed as non-nullable, but null when Skia cannot make the snapshot
-+    // (e.g. bounds outside of the surface): outputImage then keeps its
-+    // previous content.
-+    if (outputImage && image) {
-       outputImage.ref = image;
-     }
-     return new JsiSkImage(this.CanvasKit, image);
+@@ -67,6 +67,10 @@ class RNSkAsync {
+                 [promise, settle = std::move(settle)](jsi::Runtime &runtime) {
+                   try {
+                     settle(runtime, *promise);
++                  } catch (const RNJsi::NamedError &error) {
++                    // A SkiaDecodeError, an AbortError...: the error of
++                    // its name.
++                    promise->reject(error);
+                   } catch (const jsi::JSError &error) {
+                     // The JS error itself (a RangeError for a typed array
+                     // too large, say), name and stack kept.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4545** (2026-11-26): fix(🌐): throw SkiaSurfaceUnavailableError when the web has no drawing surface (2.x) (@wcandillon)
 - **PR #4542** (2026-11-26): fix(🔤): accept a TypefaceFontProvider wherever a FontMgr is expected (2.x backport of #4541) (@filipemsilv4)
 - **PR #4541** (2026-11-26): fix(🔤): accept a TypefaceFontProvider wherever a FontMgr is expected (@filipemsilv4)
 - **PR #4540** (2026-11-25): fix(🍏): don't name build stamps .signature (ITMS-91063) (@wcandillon)
+- **PR #4533** (2026-11-26): feat(🚨): add named Skia errors and raise them from native code (@wcandillon)
 - **PR #4532** (2026-11-25): feat(🎞️): add Surface.flushAsync() (@wcandillon)
-- **PR #4531** (2026-11-25): fix(🐛): log lost surface recordings and keep outputImage without a snapshot (@wcandillon)
-- **PR #4530** (2026-11-25): Remove npm package generation, keep only release assets (@wcandillon)
 
 ---
 
@@ -2226,36 +2229,48 @@ when no snapshot could be made.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🍏): don't name build stamps .signature (ITMS-91063)
+## X. 🚨): add named Skia errors and raise them from native code
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/docs/docs/errors.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `13bdf30c`: 🍏): don't name build stamps .signature (ITMS-91063). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `caa24586`: 🚨): add named Skia errors and raise them from native code. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/docs/errors.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      # Xcode collects *.signature files from build products into the archive,
-      # and App Store Connect rejects any that is not an XCFramework code
-      # signature (ITMS-91063, #4539). No build phase may leave one there.
-      # The react-native-webgpu release the example installs still writes
-      # .rnwgpu-dawn.signature (fixed in wcandillon/react-native-webgpu#655):
-      # drop the exclusion once the example is on a release with that fix.
-      - name: Check build products for *.signature files
-        run: |
-          signatures=$(find "$DERIVED_DATA/Build/Products" -name '*.signature' \
-            -not -path '*/ReactNativeWebGPUBinaries/*')
-          if [ -n "$signatures" ]; then
-            echo "::error::Build products contain *.signature files, which App Store Connect rejects (ITMS-91063):"
-            echo "$signatures"
-            exit 1
-          fi
+---
+id: errors
+title: Errors
+sidebar_label: Errors
+slug: /errors
+---
 
+React Native Skia reports failures the way WebGPU does: a call that fails throws an error with a name, a promise that fails rejects with one, and `null` is only ever a result, never a failure.
+
+## The rules
+
+| Situation | Outcome |
+| --- | --- |
+| A wrong argument type, a missing argument | Throws a `TypeError` |
+| Data that cannot be decoded, parsed or compiled | Throws a `SkiaDecodeError` or an `SkSLCompilationError` |
+| A GPU or CPU allocation that fails | Throws a `SkiaOutOfMemoryError` or a `SkiaValidationError` |
+| No GPU on the device | Throws a `SkiaGPUUnavailableError` (see [`Skia.gpu`](/docs/webgpu#the-gpu-device)) |
+| No drawing surface in the browser | Throws a `SkiaSurfaceUnavailableError` |
+| A valid call without a result (a path operation with an empty outcome, the end of an iteration) | Returns `null` |
+| Asynchronous work that fails | Rejects with a named error |
+| An API the platform does not have | Throws an error named `NotSupportedError` |
+
+## Error classes
+
+Every error React Native Skia raises extends `SkiaError`, which extends `Error`.
+
+| Class | Raised when | Extra field |
+| --- | --- | --
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2265,7 +2280,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `13bdf30c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `caa24586` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

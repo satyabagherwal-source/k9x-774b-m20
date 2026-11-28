@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-Q4MA",
-    "timestamp": "2026-11-26T20:13:54.274Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "0dbd8e1e4a74dbd408822fc08d5446e4d620bdbd53c2dff6c8a5965fa07549d0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-QFAA",
     "timestamp": "2026-11-26T20:14:08.098Z",
     "repository": "CaviraOSS/LongMemory",
@@ -7490,6 +7475,21 @@
     "repository": "SeekStorm/SeekStorm",
     "learningId": "learn-github-seekstorm-seekstorm",
     "contentHash": "74a16c8d8c334986fca61545ff07cbd93fc0ad4c53aaf0363395e4dbe2f0dcc8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-OUPQ",
+    "timestamp": "2026-11-28T17:00:17.918Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "3467d9736c4f985c6fdcd16873c2c6016ca062e27d03aa36f20bb55b91825578",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

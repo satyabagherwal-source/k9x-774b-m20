@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T16:35:24.137Z",
-  "total_cycles_completed": 13354,
-  "total_learnings_persisted": 13354,
+  "last_updated": "2026-11-28T17:00:17.989Z",
+  "total_cycles_completed": 13355,
+  "total_learnings_persisted": 13355,
   "total_rules_promoted": 12048,
   "history": [
-    {
-      "timestamp": "2026-11-27T20:09:52.023Z",
-      "repository": "Nasiko-Labs/nasiko",
-      "learningId": "learn-github-nasiko-labs-nasiko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T20:10:04.368Z",
       "repository": "trailbaseio/trailbase",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T16:35:24.137Z",
       "repository": "SeekStorm/SeekStorm",
       "learningId": "learn-github-seekstorm-seekstorm",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T17:00:17.989Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

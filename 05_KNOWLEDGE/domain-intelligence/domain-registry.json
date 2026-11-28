@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T16:35:31.842Z",
-  "total_records": 2916,
+  "last_updated": "2026-11-28T17:01:03.498Z",
+  "total_records": 2917,
   "domains": {
     "A": {
       "total": 29,
@@ -1790,7 +1790,7 @@
       ]
     },
     "H": {
-      "total": 711,
+      "total": 712,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2502,7 +2502,8 @@
         "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-core-invariants",
         "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-learnings-core-invarian",
         "domain_intelligence-technical-construction-intelligence-tuist-tuist-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-tuist-tuist-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-tuist-tuist-learnings-core-invariants",
+        "DOM-H-77E7EEF6"
       ]
     },
     "I": {
@@ -9649,8 +9650,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "3fc7e88e8a17f8b7f113ff09ab69f0cc65811dce6d071e8427dd63edb13ccb9c",
-      "created_at": "2026-11-28T15:54:29.961Z"
+      "content_hash": "f64f1a6914db195afad47f42178fda1482df7aaf322adda3e861ee947a179b7b",
+      "created_at": "2026-11-28T17:01:03.498Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12307,8 +12308,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "babafc025d581842c1b1dcc77cc4ce88e2b340d772f0e39face60f4e7cb2fde8",
-      "created_at": "2026-11-28T16:12:53.835Z"
+      "content_hash": "20cc4cac5a8adbac882fdfc6909bf90c322e22bcb793492e915359f82ec30500",
+      "created_at": "2026-11-28T17:01:02.007Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -14832,10 +14833,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
       "repository": "wcandillon/react-native-skia",
-      "content_hash": "d563e17693215a3238ec482bc5e72e7c7ff30e5c8f4330885fb45b8ffe0f2740",
-      "created_at": "2026-11-26T23:41:01.647Z"
+      "content_hash": "f8086cb8b70b52dc3368e44f194ff24116359a61e78a71c43d778f5588df4526",
+      "created_at": "2026-11-28T17:00:18.632Z"
     },
     "DOM-D-AF708B11": {
       "record_id": "DOM-D-AF708B11",
@@ -26469,8 +26470,8 @@
       "title": "Technical Construction Intelligence: wcandillon-react-native-skia-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-learnings-technical-construction-intelligence-wcand.md",
       "repository": "wcandillon-react-native-skia-learnings",
-      "content_hash": "abda363d87f3220dd80829b447fec3ca9f093485ac47486ea177b97695aa1ca6",
-      "created_at": "2026-11-26T11:03:56.722Z"
+      "content_hash": "15bcc391fd12c9afa1d88c6fc4390f76a8a47664554d62f80c9c144c0445b305",
+      "created_at": "2026-11-28T17:01:00.447Z"
     },
     "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants": {
       "record_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants",
@@ -49526,6 +49527,48 @@
       "repository": "sweetpad-dev-sweetpad-learnings",
       "content_hash": "ded98662cdc592b1b123fe0c7a6244f43c20f36bbc2d50919f630eb47d35822a",
       "created_at": "2026-11-28T16:35:30.191Z"
+    },
+    "DOM-H-77E7EEF6": {
+      "record_id": "DOM-H-77E7EEF6",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "🚨): add named Skia errors and raise them from native code",
+      "content": "When implementing operations in `apps/docs/docs/errors.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "3dc935f05f1b804e73745d7a6bde47fa65a6adba955000a6294f6b958927c715",
+      "summary": "Prevents defects observed in production commit `caa24586`: 🚨): add named Skia errors and raise them from native code. Unvalidated execution -> When implementing operations in `apps/docs/docs/errors.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and",
+      "provenance": {
+        "source_uri": "project://wcandillon-react-native-skia/wcandillon-react-native-skia-learnings.md",
+        "source_version": "caa24586",
+        "observed_at": "2026-11-28T17:00:17.126Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (wcandillon-react-native-skia)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of wcandillon-react-native-skia"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.81,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T17:00:59.502Z"
     }
   }
 }

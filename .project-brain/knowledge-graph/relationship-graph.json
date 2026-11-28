@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T15:36:46.616Z",
+  "updated_at": "2026-11-28T17:00:59.556Z",
   "statistics": {
-    "total_nodes": 607,
+    "total_nodes": 608,
     "total_edges": 241,
     "domain_distribution": {
       "D": 360,
       "M": 1,
-      "H": 120,
+      "H": 121,
       "J": 23,
       "K": 37,
       "L": 9,
@@ -13541,6 +13541,28 @@
       ],
       "created_at": "2026-11-28T15:36:46.616Z",
       "updated_at": "2026-11-28T15:36:46.616Z"
+    },
+    "DOM-H-77E7EEF6": {
+      "id": "DOM-H-77E7EEF6",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "🚨): add named Skia errors and raise them from native code",
+      "summary": "Prevents defects observed in production commit `caa24586`: 🚨): add named Skia errors and raise them from native code. Unvalidated execution -> When implementing operations in `apps/docs/docs/errors.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and",
+      "confidence": 0.81,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://wcandillon-react-native-skia/wcandillon-react-native-skia-learnings.md",
+        "source_version": "caa24586",
+        "observed_at": "2026-11-28T17:00:17.126Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (wcandillon-react-native-skia)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-28T17:00:59.556Z",
+      "updated_at": "2026-11-28T17:00:59.556Z"
     }
   },
   "edges": [

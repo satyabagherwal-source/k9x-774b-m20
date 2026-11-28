@@ -14116,3 +14116,5 @@ Every entry in this ledger must capture:
 | `learn-github-lapce-lapce` | `https://github.com/lapce/lapce` | `882119fe` | Multi-dimensional audit evidence | 2026-11-28T16:35:14.788Z |
 | `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `6d61e2f6` | Multi-dimensional audit evidence | 2026-11-28T16:35:20.631Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `4bb74f4c` | Multi-dimensional audit evidence | 2026-11-28T16:35:24.077Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `caa24586` | Multi-dimensional audit evidence | 2026-11-28T17:00:17.923Z |
+| `learn-dom-h-77e7eef6` | `project://wcandillon-react-native-skia` | `caa24586` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md` | 2026-11-28T17:00:59.560Z |

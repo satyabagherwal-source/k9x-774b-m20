@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T16:35:32.130Z",
+  "last_updated": "2026-11-28T17:01:03.818Z",
   "total_verified_learnings": 9153,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27198,
+  "total_items": 27199,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fc7e88e8a17f8b7f113ff09ab69f0cc65811dce6d071e8427dd63edb13ccb9c",
+      "content_hash": "f64f1a6914db195afad47f42178fda1482df7aaf322adda3e861ee947a179b7b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T15:54:29.961Z"
+      "persisted_at": "2026-11-28T17:01:03.498Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "dd3cc2876a8837707940337859ea23db3e1751cc87cc4b84b994f0a7d56b3a4e",
+      "content_hash": "8cbd046801fe55268fb3ad30f70c241d918a3ac40ff4ef4af569c8d683f1451d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T15:54:30.176Z"
+      "persisted_at": "2026-11-28T17:01:03.818Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219857,9 +219857,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "babafc025d581842c1b1dcc77cc4ce88e2b340d772f0e39face60f4e7cb2fde8",
+      "content_hash": "20cc4cac5a8adbac882fdfc6909bf90c322e22bcb793492e915359f82ec30500",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T16:12:53.835Z"
+      "persisted_at": "2026-11-28T17:01:02.007Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219869,9 +219869,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "59bf5b8d6dee539b037e5a871a2699a9b6d228501d212ed418610f5ccc95e6f8",
+      "content_hash": "487c2da2614fd3708f1e8a600b15d060f65ede1f0cb03467b4d7767a66725555",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T16:12:54.124Z"
+      "persisted_at": "2026-11-28T17:01:02.324Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -228408,13 +228408,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
       "source_version": "caa24586",
-      "content_hash": "6db611d77c1f5deff593d37bb87bdfa616ccfb19b0a167330d73fe30c03e769f",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "content_hash": "3467d9736c4f985c6fdcd16873c2c6016ca062e27d03aa36f20bb55b91825578",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 8346,
@@ -228447,7 +228447,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T23:41:00.830Z",
+      "verified_at": "2026-11-28T17:00:17.599Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228486,25 +228486,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
       "repository": "wcandillon/react-native-skia",
       "source_version": "caa24586",
-      "content_hash": "d563e17693215a3238ec482bc5e72e7c7ff30e5c8f4330885fb45b8ffe0f2740",
+      "content_hash": "f8086cb8b70b52dc3368e44f194ff24116359a61e78a71c43d778f5588df4526",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T23:41:01.647Z"
+      "persisted_at": "2026-11-28T17:00:18.632Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/shopify-react-native-skia-verification-protocol-empirical-defect-shield-for-wcan.md",
+      "relative_path": "08_VERIFICATION/wcandillon-react-native-skia-verification-protocol-empirical-defect-shield-for-w.md",
       "title": "Verification Protocol: Empirical Defect Shield for wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
       "source_version": "caa24586",
-      "content_hash": "0247b89a257d87ff4b4653fcc4da0d24e2a37351e5e3400d59a2beee6cac2c86",
+      "content_hash": "25ff9a46d884fd63d04ebd1b55b1b3c95e9554ec750d35ea507d0f0446398e54",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T23:41:01.880Z"
+      "persisted_at": "2026-11-28T17:00:18.939Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria",
@@ -271899,9 +271899,9 @@
       "title": "Technical Construction Intelligence: wcandillon-react-native-skia-learnings Core Invariants",
       "repository": "wcandillon-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "abda363d87f3220dd80829b447fec3ca9f093485ac47486ea177b97695aa1ca6",
+      "content_hash": "15bcc391fd12c9afa1d88c6fc4390f76a8a47664554d62f80c9c144c0445b305",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T11:03:56.722Z"
+      "persisted_at": "2026-11-28T17:01:00.447Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia-l": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia-l",
@@ -271911,9 +271911,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for wcandillon-react-native-skia-learnings",
       "repository": "wcandillon-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c74e298baa9137d32a3fcf172d8bd1965d4db78805fc80a468e8d9af880ae9e",
+      "content_hash": "aece2dadb2b418e200890b5c9987750d381c05863f6b52cb92208f8d81d07731",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:03:56.985Z"
+      "persisted_at": "2026-11-28T17:01:00.768Z"
     },
     "learn-github-mfontanini-presenterm": {
       "learning_id": "learn-github-mfontanini-presenterm",
@@ -351348,13 +351348,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZVZL-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PSHF-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e14137ec31938c5d820f9046b5cfaac253dbbdcbd3e5d83875cea9857c2ddcc4",
+      "content_hash": "c9e62151f809d412a3a4e5e841e841d97927dae05f78e6947c734e9cd95dca6d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T16:12:53.554Z"
+      "persisted_at": "2026-11-28T17:01:01.684Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -362271,13 +362271,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-C89W-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PTMU-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c4ae69acbd99b5d0dcb4fa40c0b38403c7cdaa6a7ffbe73807a67e2b2237effa",
+      "content_hash": "1bc81a4ab8295676d742888e9899f5bc51fb48223f74905a9ecc0e5abf9cf015",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T15:54:29.736Z"
+      "persisted_at": "2026-11-28T17:01:03.188Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -374004,6 +374004,18 @@
       "content_hash": "ded98662cdc592b1b123fe0c7a6244f43c20f36bbc2d50919f630eb47d35822a",
       "domain_letter": "D",
       "persisted_at": "2026-11-28T16:35:30.191Z"
+    },
+    "candidate_directive-add-named-skia-errors-and-raise-them-from-native-code": {
+      "item_id": "candidate_directive-add-named-skia-errors-and-raise-them-from-native-code",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PR9Y-add-named-skia-errors-and-raise-them-from-native-code.md",
+      "title": "🚨): add named Skia errors and raise them from native code",
+      "repository": "wcandillon-react-native-skia-learnings",
+      "source_version": "HEAD",
+      "content_hash": "39f3fdc2bb3ecfc814aeae45abbdb68475e9c77f5f4e9e4d1b937ace85242915",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T17:01:00.133Z"
     }
   },
   "ai-builder-brain": {

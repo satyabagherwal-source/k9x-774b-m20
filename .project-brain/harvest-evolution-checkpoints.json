@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T16:35:32.375Z",
+  "last_updated": "2026-11-28T17:01:04.109Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T15:54:30.394Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-28T16:12:53.032Z",
+      "processed_at": "2026-11-28T17:01:01.091Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-28T15:54:29.388Z",
+      "processed_at": "2026-11-28T17:01:02.649Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1873,9 +1873,9 @@
       "staged_for_review": 0
     },
     "wcandillon-react-native-skia-learnings.md": {
-      "processed_at": "2026-11-26T11:03:55.844Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-28T17:00:59.561Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md": {
       "processed_at": "2026-11-26T12:38:47.285Z",
@@ -4083,7 +4083,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5391,
-  "total_canonical_promoted": 607,
-  "total_staged_for_review": 4109
+  "total_dossiers_evaluated": 5394,
+  "total_canonical_promoted": 608,
+  "total_staged_for_review": 4111
 }
