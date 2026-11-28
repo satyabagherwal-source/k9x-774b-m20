@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T02:41:25.803Z",
-  "total_cycles_completed": 13237,
-  "total_learnings_persisted": 13237,
-  "total_rules_promoted": 11938,
+  "last_updated": "2026-11-28T02:50:16.712Z",
+  "total_cycles_completed": 13238,
+  "total_learnings_persisted": 13238,
+  "total_rules_promoted": 11939,
   "history": [
-    {
-      "timestamp": "2026-11-27T08:58:12.154Z",
-      "repository": "inclusionAI/Ming-Image-0.2-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-2-design",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T08:58:14.727Z",
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -1403,6 +1396,13 @@
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T02:50:16.712Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

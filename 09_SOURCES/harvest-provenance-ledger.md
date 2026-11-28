@@ -13982,3 +13982,4 @@ Every entry in this ledger must capture:
 | `learn-dom-h-6f2c6ab3` | `project://cheeriojs-dom-serializer` | `c64fe929` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md` | 2026-11-28T02:32:19.208Z |
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `990d02a5` | Multi-dimensional audit evidence | 2026-11-28T02:41:14.957Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `6125d544` | Multi-dimensional audit evidence | 2026-11-28T02:41:25.754Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `14a608df` | Multi-dimensional audit evidence | 2026-11-28T02:50:16.706Z |

@@ -4,24 +4,24 @@
 {
   "source_repository": "RediSearch/RediSearch",
   "source_url": "https://github.com/RediSearch/RediSearch",
-  "source_version": "078550d7",
+  "source_version": "14a608df",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-27T07:30:45.377Z",
+  "timestamp": "2026-11-28T02:50:16.938Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-redisearch-redisearch",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [RediSearch/RediSearch](https://github.com/RediSearch/RediSearch) (Revision: `078550d7`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-27T07:30:45.377Z`  
+> **Provenance**: Harvested from [RediSearch/RediSearch](https://github.com/RediSearch/RediSearch) (Revision: `14a608df`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-28T02:50:16.938Z`  
 > **Learning ID**: `learn-github-redisearch-redisearch`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 75%
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from RediSearch/RediSearch:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T07:30:43.944Z  
+> **Harvest Timestamp**: 2026-11-28T02:50:15.400Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1900,714 +1900,455 @@ export interface Profile<X = {}> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ff955074` (2026-11-26)
-**Commit Message**: [RED-224927] Fix building from source on macOS when other Redis modules install an older LLVM (#12490)
+### Incident Patch 1: `b9566c47` (2026-11-27)
+**Commit Message**: [MOD-21503] Fix a crash at shutdown with disk indexes when a worker still holds a dropped index (#12501)
 
-* [RED-224927] Build on macOS with the LLVM bootstrap installs, not the first clang on PATH
+* [MOD-21503] Don't close a disk index after the disk context was closed at shutdown
 
-When Redis bootstraps all bundled modules in one environment, RedisJSON's,
-RedisTimeSeries' and RedisBloom's macOS installers put Homebrew llvm@18 on
-PATH after ours. build.sh passed plain clang/clang++ to CMake, so Search
-compiled with Clang 18, whose libc++ lacks std::atomic_ref, and SVS failed
-to build.
+A worker can hold the last reference of an index that was already dropped (for
+example by FLUSHALL) when shutdown closes the disk context. Releasing it then
+closed the index against a freed context.
 
-Look for LLVM_VERSION where install_llvm.sh installs it (Homebrew
-llvm@<ver>, then the tarball's LLVM_INSTALL_DIR) and fall back to PATH,
-with a warning, only when neither holds that version.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Point bindgen and the SDK at the macOS LLVM build.sh selects
-
-Export LIBCLANG_PATH from the selected LLVM, so bindgen does not load
-another module's libclang from PATH. When that LLVM is the upstream
-tarball and SDKROOT is unset, set it from xcrun: unlike Homebrew's clang,
-upstream clang has no default SDK, and install_llvm.sh persists SDKROOT
-only in GitHub Actions and bash/zsh login profiles.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL
-
-**File**: `build.sh` (modified, +68/-1)
-```diff
-@@ -455,6 +455,72 @@ find_module_path() {
-   realpath "$module_path"
- }
- 
-+#-----------------------------------------------------------------------------
-+# Function: select_macos_compilers
-+# Set MACOS_C_COMPILER/MACOS_CXX_COMPILER to clang/clang++ from PATH when that
-+# is Apple clang or LLVM_VERSION. Otherwise use the LLVM that
-+# .install/install_llvm.sh installs, and export LIBCLANG_PATH so bindgen loads
-+# the same LLVM's libclang; fall back to PATH if that LLVM is not installed.
-+#
-+# PATH can hold the wrong LLVM: when Redis bootstraps several modules into one
-+# environment, modules bootstrapped after this one put an older Homebrew LLVM
-+# ahead of ours, and that LLVM's libc++ lacks C++20 features SVS uses. Apple
-+# clang is kept because Homebrew's packages of Redis build with it.
-+#-----------------------------------------------------------------------------
-+select_macos_compilers() {
-+  local LLVM_VERSION LLVM_FULL_VERSION
-+  source "$ROOT/.install/LLVM_VERSION.sh"
-+
-+  MACOS_C_COMPILER=clang
-+  MACOS_CXX_COMPILER=clang++
-+  local path_banner
-+  path_banner=$({ clang --version 2>/dev/null || true; } | head -n1)
-+  if [[ "$path_banner" == "Apple clang"* || \
-+        "$(clang_major_version clang)" == "$LLVM_VERSION" ]]; then
-+    return
-+  fi
-+
-+  # Same locations, in the same order of preference, as install_llvm.sh.
-+  local tarball_bin="${LLVM_INSTALL_DIR:-$HOME/.local/llvm}/bin"
-+  local -a candidates=()
-+  local brew_prefix
-+  if command -v brew &>/dev/null && brew_prefix=$(brew --prefix 2>/dev/null); then
-+    candidates+=("$brew_prefix/opt/llvm@${LLVM_VERSION}/bin")
-+  fi
-+  candidates+=("$tarball_bin")
-+
-+  local dir
-+  for dir in "${candidates[@]}"; do
-+    if [[ -x "$dir/clang" && -x "$dir/clang++" && \
-+          "$(clang_major_version "$dir/clang")" == "$LLVM_VERSION" ]]; then
-+      # run_cmake() runs its command unquoted, so these paths would be split
-+      # at the space and fail in CMake with an unrelated error.
-+      if [[ "$dir" =~ [[:space:]] ]]; then
-+        echo "Error: LLVM $LLVM_VERSION is at '$dir', whose path contains whitespace." >&2
-+        echo "Paths with whitespace are not supported; set LLVM_INSTALL_DIR to a path without it." >&2
-+        exit 1
-+      fi
-+      MACOS_C_COMPILER="$dir/clang"
-+      MACOS_CXX_COMPILER="$dir/clang++"
-+      export LIBCLANG_PATH="${dir%/bin}/lib"
-+      # Unlike Homebrew's, upstream clang has no default SDK. install_llvm.sh
-+      # persists SDKROOT only in GitHub Actions and bash/zsh login profiles.
-+      if [[ "$dir" == "$tarball_bin" && -z "${SDKROOT:-}" ]]; then
-+        export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
-+      fi
-+      echo "Using LLVM $LLVM_VERSION from $dir instead of PATH's ${path_banner:-clang}"
-+      return
-+    fi
-+  done
-+
-+  echo "WARNING: LLVM $LLVM_VERSION not found (run 'make bootstrap'); using PATH's ${path_banner:-clang}"
-+}
-+
-+# Prints the LLVM major version of the clang binary $1, or nothing.
-+clang_major_version() {
-+  { "$1" --version 2>/dev/null || true; } | head -n1 | sed -En 's/.*version ([0-9]+).*/\1/p'
-+}
-+
- #-----------------------------------------------------------------------------
- # Function: prepare_cmake_arguments
- # Prepare arguments to pass to CMake
-@@ -733,7 +799,8 @@ prepare_cmake_arguments() {
-   CMAKE_BASIC_ARGS="$CMAKE_BASIC_ARGS -UCMAKE_TOOLCHAIN_FILE"
- 
-   if [[ "$OS_NAME" == "macos" ]]; then
--    CMAKE_BASIC_ARGS="$CMAKE_BASIC_ARGS -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
-+    select_macos_compilers
-+    CMAKE_BASIC_ARGS="$CMAKE_BASIC_ARGS -DCMAKE_C_COMPILER=$MACOS_C_COMPILER -DCMAKE_CXX_COMPILER=$MACOS_CXX_COMPILER"
-   fi
- 
-   if [[ "$BUILD_INTEL_SVS_OPT" == "yes" || "$BUILD_INTEL_SVS_OPT" == "1" ]]; then
-```
-
----
-
-### Incident Patch 2: `b5adca86` (2026-11-26)
-**Commit Message**: [MOD-21663] Fix undefined behaviour when ordering intersection children with disk unions on Flex (#12596)
-
-* [MOD-21663] Ask each iterator for its intersection sort weight
-
-An intersection orders its children by estimate times sort weight. For a
-child behind the C header, the weight came from a switch on the header's
-type tag that cast the iterator to Intersection<CRQEIterator> or
-UnionOpaque<CRQEIterator>. The disk backend's multi-range numeric and geo
-unions also report Union but hold type-erased children, so with union
-prioritisation on the cast read the wrong type.
-
-Add an IntersectionSortWeight callback as the new last field of the
-QueryIterator header. RQEIteratorWrapper installs it from the inner
-type's own RQEIterator::intersection_sort_weight, and CRQEIterator calls
-through it. A NULL callback means the neutral weight 1.0, so a header
-built outside this module that leaves it unset stays safe.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* [MOD-21663] Drop the unused C-iterator accessor and tighten the sort-weight docs
+SearchDisk_CloseIndex now takes a shared lifetime lock and skips the close, leaking
+the handle, when the context is already closed; SearchDisk_Close takes it
+exclusively (bounded wait, then leaves the context open). IndexSpec_FreeUnlinkedData
+leaks the spec as well in that case, except in assert builds. Shutdown no longer
+waits for workers; the files left behind are reclaimed by the storage startup
+cleanup.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* [MOD-21663] Remove imports left unused by the accessor removal
+* [MOD-21503] Unit test the disk index close against the disk context close
 
-Co-Authored-By: Claude Sonne
+Covers closing an index while the context is open, skipping the close (and leaking
+the handle) once the context is closed, and the context close waiting for an index
+that is mid-close.
 
-**File**: `src/iterators/iterator_api.h` (modified, +8/-3)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* [MOD-21503] Extract the
+
+**File**: `src/aggregate/aggregate_exec.c` (modified, +6/-0)
 ```diff
-@@ -178,6 +178,10 @@ typedef struct QueryIterator {
-    * report bounds: one that does must implement this. */
-   IteratorStatus (*ReadWithThreshold)(struct QueryIterator *self, double minCompetitiveScore);
+@@ -1415,6 +1415,12 @@ void AREQ_Execute_Callback(blockedClientReqCtx *BCRctx) {
  
-+  /* Callbacks added after the others go last, so that adding them leaves the offsets of the
-+   * earlier ones unchanged. A header that never sets one (e.g. a zero-initialised C/C++
-+   * iterator such as the test mocks) gets NULL; each callback says what NULL means. */
-+
-   /**
-    * Called immediately before the spec read lock is released, to inform the iterator that it
-    * must drop any state that depends on the lock being held (in particular, borrows into
-@@ -190,11 +194,12 @@ typedef struct QueryIterator {
-    *
-    * Rust-wrapped iterators flip their internal typestate from Active to Suspended here, so
-    * that subsequent calls to read/skip/current/rewind would hard-fail at the FFI boundary.
--   *
--   * Last in the struct so that adding it left the offsets of the other callbacks unchanged for
--   * iterators built outside this module, such as the disk API's.
-    */
-   void (*Suspend)(struct QueryIterator *self);
-+
-+  /* The weight an intersection multiplies this child's `NumEstimated` by to order its children:
-+   * the lowest product goes first. NULL means 1.0, a neutral weight. */
-+  double (*IntersectionSortWeight)(const struct QueryIterator *self, bool prioritizeUnionChildren);
- } QueryIterator;
- 
- static inline ValidateStatus Default_Revalidate(struct QueryIterator *base, struct IndexSpec *spec) {
+ cleanup:
+   RedisModule_FreeThreadSafeContext(outctx);
++#ifdef ENABLE_ASSERT
++  // Sync point (debug): the worker is done with the query and about to release its reference to
++  // the spec, which is the last one if the index was dropped meanwhile. Worker-only: the request
++  // itself is freed on other threads too.
++  SyncPoint_Wait(SYNC_POINT_BEFORE_AREQ_SPEC_RELEASE);
++#endif
+   IndexSpecRef_Release(execution_ref);
+   blockedClientReqCtx_destroy(BCRctx);
+ }
 ```
 
-**File**: `src/redisearch_rs/rqe_iterators/src/boxed.rs` (modified, +1/-7)
+**File**: `src/debug_commands.h` (modified, +8/-0)
 ```diff
-@@ -61,7 +61,6 @@ use ref_mode::{Active, Suspended};
- 
- use crate::{
-     IteratorType, RQEIterator, RQEIteratorError, RQEValidateStatus, ResumeOutcome, SkipToOutcome,
--    c2rust,
- };
- 
- /// Concrete-typed active iterator trait — the new shape of
-@@ -89,7 +88,7 @@ pub trait RQEIteratorBoxed<'index>: RQEIterator<'index> + 'index {
-     /// Transition to the suspended state.
-     ///
-     /// Must be called while the spec read lock is still held: an implementation may still read
--    /// index memory, as [`CRQEIterator`](c2rust::CRQEIterator) does to snapshot its estimate.
-+    /// index memory, as [`CRQEIterator`](crate::c2rust::CRQEIterator) does to snapshot its estimate.
-     fn suspend(self: Box<Self>) -> Box<Self::Suspended>;
+@@ -171,6 +171,14 @@ void StoreResultsDebugCtx_SetPause(bool pause);
+ // SYNC_POINT_GC_BEFORE_DELETED_IDS_REMOVE deterministically wakes into the freed DB
+ // (use-after-free) when the disk-GC/teardown handshake was missing.
+ #define SYNC_POINT_AFTER_DISK_INDEX_CLOSE               "AfterDiskIndexClose"
++// A query worker about to release its reference to the spec at the end of its job. Lets a test
++// make the last reference of a dropped index be released after shutdown closed the disk context,
++// which is when a worker that was still finishing a request does it.
++#define SYNC_POINT_BEFORE_AREQ_SPEC_RELEASE             "BeforeAreqSpecRelease"
++// Disk shutdown: parked right after the disk context is closed, after releasing a worker parked
++// at SYNC_POINT_BEFORE_AREQ_SPEC_RELEASE. Keeps the process alive so that worker finishes its
++// release; arm it with an auto-release timeout, since the main thread cannot process a SIGNAL.
++#define SYNC_POINT_AFTER_DISK_CONTEXT_CLOSE             "AfterDiskContextClose"
+ // Disk async loader: parked right after a swap-prefetch is issued for a non-resident key and
+ // before the worker waits for the completion (RSE redisearch_disk). Lets a test mutate or delete
+ // the key inside the async swap window so the callback hits the docid-mismatch / expired-doc path,
+```
+
+**File**: `src/notifications.c` (modified, +9/-0)
+```diff
+@@ -746,6 +746,9 @@ static void DeleteDiskIndexesOnShutdown(RedisModuleCtx *ctx) {
+ #endif
  }
  
-@@ -730,11 +729,6 @@ impl<'index> RQEIterator<'index> for TypeErasedRQEIterator<'index> {
-         self.0.type_()
-     }
- 
--    #[inline(always)]
--    fn as_c_iterator(&self) -> Option<&c2rust::CRQEIterator> {
--        self.0.as_c_iterator()
--    }
--
-     #[inline(always)]
-     fn intersection_sort_weight(&self, prioritize_union_children: bool) -> f64 {
-         self.0.intersection_sort_weight(prioritize_union_children)
-```
-
-**File**: `src/redisearch_rs/rqe_iterators/src/c2rust.rs` (modified, +9/-73)
-```diff
-@@ -21,7 +21,6 @@ use crate::{
-     IteratorType, RQEIterator, RQEIteratorBoxed, RQEIteratorError, RQESuspendedIterator,
-     RQEValidateStatus, ResumeOutcome, SkipToOutcome,
-     interop::RQEIteratorWrapper,
--    intersection::Intersection,
-     profile_print,
-     profile_print::ProfilePrint,
-     score_bound::{BlockBound, MinCompetitiveScore},
-@@ -66,7 +65,8 @@ pub struct CRQEIterator {
-     /// 2. [`Self::header`] is an owning pointer, in the same way `Box` owns the
-     ///    allocated heap data.
-     /// 3. All callbacks are defined (i.e. the function pointers are not NULL),
--    ///    with the exception of `SkipTo` and `ProfileChildren`, which are optional.
-+    ///    with the exception of `SkipTo`, `ProfileChildren` and
-+    ///    `IntersectionSortWeight`, which are optional.
-     /// 4. All callbacks can be safely called, when the right aliasing conditions are
-     ///    in place
-     header: NonNull<QueryIterator>,
-@@ -150,7 +150,8 @@ impl CRQEIterator {
-     /// 2. `header` is an owning pointer, in the same way `Box` owns the
-     ///    allocated heap data.
-     /// 3. All callbacks are defined (i.e. the function pointers are not NULL),
--    ///    with the exception of `SkipTo` and `ProfileChildren`, which are optional.
-+    ///    with the exception of `SkipTo`, `ProfileChildren` and
-+    ///    `IntersectionSortWeight`, which are optional.
-     /// 4. All callbacks can be safely called, when the right aliasing conditions are
-     ///    in place
-     pub unsafe fn new(header: NonNull<QueryIterator>) -> Self {
-@@ -382,77 +383,12 @@ impl<'index> RQEIterator<'index> for CRQEIterator {
-         self.type_
-     }
- 
--    fn as_c_iterator(&self) -> Option<&CRQEIterator> {
--        Some(self)
--    }
--
-     fn intersection_sort_weight(&self, prioritize_union_children: bool) -> f64 {
--        match self.type_ {
--            IteratorType::Intersect => {
--                // SAFETY:
--                // 1. and 2. `type_ == INTERSECT_ITERATOR` guarantees `self` was produced by
--                //    `RQEIteratorWrapper::boxed_new` with `Intersection<CRQEIterator>` as the
--                //    inner type (`NewIntersectionIterator` is the sole constructor of a C
--                //    wrapped intersection). `as_raw` returns the owning pointer, whose
--                //    provenance spans the whole wrapper; a pointer derived from
--                //    `&QueryIterator` would cover only the header and make the read of the
--                //    wrapped iterator UB.
--                // 3. The borrow ends within this expression, while `self` keeps the iterator
--                //    alive.
--                let n = unsafe {
--                    RQEIteratorWrapper::<Intersection<'_, CRQEIterator>>::ref_from_header_ptr(
--                        self.as_raw(),
--                    )
--                    .inner()
--                    .num_children()
--                };
--                1.0 / n.max(1) as f64
--            }
--            IteratorType::Union if prioritize_union_children => {
--                // SAFETY:
--                // 1. and 2. `type_ == Union` guarantees `self` was produced by
--                //    `RQEIteratorWrapper::boxed_new_inner` with `UnionOpaque<CRQEIterator>` as
--                //    the inner type (`NewUnionIterator` is the sole constructor of a C wrapped
--                //    union). `as_raw` returns the owning pointer, whose provenance spans the
--                //    whole wrapper; a pointer derived from `&QueryIterator` would cover only
--                //    the header and make the read of the wrapped iterator UB.
--                // 3. The borrow ends within this expression, while `self` keeps the iterator
--                //    alive.
--                let n = unsafe {
--                    RQEIteratorWrapper::<super::UnionOpaque<'_, CRQEIterator>>::ref_from_header_ptr(
--                        self.as_raw(),
--                    )
--                    .inner()
--                    .num_children_active()
--                };
--                n.max(1) as f64
--            }
--            IteratorType::InvIdxNumeric => 1.0,
--            IteratorType::InvIdxTerm => 1.0,
--            IteratorType::InvIdxWildcard => 1.0,
--            IteratorType::InvIdxMissing => 1.0,
--            IteratorType::InvIdxTag => 1.0,
--            IteratorType::Hybrid => 1.0,
--            IteratorType::Union => 1.0,
--            IteratorType::Not => 1.0,
--            IteratorType::NotOptimized => 1.0,
--            IteratorType::Optional => 1.0,
--            IteratorType::OptionalOptimized => 1.0,
--            IteratorType::Wildcard => 1.0,
--            IteratorType::Empty => 1.0,
--            IteratorType::IdListSorted => 1.0,
--            IteratorType::IdListUnsorted => 1.0,
--            IteratorType::MetricSortedById => 1.0,
--            IteratorType::MetricSortedByScore => 1.0,
--            IteratorType::MetricLazySortedById => 1.0,
--            IteratorType::MetricLazySortedByScore => 1.0,
--          
-```
-
-**File**: `src/redisearch_rs/rqe_iterators/src/interop.rs` (modified, +21/-0)
-```diff
-@@ -235,6 +235,7 @@ where
-                 CurrentMaxScore: Some(current_max_score::<I>),
-                 CurrentBlockBound: Some(current_block_bound::<I>),
-                 ReadWithThreshold: Some(read_with_threshold::<I>),
-+                IntersectionSortWeight: Some(intersection_sort_weight::<I>),
-             },
-             state: WrapperState::Active(Box::new(inner)),
-         });
-@@ -621,6 +622,26 @@ extern "C" fn current_max_score<'index, I: RQEIteratorBoxed<'index> + 'index>(
-     wrapper.state.active_ref().current_max_score()
- }
- 
-+/// Panics while the iterator is suspended, like [`num_estimated`]: an intersection reads its
-+/// children's weights only while it is being built, and a child being built into a tree is active.
-+extern "C" fn intersection_sort_weight<'index, I: RQEIteratorBoxed<'index> + 'index>(
-+    base: *const QueryIterator,
-+    prioritize_union_children: bool,
-+) -> f64 {
-+    debug_assert!(base.is_aligned());
-+    // SAFETY: 1. and 2. by invariant 1. of [`RQEIteratorWrapper`]. 3. C frees the iterator
-+    // before the index data it borrows.
-+    let wrapper = unsafe {
-+        RQEIteratorWrapper::<'index, I>::ref_from_header_ptr(
-+            NonNull::new(base.cast_mut()).expect("`base` must not be null"),
-+        )
-+    };
-+    wrapper
-+        .state
-+        .active_ref()
-+        .intersection_sort_weight(prioritize_union_children)
-+}
-+
- extern "C" fn current_block_bound<'index, I: RQEIteratorBoxed<'index> + 'index>(
-     base: *const QueryIterator,
-     last_doc_id: *mut DocId,
-```
-
-**File**: `src/redisearch_rs/rqe_iterators/src/lib.rs` (modified, +2/-15)
-```diff
-@@ -312,23 +312,14 @@ pub trait RQEIterator<'index> {
-     /// Returns the [`IteratorType`] of this iterator.
-     fn type_(&self) -> IteratorType;
- 
--    /// Returns `Some(&self)` if this iterator is a [`c2rust::CRQEIterator`], `None` otherwise.
--    ///
--    /// Used by [`Intersection`] to compute sort weights without requiring `'static`.
--    fn as_c_iterator(&self) -> Option<&c2rust::CRQEIterator> {
--        None
--    }
--
-     /// Returns the sort weight for this iterator when used as a child of an [`Intersection`].
-     ///
-     /// [`Intersection`] uses this to order its children before execution: a lower value makes
-     /// this iterator act as the pivot (minimising `SkipTo` calls). The final sort key is
-     /// `num_estimated * intersection_sort_weight(...)`.
-     ///
--    /// Implementers:
--    /// - [`Intersection`]: `1.0 / num_children` — fewer children means tighter selectivity.
--    /// - [`Union`]: `num_children` when `prioritize_union_children`, else `1.0`.
--    /// - Everything else: `1.0` — neutral, no influence.
-+    /// `1.0` is neutral and is what leaf iterators return. Composites derive their own weight;
-+    /// see the implementations on [`Intersection`] and the union iterators.
-     fn intersection_sort_weight(&self, prioritize_union_children: bool) -> f64;
- 
-     /**************** score bounds ****************/
-@@ -445,10 +436,6 @@ impl<'index, I: RQEIterator<'index> + ?Sized + 'index> RQEIterator<'index> for B
-         (**self).type_()
-     }
- 
--    fn as_c_iterator(&self) -> Option<&c2rust::CRQEIterator> {
--        (**self).as_c_iterator()
--    }
--
-     fn intersection_sort_weight(&self, prioritize_union_children: bool) -> f64 {
-         (**self).intersection_sort_weight(prioritize_union_children)
-     }
-```
-
-**File**: `src/redisearch_rs/rqe_iterators/tests/integration/c2rust.rs` (modified, +61/-1)
-```diff
-@@ -12,7 +12,8 @@
- 
- use query_types::QueryNodeType;
- use rqe_iterators::{
--    RQEIterator, c2rust::CRQEIterator, id_list::IdListSorted, interop::RQEIteratorWrapper,
-+    IteratorType, RQEIterator, RQEIteratorPrintable, UnionFullFlat, UnionOpaque, UnionVariant,
-+    c2rust::CRQEIterator, id_list::IdListSorted, interop::RQEIteratorWrapper,
-     intersection::Intersection, union_opaque::build_union,
- };
- 
-@@ -48,3 +49,62 @@ fn sort_weight_of_c_wrapped_union() {
-     assert_eq!(it.intersection_sort_weight(true), 3.0);
-     assert_eq!(it.intersection_sort_weight(false), 1.0);
- }
-+
-+/// A union over type-erased children, lowered as a type-erased leaf: the shape
-+/// the disk backend gives multi-range numeric and geo clauses. It reports
-+/// [`IteratorType::Union`] without being a `UnionOpaque<CRQEIterator>`.
-+fn c_wrapped_type_erased_union(n: usize) -> CRQEIterator {
-+    let children: Vec<Box<dyn RQEIteratorPrintable<'static>>> = (0..n)
-+        .map(|_| Box::new(IdListSorted::new(vec![1, 2, 3])) as Box<_>)
-+        .collect();
-+    let union: Box<dyn RQEIteratorPrintable<'static>> = Box::new(UnionOpaque {
-+        variant: UnionVariant::FlatFull(UnionFullFlat::new(children)),
-+        query_node_type: QueryNodeType::Union,
-+        query_string: None,
-+    });
-+    let it = CRQEIterator::from_rust_leaf(union);
-+    assert_eq!(it.type_(), IteratorType::Union);
-+    it
-+}
-+
-+/// The weight comes from the union itself, whatever its child type. Under
-+/// miri this also checks that nothing reads the wrapper as another type.
-+#[test]
-+fn sort_weight_of_c_wrapped_type_erased_union() {
-+    let it = c_wrapped_type_erased_union(3);
-+
-+    assert_eq!(it.intersection_sort_weight(true), 3.0);
-+    assert_eq!(it.intersection_sort_weight(false), 1.0);
-+}
-+
-+/// A header built outside this module may leave `IntersectionSortWeight` NULL;
-+/// such an iterator gets the neutral weight instead of its own.
-+#[test]
-+fn sort_weight_of_header_without_callback() {
-+    let ptr = build_union(c_leaves(3), false, usize::MAX, QueryNodeType::Union, 1.0);
-+    // SAFETY: `ptr` was just produced by a wrapper constructor and is not aliased.
-+    unsafe { rqe_iterators::interop::patch_vtable(ptr, |h| h.IntersectionSortWeight = None) };
-+    // SAFETY: `build_union` returns a uniquely-owned header with every
-+    // required callback populated, and `IntersectionSortWeight` is optional.
-+    let it = unsafe { CRQEIterator::new(ptr) };
-+
-+    assert_eq!(it.intersection_sort_weight(true), 1.0);
-+}
-+
-+/// With union children prioritised, a type-erased union is weighted by its
-+/// child count and so moves behind a leaf that estimates more documents.
-+#[rstest::rstest]
-+#[case::prioritized(true, IteratorType::IdListSorted)]
-+#[case::not_prioritized(false, IteratorType::Union)]
-+fn intersection_orders_c_wrapped_type_erased_union(
-+    #[case] prioritize_union_children: bool,
-+    #[case] first: IteratorType,
-+) {
-+    // The union estimates 9 documents, weighted 27 when prioritised; the leaf 12.
-+    let union = c_wrapped_type_erased_union(3);
-+    let leaf = CRQEIterator::from_rust_leaf(IdListSorted::new((1..=12).collect::<Vec<_>>()));
-+
-+    let intersection = Intersection::new(vec![union, leaf], 1.0, prioritize_union_children);
-+
-+    assert_eq!(intersection.child_at(0).type_(), first);
-+}
-```
-
-**File**: `src/redisearch_rs/rqe_iterators_test_utils/src/contract_checker.rs` (modified, +1/-5)
-```diff
-@@ -20,7 +20,7 @@ use index_result::RSIndexResult;
- use index_spec::IndexSpecReadGuard;
- use rqe_core::DocId;
- use rqe_iterators::{
--    IteratorType, RQEIterator, RQEIteratorError, RQEValidateStatus, SkipToOutcome, c2rust,
-+    IteratorType, RQEIterator, RQEIteratorError, RQEValidateStatus, SkipToOutcome,
- };
- 
- /// Where the checker believes the wrapped iterator stands, updated on every
-@@ -708,10 +708,6 @@ impl<'index, I: RQEIterator<'index>> RQEIterator<'index> for ContractChecker<I>
-         self.inner.type_()
-     }
- 
--    fn as_c_iterator(&self) -> Option<&c2rust::CRQEIterator> {
--        self.inner.as_c_iterator()
--    }
--
-     fn intersection_sort_weight(&self, prioritize_union_children: bool) -> f64 {
-         self.inner
-             .intersection_sort_weight(prioritize_union_children)
-```
-
----
-
-### Incident Patch 3: `c6a7898d` (2026-11-26)
-**Commit Message**: Fix FT.HYBRID merging distinct document keys containing NUL (#12493) (#12560)
-
-* Preserve binary document keys when merging hybrid results
-
-* Borrow binary key views during hybrid result lookups
-
-* Share binary RString dictionary key helpers
-
-* Group RString dictionary declarations by operation
-
-**File**: `src/result_processor.c` (modified, +34/-32)
-```diff
-@@ -48,6 +48,7 @@
- #include "doc_table.h"
- #include "document.h"
- #include "hiredis/sds.h"
-+#include "buffer/buffer.h"
- #include "index_result_rs.h"
- #include "profile/profile.h"
- #include "query_error.h"
-@@ -2734,14 +2735,14 @@ static void hybridSearchResultValueDestructor(void *privdata, void *obj) {
-   HybridSearchResult_Free((HybridSearchResult*)obj);
- }
- 
--// Dictionary type for keyPtr -> HybridSearchResult mapping
-+// Binary-safe document key -> HybridSearchResult mapping
- dictType dictTypeHybridSearchResult = {
--  .hashFunction = stringsHashFunction,
--  .keyDup = stringsKeyDup,
--  .valDup = NULL,
--  .keyCompare = stringsKeyCompare,
--  .keyDestructor = stringsKeyDestructor,
--  .valDestructor = hybridSearchResultValueDestructor,
-+    .hashFunction = rstringHashFunction,
-+    .keyDup = rstringKeyDup,
-+    .valDup = NULL,
-+    .keyCompare = rstringKeyCompare,
-+    .keyDestructor = stringsKeyDestructor,
-+    .valDestructor = hybridSearchResultValueDestructor,
- };
- 
-  /*******************************************************************************************************************
-@@ -2794,45 +2795,46 @@ static inline bool RPHybridMerger_Error(const RPHybridMerger *self) {
-   * @param numUpstreams - the number of upstreams
-   * @param score - used to override the result's score
-  */
-- static bool hybridMergerStoreUpstreamResult(RPHybridMerger* self, SearchResult *r, size_t upstreamIndex, double score) {
--  // Single shard case - use dmd->keyPtr
-+static bool hybridMergerStoreUpstreamResult(RPHybridMerger *self, SearchResult *r,
-+                                            size_t upstreamIndex, double score) {
-   RLookupRow translated = RLookupRow_New();
-   RLookupRow_WriteFieldsFrom(SearchResult_GetRowData(r),
--      self->lookupCtx->sourceLookups[upstreamIndex], &translated,
--      self->lookupCtx->tailLookup, self->lookupCtx->createMissingKeys);
-+                             self->lookupCtx->sourceLookups[upstreamIndex], &translated,
-+                             self->lookupCtx->tailLookup, self->lookupCtx->createMissingKeys);
-   RLookupRow_Reset(SearchResult_GetRowDataMut(r));
-   SearchResult_SetRowData(r, translated);
- 
-   const RSDocumentMetadata *dmd = SearchResult_GetDocumentMetadata(r);
--  const char *keyPtr = dmd ? dmd->keyPtr : NULL;
--  // Coordinator case - no dmd - use docKey in rlookup
--  const bool fallbackToLookup = !keyPtr && self->docKey;
--  if (fallbackToLookup) {
-+  RString key;
-+  if (dmd && dmd->keyPtr) {
-+    key.s = DMD_KeyPtrLen(dmd, &key.n);
-+  } else {
-+    if (!self->docKey) {
-+      return false;
-+    }
-     RSValue *docKeyValue = RLookupRow_Get(self->docKey, SearchResult_GetRowData(r));
--    if (docKeyValue != NULL) {
--      keyPtr = RSValue_StringPtrLen(docKeyValue, NULL);
-+    if (!docKeyValue) {
-+      return false;
-+    }
-+    key.s = RSValue_StringPtrLen(docKeyValue, &key.n);
-+    if (!key.s) {
-+      return false;
-     }
++// Workers are not waited for: one that still holds a dropped index (for example after FLUSHALL)
++// finds the disk context closed when it releases it, and SearchDisk_CloseIndex then leaks the
++// index instead of closing it. Its files are reclaimed by the startup cleanup of the storage.
+ void ShutdownDiskClose(RedisModuleCtx *ctx, RedisModuleEvent eid, uint64_t subevent, void *data) {
+   SlotCleanup_StopDiskJobs();
+   RedisModule_Log(ctx, "notice", "%s", "Begin releasing RediSearch DiskAPI resources on shutdown");
+@@ -763,6 +766,12 @@ void ShutdownDiskClose(RedisModuleCtx *ctx, RedisModuleEvent eid, uint64_t subev
+     DiskGC_UnlockRuns();
    }
--  if (!keyPtr) {
--    return false;
--  }
--
--  // Check if we've seen this document before
--  HybridSearchResult *hybridResult = (HybridSearchResult*)dictFetchValue(self->hybridResults, keyPtr);
+   SearchDisk_Close(ctx);
++#ifdef ENABLE_ASSERT
++  // Lets a worker that holds a dropped index release it now that the context is closed, and keeps
++  // the process alive long enough for it to do so.
++  SyncPoint_Signal(SYNC_POINT_BEFORE_AREQ_SPEC_RELEASE);
++  SyncPoint_Wait(SYNC_POINT_AFTER_DISK_CONTEXT_CLOSE);
++#endif
+   RedisModule_Log(ctx, "notice", "%s", "End releasing RediSearch DiskAPI resources");
+ }
  
-+  HybridSearchResult *hybridResult = dictFetchValue(self->hybridResults, &key);
-   if (!hybridResult) {
--    // First time seeing this document - create new hybrid result
-     hybridResult = HybridSearchResult_New(self->numUpstreams);
--    dictAdd(self->hybridResults, (void*)keyPtr, hybridResult);
-+    dictAdd(self->hybridResults, &key, hybridResult);
+```
+
+**File**: `src/search_disk.c` (modified, +49/-8)
+```diff
+@@ -10,6 +10,7 @@
+ #include "search_disk.h"
+ #include "slot_cleanup.h"
+ 
++#include <pthread.h>
+ #include <stdatomic.h>
+ #include <stdint.h>
+ #include <stdlib.h>
+@@ -35,6 +36,31 @@ RedisSearchDisk *disk_db = NULL;
+ 
+ static size_t diskMemoryLimitBytes = 0;
+ 
++// Orders SearchDisk_CloseIndex against SearchDisk_Close. A close that can run on any thread (the
++// last reference of a dropped index may be released by a worker) takes it shared, so closes stay
++// parallel; closing the shared context takes it exclusive, so no index is mid-close when the
++// context goes away and none starts after.
++static pthread_rwlock_t diskLifetimeLock_g = PTHREAD_RWLOCK_INITIALIZER;
++
++// Index handles that SearchDisk_CloseIndex could not close because the disk context was already
++// closed. Kept in a global only so that they stay reachable and leak checkers (LeakSanitizer,
++// valgrind) do not report an intentional leak at exit.
++static pthread_mutex_t leakedDiskIndexesLock_g = PTHREAD_MUTEX_INITIALIZER;
++static RedisSearchDiskIndexSpec **leakedDiskIndexes_g = NULL;
++static size_t leakedDiskIndexesLen_g = 0;
++
++static void SearchDisk_KeepLeakedIndexReachable(RedisSearchDiskIndexSpec *index) {
++  pthread_mutex_lock(&leakedDiskIndexesLock_g);
++  RedisSearchDiskIndexSpec **grown =
++      rm_realloc(leakedDiskIndexes_g, (leakedDiskIndexesLen_g + 1) * sizeof(*grown));
++  leakedDiskIndexes_g = grown;
++  leakedDiskIndexes_g[leakedDiskIndexesLen_g++] = index;
++  pthread_mutex_unlock(&leakedDiskIndexesLock_g);
++}
++
++// Whether the backend supports async I/O, copied from the backend by SearchDisk_CacheAsyncIOSupport.
++static _Atomic bool asyncIOSupported_g = false;
++
+ static bool SearchDisk_ApplyResourceState(size_t registeredIndexCount) {
+   RS_ASSERT(disk && disk_db && disk->basic.updateMemoryLimit);
+   return disk->basic.updateMemoryLimit(disk_db, diskMemoryLimitBytes, registeredIndexCount);
+@@ -210,6 +236,7 @@ bool SearchDisk_Initialize(RedisModuleCtx *ctx) {
+     RedisModule_Log(ctx, "warning", "Search Disk is enabled but could not be initialized");
+     return false;
    }
++  SearchDisk_CacheAsyncIOSupport();
  
--   SearchResult_SetScore(r, score);
--   // The merger holds `r` in its dictionary across further upstream Reads;
--   // preserve or drop the borrowed RSIndexResult so it does not dangle.
--   SearchResult_BufferIndexResult(&self->base, r);
--   HybridSearchResult_StoreResult(hybridResult, r, upstreamIndex);
--   return true;
-- }
-+  SearchResult_SetScore(r, score);
-+  // The merger holds `r` in its dictionary across further upstream Reads;
-+  // preserve or drop the borrowed RSIndexResult so it does not dangle.
-+  SearchResult_BufferIndexResult(&self->base, r);
-+  HybridSearchResult_StoreResult(hybridResult, r, upstreamIndex);
+   // Register BigModule callbacks for disk usage reporting
+   if (!SearchDisk_RegisterBigModuleCallbacks(ctx)) {
+@@ -246,9 +273,12 @@ void SearchDisk_Close(RedisModuleCtx *ctx) {
+       SlotCleanup_StopDiskJobs();
+     }
+     SearchDisk_StopMetrics();
++    pthread_rwlock_wrlock(&diskLifetimeLock_g);
+     disk->basic.close(ctx, disk_db);
+     disk_db = NULL;
++    atomic_store(&asyncIOSupported_g, false);
+     diskMemoryLimitBytes = 0;
++    pthread_rwlock_unlock(&diskLifetimeLock_g);
+   }
+ }
+ 
+@@ -417,9 +447,19 @@ void SearchDisk_CloseIndexOnMainThread(RedisModuleCtx *ctx, IndexSpec *spec) {
+   }
+ }
+ 
+-void SearchDisk_CloseIndex(RedisSearchDiskIndexSpec *index) {
+-    RS_ASSERT(disk_db && index);
+-    disk->basic.closeIndexSpec(disk_db, index);
++bool SearchDisk_CloseIndex(RedisSearchDiskIndexSpec *index) {
++  RS_ASSERT(index);
++  pthread_rwlock_rdlock(&diskLifetimeLock_g);
++  if (!disk_db) {
++    pthread_rwlock_unlock(&diskLifetimeLock_g);
++    SearchDisk_KeepLeakedIndexReachable(index);
++    RedisModule_Log(RSDummyContext, "notice",
++                    "Skipped closing a disk index released after the disk context was closed");
++    return false;
++  }
++  disk->basic.closeIndexSpec(disk_db, index);
++  pthread_rwlock_unlock(&diskLifetimeLock_g);
 +  return true;
-+}
- 
-  /* Helper function to consume results from a single upstream */
-  static int hybridMergerConsumeFromUpstream(RPHybridMerger *self, size_t maxResults, size_t upstreamIndex) {
-```
-
-**File**: `src/util/dict/dict.c` (modified, +20/-0)
-```diff
-@@ -63,6 +63,7 @@
- #include "redismodule.h"
- #include "rmalloc.h"
- #include "obfuscation/hidden.h"
-+#include "buffer/buffer.h"
- 
- uint64_t stringsHashFunction(const void *key){
-     return RS_dictGenHashFunction(key, strlen((char*)key));
-@@ -130,6 +131,25 @@ void* redisStringsKeyDup(void *privdata, const void *key){
-   return (void*)RedisModule_HoldString(NULL, (RedisModuleString*)keyStr);
  }
  
-+uint64_t rstringHashFunction(const void *key) {
-+  const RString *str = key;
-+  return dictGenHashFunction(str->s, str->n);
+ void SearchDisk_IndexSpecRdbSave(RedisModuleIO *rdb, RedisSearchDiskIndexSpec *index) {
+@@ -656,12 +696,13 @@ void SearchDisk_FreeAsyncReadPool(RedisSearchDiskAsyncReadPool pool) {
+     }
+ }
+ 
++void SearchDisk_CacheAsyncIOSupport() {
++    atomic_store(&asyncIOSupported_g, disk && disk_db && disk->basic.isAsyncIOSupported(disk_db));
 +}
 +
-+int rstringKeyCompare(void *privdata, const void *left, const void *right) {
-+  const RString *a = left, *b = right;
-+  return a->n == b->n && memcmp(a->s, b->s, a->n) == 0;
-+}
-+
-+void *rstringKeyDup(void *privdata, const void *key) {
-+  const RString *src = key;
-+  RString *copy = rm_malloc(sizeof(*copy) + src->n);
-+  char *bytes = (char *)(copy + 1);
-+  memcpy(bytes, src->s, src->n);
-+  *copy = (RString){.s = bytes, .n = src->n};
-+  return copy;
-+}
-+
- static void stringsListValDestructor(void *privdata, void *val) {
-   arrayof(char *) list = val;
-   array_free_ex(list, rm_free(*(char **)ptr));
+ bool SearchDisk_IsAsyncIOSupported() {
+-    if (!disk || !disk_db) {
+-        return false;
+-    }
+-    // Check if the underlying disk backend supports async I/O
+-    return disk->basic.isAsyncIOSupported(disk_db);
++    // Workers call this while shutdown may close the disk context, so it must not touch disk_db.
++    return atomic_load(&asyncIOSupported_g);
+ }
+ 
+ void SearchDisk_SetAsyncIOEnabled(bool enabled) {
 ```
 
-**File**: `src/util/dict/dict.h` (modified, +6/-0)
+**File**: `src/search_disk.h` (modified, +20/-1)
 ```diff
-@@ -254,10 +254,13 @@ extern dictType dictTypeUint64;
- uint64_t stringsHashFunction(const void *key);
- uint64_t hiddenNameHashFunction(const void *key);
- uint64_t redisStringsHashFunction(const void *key);
-+/* RString callbacks borrow binary-safe views: s must be non-NULL and readable for n bytes. */
-+uint64_t rstringHashFunction(const void *key);
+@@ -138,9 +138,18 @@ void SearchDisk_CloseIndexOnMainThread(RedisModuleCtx *ctx, IndexSpec *spec);
+ /**
+  * @brief Close an index, **Important** must be called once and only once for every index
+  *
++ * Safe to call from any thread, including after the disk context was closed at shutdown: the last
++ * reference of a dropped index can be released by a worker that outlives it. In that case the index
++ * is not closed and, if it was marked for deletion, its files are not destroyed. The leftover is
++ * reclaimed by the startup cleanup of the storage (or, after a hot restart, as an unclaimed
++ * database), not by this call.
++ *
+  * @param index Pointer to the index to close
++ * @return true if the index was closed; false if the disk context was already closed, in which
++ *         case the index handle is leaked and everything it may reference, such as the owning
++ *         IndexSpec, must stay allocated
+  */
+-void SearchDisk_CloseIndex(RedisSearchDiskIndexSpec *index);
++bool SearchDisk_CloseIndex(RedisSearchDiskIndexSpec *index);
  
- int stringsKeyCompare(void *privdata, const void *key1, const void *key2);
- int hiddenNameKeyCompare(void *privdata, const void *key1, const void *key2);
- int redisStringsKeyCompare(void *privdata, const void *key1, const void *key2);
-+int rstringKeyCompare(void *privdata, const void *key1, const void *key2);
+ /**
+  * @brief Save the disk-related data of the index to the rdb file
+@@ -637,6 +646,16 @@ void SearchDisk_FreeAsyncReadPool(RedisSearchDiskAsyncReadPool pool);
+  */
+ bool SearchDisk_IsAsyncIOSupported();
  
- void stringsKeyDestructor(void *privdata, void *key);
- void hiddenNameKeyDestructor(void *privdata, void *key);
-@@ -266,6 +269,9 @@ void redisStringsKeyDestructor(void *privdata, void *key);
- void* stringsKeyDup(void *privdata, const void *key);
- void* hiddenNameKeyDup(void *privdata, const void *key);
- void* redisStringsKeyDup(void *privdata, const void *key);
-+/* Copies the view and bytes into one allocation without a terminator;
-+ * release it with stringsKeyDestructor. */
-+void *rstringKeyDup(void *privdata, const void *key);
- 
- 
- #endif /* __DICT_H */
++/**
++ * @brief Reads the backend's async I/O support into the copy SearchDisk_IsAsyncIOSupported returns.
++ *
++ * Done once when the disk context opens (SearchDisk_Initialize), since the backend fixes the
++ * answer then, and workers must not pass the context to the backend while shutdown may free it.
++ * Tests that install their own context and backend call it after doing so, and again after
++ * removing them.
++ */
++void SearchDisk_CacheAsyncIOSupport();
++
+ /**
+  * @brief Enable or disable async I/O globally
+  *
 ```
 
-**File**: `tests/pytests/test_hybrid.py` (modified, +18/-0)
+**File**: `src/spec.c` (modified, +10/-1)
 ```diff
-@@ -585,3 +585,21 @@ def test_range_epsilon(self):
-             "vector_equivalent": "@vector_hnsw:[VECTOR_RANGE 5 $BLOB]=>{$EPSILON:0.5; $YIELD_DISTANCE_AS: vector_distance}"
-         }
-         run_test_scenario(self.env, self.index_name, scenario, self.vector_blob)
+@@ -2261,8 +2261,17 @@ static void IndexSpec_FreeUnlinkedData(IndexSpec *spec) {
+   //  Closing here — before any of the trie/dict/lock
+   // teardown below — keeps every field those callbacks might touch valid.
+   if (spec->diskSpec) {
+-    SearchDisk_CloseIndex(spec->diskSpec);
++    const bool closed = SearchDisk_CloseIndex(spec->diskSpec);
+     spec->diskSpec = NULL;
++    if (!closed) {
++      // The disk context is gone (shutdown), so the index was leaked instead of closed and its
++      // background jobs may still call back into this spec. Leak the spec too; the process is
++      // exiting. Assert builds free it anyway so that leak checkers (valgrind, ASan) stay quiet;
++      // compactions of a dropped index were already disabled when it was marked for deletion.
++#ifndef ENABLE_ASSERT
++      return;
++#endif
++    }
+   }
+   if (spec->pendingDiskRdbState) {
+     SearchDisk_FreeRdbState(spec->pendingDiskRdbState);
+```
+
+**File**: `tests/cpptests/test_cpp_disk_close_lifetime.cpp` (added, +154/-0)
+```diff
+@@ -0,0 +1,154 @@
++/*
++ * Copyright (c) 2006-Present, Redis Ltd.
++ * All rights reserved.
++ *
++ * Licensed under your choice of the Redis Source Available License 2.0
++ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
++ * GNU Affero General Public License v3 (AGPLv3).
++ */
 +
++#include "gtest/gtest.h"
++#include "common.h"
++#include "module.h"
 +
-+def testHybridBinaryDocumentKeys(env):
-+    """Keep full document keys distinct in standalone and coordinator hybrid mergers."""
-+    conn = getConnectionByEnv(env)
-+    env.expect('FT.CREATE', 'idx', 'ON', 'HASH', 'PREFIX', 1, '{doc}:',
-+               'SCHEMA', 'body', 'TEXT', 'v', 'VECTOR', 'FLAT', 6,
-+               'TYPE', 'FLOAT32', 'DIM', 2, 'DISTANCE_METRIC', 'L2').ok()
-+    vector = np.zeros(2, dtype=np.float32).tobytes()
-+    keys = ['{doc}:one\x00suffix', '{doc}:one', '{doc}:one\x00other']
-+    for count, key in enumerate(keys, 1):
-+        conn.execute_command('HSET', key, 'body', 'needleft', 'v', vector)
-+        result = env.cmd('FT.HYBRID', 'idx', 'SEARCH', 'needleft',
-+                         'VSIM', '@v', '$B', 'KNN', 2, 'K', count,
-+                         'PARAMS', 2, 'B', vector)
-+        env.assertEqual(result[1], count, message=result)
-+        rows = [dict(zip(row[::2], row[1::2])) for row in result[3]]
-+        env.assertEqual(sorted(row['__key'] for row in rows), sorted(keys[:count]))
++#include <atomic>
++#include <chrono>
++#include <future>
++#include <thread>
++
++extern "C" {
++#include "search_disk.h"
++extern RedisSearchDiskAPI *disk;
++extern RedisSearchDisk *disk_db;
++extern bool isFlex;
++}
++
++namespace {
++
++// Closing an index must be ordered against closing the shared disk context, because the last
++// reference of a dropped index can be released by a worker while shutdown closes the context.
++class DiskCloseLifetimeTest : public ::testing::Test {
++ protected:
++  RedisSearchDiskAPI savedApi{};
++  RedisSearchDiskAPI *savedDisk = nullptr;
++  RedisSearchDisk *savedDiskDb = nullptr;
++  bool savedIsFlex = false;
++  RedisSearchDiskAPI api{};
++  // Stands in for an index handle; the mock never dereferences it.
++  int index = 0;
++
++  static inline std::atomic<int> closeIndexCalls{0};
++  static inline std::atomic<int> closeContextCalls{0};
++  static inline std::atomic<bool> indexClosedBeforeContext{false};
++  static inline std::atomic<int> asyncIOQueries{0};
++  static inline std::promise<void> insideClose;
++  static inline std::shared_future<void> releaseClose;
++
++  void SetUp() override {
++    savedDisk = disk;
++    savedDiskDb = disk_db;
++    savedIsFlex = isFlex;
++    closeIndexCalls = 0;
++    closeContextCalls = 0;
++    indexClosedBeforeContext = false;
++    asyncIOQueries = 0;
++
++    api.basic.isAsyncIOSupported = [](RedisSearchDisk *) {
++      ++asyncIOQueries;
++      return true;
++    };
++    api.basic.closeIndexSpec = [](RedisSearchDisk *, RedisSearchDiskIndexSpec *) {
++      ++closeIndexCalls;
++    };
++    api.basic.close = [](RedisModuleCtx *, RedisSearchDisk *) {
++      indexClosedBeforeContext = closeIndexCalls > 0;
++      ++closeContextCalls;
++    };
++    api.metrics.stopMetrics = [](RedisSearchDisk *) {};
++    disk = &api;
++    disk_db = reinterpret_cast<RedisSearchDisk *>(&api);
++    // Keeps SearchDisk_Close away from the slot-cleanup jobs, which are not started here.
++    isFlex = false;
++  }
++
++  void TearDown() override {
++    disk = savedDisk;
++    disk_db = savedDiskDb;
++    isFlex = savedIsFlex;
++    SearchDisk_CacheAsyncIOSupport();
++  }
++
++  RedisSearchDiskIndexSpec *handle() {
++    return reinterpret_cast<RedisSearchDiskIndexSpec *>(&index);
++  }
++};
++
++TEST_F(DiskCloseLifetimeTest, ClosesTheIndexWhileTheContextIsOpen) {
++  EXPECT_TRUE(SearchDisk_CloseIndex(handle()));
++  EXPECT_EQ(closeIndexCalls, 1);
++}
++
++TEST_F(DiskCloseLifetimeTest, SkipsTheIndexCloseOnceTheContextIsClosed) {
++  SearchDisk_Close(nullptr);
++  EXPECT_EQ(closeContextCalls, 1);
++  EXPECT_EQ(disk_db, nullptr);
++
++  EXPECT_FALSE(SearchDisk_CloseIndex(handle()));
++  EXPECT_EQ(closeIndexCalls, 0);
++}
++
++// Workers building a query pipeline ask this while shutdown may be freeing the context, so the
++// backend is asked once, when the context opens, and never through disk_db after that.
++TEST_F(DiskCloseLifetimeTest, AsyncIOSupportIsReadFromTheBackendOnlyWhenCached) {
++  EXPECT_FALSE(SearchDisk_IsAsyncIOSupported());
++  EXPECT_EQ(asyncIOQueries, 0);
++
++  SearchDisk_CacheAsyncIOSupport();
++  EXPECT_EQ(asyncIOQueries, 1);
++  EXPECT_TRUE(SearchDisk_IsAsyncIOSupported());
++  EXPECT_TRUE(SearchDisk_IsAsyncIOSupported());
++  EXPECT_EQ(asyncIOQueries, 1);
++}
++
++TEST_F(DiskCloseLifetimeTest, AsyncIOSupportIsClearedWhenTheContextIsClosed) {
++  SearchDisk_CacheAsyncIOSupport();
++  ASSERT_TRUE(SearchDisk_IsAsyncIOSupported());
++
++  SearchDisk_Close(nullptr);
++  EXPECT_FALSE(SearchDisk_IsAsyncIOSupported());
++  EXPECT_EQ(asyncIOQueries, 1);
++}
++
++TEST_F(DiskCloseLifetimeTest, ClosingTheContextWaitsForAnIndexThatIsMidClose) {
++  insideClose = std::promise<void>();
++  std::promise<void> release;
++  releaseClose = release.get_future().share();
++  api.basic.closeIndexSpec = [](RedisSearchDisk *, RedisSearchDiskIndexSpec *) {
++    ++closeIndexCalls;
++    insideClose.set_value();
++    releaseClose.wait();
++  };
++
++  auto closeIndex = std::async(std::launch::async, [&] { return SearchDisk_CloseIndex(handle()); });
++  insideClose.get_future().wait();
++
++  std::atomic<bool> contextClosed{false};
++  std::thread closeContext([&] {
++    SearchDisk_Close(nullptr);
++    contextClosed = true;
++  });
++
++  // The context must stay open for as long as the index close is running.
++  std::this_thread::sleep_for(std::chrono::milliseconds(100));
++  EXPECT_FALSE(contextClosed);
++  EXPECT_EQ(closeContextCalls, 0);
++
++  release.set_value();
++  EXPECT_TRUE(closeIndex.get());
++  closeContext.join();
++  EXPECT_TRUE(contextClosed);
++  EXPECT_EQ(closeContextCalls, 1);
++  EXPECT_TRUE(indexClosedBeforeContext);
++}
++
++}  // namespace
+```
+
+**File**: `tests/cpptests/test_cpp_slot_cleanup.cpp` (modified, +3/-0)
+```diff
+@@ -591,6 +591,7 @@ class DiskSlotAsyncVisibilityTest : public DiskSlotVisibilityTest {
+     RSGlobalConfig.diskAsyncReadPoolSize = 8;
+     RSGlobalConfig.diskAsyncReadQueueFactor = 1;
+     api.basic.isAsyncIOSupported = [](RedisSearchDisk *) { return true; };
++    SearchDisk_CacheAsyncIOSupport();
+     api.docTable.isDocIdDeleted = [](RedisSearchDiskIndexSpec *, t_docId id) {
+       for (const auto deleted : bufferedAsyncPool->deletedIds) {
+         if (deleted == id) return true;
+@@ -666,6 +667,8 @@ class DiskSlotAsyncVisibilityTest : public DiskSlotVisibilityTest {
+     RSGlobalConfig.diskAsyncReadQueueFactor = savedQueueFactor;
+     bufferedAsyncPool = nullptr;
+     DiskSlotVisibilityTest::TearDown();
++    // The fixture's backend is gone, so the cached answer must not outlive it.
++    SearchDisk_CacheAsyncIOSupport();
+   }
+ 
+   RedisSearchDiskQueryView *view() {
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #12609** (2026-11-26): [MOD-19636] Remove the unreachable FT.ADD PARTIAL fast path (@eyalrund)
+- **PR #12606** (2026-11-27): [MOD-19852] Count a repeated TAG value once per document in disk index counts (@JoanFM)
 - **PR #12605** (2026-11-26): rust-port: let port plans retire header functions and list the C tests the swap replaces (@gdesmott)
 - **PR #12601** (2026-11-26): [MOD-19622] Reject vector indexes with an unknown SVS compression on load (@eyalrund)
 - **PR #12599** (2026-11-26): [8.8-rse] Fix nightly yield and HNSW checkpoint tests (@redisearch-backport-pull-request[bot])
 - **PR #12598** (2026-11-26): [MOD-21189] Find the heap union's score-skipping pivot without rescanning its children (@JoanFM)
-- **PR #12596** (2026-11-26): [MOD-21663] Fix undefined behaviour when ordering intersection children with disk unions on Flex (@ofiryanai)
 
 ---
 
@@ -2627,56 +2368,36 @@ Co-Authored-By: Claude Sonne
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [RED-224927] Fix building from source on macOS when other Redis modules install 
+## X. [MOD-21503] Fix a crash at shutdown with disk indexes when a worker still holds 
 
 **RULE**:
-When implementing operations in `build.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/aggregate/aggregate_exec.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ff955074`: [RED-224927] Fix building from source on macOS when other Redis modules install an older LLVM. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9566c47`: [MOD-21503] Fix a crash at shutdown with disk indexes when a worker still holds a dropped index. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/aggregate/aggregate_exec.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#-----------------------------------------------------------------------------
-# Function: select_macos_compilers
-# Set MACOS_C_COMPILER/MACOS_CXX_COMPILER to clang/clang++ from PATH when that
-# is Apple clang or LLVM_VERSION. Otherwise use the LLVM that
-# .install/install_llvm.sh installs, and export LIBCLANG_PATH so bindgen loads
-# the same LLVM's libclang; fall back to PATH if that LLVM is not installed.
-#
-# PATH can hold the wrong LLVM: when Redis bootstraps several modules into one
-# environment, modules bootstrapped after this one put an older Homebrew LLVM
-# ahead of ours, and that LLVM's libc++ lacks C++20 features SVS uses. Apple
-# clang is kept because Homebrew's packages of Redis build with it.
-#-----------------------------------------------------------------------------
-select_macos_compilers() {
-  local LLVM_VERSION LLVM_FULL_VERSION
-  source "$ROOT/.install/LLVM_VERSION.sh"
-
-  MACOS_C_COMPILER=clang
-  MACOS_CXX_COMPILER=clang++
-  local path_banner
-  path_banner=$({ clang --version 2>/dev/null || true; } | head -n1)
-  if [[ "$path_banner" == "Apple clang"* || \
-        "$(clang_major_version clang)" == "$LLVM_VERSION" ]]; then
-    return
-  fi
-
-  # Same locations, in t
+#ifdef ENABLE_ASSERT
+  // Sync point (debug): the worker is done with the query and about to release its reference to
+  // the spec, which is the last one if the index was dropped meanwhile. Worker-only: the request
+  // itself is freed on other threads too.
+  SyncPoint_Wait(SYNC_POINT_BEFORE_AREQ_SPEC_RELEASE);
+#endif
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    CMAKE_BASIC_ARGS="$CMAKE_BASIC_ARGS -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ff955074` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9566c47` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

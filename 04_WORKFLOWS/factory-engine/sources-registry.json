@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T02:41:29.204Z",
-    "lastVerified": "2026-11-28T02:41:29.204Z",
+    "lastChecked": "2026-11-28T02:50:20.024Z",
+    "lastVerified": "2026-11-28T02:50:20.024Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-28T02:13:23.977Z",
+    "lastChecked": "2026-11-28T02:50:13.883Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-28T02:13:23.977Z"
+    "lastVerified": "2026-11-28T02:50:13.883Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -367,8 +367,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T22:36:10.352Z",
-    "lastVerified": "2026-11-27T22:36:10.352Z",
+    "lastChecked": "2026-11-28T02:50:08.907Z",
+    "lastVerified": "2026-11-28T02:50:08.907Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -4178,9 +4178,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-27T09:08:04.149Z",
+    "lastChecked": "2026-11-28T02:50:06.403Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-27T09:08:04.149Z"
+    "lastVerified": "2026-11-28T02:50:06.403Z"
   },
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
@@ -6603,8 +6603,8 @@
     "officialUrl": "https://github.com/golutra/golutra",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T02:58:11.497Z",
-    "lastVerified": "2026-11-27T02:58:11.497Z",
+    "lastChecked": "2026-11-28T02:49:58.908Z",
+    "lastVerified": "2026-11-28T02:49:58.908Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-golutra-golutra",
@@ -7321,14 +7321,14 @@
     "officialUrl": "https://github.com/RediSearch/RediSearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T07:30:43.944Z",
-    "lastVerified": "2026-11-27T07:30:43.944Z",
+    "lastChecked": "2026-11-28T02:50:15.400Z",
+    "lastVerified": "2026-11-28T02:50:15.400Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "2161f24ce13694ee875ecdccbcb097d62a7020fe7e72271c9d41891631f83bb0",
+    "contentHash": "dbe66d7ab4494d103b145db3f4ff32d21a528a9be27da0f807f2048e96b17fc4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10896,9 +10896,9 @@
   "gonzalezreal-swift-markdown-ui": {
     "name": "swift-markdown-ui",
     "officialUrl": "https://github.com/gonzalezreal/swift-markdown-ui",
-    "lastChecked": "2026-11-26T00:59:25.639Z",
+    "lastChecked": "2026-11-28T02:50:03.866Z",
     "revisionIdentifier": "8371aeb3",
-    "lastVerified": "2026-11-26T00:59:25.639Z"
+    "lastVerified": "2026-11-28T02:50:03.866Z"
   },
   "scrapy-plugins-scrapy-playwright": {
     "name": "scrapy-playwright",
@@ -11377,9 +11377,9 @@
   "rehypejs-rehype": {
     "name": "rehype",
     "officialUrl": "https://github.com/rehypejs/rehype",
-    "lastChecked": "2026-11-24T18:09:00.741Z",
+    "lastChecked": "2026-11-28T02:50:01.382Z",
     "revisionIdentifier": "cae74c7f",
-    "lastVerified": "2026-11-24T18:09:00.741Z"
+    "lastVerified": "2026-11-28T02:50:01.382Z"
   },
   "sindresorhus-keyboardshortcuts": {
     "name": "KeyboardShortcuts",
