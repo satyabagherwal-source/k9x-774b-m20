@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1.1",
   "source_version": "hf-aleph-alpha-kolibri-1.1",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T17:13:31.543Z",
+  "timestamp": "2026-11-28T01:35:21.984Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-aleph-alpha-kolibri-1-1",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Aleph-Alpha/Kolibri-1.1](https://huggingface.co/Aleph-Alpha/Kolibri-1.1) (Revision: `hf-aleph-a`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T17:13:31.543Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T01:35:21.984Z`  
 > **Learning ID**: `learn-huggingface-aleph-alpha-kolibri-1-1`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1.1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Aleph-Alpha/Kolibri-1.1](https://huggingface.co/Aleph-Alpha/Kolibri-1.1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:13:30.479Z  
+> **Harvest Timestamp**: 2026-11-28T01:35:20.988Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 272 downloads | 84 likes
+- **Stars / Engagement**: 1725 downloads | 219 likes
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T01:26:59.124Z",
+  "last_updated": "2026-11-28T01:35:46.699Z",
   "total_records": 2868,
   "domains": {
     "A": {
@@ -15929,8 +15929,8 @@
       "title": "Content & Information Intelligence: okteto/okteto Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-content-information-intelligence-okteto-okteto-core-invariants.md",
       "repository": "okteto/okteto",
-      "content_hash": "b409fe0c3ed3ce7b95be50db4ce154d8cfaab709e437301483687303c75e57fc",
-      "created_at": "2026-11-27T07:30:40.503Z"
+      "content_hash": "6f494585e714f0b44ba59c3a9a899edcfe6f311ab77e5c359b570de17d386d2d",
+      "created_at": "2026-11-28T01:35:31.928Z"
     },
     "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants",
@@ -16016,8 +16016,8 @@
       "title": "Content & Information Intelligence: okteto-okteto-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-learnings-content-information-intelligence-okteto-okteto-learnings.md",
       "repository": "okteto-okteto-learnings",
-      "content_hash": "39952b6aedacd8a42c3980254cf312a6ae919c255cb217422ce9dd84437a59d5",
-      "created_at": "2026-11-27T07:30:49.861Z"
+      "content_hash": "8ea80ffcd8439b3ea23f0e731c2f3047ece8f71d28871b4b6c66d42363ea52d9",
+      "created_at": "2026-11-28T01:35:46.699Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants",
@@ -18284,8 +18284,8 @@
       "title": "Architecture Intelligence: ytsaurus/ytsaurus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ytsaurus-ytsaurus-architecture-intelligence-ytsaurus-ytsaurus-core-invariants.md",
       "repository": "ytsaurus/ytsaurus",
-      "content_hash": "c6148983ba2a725394860c6c4d64bd21ddb750fd0282db339c30164250da2c50",
-      "created_at": "2026-11-26T12:20:15.966Z"
+      "content_hash": "888e0e89a5d304ce00c1f5b6e9c7c4b5ff485535d4358c4a0a6f296f37de7d68",
+      "created_at": "2026-11-28T01:35:40.497Z"
     },
     "DOM-D-CC7591B7": {
       "record_id": "DOM-D-CC7591B7",
@@ -24399,8 +24399,8 @@
       "title": "Technical Construction Intelligence: chrisbanes/skills Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chrisbanes-skills-technical-construction-intelligence-chrisbanes-skills-core-inv.md",
       "repository": "chrisbanes/skills",
-      "content_hash": "635e5ee4890835c605fd167ee7bf7604c7c8ce6f3922b24c96760f6dbc4bbdfa",
-      "created_at": "2026-11-25T23:41:44.934Z"
+      "content_hash": "938dad22c43b025618cd074a63e59509efd8b91f1d5dc3e5cc48b797e3f67c92",
+      "created_at": "2026-11-28T01:35:29.131Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-learnings-core-invariants",
@@ -24408,8 +24408,8 @@
       "title": "Technical Construction Intelligence: chrisbanes-skills-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chrisbanes-skills-learnings-technical-construction-intelligence-chrisbanes-skill.md",
       "repository": "chrisbanes-skills-learnings",
-      "content_hash": "053bd75577e5ef42442aea8df9aaac98a102246474ff4129399bd71f28f68a43",
-      "created_at": "2026-11-25T23:41:51.388Z"
+      "content_hash": "008504486ff83bcca795e67aa97dc0ff17d70e0c1f84cec1b84b48a45d4f72d9",
+      "created_at": "2026-11-28T01:35:44.828Z"
     },
     "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kamgurgul-cpu-info-core-invariants",
@@ -43121,8 +43121,8 @@
       "title": "Research & Knowledge Intelligence: Aleph-Alpha/Kolibri-1.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-aleph-alpha-kolibri-1-1-research-knowledge-intelligence-aleph-alpha-kolibri-1.md",
       "repository": "Aleph-Alpha/Kolibri-1.1",
-      "content_hash": "fc06d66669696c67b06b03060363abca03768832fbc3961c1866089f8a4bcd48",
-      "created_at": "2026-11-24T17:13:31.544Z"
+      "content_hash": "ddb7c3a0307841b37365f64c59dba29be2468ca16d6bd6d659deb733387e6312",
+      "created_at": "2026-11-28T01:35:21.985Z"
     },
     "DOM-D-17A2D54E": {
       "record_id": "DOM-D-17A2D54E",
@@ -43172,8 +43172,8 @@
       "title": "Research & Knowledge Intelligence: hf-aleph-alpha-kolibri-1.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-aleph-alpha-kolibri-1-1-learnings-research-knowledge-intelligence-hf-aleph-al.md",
       "repository": "hf-aleph-alpha-kolibri-1.1-learnings",
-      "content_hash": "db88095c1a902d64f456671051245a78cd538e46f43805954bf6fc62c778f12c",
-      "created_at": "2026-11-24T17:14:28.508Z"
+      "content_hash": "f148eb7d8ed9152cfcc6a51502d6c90ef4b7918d797f14edf94a9f049c81a5b1",
+      "created_at": "2026-11-28T01:35:43.845Z"
     },
     "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-core-invariants",

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-IG8O",
-    "timestamp": "2026-11-26T13:36:01.464Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "b2a8de1309423d139f69614fa7a585280d2665d59ea3b8d5e3cf3e5013bd3ad3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-IH1T",
-    "timestamp": "2026-11-26T13:36:02.513Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "f4fbdf3c2b302a6aeca151ccb3dc909471431b461c78e8e9ccaa0e3d77623b23",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-IJP7",
-    "timestamp": "2026-11-26T13:36:05.947Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "2b9e961d75c217e3e1c9a15a29e24acc7b7534edc83effe22655fb9dab16e14a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-ILT1",
-    "timestamp": "2026-11-26T13:36:08.677Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "e0649035044e4ebea4360f06be6336fa841baa5b933617bab1ad04f79c15e705",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-TGEE",
     "timestamp": "2026-11-26T13:44:34.886Z",
     "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -7490,6 +7430,66 @@
     "repository": "skyhook-io/radar",
     "learningId": "learn-github-skyhook-io-radar",
     "contentHash": "83e949288125adf49f8d546390d420a3385a0c1e869f25d0d58327d47170f361",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-NDL1",
+    "timestamp": "2026-11-28T01:35:21.733Z",
+    "repository": "Aleph-Alpha/Kolibri-1.1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1-1",
+    "contentHash": "30617ad994d0fc47c3873aa7d8eeba4acfbb93c421820e64250d26dc6305a182",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-NIXS",
+    "timestamp": "2026-11-28T01:35:28.672Z",
+    "repository": "chrisbanes/skills",
+    "learningId": "learn-github-chrisbanes-skills",
+    "contentHash": "1505dbbbc006152b73efb7e87865dcde8e881e96c56e01c3e5d1f45251d348c2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-NL2U",
+    "timestamp": "2026-11-28T01:35:31.446Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "66dc107f7f371658601f13568e8e10163cf50cfb2cf4ea35299a9b6eb4c8a20b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-NRP2",
+    "timestamp": "2026-11-28T01:35:40.022Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "4adbf022ef1a0ddeeb34f00ea5978d3475b95595a1b9b879202bd7cc2548cf85",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

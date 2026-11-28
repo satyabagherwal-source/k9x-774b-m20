@@ -13959,3 +13959,7 @@ Every entry in this ledger must capture:
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `8d73e835` | Multi-dimensional audit evidence | 2026-11-28T01:18:53.076Z |
 | `learn-huggingface-apple-depthpro2` | `https://huggingface.co/apple/DepthPro2` | `hf-apple-d` | Multi-dimensional audit evidence | 2026-11-28T01:26:43.749Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `711f4b42` | Multi-dimensional audit evidence | 2026-11-28T01:26:53.140Z |
+| `learn-huggingface-aleph-alpha-kolibri-1-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1.1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-11-28T01:35:21.746Z |
+| `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `2975135e` | Multi-dimensional audit evidence | 2026-11-28T01:35:28.685Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `24b444d1` | Multi-dimensional audit evidence | 2026-11-28T01:35:31.459Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `a0a5c188` | Multi-dimensional audit evidence | 2026-11-28T01:35:40.035Z |

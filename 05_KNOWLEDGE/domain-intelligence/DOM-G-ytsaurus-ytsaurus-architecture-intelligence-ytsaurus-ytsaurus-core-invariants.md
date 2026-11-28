@@ -4,24 +4,24 @@
 {
   "source_repository": "ytsaurus/ytsaurus",
   "source_url": "https://github.com/ytsaurus/ytsaurus",
-  "source_version": "4fc0fe7e",
+  "source_version": "a0a5c188",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T12:20:15.761Z",
+  "timestamp": "2026-11-28T01:35:40.281Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ytsaurus-ytsaurus",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `4fc0fe7e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T12:20:15.761Z`  
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `a0a5c188`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T01:35:40.281Z`  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ytsaurus/ytsaurus:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T12:20:14.334Z  
+> **Harvest Timestamp**: 2026-11-28T01:35:38.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2327 stars
+- **Stars / Engagement**: 2328 stars
 
 ---
 
@@ -1209,426 +1209,868 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9981fd4e` (2026-11-26)
-**Commit Message**: YT-23401: Allow toggling network throttler IPC via node dynamic config
+### Incident Patch 1: `0a66f47a` (2026-11-27)
+**Commit Message**: [yt/java] Fix HttpClient selector thread leak
 
-Data and exec nodes on a host share a network throttling budget through IPC. Add enable_network_throttler_ipc to the node dynamic config (default: true) so they can switch to independent budgets without restarting when their networks are separated.
+Fixes #1845.
 
-On a mode change, preserve bucket throttler objects, local quota and debt, accumulation windows, usage and pending requests. Replace only their shared-reserve connection; no initial quota is granted and the old shared reserve is not copied into the new group.
-commit_hash:94822bf018faf7de41a40590e4a4a7f122d0c7fb
+Close the HTTP client used for proxy discovery together with `ClientPoolService`.
 
-**File**: `yt/yt/core/concurrency/fair_throttler.cpp` (modified, +95/-63)
+On Java 21 and newer, the client is closed explicitly. On Java 11–20, the strong reference to the internal HTTP client facade is released, allowing the selector thread to terminate after garbage collection.
+
+Tested on Java 17 and Java 21.
+
+* Changelog entry
+Type: fix
+Component: java-sdk
+
+Closing `YTsaurusClient` no longer leaks the HTTP proxy discovery thread.
+
+---
+
+Pull Request resolved: https://github.com/ytsaurus/ytsaurus/pull/1847
+
+Co-authored-by: tinarsky <[REDACTED_EMAIL]>
+commit_hash:5fb759514704d0d9a3283c8897a667a5611227a1
+
+**File**: `yt/java/ytsaurus-client/src/main/java/tech/ytsaurus/client/ClientPool.java` (modified, +33/-4)
 ```diff
-@@ -5,6 +5,8 @@
+@@ -29,6 +29,7 @@
+ import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.TimeoutException;
+ import java.util.concurrent.atomic.AtomicInteger;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Predicate;
+ import java.util.stream.Collectors;
  
- #include <yt/yt/core/profiling/timing.h>
+@@ -292,10 +293,12 @@ private ClientPoolService(HttpBuilder httpBuilder) {
+         }
+         HttpClient httpClient = httpClientBuilder.build();
  
-+#include <library/cpp/yt/memory/atomic_intrusive_ptr.h>
+-        proxyGetter = new HttpProxyGetter(
++        HttpProxyGetter httpProxyGetter = new HttpProxyGetter(
+                 httpClient,
+                 httpBuilder
+         );
++        proxyGetter = httpProxyGetter;
++        toClose.add(httpProxyGetter);
+ 
+         executorService = httpBuilder.eventLoop;
+         updatePeriodMs = httpBuilder.options.getProxyUpdateTimeout().toMillis();
+@@ -946,7 +949,7 @@ interface ProxyGetter {
+ 
+ @NonNullApi
+ @NonNullFields
+-class HttpProxyGetter implements ProxyGetter {
++class HttpProxyGetter implements ProxyGetter, AutoCloseable {
+     private static final int HTTP_PROXY_PORT = 80;
+     private static final int HTTPS_PROXY_PORT = 443;
+ 
+@@ -956,7 +959,7 @@ class HttpProxyGetter implements ProxyGetter {
+     private static final String HTTP_SCHEME = "http";
+     private static final String HTTPS_SCHEME = "https";
+ 
+-    private final HttpClient httpClient;
++    private final AtomicReference<HttpClient> httpClientRef;
+     private final String balancerFqdn;
+     private final Duration discoverProxiesTimeout;
+     @Nullable
+@@ -972,7 +975,7 @@ class HttpProxyGetter implements ProxyGetter {
+     String proxyNetworkName;
+ 
+     HttpProxyGetter(HttpClient httpClient, ClientPoolService.HttpBuilder httpBuilder) {
+-        this.httpClient = httpClient;
++        this.httpClientRef = new AtomicReference<>(httpClient);
+         this.balancerFqdn = Objects.requireNonNull(httpBuilder.balancerFqdn);
+         this.balancerPort = httpBuilder.balancerPort;
+         this.discoverProxiesTimeout = Objects.requireNonNull(httpBuilder.options).getProxyUpdateTimeout();
+@@ -986,6 +989,11 @@ class HttpProxyGetter implements ProxyGetter {
+ 
+     @Override
+     public CompletableFuture<List<HostPort>> getProxies() {
++        HttpClient httpClient = httpClientRef.get();
++        if (httpClient == null) {
++            return CompletableFuture.failedFuture(new IllegalStateException("HTTP proxy getter is closed"));
++        }
 +
- #include <util/random/shuffle.h>
- 
- namespace NYT::NConcurrency {
-@@ -257,18 +259,19 @@ class TBucketThrottler
-     {
-         YT_VERIFY(amount >= 0);
- 
-+        auto sharedBucket = SharedBucket_.Acquire();
-         auto available = Quota_.GetValue();
-         auto globalAvailable = IsLimited()
-             ? 0
--            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
- 
-         if (amount > available + globalAvailable) {
-             return false;
-         }
- 
-         auto globalConsumed = std::clamp<i64>(amount - available, 0, globalAvailable);
-         Quota_.Acquire(amount - globalConsumed);
--        SharedBucket_->Limit.Acquire(globalConsumed);
-+        sharedBucket->Limit.Acquire(globalConsumed);
- 
-         ValueCounter_.Increment(amount);
-         Usage_ += amount;
-@@ -280,16 +283,17 @@ class TBucketThrottler
-     {
-         YT_VERIFY(amount >= 0);
- 
-+        auto sharedBucket = SharedBucket_.Acquire();
-         auto available = Quota_.GetValue();
-         auto globalAvailable = IsLimited()
-             ? 0
--            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
- 
-         auto consumed = std::min(amount, available + globalAvailable);
- 
-         auto globalConsumed = std::clamp<i64>(consumed - available, 0, globalAvailable);
-         Quota_.Acquire(consumed - globalConsumed);
--        SharedBucket_->Limit.Acquire(globalConsumed);
-+        sharedBucket->Limit.Acquire(globalConsumed);
- 
-         ValueCounter_.Increment(consumed);
-         Usage_ += consumed;
-@@ -301,15 +305,16 @@ class TBucketThrottler
-     {
-         YT_VERIFY(amount >= 0);
- 
-+        auto sharedBucket = SharedBucket_.Acquire();
-         auto available = Quota_.GetValue();
-         // NB: Shared bucket limit can get below zero because resource acquisition is racy.
-         auto globalAvailable = IsLimited()
-             ? 0
--            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
- 
-         auto globalConsumed = std::clamp<i64>(amount - available, 0, globalAvailable);
-         Quota_.Acquire(amount - globalConsumed);
--        SharedBucket_->Limit.Acquire(globalConsumed);
-+        sharedBucket->Limit.Acquire(globalConsumed);
- 
-         ValueCounter_.Increment(amount);
-         Usage_ += amount;
-@@ -357,8 +362,9 @@ class TBucketThrottler
- 
-     i64 GetAvailable() const override
-     {
-+        auto sharedBucket = SharedBucket_.Acquire();
-         auto available = Quota_.GetValue();
--        auto globalAvailable = IsLimited() ? 0 : SharedBucket_->Limit.GetValue();
-+        auto globalAvailable = IsLimited() ? 0 : sharedBucket->Limit.GetValue();
-         return available + globalAvailable;
+         var discoverProxiesUrl = String.format(
+                 "%s://%s/api/v4/discover_proxies?type=rpc", createScheme(), createFqdnWithPort()
+         );
+@@ -1062,6 +1070,27 @@ public CompletableFuture<List<HostPort>> getProxies() {
+         });
      }
  
-@@ -465,14 +471,19 @@ class TBucketThrottler
-         }
-     }
- 
-+    void SetSharedBucket(const TSharedBucketPtr& sharedBucket)
-+    {
-+        SharedBucket_.Store(sharedBucket);
++    /**
++     * Shuts down the HTTP client used for proxy discovery without waiting for in-flight requests.
++     * On Java 11-20 the client has no shutdown API, so its selector thread stops only after
++     * the client is garbage collected.
++     */
++    @Override
++    public void close() {
++        HttpClient httpClient = httpClientRef.getAndSet(null);
++        if (httpClient == null) {
++            return;
++        }
++
++        try {
++            HttpClient.class.getMethod("shutdownNow").invoke(httpClient);
++        } catch (NoSuchMethodException ignored) {
++            // HttpClient has no explicit shutdown API before Java 21.
++        } catch (ReflectiveOperationException e) {
++            throw new RuntimeException("Failed to shut down HTTP proxy discovery client", e);
++        }
 +    }
 +
-     bool IsLimited() const
-     {
-         return Limited_.load();
-     }
- 
- private:
-     const NLogging::TLogger Logger;
--    const TSharedBucketPtr SharedBucket_;
-+    TAtomicIntrusivePtr<TSharedBucket> SharedBucket_;
-     const NProfiling::TProfiler Profiler_;
-     const NProfiling::TCounter ValueCounter_;
-     const NProfiling::TCounter ReleasedCounter_;
-@@ -520,15 +531,12 @@ class TFairThrottler
-         , SharedBucket_(New<TSharedBucket>(
-             Config_->GlobalAccumulationTicks,
-             Profiler_,
--            GetSharedBucketValue()))
-+            GetSharedBucketValue(Ipc_)))
-     {
--        if (Ipc_) {
--            Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
--                return IsLeader_.load();
--            });
--        } else {
--            IsLeader_ = true;
--        }
-+        IsLeader_ = !Ipc_;
-+        Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
-+            return IsLeader_.load();
-+        });
- 
-         Profiler_.AddFuncGauge("/total_limit", MakeStrong(this), [this] {
-             auto guard = Guard(Lock_);
-@@ -542,50 +550,44 @@ class TFairThrottler
-         const std::string& name,
-         TFairThrottlerBucketConfigPtr config) final
-     {
--        if (!config) {
--            config = New<TFairThrottlerBucketConfig>();
--        }
--
-         auto guard = Guard(Lock_);
--        if (auto it = Buckets_.find(name); it != Buckets_.end()) {
--            it->second.Throttler->Update(Config_, config);
--
--            it->second.Config = std::move(config);
--
--            return it->second.Throttler;
--        }
--
--        auto throttler = New<TBucketThrottler>(
--            Logger().WithTag("Bucket", name),
--            Profiler_.WithTag("bucket", name),
--            SharedBucket_,
--            Config_);
--
--        throttler->Update(Config_, config);
--
--        IFai
+     private String createScheme() {
+         if (useTLS) {
+             return HTTPS_SCHEME;
 ```
 
-**File**: `yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp` (modified, +164/-0)
+**File**: `yt/java/ytsaurus-client/src/test/java/tech/ytsaurus/client/HttpProxyGetterCloseTest.java` (added, +57/-0)
 ```diff
-@@ -5,6 +5,7 @@
- 
- #include <library/cpp/testing/common/env.h>
- 
-+#include <tuple>
- #include <vector>
- 
- namespace NYT::NConcurrency {
-@@ -329,5 +330,168 @@ TEST_F(TConcurrentFairThrottlerTest, TwoBuckets)
- 
- ////////////////////////////////////////////////////////////////////////////////
- 
-+constexpr int LeaderMask = 1;
-+constexpr int FollowerMask = 2;
+@@ -0,0 +1,57 @@
++package tech.ytsaurus.client;
 +
-+void CheckIpcReconfiguration(int reconfigureMask)
-+{
-+    std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-+    auto config = New<TFairThrottlerConfig>();
-+    config->IpcPath = (GetOutputPath() / (testName + ".throttler")).GetPath();
-+    config->TotalLimit = 100;
-+    auto bucketConfig = New<TFairThrottlerBucketConfig>();
++import java.net.http.HttpClient;
++import java.time.Duration;
++import java.util.Random;
 +
-+    auto leader = CreateFairThrottler(config, Logger, NProfiling::TProfiler{});
-+    auto first = leader->CreateBucketThrottler("first", bucketConfig);
-+    // Elect the first throttler before creating its peer.
-+    ASSERT_TRUE(WaitFor(first->Throttle(1).WithTimeout(TDuration::Seconds(5))).IsOK());
++import io.netty.channel.nio.NioEventLoopGroup;
++import org.junit.Assume;
++import org.junit.Test;
++import tech.ytsaurus.client.rpc.RpcOptions;
 +
-+    auto follower = CreateFairThrottler(config, Logger, NProfiling::TProfiler{});
-+    auto second = follower->CreateBucketThrottler("second", bucketConfig);
-+    auto reconfigure = [&] (const TFairThrottlerConfigPtr& newConfig) {
-+        if (reconfigureMask & LeaderMask) {
-+            leader->Reconfigure(newConfig, {});
++import static org.junit.Assert.assertTrue;
++
++public class HttpProxyGetterCloseTest {
++    @Test
++    public void testCloseTerminatesSelectorManagerOnJava21() throws Exception {
++        HttpClient httpClient = HttpClient.newHttpClient();
++        Assume.assumeTrue(httpClient instanceof AutoCloseable);
++
++        HttpProxyGetter getter = new HttpProxyGetter(
++                httpClient,
++                ClientPoolService.httpBuilder()
++                        .setBalancerFqdn("localhost")
++                        .setOptions(new RpcOptions())
++        );
++
++        getter.close();
++
++        Object isTerminated = HttpClient.class
++                .getMethod("awaitTermination", Duration.class)
++                .invoke(httpClient, Duration.ofSeconds(30));
++        assertTrue(isTerminated instanceof Boolean);
++        assertTrue(
++                "HttpClient did not terminate within 30 seconds",
++                (Boolean) isTerminated
++        );
++    }
++
++    @Test
++    public void testClientPoolServiceClosesHttpProxyGetter() {
++        NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup(1);
++        HttpProxyGetter getter;
++        try (ClientPoolService clientPoolService = ClientPoolService.httpBuilder()
++                .setDataCenterName("test")
++                .setBalancerFqdn("localhost")
++                .setOptions(new RpcOptions())
++                .setClientFactory(new MockRpcClientFactory())
++                .setEventLoop(eventLoopGroup)
++                .setRandom(new Random())
++                .build()) {
++            getter = (HttpProxyGetter) clientPoolService.proxyGetter;
++        } finally {
++            eventLoopGroup.shutdownGracefully().syncUninterruptibly();
 +        }
-+        if (reconfigureMask & FollowerMask) {
-+            follower->Reconfigure(newConfig, {});
-+        }
-+    };
-+
-+    std::vector<TFuture<void>> firstRequests, secondRequests;
-+    for (int index = 0; index < 1000; ++index) {
-+        firstRequests.push_back(first->Throttle(10));
-+        secondRequests.push_back(second->Throttle(10));
-+    }
-+
-+    auto localConfig = New<TFairThrottlerConfig>();
-+    localConfig->TotalLimit = config->TotalLimit;
-+    for (int iteration = 0; iteration < 2; ++iteration) {
-+        reconfigure(localConfig);
-+        ASSERT_EQ(first, leader->CreateBucketThrottler("first", bucketConfig));
-+        ASSERT_EQ(second, follower->CreateBucketThrottler("second", bucketConfig));
-+
-+        auto firstBefore = CountCompleted(firstRequests);
-+        auto secondBefore = CountCompleted(secondRequests);
-+        Sleep(TDuration::Seconds(2));
-+
-+        // Both throttlers now have independent budgets, including the former IPC peer.
-+        EXPECT_GE(CountCompleted(firstRequests) - firstBefore, 15);
-+        EXPECT_GE(CountCompleted(secondRequests) - secondBefore, 15);
-+
-+        reconfigure(config);
-+        ASSERT_EQ(first, leader->CreateBucketThrottler("first", bucketConfig));
-+        ASSERT_EQ(second, follower->CreateBucketThrottler("second", bucketConfig));
-+        Sleep(TDuration::MilliSeconds(500));
-+        firstBefore = CountCompleted(firstRequests);
-+        secondBefore = CountCompleted(secondRequests);
-+        Sleep(TDuration::Seconds(2));
-+
-+        // Rejoining IPC restores a single budget shared between both throttlers.
-+        auto firstCompleted = CountCompleted(firstRequests) - firstBefore;
-+        auto secondCompleted = CountCompleted(secondRequests) - secondBefore;
-+        EXPECT_GE(firstCompleted, 5);
-+        EXPECT_GE(secondCompleted, 5);
-+        EXPECT_LE(firstCompleted + secondCompleted, 28);
-+    }
-+
-+    for (const auto& request : firstRequests) {
-+        request.Cancel(TError("Test finished"));
-+    }
-+    for (const auto& request : secondRequests) {
-+        request.Cancel(TError("Test finished"));
++        assertTrue(getter.getProxies().isCompletedExceptionally());
 +    }
 +}
+```
+
+---
+
+### Incident Patch 2: `532026b1` (2026-11-27)
+**Commit Message**: Fix Strawberry resource authorization and configuration validation
+
+The shared Strawberry API now checks resource permissions for the values actually stored in a speclet. Creating or replacing a clique configuration with an unauthorized disk account, or switching to it through a nested option edit, returns an authorization error and leaves the speclet unchanged.
+
+The changes fix two groups of defects found in the existing controller code:
+
+- Malformed user configurations could panic the controller while reporting a type error, including `pool=#`, `pool_trees=[#]`, `secrets=#`, null secret values, and null `state` / `health` filters. The affected validators return errors with type attributes instead of calling `.String()` on `reflect.TypeOf(nil)`.
+- Resource permission checks were incomplete: `disk_request.account` was not authorized, and nested or escaped option edits and removals could bypass validation. The API checks the requesting user's and configured service robot's `use` permissions for affected explicit pools, network projects and disk accounts. Pool checks still respect `validate_pool_access`.
+
+Creation and full speclet replacement validate all explicit resources. Option e
+
+**File**: `yt/chyt/controller/internal/api/api.go` (modified, +119/-36)
+```diff
+@@ -3,7 +3,6 @@ package api
+ import (
+ 	"context"
+ 	"fmt"
+-	"reflect"
+ 	"strconv"
+ 	"time"
+ 
+@@ -260,7 +259,7 @@ func (a *API) CheckPermissionToNetworkProject(ctx context.Context, networkProjec
+ func (a *API) validatePoolOption(ctx context.Context, poolValue any, poolTreesValue any) error {
+ 	pool, ok := poolValue.(string)
+ 	if !ok {
+-		typeName := reflect.TypeOf(poolValue).String()
++		typeName := fmt.Sprintf("%T", poolValue)
+ 		return yterrors.Err(
+ 			fmt.Sprintf("pool option has unexpected value type %v", typeName),
+ 			yterrors.Attr("type", typeName))
+@@ -269,7 +268,7 @@ func (a *API) validatePoolOption(ctx context.Context, poolValue any, poolTreesVa
+ 	if poolTreesValue != nil {
+ 		poolTreeValues, ok := poolTreesValue.([]any)
+ 		if !ok {
+-			typeName := reflect.TypeOf(poolTreesValue).String()
++			typeName := fmt.Sprintf("%T", poolTreesValue)
+ 			return yterrors.Err(
+ 				fmt.Sprintf("pool_trees option has unexpected value type %v", typeName),
+ 				yterrors.Attr("type", typeName))
+@@ -278,7 +277,7 @@ func (a *API) validatePoolOption(ctx context.Context, poolValue any, poolTreesVa
+ 		for _, poolTreeValue := range poolTreeValues {
+ 			poolTree, ok := poolTreeValue.(string)
+ 			if !ok {
+-				typeName := reflect.TypeOf(poolTreeValue).String()
++				typeName := fmt.Sprintf("%T", poolTreeValue)
+ 				return yterrors.Err(
+ 					fmt.Sprintf("element of pool_trees option has unexpected value type %v", typeName),
+ 					yterrors.Attr("type", typeName))
+@@ -293,6 +292,81 @@ func (a *API) validatePoolOption(ctx context.Context, poolValue any, poolTreesVa
+ 
+ }
+ 
++// An empty changedOptions set checks every explicit resource.
++func (a *API) checkPermissionToResources(ctx context.Context, speclet map[string]any, changedOptions map[string]struct{}) error {
++	checkAll := len(changedOptions) == 0
++	_, checkPool := changedOptions["pool"]
++	_, checkPoolTrees := changedOptions["pool_trees"]
++	_, checkNetworkProject := changedOptions["network_project"]
++	_, checkDiskRequest := changedOptions["disk_request"]
++	checkPool = checkAll || checkPool || checkPoolTrees
++	checkNetworkProject = checkAll || checkNetworkProject
++	checkDiskRequest = checkAll || checkDiskRequest
 +
-+class TFairThrottlerIpcReconfigurationTest
-+    : public ::testing::TestWithParam<int>
-+{ };
-+
-+TEST_P(TFairThrottlerIpcReconfigurationTest, IpcReconfiguration)
-+{
-+    CheckIpcReconfiguration(GetParam());
++	if pool, poolIsSet := speclet["pool"]; poolIsSet && checkPool {
++		if err := a.validatePoolOption(ctx, pool, speclet["pool_trees"]); err != nil {
++			return err
++		}
++	}
++	if networkProject, networkProjectIsSet := speclet["network_project"]; networkProjectIsSet && checkNetworkProject {
++		if err := validateString(networkProject); err != nil {
++			return err
++		}
++		if err := a.CheckPermissionToNetworkProject(ctx, networkProject.(string)); err != nil {
++			return err
++		}
++	}
++	if diskRequest, diskRequestIsSet := speclet["disk_request"]; diskRequestIsSet && checkDiskRequest {
++		return a.validateDiskRequestOption(ctx, diskRequest)
++	}
++	return nil
 +}
 +
-+INSTANTIATE_TEST_SUITE_P(
-+    TFairThrottlerIpcReconfigurationTest,
-+    TFairThrottlerIpcReconfigurationTest,
-+    ::testing::Values(FollowerMask, LeaderMask, LeaderMask | FollowerMask));
++func (a *API) validateDiskRequestOption(ctx context.Context, value any) error {
++	if value == nil {
++		return nil
++	}
++	request, ok := value.(map[string]any)
++	if !ok {
++		typeName := fmt.Sprintf("%T", value)
++		return yterrors.Err(
++			fmt.Sprintf("disk_request option has unexpected value type %v", typeName),
++			yterrors.Attr("type", typeName))
++	}
++	if value := request["account"]; value != nil {
++		if err := validateString(value); err != nil {
++			return err
++		}
++		return a.CheckPermissionToAccount(ctx, value.(string))
++	}
++	return nil
++}
 +
-+////////////////////////////////////////////////////////////////////////////////
++func (a *API) CheckPermissionToAccount(ctx context.Context, account string) error {
++	if account == "" {
++		return fmt.Errorf("account must not be empty")
++	}
++	user, err := getUser(ctx)
++	if err != nil {
++		return err
++	}
++	path := ypath.Path("//sys/accounts").Child(account)
++	users := []string{user}
++	if a.cfg.RobotUsername != "" && a.cfg.RobotUsername != user {
++		users = append(users, a.cfg.RobotUsername)
++	}
++	for _, subject := range users {
++		response, err := a.Ytc.CheckPermission(ctx, subject, yt.PermissionUse, path, nil)
++		if err != nil {
++			return err
++		}
++		if response.Action != yt.ActionAllow {
++			return yterrors.Err(fmt.Sprintf("use permission to account %q denied for user %q", account, subject), yterrors.CodeAuthorizationError)
++		}
++	}
++	return nil
++}
 +
-+void CheckLocalStatePreservation(bool useIpcBefore, bool useIpcAfter)
-+{
-+    std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-+    auto ipcPath = (GetOutputPath() / (testName + ".throttler")).GetPath();
-+    auto oldConfig = New<TFairThrottlerConfig>();
-+    oldConfig->TotalLimit = 100;
-+    oldConfig->DistributionPeriod = TDuration::Hours(1);
-+    if (useIpcBefore) {
-+        oldConfig->IpcPath = ipcPath;
-+    }
-+
-+    auto throttler = CreateFairThrottler(oldConfig, Logger, NProfiling::TProfiler{});
-+    auto probe = throttler->CreateBucketThrottler("probe", New<TFairThrottlerBucketConfig>());
-+    // Wait for the initial tick. The next tick is an hour away, so it cannot mask a reset.
-+    ASSERT_TRUE(WaitFor(probe->Throttle(1).WithTimeout(TDuration::Seconds(5))).IsOK());
-+
-+    auto bucketConfig = New<TFairThrottlerBucketConfig>();
-+    bucketConfig->Limit = 100;
-+    auto bucket = throttler->CreateBucketThrottler("main", bucketConfig);
-+    // A limited bucket cannot draw from th
-```
-
-**File**: `yt/yt/server/node/cluster_node/bootstrap.cpp` (modified, +8/-2)
-```diff
-@@ -1399,8 +1399,11 @@ class TBootstrap
-         std::optional<i64> netRxLimit)
-     {
-         {
--            auto throttlerConfig = New<TFairThrottlerConfig>();
-+            auto throttlerConfig = CloneYsonStruct(Config_->InThrottler);
-             throttlerConfig->TotalLimit = GetNetworkThrottlerLimit(newConfig, netRxLimit);
-+            if (!newConfig->EnableNetworkThrottlerIpc) {
-+                throttlerConfig->IpcPath.reset();
-+            }
+ func (a *API) newOplet(
+ 	alias string,
+ 	userClient yt.Client,
+@@ -436,6 +510,12 @@ func (a *API) Create(
+ 		}
+ 	}
  
-             THashMap<std::string, TFairThrottlerBucketConfigPtr> inBucketsConfig;
-             for (const auto& bucket : EnabledInThrottlers_) {
-@@ -1412,8 +1415,11 @@ class TBootstrap
-             InThrottler_->Reconfigure(throttlerConfig, inBucketsConfig);
-         }
-         {
--            auto throttlerConfig = New<TFairThrottlerConfig>();
-+            auto throttlerConfig = CloneYsonStruct(Config_->OutThrottler);
-             throttlerConfig->TotalLimit = GetNetworkThrottlerLimit(newConfig, netTxLimit);
-+            if (!newConfig->EnableNetworkThrottlerIpc) {
-+                throttlerConfig->IpcPath.reset();
-+            }
-             THashMap<std::string, TFairThrottlerBucketConfigPtr> outBucketsConfig;
-             for (const auto& bucket : EnabledOutThrottlers_) {
-                 outBucketsConfig[bucket] = Config_->OutThrottlers[bucket];
-```
-
-**File**: `yt/yt/server/node/cluster_node/config.cpp` (modified, +2/-0)
-```diff
-@@ -521,6 +521,8 @@ void TClusterNodeDynamicConfig::Register(TRegistrar registrar)
-         .DefaultNew();
-     registrar.Parameter("master_connector", &TThis::MasterConnector)
-         .DefaultNew();
-+    registrar.Parameter("enable_network_throttler_ipc", &TThis::EnableNetworkThrottlerIpc)
-+        .Default(true);
-     registrar.Parameter("in_throttlers", &TThis::InThrottlers)
-         .Default();
-     registrar.Parameter("out_throttlers", &TThis::OutThrottlers)
-```
-
-**File**: `yt/yt/server/node/cluster_node/config.h` (modified, +3/-0)
-```diff
-@@ -463,6 +463,9 @@ struct TClusterNodeDynamicConfig
-     //! Master connector configuration.
-     TMasterConnectorDynamicConfigPtr MasterConnector;
- 
-+    //! Whether network fair throttlers share quota with other processes via IPC.
-+    bool EnableNetworkThrottlerIpc;
++	if diskRequest, diskRequestIsSet := specletOptions["disk_request"]; diskRequestIsSet {
++		if err := a.validateDiskRequestOption(ctx, diskRequest); err != nil {
++			return err
++		}
++	}
 +
-     //! Bucket configuration for in network throttlers.
-     THashMap<std::string, NConcurrency::TFairThrottlerBucketConfigPtr> InThrottlers;
+ 	user, err := getUser(ctx)
+ 	if err != nil {
+ 		a.l.Error("failed to get user", log.Error(err))
+@@ -628,17 +708,20 @@ func (a *API) setOption(
+ 	value any,
+ 	options *yt.SetNodeOptions,
+ ) error {
+-	if key == "active" {
++	parts, err := parseSpecletOptionPath(key)
++	if err != nil {
++		return err
++	}
++	// Resource edits need permission checks against the resulting speclet.
++	switch parts[0] {
++	case "pool", "pool_trees", "network_project", "disk_request":
++		return a.EditOptions(ctx, alias, map[string]any{ke
+```
+
+**File**: `yt/chyt/controller/internal/api/helpers.go` (modified, +44/-11)
+```diff
+@@ -3,12 +3,13 @@ package api
+ import (
+ 	"fmt"
+ 	"math/rand"
+-	"reflect"
+ 	"regexp"
++	"strings"
+ 
+ 	"golang.org/x/exp/slices"
+ 
+ 	"go.ytsaurus.tech/yt/chyt/controller/internal/strawberry"
++	"go.ytsaurus.tech/yt/go/ypath"
+ 	"go.ytsaurus.tech/yt/go/yt"
+ 	"go.ytsaurus.tech/yt/go/yterrors"
+ )
+@@ -41,7 +42,7 @@ func unexpectedTypeError(typeName string) error {
+ func validateSpecletOptions(speclet any) error {
+ 	_, ok := speclet.(map[string]any)
+ 	if !ok {
+-		typeName := reflect.TypeOf(speclet).String()
++		typeName := fmt.Sprintf("%T", speclet)
+ 		return unexpectedTypeError(typeName)
+ 	}
+ 	return nil
+@@ -50,12 +51,12 @@ func validateSpecletOptions(speclet any) error {
+ func validateSecrets(secrets any) error {
+ 	secretsMap, ok := secrets.(map[string]any)
+ 	if !ok {
+-		typeName := reflect.TypeOf(secrets).String()
++		typeName := fmt.Sprintf("%T", secrets)
+ 		return unexpectedTypeError(typeName)
+ 	}
+ 	allowedTypes := []string{"string", "int64", "uint64", "bool", "float64"}
+ 	for _, v := range secretsMap {
+-		if vType := reflect.TypeOf(v).String(); !slices.Contains(allowedTypes, vType) {
++		if vType := fmt.Sprintf("%T", v); !slices.Contains(allowedTypes, vType) {
+ 			return unexpectedTypeError(vType)
+ 		}
+ 	}
+@@ -65,7 +66,7 @@ func validateSecrets(secrets any) error {
+ func validateBool(value any) error {
+ 	_, ok := value.(bool)
+ 	if !ok {
+-		typeName := reflect.TypeOf(value).String()
++		typeName := fmt.Sprintf("%T", value)
+ 		return unexpectedTypeError(typeName)
+ 	}
+ 	return nil
+@@ -74,7 +75,7 @@ func validateBool(value any) error {
+ func validateString(value any) error {
+ 	_, ok := value.(string)
+ 	if !ok {
+-		typeName := reflect.TypeOf(value).String()
++		typeName := fmt.Sprintf("%T", value)
+ 		return unexpectedTypeError(typeName)
+ 	}
+ 	return nil
+@@ -87,14 +88,14 @@ func transformToStringSlice(value any) (any, error) {
+ 
+ 	array, ok := value.([]any)
+ 	if !ok {
+-		typeName := reflect.TypeOf(value).String()
++		typeName := fmt.Sprintf("%T", value)
+ 		return nil, unexpectedTypeError(typeName)
+ 	}
+ 
+ 	transformedAttributes := []string{}
+ 	for _, element := range array {
+ 		if _, ok = element.(string); !ok {
+-			typeName := reflect.TypeOf(value).String()
++			typeName := fmt.Sprintf("%T", value)
+ 			return nil, unexpectedTypeError(typeName)
+ 		}
+ 		transformedAttributes = append(transformedAttributes, element.(string))
+@@ -110,7 +111,7 @@ func transformFilterValues(value any) (any, error) {
+ 
+ 	filterVals, ok := value.(map[string]any)
+ 	if !ok {
+-		typeName := reflect.TypeOf(value).String()
++		typeName := fmt.Sprintf("%T", value)
+ 		return nil, unexpectedTypeError(typeName)
+ 	}
+ 
+@@ -120,14 +121,14 @@ func transformFilterValues(value any) (any, error) {
+ 			if stringV, ok := v.(string); ok {
+ 				newMap[k] = strawberry.OpletState(stringV)
+ 			} else {
+-				typeName := reflect.TypeOf(v).String()
++				typeName := fmt.Sprintf("%T", v)
+ 				return nil, unexpectedTypeError(typeName)
+ 			}
+ 		} else if k == "health" {
+ 			if stringV, ok := v.(string); ok {
+ 				newMap[k] = strawberry.OpletHealth(stringV)
+ 			} else {
+-				typeName := reflect.TypeOf(v).String()
++				typeName := fmt.Sprintf("%T", v)
+ 				return nil, unexpectedTypeError(typeName)
+ 			}
+ 		} else {
+@@ -168,3 +169,35 @@ func getRandomString(length int) string {
+ 	}
+ 	return string(b)
+ }
++
++func parseSpecletOptionPath(key string) ([]string, error) {
++	tokens, err := ypath.SplitTokens("//" + key)
++	if err != nil || len(tokens) < 2 || strings.Join(tokens, "") != "//"+key {
++		return nil, fmt.Errorf("invalid option path %q", key)
++	}
++	parts := make([]string, 0, len(tokens)-1)
++	for _, token := range tokens[1:] {
++		part, err := ypath.UnescapeLiteral(strings.TrimPrefix(token, "/"))
++		if err != nil || part == "" {
++			return nil, fmt.Errorf("invalid option path %q", key)
++		}
++		parts = append(parts, part)
++	}
++	return parts, nil
++}
++
++// Apply path-based edits to the actual final map so permission checks see the
++// same values that SetNode stores. This includes disk_request/account edits.
++func editSpecletOption(speclet map[string]any, key string, value any, remove bool) (string, error) {
++	parts, err := parseSpecletOptionPath(key)
++	if err != nil {
++		return "", err
++	}
++	path := ypath.Path("/" + key)
++	if remove {
++		_, err = ypath.RemoveMapValue(speclet, path)
++	} else {
++		err = ypath.SetMapValue(speclet, path, value, true)
++	}
++	return parts[0], err
++}
+```
+
+**File**: `yt/chyt/controller/internal/api/ya.make` (modified, +2/-0)
+```diff
+@@ -10,6 +10,8 @@ SRCS(
+ 
+ GO_TEST_SRCS(
+     default_options_test.go
++    helpers_test.go
++    speclet_validation_test.go
+ )
+ 
+ END()
+```
+
+**File**: `yt/chyt/controller/internal/strawberry/speclet.go` (modified, +8/-0)
+```diff
+@@ -5,6 +5,13 @@ import (
+ 	"go.ytsaurus.tech/yt/go/yt"
+ )
+ 
++type DiskRequest struct {
++	DiskSpace  *uint64 `yson:"disk_space,omitempty"`
++	InodeCount *uint64 `yson:"inode_count,omitempty"`
++	Account    *string `yson:"account,omitempty"`
++	MediumName *string `yson:"medium_name,omitempty"`
++}
++
+ // Change of these parameters leads to operation restart.
+ type RestartRequiredOptions struct {
+ 	Stage            *string      `yson:"stage"`
+@@ -13,6 +20,7 @@ type RestartRequiredOptions struct {
+ 	LayerPaths       []ypath.Path `yson:"layer_paths"`
+ 	EnableCPUReclaim *bool        `yson:"enable_cpu_reclaim"`
+ 	PoolTrees        []string     `yson:"pool_trees"`
++	DiskRequest      *DiskRequest `yson:"disk_request"`
+ }
+ 
+ type Speclet struct {
+```
+
+**File**: `yt/chyt/controller/test/integration/api_test.go` (modified, +231/-3)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	"go.ytsaurus.tech/yt/chyt/controller/internal/strawberry"
+ 	"go.ytsaurus.tech/yt/chyt/controller/test/helpers"
+ 	"go.ytsaurus.tech/yt/go/guid"
++	"go.ytsaurus.tech/yt/go/ypath"
+ 	"go.ytsaurus.tech/yt/go/yson"
+ 	"go.ytsaurus.tech/yt/go/yt"
+ )
+@@ -88,6 +89,50 @@ func TestHTTPAPICreateAndRemove(t *testing.T) {
+ 	require.True(t, ok)
+ }
+ 
++func TestHTTPAPINetworkProjectAccessOnCreation(t *testing.T) {
++	t.Parallel()
++
++	env, c := helpers.PrepareSleepAPI(t)
++	c.User = helpers.GenerateAlias()
++	_, err := env.YT.CreateObject(env.Ctx, yt.NodeUser, &yt.CreateObjectOptions{
++		Attributes: map[string]any{"name": c.User},
++	})
++	require.NoError(t, err)
++
++	project := helpers.GenerateAlias()
++	_, err = env.YT.CreateObject(env.Ctx, yt.NodeNetworkProject, &yt.CreateObjectOptions{
++		Attributes: map[string]any{
++			"name": project,
++			"acl": []yt.ACE{{
++				Action:      yt.ActionDeny,
++				Subjects:    []string{c.User},
++				Permissions: []yt.Permission{yt.PermissionUse},
++			}},
++		},
++	})
++	require.NoError(t, err)
++
++	alias := helpers.GenerateAlias()
++	r := c.MakePostRequest("create", api.RequestParams{
++		Params: map[string]any{
++			"alias":           alias,
++			"speclet_options": map[string]any{"network_project": project},
++		},
++	})
++	require.Equal(t, http.StatusBadRequest, r.StatusCode, string(r.Body))
++	require.Contains(t, string(r.Body), "use permission to network_project "+project+" denied for user "+c.User)
++
++	for _, path := range []ypath.Path{
++		env.StrawberryRoot.Child(alias),
++		env.StrawberryRoot.JoinChild(alias, "speclet"),
++		strawberry.AccessControlNamespacesPath.JoinChild("sleep", alias),
++	} {
++		exists, err := env.YT.NodeExists(env.Ctx, path, nil)
++		require.NoError(t, err)
++		require.False(t, exists, "rejected creation must not leave %s", path)
++	}
++}
++
+ func TestHTTPAPILivyIsDeprecated(t *testing.T) {
+ 	t.Parallel()
+ 
+@@ -351,6 +396,111 @@ func TestHTTPAPIParseParams(t *testing.T) {
+ 	}
+ }
+ 
++func preparePoolAccessAPI(t *testing.T) (*helpers.Env, *helpers.RequestClient, string, string) {
++	t.Helper()
++
++	env, c := helpers.PrepareSleepAPI(t)
++	c.User = helpers.GenerateAlias()
++	_, err := env.YT.CreateObject(env.Ctx, yt.NodeUser, &yt.CreateObjectOptions{
++		Attributes: map[string]any{"name": c.User},
++	})
++	require.NoError(t, err)
++
++	allowedPool, deniedPool := helpers.GenerateAlias(), helpers.GenerateAlias()
++	for _, pool := range []string{allowedPool, deniedPool} {
++		action := yt.ActionAllow
++		if pool == deniedPool {
++			action = yt.ActionDeny
++		}
++		_, err := env.YT.CreateObject(env.Ctx, yt.NodeSchedulerPool, &yt.CreateObjectOptions{
++			Attributes: map[string]any{
++				"name":      pool,
++				"pool_tree": "default",
++				"acl": []yt.ACE{{
++					Action:      action,
++					Subjects:    []string{c.User},
++					Permissions: []yt.Permission{yt.PermissionUse},
++				}},
++			},
++		})
++		require.NoError(t, err)
++	}
++	return env, c, allowedPool, deniedPool
++}
++
++func TestHTTPAPIPoolAccessOnCreation(t *testing.T) {
++	t.Parallel()
++
++	env, c, _, deniedPool := preparePoolAccessAPI(t)
++	alias := helpers.GenerateAlias()
++	r := c.MakePostRequest("create", api.RequestParams{
++		Params: map[string]any{
++			"alias":           alias,
++			"speclet_options": map[string]any{"pool": deniedPool},
++		},
++	})
++	require.Equal(t, http.StatusBadRequest, r.StatusCode, string(r.Body))
++	require.Contains(t, string(r.Body), "use permission to pool "+deniedPool+" in pool_tree default denied for user "+c.User)
++
++	for _, path := range []ypath.Path{
++		env.StrawberryRoot.Child(alias),
++		env.StrawberryRoot.JoinChild(alias, "speclet"),
++		strawberry.AccessControlNamespacesPath.JoinChild("sleep", alias),
++	} {
++		exists, err := env.YT.NodeExists(env.Ctx, path, nil)
++		require.NoError(t, err)
++		require.False(t, exists, "rejected creation must not leave %s", path)
++	}
++}
++
++func TestHTTPAPIPoolAccessOnModification(t *testing.T) {
++	t.Parallel()
++
++	env, c, allowedPool, deniedPool := preparePoolAccessAPI(t)
++	for _, command := range []string{"set_option", "set_options", "edit_options", "set_speclet"} {
++		t.Run(command, func(t *testing.T) {
++			alias := helpers.GenerateAlias()
++			r := c.MakePostRequest("create", api.RequestParams{
++				Params: map[string]any{
++					"alias": alias,
++					"speclet_options": map[string]any{
++						"pool":        allowedPool,
++						"test_option": int64(1),
++					},
++				},
++			})
++			require.Equal(t, http.StatusOK, r.StatusCode, string(r.Body))
++
++			specletPath := env.StrawberryRoot.JoinChild(alias, "speclet")
++			getOptions := &yt.GetNodeOptions{Attributes: []string{"value", "revision"}}
++			var before, after map[string]any
++			require.NoError(t, env.YT.GetNode(env.Ctx, specletPath.Attrs(), &before, getOptions))
++
++			options := map[string]any{"pool": deniedPool}
++			params := map[string]any{"alias": alias}
++			switch command {
++			case "set_option":
++				params["key"] = "pool"
++				params["value"] = deniedPool
++			case "set_options":
++				options["test_option"] = int64(2)
+
+```
+
+**File**: `yt/chyt/controller/test/integration/resource_access_test.go` (added, +298/-0)
+```diff
+@@ -0,0 +1,298 @@
++package integration
++
++import (
++	"fmt"
++	"net/http"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	"go.ytsaurus.tech/yt/chyt/controller/internal/api"
++	"go.ytsaurus.tech/yt/chyt/controller/internal/strawberry"
++	"go.ytsaurus.tech/yt/chyt/controller/test/helpers"
++	"go.ytsaurus.tech/yt/go/ypath"
++	"go.ytsaurus.tech/yt/go/yson"
++	"go.ytsaurus.tech/yt/go/yt"
++)
++
++func prepareResourceAccessAPI(t *testing.T) (*helpers.Env, *helpers.RequestClient) {
++	t.Helper()
++	env, c := helpers.PrepareSleepAPI(t)
++	c.User = helpers.GenerateAlias()
++	_, err := env.YT.CreateObject(env.Ctx, yt.NodeUser, &yt.CreateObjectOptions{
++		Attributes: map[string]any{"name": c.User},
++	})
++	require.NoError(t, err)
++	return env, c
++}
++
++func resourceUseACL(user string, allowed bool) []yt.ACE {
++	action := yt.ActionDeny
++	if allowed {
++		action = yt.ActionAllow
++	}
++	return []yt.ACE{{Action: action, Subjects: []string{user}, Permissions: []yt.Permission{yt.PermissionUse}}}
++}
++
++func prepareDiskAccountAccessAPI(t *testing.T) (*helpers.Env, *helpers.RequestClient, string, string) {
++	t.Helper()
++	env, c := prepareResourceAccessAPI(t)
++	allowedAccount, deniedAccount := helpers.GenerateAlias(), helpers.GenerateAlias()
++	for _, account := range []string{allowedAccount, deniedAccount} {
++		_, err := env.YT.CreateObject(env.Ctx, yt.NodeAccount, &yt.CreateObjectOptions{
++			Attributes: map[string]any{
++				"name": account,
++				"acl":  resourceUseACL(c.User, account == allowedAccount),
++			},
++		})
++		require.NoError(t, err)
++	}
++	return env, c, allowedAccount, deniedAccount
++}
++
++func preparePoolTreesAccessAPI(t *testing.T) (*helpers.Env, *helpers.RequestClient, string, string, string) {
++	t.Helper()
++	env, c := prepareResourceAccessAPI(t)
++	pool := helpers.GenerateAlias()
++	allowedTree, deniedTree := helpers.GenerateAlias(), helpers.GenerateAlias()
++	for _, tree := range []string{allowedTree, deniedTree} {
++		_, err := env.YT.CreateObject(env.Ctx, yt.NodeSchedulerPoolTree, &yt.CreateObjectOptions{
++			Attributes: map[string]any{
++				"name":   tree,
++				"config": map[string]any{"node_tag_filter": tree},
++			},
++		})
++		require.NoError(t, err)
++		_, err = env.YT.CreateObject(env.Ctx, yt.NodeSchedulerPool, &yt.CreateObjectOptions{
++			Attributes: map[string]any{
++				"name":      pool,
++				"pool_tree": tree,
++				"acl":       resourceUseACL(c.User, tree == allowedTree),
++			},
++		})
++		require.NoError(t, err)
++	}
++	return env, c, pool, allowedTree, deniedTree
++}
++
++func requireResourceAccessDenied(t *testing.T, r helpers.Response, message string) {
++	t.Helper()
++	require.Equal(t, http.StatusBadRequest, r.StatusCode, string(r.Body))
++	var response struct {
++		Message string `yson:"message"`
++	}
++	require.NoError(t, yson.Unmarshal(r.Body, &response))
++	require.Equal(t, message, response.Message)
++}
++
++func requireRejectedResourceCreation(t *testing.T, env *helpers.Env, c *helpers.RequestClient, options map[string]any, message string) string {
++	t.Helper()
++	alias := helpers.GenerateAlias()
++	r := c.MakePostRequest("create", api.RequestParams{
++		Params: map[string]any{"alias": alias, "speclet_options": options},
++	})
++	requireResourceAccessDenied(t, r, message)
++	for _, path := range []ypath.Path{
++		env.StrawberryRoot.Child(alias),
++		env.StrawberryRoot.JoinChild(alias, "speclet"),
++		strawberry.AccessControlNamespacesPath.JoinChild("sleep", alias),
++	} {
++		exists, err := env.YT.NodeExists(env.Ctx, path, nil)
++		require.NoError(t, err)
++		require.False(t, exists, "rejected creation must not leave %s", path)
++	}
++	return alias
++}
++
++func requireRejectedResourceEdit(t *testing.T, env *helpers.Env, c *helpers.RequestClient, alias, command string, params map[string]any, message string) {
++	t.Helper()
++	specletPath := env.StrawberryRoot.JoinChild(alias, "speclet")
++	getOptions := &yt.GetNodeOptions{Attributes: []string{"value", "revision"}}
++	var before, after map[string]any
++	require.NoError(t, env.YT.GetNode(env.Ctx, specletPath.Attrs(), &before, getOptions))
++	r := c.MakePostRequest(command, api.RequestParams{Params: params})
++	requireResourceAccessDenied(t, r, message)
++	require.NoError(t, env.YT.GetNode(env.Ctx, specletPath.Attrs(), &after, getOptions))
++	require.Equal(t, before, after, "rejected edits must preserve both speclet contents and revision")
++}
++
++func TestHTTPAPIDiskAccountAccessOnCreation(t *testing.T) {
++	t.Parallel()
++	env, c, allowedAccount, deniedAccount := prepareDiskAccountAccessAPI(t)
++	message := fmt.Sprintf("Use permission to account %q denied for user %q", deniedAccount, c.User)
++	alias := requireRejectedResourceCreation(t, env, c, map[string]any{
++		"disk_request": map[string]any{"account": deniedAccount, "disk_space": int64(1024)},
++	}, message)
++	r := c.MakePostRequest("create", api.RequestParams{
++		Params: map[string]any{
++			"alias": alias,
++			"speclet_options": map[string]any{
++				"disk_request": map[string]any{"account": allowedAccount, "disk_space": int64(1024)},
++			},
++		},
++	})
+```
+
+**File**: `yt/chyt/controller/test/integration/ya.make` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@ ENDIF()
+ GO_TEST_SRCS(
+     api_test.go
+     monitoring_test.go
++    resource_access_test.go
+     strawberry_test.go
+ )
  
 ```
 
 ---
 
-### Incident Patch 2: `dc31b68d` (2026-11-26)
-**Commit Message**: YTFLOW: Fix the key-visitor scan-all description in docs
-commit_hash:4055ab9c76cdc17aeae95aa8a2be54e6da0f188b
+### Incident Patch 3: `49aa4254` (2026-11-27)
+**Commit Message**: YT-29411: Bump CPU requirement for chyt server tests
 
-**File**: `yt/docs/en/_includes/flow/concepts/key_visitor.md` (modified, +1/-1)
+The suite runs a full YT cluster (4 master cells plus a ground cluster in the
+Sequoia variants), 5 nodes and a CHYT clique per test, but inherits cpu:10 from
+YaMakeBoilerplateForTests.txt, the lowest of all large YT suites (size_l asks
+cpu:28, size_xl cpu:38). The starved slot shows up as timeouts rather than
+assertion failures: tests hit the 90 s pytest-timeout inside Clique enter/exit
+and whole chunks get killed at the 1800 s suite timeout with tests NOT_LAUNCHED.
+
+Bumping ram to 24 in https://nda.ya.ru/t/XUMeh69b7xYd2K did not help, so RAM was not the binding constraint.
+commit_hash:87c2a82c8be70c4b411bc64cfc566fec60239046
+
+**File**: `yt/chyt/tests/server/ya.make` (modified, +3/-0)
 ```diff
-@@ -73,7 +73,7 @@ To make a computation accept a visit stream, you must fill the `key_visitor_stre
- 
- - `names`: a list of internal-state names to count keys from. If unspecified or empty, all keys from all internal states of the computation are used.
- - `weak_external_names`: a list of visitor-driven external-state joiners scanned in step with the visit stream without contributing keys. Such a joiner is read over the same key ranges as the other sources, so its row is available in `ProcessVisit` for the visit key, but a key present only in the joiner produces no visit (a left join against the keys of `names`/`external_names`). Must not overlap with `external_names`; the "at most one visit stream per joiner" rule covers both lists. See [Static table joiner](#static-table-joiner).
--- `external_names`: a list of [external-state managers](../../../flow/concepts/glossary.md#state) and visitor-driven external-state joiners (see [Static table joiner](#static-table-joiner)) for the computation, whose tables are used to count keys. This lets the visitor scan the external state (including that of companion computations) and evict outdated records via `clear()` in the visit handler. If only `external_names` is specified (without `names`), only the listed external state is scanned; internal states aren’t scanned. If neither `names` nor `external_names` is specified, all internal states are scanned, but external state and joiners aren’t; a joiner is scanned only if explicitly listed in `external_names`, and in no more than one visit stream of the computation (checked at spec submit time).
-+- `external_names`: a list of [external-state managers](../../../flow/concepts/glossary.md#state) and visitor-driven external-state joiners (see [Static table joiner](#static-table-joiner)) for the computation, whose tables are used to count keys. This lets the visitor scan the external state (including that of companion computations) and evict outdated records via `clear()` in the visit handler. If only `external_names` is specified (without `names`), only the listed external state is scanned; internal states aren’t scanned. If neither `names` nor `external_names` is specified, all internal states and all external-state managers of the computation are scanned, but joiners aren’t; a joiner is scanned only if explicitly listed in `external_names`, and in no more than one visit stream of the computation (checked at spec submit time).
- - `upstream_streams`: which of the computation’s input and source streams the visitor follows, that is, whose completion it waits for before the final pass (see [Pass lifecycle](#pass-lifecycle)). When unspecified, all input and source streams of the computation. Only meaningful with `finite=%true` (see [Dynamic spec parameters](#dynamic-params)). For when the list needs narrowing, see [`streams_dependency`](#deps).
- 
- ### Dynamic spec parameters {#dynamic-params}
-```
-
-**File**: `yt/docs/ru/_includes/flow/concepts/key_visitor.md` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ Key-visitor-стрим решает эту задачу: фоновая зада
- ### Параметры статической спеки {#static-params}
- 
- - `names` — список имён internal-стейтов, по которым считать ключи. Если не задан или пустой — все ключи всех internal-стейтов компьютейшена.
--- `external_names` — список имён [external-стейт-менеджеров](../../../flow/concepts/glossary.md#state) и visitor-driven external-стейт-джойнеров (см. [Джойн внешней статической таблицы](#static-table-joiner)) компьютейшена, по таблицам которых считать ключи. Позволяет визитору обходить external-стейт (в том числе у companion-компьютейшенов) и эвиктить устаревшие записи через `clear()` в обработчике визита. Если задан только `external_names` (без `names`) — обходится только перечисленный external-стейт, internal-стейты не сканируются. Если не заданы ни `names`, ни `external_names`, обходятся все internal-стейты, а external-стейт и джойнеры — нет; джойнер обходится только при явном перечислении в `external_names`, и не более чем в одном visit-стриме компьютейшена (проверяется при submit'е спеки).
-+- `external_names` — список имён [external-стейт-менеджеров](../../../flow/concepts/glossary.md#state) и visitor-driven external-стейт-джойнеров (см. [Джойн внешней статической таблицы](#static-table-joiner)) компьютейшена, по таблицам которых считать ключи. Позволяет визитору обходить external-стейт (в том числе у companion-компьютейшенов) и эвиктить устаревшие записи через `clear()` в обработчике визита. Если задан только `external_names` (без `names`) — обходится только перечисленный external-стейт, internal-стейты не сканируются. Если не заданы ни `names`, ни `external_names`, обходятся все internal-стейты и все external-стейт-менеджеры компьютейшена, а джойнеры — нет; джойнер обходится только при явном перечислении в `external_names`, и не более чем в одном visit-стриме компьютейшена (проверяется при submit'е спеки).
- - `weak_external_names` — список visitor-driven external-стейт-джойнеров, которые обходятся синхронно с visit-стримом, но ключей в него не поставляют: джойнер читается по тем же диапазонам, что и остальные источники, и его строка доступна в `ProcessVisit` для ключа визита, а ключ, который есть только в джойнере, визита не порождает (left join по ключам `names`/`external_names`). Не пересекается с `external_names`; ограничение «не более одного visit-стрима на джойнер» действует для обоих списков. См. [Джойн внешней статической таблицы](#static-table-joiner).
- - `upstream_streams` — какие входные и source-стримы компьютейшена визитор отслеживает, то есть завершения каких из них ждёт перед финальным pass'ом (см. [Жизненный цикл прохода](#pass-lifecycle)). Если не задан — все входные и source-стримы компьютейшена. Имеет смысл только при `finite=%true` (см. [Параметры динамической спеки](#dynamic-params)). Когда список нужно сужать — см. [`streams_dependency`](#deps).
- 
-```
-
----
-
-### Incident Patch 3: `5bdc9082` (2026-11-26)
-**Commit Message**: Fix partial type annotation
-
-Here are fixes for 2 bugs. One is trivial, but the second is interesting. `COALESCE(T?, Universal)` returned `T`. It seems that any `COALESCE` with `Universal`s should return `Universal`, because the type inference rule uses common type and a common type with any unknown type is obviously unknown.
-commit_hash:494c85b85dfabae384157bc2acc2fabc24b70782
-
-**File**: `yql/essentials/core/type_ann/type_ann_core.cpp` (modified, +6/-0)
-```diff
-@@ -6174,6 +6174,12 @@ IGraphTransformer::TStatus CoalesceWrapper(const TExprNode::TPtr& input, TExprNo
-     const auto leftType = input->Head().GetTypeAnn();
-     const auto rightType = input->Tail().GetTypeAnn();
- 
-+    if (leftType->GetKind() == ETypeAnnotationKind::Universal ||
-+        (rightType->GetKind() == ETypeAnnotationKind::Universal && leftType->IsOptionalOrNull())) {
-+        input->SetTypeAnn(ctx.Expr.MakeType<TUniversalExprType>());
-+        return IGraphTransformer::TStatus::Ok;
-+    }
-+
-     auto leftItemType = leftType;
-     if (leftType->GetKind() == ETypeAnnotationKind::Optional) {
-         leftItemType = leftType->Cast<TOptionalExprType>()->GetItemType();
-```
-
-**File**: `yql/essentials/core/type_ann/type_ann_list.cpp` (modified, +2/-1)
-```diff
-@@ -3381,7 +3381,8 @@ namespace {
-                 return nullptr;
-             }
-             const auto itemType = input.GetTypeAnn()->Cast<TListExprType>()->GetItemType();
--            if (itemType->GetKind() == ETypeAnnotationKind::UniversalStruct) {
-+            if (itemType->GetKind() == ETypeAnnotationKind::UniversalStruct ||
-+                itemType->GetKind() == ETypeAnnotationKind::Universal) {
-                 isUniversal = true;
-                 return nullptr;
-             }
+@@ -14,7 +14,10 @@ IF (SANITIZER_TYPE)
+         ram:48
+     )
+ ELSE()
++    # A clique on top of a full (Sequoia: 4-cell + ground) cluster does not fit the
++    # boilerplate default of cpu:10; cf. cpu:28 in yt/yt/tests/integration/size_l.
+     REQUIREMENTS(
++        cpu:28
+         ram:24
+     )
+ ENDIF()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1919** (closed): yt/go/yson: do not allocate when writing binary varints and floats (@orloffv)
+- **PR #1908** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1903** (closed): Go SDK: Serialization of Composite types. #1902 (@psk-nebi)
 - **PR #1897** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1895** (closed): yt/chyt: remove hardcoded jaeger (@koct9i)
 - **PR #1892** (closed): Fix typo in chaos-dynamic-tables.md (@hsalkaline)
-- **PR #1887** (closed): Preserve bus TLS configuration for YT QL RPC connections (@Tony-Romanov)
-- **PR #1885** (closed): Run cross-cluster MR operations by ytsaurus Go SDK (@sagishev)
 
 ---
 
@@ -1648,85 +2090,61 @@ commit_hash:494c85b85dfabae384157bc2acc2fabc24b70782
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-23401: Allow toggling network throttler IPC via node dynamic config
+## X. [yt/java] Fix HttpClient selector thread leak
 
 **RULE**:
-When implementing operations in `yt/yt/core/concurrency/fair_throttler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/java/ytsaurus-client/src/main/java/tech/ytsaurus/client/ClientPool.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9981fd4e`: YT-23401: Allow toggling network throttler IPC via node dynamic config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a66f47a`: [yt/java] Fix HttpClient selector thread leak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/core/concurrency/fair_throttler.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/java/ytsaurus-client/src/main/java/tech/ytsaurus/client/ClientPool.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <library/cpp/yt/memory/atomic_intrusive_ptr.h>
+import java.util.concurrent.atomic.AtomicReference;
+        HttpProxyGetter httpProxyGetter = new HttpProxyGetter(
+        proxyGetter = httpProxyGetter;
+        toClose.add(httpProxyGetter);
+class HttpProxyGetter implements ProxyGetter, AutoCloseable {
+    private final AtomicReference<HttpClient> httpClientRef;
+        this.httpClientRef = new AtomicReference<>(httpClient);
+        HttpClient httpClient = httpClientRef.get();
+        if (httpClient == null) {
+            return CompletableFuture.failedFuture(new IllegalStateException("HTTP proxy getter is closed"));
+        }
 
-        auto sharedBucket = SharedBucket_.Acquire();
-            : std::max<i64>(0, sharedBucket->Limit.GetValue());
-        sharedBucket->Limit.Acquire(globalConsumed);
-        auto sharedBucket = SharedBucket_.Acquire();
-            : std::max<i64>(0, sharedBucket->Limit.GetValue());
-        sharedBucket->Limit.Acquire(globalConsumed);
-        auto sharedBucket = SharedBucket_.Acquire();
-            : std::max<i64>(0, sharedBucket->Limit.GetValue());
-        sharedBucket->Limit.Acquire(globalConsumed);
-        auto sharedBucket = SharedBucket_.Acquire();
-        auto globalAvailable = IsLimited() ? 0 : sharedBucket->Limit.GetValue();
-    void SetSharedBucket(const TSharedBucketPtr& sharedBucket)
-    {
-        SharedBucket_.Store(sharedBucket);
-    }
+    /**
+     * Shuts down the HTTP client used for proxy discovery without waiting for in-flight requests.
+     * On Java 11-20 the client has no shutdown API, so its selector thread stops only after
+     * the client is garbage collected.
+     */
+    @Override
+    public void close() {
+        HttpClient httpClient = httpClientRef.getAndSet(null);
+        if (httpClient == null) {
+            return;
+        }
 
-    TAtomicIntrusivePtr<TSharedBucket> SharedBucket_;
-            GetSharedBucketValue(Ipc_)))
-        IsLeader_ = !Ipc_;
-        Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
-            return IsLeader_.load();
-        });
+        try {
+            HttpClient.class.getMethod("shutdownNow").invoke(httpClient);
+        } catch (NoSuchMethodException ignored) {
+            // HttpClient has no explicit shutdown API befor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-        SharedBucket_->Limit.Acquire(globalConsumed);
-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-        SharedBucket_->Limit.Acquire(globalConsumed);
-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-        SharedBucket_->Limit.Acquire(globalConsumed);
-        auto globalAvailable = IsLimited() ? 0 : SharedBucket_->Limit.GetValue();
-    const TSharedBucketPtr SharedBucket_;
-            GetSharedBucketValue()))
-        if (Ipc_) {
-            Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
-                return IsLeader_.load();
-            });
-        } else {
-            IsLeader_ = true;
-        }
-        if (!config) {
-            config = New<TFairThrottlerBucketConfig>();
-        }
-
-        if (auto it = Buckets_.find(name); it != Buckets_.end()) {
-            it->second.Throttler->Update(Config_, config);
-
-            it->second.Config = std::move(config);
-
-            return it->second.Throttler;
-        }
-
-        auto throttler = New<TBucketThrottler>(
-            Logger().WithTag("Bucket", name),
-            Profiler_.WithTag("bucket", name),
-            S
+        proxyGetter = new HttpProxyGetter(
+class HttpProxyGetter implements ProxyGetter {
+    private final HttpClient httpClient;
+        this.httpClient = httpClient;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9981fd4e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a66f47a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -13926,3 +13926,7 @@
 | `CYCLE-20261128-26Q0` | `2026-11-28T01:18:53.064Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11006` | Yes (`09e00446...`) |
 | `CYCLE-20261128-C9W7` | `2026-11-28T01:26:43.735Z` | `apple/DepthPro2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md` | Yes (`a18f4677...`) |
 | `CYCLE-20261128-CH53` | `2026-11-28T01:26:53.127Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11007` | Yes (`83e94928...`) |
+| `CYCLE-20261128-NDL1` | `2026-11-28T01:35:21.733Z` | `Aleph-Alpha/Kolibri-1.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1.1-learnings.md` | Yes (`30617ad9...`) |
+| `CYCLE-20261128-NIXS` | `2026-11-28T01:35:28.672Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11008` | Yes (`1505dbbb...`) |
+| `CYCLE-20261128-NL2U` | `2026-11-28T01:35:31.446Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11009` | Yes (`66dc107f...`) |
+| `CYCLE-20261128-NRP2` | `2026-11-28T01:35:40.022Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11010` | Yes (`4adbf022...`) |

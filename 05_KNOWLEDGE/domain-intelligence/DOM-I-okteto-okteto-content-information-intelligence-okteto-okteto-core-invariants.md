@@ -4,24 +4,24 @@
 {
   "source_repository": "okteto/okteto",
   "source_url": "https://github.com/okteto/okteto",
-  "source_version": "ffbae6ba",
+  "source_version": "24b444d1",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T07:30:40.312Z",
+  "timestamp": "2026-11-28T01:35:31.711Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-okteto-okteto",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [okteto/okteto](https://github.com/okteto/okteto) (Revision: `ffbae6ba`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T07:30:40.312Z`  
+> **Provenance**: Harvested from [okteto/okteto](https://github.com/okteto/okteto) (Revision: `24b444d1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T01:35:31.711Z`  
 > **Learning ID**: `learn-github-okteto-okteto`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from okteto/okteto:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T07:30:38.914Z  
+> **Harvest Timestamp**: 2026-11-28T01:35:30.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1516,167 +1516,558 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ffbae6ba` (2026-11-26)
-**Commit Message**: feat(up): warn that hybrid mode is deprecated (PROD-555) (#5297)
+### Incident Patch 1: `24b444d1` (2026-11-27)
+**Commit Message**: feat(build): reuse the build context saved by BuildKit across checkouts, behind a flag (#5287)
 
-okteto up now warns once, right before the activation loop starts, when
-the development container runs in hybrid mode, and points to sync mode.
+* feat(build): reuse the build context saved by BuildKit across checkouts, behind a flag
 
-Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+BuildKit keeps one copy of the build context per shared key and only receives
+the files whose size or modification time changed. The CLI sets no shared key,
+so every build of a BuildKit instance overwrites the same copy, and the context
+is uploaded again in full after any other build, from another clone of the
+repository and from every pipeline or installer job.
 
-**File**: `cmd/up/up.go` (modified, +21/-0)
+With OKTETO_BUILDKIT_SMART_BUILD_CONTEXT_ENABLED=true the CLI sends, for remote
+deploy, destroy and test and for image builds:
+
+- A shared key that is the same for everybody who runs the same build of the
+  same repository: a hash of the repository (host and path), the context
+  folder inside the repository, the ignore patterns, the Dockerfile and the
+  target. The Dockerfile is its path inside the repository, or its content
+  when it is outside (the ones that the CLI generates have a random name).
+  Remote deploy, destroy and test share one value for it.
+- The build option okteto-local-source:context=<source>, which tells Okteto's
+  BuildK
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -22,6 +22,7 @@ import (
- 	"path/filepath"
- 	"strconv"
- 	"strings"
-+	"sync"
- 	"syscall"
- 	"time"
- 
-@@ -65,11 +66,16 @@ const (
- 	ReconnectingMessage = "Trying to reconnect to your cluster. File synchronization will automatically resume when the connection improves."
- 
- 	composeVolumesUrl = "https://www.okteto.com/docs/reference/docker-compose/#volumes-string-optional"
-+
-+	hybridModeDeprecatedWarning = "Hybrid mode is deprecated and will be removed in a future release.\n    Use sync mode instead: remove 'mode: hybrid' from your development container and define the folders to synchronize in 'sync'.\n    Learn more: https://www.okteto.com/docs/reference/okteto-manifest/#sync-string-required"
+@@ -297,4 +297,4 @@ require (
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261012220534-4341edf3f941 // indirect
  )
  
- var (
- 	errConfigNotConfigured     = fmt.Errorf("kubeconfig not found")
- 	errAnotherUpCommandStarted = errors.New("development container has been deactivated by another 'okteto up' command")
-+
-+	// hybridModeDeprecationWarningOnce keeps the hybrid mode deprecation warning to one per command
-+	hybridModeDeprecationWarningOnce sync.Once
- )
- 
- // Options represents the options available on up command
-@@ -439,6 +445,19 @@ func loadManifestOverrides(dev *model.Dev, upOptions *Options) error {
- 	return nil
- }
- 
-+// warnIfHybridMode warns that hybrid mode is deprecated when the development container runs in hybrid mode.
-+// It is called once the manifest and the development container are loaded, right before the activation loop,
-+// and the warning is logged once even though the development container can be activated several times
-+// along the same command (retries and reconnections)
-+func warnIfHybridMode(dev *model.Dev) {
-+	if !dev.IsHybridModeEnabled() {
-+		return
-+	}
-+	hybridModeDeprecationWarningOnce.Do(func() {
-+		oktetoLog.Warning(hybridModeDeprecatedWarning)
-+	})
-+}
-+
- func setSyncDefaultsByDevMode(dev *model.Dev, getSyncTempDir func() (string, error)) error {
- 	if dev.IsHybridModeEnabled() {
- 		syncTempDir, err := getSyncTempDir()
-@@ -521,6 +540,8 @@ func (up *upContext) start() error {
- 	up.analyticsMeta.RepositoryProps(utils.IsOktetoRepo())
- 	up.analyticsMeta.SetNamespace(up.Namespace)
- 
-+	warnIfHybridMode(up.Dev)
-+
- 	go up.activateLoop()
- 
- 	go up.pidController.notifyIfPIDFileChange(pidFileCh)
+-replace github.com/moby/buildkit => github.com/okteto/buildkit v0.35.2-0.20261120071757-2ea2d399aff8 // v0.35.1-okteto1
++replace github.com/moby/buildkit => github.com/okteto/buildkit v0.35.2-0.20261127133601-44cd4a847058 // v0.35.1-okteto2
 ```
 
-**File**: `cmd/up/up_test.go` (modified, +55/-0)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -14,9 +14,11 @@
- package up
- 
- import (
+@@ -539,8 +539,8 @@ github.com/nwaples/rardecode/v2 v2.2.0 h1:4ufPGHiNe1rYJxYfehALLjup4Ls3ck42CWwjKi
+ github.com/nwaples/rardecode/v2 v2.2.0/go.mod h1:7uz379lSxPe6j9nvzxUZ+n7mnJNgjsRNb6IbvGVHRmw=
+ github.com/oklog/ulid/v2 v2.1.2 h1:IEclFb9JNvzYA6MW2SCxbLzcHTVsfqm3PrqGQJH5zec=
+ github.com/oklog/ulid/v2 v2.1.2/go.mod h1:rcEKHmBBKfef9DhnvX7y1HZBYxjXb0cP5ExxNsTT1QQ=
+-github.com/okteto/buildkit v0.35.2-0.20261120071757-2ea2d399aff8 h1:JrLzIAeN8ZI4pPRLryJ6lKm/ZgQmk/RJILHOdWVZzDw=
+-github.com/okteto/buildkit v0.35.2-0.20261120071757-2ea2d399aff8/go.mod h1:1bLB7NqbvyIScAVGCmYzQWHxdrJq42ZpdvBqlQRnoOk=
++github.com/okteto/buildkit v0.35.2-0.20261127133601-44cd4a847058 h1:z023y9DVe/8OxFhrV62o18R1IkTewzn/fVSdLR7BLJc=
++github.com/okteto/buildkit v0.35.2-0.20261127133601-44cd4a847058/go.mod h1:1bLB7NqbvyIScAVGCmYzQWHxdrJq42ZpdvBqlQRnoOk=
+ github.com/onsi/ginkgo/v2 v2.32.0 h1:Hw7s2pVrQo/8Yz5N77qdnpHaoc+c6cC9WIV1Jce+J6E=
+ github.com/onsi/ginkgo/v2 v2.32.0/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
+ github.com/onsi/gomega v1.40.0 h1:Vtol0e1MghCD2ZVIilPDIg44XSL9l2QAn8ZNaljWcJc=
+```
+
+**File**: `pkg/build/buildkit/buildcontext.go` (added, +412/-0)
+```diff
+@@ -0,0 +1,412 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package buildkit
++
++import (
++	"bufio"
 +	"bytes"
- 	"context"
- 	"errors"
- 	"fmt"
++	"crypto/rand"
++	"crypto/sha256"
++	"encoding/hex"
++	"errors"
++	"net/url"
++	"os"
++	"path/filepath"
++	"strconv"
++	"strings"
 +	"sync"
- 	"testing"
- 
- 	"github.com/okteto/okteto/internal/test"
-@@ -26,10 +28,12 @@ import (
- 	"github.com/okteto/okteto/pkg/constants"
- 	"github.com/okteto/okteto/pkg/env"
- 	oktetoErrors "github.com/okteto/okteto/pkg/errors"
-+	oktetoLog "github.com/okteto/okteto/pkg/log"
- 	"github.com/okteto/okteto/pkg/model"
- 	"github.com/okteto/okteto/pkg/model/forward"
- 	"github.com/okteto/okteto/pkg/okteto"
- 	"github.com/okteto/okteto/pkg/types"
-+	"github.com/sirupsen/logrus"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	authenticationv1 "k8s.io/api/authentication/v1"
-@@ -457,6 +461,57 @@ func TestSetSyncDefaultsByDevModeError(t *testing.T) {
- 	require.Equal(t, *dev, expectedDev)
++
++	"github.com/moby/buildkit/client"
++	"github.com/okteto/okteto/pkg/config"
++	"github.com/okteto/okteto/pkg/constants"
++	"github.com/okteto/okteto/pkg/env"
++	"github.com/okteto/okteto/pkg/log/io"
++	"github.com/okteto/okteto/pkg/repository"
++	"github.com/okteto/okteto/pkg/types"
++	"github.com/spf13/afero"
++)
++
++const (
++	// SmartBuildContextEnabledEnvVar makes BuildKit reuse the build context that it saved for the same
++	// repository, whoever sent it: another folder, another user or a pipeline.
++	// Disabled by default: it needs a BuildKit that understands the build option that names the source of the
++	// files, and without the variable the CLI sends exactly what it sent before.
++	SmartBuildContextEnabledEnvVar = "OKTETO_BUILDKIT_SMART_BUILD_CONTEXT_ENABLED"
++
++	// contextLocalName is the name of the local directory with the build context in a BuildKit request
++	contextLocalName = "context"
++
++	// localSourceOptPrefix is the prefix of the build option that tells Okteto's BuildKit which directory the
++	// files of a local directory come from: "okteto-local-source:<local name>=<source>". BuildKit compares the
++	// files by modification time when the copy that it saved was sent from the same source, and by content when
++	// it was sent from another one.
++	localSourceOptPrefix = "okteto-local-source:"
++
++	// buildContextKeyVersion changes when the values that make the shared key change
++	buildContextKeyVersion = "v1"
++
++	// remoteOperationBuild is the value that identifies the Dockerfile of a remote deploy, destroy or test in the
++	// shared key. The CLI generates it and it always copies the whole build context, so the three operations can
++	// reuse the same saved copy.
++	remoteOperationBuild = "okteto-remote-operation"
++
++	// dockerfileContentPrefix marks a Dockerfile that the shared key identifies by its content
++	dockerfileContentPrefix = "content:"
++
++	// sourceIDFile is the file of the Okteto home with the random value that identifies the home in the source of
++	// the files. The first build that needs it creates it.
++	sourceIDFile           = ".build-source-id"
++	sourceIDFilePermission = 0600
++
++	buildContextIDLength = 32
++	randomSourceBytes    = 16
++)
++
++// sourceIDMu makes the builds that run at the same time in the process read or create the file one after the other
++var sourceIDMu sync.Mutex
++
++var errEmptySourceID = errors.New("the file with the ID of the okteto home is empty")
++
++// buildContextStrategy sets how BuildKit reuses the build context that it saved in previous builds
++type buildContextStrategy interface {
++	configure(opt *client.SolveOpt, buildOptions *types.BuildOptions)
++}
++
++// newBuildContextStrategy reads the feature flag once and returns the strategy to use
++func newBuildContextStrategy(fs afero.Fs, logger *io.Controller) buildContextStrategy {
++	if !env.LoadBoolean(SmartBuildContextEnabledEnvVar) {
++		return noopBuildContext{}
++	}
++	// the Okteto home exists when a build starts: the Okteto context was read from it
++	homeID := func() (string, error) { return homeSourceID(fs, config.GetOktetoHomeWithFilesystem(fs)) }
++	return &smartBuildContext{
++		fs:          fs,
++		logger:      logger,
++		repoURL:     func(dir string) string { return repository.NewRepository(dir).GetAnonymizedRepo() },
++		repoRoot:    repository.FindTopLevelGitDir,
++		homeID:      homeID,
++		inInstaller: config.RunningInInstaller,
++		inCI:        runningInCI,
++		randomID:    randomSource,
++	}
++}
++
++// runningInCI reports whether the CI variable is set to something other than false: most systems set it to "true"
++// and some to their name
++func runningInCI() bool {
++	value := os.Getenv(constants.CIEnvVar)
++	if value == "" {
++		return false
++	}
++	enabled, err := strconv.ParseBool(value)
++	return err != nil || enabled
++}
++
++// noopBuildContext keeps the request as it is: BuildKit reuses one saved copy for all the builds that it receives
++// and compares the files by modification time
++type noopBuildContext struct{}
++
++func (noopBuildContext) configure(*client.SolveOpt, *types.BuildOptions) {}
++
++// smartBuildContext gives BuildKit a key that is the same for everybody who runs the same build of the same
++// repository (same fol
+```
+
+**File**: `pkg/build/buildkit/buildcontext_test.go` (added, +1026/-0)
+```diff
+@@ -0,0 +1,1026 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package buildkit
++
++import (
++	"errors"
++	"fmt"
++	"os"
++	"path/filepath"
++	"strings"
++	"sync"
++	"testing"
++
++	"github.com/go-git/go-git/v5"
++	gitconfig "github.com/go-git/go-git/v5/config"
++	"github.com/moby/buildkit/client"
++	"github.com/okteto/okteto/pkg/constants"
++	"github.com/okteto/okteto/pkg/log/io"
++	"github.com/okteto/okteto/pkg/types"
++	"github.com/spf13/afero"
++	"github.com/stretchr/testify/require"
++	"github.com/tonistiigi/fsutil"
++)
++
++const (
++	testRepoURL        = "https://github.com/okteto/movies"
++	testRepoID         = "github.com/okteto/movies"
++	testContextFolder  = "services/api"
++	testDockerfile     = "services/api/Dockerfile"
++	testHomeID         = "home"
++	testRandomSource   = "random"
++	testSourceOpt      = "okteto-local-source:context"
++	testFilePermission = 0600
++	testDirPermission  = 0700
++)
++
++// testBuildContext is a repository in a temporary folder with a build context in "services/api" and the request
++// of an image build of "services/api/Dockerfile"
++type testBuildContext struct {
++	strategy    *smartBuildContext
++	root        string
++	contextPath string
++	// dockerfile is the user's Dockerfile and translated is the copy with a random name that the CLI sends
++	dockerfile string
++	translated string
++	target     string
++	outputMode string
++}
++
++func newTestBuildContext(t *testing.T) *testBuildContext {
++	t.Helper()
++	root := t.TempDir()
++	contextPath := filepath.Join(root, "services", "api")
++	require.NoError(t, os.MkdirAll(contextPath, testDirPermission))
++	return &testBuildContext{
++		root:        root,
++		contextPath: contextPath,
++		dockerfile:  filepath.Join(contextPath, "Dockerfile"),
++		translated:  filepath.Join(t.TempDir(), "buildkit-1234"),
++		strategy: &smartBuildContext{
++			fs:          afero.NewOsFs(),
++			logger:      io.NewIOController(),
++			repoURL:     func(string) string { return testRepoURL },
++			repoRoot:    func(string) (string, error) { return root, nil },
++			homeID:      func() (string, error) { return testHomeID, nil },
++			inInstaller: func() bool { return false },
++			inCI:        func() bool { return false },
++			randomID:    func() string { return testRandomSource },
++		},
++	}
++}
++
++func (c *testBuildContext) buildOptions() *types.BuildOptions {
++	return &types.BuildOptions{
++		Path:               c.contextPath,
++		File:               c.translated,
++		OriginalDockerfile: c.dockerfile,
++		Target:             c.target,
++		OutputMode:         c.outputMode,
++	}
++}
++
++// configure runs the strategy on a request that uploads the build context
++func (c *testBuildContext) configure(t *testing.T) *client.SolveOpt {
++	t.Helper()
++	mount, err := fsutil.NewFS(c.contextPath)
++	require.NoError(t, err)
++	opt := &client.SolveOpt{
++		LocalMounts:   map[string]fsutil.FS{"context": mount},
++		FrontendAttrs: map[string]string{"filename": "buildkit-1234"},
++	}
++	c.strategy.configure(opt, c.buildOptions())
++	return opt
++}
++
++func (c *testBuildContext) expectedSource(t *testing.T) string {
++	t.Helper()
++	absPath, err := filepath.Abs(c.contextPath)
++	require.NoError(t, err)
++	resolved, err := filepath.EvalSymlinks(absPath)
++	require.NoError(t, err)
++	return hashID(testHomeID, resolved)
++}
++
++// testKey returns the shared key of a build of the test repository
++func testKey(contextFolder, ignoreRules, build, target string) string {
++	return "okteto-" + hashID("v1", testRepoID, contextFolder, ignoreRules, build, target)
++}
++
++func writeTestFile(t *testing.T, path, content string) {
++	t.Helper()
++	require.NoError(t, os.WriteFile(path, []byte(content), testFilePermission))
++}
++
++func TestNewBuildContextStrategy(t *testing.T) {
++	tests := []struct {
++		expected buildContextStrategy
++		name     string
++		value    string
++	}{
++		{name: "not set", value: "", expected: noopBuildContext{}},
++		{name: "false", value: "false", expected: noopBuildContext{}},
++		{name: "true", value: "true", expected: &smartBuildContext{}},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			t.Setenv(SmartBuildContextEnabledEnvVar, tt.value)
++			strategy := newBuildContextStrategy(afero.NewMemMapFs(), io.NewIOController())
++			require.IsType(t, tt.expected, strategy)
++		})
++	}
++}
++
++func TestNewBuildContextStrategyHasEveryDependency(t *testing.T) {
++	t.Setenv(SmartBuildContextEnabledEnvVar, "true")
++	fs := afero.NewMemMapFs()
++	logger := io.NewIOController()
++
++	stra
+```
+
+**File**: `pkg/build/buildkit/buildcontext_unix_test.go` (added, +119/-0)
+```diff
+@@ -0,0 +1,119 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//go:build !windows
++
++package buildkit
++
++import (
++	"os"
++	"path/filepath"
++	"testing"
++
++	"github.com/spf13/afero"
++	"github.com/stretchr/testify/require"
++)
++
++func TestSmartBuildContextOfASymlinkToTheFolder(t *testing.T) {
++	c := newTestBuildContext(t)
++	first := c.configure(t)
++
++	link := filepath.Join(t.TempDir(), "link")
++	require.NoError(t, os.Symlink(c.contextPath, link))
++	c.contextPath = link
++	second := c.configure(t)
++
++	require.NotEmpty(t, first.SharedKey)
++	require.Equal(t, first.SharedKey, second.SharedKey)
++	require.Equal(t, first.FrontendAttrs[testSourceOpt], second.FrontendAttrs[testSourceOpt])
++}
++
++func TestSmartBuildContextOfARepositoryReachedThroughASymlink(t *testing.T) {
++	c := newTestBuildContext(t)
++	first := c.configure(t)
++
++	// the root of the repository always comes without symbolic links
++	link := filepath.Join(t.TempDir(), "repository")
++	require.NoError(t, os.Symlink(c.root, link))
++	c.contextPath = filepath.Join(link, "services", "api")
++	c.dockerfile = filepath.Join(c.contextPath, "Dockerfile")
++	second := c.configure(t)
++
++	require.Equal(t, testKey(testContextFolder, "", testDockerfile, ""), second.SharedKey)
++	require.Equal(t, first.SharedKey, second.SharedKey)
++	require.Equal(t, first.FrontendAttrs[testSourceOpt], second.FrontendAttrs[testSourceOpt])
++}
++
++func TestSmartBuildContextKeyOfADockerfileThatIsASymlink(t *testing.T) {
++	c := newTestBuildContext(t)
++	writeTestFile(t, c.dockerfile, "FROM scratch\n")
++	first := c.configure(t)
++
++	link := filepath.Join(c.root, "Dockerfile.link")
++	require.NoError(t, os.Symlink(c.dockerfile, link))
++	c.dockerfile = link
++	second := c.configure(t)
++
++	require.Equal(t, first.SharedKey, second.SharedKey)
++}
++
++func TestResolveSymlinksOfAPathThatDoesNotExist(t *testing.T) {
++	dir := t.TempDir()
++	resolvedDir, err := filepath.EvalSymlinks(dir)
++	require.NoError(t, err)
++	link := filepath.Join(dir, "link")
++	require.NoError(t, os.Symlink(dir, link))
++
++	resolved := resolveSymlinks(filepath.Join(link, "missing", "Dockerfile"))
++
++	require.Equal(t, filepath.Join(resolvedDir, "missing", "Dockerfile"), resolved)
++}
++
++func TestSmartBuildContextOfASymlinkOutsideTheRepository(t *testing.T) {
++	root := newTestGitRepository(t, "git@github.com:okteto/movies.git")
++	contextPath := filepath.Join(root, "services", "api")
++	link := filepath.Join(t.TempDir(), "api")
++	require.NoError(t, os.Symlink(contextPath, link))
++
++	direct := configureRealBuildContext(t, contextPath)
++	linked := configureRealBuildContext(t, link)
++
++	require.Equal(t, testKey(testContextFolder, "", testDockerfile, ""), direct.SharedKey)
++	require.Equal(t, direct.SharedKey, linked.SharedKey)
++}
++
++func TestUploadedFolderResolvesSymlinksBeforeParentFolders(t *testing.T) {
++	// "link/.." is the parent of the folder that the link points to, not the folder that has the link
++	target := filepath.Join(t.TempDir(), "repository", "services")
++	require.NoError(t, os.MkdirAll(target, testDirPermission))
++	link := filepath.Join(t.TempDir(), "link")
++	require.NoError(t, os.Symlink(target, link))
++	expected, err := filepath.EvalSymlinks(filepath.Dir(target))
++	require.NoError(t, err)
++
++	folder, err := uploadedFolder(link + string(filepath.Separator) + "..")
++
++	require.NoError(t, err)
++	require.Equal(t, expected, folder)
++}
++
++func TestHomeSourceIDCanOnlyBeReadByItsOwner(t *testing.T) {
++	home := t.TempDir()
++
++	_, err := homeSourceID(afero.NewOsFs(), home)
++	require.NoError(t, err)
++
++	info, err := os.Stat(filepath.Join(home, sourceIDFile))
++	require.NoError(t, err)
++	require.Equal(t, os.FileMode(sourceIDFilePermission), info.Mode().Perm())
++}
+```
+
+**File**: `pkg/build/buildkit/opt.go` (modified, +3/-0)
+```diff
+@@ -101,6 +101,7 @@ type SolveOptBuilder struct {
+ 	clientFactory clientFactory
+ 	fs            afero.Fs
+ 	secretMgr     secretBuildManager
++	buildContext  buildContextStrategy
  }
  
-+// captureHybridModeWarning resets the hybrid mode warning so each test starts a new command, and returns the plain logs
-+func captureHybridModeWarning(t *testing.T) *bytes.Buffer {
-+	t.Helper()
-+	hybridModeDeprecationWarningOnce = sync.Once{}
-+	out := &bytes.Buffer{}
-+	oktetoLog.Init(logrus.WarnLevel)
-+	oktetoLog.SetOutputFormat(oktetoLog.PlainFormat)
-+	oktetoLog.SetOutput(out)
-+	t.Cleanup(func() {
-+		hybridModeDeprecationWarningOnce = sync.Once{}
-+		oktetoLog.Init(logrus.WarnLevel)
+ // OktetoContextInterface is an interface to interact with the okteto context
+@@ -140,6 +141,7 @@ func NewSolveOptBuilder(cf clientFactory, reg IsInOktetoRegistryChecker, okCtx O
+ 		secretMgr:     secretMgr,
+ 		clientFactory: cf,
+ 		okCtx:         okCtx,
++		buildContext:  newBuildContextStrategy(fs, logger),
+ 	}, nil
+ }
+ 
+@@ -288,6 +290,7 @@ func (b *SolveOptBuilder) Build(ctx context.Context, buildOptions *types.BuildOp
+ 		// API, we should remove this flag.
+ 		Internal: env.LoadBoolean("OKTETO_BUILDKIT_INTERNAL_MODE"),
+ 	}
++	b.buildContext.configure(opt, buildOptions)
+ 
+ 	if buildOptions.Tag != "" {
+ 		opt.Exports = []client.ExportEntry{
+```
+
+**File**: `pkg/repository/git.go` (modified, +4/-0)
+```diff
+@@ -139,6 +139,10 @@ func (r gitRepoController) getRepoURL() (string, error) {
+ 		return "", fmt.Errorf("git repo doesn't have any remote")
+ 	}
+ 
++	// go-git returns the remotes in no particular order: without "origin" it is always the first one by name
++	sort.Slice(remotes, func(i, j int) bool {
++		return remotes[i].Config().Name < remotes[j].Config().Name
 +	})
-+	return out
+ 	return r.sanitiseURL(remotes[0].Config().URLs[0]), nil
+ }
+ 
+```
+
+**File**: `pkg/repository/git_remotes_test.go` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//go:build !windows
++
++package repository
++
++import (
++	"testing"
++
++	"github.com/go-git/go-git/v5"
++	"github.com/go-git/go-git/v5/config"
++	"github.com/stretchr/testify/require"
++)
++
++func TestGetRepoURLWithoutOriginUsesTheFirstRemoteByName(t *testing.T) {
++	dir := t.TempDir()
++	repo, err := git.PlainInit(dir, false)
++	require.NoError(t, err)
++	for _, name := range []string{"upstream", "fork", "mirror"} {
++		_, err = repo.CreateRemote(&config.RemoteConfig{Name: name, URLs: []string{"https://github.com/okteto/" + name + ".git"}})
++		require.NoError(t, err)
++	}
++
++	// go-git returns the remotes in no particular order: every call has to pick the same one
++	urls := map[string]int{}
++	for range 30 {
++		urls[NewRepository(dir).GetAnonymizedRepo()]++
++	}
++
++	require.Equal(t, map[string]int{"https://github.com/okteto/fork": 30}, urls)
 +}
-+
-+func TestWarnIfHybridModeWarnsInHybridMode(t *testing.T) {
-+	out := captureHybridModeWarning(t)
-+
-+	warnIfHybridMode(&model.Dev{Mode: constants.OktetoHybridModeFieldValue})
-+
-+	require.Equal(t, "WARNING: "+hybridModeDeprecatedWarning+"\n", out.String())
-+}
-+
-+func TestWarnIfHybridModeWarnsOnceWhenCalledSeveralTimes(t *testing.T) {
-+	out := captureHybridModeWarning(t)
-+	dev := &model.Dev{Mode: constants.OktetoHybridModeFieldValue}
-+
-+	warnIfHybridMode(dev)
-+	warnIfHybridMode(dev)
-+	warnIfHybridMode(dev)
-+
-+	require.Equal(t, "WARNING: "+hybridModeDeprecatedWarning+"\n", out.String())
-+}
-+
-+func TestWarnIfHybridModeDoesNotWarnInSyncMode(t *testing.T) {
-+	out := captureHybridModeWarning(t)
-+
-+	warnIfHybridMode(&model.Dev{Mode: constants.OktetoSyncModeFieldValue})
-+
-+	require.Empty(t, out.String())
-+}
-+
-+func TestWarnIfHybridModeKeepsWarningAfterASyncModeDev(t *testing.T) {
-+	out := captureHybridModeWarning(t)
-+
-+	warnIfHybridMode(&model.Dev{Mode: constants.OktetoSyncModeFieldValue})
-+	warnIfHybridMode(&model.Dev{Mode: constants.OktetoHybridModeFieldValue})
-+
-+	require.Equal(t, "WARNING: "+hybridModeDeprecatedWarning+"\n", out.String())
-+}
-+
- func TestUpdateKubetoken(t *testing.T) {
- 	tt := []struct {
- 		expected    error
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5299** (closed): Upgrade buildkit dependency to v0.35.1-okteto2 (@devin-ai-integration[bot])
 - **PR #5297** (2026-11-26): PROD-555: Warn that hybrid mode is deprecated in okteto up (@jLopezbarb)
 - **PR #5289** (2026-11-25): PROD-561: Select the test containers to run with profiles in okteto test (@ifbyol)
+- **PR #5287** (2026-11-27): feat(build): reuse the build context saved by BuildKit across checkouts, behind a flag (@ifbyol)
 - **PR #5286** (2026-11-23): docs: update the links to the docs and use the short anchors of the Okteto Manifest reference (@pchico83)
 - **PR #5285** (2026-11-23): chore(deps): Update k8s.io/utils digest to ca04ba5 (@oktetobot)
-- **PR #5284** (closed): docs: point the CLI messages and the README to the current docs pages (@pchico83)
-- **PR #5282** (2026-11-24): fix(up)!: require 'image' when 'autocreate' is enabled (@pchico83)
 
 ---
 
@@ -1696,51 +2087,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. up): warn that hybrid mode is deprecated (PROD-555)
+## X. build): reuse the build context saved by BuildKit across checkouts, behind a fla
 
 **RULE**:
-When implementing operations in `cmd/up/up.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ffbae6ba`: up): warn that hybrid mode is deprecated (PROD-555). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `24b444d1`: build): reuse the build context saved by BuildKit across checkouts, behind a flag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/up/up.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"sync"
-
-	hybridModeDeprecatedWarning = "Hybrid mode is deprecated and will be removed in a future release.\n    Use sync mode instead: remove 'mode: hybrid' from your development container and define the folders to synchronize in 'sync'.\n    Learn more: https://www.okteto.com/docs/reference/okteto-manifest/#sync-string-required"
-
-	// hybridModeDeprecationWarningOnce keeps the hybrid mode deprecation warning to one per command
-	hybridModeDeprecationWarningOnce sync.Once
-// warnIfHybridMode warns that hybrid mode is deprecated when the development container runs in hybrid mode.
-// It is called once the manifest and the development container are loaded, right before the activation loop,
-// and the warning is logged once even though the development container can be activated several times
-// along the same command (retries and reconnections)
-func warnIfHybridMode(dev *model.Dev) {
-	if !dev.IsHybridModeEnabled() {
-		return
-	}
-	hybridModeDeprecationWarningOnce.Do(func() {
-		oktetoLog.Warning(hybridModeDeprecatedWarning)
-	})
-}
-
-	warnIfHybridMode(up.Dev)
-
+replace github.com/moby/buildkit => github.com/okteto/buildkit v0.35.2-0.20261127133601-44cd4a847058 // v0.35.1-okteto2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+replace github.com/moby/buildkit => github.com/okteto/buildkit v0.35.2-0.20261120071757-2ea2d399aff8 // v0.35.1-okteto1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ffbae6ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `24b444d1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

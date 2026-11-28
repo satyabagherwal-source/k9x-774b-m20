@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T01:26:59.510Z",
+  "last_updated": "2026-11-28T01:35:47.096Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T01:26:58.382Z",
@@ -738,7 +738,7 @@
       "staged_for_review": 0
     },
     "okteto-okteto-learnings.md": {
-      "processed_at": "2026-11-27T07:30:49.048Z",
+      "processed_at": "2026-11-28T01:35:45.610Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1323,7 +1323,7 @@
       "staged_for_review": 0
     },
     "chrisbanes-skills-learnings.md": {
-      "processed_at": "2026-11-25T23:41:50.434Z",
+      "processed_at": "2026-11-28T01:35:44.102Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3838,8 +3838,8 @@
       "staged_for_review": 1
     },
     "hf-aleph-alpha-kolibri-1.1-learnings.md": {
-      "processed_at": "2026-11-24T17:14:28.111Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-28T01:35:43.587Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-baidu-ernie-5.5-flash-preview-learnings.md": {
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5184,
+  "total_dossiers_evaluated": 5187,
   "total_canonical_promoted": 588,
-  "total_staged_for_review": 3924
+  "total_staged_for_review": 3926
 }

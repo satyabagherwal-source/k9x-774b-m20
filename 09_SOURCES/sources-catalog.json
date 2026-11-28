@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "ffbae6ba",
+    "sourceVersion": "24b444d1",
     "license": "Apache-2.0",
-    "contentHash": "f5b11a340210f0cc7d100ea0d302a4d5dc7cae3b88d891f948a10830507f4cf7",
-    "lastHarvestedAt": "2026-11-27T07:30:40.080Z",
+    "contentHash": "66dc107f7f371658601f13568e8e10163cf50cfb2cf4ea35299a9b6eb4c8a20b",
+    "lastHarvestedAt": "2026-11-28T01:35:31.459Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "ee4f1331",
+    "sourceVersion": "a0a5c188",
     "license": "Apache-2.0",
-    "contentHash": "1f343814857db2dfa3de55027c4d34bb92bc18ec9bc3d2a7a7aa26c4125cad48",
-    "lastHarvestedAt": "2026-11-27T06:14:51.247Z",
+    "contentHash": "4adbf022ef1a0ddeeb34f00ea5978d3475b95595a1b9b879202bd7cc2548cf85",
+    "lastHarvestedAt": "2026-11-28T01:35:40.035Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -8873,10 +8873,10 @@
     "repository": "chrisbanes/skills",
     "platform": "github",
     "sourceUrl": "https://github.com/chrisbanes/skills",
-    "sourceVersion": "9427b3a2",
+    "sourceVersion": "2975135e",
     "license": "Apache-2.0",
-    "contentHash": "feed1273cf9911e938ebb2351cc479f4b8b9ff83cb03c3a6a85c6f61d767091a",
-    "lastHarvestedAt": "2026-11-25T23:41:44.349Z",
+    "contentHash": "1505dbbbc006152b73efb7e87865dcde8e881e96c56e01c3e5d1f45251d348c2",
+    "lastHarvestedAt": "2026-11-28T01:35:28.685Z",
     "learningId": "learn-github-chrisbanes-skills"
   },
   "joreilly-confetti": {
@@ -13365,8 +13365,8 @@
     "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1.1",
     "sourceVersion": "hf-aleph-alpha-kolibri-1.1",
     "license": "Open-Source",
-    "contentHash": "a55946688504cbeede06b523ce0eb2cbeb1ee90c1a59ec72de25ab169f1ea19b",
-    "lastHarvestedAt": "2026-11-24T17:13:31.242Z",
+    "contentHash": "30617ad994d0fc47c3873aa7d8eeba4acfbb93c421820e64250d26dc6305a182",
+    "lastHarvestedAt": "2026-11-28T01:35:21.746Z",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1-1"
   },
   "hf-baidu-ernie-5.5-flash-preview": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T23:41:51.012Z",
+  "timestamp": "2026-11-28T01:35:44.475Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-chrisbanes-skills-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [chrisbanes-skills-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T23:41:51.012Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T01:35:44.475Z`  
 > **Learning ID**: `LEARN-EVO-chrisbanes-skills-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source**: github ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
-> **Source Version**: `9427b3a2`  
+> **Source Version**: `2975135e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T23:41:42.967Z  
+> **Timestamp**: 2026-11-28T01:35:27.406Z  
 > **Learning ID**: `learn-github-chrisbanes-skills`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T23:41:42.960Z  
+> **Harvest Timestamp**: 2026-11-28T01:35:27.400Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -273,83 +273,221 @@ class ProfileModel {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `282f86a6` (2026-11-24)
-**Commit Message**: Diagnose unresolved bugs before issue planning (#196)
+### Incident Patch 1: `2975135e` (2026-11-27)
+**Commit Message**: Require unique scratch files in every subagent brief (#206)
+
+## Problem
+
+On 2026-11-27, a `run-project` drain of chrisbanes/haze ran three
+ticket-owner subagents in parallel, each in its own worktree. Owners run
+`git`, `gh` and Gradle with the command sandbox off, because the sandbox
+blocks keychain/ssh, `~/.gradle` and worktree git dirs. With the sandbox
+off, `$TMPDIR` is the shared `/tmp/claude-501`, not a per-command temp
+dir.
+
+During mutation and sensitivity checks, two owners backed up a source
+file to the same fixed path, `$TMPDIR/delegate.bak`:
+
+- the #1923 owner backed up `RenderScriptBlurVisualEffectDelegate.kt`;
+- the #1927 owner backed up
+`RenderEffectBlurVisualEffectDelegate.android.kt`.
+
+The #1927 owner's 191-line file overwrote #1923's backup and was later
+deleted. #1923 only avoided damage because it restored from git. Had it
+restored from the backup, another ticket's code would have silently
+replaced its file and been committed. A third owner used another fixed
+name, `/tmp/claude-501/b1903/`. `git diff` confirmed that nothing
+reached a PR.
+
+The controller fixed it mid-drain by adding one line to later owner
+briefs ("Temp files: `mktemp` only, never fixed names"), an
+
+**File**: `evals/tests/test_workflows_writing_matrix.py` (modified, +7/-0)
+```diff
+@@ -237,6 +237,13 @@ def test_each_consumer_links_to_shared_handoff_reference(self):
+                 source = directory / caller
+                 self.assertIn(os.path.relpath(shared, source.parent), source.read_text())
+ 
++    def test_handoff_brief_requires_unique_scratch_files(self):
++        # Parallel owners once overwrote each other's fixed `$TMPDIR/delegate.bak`.
++        text = (REPO_ROOT / "skills/subagent-delegation/references/subagent-selection.md").read_text()
++        brief = " ".join(text.split("## Handoff brief", 1)[1].split("## Return", 1)[0].split())
++        self.assertIn("In every brief, include “Create scratch files, logs and backups with `mktemp`", brief)
++        self.assertIn("never use a fixed name in a shared temp directory", brief)
++
+     def test_project_execution_routes_mandatory_scheduler_and_review_contracts(self):
+         entrypoint = (REPO_ROOT / "skills/run-project/SKILL.md").read_text(
+             encoding="utf-8"
+```
+
+**File**: `skills/subagent-delegation/references/subagent-selection.md` (modified, +4/-1)
+```diff
+@@ -96,7 +96,10 @@ document solely to avoid a short inline detail when no suitable record exists.
+ - Objective or question.
+ - **Workspace.** Exact checkout path and state, including branch and base
+   SHA when applicable. In an editing brief, include “Preserve others' edits,
+-  including concurrent changes in your owned files.”
++  including concurrent changes in your owned files.” In every brief, include
++  “Create scratch files, logs and backups with `mktemp`, or restore from Git
++  (`HEAD` or a WIP commit); never use a fixed name in a shared temp directory,
++  because parallel agents share `/tmp` when the sandbox is off.”
+ - Relevant instructions and evidence.
+ - Allowed actions and forbidden actions.
+ - Acceptance criteria and expected result.
+```
+
+---
+
+### Incident Patch 2: `4ef1d9bc` (2026-11-26)
+**Commit Message**: Prefer host delegation and fix retained claim recovery (#205)
 
 ## Summary
 
 ```text
-Direct delivery with clear expected behavior and no current plan
-└─ Fix would be speculative → diagnose
-   ├─ Cause and verification established → recheck the fast path, otherwise use to-plan
-   └─ Evidence falls short → record the blocker and continue independent work
-```
+Delegation
+  Resolve the worker provider's model, effort and pins.
+  Prefer a compatible host route, with native fallback where allowed.
 
-Use `diagnosing-bugs` when available and local checks when it’s absent.
-A trace can substitute for a runnable reproducer when it establishes the
-cause and gives the delivery owner a concrete way to verify the fix.
+Retained GitHub Project claims
+  Verify release before applying cutover checks.
+  Publish the migration record before the authority-resume record for a pause.
+  Reconcile rollback retries against verified journal operations.
+```
 
 ## Evidence
 
-- **Before.** The fast path excluded unresolved bugs, and the fallback
-led directly to `to-plan`.
-- **After.** Three offline cases cover provider and local diagnosis,
-equivalent evidence, blocked diagnosis, fast-path requalification, and
-when to skip diagnosis.
-- Lint, reference sync, corpus validation (319 cases), and all 431
-evaluation unit tests passed. The full `npm test` command stopped at a
-CRLF release fixture, which passed in isolation with a command-scoped
-`core.autocrlf=false` override.
+- Previously, route selection was provider-native by default, and
+migration refresh and rollback could compare live state against an
+outdated snapshot.
+- Calibration cases cover host preference and fallback, cross-provider
+model selection, a released claim moving to In Progress, and rollback
+retry after a verified inverse write.
+- Markdown lint, 328 eval case definitions, and 53 focused tests passed.
+Live evals were skipped.
 
 ## Merge Danger
 
-**Two-way door.** Reverting the commit restores the previous routing.
-
-**Scope.** Direct `deliver-issu
+Two-way. Reverting the PR restores the previous skill instructions. The
+affected workflows are subagent delegation and retained claims during
+legacy GitHub Project migrations.
 
 **File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -132,7 +132,7 @@ for its lane-specific fallback and blocking behavior.
- 
- ### Workflows
- 
--- [`deliver-issue`](skills/deliver-issue/SKILL.md) — coordinate a named tracker issue and its descendants, or a verified board-controller handoff through solo or justified delegated implementation, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and revision-isolated evidence with preservation checks, independent integrated-candidate review and focused repair review, and PR shepherding, delivering to GitHub or GitLab code hosts; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
-+- [`deliver-issue`](skills/deliver-issue/SKILL.md) — coordinate a named tracker issue and its descendants, or a verified board-controller handoff through solo or justified delegated implementation, diagnosis before planning for unresolved bugs in direct delivery, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and revision-isolated evidence with preservation checks, independent integrated-candidate review and focused repair review, and PR shepherding, delivering to GitHub or GitLab code hosts; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
+@@ -168,7 +168,7 @@ for its lane-specific fallback and blocking behavior.
+ - [`deliver-issue`](skills/deliver-issue/SKILL.md) — coordinate a named tracker issue and its descendants, or a verified board-controller handoff using the installed `implement-with-subagents` executor for each approved PR, diagnosis before planning for unresolved bugs in direct delivery, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and revision-isolated evidence with preservation checks, independent integrated-candidate review and focused repair review, and PR shepherding, delivering to GitHub or GitLab code hosts; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
  - [`release-kotlin-library`](skills/release-kotlin-library/SKILL.md) — assess readiness, prepare, and verify Kotlin library releases; check the `gradle-maven-publish-plugin` prerequisite, use `changelog` for notes, prepare Metalava API snapshots, and follow repository checks and publication gates.
  - [`gradle-run`](skills/gradle-run/SKILL.md) — run every agent-initiated Gradle command through a compact-output wrapper; recover run identity and bounded results by workflow ID with read-only status, and diagnose failures with optional investigation helpers.
- - [`subagent-delegation`](skills/subagent-delegation/SKILL.md) — provider-neutral delegation playbook, loaded by name or through a one-line user-level opt-in, with separate Codex, Claude Code, and Antigravity/Gemini model routing, installed-role precedence, parallel briefs, independent audits, and lead acceptance.
+-- [`subagent-delegation`](skills/subagent-delegation/SKILL.md) — provider-neutral delegation playbook, loaded by name or through a one-line user-level opt-in, with separate Codex, Claude Code, and Antigravity/Gemini model routing, installed-role precedence, parallel briefs, independent audits, and lead acceptance.
++- [`subagent-delegation`](skills/subagent-delegation/SKILL.md) — provider-neutral delegation playbook, loaded by name or through a one-line user-level opt-in, with host delegation discovery and Codex, Claude Code, and Antigravity/Gemini model routing, installed-role precedence, parallel briefs, independent audits, and lead acceptance.
+ - [`implement-with-subagents`](skills/implement-with-subagents/SKILL.md) — default to the lead for a single item or serial graph, apply requested implementation model and effort at preflight, and use workers for every item in a graph with parallel work. Preserve dependency-aware integration, independent final review, same-owner repair, bounded checkout reuse, and read-only orchestration review.
+ - [`to-plan`](skills/to-plan/SKILL.md) — create risk-scaled implementation plans that prove baselines from green CI, with observable slices and consequential boundary validation before dependent work, plus authenticated integration amendments, tracker-bound markers and explicit consumer handoffs. Standalone issue planning can start without `ready-for-agent`. Decide separate PRs by coherent deliverable boundaries.
+ - [`run-project`](skills/run-project/SKILL.md) — explicitly triage, plan and deliver eligible tickets from a Project board, using Todo / In progress / Done, human-applied role authority, preserved label stops, scheduling and review gates, with a GitHub or GitLab code host; use `deliver-issue` for one named item.
 ```
 
-**File**: `evals/README.md` (modified, +3/-0)
+**File**: `evals/README.md` (modified, +5/-3)
 ```diff
-@@ -441,6 +441,9 @@ CI-supplied full-suite evidence versus explicit local rules and checks CI
- cannot run; and `to-plan` baselines proven from green CI on the exact base SHA
- while keeping focused checks CI cannot answer. They use immutable synthetic
- state.
-+Three direct-delivery diagnosis calibrations cover diagnosis before planning,
-+fast-path requalification, local fallback, equivalent causal evidence, blocked
-+reproduction and restraint when an existing plan or verified outcome applies.
- Three nested-agent calibrations check that a delegated owner waits for its
- own reviewer, helpers and slice workers before returning, keeps independent
- launches parallel, and that the top-level controller keeps background launches.
+@@ -363,9 +363,11 @@ routing, parallel briefs, installed custom-role precedence, fresh independent
+ audits, runtime-specific result delivery and workspace lifecycle, task-wide
+ invocation, and solo-work restraint with evidence reuse. Each prompt supplies
+ the user-level opt-in, and a calibration-only automatic control checks that the
+-skill stays inactive without it. These are supplied-state, read-only cases with
+-deterministic fixture-integrity checks and semantic rubrics; no live model
+-results are claimed.
++skill stays inactive without it. A calibration case checks host route
++preference, explicit route requirements, provider-native fallback, and model
++routing for a worker on a different provider from the lead. These are
++supplied-state, read-only cases with deterministic fixture-integrity checks
++and semantic rubrics.
+ The changelog triad checks stable-cycle coverage, incremental Unreleased
+ maintenance and missing-file restraint across non-Kotlin repositories. The
+ three `simplify-changes` cases cover a verified cleanup, a report on local changes
 ```
 
-**File**: `evals/cases/deliver-issue-bug-diagnosis-direct/case.json` (added, +42/-0)
+**File**: `evals/cases/deliver-tasks-migration-apply-direct/expectations.json` (modified, +9/-0)
 ```diff
-@@ -0,0 +1,42 @@
+@@ -63,6 +63,15 @@
+       ],
+       "same_owner": true,
+       "reset_budget": false
++    },
++    "resume-migration-only": {
++      "dispatch": false,
++      "preserve_hold": true,
++      "reset_budget": false
++    },
++    "released-on-refresh": {
++      "released": ["I5"],
++      "held": ["I1"]
+     }
+   }
+ }
+```
+
+**File**: `evals/cases/deliver-tasks-migration-apply-direct/prompt.md` (modified, +4/-1)
+```diff
+@@ -57,7 +57,10 @@ Assess these additional independent snapshots under the same no-provider and no-
+ - **writer-returned:** Identical to retained except the I5 writer resumed after approval and can still write under the old binding.
+ - **parked:** The proposed retained inventory includes I5 as CI-parked. The state is stable, but its unchanged old lease and PR cannot be reconciled by this migration.
+ - **resume-unknown:** After activation, the I1 pause condition is satisfied, but the original budget checkpoint cannot be verified and no valid migration-resume record exists.
+-
+ - **resume-verified:** I1's original resume condition, new scoped authority, exact lease and remaining budget are verified, both resume records are read back, and the existing owner acknowledges the new lease. I5 remains held.
++- **resume-migration-only:** Identical to resume-verified except the authority-resume publication timed out and its outcome could not be reconciled. Assess eligibility now, before any further publication or dispatch.
++- **released-on-refresh:** In a separate run after activation, I5's scoped continuation, migration-resume record, and acknowledgement of the new lease are all verified. I5 then moves from Todo to In Progress through normal implementation claim. Its current-binding checks pass. I1's original pause condition remains unmet. On refresh, identify which retained item follows normal current-binding checks and which stays held.
+ 
+ Add these keys to the decision artifact: retained: action, moves_verified, retained_claims (item IDs in inventory order), eligible_after_activation (retained item IDs only), preserve_owners, preserve_budgets, rewrite_historical_markers; writer-returned: action, writes; parked: action, writes; resume-unknown: dispatch, preserve_hold, reset_budget (booleans); resume-verified: releasable (retained item IDs), same_owner, reset_budget. For writer-returned, return the disposition for a changed approved precondition.
++
++For resume-migration-only, return the same fields as resume-unknown. For released-on-refresh, return `released` and `held` as retained item ID arrays in inventory order.
+```
+
+**File**: `evals/cases/deliver-tasks-migration-partial-failure-novel/expectations.json` (modified, +10/-0)
+```diff
+@@ -31,6 +31,16 @@
+       "I2": "rollback-conflict",
+       "create_option": false,
+       "delete_options": false
++    },
++    "rollback-after-release": {
++      "action": "migration-blocked",
++      "inverse_writes": 0,
++      "preserve_journal": true
++    },
++    "retained-rollback-retry": {
++      "I1": "already-original-no-op",
++      "I2": "restore-B-with-readback",
++      "migration_blocked": false
+     }
+   }
+ }
+```
+
+**File**: `evals/cases/deliver-tasks-migration-partial-failure-novel/prompt.md` (modified, +4/-0)
+```diff
+@@ -50,3 +50,7 @@ Exact plan approved; durable journal records original states before any writes.
+ Use action migration-blocked for unresolved outcomes. verified lists item IDs in supplied inventory order; I3 uses unknown, retry-with-fresh-preconditions or already-original-no-op. Rollback item dispositions use preserve-concurrent-change, restore-B-with-readback, already-original-no-op or rollback-conflict. Config dispositions use restore-legacy-remove-unchanged-destination or preserve-and-propose-inverse-patch; instruction dispositions use restore-original-with-readback or preserve-and-propose-inverse-patch. Retry/intent/readback/preserve/option flags are booleans; config_writes is a number.
+ 
+ Write `.scratch/review-decisions.json` with these snapshot keys and fields: partial: action, verified, retry_I2, I3, retry_I3, config_writes, preserve_journal; retry-original: I3, write_intent_first, readback_required; rollback: I1, I2, I3, config, AGENTS.md, CLAUDE.md, journal_inverse_operations, delete_options; missing-option: I2, create_option, delete_options. Use JSON booleans/numbers/arrays/maps as appropriate. Explain the dry run and exact config reshape, original-state journal and readbacks, retry/rollback preconditions, activation boundary and human-only option deletion in your response.
++
++Assess one independent `rollback-after-release` snapshot. The retained-claim migration completed and the replacement activated. The journal records I1 as a retained authority pause. I1 has since resumed under a verified new-binding lease. All writers are now quiesced, the other work and configuration still match the recorded migration output, and the human requests ordinary journal rollback. Return `action`, `inverse_writes` (number), and `preserve_journal` (boolean) for the immediate disposition before any binding or ownership reconciliation.
++
++Assess an independent `retained-rollback-retry` snapshot. Rollback already restored retained I1's original Backlog Status, and the journal records the verified inverse write. A retry sees I1 still in Backlog, I2 still in its migrated Todo Status, and every other item and file matching the reconciled journal. Writers remain fenced. No retained claim resumed or acquired a new lease, and no other work was admitted. Return `I1` and `I2` using the rollback item dispositions above, and `migration_blocked` (boolean).
+```
+
+**File**: `evals/cases/subagent-delegation-host-routing-novel/case.json` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
 +{
-+  "id": "deliver-issue-bug-diagnosis-direct",
-+  "title": "Diagnose an unexplained bug before selecting the delivery route",
++  "id": "subagent-delegation-host-routing-novel",
++  "title": "Choose a delegation route from host and provider capabilities",
 +  "family": "workflow",
 +  "target_skills": [
-+    "deliver-issue"
++    "subagent-delegation"
 +  ],
 +  "expected_skills": [
-+    "deliver-issue"
++    "subagent-delegation"
 +  ],
 +  "task_mode": "review",
-+  "kind": "direct",
-+  "fixture": "workflow",
++  "kind": "novel",
++  "fixture": "workflow-delegation",
 +  "allowed_write_paths": [],
 +  "forbid_all_commands": true,
 +  "allow_skill_reference_reads": true,
@@ -357,98 +495,28 @@ CRLF release fixture, which passed in isolation with a command-scoped
 +    {
 +      "argv": [
 +        "python3",
-+        "@validators/pr_review_decisions.py",
-+        "deliver-issue-bug-diagnosis-direct",
-+        "--response"
++        "@validators/text_case.py",
++        "subagent-delegation-host-routing-novel"
 +      ],
 +      "timeout_seconds": 30
 +    }
 +  ],
 +  "rubric": [
 +    {
-+      "id": "diagnosis",
-+      "text": "Uses the installed provider for diagnosis before drafting or editing the fix, with the current delivery owner retaining control."
++      "id": "host-preference",
++      "text": "Chooses the host for A based on the supplied capabilities, keeps the required model and effort, and retains the host session handle for results and repairs by the same owner. Uses the host's own tool contract."
 +    },
 +    {
-+      "id": "handoff",
-+      "text": "Hands the established cause and verification recipe to the delivery owner and rechecks every existing fast-path condition."
-+    }
-+  ],
-+  "provenance": {
-+    "kind": "synthetic"
-+  },
-+  "calibration": true
-+}
-```
-
-**File**: `evals/cases/deliver-issue-bug-diagnosis-direct/expectations.json` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+{
-+  "decisions": {
-+    "intake": {
-+      "next": "diagnose",
-+      "method": "provider",
-+      "fix_during_diagnosis": false
++      "id": "fallback",
++      "text": "Chooses the native route for B to enforce read-only access and preserve fresh review context at the exact candidate. Reports that same access mismatch as a blocker for C without switching routes or treating a brief as access enforcement."
 +    },
-+    "diagnosed": {
-+      "next": "fast-path",
-+      "retain_cause_and_verification": true,
-+      "regression_test_owner": "implementation"
-+    }
-+  }
-+}
-```
-
-**File**: `evals/cases/deliver-issue-bug-diagnosis-direct/prompt.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+Use the supplied snapshots and applicable skill references. Read only the needed skill files. Return one JSON object keyed by snapshot. Do not execute delivery, run checks, contact providers, or edit files.
-+
-+An explicit direct delivery request names a verified leaf issue. The CLI must preserve escaped spaces when loading a local config. Its current baseline drops them, but there is no current plan or evidence locating the cause. All scope, readiness, and ownership checks passed. An external skill named `diagnosing-bugs` is installed.
-+
-+- `intake` is the initial snapshot above. Give `next` (`diagnose`, `plan`, or `fast-path`), `method` (`provider`, `local`, or `none`), and `fix_during_diagnosis` (boolean).
-+- `diagnosed` is a later snapshot for the same issue. A focused config-loading test reproduces the dropped spaces on the identified baseline. A targeted probe isolates an internal normalization error. One internal file and its test suffice, and every existing fast-path condition now passes. Give `next` (`plan` or `fast-path`), `retain_cause_and_verification` (boolean), and `regression_test_owner` (`diagnosis` or `implementation`).
-```
-
-**File**: `evals/cases/deliver-issue-bug-diagnosis-negative/case.json` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+{
-+  "id": "deliver-issue-bug-diagnosis-negative",
-+  "title": "Skip new diagnosis when the current route already applies",
-+  "family": "workflow",
-+  "target_skills": [
-+    "deliver-issue"
-+  ],
-+  "expected_skills": [
-+    "deliver-issue"
-+  ],
-+  "task_mode": "review",
-+  "kind": "negative",
-+  "fixture": "workflow",
-+  "allowed_write_paths": [],
-+  "forbid_all_commands": true,
-+  "allow_skill_reference_reads": true,
-+  "validators": [
-+    {
-+      "argv": [
-+        "python3",
-+        "@validators/pr_review_decisions.py",
-+        "deliver-issue-bug-diagnosis-negative",
-+        "--response"
-+      ],
-+      "timeout_seconds": 30
-+    }
-+  ],
-+  "rubric": [
 +    {
 +      "id": "restraint",
-+      "text": "Skips new diagnosis for a known fix, a current approved plan, a verified board handoff, and a fully accepted no-change outcome."
++      "text": "Honors the explicit native route for D despite a compatible host. Keeps E solo. Makes recommendations only and performs no dispatch, edits, or settings changes."
 +    },
 +    {
-+      "id": "readiness",
-+      "text": "Resolves missing product behavior before attempting diagnosis and keeps verified no-change distinct from speculation."
++      "id": "worker-provider-policy",
++      "text": "For F, uses the Claude Code policy for the unpinned worker despite the Codex lead. Resolves Sonnet and medium effort for ordinary bounded implementation, then selects the host with its supplied claude-sonnet ID and medium effort. Uses host controls for dispatch."
 +    }
 +  ],
 +  "provenance": {
@@ -458,56 +526,27 @@ CRLF release fixture, which passed in isolation with a command-scoped
 +}
 ```
 
-**File**: `evals/cases/deliver-issue-bug-diagnosis-negative/expectations.json` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+{
-+  "decisions": {
-+    "known-fix": {
-+      "next": "fast-path",
-+      "start_new_diagnosis": false
-+    },
-+    "approved-plan": {
-+      "next": "reuse-plan",
-+      "start_new_diagnosis": false
-+    },
-+    "board-owned": {
-+      "next": "board-handoff",
-+      "start_new_diagnosis": false
-+    },
-+    "unclear-outcome": {
-+      "next": "clarify",
-+      "start_new_diagnosis": false
-+    },
-+    "already-fixed": {
-+      "next": "no-change",
-+      "start_new_diagnosis": false
-+    }
-+  }
-+}
-```
-
-**File**: `evals/cases/deliver-issue-bug-diagnosis-negative/prompt.md` (added, +9/-0)
+**File**: `evals/cases/subagent-delegation-host-routing-novel/expectations.json` (added, +9/-0)
 ```diff
 @@ -0,0 +1,9 @@
-+Use the supplied snapshots and applicable skill references. Read only the needed skill files. Return one JSON object keyed by snapshot, with `next` (`diagnose`, `fast-path`, `reuse-plan`, `board-handoff`, `clarify`, or `no-change`) and `start_new_diagnosis` (boolean) in each. Do not execute delivery, contact providers, or edit files.
-+
-+All the following issues carry a bug label. Unless otherwise stated, each is a verified, authorized direct delivery with no holds and no plan.
-+
-+- `known-fix`: A current failing test and a one-variable probe already establish a reversed internal comparator as the cause and the test as verification. Every fast-path condition passes.
-+- `approved-plan`: A current verified plan already covers an intermittent failure, with evidence and an affected regression check.
-+- `board-owned`: The active board controller sent a verified single-ticket implementation handoff with a current approved plan. No material mismatch emerged.
-+- `unclear-outcome`: The observed response is clear, but the ticket has conflicting requirements about what the response should be.
-+- `already-fixed`: On the current integrated base an existing fix passes an acceptance check exercising the original failing path. The active approved plan's full acceptance and dependencies are verified, there is no remaining diff or change request, and no new closure authority.
++{
++  "files": [
++    "state.md"
++  ],
++  "must_contain": [
++    "Immutable evaluation state",
++    "root lead owns architecture"
++  ]
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #206** (2026-11-27): Require unique scratch files in every subagent brief (@chrisbanes)
+- **PR #205** (2026-11-26): Prefer host delegation and fix retained claim recovery (@chrisbanes)
 - **PR #204** (2026-11-25): Improve skill eval reliability and Kotlin and Compose coverage (@chrisbanes)
 - **PR #203** (2026-11-24): Restore delivery safeguards and rename simplify to simplify-changes (@chrisbanes)
 - **PR #202** (2026-11-24): Add a standalone simplify skill (@chrisbanes)
 - **PR #201** (2026-11-24): Simplify skill instructions and share references across skills (@chrisbanes)
-- **PR #200** (2026-11-24): Use implement-with-subagents for issue delivery (@chrisbanes)
-- **PR #199** (2026-11-24): Share tracker and triage configuration across delivery skills (@chrisbanes)
 
 ---
 
@@ -527,31 +566,37 @@ CRLF release fixture, which passed in isolation with a command-scoped
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Diagnose unresolved bugs before issue planning
+## X. Require unique scratch files in every subagent brief
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `evals/tests/test_workflows_writing_matrix.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `282f86a6`: Diagnose unresolved bugs before issue planning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2975135e`: Require unique scratch files in every subagent brief. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `evals/tests/test_workflows_writing_matrix.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- [`deliver-issue`](skills/deliver-issue/SKILL.md) — coordinate a named tracker issue and its descendants, or a verified board-controller handoff through solo or justified delegated implementation, diagnosis before planning for unresolved bugs in direct delivery, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and revision-isolated evidence with preservation checks, independent integrated-candidate review and focused repair review, and PR shepherding, delivering to GitHub or GitLab code hosts; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
+    def test_handoff_brief_requires_unique_scratch_files(self):
+        # Parallel owners once overwrote each other's fixed `$TMPDIR/delegate.bak`.
+        text = (REPO_ROOT / "skills/subagent-delegation/references/subagent-selection.md").read_text()
+        brief = " ".join(text.split("## Handoff brief", 1)[1].split("## Return", 1)[0].split())
+        self.assertIn("In every brief, include “Create scratch files, logs and backups with `mktemp`", brief)
+        self.assertIn("never use a fixed name in a shared temp directory", brief)
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-- [`deliver-issue`](skills/deliver-issue/SKILL.md) — coordinate a named tracker issue and its descendants, or a verified board-controller handoff through solo or justified delegated implementation, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and revision-isolated evidence with preservation checks, independent integrated-candidate review and focused repair review, and PR shepherding, delivering to GitHub or GitLab code hosts; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `282f86a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2975135e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

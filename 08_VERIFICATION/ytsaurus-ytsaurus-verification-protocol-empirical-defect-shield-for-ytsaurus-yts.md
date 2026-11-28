@@ -4,22 +4,22 @@
 {
   "source_repository": "ytsaurus/ytsaurus",
   "source_url": "https://github.com/ytsaurus/ytsaurus",
-  "source_version": "ee4f1331",
+  "source_version": "a0a5c188",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T06:14:51.482Z",
+  "timestamp": "2026-11-28T01:35:40.284Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ytsaurus-ytsaurus",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `ee4f1331`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T06:14:51.482Z`  
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `a0a5c188`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T01:35:40.284Z`  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ytsaurus/ytsaurus` (Commit: `ee4f1331`)
+- **Target Repository**: `ytsaurus/ytsaurus` (Commit: `a0a5c188`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T06:14:50.112Z  
+> **Harvest Timestamp**: 2026-11-28T01:35:38.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1206,722 +1206,868 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `97403463` (2026-11-26)
-**Commit Message**: YT-30225: Fix Arrow writer crashes on optional<yson> nested in composite types
+### Incident Patch 1: `0a66f47a` (2026-11-27)
+**Commit Message**: [yt/java] Fix HttpClient selector thread leak
 
-- {% cut "ai summary" %}
+Fixes #1845.
 
-  - Crash fix. With enable_complex_types=%true, read_table could crash the proxy when an optional<yson> inside a struct, list, or dict held a value such as \{\}. These values now round-trip through Arrow.
-  - Wire-format change. The YtType=yson marker moves from the enclosing Arrow column to the nullable binary field that holds the value. A nested YSON string such as "abc" used to produce the three raw bytes abc. It now produces a complete binary YSON string.
-  - Arrow input. For a yson target, write_table now decodes and validates marked nested fields, including dictionary-encoded ones. For example, marked b"\[1;2;\]" becomes the list \[1, 2\]. An unmarked field or an explicit string target preserves the literal bytes. Malformed YSON is rejected when decoding.
-  - Omitted struct fields. On export, omitted trailing optional fields now appear as Arrow nulls.
+Close the HTTP client used for proxy discovery together with `ClientPoolService`.
 
-  {% endcut %}
+On Java 21 and newer, the client is closed explicitly. On Java 11–20, the strong reference to the internal HTTP client facade is released, allowing the selector thread to terminate after garbage collection.
+
+Tested on Java 17 and Java 21.
+
 * Changelog entry
-  Type: fix
-  Component: proxy
-commit_hash:2c968dfd2a935bc4e96fe213a178b7e9c660aeb8
+Type: fix
+Component: java-sdk
 
-**File**: `yt/yt/library/formats/arrow_parser.cpp` (modified, +70/-31)
-```diff
-@@ -2,6 +2,8 @@
- #include "arrow_metadata_constants.h"
- #include "arrow_helpers.h"
- 
-+#include <yt/yt/core/yson/pull_parser.h>
-+
- #include <yt/yt/client/formats/parser.h>
- 
- #include <yt/yt/client/table_client/helpers.h>
-@@ -21,6 +23,7 @@
- #include <util/generic/buffer.h>
- 
- #include <util/stream/buffer.h>
-+#include <util/stream/mem.h>
- 
- #include <contrib/libs/apache/arrow_next/cpp/src/arrow/api.h>
- #include <contrib/libs/apache/arrow_next/cpp/src/arrow/type_fwd.h>
-@@ -793,27 +796,27 @@ class TArraySimpleVisitor
-     // String types.
-     arrow20::Status Visit(const arrow20::StringType& /*type*/) override
-     {
--        return ParseStringLikeArray<arrow20::StringArray>();
-+        return VisitStringLike<arrow20::StringArray>();
-     }
- 
-     arrow20::Status Visit(const arrow20::LargeStringType& /*type*/) override
-     {
--        return ParseStringLikeArray<arrow20::LargeStringArray>();
-+        return VisitStringLike<arrow20::LargeStringArray>();
-     }
- 
-     arrow20::Status Visit(const arrow20::BinaryType& /*type*/) override
-     {
--        return ParseStringLikeArray<arrow20::BinaryArray>();
-+        return VisitStringLike<arrow20::BinaryArray>();
-     }
- 
-     arrow20::Status Visit(const arrow20::LargeBinaryType& /*type*/) override
-     {
--        return ParseStringLikeArray<arrow20::LargeBinaryArray>();
-+        return VisitStringLike<arrow20::LargeBinaryArray>();
-     }
- 
-     arrow20::Status Visit(const arrow20::FixedSizeBinaryType& /*type*/) override
-     {
--        return ParseStringLikeArray<arrow20::FixedSizeBinaryArray>();
-+        return VisitStringLike<arrow20::FixedSizeBinaryArray>();
-     }
- 
-     // Boolean type.
-@@ -830,14 +833,14 @@ class TArraySimpleVisitor
- 
-     arrow20::Status Visit(const arrow20::Decimal128Type& type) override
-     {
--        return ParseStringLikeArray<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
-+        return ParseStringLike<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
-             return MakeDecimalBinaryValue<TDecimal::TValue128>(value, columnId, type.precision());
-         });
-     }
- 
-     arrow20::Status Visit(const arrow20::Decimal256Type& type) override
-     {
--        return ParseStringLikeArray<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
-+        return ParseStringLike<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
-             return MakeDecimalBinaryValue<TDecimal::TValue256>(value, columnId, type.precision());
-         });
-     }
-@@ -1009,7 +1012,7 @@ class TArraySimpleVisitor
-     }
- 
-     template <typename ArrayType>
--    arrow20::Status ParseStringLikeArray(auto makeUnversionedValueFunc)
-+    arrow20::Status ParseStringLike(auto makeUnversionedValueFunc)
-     {
-         auto array = std::static_pointer_cast<ArrayType>(Array_);
-         YT_VERIFY(array->length() <= std::ssize(*RowValues_));
-@@ -1033,18 +1036,31 @@ class TArraySimpleVisitor
-     }
- 
-     template <typename ArrayType>
--    arrow20::Status ParseStringLikeArray()
--    {
--        // Note that MakeUnversionedValue actually has third argument in its signature,
--        // which leads to a "too few arguments" in the point of its invocation if we try to pass
--        // it directly to ParseStringLikeArray.
--        return ParseStringLikeArray<ArrayType>([this] (TStringBuf value, i64 columnId) {
--            if (HasYsonTypeInMetadata(SchemaField_)) {
--                ValidateYsonValue(value);
--                return MakeUnversionedAnyValue(value, columnId);
--            } else {
--                return MakeUnversionedStringValue(value, columnId);
--            }
-+    arrow20::Status VisitStringLike()
-+    {
-+        if ((!ColumnType_ || *ColumnType_ == ESimpleLogicalValueType::Any) &&
-+            HasYsonTypeInMetadata(SchemaField_))
-+        {
-+            return ParseYson<ArrayType>();
-+        } else {
-+            return ParseString<ArrayType>();
-+        }
-+    }
-+
-+    template <typename ArrayType>
-+    arrow20::Status ParseYson()
-+    {
-+        return ParseStringLike<ArrayType>([] (TStringBuf value, i64 columnId) {
-+            ValidateYsonValue(value);
-+            return MakeUnversionedAnyValue(value, columnId);
-+        });
-+    }
-+
-+    template <typename ArrayType>
-+    arrow20::Status ParseString()
-+    {
-+        return ParseStringLike<ArrayType>([] (TStringBuf value, i64 columnId) {
-+            return MakeUnversionedStringValue(value, columnId);
-         });
-     }
- 
-@@ -1276,31 +1292,31 @@ class TArrayCompositeVisitor
-     arrow20::Status Visit(const arrow20::StringType& type) override
-     {
-         CheckArrowTypeMatch(YTType_->AsSimpleTypeRef().GetElement(), type.type_name(), Array_->type());
--        return ParseStringLikeArray<arrow20::StringArray>();
-+        return VisitStringLike<arrow20::StringArray>();
-     }
- 
-     arrow20::Status Visit(const arrow20::LargeStringType& type) override
-     {
-         CheckArrowTypeMatch(YTType_->AsSimpleTypeRef().GetElement(), type.type_name(), Array_->
-```
+Closing `YTsaurusClient` no longer leaks the HTTP proxy discovery thread.
 
-**File**: `yt/yt/library/formats/arrow_writer.cpp` (modified, +48/-11)
+---
+
+Pull Request resolved: https://github.com/ytsaurus/ytsaurus/pull/1847
+
+Co-authored-by: tinarsky <[REDACTED_EMAIL]>
+commit_hash:5fb759514704d0d9a3283c8897a667a5611227a1
+
+**File**: `yt/java/ytsaurus-client/src/main/java/tech/ytsaurus/client/ClientPool.java` (modified, +33/-4)
 ```diff
-@@ -22,6 +22,9 @@
- #include <yt/yt/core/misc/blob_output.h>
- #include <yt/yt/core/misc/error.h>
+@@ -29,6 +29,7 @@
+ import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.TimeoutException;
+ import java.util.concurrent.atomic.AtomicInteger;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Predicate;
+ import java.util.stream.Collectors;
  
-+#include <yt/yt/core/yson/pull_parser.h>
-+#include <yt/yt/core/yson/token_writer.h>
-+
- #include <library/cpp/yt/memory/range.h>
- 
- #include <util/stream/mem.h>
-@@ -238,11 +241,23 @@ TArrowSchemaType SerializeLeafColumnType(
-             };
- 
-         case ESimpleLogicalValueType::String:
-+            return TArrowSchemaType{
-+                .Type = flatbuf::Type_Binary,
-+                .Offset = flatbuf::CreateBinary(*flatbufBuilder)
-+                    .Union(),
-+            };
-+
-         case ESimpleLogicalValueType::Any:
-             return TArrowSchemaType{
-                 .Type = flatbuf::Type_Binary,
-                 .Offset = flatbuf::CreateBinary(*flatbufBuilder)
-                     .Union(),
-+                .CustomMetadata = {
-+                    flatbuf::CreateKeyValue(
-+                        *flatbufBuilder,
-+                        SerializeString(flatbufBuilder, YTTypeMetadataKey),
-+                        SerializeString(flatbufBuilder, YTTypeMetadataValueYson)),
-+                },
-             };
- 
-         case ESimpleLogicalValueType::TzDate:
-@@ -1529,6 +1544,25 @@ void AppendSimpleTypeToBuffer(
- {
-     auto simpleType = CastToV1Type(logicalType).first;
- 
-+    if (simpleType == ESimpleLogicalValueType::Any) {
-+        auto& offsetsBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
-+        TBlob& valueBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
-+
-+        // TODO(dagorokhov): Use a non-owning blob output adapter (YT-30459).
-+        TBlobOutput output;
-+        output.Blob() = std::move(valueBuffer);
-+        {
-+            TCheckedInDebugYsonTokenWriter writer(&output);
-+            cursor.TransferComplexValue(&writer);
-+            writer.Flush();
-+        }
-+        valueBuffer = std::move(output.Blob());
-+
-+        offsetsBuffer.AppendValue<ui32>(valueBuffer.Size());
-+
-+        return;
-+    }
-+
-     if (IsStringLikeType(simpleType)) {
-         auto& offsetsBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
-         auto& valueBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
-@@ -1538,6 +1572,7 @@ void AppendSimpleTypeToBuffer(
-         valueBuffer.Append(string.Data(), string.Size());
-         offsetsBuffer.AppendValue<ui32>(valueBuffer.Size());
- 
-+        cursor.Next();
-         return;
-     }
- 
-@@ -1577,10 +1612,12 @@ void AppendSimpleTypeToBuffer(
-                 YT_ABORT();
+@@ -292,10 +293,12 @@ private ClientPoolService(HttpBuilder httpBuilder) {
          }
+         HttpClient httpClient = httpClientBuilder.build();
  
-+        cursor.Next();
-         return;
-     }
+-        proxyGetter = new HttpProxyGetter(
++        HttpProxyGetter httpProxyGetter = new HttpProxyGetter(
+                 httpClient,
+                 httpBuilder
+         );
++        proxyGetter = httpProxyGetter;
++        toClose.add(httpProxyGetter);
  
-     if (simpleType == ESimpleLogicalValueType::Null || simpleType == ESimpleLogicalValueType::Void) {
-+        cursor.Next();
-         return;
-     }
+         executorService = httpBuilder.eventLoop;
+         updatePeriodMs = httpBuilder.options.getProxyUpdateTimeout().toMillis();
+@@ -946,7 +949,7 @@ interface ProxyGetter {
  
-@@ -1636,6 +1673,8 @@ void AppendSimpleTypeToBuffer(
-         default:
-             THROW_ERROR_EXCEPTION("Column has unexpected nested type %Qlv", simpleType);
-     }
+ @NonNullApi
+ @NonNullFields
+-class HttpProxyGetter implements ProxyGetter {
++class HttpProxyGetter implements ProxyGetter, AutoCloseable {
+     private static final int HTTP_PROXY_PORT = 80;
+     private static final int HTTPS_PROXY_PORT = 443;
+ 
+@@ -956,7 +959,7 @@ class HttpProxyGetter implements ProxyGetter {
+     private static final String HTTP_SCHEME = "http";
+     private static final String HTTPS_SCHEME = "https";
+ 
+-    private final HttpClient httpClient;
++    private final AtomicReference<HttpClient> httpClientRef;
+     private final String balancerFqdn;
+     private final Duration discoverProxiesTimeout;
+     @Nullable
+@@ -972,7 +975,7 @@ class HttpProxyGetter implements ProxyGetter {
+     String proxyNetworkName;
+ 
+     HttpProxyGetter(HttpClient httpClient, ClientPoolService.HttpBuilder httpBuilder) {
+-        this.httpClient = httpClient;
++        this.httpClientRef = new AtomicReference<>(httpClient);
+         this.balancerFqdn = Objects.requireNonNull(httpBuilder.balancerFqdn);
+         this.balancerPort = httpBuilder.balancerPort;
+         this.discoverProxiesTimeout = Objects.requireNonNull(httpBuilder.options).getProxyUpdateTimeout();
+@@ -986,6 +989,11 @@ class HttpProxyGetter implements ProxyGetter {
+ 
+     @Override
+     public CompletableFuture<List<HostPort>> getProxies() {
++        HttpClient httpClient = httpClientRef.get();
++        if (httpClient == null) {
++            return CompletableFuture.failedFuture(new IllegalStateException("HTTP proxy getter is closed"));
++        }
 +
-+    cursor.Next();
- }
+         var discoverProxiesUrl = String.format(
+                 "%s://%s/api/v4/discover_proxies?type=rpc", createScheme(), createFqdnWithPort()
+         );
+@@ -1062,6 +1070,27 @@ public CompletableFuture<List<HostPort>> getProxies() {
+         });
+     }
  
- void AppendNullSimpleTypeToBuffer(
-@@ -1794,12 +1833,9 @@ void FillBuffersForComplexType(
-     TYsonPullParserCursor& cursor)
- {
-     switch (type->GetMetatype()) {
--        case ELogicalMetatype::Simple: {
-+        case ELogicalMetatype::Simple:
-             AppendSimpleTypeToBuffer(type, buffers, currentBufferIndex, cursor);
--            cursor.Next();
--
-             break;
--        }
- 
-         case ELogicalMetatype::Optional: {
-             // See https://ytsaurus.tech/docs/user-guide/storage/data-types#yson_optional
-@@ -1920,6 +1956,14 @@ void FillBuffersForComplexType(
-                     *cursor);
-             });
- 
-+            for (; fieldIndex < std::ssize(fields); ++fieldIndex) {
-+                const auto& field = fields[fieldIndex];
-+                FillBuffersForComplexTypeWithNulls(
-+                    field.Type,
-+                    buffers,
-+                    currentBufferIndex);
-+            }
++    /**
++     * Shuts down the HTTP client used for proxy discovery without waiting for in-flight requests.
++     * On Java 11-20 the client has no shutdown API, so its selector thread stops only after
++     * the client is garbage collected.
++     */
++    @Override
++    public void close() {
++        HttpClient httpClient = httpClientRef.getAndSet(null);
++        if (httpClient == null) {
++            return;
++        }
 +
-             break;
-         }
- 
-@@ -2787,13 +2831,6 @@ class TArrowWriter
- 
-             auto [typeType, typeOffset, childrenFields, customMetadata] = SerializeColumnType(&flatbufBuilder, columnSchema.LogicalType(), ArrowConfig_);
- 
--            if (CastToV1Type(columnSchema.LogicalType()).first == ESimpleLogicalValueType::Any) {
--                customMetadata.push_back(flatbuf::CreateKeyValue(
--                    flatbufBuilder,
--                    flatbufBuilder.CreateString(YTTypeMetadataKey),
--                    flatbufBuilder.CreateString(YTTypeMetadataValueYson)));
--            }
--
-             flatbuffers::Offset<flatbuf::DictionaryEncoding> dictionaryEncodingOffset;
-             auto indexTypeOffset = flatbuf::CreateInt(flatbufBuilder, /*bitWidth*/ 32, /*is_signed*/ false);
- 
++        try {
++            HttpClient.class.getMethod("shutdownNow").invoke(httpClient);
++        } catch (NoSuchMethodException ignored) {
++            // HttpClient has no explicit shutdown API before Java 21.
++        } catch (ReflectiveOperationException e) {
++            throw new RuntimeException("Failed to shut down HTTP proxy discovery client", e);
++        }
++    }
++
+     private String createScheme() {
+         if (useTLS) {
+             return HTTPS_SCHEME;
 ```
 
-**File**: `yt/yt/library/formats/unittests/arrow_parser_ut.cpp` (modified, +111/-0)
+**File**: `yt/java/ytsaurus-client/src/test/java/tech/ytsaurus/client/HttpProxyGetterCloseTest.java` (added, +57/-0)
 ```diff
-@@ -1485,6 +1485,117 @@ TEST(TArrowParserTest, InvalidYsonMetadata)
-     }
- }
- 
-+class TArrowYsonMetadataTest
-+    : public ::testing::TestWithParam<bool>
-+{
-+protected:
-+    TTableSchemaPtr MakeSchema(TLogicalTypePtr type = OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Any)))
-+    {
-+        if (GetParam()) {
-+            type = StructLogicalType({{"value", "value", type}}, /*removedFieldStableNames*/ {});
+@@ -0,0 +1,57 @@
++package tech.ytsaurus.client;
++
++import java.net.http.HttpClient;
++import java.time.Duration;
++import java.util.Random;
++
++import io.netty.channel.nio.NioEventLoopGroup;
++import org.junit.Assume;
++import org.junit.Test;
++import tech.ytsaurus.client.rpc.RpcOptions;
++
++import static org.junit.Assert.assertTrue;
++
++public class HttpProxyGetterCloseTest {
++    @Test
++    public void testCloseTerminatesSelectorManagerOnJava21() throws Exception {
++        HttpClient httpClient = HttpClient.newHttpClient();
++        Assume.assumeTrue(httpClient instanceof AutoCloseable);
++
++        HttpProxyGetter getter = new HttpProxyGetter(
++                httpClient,
++                ClientPoolService.httpBuilder()
++                        .setBalancerFqdn("localhost")
++                        .setOptions(new RpcOptions())
++        );
++
++        getter.close();
++
++        Object isTerminated = HttpClient.class
++                .getMethod("awaitTermination", Duration.class)
++                .invoke(httpClient, Duration.ofSeconds(30));
++        assertTrue(isTerminated instanceof Boolean);
++        assertTrue(
++                "HttpClient did not terminate within 30 seconds",
++                (Boolean) isTerminated
++        );
++    }
++
++    @Test
++    public void testClientPoolServiceClosesHttpProxyGetter() {
++        NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup(1);
++        HttpProxyGetter getter;
++        try (ClientPoolService clientPoolService = ClientPoolService.httpBuilder()
++                .setDataCenterName("test")
++                .setBalancerFqdn("localhost")
++                .setOptions(new RpcOptions())
++                .setClientFactory(new MockRpcClientFactory())
++                .setEventLoop(eventLoopGroup)
++                .setRandom(new Random())
++                .build()) {
++            getter = (HttpProxyGetter) clientPoolService.proxyGetter;
++        } finally {
++            eventLoopGroup.shutdownGracefully().syncUninterruptibly();
 +        }
-+        return New<TTableSchema>(std::vector{TColumnSchema("value", type)});
-+    }
-+
-+    std::string MakeInput(std::shared_ptr<arrow20::Array> array)
-+    {
-+        auto metadata = std::make_shared<arrow20::KeyValueMetadata>(
-+            std::vector{YTTypeMetadataKey},
-+            std::vector{YTTypeMetadataValueYson});
-+        auto field = arrow20::field("value", array->type(), /*nullable*/ true, metadata);
-+        if (GetParam()) {
-+            auto type = arrow20::struct_({field});
-+            array = std::make_shared<arrow20::StructArray>(type, array->length(), arrow20::ArrayVector{array});
-+            field = arrow20::field("value", type);
-+        }
-+        return MakeOutputFromRecordBatch(arrow20::RecordBatch::Make(
-+            arrow20::schema({field}),
-+            array->length(),
-+            {array}));
-+    }
-+};
-+
-+TEST_P(TArrowYsonMetadataTest, StringLikeYsonAndDictionaryValues)
-+{
-+    auto check = [&] (const std::shared_ptr<arrow20::Array>& array) {
-+        TCollectingValueConsumer collectedRows(MakeSchema());
-+        auto parser = CreateParserForArrow(&collectedRows);
-+        parser->Read(MakeInput(array));
-+        parser->Finish();
-+
-+        ASSERT_EQ(collectedRows.Size(), 1);
-+        auto value = collectedRows.GetRowValue(0, "value");
-+        if (GetParam()) {
-+            EXPECT_EQ(ConvertToYsonTextStringStable(GetComposite(value)), "[42;]");
-+        } else {
-+            EXPECT_EQ(ConvertTo<i64>(GetAny(value)), 42);
-+        }
-+    };
-+    auto checkBuilder = [&] (auto& builder, std::string_view value = "42") {
-+        Verify(builder.Append(value));
-+        auto array = builder.Finish().ValueOrDie();
-+        check(array);
-+
-+        arrow20::Int32Builder indicesBuilder;
-+        Verify(indicesBuilder.Append(0));
-+        auto indices = indicesBuilder.Finish().ValueOrDie();
-+        check(std::make_shared<arrow20::DictionaryArray>(
-+            arrow20::dictionary(arrow20::int32(), array->type()),
-+            indices,
-+            array));
-+    };
-+
-+    arrow20::BinaryBuilder binaryBuilder;
-+    checkBuilder(binaryBuilder);
-+    arrow20::LargeBinaryBuilder largeBinaryBuilder;
-+    checkBuilder(largeBinaryBuilder);
-+    arrow20::StringBuilder stringBuilder;
-+    checkBuilder(stringBuilder);
-+    arrow20::LargeStringBuilder largeStringBuilder;
-+    checkBuilder(largeStringBuilder);
-+    arrow20::FixedSizeBinaryBuilder fixedSizeBinaryBuilder(arrow20::fixed_size_binary(3));
-+    checkBuilder(fixedSizeBinaryBuilder, "42\0"s);
-+}
-+
-+TEST_P(TArrowYsonMetadataTest, MalformedYsonIsRejected)
-+{
-+    arrow20::BinaryBuilder builder;
-+    Verify(builder.Append("{"));
-+    TCollectingValueConsumer collectedRows(MakeSchema());
-+    auto parser = CreateParserForArrow(&collectedRows);
-+    EXPECT_THROW_WITH_SUBSTRING(parser->Read(MakeInput(builder.Finish().ValueOrDie())), "is not a valid YSON");
-+}
-+
-+TEST_P(TArrowYsonMetadataTest, StringTargetPreservesBytes)
-+{
-+    arrow20::BinaryBuilder builder;
-+    Verify(builder.Append("{"));
-+    TCollectingValueConsumer collectedRows(MakeSchema(SimpleLogicalType(ESimpleLogicalValueType::String)));
-+    auto parser = CreateParserForArrow(&collectedRows);
-+    parser->Read(MakeInput(builder.Finish().ValueOrDie()));
-+    parser->Finish();
-+
-+    ASSERT_EQ(collectedRows.Size(), 1);
-+    auto value = collectedRows.GetRowValue(0, "value");
-+    if (GetParam()) {
-+        EXPECT_EQ(ConvertTo<std::vector<std::string>>(GetComposite(value)), std::vector<std::string>{"{"});
-+    } else {
-+        EXPECT_EQ(GetString(value), "{");
++        assertTrue(getter.getProxies().isCompletedExceptionally());
 +    }
 +}
-+
-+INSTANTIATE_TEST_SUITE_P(TopLevelAndNested, TArrowYsonMetadataTest, ::testing::Bool());
-+
-+TEST(TArrowParserTest, BinaryListRejectsMalformedYson)
-+{
-+    auto schema = New<TTableSchema>(std::vector{
-+        TColumnSchema("any", ListLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Int64))),
-+    });
-+    TCollectingValueConsumer collectedRows(schema);
-+    auto parser = CreateParserForArrow(&collectedRows);
-+    EXPECT_THROW_WITH_SUBSTRING(parser->Read(MakeYsonArrow({"["})), "is not a valid YSON");
-+}
-+
- TEST(TArrowParserTest, WrongListInput)
- {
-     auto tableSchema = New<TTableSchema>(std::vector<TColumnSchema>{
-```
-
-**File**: `yt/yt/tests/integration/formats/test_arrow_format.py` (modified, +60/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- from yt_commands import authors, create, read_table, write_table, map, merge, get
- 
--from yt_type_helpers import optional_type, list_type, struct_type, decimal_type
-+from yt_type_helpers import optional_type, list_type, struct_type, decimal_type, dict_type
- 
- import pytest
- 
-@@ -424,6 +424,34 @@ def test_string_and_any_arrow(self, optimize_for):
- 
-         assert read_table("//tmp/table1") == read_table("//tmp/table2")
- 
-+    @authors("dagorokhov")
-+    @pytest.mark.parametrize("dictionary_encoded", [False, True])
-+    def test_write_arrow_mixed_string_and_yson_fields(self, optimize_for, dictionary_encoded):
-+        schema = [{
-+            "name": "record",
-+            "type_v3": struct_type([("text", "string"), ("payload", optional_type("yson")), ("unannotated", optional_type("yson"))]),
-+        }]
-+        create("table", "//tmp/table", attributes={"schema": schema, "optimize_for": optimize_for})
-+
-+        text = pa.array([b"[1;2;]", b"#", b"[1;2;]"], type=pa.binary())
-+        payload = pa.array([b"[1;2;]", None, b"[1;2;]"], type=pa.binary())
-+        if dictionary_encoded:
-+            payload = payload.dictionary_encode()
-+        fields = [
-+            pa.field("text", text.type),
-+            pa.field("payload", payload.type, metadata={b"YtType": b"yson"}),
-+            pa.field("unannotated", payload.type),
-+        ]
-+        records = pa.StructArray.from_arrays([text, payload, payload], fields=fields)
-+        arrow_table = pa.Table.from_arrays([records], names=["record"])
-+        write_table("//tmp/table", serialize_arrow_table(arrow_table), is_raw=True, input_format=ARROW_FORMAT)
-+
-+        assert read_table("//tmp/table") == [
-+            {"record": {"text": "[1;2;]", "payload": [1, 2], "unannotated": "[1;2;]"}},
-+            {"record": {"text": "#", "payload": None, "unannotated": None}},
-+            {"record": {"text": "[1;2;]", "payload": [1, 2], "unannotated": "[1;2;]"}},
-+        ]
-+
-     @authors("max42")
-     def test_write_arrow_decimal(self, optimize_for):
-         schema = [
-@@ -1218,6 +1246,37 @@ class TestComplexTypesArrowFormat(YTEnvSetup):
-     NUM_SCHEDULERS = 1
-     ENABLE_MULTIDAEMON = True
- 
-+    @authors("dagorokhov")
-+    def test_round_trip_nested_yson(self, optimize_for):
-+        item = struct_type([("value", optional_type("yson"))])
-+        schema = [{"name": "items", "type_v3": optional_type(dict_type("string", list_type(item)))}]
-+        create("table", "//tmp/input", attributes={"schema": schema, "optimize_for": optimize_for})
-+        create("table", "//tmp/output", attributes={"schema": schema})
-+
-+        arrow_format = yson.loads(ARROW_FORMAT_COMPLEX_TYPES)
-+        field_type = parse_arrow_stream(read_table("//tmp/input", output_format=arrow_format)).schema.field("items").type
-+        if pa.types.is_dictionary(field_type):
-+            field_type = field_type.value_type
-+        assert pa.types.is_map(field_type)
-+        assert pa.types.is_list(field_type.item_type)
-+        value = field_type.item_type.value_type["value"]
-+        assert value.type == pa.binary() and value.nullable
-+        assert (value.metadata or {}).get(b"YtType") == b"yson"
-+
-+        rows = [
-+            {"items": None},
-+            {"items": [["a", []], ["b", [{"value": None}, {"value": {"x": 1}}]]]},
-+        ]
-+        write_table("//tmp/input", rows)
-+        data = read_table("//tmp/input", output_format=arrow_format)
-+        items = parse_arrow_stream(data).column("items").combine_chunks()
-+        if pa.types.is_dictionary(items.type):
-+            items = items.dictionary_decode()
-+        assert items.type == field_type
-+        assert items.is_null().to_pylist() == [True, False]
-+        write_table("//tmp/output", data, is_raw=True, input_format=ARROW_FORMAT)
-+        assert read_table("//tmp/output") == read_table("//tmp/input")
-+
-     MAP_CAT_TABLE_DATA = [
-         (
-             struct_type([("a", "int64"), ("b", "string")]),
-```
-
-**File**: `yt/yt/ytlib/unittests/arrow_writer_ut.cpp` (modified, +152/-0)
-```diff
-@@ -32,6 +32,9 @@
- #include <yt/yt/core/concurrency/async_stream_helpers.h>
- #include <yt/yt/core/concurrency/scheduler_api.h>
- 
-+#include <yt/yt/core/ytree/convert.h>
-+#include <yt/yt/core/ytree/ypath_client.h>
-+
- #include <util/stream/null.h>
- #include <util/string/hex.h>
- 
-@@ -57,6 +60,7 @@ using namespace NNamedValue;
- using namespace NTableClient;
- using namespace NTzTypes;
- using namespace NYson;
-+using namespace NYTree;
- using namespace NConcurrency;
- 
- ////////////////////////////////////////////////////////////////////////////////
-@@ -2586,5 +2590,153 @@ TEST(TArrowWriterComplexTest, ColumnarBatchWithStartIndex)
- 
- ////////////////////////////////////////////////////////////////////////////////
- 
-+const std::vector<std::string> NestedYsonValues = {
-+    "{}",
-+    "{a=1;b=[x;y]}",
-+    "[]",
-+    "[1;2u;3.5]",
-+    "-5",
-+    "5u",
-+    "2.5",
-+    "%true",
-+    "%false",
-+    "\"str\"",
-+    "\"" + std::string(8_KB, 'x') + "\"",
-+    "{x=<attr=1>y;z=#}",
-+    "[<attr=1>#;#]",
-+};
-+
-+void WriteBatchFromYson(
-+    const TLogicalTypePtr& type,
-+    const std::vector<std::string>& ysonValues,
-+    bool columnar,
-+    TStringStream* outputStream)
-+{
-+    std::vector<std::string> columnNames = {"column"};
-+    std::vector<TTableSchemaPtr> tableSchemas = {
-+        New<TTableSchema>(std::vector{TColumnSchema(columnNames[0], type)}),
-+    };
-+
-+    auto rows = MakeUnversionedAnyRowsFromYson({ysonValues}, columnNames);
-+
-+    auto config = New<TArrowFormatConfig>();
-+    config->EnableComplexTypes = true;
-+
-+    auto writer = CreateArrowWriter(rows.NameTable, outputStream, tableSchemas, config);
-+
-+    bool ready = columnar
-+        ? writer->WriteBatch(MakeColumnarRowBatch(rows.Rows, tableSchemas[0]))
-+        : writer->Write(rows.Rows);
-+    if (!ready) {
-+        WaitForFast(writer->GetReadyEvent())
-+            .ThrowOnError();
-+    }
-+
-+    WaitForFast(writer->Close())
-+        .ThrowOnError();
-+
-+    EXPECT_EQ(writer->GetEncodedColumnarBatchCount(), columnar ? 1 : 0);
-+    EXPECT_EQ(writer->GetEncodedRowBatchCount(), columnar ? 0 : 1);
-+}
-+
-+void ExpectYsonEqual(TStringBuf expected, TStringBuf actual)
-+{
-+    auto expectedNode = ConvertToNode(TYsonStringBuf(expected));
-+    auto actualNode = ConvertToNode(TYsonStringBuf(actual));
-+    EXPECT_TRUE(AreNodesEqual(expectedNode, actualNode))
-+        << "Expected: " << ConvertToYsonString(expectedNode, EYsonFormat::Pretty).AsStringBuf()
-+        << "\nActual: " << ConvertToYsonString(actualNode, EYsonFormat::Pretty).AsStringBuf();
-+}
-+
-+TEST(TArrowWriterComplexTest, YsonInStruct)
-+{
-+    auto structType = StructLogicalType({
-+        TStructField{"before", "before", SimpleLogicalType(ESimpleLogicalValueType::String)},
-+        TStructField{"yson", "yson", OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Any))},
-+        TStructField{"after", "after", SimpleLogicalType(ESimpleLogicalValueType::Int64)},
-+    }, /*removedFieldStableNames*/ {});
-+
-+    std::vector<std::string> ysonValues;
-+    for (const auto& value : NestedYsonValues) {
-+        ysonValues.push_back("[foo;" + value + ";42]");
-+    }
-+    ysonValues.push_back("[foo;#;42]");
-+
-+    for (bool columnar : {false, true}) {
-+        TStringStream arrowData;
-+        SCOPED_TRACE(Format("Columnar: %v", columnar));
-+        WriteBatchFromYson(structType, ysonValues, columnar, &arrowData);
-+        auto batch = MakeBatch(arrowData);
-+
-+        auto structArray = std::dynamic_pointer_cast<arrow20::StructArray>(batch->column(0));
-+        ASSERT_TRUE(structArray);
-+
-+        EXPECT_EQ(
-+            ReadStringArray(structArray->GetFieldByName("before")),
-+            std::vector<std::string>(ysonValues.size(), "foo"));
-+        EXPECT_EQ(
-+            ReadInteger64Array(structArray->GetFieldByName("after")),
-+            std::vector<i64>(ysonValues.size(), 42));
-+
-+        auto ysonField = structArray->struct_type()->GetFieldByName("yson");
-+        ASSERT_TRUE(ysonField);
-+        EXPECT_TRUE(ysonField->nullable());
-+        ASSERT_TRUE(ysonField->metadata());
-+        auto metadataValue = ysonField->metadata()->Get(YTTypeMetadataKey);
-+        ASSERT_TRUE(metadataValue.ok()) << metadataValue.status().ToString();
-+        EXPECT_EQ(*metadataValue, YTTypeMetadataValueYson);
-+
-+        auto ysonArray = std::dynamic_pointer_cast<arrow20::BinaryArray>(structArray->GetFieldByName("yson"));
-+        ASSERT_TRUE(ysonArray);
-+        ASSERT_EQ(ysonArray->length(), std::ssize(ysonValues));
-+        EXPECT_TRUE(ysonArray->IsNull(ysonArray->length() - 1));
-+        for (int index = 0; index < std::ssize(NestedYsonValues); ++index) {
-+            ASSERT_TRUE(ysonArray->IsValid(index));
-+            auto view = ysonArray->GetView(index);
-+            ExpectYsonEqual(NestedYsonValues[index], TStringBuf(view.data(), view.size()));
-+        }
-+    }
-+}
-+
-+TEST(TArrowWriterComplexTest, OmittedTrailingFieldsAreNull)
-+{
-+    auto structType = StructLogicalType({
-+        TStructField{"a", "a", SimpleLogicalT
 ```
 
 ---
 
-### Incident Patch 2: `00ab595d` (2026-11-27)
-**Commit Message**: YT-30595: Revert redundant pending unregistration reset (rXXXXXX)
+### Incident Patch 2: `532026b1` (2026-11-27)
+**Commit Message**: Fix Strawberry resource authorization and configuration validation
 
-Revert rXXXXXX (97685f131b235ccd901f7146707ef0db43c2ed4c), introduced by [PR 17437255](https://nda.ya.ru/t/Bs7KmzA37xUyPQ
+The shared Strawberry API now checks resource permissions for the values actually stored in a speclet. Creating or replacing a clique configuration with an unauthorized disk account, or switching to it through a nested option edit, returns an authorization error and leaves the speclet unchanged.
 
-[PR 16760467](https://nda.ya.ru/t/TNThon6-7xUyPR is merged and now clears HasPendingUnregistration at the start of DoUnregisterNode. Remove the redundant reset immediately before that call in EndNodeHeartbeatProcessing. The call is protected by TForbidContextSwitchGuard; the reset inside DoUnregisterNode remains and preserves the fix for repeated unregistration after a heartbeat.
+The changes fix two groups of defects found in the existing controller code:
 
-The diff removes exactly one line from node_shard.cpp. Based on trunk rXXXXXX (a3558a25d0344d5ef80ccc388cdfaa01d07452ac).
+- Malformed user configurations could panic the controller while reporting a type error, including `pool=#`, `pool_trees=[#]`, `secrets=#`, null secret values, and null `state` / `health` filters. The affected validators return errors with type attributes instead of calling `.String()` on `reflect.TypeOf(nil)`.
+- Resource permission checks were incomplete: `disk_request.account` was not authorized, and nested or escaped option edits and removals could bypass validation. The API checks the requesting user's and configured service robot's `use` permissions for affected explicit pools, network projects and disk accounts. Pool checks still respect `validate_pool_access`.
 
-Validation: reviewed the staged diff; ya style --check --smart-staged and committed-diff lint passed. No build or tests were run for this one-line cleanup.
+Creation and full speclet replacement validate all explicit resources. Option e
 
-Tickets:(https://nda.ya.ru/t/ijmmpb9E7xUyPS,(https://nda.ya.ru/t/l_lUtExX7xUyPT
-commit_hash:d6af743c6d4535f06b564cf3b089919ca174ff5d
-
-**File**: `yt/yt/server/scheduler/node_shard.cpp` (modified, +0/-1)
+**File**: `yt/chyt/controller/internal/api/api.go` (modified, +119/-36)
 ```diff
-@@ -2278,7 +2278,6 @@ void TNodeShard::EndNodeHeartbeatProcessing(const TExecNodePtr& node)
-     }
+@@ -3,7 +3,6 @@ package api
+ import (
+ 	"context"
+ 	"fmt"
+-	"reflect"
+ 	"strconv"
+ 	"time"
  
-     if (node->GetHasPendingUnregistration()) {
--        node->SetHasPendingUnregistration(false);
-         DoUnregisterNode(node);
-     }
+@@ -260,7 +259,7 @@ func (a *API) CheckPermissionToNetworkProject(ctx context.Context, networkProjec
+ func (a *API) validatePoolOption(ctx context.Context, poolValue any, poolTreesValue any) error {
+ 	pool, ok := poolValue.(string)
+ 	if !ok {
+-		typeName := reflect.TypeOf(poolValue).String()
++		typeName := fmt.Sprintf("%T", poolValue)
+ 		return yterrors.Err(
+ 			fmt.Sprintf("pool option has unexpected value type %v", typeName),
+ 			yterrors.Attr("type", typeName))
+@@ -269,7 +268,7 @@ func (a *API) validatePoolOption(ctx context.Context, poolValue any, poolTreesVa
+ 	if poolTreesValue != nil {
+ 		poolTreeValues, ok := poolTreesValue.([]any)
+ 		if !ok {
+-			typeName := reflect.TypeOf(poolTreesValue).String()
++			typeName := fmt.Sprintf("%T", poolTreesValue)
+ 			return yterrors.Err(
+ 				fmt.Sprintf("pool_trees option has unexpected value type %v", typeName),
+ 				yterrors.Attr("type", typeName))
+@@ -278,7 +277,7 @@ func (a *API) validatePoolOption(ctx context.Context, poolValue any, poolTreesVa
+ 		for _, poolTreeValue := range poolTreeValues {
+ 			poolTree, ok := poolTreeValue.(string)
+ 			if !ok {
+-				typeName := reflect.TypeOf(poolTreeValue).String()
++				typeName := fmt.Sprintf("%T", poolTreeValue)
+ 				return yterrors.Err(
+ 					fmt.Sprintf("element of pool_trees option has unexpected value type %v", typeName),
+ 					yterrors.Attr("type", typeName))
+@@ -293,6 +292,81 @@ func (a *API) validatePoolOption(ctx context.Context, poolValue any, poolTreesVa
+ 
  }
+ 
++// An empty changedOptions set checks every explicit resource.
++func (a *API) checkPermissionToResources(ctx context.Context, speclet map[string]any, changedOptions map[string]struct{}) error {
++	checkAll := len(changedOptions) == 0
++	_, checkPool := changedOptions["pool"]
++	_, checkPoolTrees := changedOptions["pool_trees"]
++	_, checkNetworkProject := changedOptions["network_project"]
++	_, checkDiskRequest := changedOptions["disk_request"]
++	checkPool = checkAll || checkPool || checkPoolTrees
++	checkNetworkProject = checkAll || checkNetworkProject
++	checkDiskRequest = checkAll || checkDiskRequest
++
++	if pool, poolIsSet := speclet["pool"]; poolIsSet && checkPool {
++		if err := a.validatePoolOption(ctx, pool, speclet["pool_trees"]); err != nil {
++			return err
++		}
++	}
++	if networkProject, networkProjectIsSet := speclet["network_project"]; networkProjectIsSet && checkNetworkProject {
++		if err := validateString(networkProject); err != nil {
++			return err
++		}
++		if err := a.CheckPermissionToNetworkProject(ctx, networkProject.(string)); err != nil {
++			return err
++		}
++	}
++	if diskRequest, diskRequestIsSet := speclet["disk_request"]; diskRequestIsSet && checkDiskRequest {
++		return a.validateDiskRequestOption(ctx, diskRequest)
++	}
++	return nil
++}
++
++func (a *API) validateDiskRequestOption(ctx context.Context, value any) error {
++	if value == nil {
++		return nil
++	}
++	request, ok := value.(map[string]any)
++	if !ok {
++		typeName := fmt.Sprintf("%T", value)
++		return yterrors.Err(
++			fmt.Sprintf("disk_request option has unexpected value type %v", typeName),
++			yterrors.Attr("type", typeName))
++	}
++	if value := request["account"]; value != nil {
++		if err := validateString(value); err != nil {
++			return err
++		}
++		return a.CheckPermissionToAccount(ctx, value.(string))
++	}
++	return nil
++}
++
++func (a *API) CheckPermissionToAccount(ctx context.Context, account string) error {
++	if account == "" {
++		return fmt.Errorf("account must not be empty")
++	}
++	user, err := getUser(ctx)
++	if err != nil {
++		return err
++	}
++	path := ypath.Path("//sys/accounts").Child(account)
++	users := []string{user}
++	if a.cfg.RobotUsername != "" && a.cfg.RobotUsername != user {
++		users = append(users, a.cfg.RobotUsername)
++	}
++	for _, subject := range users {
++		response, err := a.Ytc.CheckPermission(ctx, subject, yt.PermissionUse, path, nil)
++		if err != nil {
++			return err
++		}
++		if response.Action != yt.ActionAllow {
++			return yterrors.Err(fmt.Sprintf("use permission to account %q denied for user %q", account, subject), yterrors.CodeAuthorizationError)
++		}
++	}
++	return nil
++}
++
+ func (a *API) newOplet(
+ 	alias string,
+ 	userClient yt.Client,
+@@ -436,6 +510,12 @@ func (a *API) Create(
+ 		}
+ 	}
+ 
++	if diskRequest, diskRequestIsSet := specletOptions["disk_request"]; diskRequestIsSet {
++		if err := a.validateDiskRequestOption(ctx, diskRequest); err != nil {
++			return err
++		}
++	}
++
+ 	user, err := getUser(ctx)
+ 	if err != nil {
+ 		a.l.Error("failed to get user", log.Error(err))
+@@ -628,17 +708,20 @@ func (a *API) setOption(
+ 	value any,
+ 	options *yt.SetNodeOptions,
+ ) error {
+-	if key == "active" {
++	parts, err := parseSpecletOptionPath(key)
++	if err != nil {
++		return err
++	}
++	// Resource edits need permission checks against the resulting speclet.
++	switch parts[0] {
++	case "pool", "pool_trees", "network_project", "disk_request":
++		return a.EditOptions(ctx, alias, map[string]any{ke
+```
+
+**File**: `yt/chyt/controller/internal/api/helpers.go` (modified, +44/-11)
+```diff
+@@ -3,12 +3,13 @@ package api
+ import (
+ 	"fmt"
+ 	"math/rand"
+-	"reflect"
+ 	"regexp"
++	"strings"
+ 
+ 	"golang.org/x/exp/slices"
+ 
+ 	"go.ytsaurus.tech/yt/chyt/controller/internal/strawberry"
++	"go.ytsaurus.tech/yt/go/ypath"
+ 	"go.ytsaurus.tech/yt/go/yt"
+ 	"go.ytsaurus.tech/yt/go/yterrors"
+ )
+@@ -41,7 +42,7 @@ func unexpectedTypeError(typeName string) error {
+ func validateSpecletOptions(speclet any) error {
+ 	_, ok := speclet.(map[string]any)
+ 	if !ok {
+-		typeName := reflect.TypeOf(speclet).String()
++		typeName := fmt.Sprintf("%T", speclet)
+ 		return unexpectedTypeError(typeName)
+ 	}
+ 	return nil
+@@ -50,12 +51,12 @@ func validateSpecletOptions(speclet any) error {
+ func validateSecrets(secrets any) error {
+ 	secretsMap, ok := secrets.(map[string]any)
+ 	if !ok {
+-		typeName := reflect.TypeOf(secrets).String()
++		typeName := fmt.Sprintf("%T", secrets)
+ 		return unexpectedTypeError(typeName)
+ 	}
+ 	allowedTypes := []string{"string", "int64", "uint64", "bool", "float64"}
+ 	for _, v := range secretsMap {
+-		if vType := reflect.TypeOf(v).String(); !slices.Contains(allowedTypes, vType) {
++		if vType := fmt.Sprintf("%T", v); !slices.Contains(allowedTypes, vType) {
+ 			return unexpectedTypeError(vType)
+ 		}
+ 	}
+@@ -65,7 +66,7 @@ func validateSecrets(secrets any) error {
+ func validateBool(value any) error {
+ 	_, ok := value.(bool)
+ 	if !ok {
+-		typeName := reflect.TypeOf(value).String()
++		typeName := fmt.Sprintf("%T", value)
+ 		return unexpectedTypeError(typeName)
+ 	}
+ 	return nil
+@@ -74,7 +75,7 @@ func validateBool(value any) error {
+ func validateString(value any) error {
+ 	_, ok := value.(string)
+ 	if !ok {
+-		typeName := reflect.TypeOf(value).String()
++		typeName := fmt.Sprintf("%T", value)
+ 		return unexpectedTypeError(typeName)
+ 	}
+ 	return nil
+@@ -87,14 +88,14 @@ func transformToStringSlice(value any) (any, error) {
+ 
+ 	array, ok := value.([]any)
+ 	if !ok {
+-		typeName := reflect.TypeOf(value).String()
++		typeName := fmt.Sprintf("%T", value)
+ 		return nil, unexpectedTypeError(typeName)
+ 	}
+ 
+ 	transformedAttributes := []string{}
+ 	for _, element := range array {
+ 		if _, ok = element.(string); !ok {
+-			typeName := reflect.TypeOf(value).String()
++			typeName := fmt.Sprintf("%T", value)
+ 			return nil, unexpectedTypeError(typeName)
+ 		}
+ 		transformedAttributes = append(transformedAttributes, element.(string))
+@@ -110,7 +111,7 @@ func transformFilterValues(value any) (any, error) {
+ 
+ 	filterVals, ok := value.(map[string]any)
+ 	if !ok {
+-		typeName := reflect.TypeOf(value).String()
++		typeName := fmt.Sprintf("%T", value)
+ 		return nil, unexpectedTypeError(typeName)
+ 	}
+ 
+@@ -120,14 +121,14 @@ func transformFilterValues(value any) (any, error) {
+ 			if stringV, ok := v.(string); ok {
+ 				newMap[k] = strawberry.OpletState(stringV)
+ 			} else {
+-				typeName := reflect.TypeOf(v).String()
++				typeName := fmt.Sprintf("%T", v)
+ 				return nil, unexpectedTypeError(typeName)
+ 			}
+ 		} else if k == "health" {
+ 			if stringV, ok := v.(string); ok {
+ 				newMap[k] = strawberry.OpletHealth(stringV)
+ 			} else {
+-				typeName := reflect.TypeOf(v).String()
++				typeName := fmt.Sprintf("%T", v)
+ 				return nil, unexpectedTypeError(typeName)
+ 			}
+ 		} else {
+@@ -168,3 +169,35 @@ func getRandomString(length int) string {
+ 	}
+ 	return string(b)
+ }
++
++func parseSpecletOptionPath(key string) ([]string, error) {
++	tokens, err := ypath.SplitTokens("//" + key)
++	if err != nil || len(tokens) < 2 || strings.Join(tokens, "") != "//"+key {
++		return nil, fmt.Errorf("invalid option path %q", key)
++	}
++	parts := make([]string, 0, len(tokens)-1)
++	for _, token := range tokens[1:] {
++		part, err := ypath.UnescapeLiteral(strings.TrimPrefix(token, "/"))
++		if err != nil || part == "" {
++			return nil, fmt.Errorf("invalid option path %q", key)
++		}
++		parts = append(parts, part)
++	}
++	return parts, nil
++}
++
++// Apply path-based edits to the actual final map so permission checks see the
++// same values that SetNode stores. This includes disk_request/account edits.
++func editSpecletOption(speclet map[string]any, key string, value any, remove bool) (string, error) {
++	parts, err := parseSpecletOptionPath(key)
++	if err != nil {
++		return "", err
++	}
++	path := ypath.Path("/" + key)
++	if remove {
++		_, err = ypath.RemoveMapValue(speclet, path)
++	} else {
++		err = ypath.SetMapValue(speclet, path, value, true)
++	}
++	return parts[0], err
++}
+```
+
+**File**: `yt/chyt/controller/internal/api/ya.make` (modified, +2/-0)
+```diff
+@@ -10,6 +10,8 @@ SRCS(
+ 
+ GO_TEST_SRCS(
+     default_options_test.go
++    helpers_test.go
++    speclet_validation_test.go
+ )
+ 
+ END()
+```
+
+**File**: `yt/chyt/controller/internal/strawberry/speclet.go` (modified, +8/-0)
+```diff
+@@ -5,6 +5,13 @@ import (
+ 	"go.ytsaurus.tech/yt/go/yt"
+ )
+ 
++type DiskRequest struct {
++	DiskSpace  *uint64 `yson:"disk_space,omitempty"`
++	InodeCount *uint64 `yson:"inode_count,omitempty"`
++	Account    *string `yson:"account,omitempty"`
++	MediumName *string `yson:"medium_name,omitempty"`
++}
++
+ // Change of these parameters leads to operation restart.
+ type RestartRequiredOptions struct {
+ 	Stage            *string      `yson:"stage"`
+@@ -13,6 +20,7 @@ type RestartRequiredOptions struct {
+ 	LayerPaths       []ypath.Path `yson:"layer_paths"`
+ 	EnableCPUReclaim *bool        `yson:"enable_cpu_reclaim"`
+ 	PoolTrees        []string     `yson:"pool_trees"`
++	DiskRequest      *DiskRequest `yson:"disk_request"`
+ }
+ 
+ type Speclet struct {
+```
+
+**File**: `yt/chyt/controller/test/integration/api_test.go` (modified, +231/-3)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	"go.ytsaurus.tech/yt/chyt/controller/internal/strawberry"
+ 	"go.ytsaurus.tech/yt/chyt/controller/test/helpers"
+ 	"go.ytsaurus.tech/yt/go/guid"
++	"go.ytsaurus.tech/yt/go/ypath"
+ 	"go.ytsaurus.tech/yt/go/yson"
+ 	"go.ytsaurus.tech/yt/go/yt"
+ )
+@@ -88,6 +89,50 @@ func TestHTTPAPICreateAndRemove(t *testing.T) {
+ 	require.True(t, ok)
+ }
+ 
++func TestHTTPAPINetworkProjectAccessOnCreation(t *testing.T) {
++	t.Parallel()
++
++	env, c := helpers.PrepareSleepAPI(t)
++	c.User = helpers.GenerateAlias()
++	_, err := env.YT.CreateObject(env.Ctx, yt.NodeUser, &yt.CreateObjectOptions{
++		Attributes: map[string]any{"name": c.User},
++	})
++	require.NoError(t, err)
++
++	project := helpers.GenerateAlias()
++	_, err = env.YT.CreateObject(env.Ctx, yt.NodeNetworkProject, &yt.CreateObjectOptions{
++		Attributes: map[string]any{
++			"name": project,
++			"acl": []yt.ACE{{
++				Action:      yt.ActionDeny,
++				Subjects:    []string{c.User},
++				Permissions: []yt.Permission{yt.PermissionUse},
++			}},
++		},
++	})
++	require.NoError(t, err)
++
++	alias := helpers.GenerateAlias()
++	r := c.MakePostRequest("create", api.RequestParams{
++		Params: map[string]any{
++			"alias":           alias,
++			"speclet_options": map[string]any{"network_project": project},
++		},
++	})
++	require.Equal(t, http.StatusBadRequest, r.StatusCode, string(r.Body))
++	require.Contains(t, string(r.Body), "use permission to network_project "+project+" denied for user "+c.User)
++
++	for _, path := range []ypath.Path{
++		env.StrawberryRoot.Child(alias),
++		env.StrawberryRoot.JoinChild(alias, "speclet"),
++		strawberry.AccessControlNamespacesPath.JoinChild("sleep", alias),
++	} {
++		exists, err := env.YT.NodeExists(env.Ctx, path, nil)
++		require.NoError(t, err)
++		require.False(t, exists, "rejected creation must not leave %s", path)
++	}
++}
++
+ func TestHTTPAPILivyIsDeprecated(t *testing.T) {
+ 	t.Parallel()
+ 
+@@ -351,6 +396,111 @@ func TestHTTPAPIParseParams(t *testing.T) {
+ 	}
+ }
+ 
++func preparePoolAccessAPI(t *testing.T) (*helpers.Env, *helpers.RequestClient, string, string) {
++	t.Helper()
++
++	env, c := helpers.PrepareSleepAPI(t)
++	c.User = helpers.GenerateAlias()
++	_, err := env.YT.CreateObject(env.Ctx, yt.NodeUser, &yt.CreateObjectOptions{
++		Attributes: map[string]any{"name": c.User},
++	})
++	require.NoError(t, err)
++
++	allowedPool, deniedPool := helpers.GenerateAlias(), helpers.GenerateAlias()
++	for _, pool := range []string{allowedPool, deniedPool} {
++		action := yt.ActionAllow
++		if pool == deniedPool {
++			action = yt.ActionDeny
++		}
++		_, err := env.YT.CreateObject(env.Ctx, yt.NodeSchedulerPool, &yt.CreateObjectOptions{
++			Attributes: map[string]any{
++				"name":      pool,
++				"pool_tree": "default",
++				"acl": []yt.ACE{{
++					Action:      action,
++					Subjects:    []string{c.User},
++					Permissions: []yt.Permission{yt.PermissionUse},
++				}},
++			},
++		})
++		require.NoError(t, err)
++	}
++	return env, c, allowedPool, deniedPool
++}
++
++func TestHTTPAPIPoolAccessOnCreation(t *testing.T) {
++	t.Parallel()
++
++	env, c, _, deniedPool := preparePoolAccessAPI(t)
++	alias := helpers.GenerateAlias()
++	r := c.MakePostRequest("create", api.RequestParams{
++		Params: map[string]any{
++			"alias":           alias,
++			"speclet_options": map[string]any{"pool": deniedPool},
++		},
++	})
++	require.Equal(t, http.StatusBadRequest, r.StatusCode, string(r.Body))
++	require.Contains(t, string(r.Body), "use permission to pool "+deniedPool+" in pool_tree default denied for user "+c.User)
++
++	for _, path := range []ypath.Path{
++		env.StrawberryRoot.Child(alias),
++		env.StrawberryRoot.JoinChild(alias, "speclet"),
++		strawberry.AccessControlNamespacesPath.JoinChild("sleep", alias),
++	} {
++		exists, err := env.YT.NodeExists(env.Ctx, path, nil)
++		require.NoError(t, err)
++		require.False(t, exists, "rejected creation must not leave %s", path)
++	}
++}
++
++func TestHTTPAPIPoolAccessOnModification(t *testing.T) {
++	t.Parallel()
++
++	env, c, allowedPool, deniedPool := preparePoolAccessAPI(t)
++	for _, command := range []string{"set_option", "set_options", "edit_options", "set_speclet"} {
++		t.Run(command, func(t *testing.T) {
++			alias := helpers.GenerateAlias()
++			r := c.MakePostRequest("create", api.RequestParams{
++				Params: map[string]any{
++					"alias": alias,
++					"speclet_options": map[string]any{
++						"pool":        allowedPool,
++						"test_option": int64(1),
++					},
++				},
++			})
++			require.Equal(t, http.StatusOK, r.StatusCode, string(r.Body))
++
++			specletPath := env.StrawberryRoot.JoinChild(alias, "speclet")
++			getOptions := &yt.GetNodeOptions{Attributes: []string{"value", "revision"}}
++			var before, after map[string]any
++			require.NoError(t, env.YT.GetNode(env.Ctx, specletPath.Attrs(), &before, getOptions))
++
++			options := map[string]any{"pool": deniedPool}
++			params := map[string]any{"alias": alias}
++			switch command {
++			case "set_option":
++				params["key"] = "pool"
++				params["value"] = deniedPool
++			case "set_options":
++				options["test_option"] = int64(2)
+
+```
+
+**File**: `yt/chyt/controller/test/integration/resource_access_test.go` (added, +298/-0)
+```diff
+@@ -0,0 +1,298 @@
++package integration
++
++import (
++	"fmt"
++	"net/http"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	"go.ytsaurus.tech/yt/chyt/controller/internal/api"
++	"go.ytsaurus.tech/yt/chyt/controller/internal/strawberry"
++	"go.ytsaurus.tech/yt/chyt/controller/test/helpers"
++	"go.ytsaurus.tech/yt/go/ypath"
++	"go.ytsaurus.tech/yt/go/yson"
++	"go.ytsaurus.tech/yt/go/yt"
++)
++
++func prepareResourceAccessAPI(t *testing.T) (*helpers.Env, *helpers.RequestClient) {
++	t.Helper()
++	env, c := helpers.PrepareSleepAPI(t)
++	c.User = helpers.GenerateAlias()
++	_, err := env.YT.CreateObject(env.Ctx, yt.NodeUser, &yt.CreateObjectOptions{
++		Attributes: map[string]any{"name": c.User},
++	})
++	require.NoError(t, err)
++	return env, c
++}
++
++func resourceUseACL(user string, allowed bool) []yt.ACE {
++	action := yt.ActionDeny
++	if allowed {
++		action = yt.ActionAllow
++	}
++	return []yt.ACE{{Action: action, Subjects: []string{user}, Permissions: []yt.Permission{yt.PermissionUse}}}
++}
++
++func prepareDiskAccountAccessAPI(t *testing.T) (*helpers.Env, *helpers.RequestClient, string, string) {
++	t.Helper()
++	env, c := prepareResourceAccessAPI(t)
++	allowedAccount, deniedAccount := helpers.GenerateAlias(), helpers.GenerateAlias()
++	for _, account := range []string{allowedAccount, deniedAccount} {
++		_, err := env.YT.CreateObject(env.Ctx, yt.NodeAccount, &yt.CreateObjectOptions{
++			Attributes: map[string]any{
++				"name": account,
++				"acl":  resourceUseACL(c.User, account == allowedAccount),
++			},
++		})
++		require.NoError(t, err)
++	}
++	return env, c, allowedAccount, deniedAccount
++}
++
++func preparePoolTreesAccessAPI(t *testing.T) (*helpers.Env, *helpers.RequestClient, string, string, string) {
++	t.Helper()
++	env, c := prepareResourceAccessAPI(t)
++	pool := helpers.GenerateAlias()
++	allowedTree, deniedTree := helpers.GenerateAlias(), helpers.GenerateAlias()
++	for _, tree := range []string{allowedTree, deniedTree} {
++		_, err := env.YT.CreateObject(env.Ctx, yt.NodeSchedulerPoolTree, &yt.CreateObjectOptions{
++			Attributes: map[string]any{
++				"name":   tree,
++				"config": map[string]any{"node_tag_filter": tree},
++			},
++		})
++		require.NoError(t, err)
++		_, err = env.YT.CreateObject(env.Ctx, yt.NodeSchedulerPool, &yt.CreateObjectOptions{
++			Attributes: map[string]any{
++				"name":      pool,
++				"pool_tree": tree,
++				"acl":       resourceUseACL(c.User, tree == allowedTree),
++			},
++		})
++		require.NoError(t, err)
++	}
++	return env, c, pool, allowedTree, deniedTree
++}
++
++func requireResourceAccessDenied(t *testing.T, r helpers.Response, message string) {
++	t.Helper()
++	require.Equal(t, http.StatusBadRequest, r.StatusCode, string(r.Body))
++	var response struct {
++		Message string `yson:"message"`
++	}
++	require.NoError(t, yson.Unmarshal(r.Body, &response))
++	require.Equal(t, message, response.Message)
++}
++
++func requireRejectedResourceCreation(t *testing.T, env *helpers.Env, c *helpers.RequestClient, options map[string]any, message string) string {
++	t.Helper()
++	alias := helpers.GenerateAlias()
++	r := c.MakePostRequest("create", api.RequestParams{
++		Params: map[string]any{"alias": alias, "speclet_options": options},
++	})
++	requireResourceAccessDenied(t, r, message)
++	for _, path := range []ypath.Path{
++		env.StrawberryRoot.Child(alias),
++		env.StrawberryRoot.JoinChild(alias, "speclet"),
++		strawberry.AccessControlNamespacesPath.JoinChild("sleep", alias),
++	} {
++		exists, err := env.YT.NodeExists(env.Ctx, path, nil)
++		require.NoError(t, err)
++		require.False(t, exists, "rejected creation must not leave %s", path)
++	}
++	return alias
++}
++
++func requireRejectedResourceEdit(t *testing.T, env *helpers.Env, c *helpers.RequestClient, alias, command string, params map[string]any, message string) {
++	t.Helper()
++	specletPath := env.StrawberryRoot.JoinChild(alias, "speclet")
++	getOptions := &yt.GetNodeOptions{Attributes: []string{"value", "revision"}}
++	var before, after map[string]any
++	require.NoError(t, env.YT.GetNode(env.Ctx, specletPath.Attrs(), &before, getOptions))
++	r := c.MakePostRequest(command, api.RequestParams{Params: params})
++	requireResourceAccessDenied(t, r, message)
++	require.NoError(t, env.YT.GetNode(env.Ctx, specletPath.Attrs(), &after, getOptions))
++	require.Equal(t, before, after, "rejected edits must preserve both speclet contents and revision")
++}
++
++func TestHTTPAPIDiskAccountAccessOnCreation(t *testing.T) {
++	t.Parallel()
++	env, c, allowedAccount, deniedAccount := prepareDiskAccountAccessAPI(t)
++	message := fmt.Sprintf("Use permission to account %q denied for user %q", deniedAccount, c.User)
++	alias := requireRejectedResourceCreation(t, env, c, map[string]any{
++		"disk_request": map[string]any{"account": deniedAccount, "disk_space": int64(1024)},
++	}, message)
++	r := c.MakePostRequest("create", api.RequestParams{
++		Params: map[string]any{
++			"alias": alias,
++			"speclet_options": map[string]any{
++				"disk_request": map[string]any{"account": allowedAccount, "disk_space": int64(1024)},
++			},
++		},
++	})
+```
+
+**File**: `yt/chyt/controller/test/integration/ya.make` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@ ENDIF()
+ GO_TEST_SRCS(
+     api_test.go
+     monitoring_test.go
++    resource_access_test.go
+     strawberry_test.go
+ )
+ 
 ```
 
 ---
 
-### Incident Patch 3: `c88470ec` (2026-11-27)
-**Commit Message**: Add CUDA 13.5 for Linux x86-64
+### Incident Patch 3: `49aa4254` (2026-11-27)
+**Commit Message**: YT-29411: Bump CPU requirement for chyt server tests
 
-Добавлена поддержка CUDA Toolkit 13.5.0 для сборки YNMT под Linux x86-64.
+The suite runs a full YT cluster (4 master cells plus a ground cluster in the
+Sequoia variants), 5 nodes and a CHYT clique per test, but inherits cpu:10 from
+YaMakeBoilerplateForTests.txt, the lowest of all large YT suites (size_l asks
+cpu:28, size_xl cpu:38). The starved slot shows up as timeouts rather than
+assertion failures: tests hit the 90 s pytest-timeout inside Clique enter/exit
+and whole chunks get killed at the 1800 s suite timeout with tests NOT_LAUNCHED.
 
-* Подключён пропатченный Toolkit через описания host- и target-ресурсов, обновлён `CUDA_FAKEID`.
+Bumping ram to 24 in https://nda.ya.ru/t/XUMeh69b7xYd2K did not help, so RAM was not the binding constraint.
+commit_hash:87c2a82c8be70c4b411bc64cfc566fec60239046
 
-* В инструкцию добавлены ссылки на патч и архив Toolkit в Sandbox.
-
-* Исправлена ошибка компиляции GPU-тестов бэкенда YNMT с CUDA 13.2 и 13.5: вызов `ReinterpretCast<T>()` вынесен в отдельную строку.
-
-* Добавлены CI-проверки backend и моделей YNMT с CUDA 13.5 на H100 и B200, включая подготовку кеша.
-
-* Для совместимости тестов YNMT с CUDA 13.5 на B200 увеличены допуски при сравнении оценок токенов в `NgramSystemPromptReuseInsideChunk` (с `0.002` до `0.03`) и `VLMQwen35MoeBf16` (с `0.001` до `0.005`)
-commit_hash:907afd00c5b051a87afaff930829dbc9712f4dca
-
-**File**: `build/ymake_conf.py` (modified, +10/-1)
+**File**: `yt/chyt/tests/server/ya.make` (modified, +3/-0)
 ```diff
-@@ -2557,6 +2557,10 @@ class CudaToolkit(object):
-             required_host_version='11.8',
-         ),
-     }
-+    # CUDA toolkits available only for Linux x86-64 builds.
-+    LINUX_X86_64 = {
-+        '13.5': CudaSdk(host_tools_json='cuda_13.5.json', target_sdk_json='cuda_target_13.5.json'),
-+    }
-     WINDOWS_X86_64 = {
-         '11.4': CudaSdk(host_tools_json='cuda_11.4.json', target_sdk_json=None),
-     }
-@@ -2576,7 +2580,12 @@ def routes(cls, host, target):
-         if not (host.is_linux_x86_64 or host.is_linux_armv8 or host.is_linux_armv9a):
-             return {}
-         if target.is_linux_x86_64:
--            return cls.with_aliases(cls.LINUX)
-+            sdks = dict(cls.LINUX)
-+            # LINUX_X86_64 toolkits ship only x86-64 host tools.
-+            # An ARM host needs ARM tools even when cross-compiling for an x86-64 target.
-+            if host.is_linux_x86_64:
-+                sdks.update(cls.LINUX_X86_64)
-+            return cls.with_aliases(sdks)
-         if target.is_linux_armv8 or target.is_linux_armv9a:
-             sdks = dict(cls.LINUX)
-             sdks.update(cls.LEGACY_JETPACK)
+@@ -14,7 +14,10 @@ IF (SANITIZER_TYPE)
+         ram:48
+     )
+ ELSE()
++    # A clique on top of a full (Sequoia: 4-cell + ground) cluster does not fit the
++    # boilerplate default of cpu:10; cf. cpu:28 in yt/yt/tests/integration/size_l.
+     REQUIREMENTS(
++        cpu:28
+         ram:24
+     )
+ ENDIF()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1919** (closed): yt/go/yson: do not allocate when writing binary varints and floats (@orloffv)
+- **PR #1908** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1903** (closed): Go SDK: Serialization of Composite types. #1902 (@psk-nebi)
 - **PR #1897** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1895** (closed): yt/chyt: remove hardcoded jaeger (@koct9i)
 - **PR #1892** (closed): Fix typo in chaos-dynamic-tables.md (@hsalkaline)
-- **PR #1887** (closed): Preserve bus TLS configuration for YT QL RPC connections (@Tony-Romanov)
-- **PR #1885** (closed): Run cross-cluster MR operations by ytsaurus Go SDK (@sagishev)
 
 ---
 
@@ -1941,78 +2087,61 @@ commit_hash:907afd00c5b051a87afaff930829dbc9712f4dca
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-30225: Fix Arrow writer crashes on optional<yson> nested in composite types
+## X. [yt/java] Fix HttpClient selector thread leak
 
 **RULE**:
-When implementing operations in `yt/yt/library/formats/arrow_parser.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/java/ytsaurus-client/src/main/java/tech/ytsaurus/client/ClientPool.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `97403463`: YT-30225: Fix Arrow writer crashes on optional<yson> nested in composite types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a66f47a`: [yt/java] Fix HttpClient selector thread leak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/library/formats/arrow_parser.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/java/ytsaurus-client/src/main/java/tech/ytsaurus/client/ClientPool.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <yt/yt/core/yson/pull_parser.h>
-
-#include <util/stream/mem.h>
-        return VisitStringLike<arrow20::StringArray>();
-        return VisitStringLike<arrow20::LargeStringArray>();
-        return VisitStringLike<arrow20::BinaryArray>();
-        return VisitStringLike<arrow20::LargeBinaryArray>();
-        return VisitStringLike<arrow20::FixedSizeBinaryArray>();
-        return ParseStringLike<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
-        return ParseStringLike<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
-    arrow20::Status ParseStringLike(auto makeUnversionedValueFunc)
-    arrow20::Status VisitStringLike()
-    {
-        if ((!ColumnType_ || *ColumnType_ == ESimpleLogicalValueType::Any) &&
-            HasYsonTypeInMetadata(SchemaField_))
-        {
-            return ParseYson<ArrayType>();
-        } else {
-            return ParseString<ArrayType>();
+import java.util.concurrent.atomic.AtomicReference;
+        HttpProxyGetter httpProxyGetter = new HttpProxyGetter(
+        proxyGetter = httpProxyGetter;
+        toClose.add(httpProxyGetter);
+class HttpProxyGetter implements ProxyGetter, AutoCloseable {
+    private final AtomicReference<HttpClient> httpClientRef;
+        this.httpClientRef = new AtomicReference<>(httpClient);
+        HttpClient httpClient = httpClientRef.get();
+        if (httpClient == null) {
+            return CompletableFuture.failedFuture(new IllegalStateException("HTTP proxy getter is closed"));
         }
-    }
 
-    template <typename ArrayType>
-    arrow20::Status ParseYson()
-    {
-        return ParseStringLike<ArrayType>([] (TStringBuf value, i64 columnId) {
-            ValidateYsonValue(value);
-            return MakeUnversionedAnyValue(value, columnId);
-        });
-    }
+    /**
+     * Shuts down the HTTP client used for proxy discovery without waiting for in-flight requests.
+     * On Java 11-20 the client has no shutdown API, so its selector thread stops only after
+     * the client is garbage collected.
+     */
+    @Override
+    public void close() {
+        HttpClient httpClient = httpClientRef.getAndSet(null);
+        if (httpClient == null) {
+            return;
+        }
+
+        try {
+            HttpClient.class.getMethod("shutdownNow").invoke(httpClient);
+        } catch (NoSuchMethodException ignored) {
+            // HttpClient has no explicit shutdown API befor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        return ParseStringLikeArray<arrow20::StringArray>();
-        return ParseStringLikeArray<arrow20::LargeStringArray>();
-        return ParseStringLikeArray<arrow20::BinaryArray>();
-        return ParseStringLikeArray<arrow20::LargeBinaryArray>();
-        return ParseStringLikeArray<arrow20::FixedSizeBinaryArray>();
-        return ParseStringLikeArray<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
-        return ParseStringLikeArray<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
-    arrow20::Status ParseStringLikeArray(auto makeUnversionedValueFunc)
-    arrow20::Status ParseStringLikeArray()
-    {
-        // Note that MakeUnversionedValue actually has third argument in its signature,
-        // which leads to a "too few arguments" in the point of its invocation if we try to pass
-        // it directly to ParseStringLikeArray.
-        return ParseStringLikeArray<ArrayType>([this] (TStringBuf value, i64 columnId) {
-            if (HasYsonTypeInMetadata(SchemaField_)) {
-                ValidateYsonValue(value);
-                return MakeUnversionedAnyValue(value, columnId);
-            } else {
-                return MakeUnversionedStringValu
+        proxyGetter = new HttpProxyGetter(
+class HttpProxyGetter implements ProxyGetter {
+    private final HttpClient httpClient;
+        this.httpClient = httpClient;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `97403463` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a66f47a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

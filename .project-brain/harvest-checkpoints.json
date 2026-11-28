@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T01:26:53.149Z",
+  "last_updated": "2026-11-28T01:35:40.043Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "f5b11a340210f0cc7d100ea0d302a4d5dc7cae3b88d891f948a10830507f4cf7",
-      "verified_at": "2026-11-27T07:30:40.092Z",
+      "content_hash": "66dc107f7f371658601f13568e8e10163cf50cfb2cf4ea35299a9b6eb4c8a20b",
+      "verified_at": "2026-11-28T01:35:31.467Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T07:30:40.092Z"
+      "last_updated": "2026-11-28T01:35:31.467Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "1f343814857db2dfa3de55027c4d34bb92bc18ec9bc3d2a7a7aa26c4125cad48",
-      "verified_at": "2026-11-27T06:14:51.259Z",
+      "content_hash": "4adbf022ef1a0ddeeb34f00ea5978d3475b95595a1b9b879202bd7cc2548cf85",
+      "verified_at": "2026-11-28T01:35:40.043Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T06:14:51.259Z"
+      "last_updated": "2026-11-28T01:35:40.043Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -13356,14 +13356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chrisbanes-skills",
-      "content_hash": "feed1273cf9911e938ebb2351cc479f4b8b9ff83cb03c3a6a85c6f61d767091a",
-      "verified_at": "2026-11-25T23:41:44.369Z",
+      "content_hash": "1505dbbbc006152b73efb7e87865dcde8e881e96c56e01c3e5d1f45251d348c2",
+      "verified_at": "2026-11-28T01:35:28.693Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T23:41:44.369Z"
+      "last_updated": "2026-11-28T01:35:28.693Z"
     },
     "joreilly/Confetti": {
       "repository": "joreilly/Confetti",
@@ -20166,14 +20166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-aleph-alpha-kolibri-1-1",
-      "content_hash": "a55946688504cbeede06b523ce0eb2cbeb1ee90c1a59ec72de25ab169f1ea19b",
-      "verified_at": "2026-11-24T17:13:31.260Z",
+      "content_hash": "30617ad994d0fc47c3873aa7d8eeba4acfbb93c421820e64250d26dc6305a182",
+      "verified_at": "2026-11-28T01:35:21.755Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:13:31.260Z"
+      "last_updated": "2026-11-28T01:35:21.755Z"
     },
     "baidu/ERNIE-5.5-Flash-Preview": {
       "repository": "baidu/ERNIE-5.5-Flash-Preview",
