@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T05:06:59.864Z",
-  "total_cycles_completed": 13266,
-  "total_learnings_persisted": 13266,
-  "total_rules_promoted": 11960,
+  "last_updated": "2026-11-28T05:16:06.619Z",
+  "total_cycles_completed": 13267,
+  "total_learnings_persisted": 13267,
+  "total_rules_promoted": 11961,
   "history": [
-    {
-      "timestamp": "2026-11-27T11:03:06.720Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T11:14:30.682Z",
       "repository": "meta/folly",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T05:06:59.864Z",
       "repository": "domcyrus/rustnet",
       "learningId": "learn-github-domcyrus-rustnet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T05:16:06.619Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

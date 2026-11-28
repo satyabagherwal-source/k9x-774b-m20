@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T05:07:08.332Z",
-    "lastVerified": "2026-11-28T05:07:08.332Z",
+    "lastChecked": "2026-11-28T05:16:10.120Z",
+    "lastVerified": "2026-11-28T05:16:10.120Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-28T04:38:50.819Z",
+    "lastChecked": "2026-11-28T05:16:02.794Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-28T04:38:50.819Z"
+    "lastVerified": "2026-11-28T05:16:02.794Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -497,14 +497,14 @@
     "officialUrl": "https://github.com/milvus-io/milvus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T10:43:14.823Z",
-    "lastVerified": "2026-11-27T10:43:14.823Z",
+    "lastChecked": "2026-11-28T05:16:04.979Z",
+    "lastVerified": "2026-11-28T05:16:04.979Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "b06021a2d08b0679e366466074ac5875a229f5a29aa1234c61cb7b46dee05e33",
+    "contentHash": "813ce7f1e4cac4839602956d5665fbfcc1d92b742c5da5d0fc34d33524b1ad63",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1792,8 +1792,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T01:10:03.169Z",
-    "lastVerified": "2026-11-28T01:10:03.169Z",
+    "lastChecked": "2026-11-28T05:15:57.923Z",
+    "lastVerified": "2026-11-28T05:15:57.923Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -5148,12 +5148,12 @@
     "lastVerified": "2026-11-27T01:46:32.961Z"
   },
   "aquasecurity-trivy": {
-    "name": "aquasecurity/trivy",
+    "name": "trivy",
     "officialUrl": "https://github.com/aquasecurity/trivy",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T12:03:38.610Z",
-    "lastVerified": "2026-11-27T12:03:38.610Z",
+    "lastChecked": "2026-11-28T05:15:55.390Z",
+    "lastVerified": "2026-11-28T05:15:55.390Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy",
@@ -5162,7 +5162,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e7c77205"
   },
   "slatedb-slatedb": {
     "name": "slatedb/slatedb",
@@ -7681,12 +7682,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "topgrade-rs-topgrade": {
-    "name": "topgrade-rs/topgrade",
+    "name": "topgrade",
     "officialUrl": "https://github.com/topgrade-rs/topgrade",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T05:30:05.228Z",
-    "lastVerified": "2026-11-27T05:30:05.228Z",
+    "lastChecked": "2026-11-28T05:15:47.879Z",
+    "lastVerified": "2026-11-28T05:15:47.879Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topgrade-rs-topgrade",
@@ -7695,7 +7696,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "95c5787f"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -11304,9 +11306,9 @@
   "mazzzystar-queryable": {
     "name": "Queryable",
     "officialUrl": "https://github.com/mazzzystar/Queryable",
-    "lastChecked": "2026-11-26T03:21:26.545Z",
+    "lastChecked": "2026-11-28T05:15:52.785Z",
     "revisionIdentifier": "19825faa",
-    "lastVerified": "2026-11-26T03:21:26.545Z"
+    "lastVerified": "2026-11-28T05:15:52.785Z"
   },
   "fb55-css-select": {
     "name": "fb55/css-select",
@@ -11653,12 +11655,12 @@
     "lastVerified": "2026-11-26T05:48:36.398Z"
   },
   "rdfjs-n3.js": {
-    "name": "rdfjs/N3.js",
+    "name": "N3.js",
     "officialUrl": "https://github.com/rdfjs/N3.js",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-24T20:12:47.008Z",
-    "lastVerified": "2026-11-24T20:12:47.008Z",
+    "lastChecked": "2026-11-28T05:15:50.355Z",
+    "lastVerified": "2026-11-28T05:15:50.355Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rdfjs-n3-js",
@@ -11667,7 +11669,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6b42d44a"
   },
   "elai950-alerttoast": {
     "name": "AlertToast",

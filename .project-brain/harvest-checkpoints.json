@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T05:06:59.867Z",
+  "last_updated": "2026-11-28T05:16:06.623Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "b06021a2d08b0679e366466074ac5875a229f5a29aa1234c61cb7b46dee05e33",
-      "verified_at": "2026-11-27T10:43:16.111Z",
+      "content_hash": "813ce7f1e4cac4839602956d5665fbfcc1d92b742c5da5d0fc34d33524b1ad63",
+      "verified_at": "2026-11-28T05:16:06.622Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T10:43:16.111Z"
+      "last_updated": "2026-11-28T05:16:06.622Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",

@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "8425467c",
+    "sourceVersion": "abf63e92",
     "license": "Apache-2.0",
-    "contentHash": "b06021a2d08b0679e366466074ac5875a229f5a29aa1234c61cb7b46dee05e33",
-    "lastHarvestedAt": "2026-11-27T10:43:16.098Z",
+    "contentHash": "813ce7f1e4cac4839602956d5665fbfcc1d92b742c5da5d0fc34d33524b1ad63",
+    "lastHarvestedAt": "2026-11-28T05:16:06.613Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {

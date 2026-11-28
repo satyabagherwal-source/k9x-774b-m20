@@ -14014,3 +14014,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-thinkingmachines-inkling-2-mini` | `https://huggingface.co/thinkingmachines/Inkling-2-Mini` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-28T04:57:34.002Z |
 | `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `943134a1` | Multi-dimensional audit evidence | 2026-11-28T04:57:41.282Z |
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `695a517d` | Multi-dimensional audit evidence | 2026-11-28T05:06:59.858Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `abf63e92` | Multi-dimensional audit evidence | 2026-11-28T05:16:06.613Z |

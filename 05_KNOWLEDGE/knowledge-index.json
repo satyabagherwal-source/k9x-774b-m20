@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T05:07:12.633Z",
+  "last_updated": "2026-11-28T05:16:13.756Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26966,
+  "total_items": 26968,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce5fce5712108b201edc2bf8d822bdc99f3e4e77da67ec898610c477a870232c",
+      "content_hash": "fc3d58fe7754e92c2a86cb5836ec0134debc45b4cea17d6f319c457eb9c4a344",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T03:08:14.231Z"
+      "persisted_at": "2026-11-28T05:16:13.570Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "631dd01e909d070ae0dd49206162f196880976253c2d034ce8cbf5ba7ccbc6f7",
+      "content_hash": "f806413a0fe5ffd1b7cfad28c2e053d50b8a92684d9394f82a5c4d52f70fbcdf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T03:08:14.411Z"
+      "persisted_at": "2026-11-28T05:16:13.756Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0511e821592edf15d3b4d45f3ddaa52fb9cdb3b6ad0ef22d6d1b34044e40aa3b",
+      "content_hash": "71a7b000dc1b807c3bfb953223529047aef42120e66ed5e7be7880de1139a140",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T05:07:12.633Z"
+      "persisted_at": "2026-11-28T05:16:12.362Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -114177,10 +114177,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "repository": "milvus-io/milvus",
-      "source_version": "8425467c",
-      "content_hash": "8b4277a77d819bd97ef03b3153b7a30b54f8968847c6213320ff13b9a6d9ec1e",
+      "source_version": "abf63e92",
+      "content_hash": "8754dadbc1c0cf784e1713fdf869ccfcf15aa9ac0664f74a20df56a4d510792b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:43:16.569Z"
+      "persisted_at": "2026-11-28T05:16:07.149Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus",
@@ -114189,10 +114189,10 @@
       "relative_path": "08_VERIFICATION/milvus-io-milvus-verification-protocol-empirical-defect-shield-for-milvus-io-mil.md",
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io/milvus",
       "repository": "milvus-io/milvus",
-      "source_version": "8425467c",
-      "content_hash": "68a3bee371c996a0a20ff3e0427a2ae9b452d72f8b5b2eecb45cb9b55e75582d",
+      "source_version": "abf63e92",
+      "content_hash": "496f7bc3a075308beb35732c7f530fa1452719dab987de9aaeeed91acea53c3a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:43:16.778Z"
+      "persisted_at": "2026-11-28T05:16:07.378Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
@@ -114214,9 +114214,9 @@
       "title": "Technical Construction Intelligence: milvus-io-milvus-learnings Core Invariants",
       "repository": "milvus-io-milvus-learnings",
       "source_version": "HEAD",
-      "content_hash": "29f45db707360965d85a3814ab0163d399de35ce0587cabe7c616b9983f512a8",
+      "content_hash": "4fdd272dfe63688760f4f86c9878c730bb7dcd6f4ffd64cb671ae86604364135",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:43:21.446Z"
+      "persisted_at": "2026-11-28T05:16:10.975Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus-learnings",
@@ -114226,9 +114226,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io-milvus-learnings",
       "repository": "milvus-io-milvus-learnings",
       "source_version": "HEAD",
-      "content_hash": "a83d194ccb5a5718bebe6d9f438967634e58c6dacc2205e4083cf33e30fbe326",
+      "content_hash": "efdc006b96625c6f55d3062028d5b01eb9e6c2dba7fb4e7c090454ccedebb941",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:43:21.656Z"
+      "persisted_at": "2026-11-28T05:16:11.200Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",
@@ -245405,8 +245405,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "8425467c",
-      "content_hash": "b06021a2d08b0679e366466074ac5875a229f5a29aa1234c61cb7b46dee05e33",
+      "source_version": "abf63e92",
+      "content_hash": "813ce7f1e4cac4839602956d5665fbfcc1d92b742c5da5d0fc34d33524b1ad63",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -245474,6 +245474,11 @@
           "number": 10880,
           "title": "Build MILVUS_FIPS_ENABLED=ON on Go's FIPS 140-3 module",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11041,
+          "title": "Align REST v2 quota checks and hook order with gRPC",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245481,7 +245486,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T10:43:15.821Z",
+      "verified_at": "2026-11-28T05:16:06.241Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -301652,9 +301657,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9f65e6524c4f82b2594841dc88d30ac78d9cd4bb67c7b5966e875b3f6685efb",
+      "content_hash": "dac86d01427943045d4f82fee505052460946336bc1f99565b05761ca423a4ee",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T03:08:14.034Z"
+      "persisted_at": "2026-11-28T05:16:13.367Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -358957,13 +358962,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7SZT-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JDHQ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "5e565d2e53a38f4c77135b6a16236ccb679c8692bfa46584e4938e392731cbe7",
+      "content_hash": "9235405fd1e51c295510e7ec40328984d6b38dbf49dc928c6c1fc8bc3275361d",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T05:07:12.140Z"
+      "persisted_at": "2026-11-28T05:16:11.921Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358973,9 +358978,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "456df63770d008cc0b2d6182cd1abbc52fb984169754d056b23e0b916d10d61c",
+      "content_hash": "9199a2fda0982da84970ff62fa0f96d5b76af0fb08120cad8d39c79edc161754",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T05:07:12.403Z"
+      "persisted_at": "2026-11-28T05:16:12.153Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -363443,13 +363448,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YT1N-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JEEU-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b794fe91e7aad8b5273f141669ad5ed057baf0aa8bd7920901bd89072f98cb0f",
+      "content_hash": "8e44fa96c8b86567070316d59dfa72ff2befa1c08ce574f73230590a0cb386aa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T03:08:13.835Z"
+      "persisted_at": "2026-11-28T05:16:13.111Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -370562,6 +370567,32 @@
       "content_hash": "88c192ee733f570350873dfef92de943848e6b50e515a69b7f651afadda2c7e6",
       "domain_letter": "B",
       "persisted_at": "2026-11-28T05:07:09.572Z"
+    },
+    "rule-11041": {
+      "learning_id": "rule-11041",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11041,
+      "title": "Align REST v2 quota checks and hook order with gRPC",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "abf63e92",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T05:16:06.241Z"
+    },
+    "candidate_directive-align-rest-v2-quota-checks-and-hook-order-with-grpc": {
+      "item_id": "candidate_directive-align-rest-v2-quota-checks-and-hook-order-with-grpc",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JCLL-align-rest-v2-quota-checks-and-hook-order-with-grpc.md",
+      "title": "Align REST v2 quota checks and hook order with gRPC",
+      "repository": "milvus-io-milvus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "08ce7db06764c03a88875dc051434709b6e961140cffe0b603fff7452388f70f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T05:16:10.764Z"
     }
   },
   "ai-builder-brain": {

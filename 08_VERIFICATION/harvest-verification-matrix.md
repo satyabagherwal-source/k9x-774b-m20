@@ -13981,3 +13981,4 @@
 | `CYCLE-20261128-VEW5` | `2026-11-28T04:57:33.989Z` | `thinkingmachines/Inkling-2-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md` | Yes (`a9ef6070...`) |
 | `CYCLE-20261128-VKID` | `2026-11-28T04:57:41.269Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11039` | Yes (`98b763b9...`) |
 | `CYCLE-20261128-7JIL` | `2026-11-28T05:06:59.853Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11040` | Yes (`cc900e83...`) |
+| `CYCLE-20261128-J9E7` | `2026-11-28T05:16:06.607Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11041` | Yes (`813ce7f1...`) |

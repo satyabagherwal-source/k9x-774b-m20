@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-NSPG",
-    "timestamp": "2026-11-26T16:00:08.980Z",
-    "repository": "FalkorDB/FalkorDB",
-    "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "1e5ae53caba1ec5855aa9f03a7ed303d33599a090d8191584b188006523d72e1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-NX52",
     "timestamp": "2026-11-26T16:00:14.726Z",
     "repository": "appwrite/appwrite",
@@ -7490,6 +7475,21 @@
     "repository": "domcyrus/rustnet",
     "learningId": "learn-github-domcyrus-rustnet",
     "contentHash": "cc900e836f075cf4a776647a1aff776d2f32d0362232cc0ac6274ff9ad4e0fb0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-J9E7",
+    "timestamp": "2026-11-28T05:16:06.607Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "813ce7f1e4cac4839602956d5665fbfcc1d92b742c5da5d0fc34d33524b1ad63",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
