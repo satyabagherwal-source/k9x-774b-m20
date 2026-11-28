@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T07:22:05.769Z",
-  "total_records": 2880,
+  "last_updated": "2026-11-28T07:31:27.963Z",
+  "total_records": 2881,
   "domains": {
     "A": {
       "total": 27,
@@ -1774,7 +1774,7 @@
       ]
     },
     "H": {
-      "total": 695,
+      "total": 696,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2470,7 +2470,8 @@
         "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-core-invaria",
         "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-learnings-co",
         "DOM-H-797E7DCD",
-        "DOM-H-6F2C6AB3"
+        "DOM-H-6F2C6AB3",
+        "DOM-H-3B7BECBA"
       ]
     },
     "I": {
@@ -9613,8 +9614,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "83912ac2e7d5a04a77443b1572b30f4ebf4c636237916727f782fc81c84f8f74",
-      "created_at": "2026-11-28T06:22:14.845Z"
+      "content_hash": "a98bd46acc4ea542f3b0c20c14501900ba3e7a17e0d04e6c4d612e1c9cbd7c5b",
+      "created_at": "2026-11-28T07:31:26.483Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -37513,8 +37514,8 @@
       "title": "Quality & Verification Intelligence: solidjs/solid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-solidjs-solid-quality-verification-intelligence-solidjs-solid-core-invariants.md",
       "repository": "solidjs/solid",
-      "content_hash": "f6086c74489ba8d93c0f0ab51c78cea1d2935ec1c37aa0ca3615a264335e81c8",
-      "created_at": "2026-11-20T23:21:22.553Z"
+      "content_hash": "eb00bee6a00ff33e659ebf756b06064a3ea1eac54c469afaed3e6225e99d92c8",
+      "created_at": "2026-11-28T07:30:46.249Z"
     },
     "DOM-K-B3BE81E5": {
       "record_id": "DOM-K-B3BE81E5",
@@ -37564,8 +37565,8 @@
       "title": "Quality & Verification Intelligence: solidjs-solid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-solidjs-solid-learnings-quality-verification-intelligence-solidjs-solid-learning.md",
       "repository": "solidjs-solid-learnings",
-      "content_hash": "cfc45de5592cf8da5c996f68b75a91c693df13147845da5ae1736028adb3fff8",
-      "created_at": "2026-11-20T23:22:00.541Z"
+      "content_hash": "a75a2b8676d64a1b2b282c59683711b3a1d426e247ef4011bdbf7b24c5f9fd26",
+      "created_at": "2026-11-28T07:31:25.124Z"
     },
     "domain_intelligence-quality-verification-intelligence-webpack-webpack-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-webpack-webpack-core-invariants",
@@ -46827,8 +46828,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "eb41dff6ad032bf417b0c7f681ff06f150e9c75b8a4bb5816a7bab8fa0d8fe64",
-      "created_at": "2026-11-28T07:22:04.306Z"
+      "content_hash": "bec8d04b1d453030d6fe2deb92ab29d48927b072e153e814cdda39d71dd7d154",
+      "created_at": "2026-11-28T07:31:27.963Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -48793,6 +48794,40 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-28T06:54:07.216Z"
+    },
+    "DOM-H-3B7BECBA": {
+      "record_id": "DOM-H-3B7BECBA",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "`docs/RULES-FUNDAMENTALS.md:53`: asyncts2 corets1 effectts1 lanests5 schedulerts2 seatts3 verdictts",
+      "content": "async.ts×2 core.ts×1 effect.ts×1 lanes.ts×5 scheduler.ts×2 seat.ts×3 verdict.ts×2 thinOptimistic.ts×1 thinProjection.ts×1",
+      "content_hash": "f9031fcc12e36ed582e2195913108e21ca4ab1cf249517f56f15f43104045b97",
+      "summary": "async.ts×2 core.ts×1 effect.ts×1 lanes.ts×5 scheduler.ts×2 seat.ts×3 verdict.ts×2 thinOptimistic.ts×1 thinProjection.ts×1 -> async.ts×2 core.ts×1 effect.ts×1 lanes.ts×5 scheduler.ts×2 seat.ts×3 verdict.ts×2 thinOptimistic.ts×1 thinProjection.ts×1",
+      "provenance": {
+        "source_uri": "project://solidjs-solid/solidjs-solid-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "F-2",
+        "author_or_entity": "AI-Builder-Brain Project Learning (solidjs-solid)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of solidjs-solid"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T07:31:23.947Z"
     }
   }
 }

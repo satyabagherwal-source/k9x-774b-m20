@@ -14037,3 +14037,5 @@ Every entry in this ledger must capture:
 | `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `3d283ce1` | Multi-dimensional audit evidence | 2026-11-28T07:12:55.143Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `e385dc89` | Multi-dimensional audit evidence | 2026-11-28T07:13:04.881Z |
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `fd610a26` | Multi-dimensional audit evidence | 2026-11-28T07:21:54.827Z |
+| `learn-github-solidjs-solid` | `https://github.com/solidjs/solid` | `510bb8d0` | Multi-dimensional audit evidence | 2026-11-28T07:30:45.720Z |
+| `learn-dom-h-3b7becba` | `project://solidjs-solid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/solidjs-solid-learnings.md` | 2026-11-28T07:31:23.997Z |

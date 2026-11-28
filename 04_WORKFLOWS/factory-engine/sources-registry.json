@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-28T06:53:31.768Z",
-    "lastVerified": "2026-11-28T06:53:31.768Z",
+    "lastChecked": "2026-11-28T07:30:53.051Z",
+    "lastVerified": "2026-11-28T07:30:53.051Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T07:22:01.165Z",
-    "lastVerified": "2026-11-28T07:22:01.165Z",
+    "lastChecked": "2026-11-28T07:30:53.063Z",
+    "lastVerified": "2026-11-28T07:30:53.063Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -666,9 +666,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-28T03:17:43.396Z",
+    "lastChecked": "2026-11-28T07:30:48.222Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-28T03:17:43.396Z"
+    "lastVerified": "2026-11-28T07:30:48.222Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -1623,9 +1623,9 @@
   "seaql-sea-orm": {
     "name": "sea-orm",
     "officialUrl": "https://github.com/SeaQL/sea-orm",
-    "lastChecked": "2026-11-27T13:13:57.875Z",
+    "lastChecked": "2026-11-28T07:30:50.556Z",
     "revisionIdentifier": "c453c64e",
-    "lastVerified": "2026-11-27T13:13:57.875Z"
+    "lastVerified": "2026-11-28T07:30:50.556Z"
   },
   "software-mansion-argent": {
     "name": "software-mansion/argent",
@@ -6096,9 +6096,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-27T14:39:22.908Z",
+    "lastChecked": "2026-11-28T07:30:45.547Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-27T14:39:22.908Z"
+    "lastVerified": "2026-11-28T07:30:45.547Z"
   },
   "apache-zookeeper": {
     "name": "zookeeper",
@@ -8453,12 +8453,12 @@
     "lastVerified": "2026-11-27T11:14:26.872Z"
   },
   "bahdotsh-wrkflw": {
-    "name": "bahdotsh/wrkflw",
+    "name": "wrkflw",
     "officialUrl": "https://github.com/bahdotsh/wrkflw",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T07:48:45.826Z",
-    "lastVerified": "2026-11-27T07:48:45.826Z",
+    "lastChecked": "2026-11-28T07:30:38.067Z",
+    "lastVerified": "2026-11-28T07:30:38.067Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bahdotsh-wrkflw",
@@ -8467,7 +8467,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7234f173"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
     "name": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -11604,9 +11605,9 @@
   "jasonjmcghee-rem": {
     "name": "rem",
     "officialUrl": "https://github.com/jasonjmcghee/rem",
-    "lastChecked": "2026-11-26T05:29:06.099Z",
+    "lastChecked": "2026-11-28T07:30:43.075Z",
     "revisionIdentifier": "f4f68049",
-    "lastVerified": "2026-11-26T05:29:06.099Z"
+    "lastVerified": "2026-11-28T07:30:43.075Z"
   },
   "aio-libs-aiohttp": {
     "name": "aio-libs/aiohttp",
@@ -11981,14 +11982,14 @@
     "officialUrl": "https://github.com/solidjs/solid",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T23:04:25.689Z",
-    "lastVerified": "2026-11-24T23:04:25.689Z",
+    "lastChecked": "2026-11-28T07:30:44.206Z",
+    "lastVerified": "2026-11-28T07:30:44.206Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-solidjs-solid",
-    "contentHash": "2cd91ae795b428ab25a142801c31ec96b6396ce1e45da16f61c31cb8903c072b",
+    "contentHash": "10e7e8af7169f9a809a349d85096fe77fa4b5e88e29303e09b070380658ab794",
     "promotedRulesCount": 1,
-    "recentFixesCount": 28,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

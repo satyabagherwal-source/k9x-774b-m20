@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T06:54:07.242Z",
+  "updated_at": "2026-11-28T07:31:23.993Z",
   "statistics": {
-    "total_nodes": 594,
+    "total_nodes": 595,
     "total_edges": 240,
     "domain_distribution": {
       "D": 356,
       "M": 1,
-      "H": 114,
+      "H": 115,
       "J": 23,
       "K": 35,
       "L": 9,
@@ -13254,6 +13254,28 @@
       ],
       "created_at": "2026-11-28T06:54:07.242Z",
       "updated_at": "2026-11-28T06:54:07.242Z"
+    },
+    "DOM-H-3B7BECBA": {
+      "id": "DOM-H-3B7BECBA",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "`docs/RULES-FUNDAMENTALS.md:53`: asyncts2 corets1 effectts1 lanests5 schedulerts2 seatts3 verdictts",
+      "summary": "async.ts×2 core.ts×1 effect.ts×1 lanes.ts×5 scheduler.ts×2 seat.ts×3 verdict.ts×2 thinOptimistic.ts×1 thinProjection.ts×1 -> async.ts×2 core.ts×1 effect.ts×1 lanes.ts×5 scheduler.ts×2 seat.ts×3 verdict.ts×2 thinOptimistic.ts×1 thinProjection.ts×1",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://solidjs-solid/solidjs-solid-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "F-2",
+        "author_or_entity": "AI-Builder-Brain Project Learning (solidjs-solid)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-28T07:31:23.993Z",
+      "updated_at": "2026-11-28T07:31:23.993Z"
     }
   },
   "edges": [

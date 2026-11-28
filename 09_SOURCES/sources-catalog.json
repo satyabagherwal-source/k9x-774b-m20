@@ -9973,10 +9973,10 @@
     "repository": "solidjs/solid",
     "platform": "github",
     "sourceUrl": "https://github.com/solidjs/solid",
-    "sourceVersion": "72b5111f",
+    "sourceVersion": "510bb8d0",
     "license": "MIT",
-    "contentHash": "2cd91ae795b428ab25a142801c31ec96b6396ce1e45da16f61c31cb8903c072b",
-    "lastHarvestedAt": "2026-11-24T23:04:27.067Z",
+    "contentHash": "10e7e8af7169f9a809a349d85096fe77fa4b5e88e29303e09b070380658ab794",
+    "lastHarvestedAt": "2026-11-28T07:30:45.720Z",
     "learningId": "learn-github-solidjs-solid"
   },
   "zekunyan-ttgtagcollectionview": {

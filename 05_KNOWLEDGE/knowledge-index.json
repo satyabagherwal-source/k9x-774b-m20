@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T07:22:06.228Z",
+  "last_updated": "2026-11-28T07:31:28.222Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27018,
+  "total_items": 27021,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7ddf51bf4efec150bcd61d6f30d195c886a55155e6738a191052d00a680b74e7",
+      "content_hash": "7c4149bc28d3db5c29fb704b523e1de4dcf0a32c45db909c03c7774ac348455f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T07:22:04.546Z"
+      "persisted_at": "2026-11-28T07:31:28.222Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "83912ac2e7d5a04a77443b1572b30f4ebf4c636237916727f782fc81c84f8f74",
+      "content_hash": "a98bd46acc4ea542f3b0c20c14501900ba3e7a17e0d04e6c4d612e1c9cbd7c5b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T06:22:14.845Z"
+      "persisted_at": "2026-11-28T07:31:26.483Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "40561ec904e8f65a5fdf51e642f84c934a298c8cc7b2963bd19e69c43b02ff5d",
+      "content_hash": "786427587592a925f7f3e4c18c3e6b8a17d48e0ec37da9b07224b5fceb14eb3d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T06:22:15.053Z"
+      "persisted_at": "2026-11-28T07:31:26.746Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -272012,8 +272012,8 @@
       "slug": "solidjs-solid",
       "platform": "github",
       "source_url": "https://github.com/solidjs/solid",
-      "source_version": "72b5111f",
-      "content_hash": "2cd91ae795b428ab25a142801c31ec96b6396ce1e45da16f61c31cb8903c072b",
+      "source_version": "510bb8d0",
+      "content_hash": "10e7e8af7169f9a809a349d85096fe77fa4b5e88e29303e09b070380658ab794",
       "dossier_path": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
       "promoted_rules": [
@@ -272031,6 +272031,11 @@
           "number": 10378,
           "title": "send an empty revalidate declaration as a non-empty header",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11060,
+          "title": "keyed reconcile keeps a matched row's proxy when nothing has subscribe",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -272038,7 +272043,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:04:26.809Z",
+      "verified_at": "2026-11-28T07:30:45.419Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -272092,10 +272097,10 @@
       "relative_path": "08_VERIFICATION/solidjs-solid-verification-protocol-empirical-defect-shield-for-solidjs-solid.md",
       "title": "Verification Protocol: Empirical Defect Shield for solidjs/solid",
       "repository": "solidjs/solid",
-      "source_version": "72b5111f",
-      "content_hash": "d3a2b0aca441e2ad959946764271219dd84b4ea91e3ab88f89d74b531e20fe04",
+      "source_version": "510bb8d0",
+      "content_hash": "1e450acf15c95dae688f8320ed51eb5797d77fb3b968d6ec2d076586bbec3f36",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:04:27.748Z"
+      "persisted_at": "2026-11-28T07:30:46.479Z"
     },
     "learn-github-software-mansion-react-native-screens": {
       "learning_id": "learn-github-software-mansion-react-native-screens",
@@ -272241,9 +272246,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for solidjs-solid-learnings",
       "repository": "solidjs-solid-learnings",
       "source_version": "HEAD",
-      "content_hash": "8eebfdd713adc823687958959819e754030bfeabfa369a530dbbe88b4fdda46f",
+      "content_hash": "6acdcee2f4fcd401b7573e4ccfafe10c55117f81087b6b3873de22ee11dfc8d5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:04:41.377Z"
+      "persisted_at": "2026-11-28T07:31:25.441Z"
     },
     "candidate_directive-ios-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops": {
       "item_id": "candidate_directive-ios-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops",
@@ -314867,10 +314872,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-solidjs-solid-quality-verification-intelligence-solidjs-solid-core-invariants.md",
       "title": "Quality & Verification Intelligence: solidjs/solid Core Invariants",
       "repository": "solidjs/solid",
-      "source_version": "5a43d6f8",
-      "content_hash": "f6086c74489ba8d93c0f0ab51c78cea1d2935ec1c37aa0ca3615a264335e81c8",
+      "source_version": "510bb8d0",
+      "content_hash": "eb00bee6a00ff33e659ebf756b06064a3ea1eac54c469afaed3e6225e99d92c8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:21:22.553Z"
+      "persisted_at": "2026-11-28T07:30:46.249Z"
     },
     "rule-9661": {
       "learning_id": "rule-9661",
@@ -314930,9 +314935,9 @@
       "title": "Quality & Verification Intelligence: solidjs-solid-learnings Core Invariants",
       "repository": "solidjs-solid-learnings",
       "source_version": "HEAD",
-      "content_hash": "cfc45de5592cf8da5c996f68b75a91c693df13147845da5ae1736028adb3fff8",
+      "content_hash": "a75a2b8676d64a1b2b282c59683711b3a1d426e247ef4011bdbf7b24c5f9fd26",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:22:00.541Z"
+      "persisted_at": "2026-11-28T07:31:25.124Z"
     },
     "candidate_directive-site-give-the-homepage-watch-section-a-plain-heading": {
       "item_id": "candidate_directive-site-give-the-homepage-watch-section-a-plain-heading",
@@ -359054,13 +359059,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-18PT-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DBNY-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "be29dca9e651bd2b81860a18744b420d0a26ed15220c0ee113495d3741c21a6a",
+      "content_hash": "1e892be1886de551b928b4985c2d41844a7bba401329ca13ca732a9b89dfd0e1",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T07:22:04.007Z"
+      "persisted_at": "2026-11-28T07:31:27.706Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -359070,9 +359075,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb41dff6ad032bf417b0c7f681ff06f150e9c75b8a4bb5816a7bab8fa0d8fe64",
+      "content_hash": "bec8d04b1d453030d6fe2deb92ab29d48927b072e153e814cdda39d71dd7d154",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T07:22:04.306Z"
+      "persisted_at": "2026-11-28T07:31:27.963Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361961,13 +361966,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-WB59-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DAH6-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a45c3c13d4f30eea3826e63f7c01905af7c387ebef82964768501dfa775beb6",
+      "content_hash": "f1b4861b1844ac7675941c3ff5f7ce07248a81585f01efce8e9a5bde8a7ee2eb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T06:22:14.640Z"
+      "persisted_at": "2026-11-28T07:31:26.166Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -371326,6 +371331,44 @@
       "content_hash": "3a8d36677bb9868979750ee8fb957d25c0902e7ba9eb428acfdcb0ee32a1d323",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T07:22:02.584Z"
+    },
+    "rule-11060": {
+      "learning_id": "rule-11060",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11060,
+      "title": "keyed reconcile keeps a matched row's proxy when nothing has subscribe",
+      "source_url": "https://github.com/solidjs/solid",
+      "source_version": "510bb8d0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T07:30:45.419Z"
+    },
+    "candidate_directive-keyed-reconcile-keeps-a-matched-row-s-proxy-when-nothing-has-subscribe": {
+      "item_id": "candidate_directive-keyed-reconcile-keeps-a-matched-row-s-proxy-when-nothing-has-subscribe",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CFI0-keyed-reconcile-keeps-a-matched-row-s-proxy-when-nothing-has-subscribe.md",
+      "title": "keyed reconcile keeps a matched row's proxy when nothing has subscribe",
+      "repository": "solidjs/solid",
+      "source_version": "510bb8d0",
+      "content_hash": "58985db076eb4091032ce6a45397e3c9da82fff414262290fde8b6fe16c5a539",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T07:30:46.014Z"
+    },
+    "candidate_directive-signals-keyed-reconcile-keeps-a-matched-row-s-proxy-when-nothing-has-subscribe": {
+      "item_id": "candidate_directive-signals-keyed-reconcile-keeps-a-matched-row-s-proxy-when-nothing-has-subscribe",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D9H2-signals-keyed-reconcile-keeps-a-matched-row-s-proxy-when-nothing-has-subscribe.md",
+      "title": "signals): keyed reconcile keeps a matched row's proxy when nothing has subscribe",
+      "repository": "solidjs-solid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0d306f7f9c32f91e11f9f5e44631c1eea26e5be9b8a1e01d8b2bc49b55f053d5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T07:31:24.867Z"
     }
   },
   "ai-builder-brain": {

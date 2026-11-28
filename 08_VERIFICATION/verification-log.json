@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-QP9J",
-    "timestamp": "2026-11-26T16:58:23.719Z",
-    "repository": "mattermost/mattermost",
-    "learningId": "learn-github-mattermost-mattermost",
-    "contentHash": "4f91b632c15aa7ed48ad4e41b37a8bb036f436eee55f1d02129c1e6664537f72",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-QUPS",
     "timestamp": "2026-11-26T16:58:30.784Z",
     "repository": "topoteretes/cognee",
@@ -7490,6 +7475,21 @@
     "repository": "sveltejs/svelte",
     "learningId": "learn-github-sveltejs-svelte",
     "contentHash": "6f60a460e000b2c8ad4d4e4b76e6b716f69280e3991bae48f55814ca7a75a42f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-CF9Q",
+    "timestamp": "2026-11-28T07:30:45.710Z",
+    "repository": "solidjs/solid",
+    "learningId": "learn-github-solidjs-solid",
+    "contentHash": "10e7e8af7169f9a809a349d85096fe77fa4b5e88e29303e09b070380658ab794",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

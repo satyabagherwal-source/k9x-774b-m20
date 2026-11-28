@@ -14004,3 +14004,5 @@
 | `CYCLE-20261128-PH7N` | `2026-11-28T07:12:55.139Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11057` | Yes (`10602e48...`) |
 | `CYCLE-20261128-POQ5` | `2026-11-28T07:13:04.877Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11058` | Yes (`c70cc903...`) |
 | `CYCLE-20261128-11MU` | `2026-11-28T07:21:54.822Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11059` | Yes (`6f60a460...`) |
+| `CYCLE-20261128-CF9Q` | `2026-11-28T07:30:45.710Z` | `solidjs/solid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11060` | Yes (`10e7e8af...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T07:31:23.997Z` | `solidjs-solid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-3B7BECBA` [Domain H] | Yes (`f9031fcc...`) |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T07:21:54.833Z",
-  "total_cycles_completed": 13288,
-  "total_learnings_persisted": 13288,
-  "total_rules_promoted": 11980,
+  "last_updated": "2026-11-28T07:30:45.726Z",
+  "total_cycles_completed": 13289,
+  "total_learnings_persisted": 13289,
+  "total_rules_promoted": 11981,
   "history": [
-    {
-      "timestamp": "2026-11-27T12:41:44.638Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T12:59:14.544Z",
       "repository": "rtk-ai/rtk",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T07:21:54.833Z",
       "repository": "sveltejs/svelte",
       "learningId": "learn-github-sveltejs-svelte",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T07:30:45.726Z",
+      "repository": "solidjs/solid",
+      "learningId": "learn-github-solidjs-solid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
