@@ -14011,3 +14011,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf` | `https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-28T04:48:01.161Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `c9eb7758` | Multi-dimensional audit evidence | 2026-11-28T04:48:17.855Z |
 | `learn-dom-d-174e1cf1` | `project://hf-ai-sage-gigachat4-37b-a4b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md` | 2026-11-28T04:48:52.972Z |
+| `learn-huggingface-thinkingmachines-inkling-2-mini` | `https://huggingface.co/thinkingmachines/Inkling-2-Mini` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-28T04:57:34.002Z |
+| `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `943134a1` | Multi-dimensional audit evidence | 2026-11-28T04:57:41.282Z |

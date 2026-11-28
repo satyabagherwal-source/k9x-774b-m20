@@ -4,22 +4,22 @@
 {
   "source_repository": "0xCUB3/wBlock",
   "source_url": "https://github.com/0xCUB3/wBlock",
-  "source_version": "d439e269",
+  "source_version": "943134a1",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-26T03:04:35.411Z",
+  "timestamp": "2026-11-28T04:57:41.526Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-0xcub3-wblock",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [0xCUB3/wBlock](https://github.com/0xCUB3/wBlock) (Revision: `d439e269`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-26T03:04:35.411Z`  
+> **Provenance**: Harvested from [0xCUB3/wBlock](https://github.com/0xCUB3/wBlock) (Revision: `943134a1`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-28T04:57:41.526Z`  
 > **Learning ID**: `learn-github-0xcub3-wblock`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `0xCUB3/wBlock` (Commit: `d439e269`)
+- **Target Repository**: `0xCUB3/wBlock` (Commit: `943134a1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T03:04:33.543Z  
+> **Harvest Timestamp**: 2026-11-28T04:57:40.006Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Free, open-source Safari ad blocker for macOS, iOS, iPadOS and visionOS. Up to 750,000 rules, custom filter lists, userscripts and userstyles. No subscription.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3271 stars
+- **Stars / Engagement**: 3283 stars
 
 ---
 
@@ -2298,11 +2298,11 @@ pub(crate) struct Seen {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1166** (2026-11-25): **[BUG] Animation delay and visual glitch on back gesture using Magic Mouse or Trackpad**
-  *Symptoms*: ### Describe the bug  When I navigate to different menus in wBlock (such as Site Settings or View Logs) and then attempt to return back to the previous page (in this case Settings) via a Magic Mouse or Trackpad gesture, it introduces a 1-2 second delay before the back action triggers, and the animation appears glitchy. You also cannot keep the page steady during a live gesture by holding your finger on the mouse throughout the motion.  ### To reproduce  1. Open wBlock on macOS 2. Go to Settings 3. Click on Site Settings 4. Do a back (swipe) gesture on Magic Mouse or Trackpad  ### Expected behavior  The animation should be fluid, smooth and native, with the whole page aligning instantly with the text when a gesture begins.  Holding the gesture still with the Magic Mouse or Trackpad should also keep the page in place, and once the user releases it, the page should snap back and trigger the return action. Comparing this to Safari, for instance, shows the difference in gesture smoothness.  ### Screenshot or video  https://github.com/user-attachments/assets/fd21102b-02a5-4123-a7c6-e4c0d15f77e7  ### Environment  - OS: macOS Golden Gate 27.2.1 - wBlock Version: 3.2.3 - Intel or Apple Silicon (macOS only): Apple M3   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. 
+- **Issue #1173** (2026-11-27): **[BUG] youtube ads not blocked when accessed though webapp**
+  *Symptoms*: ### Describe the bug  i use wblock on my iphone. i really love that in safari it can block the ads on youtube aswell. when i save the youtube website to the homescreen that i can use it as a webapp the blocking of the ads before a video stops working.   ### To reproduce  Steps to reproduce the behavior: 1. Go to youtube.com on safari 2. the ads before videos are blocked, the video starts right away 3. save youtube to the homescreen, keep the 'open as webapp'-toggle enabled 4. open the newly created youtube webapp from the homescren 5. play a video 6. see that there are ads again...:(  ### Expected behavior  youtube ads should not be played in the webapp as well. it should not matter how i access youtube (though the website in safari or the bookmark from the homescreen) that ads are blocked.   ### Screenshot or video  _No response_  ### Environment  - OS: iOS 27.2.1 - wBlock Version: 3.2.3   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or
 
-- **Issue #1164** (2026-11-24): **[BUG]avoid unnecessary DOM scans for :matches-path and :matches-media**
-  *Symptoms*: ### Describe the bug  `compileSelector` in `procedural.js` only looks at `selector[0]` to decide how to query the DOM. Since `:matches-path` (which `runtime.rs` puts first) and leading `:matches-media` are neither CSS selectors nor XPath, it falls back to `document.querySelectorAll('*')`.  So every DOM mutation pass scans all elements on the page, even if the URL or media query doesn't match. If it does match, the next CSS selector is checked using `el.matches()` on every element instead of a regular `querySelectorAll(css)`.  On heavy SPAs like Facebook, this can cause unnecessary CPU usage and affect scrolling performance.  Checking `:matches-path` and `:matches-media` before querying the DOM would avoid these unnecessary scans. On a page with around 5k elements, this could reduce processing time by ~99% for non-matching passes (from ~10ms to under 0.1ms) and ~90% or more for matching passes.  ### To reproduce  Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error   ### Expected behavior  _No response_  ### Screenshot or video  _No response_  ### Environment  - OS: [e.g. iOS 26.5, macOS 26.5] - wBlock Version: [e.g. 2.0.4] - Intel or Apple Silicon (macOS only): [e.g. Apple M2]   ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`)
+- **Issue #1167** (2026-11-26): **[BUG] Cloudflare Turnstile challenges fail in Safari unless wBlock is completely disabled**
+  *Symptoms*: ### Describe the bug  Safari is unable to pass Cloudflare Turnstile verification screens while wBlock is active. Testing on the [Turnstile Troubleshooter](https://debug.challenges.cloudflare.com/) fails verification and returns the following error: `Turnstile Failed Despite Passing All Checks`. Disabling the wBlock extension completely in Safari settings is currently the only way to pass the challenge.  Whitelisting all cloudflare.com domains and the target domain inside wBlock does not resolve the problem. Disabling filters or content blockers for the specific site via Safari's per-website settings also has no effect. I've also disabledThe Safari Web Inspector Console shows that wBlock detects the challenge and skips its content script: `[wBlock] Cloudflare challenge context detected - skipping content script.` Despite skipping the content script, the extension still interferes with Turnstile verification as long as it remains enabled globally.  Enabled filters: - AdGuard Base Filter - AdGuard Tracking Protection Filter - AdGuard URL Tracking Protection Filter - Actually Legitimate URL Shortener Tool - Dandelion Sprout's Anti-Malware List - Online Malicious URL Blocklist - Peter Lowe's Blocklist - HaGeZi Multi Pro Mini - AdGuard Cookie Notice - AdGuard Popups - AdGuard Mobile App Banners - AdGuard Other Annoyances - AdGuard Widgets - AdGuard Warning Removal List - Bypass Paywalls Clean Filter - AdGuard Experimental Filter - HaGeZi Referral Allowlist - AdGuard Allowlist  Enab
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2319,1225 +2319,574 @@ pub(crate) struct Seen {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6aca811d` (2026-11-23)
-**Commit Message**: fix: click macOS rows for info, add AdGuard Mini system-wide note, and harden popup/zapper
+### Incident Patch 1: `d35480a2` (2026-11-27)
+**Commit Message**: feat(ui): use pause.fill icon with active blue fill on Pause Blocking toolbar button (#1171)
 
-- Open filter and userscript info popovers by clicking the row on macOS (preserving NSOutlineView drag-to-reorder) and drop the redundant row info button (#1157)
-- Document AdGuard Mini v3.0 experimental system-wide protection in Adblock_Comparison.md (#1157)
-- Detect unfolded foldable phone popovers in popup.js so they use popover presentation instead of phone-sheet sizing (#1157)
-- Fall back to on-demand zapper-content.js injection and frame-less delivery when activating Element Zapper on tabs where content scripts were not injected at load
-
-**File**: `Adblock_Comparison.md` (modified, +2/-2)
+**File**: `wBlock/SettingsView.swift` (modified, +25/-14)
 ```diff
-@@ -97,7 +97,7 @@ Sources: [Wipr 2 on the App Store](https://apps.apple.com/us/app/wipr-2/id166221
- 
- AdGuard splits Safari across two apps. AdGuard Mini (it used to be AdGuard for Safari) is the Mac one, and AdGuard for iOS covers iPhone, iPad, and Vision. The full AdGuard for Mac is a separate paid, system-wide product, and I'm leaving it out.
- 
--Mini has six content blockers (General, Privacy, Social, Security, Other, Custom) for a ceiling of 900,000 rules. Filter categories, custom lists, user rules, element blocking, and issue reporting are free. Pro adds real-time filter updates, AdGuard Extra for harder anti-adblock cases, and a few advanced filtering features.
-+Mini has six content blockers (General, Privacy, Social, Security, Other, Custom) for a ceiling of 900,000 rules. Filter categories, custom lists, user rules, element blocking, and issue reporting are free. Pro adds real-time filter updates, AdGuard Extra for harder anti-adblock cases, and a few advanced filtering features. Starting in v3.0, Mini also includes an experimental system-wide protection option for macOS 26 and later (with an AdGuard license) built on Apple's URL Filters API with Private Information Retrieval.
- 
- AdGuard for iOS has the same six blockers plus a Web Extension for per-site toggles and element blocking. Premium adds advanced rules and scriptlets. There's also DNS protection. It catches ad and tracker domains in other apps, but it only sees hostnames and can't hide anything on a page. AdGuard and AdGuard Pro on the iOS App Store unlock the same features now, and you only need one of them.
- 
-@@ -117,7 +117,7 @@ Sources: [AdGuard Mini](https://adguard.com/en/adguard-mini-mac/overview.html),
- | YouTube ads | Yes | Yes, breaks often | Yes, via Wipr Extra | Yes, better with Pro |
- | Twitch ads | Opt-in scripts | No dedicated option | Not documented | AdGuard Extra (Pro) |
- | Strips `utm_*` | Yes, by default | Yes | No | Yes |
--| System-wide | No | No | Filtr (paid, OS 26) | DNS on iOS |
-+| System-wide | No | No | Filtr (paid, OS 26) | Mini (experimental, paid, macOS 26+), DNS on iOS |
- 
- ### Control
- 
-```
-
-**File**: `wBlock Scripts (iOS)/Resources/pages/popup/popup.js` (modified, +79/-8)
-```diff
-@@ -363,16 +363,31 @@ function isIpadDevice() {
-     );
- }
- 
-+// Unfolded foldable phones (regular-width inner display) present Safari
-+// extension popups as an iPad-style popover even though the UA stays iPhone.
-+function isIosPopoverHost() {
-+    if (isIpadDevice()) return true;
-+    const screenWidth = Number(window.screen && window.screen.width);
-+    const screenHeight = Number(window.screen && window.screen.height);
-+    return Number.isFinite(screenWidth) && Number.isFinite(screenHeight)
-+        && Math.min(screenWidth, screenHeight) >= 600;
-+}
-+
- function shouldFillIosPhoneSheet() {
--    return CSS.supports('-webkit-touch-callout', 'none') && !isIpadDevice();
-+    return CSS.supports('-webkit-touch-callout', 'none') && !isIosPopoverHost();
- }
- 
--if (shouldFillIosPhoneSheet()) {
--    document.documentElement.classList.add('ios-phone-sheet');
--} else if (CSS.supports('-webkit-touch-callout', 'none') && isIpadDevice()) {
--    document.documentElement.classList.add('ios-ipad-popover');
-+function syncIosPopupPresentation() {
-+    const root = document.documentElement;
-+    const isTouchIos = CSS.supports('-webkit-touch-callout', 'none');
-+    const usePopover = isTouchIos && isIosPopoverHost();
-+    root.classList.toggle('ios-phone-sheet', isTouchIos && !usePopover);
-+    root.classList.toggle('ios-ipad-popover', usePopover);
- }
- 
-+syncIosPopupPresentation();
-+window.addEventListener('resize', syncIosPopupPresentation);
-+
- function setError(message) {
-     const el = document.getElementById('error');
-     if (!el) return;
-@@ -654,6 +669,64 @@ async function sendTabMessageWithRetry(tabId, message, { timeoutMs = null, valid
-     throw lastError || new Error('Failed to deliver tab message.');
- }
- 
-+async function injectZapperContentScript(tabId) {
-+    if (!tabId || !browser.scripting || typeof browser.scripting.executeScript !== 'function') {
-+        return false;
-+    }
-+    try {
-+        await browser.scripting.executeScript({
-+            target: { tabId, frameIds: [TOP_FRAME_ID] },
-+            files: ['zapper-content.js'],
-+        });
-+        return true;
-+    } catch (frameError) {
-+        try {
-+            await browser.scripting.executeScript({
-+                target: { tabId },
-+                files: ['zapper-content.js'],
-+            });
-+            return true;
-+        } catch {
-+            console.warn('[wBlock] On-demand zapper injection failed:', frameError);
-+            return false;
-+        }
-+    }
-+}
-+
-+async function activateZapperInTab(tabId) {
-+    const message = { type: 'wblock:zapper:activate' };
-+    try {
-+        return await sendTabMessageWithRetry(tabId, message, {
-+            validateResponse: isZapperCommandResponse,
-+        });
-+    } catch (initialError) {
-+        // When permission is granted on demand (e.g. a second Safari profile
-+        // or a tab opened before enabling wBlock), zapper-content.js may not
-+        // have been injected at page load.
-+        const injected = await injectZapperContentScript(tabId);
-+        if (injected) {
-+            try {
-+                return await sendTabMessageWithRetry(tabId, message, {
-+                    validateResponse: isZapperCommandResponse,
-+                });
-+            } catch {
-+                return await sendTabMessageWithRetry(tabId, message, {
-+                    validateResponse: isZapperCommandResponse,
-+                    frameId: null,
-+                });
-+            }
-+        }
-+        try {
-+            return await sendTabMessageWithRetry(tabId, message, {
-+                validateResponse: isZapperCommandResponse,
-+                frameId: null,
-+            });
-+        } catch {
-+            throw initialError;
-+        }
-+    }
-+}
-+
- async function probeTabSupport(tabId) {
-     if (!tabId) return null;
- 
-@@ -1761,9 +1834,7 @@ function setupListeners() {
-         zapperActivate.addEventListener('click', async () => {
-             try {
-                 setError('');
--                await sendTabMessageWithRetry(tab.id, { type: 'wblock:zapper:activate' }, {
--                    validateResponse: isZapperCommandResponse,
--                });
-+                await activateZapperInTab(tab.id);
-                 window.close();
-             } catch (error) {
-                 console.error('[wBlock] Failed to activate zapper:', error);
-```
-
-**File**: `wBlock/ContentView.swift` (modified, +10/-9)
-```diff
-@@ -1086,7 +1086,9 @@ struct ContentView: View {
-                 id: FilterListCategory.annoyances.rawValue + (isOther ? "" : "#" + group.topic.rawValue),
-                 header: header,
-                 rows: group.filters.map { filter in
--                    MacListRow(filter.id, leavesSection: filter.isCustom) { filterRowView(for: filter) }
-+                    MacListRow(filter.id, leavesSection: filter.isCustom, onTap: { selectedFilterInfo = filter }) {
-+                        filterRowView(for: filter)
-+                    }
-                 },
-                 allowsCrossSectionMoves: true,
-                 revealsOnlyWhileDragging: isOther && group.filters.isEmpty)
-@@ -1097,7 +1099,7 @@ struct ContentView: View {
-         if category == .foreign {
-             guard !filters.isEmpty else { return nil }
-             let rows = visibleForeignFilters(filters).map { filter in
--                MacListRow(filter.id) { filterRowView(for: filter) }
-+                MacListRow(filter.id, onTap: { selectedFilterInfo = filter }) { filterRowView(for: filter) }
-             }
-             return MacListSection(id: category.id, header: AnyView(categoryHeader(category)),
-                                   rows: rows, allowsCrossSectionMoves: false)
-@@ -1106,7 +1108,9 @@ struct ContentView: View {
-         guard acceptsMoves || !filters.isEmpty else { return nil }
-         return MacListSection(id: category.id, header: AnyView(categoryHeader(category)),
-                               rows: filters.map { filter in
--                                  MacListRow(filter.id, leavesSection: filter.isCustom) { filterRowView(for: filter) }
-+                                  MacListRow(filter.id, leavesSection: filter.isCustom, onTap: { selectedFilterInfo = filter }) {
-+                                      filterRowView(for: filter)
-+                                  }
-                               },
-                               acceptsMoves: acceptsMoves, revealsOnlyWhileDragging: acceptsMoves)
-     }
-@@ -1211,20 +1215,17 @@ struct FilterRowView: View, Equatable {
-     var body: some View {
-         HStack(alignment: .center, spacing: 10) {
-             // Keep the iOS info gesture on the text column so it cannot consume switch taps.
-+            // On macOS, MacReorderableList fires onTap on a non-drag row click so dragging stays intact.
-             filterDetails
-                 .accessibilityElement(children: .combine)
-                 .accessibilityAddTraits(.isButton)
-                 .accessibilityAction { onInfo() }
-                 .contentShape(.interaction, Rectangle())
-                 #if os(iOS)
-                 .onTapGesture(perform: onInfo)
-+                #else
-+                .infoPopoverAnchor(filter.id, capturesClicks: false)
-                 #endif
--            #if os(macOS)
--            Button(action: onInfo) { Image(systemName: "info.circle") }
--                .buttonStyle(.plain).noFocusRingCompat()
--                .foregroundStyle(.secondary).accessibilityLabel("Info").help("Info")
--                .infoPopoverAnchor(filter.id)
--            #endif
-             if filter.isRemoteURL && (isDownloading || !isDownloaded) {
-                 ContentDownloadControl(isDownloading: isDownloading, name: text.name, action: onDownload)
-             } else {
-```
-
-**File**: `wBlock/InfoPresentation.swift` (modified, +24/-13)
-```diff
-@@ -12,9 +12,9 @@ func macOSWindowAction<Action>(_ route: @escaping (Action) -> Void) -> ((Action)
- 
- extension View {
-     @ViewBuilder
--    func infoPopoverAnchor(_ id: AnyHashable?) -> some View {
-+    func infoPopoverAnchor(_ id: AnyHashable?, capturesClicks: Bool = true) -> some View {
-         #if os(macOS)
--        if let id { modifier(InfoPopoverAnchor(id: id)) } else { self }
-+        if let id { modifier(InfoPopoverAnchor(id: id, capturesClicks: capturesClicks)) } else { self }
-         #else
-         self
-         #endif
-@@ -155,6 +155,10 @@ final class InfoPopoverPresenter: ObservableObject {
-             return .init(token: token, id: anchor.id, windowNumber: window.windowNumber, frame: view.convert(view.bounds, to: nil))
-         }
-         let mouseUp = event?.type == .leftMouseUp ? event?.eventNumber : nil
-+        if let event, event.type == .leftMouseUp || event.type == .leftMouseDown,
-+           let hit = visible.first(where: { $0.windowNumber == event.windowNumber && $0.frame.contains(event.locationInWindow) }) {
-+            state.clicked(hit.token, id: id)
-+        }
-         // An item with no visible anchor, or a closing click, must not leave
-         // a selection behind that no popover shows.
-         guard let token = state.anchor(for: id, in: visible, fromKeyboard: event?.type == .keyDown),
-@@ -218,25 +222,32 @@ private struct InfoPresentationModifier<Item: Identifiable, Info: View>: ViewMod
-     }
- }
- 
--/// One info button. Its click names this anchor to every enclosing presenter
--/// before the button's action changes the selection.
-+/// One info anchor. When `capturesClicks` is true (button anchors), its tap
-+/// names this anchor before the button's action changes selection. Row anchors
-+/// inside draggable AppKit lists leave `capturesClicks` false so they do not
-+/// steal mouseDown from NSOutlineView drags; `select(_:)` matches them by click
-+/// location instead.
- private struct InfoPopoverAnchor: ViewModifier {
-     let id: AnyHashable
-+    let capturesClicks: Bool
-     @State private var token = UUID()
-     @Environment(\.infoPopoverEntries) private var entries
- 
-     func body(content: Content) -> some View {
--        content
--            .simultaneousGesture(TapGesture().onEnded {
--                for presenter in entries { presenter.clicked(token, id: id) }
--            })
--            .background {
--                ZStack {
--                    ForEach(entries.indices, id: \.self) { index in
--                        InfoPopoverAnchorRegistration(token: token, id: id, presenter: entries[index])
--                    }
-+        let anchored = content.background {
-+            ZStack {
-+                ForEach(entries.indices, id: \.self) { index in
-+                    InfoPopoverAnchorRegistration(token: token, id: id, presenter: entries[index])
-                 }
-             }
-+        }
-+        if capturesClicks {
-+            anchored.simultaneousGesture(TapGesture().onEnded {
-+                for presenter in entries { presenter.clicked(token, id: id) }
-+            })
-+        } else {
-+            anchored
-+        }
-     }
- }
- 
-```
-
-**File**: `wBlock/MacReorderableList.swift` (modified, +13/-0)
-```diff
-@@ -44,19 +44,23 @@ struct MacListRow {
-     let movableID: UUID?
-     /// False keeps the row in its own section, like a section that disallows cross-section moves.
-     var leavesSection = true
-+    var onTap: (() -> Void)? = nil
-     let content: AnyView
- 
-     init<Content: View>(_ id: UUID, movable: Bool = true, leavesSection: Bool = true, group: String? = nil,
-+                        onTap: (() -> Void)? = nil,
-                         @ViewBuilder content: () -> Content) {
-         self.id = .item(id, group)
-         movableID = movable ? id : nil
-         self.leavesSection = leavesSection
-+        self.onTap = onTap
-         self.content = AnyView(content())
-     }
- 
-     init<Content: View>(decoration id: String, @ViewBuilder content: () -> Content) {
-         self.id = .decoration(id)
-         movableID = nil
-+        self.onTap = nil
-         self.content = AnyView(content())
-     }
- }
-@@ -306,6 +310,8 @@ struct MacReorderableList: NSViewRepresentable {
-         outline.registerForDraggedTypes([Coordinator.dragType])
-         outline.dataSource = context.coordinator
-         outline.delegate = context.coordinator
-+        outline.target = context.coordinator
-+        outline.action = #selector(Coordinator.rowClicked(_:))
-         scroll.documentView = outline
-         context.coordinator.outline = outline
-         context.coordinator.update(self, environment: context.environment)
-@@ -761,6 +767,13 @@ struct MacReorderableList: NSViewRepresentable {
-             guard let node = item as? Node, case .row(let id) = node.id else { return nil }
-             return model.sections.lazy.flatMap(\.rows).first { $0.id == id }
-         }
-+        @objc func rowClicked(_ sender: NSOutlineView) {
-+            let rowIndex = sender.clickedRow
-+            guard rowIndex >= 0,
-+                  let node = sender.item(atRow: rowIndex) as? Node,
-+                  let tap = row(for: node)?.onTap else { return }
-+            tap()
-+        }
-         func movableID(for item: Any) -> UUID? { row(for: item)?.movableID }
-         func outlineView(_ outlineView: NSOutlineView, pasteboardWriterForItem item: Any) -> NSPasteboardWriting? {
-             guard let id = movableID(for: item) else { return nil }
-```
-
-**File**: `wBlock/UserScriptManagerView.swift` (modified, +5/-9)
-```diff
-@@ -401,7 +401,9 @@ struct UserScriptManagerView: View {
-             let section = UserScriptDisplaySection(id: category, scripts: displayedScripts.filter { $0.displayCategory == category })
-             return MacListSection(id: category.id, header: AnyView(displaySectionHeader(section)),
-                                   rows: section.scripts.map { script in
--                                      MacListRow(script.id, leavesSection: !script.isBuiltIn) { scriptRowView(script: script) }
-+                                      MacListRow(script.id, leavesSection: !script.isBuiltIn, onTap: {
-+                                          selectedScriptInfo = SelectedUserScript(id: script.id, action: .info)
-+                                      }) { scriptRowView(script: script) }
-                                   },
-                                   revealsOnlyWhileDragging: true)
-         }
-@@ -750,14 +752,8 @@ struct UserScriptManagerView: View {
-                     selectedScriptInfo = SelectedUserScript(id: script.id, action: .info)
-                 }
-             }
--            #endif
--            #if os(macOS)
--            Button { selectedScriptInfo = SelectedUserScript(id: script.id, action: .info) } label: {
--                Image(systemName: "info.circle")
--            }
--            .buttonStyle(.plain).noFocusRingCompat()
--            .foregroundStyle(.secondary).accessibilityLabel("Info").help("Info")
--            .infoPopoverAnchor(script.id)
-+            #else
-+            .infoPopoverAnchor(script.id, capturesClicks: false)
-             #endif
- 
-             if !script.isLocal && (downloadingScriptIDs.contains(script.id) || !script.isDownloaded) {
-```
-
----
-
-### Incident Patch 2: `3a6fdf2a` (2026-11-24)
-**Commit Message**: fix(ui): unify pause blocking banners, show paused parts, and hide duplicate footer (#1162)
-
-**File**: `scripts/test_basic_mode.swift` (modified, +16/-2)
-```diff
-@@ -412,7 +412,9 @@ struct BasicModeTests {
-             failedDuringUpdate: false,
-             lastUpdatedDate: now
-         ))
--        precondition(s4Full == .paused(partial: false) && s4Full.action == .resume)
-+        precondition(s4Full == .paused(components: .all) && s4Full.action == .resume && s4Full.isPaused)
-+        precondition(s4Full.title == "Protection Paused", "Paused title must be capitalized")
-+        precondition(s4Full.tone == .orange, "Paused tone must match orange pause banners")
- 
-         let s4Partial = SafariHealthResolver.resolve(SafariHealthInput(
-             hasReadExtensions: true,
-@@ -427,7 +429,18 @@ struct BasicModeTests {
-             failedDuringUpdate: false,
-             lastUpdatedDate: now
-         ))
--        precondition(s4Partial == .paused(partial: true))
-+        precondition(s4Partial == .paused(components: [.filters]) && s4Partial.isPaused)
-+
-+        // Pause copy reflects paused parts and mode/platform picker instructions (#1162)
-+        let fullSummary = PauseBlockingCopy.pausedSummary(for: .all)
-+        precondition(fullSummary.contains("All blocking is paused"), "Full pause summary must state everything is paused: \(fullSummary)")
-+        precondition(fullSummary.contains("Filters") && fullSummary.contains("Userscripts & Userstyles") && fullSummary.contains("Element Zapper"))
-+        let partialSummary = PauseBlockingCopy.pausedSummary(for: [.filters, .elementZapper])
-+        precondition(partialSummary.contains("Filters") && partialSummary.contains("Element Zapper") && !partialSummary.contains("Userscripts"))
-+        precondition(PauseBlockingCopy.componentPickerHint(appMode: .basic, isMacOS: false).contains("Show All Lists"))
-+        precondition(PauseBlockingCopy.componentPickerHint(appMode: .advanced, isMacOS: false).contains("Hold the Pause button"))
-+        precondition(PauseBlockingCopy.componentPickerHint(appMode: .basic, isMacOS: true).contains("View > Pause Blocking"))
-+        precondition(PauseBlockingCopy.componentPickerHint(appMode: .advanced, isMacOS: true).contains("View > Pause Blocking"))
- 
-         // 5. Rule limit hit beats applying & failed
-         let s5 = SafariHealthResolver.resolve(SafariHealthInput(
-@@ -460,6 +473,7 @@ struct BasicModeTests {
-             lastUpdatedDate: now
-         ))
-         precondition(s6 == .applying && s6.action == nil)
-+        precondition(s6.title == "Applying Filters…", "Applying title must be capitalized")
- 
-         // 7. Failed beats protected
-         let s7 = SafariHealthResolver.resolve(SafariHealthInput(
-```
-
-**File**: `wBlock/ContentView.swift` (modified, +15/-5)
-```diff
-@@ -225,11 +225,16 @@ struct ContentView: View {
-     }
- 
-     private var showBasicBottomAccessory: Bool {
--        appMode == .basic
--            && !healthStatus.isProtected
--            && healthStatus != .applying
--            && healthStatus != .checkingForUpdates
--            && (!isBasicHeroVisible || tabSelection.value != 0)
-+        guard appMode == .basic,
-+              !healthStatus.isProtected,
-+              healthStatus != .applying,
-+              healthStatus != .checkingForUpdates
-+        else { return false }
-+        // Extras and Settings already show PauseBlockingBanner at the top while paused (#1162).
-+        if healthStatus.isPaused && tabSelection.value != 0 {
-+            return false
-+        }
-+        return !isBasicHeroVisible || tabSelection.value != 0
-     }
- 
-     private func handleHealthAction(_ action: SafariHealthStatus.Action) {
-@@ -751,6 +756,11 @@ struct ContentView: View {
-                     .navigationTitle("")
-                     #endif
-                     .modifier(basicToolbar)
-+                    .topBarCompat {
-+                        if filterManager.isBlockingPaused {
-+                            PauseBlockingBanner(filterManager: filterManager)
-+                        }
-+                    }
-                     .transition(.opacity)
-                 } else {
-                     UserScriptManagerView(
-```
-
-**File**: `wBlock/SafariHealth.swift` (modified, +86/-9)
-```diff
-@@ -90,13 +90,88 @@ struct SafariHealthInput: Equatable, Sendable {
-     var lastUpdatedDate: Date?
- }
- 
-+/// Shared copy for paused-protection surfaces (Hero, top banner, and detail sheet).
-+enum PauseBlockingCopy {
-+    static var defaultIsMacOS: Bool {
-+        #if os(macOS)
-+        true
-+        #else
-+        false
-+        #endif
-+    }
-+
-+    static func componentNames(for components: BlockingPauseComponents) -> [String] {
-+        var names: [String] = []
-+        if components.contains(.filters) {
-+            names.append(NSLocalizedString("Filters", comment: "Paused blocking component"))
-+        }
-+        if components.contains(.userScripts) {
-+            names.append(NSLocalizedString("Userscripts & Userstyles", comment: "Paused blocking component"))
-+        }
-+        if components.contains(.elementZapper) {
-+            names.append(NSLocalizedString("Element Zapper", comment: "Paused blocking component"))
-+        }
-+        return names
-+    }
-+
-+    static func pausedSummary(for components: BlockingPauseComponents) -> String {
-+        let normalized = components.intersection(.all)
-+        let joined = ListFormatter.localizedString(byJoining: componentNames(for: normalized))
-+        if normalized == .all {
-+            return String.localizedStringWithFormat(
-+                NSLocalizedString(
-+                    "All blocking is paused (%@).",
-+                    comment: "Pause blocking status when every component is paused"
-+                ),
-+                joined
-+            )
-+        }
-+        return String.localizedStringWithFormat(
-+            NSLocalizedString(
-+                "Paused: %@.",
-+                comment: "Pause blocking status listing specific paused components"
-+            ),
-+            joined
-+        )
-+    }
-+
-+    static func componentPickerHint(appMode: AppMode, isMacOS: Bool = defaultIsMacOS) -> String {
-+        if isMacOS {
-+            return NSLocalizedString(
-+                "Use View > Pause Blocking to pause specific components.",
-+                comment: "macOS hint for pausing individual blocking components"
-+            )
-+        }
-+        switch appMode {
-+        case .basic:
-+            return NSLocalizedString(
-+                "Turn on Show All Lists in Settings, then hold the Pause button to pause specific components.",
-+                comment: "iOS Standard mode hint for pausing individual blocking components"
-+            )
-+        case .advanced:
-+            return NSLocalizedString(
-+                "Hold the Pause button to pause specific components.",
-+                comment: "iOS Customizable mode hint for pausing individual blocking components"
-+            )
-+        }
-+    }
-+
-+    static func message(
-+        for components: BlockingPauseComponents,
-+        appMode: AppMode,
-+        isMacOS: Bool = defaultIsMacOS
-+    ) -> String {
-+        "\(pausedSummary(for: components)) \(componentPickerHint(appMode: appMode, isMacOS: isMacOS))"
-+    }
-+}
-+
- /// Priority-ordered protection health status shown by the Hero, compact
- /// Advanced banner, Settings top row, and iOS bottom accessory.
- enum SafariHealthStatus: Equatable, Sendable {
-     case allBlockersOff
-     case someBlockersOff
-     case scriptsExtensionOff
--    case paused(partial: Bool)
-+    case paused(components: BlockingPauseComponents)
-     case ruleLimitHit
-     case applying
-     case checkingForUpdates
-@@ -133,6 +208,11 @@ enum SafariHealthStatus: Equatable, Sendable {
-         return false
-     }
- 
-+    var isPaused: Bool {
-+        if case .paused = self { return true }
-+        return false
-+    }
-+
-     var isExtensionDegraded: Bool {
-         switch self {
-         case .allBlockersOff, .someBlockersOff, .scriptsExtensionOff:
-@@ -145,8 +225,7 @@ enum SafariHealthStatus: Equatable, Sendable {
-     var tone: Tone {
-         switch self {
-         case .allBlockersOff: .red
--        case .someBlockersOff, .scriptsExtensionOff, .ruleLimitHit, .failed: .orange
--        case .paused: .gray
-+        case .someBlockersOff, .scriptsExtensionOff, .paused, .ruleLimitHit, .failed: .orange
-         case .applying, .checkingForUpdates: .accent
-         case .protected: .green
-         }
-@@ -190,18 +269,16 @@ enum SafariHealthStatus: Equatable, Sendable {
-         }
-     }
- 
--    func subtitle(now: Date = Date()) -> String {
-+    func subtitle(now: Date = Date(), appMode: AppMode = .basic) -> String {
-         switch self {
-         case .allBlockersOff:
-             return NSLocalizedString("wBlock can't block anything until turned on in Safari's Extensions menu.", comment: "Hero status subtitle: all blockers off")
-         case .someBlockersOff:
-             return NSLocalizedString("One or more blockers are off; ads might get through.", comment: "Hero status subtitle: some blockers off")
-         case .scriptsExtensionOff:
-             return NSLocalizedString("Extras and some ad blocking need the wBlock Scripts extension enabled.", comment: "Hero st
-```
-
-**File**: `wBlock/SettingsView.swift` (modified, +6/-4)
-```diff
-@@ -1575,22 +1575,24 @@ struct PauseBlockingControls: View {
-     }
- }
- 
--/// Shown while blocking is paused, on the Filters, Userscripts, and Settings pages.
-+/// Shown while blocking is paused, on Filters, Extras/Userscripts, and Settings.
- struct PauseBlockingBanner: View {
+@@ -1613,43 +1613,54 @@ struct PauseBlockingButton: View {
      @ObservedObject var filterManager: AppFilterManager
-+    @AppStorage(AppMode.storageKey) private var appMode: AppMode = .basic
+     var allowsComponentMenu: Bool = true
+ 
+-    private func toggle(isPaused: Bool) {
+-        if !isPaused {
++    private func setPaused(_ pause: Bool) {
++        if pause {
+             Haptics.play(.paused)
+         }
+-        Task { await filterManager.setBlockingPaused(!isPaused) }
++        Task { await filterManager.setBlockingPaused(pause) }
+     }
  
      var body: some View {
-         HStack(spacing: 10) {
--            Image(systemName: "pause.circle.fill")
-+            Image(systemName: "shield.slash.fill")
-                 .font(.title3)
-                 .foregroundStyle(.orange)
- 
-             VStack(alignment: .leading, spacing: 2) {
--                Text("Pause Blocking")
-+                Text("Protection Paused")
-                     .font(.subheadline.weight(.semibold))
--                Text("Pause Blocking is on while any selected component is paused. Resume restores all components.")
-+                Text(PauseBlockingCopy.message(for: filterManager.pausedComponents, appMode: appMode))
-                     .font(.caption)
-                     .foregroundStyle(.secondary)
-+                    .fixedSize(horizontal: false, vertical: true)
+         let isPaused = !filterManager.pausedComponents.isEmpty
+         let title: LocalizedStringKey = isPaused ? "Resume Blocking" : "Pause Blocking"
++        let pauseBinding = Binding(
++            get: { isPaused },
++            set: { newValue in
++                guard newValue != isPaused else { return }
++                setPaused(newValue)
++            }
++        )
+         #if os(macOS)
+-        return Button {
+-            toggle(isPaused: isPaused)
+-        } label: {
+-            Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
++        return Toggle(isOn: pauseBinding) {
++            Label(title, systemImage: "pause.fill")
+         }
++        .toggleStyle(.button)
+         .help(title)
+         .disabled(filterManager.isReloadBusy)
+         #else
+         if allowsComponentMenu {
+-            Menu {
++            let menu = Menu {
+                 Section("Pause Blocking") { PauseBlockingControls(filterManager: filterManager) }
+             } label: {
+-                Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
++                Label(title, systemImage: "pause.fill")
+             } primaryAction: {
+-                toggle(isPaused: isPaused)
++                setPaused(!isPaused)
              }
- 
-             Spacer(minLength: 8)
-```
-
-**File**: `wBlock/en.lproj/Localizable.strings` (modified, +6/-0)
-```diff
-@@ -1301,3 +1301,9 @@ To re-enable these filters, disable other large filters and apply changes again.
- "Filters are up to date." = "Filters are up to date.";
- "Checking for updates…" = "Checking for updates…";
- "Looking for newer filter lists and extras." = "Looking for newer filter lists and extras.";
-+"Userscripts & Userstyles" = "Userscripts & Userstyles";
-+"All blocking is paused (%@)." = "All blocking is paused (%@).";
-+"Paused: %@." = "Paused: %@.";
-+"Use View > Pause Blocking to pause specific components." = "Use View > Pause Blocking to pause specific components.";
-+"Turn on Show All Lists in Settings, then hold the Pause button to pause specific components." = "Turn on Show All Lists in Settings, then hold the Pause button to pause specific components.";
-+"Hold the Pause button to pause specific components." = "Hold the Pause button to pause specific components.";
+             // A tap pauses or resumes; a long press opens the menu.
+             .menuIndicator(.hidden)
+             .help(title)
+             .disabled(filterManager.isReloadBusy)
++
++            if isPaused {
++                menu.buttonStyle(.borderedProminent)
++            } else {
++                menu
++            }
+         } else {
+-            Button {
+-                toggle(isPaused: isPaused)
+-            } label: {
+-                Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
++            Toggle(isOn: pauseBinding) {
++                Label(title, systemImage: "pause.fill")
+             }
++            .toggleStyle(.button)
+             .help(title)
+             .disabled(filterManager.isReloadBusy)
+         }
 ```
 
 ---
 
-### Incident Patch 3: `e98c14a3` (2026-11-25)
-**Commit Message**: fix(macos): track back-swipe gestures interactively without delay (#1166)
+### Incident Patch 2: `943134a1` (2026-11-27)
+**Commit Message**: fix(ios): reconcile iPadOS floating tab bar safe area before first frame (#1168)
 
-Replace the delayed isComplete-only dismiss in SwipeBackNavigation with a live Core Animation swipe-back transition driven directly by trackSwipeEvent's gestureAmount. Captures the Settings root page right before navigation pushes, slides the pushed page 1-to-1 with finger movement over a parallax underlay with an opaque backing (so holding a Magic Mouse or Trackpad finger holds the page steady with no bleed-through), snaps off AppKit's asymptotic settle tail after release, and dismisses without a second animation once off-screen. Also commits immediately on release under Reduce Motion, adds checked gdp-wired proofs for SwipeBackGestureState, and adds a live AppKit regression test.
-
-**File**: `scripts/proofs/PolicyProbe.swift` (modified, +63/-0)
+**File**: `wBlock/AppTabView.swift` (modified, +81/-3)
 ```diff
-@@ -1,3 +1,4 @@
-+import AppKit
- import Foundation
- import wBlockCoreService
- 
-@@ -498,6 +499,68 @@ final class ResumeCount: @unchecked Sendable { var count = 0 }
-             : FilterUpdatePopupStatus.snapshot(groupIdentifier: group, now: now, lockDirectory: directory)
-           return [ok ? 1 : 0, states.firstIndex(of: view.state)!, Int(view.startedAt ?? 0), Int(view.finishedAt ?? 0)]
-         }
-+      case "swipeBack":
-+        var state = SwipeBackGestureState()
-+        func phaseOf(_ name: String) -> NSEvent.Phase {
-+          switch name {
-+          case "mayBegin": return .mayBegin
-+          case "began": return .began
-+          case "changed": return .changed
-+          case "ended": return .ended
-+          case "cancelled": return .cancelled
-+          default: return []
-+          }
-+        }
-+        func modeName(_ mode: SwipeBackGestureState.Mode) -> String {
-+          switch mode {
-+          case .idle: return "idle"
-+          case .pendingAxis: return "pending"
-+          case .tracking: return "tracking"
-+          case .committing: return "committing"
-+          }
-+        }
-+        func progressPermille(_ mode: SwipeBackGestureState.Mode) -> Int {
-+          if case .tracking(let p, _, let rm) = mode { return rm ? 0 : Int((p * 1000).rounded()) }
-+          return 0
-+        }
-+        return values.map { e -> [Any] in
-+          let op = e["op"] as! String
-+          var action = "none", stopped = false
-+          switch op {
-+          case "scroll":
-+            let axis = e["axis"] as! String
-+            let dx: CGFloat = axis == "back" ? 10 : 0
-+            let dy: CGFloat = axis == "other" ? 10 : 0
-+            let outcome = state.handleScroll(
-+              phase: phaseOf(e["phase"] as! String),
-+              hasMomentum: e.b("hasMomentum"),
-+              dx: dx,
-+              dy: dy,
-+              swipeEnabled: e.b("swipeEnabled"),
-+              reduceMotion: e.b("reduceMotionIn")
-+            )
-+            if outcome == .startTracking { action = "start" }
-+          case "track":
-+            let res = state.handleTrackUpdate(
-+              amount: CGFloat(e.n("amount")) / 1000.0,
-+              phase: phaseOf(e["phase"] as! String),
-+              isComplete: e.b("isComplete")
-+            )
-+            switch res {
-+            case .ignore: action = "none"; stopped = true
-+            case .update: action = "update"
-+            case .cancel(let s): action = "cancel"; stopped = s
-+            case .commit(let s): action = "commit"; stopped = s
-+            }
-+          case "finishCommit":
-+            state.finishCommit()
-+          case "abort":
-+            state.abort()
-+          default:
-+            preconditionFailure("unknown swipeBack op \(op)")
-+          }
-+          return [modeName(state.mode), action, progressPermille(state.mode), stopped ? 1 : 0]
-+        }
-       default: preconditionFailure("unknown policy suite \(suite)")
-       }
-     }
-```
-
-**File**: `scripts/proofs/README.md` (modified, +3/-0)
-```diff
-@@ -29,6 +29,9 @@ Stateful laws cover deferred uploads and per-key revision acknowledgment, along
- with the apply phase rail under out-of-order reports and failure/completion events.
- The info popover state machine covers click, selection, and dismissal sequences, with
- each token's anchor visibility as an input.
-+The swipe-back gesture state machine covers macOS scroll-axis locking, momentum
-+rejection, live finger tracking without premature commit while held, post-release
-+tail snapping, Reduce Motion release commits, and single-commit isolation.
- The foreground run gate covers its work count, run starts, and the queued resumes
- that finishing a run hands back.
- The headless rebuild gate's cooldowns, failure backoff and outcome recording are proven likewise, and
-```
-
-**File**: `scripts/proofs/policies.mjs` (modified, +138/-1)
-```diff
-@@ -508,8 +508,139 @@ const popupSteps = [
-     s => s.op.eq(5).and(s.st.ne(0), notLive(s))),
- ];
- 
-+// SwipeBackGestureState (wBlock/SwipeBackNavigation.swift): interactive macOS back-swipe state machine.
-+// Progress and amount are encoded in permille (0..1000): 300 = 0.30, 500 = 0.50, 995 = 0.995, 1000 = 1.00.
-+// Axis classifies a scroll event after accumulation: 'short' (< 8 pt), 'back' (>= 8 pt right-dominant), 'other' (vertical or left).
-+export const swipeOps = ['scroll', 'track', 'finishCommit', 'abort'];
-+export const swipePhases = ['none', 'mayBegin', 'began', 'changed', 'ended', 'cancelled'];
-+const swipeModes = ['idle', 'pending', 'tracking', 'committing'];
-+const swipeActions = ['none', 'start', 'update', 'cancel', 'commit'];
-+const swipeBase = rule('swipe back gesture')
-+  .inputs({
-+    op: oneOf(...swipeOps),
-+    phase: oneOf(...swipePhases),
-+    hasMomentum: bool,
-+    swipeEnabled: bool,
-+    reduceMotionIn: bool,
-+    axis: oneOf('short', 'back', 'other'),
-+    amount: nat,
-+    isComplete: bool,
-+  })
-+  .state({
-+    mode: oneOf(...swipeModes).from('idle'),
-+    didRelease: bool.from(false),
-+    reduceMotion: bool.from(false),
-+    progress: 0,
-+    action: oneOf(...swipeActions).from('none'),
-+    stopped: bool.from(false),
-+  })
-+  .assume(({ amount }) => amount.atMost(1000));
-+
-+function swipeStep(e, broken = '') {
-+  const active = e.mode.is('tracking').or(e.mode.is('committing'));
-+  const canScroll = broken === 'momentum'
-+    ? e.op.is('scroll').and(active.not())
-+    : e.op.is('scroll').and(active.not(), e.hasMomentum.not());
-+  const evalScroll = canScroll.and(e.phase.is('began').or(e.phase.is('changed').and(e.mode.is('pending'))));
-+  const starts = evalScroll.and(e.axis.is('back'), e.swipeEnabled);
-+  const goesPending = canScroll.and(e.phase.is('mayBegin').or(evalScroll.and(e.axis.is('short'))));
-+
-+  const isTracking = e.op.is('track').and(e.mode.is('tracking'));
-+  const rel = e.didRelease.or(e.phase.is('ended')).or(e.phase.is('cancelled'));
-+  const rm = e.reduceMotion;
-+
-+  const rmCompleteCommit = isTracking.and(rm, e.isComplete, e.amount.atLeast(500));
-+  const rmCompleteCancel = isTracking.and(rm, e.isComplete, e.amount.lt(500));
-+  const rmEndCommit = broken === 'waitForComplete'
-+    ? no
-+    : isTracking.and(rm, e.isComplete.not(), e.phase.is('ended'), e.amount.atLeast(300));
-+  const rmEndCancel = broken === 'waitForComplete'
-+    ? no
-+    : isTracking.and(rm, e.isComplete.not(), e.phase.is('ended'), e.amount.lt(300));
-+  const rmCancel = isTracking.and(rm, e.isComplete.not(), e.phase.is('cancelled'));
-+
-+  const normCompleteCommit = isTracking.and(rm.not(), e.isComplete, e.amount.atLeast(500));
-+  const normCompleteCancel = isTracking.and(rm.not(), e.isComplete, e.amount.lt(500));
-+  const normTailCommit = broken === 'commitWhileHolding'
-+    ? isTracking.and(rm.not(), e.isComplete.not(), e.amount.atLeast(995))
-+    : broken === 'waitForComplete'
-+      ? no
-+      : isTracking.and(rm.not(), e.isComplete.not(), rel, e.amount.atLeast(995));
-+
-+  const commits = rmCompleteCommit.or(rmEndCommit, normCompleteCommit, normTailCommit);
-+  const cancels = rmCompleteCancel.or(rmEndCancel, rmCancel, normCompleteCancel);
-+  const updates = isTracking.and(commits.not(), cancels.not());
-+  const stopped = rmEndCommit.or(rmEndCancel, rmCancel, normTailCommit, e.op.is('track').and(e.mode.is('tracking').not()));
-+
-+  const commitMode = broken === 'doubleCommit' ? e.mode.of('tracking') : e.mode.of('committing');
-+  const nextMode = when(
-+    e.op.is('abort'), e.mode.of('idle'),
-+    when(
-+      e.op.is('finishCommit'), when(e.mode.is('committing'), e.mode.of('idle'), e.mode),
-+      when(
-+        starts, e.mode.of('tracking'),
-+        when(
-+          goesPending, e.mode.of('pending'),
-+          when(
-+            canScroll, e.mode.of('idle'),
-+            when(
-+              commits, commitMode,
-+              when(cancels, e.mode.of('idle'), e.mode),
-+            ),
-+          ),
-+        ),
-+      ),
-+    ),
-+  );
-+
-+  return {
-+    mode: nextMode,
-+    didRelease: when(starts, no, when(updates, rel, when(nextMode.is('tracking'), e.didRelease, no))),
-+    reduceMotion: when(starts, e.reduceMotionIn, when(nextMode.is('tracking'), e.reduceMotion, no)),
-+    progress: when(
-+      starts, 0,
-+      when(
-+        updates, broken === 'waitForComplete' ? 0 : when(rm, 0, e.amount),
-+        when(nextMode.is('tracking'), e.progress, 0),
-+      ),
-+    ),
-+    action: when(
-+      starts, e.action.of('start'),
-+      when(commits, e.action.of('commit'), when(cancels, e.action.of('cancel'), when(updates, e.action.of('update'), e.action.of('none')))),
-+    ),
-+    stopped,
-+  };
-+}
-+
-+export const swipeRule = swipeBase.step(e => swipeStep(e));
-+const swipeInvariants = [
-+  swipeRule.law('progress stays within 0..1000', ({ progress }) => progress.atMost(1000)),
-+  swipeRule.law('didRelease is only true while tracking', ({ mode, didRelease }) => didRelease.implies(mode.is('tra
-```
-
-**File**: `scripts/proofs/verify.mjs` (modified, +69/-1)
-```diff
-@@ -5,7 +5,7 @@ import { mkdtempSync, readFileSync, writeFileSync, rmSync, readdirSync, existsSy
- import { tmpdir, homedir } from "node:os";
- import { join, resolve, dirname } from "node:path";
- import { fileURLToPath } from "node:url";
--import { decisions, uploadRule, revisionRule, railRule, gateRule, infoRule, headlessGateRule, headlessOps, pauseRule, popupRule, verifyProofs } from "./policies.mjs";
-+import { decisions, uploadRule, revisionRule, railRule, gateRule, infoRule, headlessGateRule, headlessOps, pauseRule, popupRule, swipeRule, verifyProofs } from "./policies.mjs";
- 
- const here = dirname(fileURLToPath(import.meta.url)),
-   root = resolve(here, "../..");
-@@ -336,6 +336,73 @@ machine(
-   },
- );
- 
-+const swipeInput = (op, o = {}) => ({
-+  op,
-+  phase: "none",
-+  hasMomentum: false,
-+  swipeEnabled: true,
-+  reduceMotionIn: false,
-+  axis: "short",
-+  amount: 0,
-+  isComplete: false,
-+  ...o,
-+});
-+const swipeScrolls = [
-+  swipeInput("scroll", { phase: "mayBegin" }),
-+  swipeInput("scroll", { phase: "began", axis: "short" }),
-+  swipeInput("scroll", { phase: "began", axis: "back" }),
-+  swipeInput("scroll", { phase: "began", axis: "back", reduceMotionIn: true }),
-+  swipeInput("scroll", { phase: "began", axis: "back", hasMomentum: true }),
-+  swipeInput("scroll", { phase: "began", axis: "back", swipeEnabled: false }),
-+  swipeInput("scroll", { phase: "began", axis: "other" }),
-+  swipeInput("scroll", { phase: "changed", axis: "back" }),
-+  swipeInput("scroll", { phase: "changed", axis: "other" }),
-+  swipeInput("scroll", { phase: "ended", axis: "back" }),
-+];
-+const swipeTracks = [
-+  swipeInput("track", { phase: "changed", amount: 400 }),
-+  swipeInput("track", { phase: "changed", amount: 996 }),
-+  swipeInput("track", { phase: "ended", amount: 250 }),
-+  swipeInput("track", { phase: "ended", amount: 350 }),
-+  swipeInput("track", { phase: "ended", amount: 996 }),
-+  swipeInput("track", { phase: "cancelled", amount: 400 }),
-+  swipeInput("track", { phase: "none", amount: 996 }),
-+  swipeInput("track", { phase: "none", amount: 0, isComplete: true }),
-+  swipeInput("track", { phase: "none", amount: 1000, isComplete: true }),
-+];
-+const swipeAlphabet = [...swipeScrolls, ...swipeTracks, swipeInput("finishCommit"), swipeInput("abort")];
-+const swipeDirected = [
-+  // Normal live hold, release, and tail snap.
-+  [
-+    swipeInput("scroll", { phase: "mayBegin" }),
-+    swipeInput("scroll", { phase: "changed", axis: "back" }),
-+    swipeInput("track", { phase: "changed", amount: 400 }),
-+    swipeInput("track", { phase: "changed", amount: 1000 }),
-+    swipeInput("track", { phase: "ended", amount: 600 }),
-+    swipeInput("track", { phase: "none", amount: 995 }),
-+    swipeInput("track", { phase: "none", amount: 1000, isComplete: true }),
-+    swipeInput("finishCommit"),
-+  ],
-+  // Reduce motion release commit and cancel.
-+  [
-+    swipeInput("scroll", { phase: "began", axis: "back", reduceMotionIn: true }),
-+    swipeInput("track", { phase: "changed", amount: 400 }),
-+    swipeInput("track", { phase: "ended", amount: 300 }),
-+    swipeInput("finishCommit"),
-+    swipeInput("scroll", { phase: "began", axis: "back", reduceMotionIn: true }),
-+    swipeInput("track", { phase: "ended", amount: 299 }),
-+  ],
-+];
-+machine(
-+  "swipeBack",
-+  swipeRule,
-+  [...traces(swipeAlphabet, 2), ...swipeDirected],
-+  (s) => {
-+    const d = swipeRule.decode(s);
-+    return [d.mode, d.action, d.progress, d.stopped ? 1 : 0];
-+  },
-+);
-+
- const temp = mkdtempSync(join(tmpdir(), "wblock-policy-proofs-"));
- try {
-   let products = process.env.WBLOCK_CORE_PRODUCTS;
-@@ -359,6 +426,7 @@ try {
-     "wBlock/ApplyChangesViewModel.swift",
-     "wBlock/Haptics.swift",
-     "wBlock/InfoPresentation.swift",
-+    "wBlock/SwipeBackNavigation.swift",
-     "scripts/proofs/PolicyProbe.swift",
-   ];
-   // The Swift probe compiles and runs in child processes while this process proves the laws.
-```
-
-**File**: `scripts/run-ci-tests.sh` (modified, +2/-0)
-```diff
-@@ -141,6 +141,8 @@ compile_direct_test list-display-order-sync \
-   wBlock/ListDisplayOrder.swift wBlock/StableSnapshot.swift scripts/test_list_display_order_sync.swift
- compile_direct_test popover-window-shield \
-   wBlock/InfoPresentation.swift wBlock/MacReorderableList.swift wBlock/Haptics.swift scripts/test_popover_window_shield.swift
-+compile_direct_test swipe-back-navigation \
-+  wBlock/SwipeBackNavigation.swift scripts/test_swipe_back_navigation.swift
- compile_direct_test info-popover-state \
-   wBlock/InfoPresentation.swift scripts/test_info_popover_state.swift
- compile_direct_test file-lock-suspension \
-```
-
-**File**: `scripts/test_swipe_back_navigation.swift` (added, +253/-0)
-```diff
-@@ -0,0 +1,253 @@
-+import SwiftUI
-+import AppKit
-+
-+private final class NavModel: ObservableObject {
-+    @Published var pushed = false
-+    var dismissCount = 0
-+}
-+
-+private struct FixtureView: View {
-+    @ObservedObject var model: NavModel
-+
-+    var body: some View {
-+        NavigationStack {
-+            Form {
-+                Section("Websites") {
-+                    Text("Site Settings")
-+                    Text("Element Zapper")
-+                }
-+                Section("Advanced") {
-+                    Text("View Logs")
-+                    Text("Background Diagnostics")
-+                }
-+            }
-+            .formStyle(.grouped)
-+            .swipeBackRootCompat()
-+            .navigationDestination(isPresented: $model.pushed) {
-+                Form {
-+                    Section("Site Settings") {
-+                        Text("example.com")
-+                        Text("improving.duckduckgo.com")
+@@ -82,13 +82,19 @@ struct AppTabView<Filters: View, Userscripts: View, Settings: View, Accessory: V
+         if #available(iOS 18.0, *) {
+             TabView(selection: $selection.value) {
+                 Tab("Filters", systemImage: "list.bullet.rectangle", value: 0) {
+-                    NavigationStack { filters }
++                    NavigationStack {
++                        filters.background(tabBarLayoutReconciler)
 +                    }
-+                }
-+                .formStyle(.grouped)
-+                .navigationTitle("Site Settings")
-+                .swipeBackNavigationCompat()
+                 }
+                 Tab(secondTabTitle, systemImage: "doc.text.fill", value: 1) {
+-                    NavigationStack { userscripts }
++                    NavigationStack {
++                        userscripts.background(tabBarLayoutReconciler)
++                    }
+                 }
+                 Tab("Settings", systemImage: "gear", value: 2) {
+-                    NavigationStack { settings }
++                    NavigationStack {
++                        settings.background(tabBarLayoutReconciler)
++                    }
+                 }
+             }
+         } else if #available(iOS 16.0, *) {
+@@ -120,6 +126,14 @@ struct AppTabView<Filters: View, Userscripts: View, Settings: View, Accessory: V
+             }
+         }
+     }
++
++    @available(iOS 18.0, *)
++    private var tabBarLayoutReconciler: some View {
++        FloatingTabBarLayoutReconciler()
++            .frame(width: 0, height: 0)
++            .allowsHitTesting(false)
++            .accessibilityHidden(true)
++    }
+     #endif
+ 
+     #if os(macOS)
+@@ -172,6 +186,70 @@ extension AppTabView where Accessory == EmptyView {
+ }
+ 
+ #if os(iOS)
++/// Reconciles iPadOS 18+ floating tab bar safe-area integration on initial
++/// launch. SwiftUI's `TabHostingController` is initially laid out by
++/// `UITabBarController` before its child `NavigationStack` registers, leaving
++/// `safeAreaInsets.top` inflated by the floating tab bar height (pushing both
++/// the navigation toolbar and scroll content down until `didBecomeActive`
++/// triggers a bar layout pass). Toggling `setTabBarHidden` once without
++/// animation before the first frame forces `UITabBarController` to recompute
++/// its integrated bar layout immediately (#1168).
++@available(iOS 18.0, *)
++private struct FloatingTabBarLayoutReconciler: UIViewControllerRepresentable {
++    func makeUIViewController(context: Context) -> ReconcilerViewController {
++        ReconcilerViewController()
++    }
++
++    func updateUIViewController(_ uiViewController: ReconcilerViewController, context: Context) {
++        uiViewController.reconcileIfNeeded()
++    }
++
++    final class ReconcilerViewController: UIViewController {
++        private var didReconcile = false
++
++        override func loadView() {
++            let emptyView = UIView(frame: .zero)
++            emptyView.isUserInteractionEnabled = false
++            emptyView.isHidden = true
++            view = emptyView
++        }
++
++        override func viewWillAppear(_ animated: Bool) {
++            super.viewWillAppear(animated)
++            reconcileIfNeeded()
++        }
++
++        override func viewDidLayoutSubviews() {
++            super.viewDidLayoutSubviews()
++            reconcileIfNeeded()
++        }
++
++        override func viewDidAppear(_ animated: Bool) {
++            super.viewDidAppear(animated)
++            reconcileIfNeeded()
++            didReconcile = true
++        }
++
++        func reconcileIfNeeded() {
++            guard !didReconcile,
++                  let tabBarController = tabBarController,
++                  let selected = tabBarController.selectedViewController,
++                  !tabBarController.isTabBarHidden,
++                  selected.children.contains(where: { $0 is UINavigationController }),
++                  selected.view.safeAreaInsets.top > tabBarController.view.safeAreaInsets.top + 1
++            else { return }
++
++            didReconcile = true
++            UIView.performWithoutAnimation {
++                tabBarController.setTabBarHidden(true, animated: false)
++                tabBarController.view.layoutIfNeeded()
++                tabBarController.setTabBarHidden(false, animated: false)
++                tabBarController.view.layoutIfNeeded()
 +            }
 +        }
 +    }
 +}
 +
-+private extension NSView {
-+    var descendants: [NSView] { [self] + subviews.flatMap(\.descendants) }
-+}
+ private struct TabBottomAccessoryCompat<Accessory: View>: ViewModifier {
+     let isEnabled: Bool
+     let accessory: () -> Accessory
+```
+
+---
+
+### Incident Patch 3: `0632d0a4` (2026-11-27)
+**Commit Message**: fix(auto-update): fix iPad foreground catch-up, metadata refresh, and applied count banner
+
+**File**: `scripts/proofs/PolicyProbe.swift` (modified, +25/-0)
+```diff
+@@ -171,6 +171,31 @@ final class ResumeCount: @unchecked Sendable { var count = 0 }
+           let result = ImportMetadataReview.userProvided(edited, automatic: automatic)
+           return ["override": result != nil, "cleared": result == ""]
+         }
++      case "persistedRunActive":
++        return values.map { e -> Values in
++          [
++            "active": SharedAutoUpdateManager.isPersistedRunActive(
++              persistedIsRunning: e.b("persisted"),
++              runningSince: Int64(e.n("runningSince")),
++              lastCheck: Int64(e.n("lastCheck")),
++              now: TimeInterval(e.n("now")),
++              staleInterval: TimeInterval(e.n("stale"))
++            )
++          ]
++        }
++      case "filterDueCheck":
++        return values.map { e -> Values in
++          [
++            "due": SharedAutoUpdateManager.isFilterDueForCheck(
++              force: e.b("force"),
++              hasPendingRevision: e.b("pending"),
++              lastChecked: Int64(e.n("lastChecked")),
++              expirySeconds: e.b("hasExpiry") ? TimeInterval(e.n("expiry")) : nil,
++              intervalSeconds: TimeInterval(e.n("interval")),
++              now: TimeInterval(e.n("now"))
++            )
++          ]
++        }
+       case "custom", "remote":
+         return values.map { e -> Values in
+           if suite == "custom" {
+```
+
+**File**: `scripts/proofs/policies.mjs` (modified, +42/-0)
+```diff
+@@ -211,6 +211,48 @@ decision('importReview', booleans('present','same','blank'),
+     m.law('an untouched field stays automatic', ({present}) => present.not(), o => o.override.not().and(o.cleared.not())),
+   ], e => ({override: e.present}));
+ 
++// SharedAutoUpdateManager.isPersistedRunActive: a stale flag left by a killed process stops counting as running.
++decision('persistedRunActive', {persisted:bool, runningSince:nat, lastCheck:nat, now:nat, stale:nat},
++  ({persisted,runningSince,lastCheck,now,stale}) => {
++    const started = when(runningSince.gt(0), runningSince, lastCheck);
++    return {active: persisted.and(now.atMost(started.plus(stale)))};
++  }, m => [
++    m.law('cleared flag is never active', ({persisted}) => persisted.not(), o => o.active.not()),
++    m.law('stale runningSince expires', ({runningSince,now,stale}) => runningSince.gt(0).and(now.gt(runningSince.plus(stale))), o => o.active.not()),
++    m.law('legacy flag without runningSince expires by lastCheck', ({runningSince,lastCheck,now,stale}) => runningSince.eq(0).and(now.gt(lastCheck.plus(stale))), o => o.active.not()),
++    m.law('recent running flag stays active', ({persisted,runningSince,now,stale}) => persisted.and(runningSince.gt(0), now.atMost(runningSince.plus(stale))), o => o.active),
++  ], [
++    e => ({active: e.persisted.or(e.persisted.not())}),
++    e => ({active: e.persisted}),
++    e => ({active: e.persisted.and(e.runningSince.eq(0).or(e.now.atMost(e.runningSince.plus(e.stale))))}),
++    e => ({active: e.persisted.and(e.persisted.not())}),
++  ]);
 +
-+@main @MainActor
-+struct SwipeBackNavigationTests {
-+    static func pump(_ seconds: TimeInterval = 0.2) {
-+        RunLoop.main.run(until: Date().addingTimeInterval(seconds))
++// SharedAutoUpdateManager.isFilterDueForCheck: non-forced checks honor short list expiry for partial-run resume,
++// but never skip a list past the user's configured auto-update interval.
++decision('filterDueCheck', {force:bool, pending:bool, hasExpiry:bool, lastChecked:nat, expiry:nat, interval:nat, now:nat},
++  ({force,pending,hasExpiry,lastChecked,expiry,interval,now}) => {
++    const effective = when(interval.gt(0), min(expiry, interval), expiry);
++    return {due: force.or(pending, lastChecked.eq(0), hasExpiry.not(), now.atLeast(lastChecked.plus(effective)))};
++  }, m => [
++    m.law('forced runs always check every list', ({force}) => force, o => o.due),
++    m.law('pending revisions always check', ({pending}) => pending, o => o.due),
++    m.law('never-checked lists always check', ({lastChecked}) => lastChecked.eq(0), o => o.due),
++    m.law('lists without expiry always check', ({hasExpiry}) => hasExpiry.not(), o => o.due),
++    m.law('lists are never skipped past configured interval', ({interval,lastChecked,now}) => interval.gt(0).and(now.atLeast(lastChecked.plus(interval))), o => o.due),
++    m.law('recently checked lists within both expiry and interval are skipped',
++      ({force,pending,lastChecked,hasExpiry,expiry,interval,now}) =>
++        force.not().and(pending.not(), lastChecked.gt(0), hasExpiry, now.lt(lastChecked.plus(expiry)), interval.eq(0).or(now.lt(lastChecked.plus(interval)))),
++      o => o.due.not()),
++  ], [
++    e => ({due: e.pending.or(e.lastChecked.eq(0), e.hasExpiry.not(), e.now.atLeast(e.lastChecked.plus(when(e.interval.gt(0), min(e.expiry, e.interval), e.expiry))))}),
++    e => ({due: e.force.or(e.lastChecked.eq(0), e.hasExpiry.not(), e.now.atLeast(e.lastChecked.plus(when(e.interval.gt(0), min(e.expiry, e.interval), e.expiry))))}),
++    e => ({due: e.force.or(e.pending, e.hasExpiry.not(), e.now.atLeast(e.lastChecked.plus(when(e.interval.gt(0), min(e.expiry, e.interval), e.expiry))))}),
++    e => ({due: e.force.or(e.pending, e.lastChecked.eq(0), e.now.atLeast(e.lastChecked.plus(when(e.interval.gt(0), min(e.expiry, e.interval), e.expiry))))}),
++    e => ({due: e.force.or(e.pending, e.lastChecked.eq(0), e.hasExpiry.not(), e.now.atLeast(e.lastChecked.plus(e.expiry)))}),
++    e => ({due: e.force.or(e.force.not())}),
++  ]);
++
+ export const upload = rule('deferred uploads').inputs({take:bool,syncing:bool,trigger:nat}).state({pending:0,kind:0,value:0});
+ const uploadStep = ({take,syncing,trigger,pending}) => ({
+   pending:when(take,0,when(syncing,trigger.plus(1),pending)), kind:when(take,2,when(syncing,1,0)),
+```
+
+**File**: `scripts/proofs/verify.mjs` (modified, +18/-0)
+```diff
+@@ -81,6 +81,24 @@ for (const e of flags(["custom", "userName", "titlePresent", "titleBlank", "user
+     version: o.versionUnknown ? "Unknown" : "2025.1",
+   }));
+ for (const e of flags(["present", "same", "blank"])) decision("importReview", [e]);
++{
++  const values = [];
++  for (const persisted of [false, true])
++    for (const runningSince of [0, 50, 90, 110])
++      for (const lastCheck of [0, 50, 90, 110])
++        for (const stale of [0, 10, 50])
++          values.push({ persisted, runningSince, lastCheck, now: 100, stale });
++  decision("persistedRunActive", values);
++}
++{
++  const values = [];
++  for (const e of flags(["force", "pending", "hasExpiry"]))
++    for (const lastChecked of [0, 50, 90, 100])
++      for (const expiry of [5, 20, 60])
++        for (const interval of [0, 10, 40])
++          values.push({ ...e, lastChecked, expiry, interval, now: 100 });
++  decision("filterDueCheck", values);
++}
+ for (const e of flags(["tomb", "local", "remote", "existed"]))
+   for (const deletedAt of [0, 99, 100, 101])
+     for (const remoteAt of [0, 99, 100, 101]) decision("custom", [{ ...e, deletedAt, remoteAt }]);
+```
+
+**File**: `scripts/test_apply_progress_presentation.swift` (modified, +10/-0)
+```diff
+@@ -142,6 +142,16 @@ import Foundation
+     precondition(
+       ApplyProgressPresentation.make(from: vm.state).progress == 1
+         && vm.state.phases.allSatisfy { $0.status == .complete })
++    precondition(ApplyProgressPresentation.appliedBannerTitle(filterUpdates: 0, scriptUpdates: 0) == String(localized: "Changes Applied"))
++    precondition(ApplyProgressPresentation.appliedBannerTitle(filterUpdates: -2, scriptUpdates: 0) == String(localized: "Changes Applied"))
++    precondition(ApplyProgressPresentation.appliedBannerTitle(filterUpdates: 1, scriptUpdates: 0) == String(localized: "1 Update Applied"))
++    precondition(ApplyProgressPresentation.appliedBannerTitle(filterUpdates: 0, scriptUpdates: 1) == String(localized: "1 Update Applied"))
++    precondition(
++      ApplyProgressPresentation.appliedBannerTitle(filterUpdates: 21, scriptUpdates: 0)
++        == String.localizedStringWithFormat(String(localized: "%d Updates Applied"), 21))
++    precondition(
++      ApplyProgressPresentation.appliedBannerTitle(filterUpdates: 2, scriptUpdates: 1)
++        == String.localizedStringWithFormat(String(localized: "%d Updates Applied"), 3))
+     print("PASS: progress formatting, numeric boundaries, accessibility, and setters")
+   }
+ }
+```
+
+**File**: `wBlock/AppDelegate.swift` (modified, +88/-58)
+```diff
+@@ -77,8 +77,18 @@ class AppDelegate: NSObject {
+     /// SwiftUI's delegate adaptor wraps this object, so `UIApplication.shared.delegate`
+     /// is not an `AppDelegate` on iOS.
+     private(set) static weak var current: AppDelegate?
+-    var filterManager: AppFilterManager?
++    private var filterManagerWaiters: [CheckedContinuation<AppFilterManager, Never>] = []
++    var filterManager: AppFilterManager? {
++        didSet {
++            guard let filterManager, !filterManagerWaiters.isEmpty else { return }
++            let waiters = filterManagerWaiters
++            filterManagerWaiters = []
++            waiters.forEach { $0.resume(returning: filterManager) }
++        }
++    }
+     var hasPendingApplyNotification = false
++    /// Trigger saved when a foreground catch-up was skipped for an upgrade rebuild or active apply.
++    private var deferredForegroundCatchUpTrigger: String?
+ 
+     override init() {
+         super.init()
+@@ -113,6 +123,16 @@ class AppDelegate: NSObject {
+     private let backgroundProcessingIdentifier = "com.alexanderskula.wblock.filter-processing"
+ 
+     #endif
++
++    nonisolated static func shouldDeferForegroundCatchUp(skipReason: String) -> Bool {
++        skipReason == "awaiting_app_upgrade" || skipReason == "foreground_apply"
 +    }
 +
-+    static func testStateMachine() {
-+        // 1. Momentum events never start a swipe.
-+        var state = SwipeBackGestureState()
-+        precondition(
-+            state.handleScroll(phase: .began, hasMomentum: true, dx: 24, dy: 0, swipeEnabled: true, reduceMotion: false) == .passThrough
-+                && state.mode == .idle,
-+            "momentum events must never start tracking"
-+        )
-+
-+        // 2. Vertical scrolls reject and return to idle.
-+        precondition(
-+            state.handleScroll(phase: .began, hasMomentum: false, dx: 2, dy: 3, swipeEnabled: true, reduceMotion: false) == .passThrough
-+                && state.mode == .pendingAxis(dx: 2, dy: 3)
-+        )
-+        precondition(
-+            state.handleScroll(phase: .changed, hasMomentum: false, dx: 1, dy: 10, swipeEnabled: true, reduceMotion: false) == .passThrough
-+                && state.mode == .idle,
-+            "vertical drag must return to idle"
-+        )
-+
-+        // 3. Leftward horizontal swipe rejects.
-+        precondition(
-+            state.handleScroll(phase: .began, hasMomentum: false, dx: -12, dy: 0, swipeEnabled: true, reduceMotion: false) == .passThrough
-+                && state.mode == .idle,
-+            "leftward swipe must not start back tracking"
-+        )
-+
-+        // 4. Disabled system preference rejects.
-+        precondition(
-+            state.handleScroll(phase: .began, hasMomentum: false, dx: 12, dy: 0, swipeEnabled: false, reduceMotion: false) == .passThrough
-+                && state.mode == .idle
-+        )
-+
-+        // 5. Fast Magic Mouse flick exceeding threshold on .began starts tracking immediately.
-+        precondition(
-+            state.handleScroll(phase: .began, hasMomentum: false, dx: 10, dy: 1, swipeEnabled: true, reduceMotion: false) == .startTracking
-+                && state.isActiveTracking
-+        )
-+
-+        // 6. Holding finger steady tracks live progress and never commits prematurely.
-+        precondition(state.handleTrackUpdate(amount: 0.4, phase: .changed, isComplete: false) == .update(progress: 0.4))
-+        precondition(state.handleTrackUpdate(amount: 0.4, phase: .changed, isComplete: false) == .update(progress: 0.4))
-+        precondition(state.handleTrackUpdate(amount: 1.0, phase: .changed, isComplete: false) == .update(progress: 1.0))
-+
-+        // 7. Releasing and settling past tailSnapThreshold snaps and commits once.
-+        precondition(state.handleTrackUpdate(amount: 0.996, phase: .ended, isComplete: false) == .commit(stop: true))
-+        precondition(state.mode == .committing)
-+        // Stray callbacks while committing are ignored and never double-commit.
-+        precondition(state.handleTrackUpdate(amount: 1.0, phase: [], isComplete: true) == .ignore)
-+        precondition(state.handleScroll(phase: .began, hasMomentum: false, dx: 20, dy: 0, swipeEnabled: true, reduceMotion: false) == .passThrough)
-+        state.finishCommit()
-+        precondition(state.mode == .idle)
-+
-+        // 8. Releasing early settles back and cancels without committing.
-+        precondition(state.handleScroll(phase: .mayBegin, hasMomentum: false, dx: 0, dy: 0, swipeEnabled: true, reduceMotion: false) == .passThrough)
-+        precondition(state.handleScroll(phase: .changed, hasMomentum: false, dx: 9, dy: 0, swipeEnabled: true, reduceMotion: false) == .startTracking)
-+        precondition(state.handleTrackUpdate(amount: -0.35, phase: .changed, isComplete: false) == .update(progress: 0.35))
-+        precondition(state.handleTrackUpdate(amount: 
-```
-
-**File**: `wBlock/SettingsView.swift` (modified, +1/-0)
-```diff
-@@ -955,6 +955,7 @@ struct SettingsView: View {
-             // can scroll to them in a page that has grown long (#999).
-             ScrollViewReader { proxy in
-                 settingsList
-+                    .swipeBackRootCompat()
-                     .toolbar {
-                         PauseBlockingToolbarItem(
-                             filterManager: filterManager,
-```
-
-**File**: `wBlock/SwipeBackNavigation.swift` (modified, +587/-53)
-```diff
-@@ -1,11 +1,11 @@
- import SwiftUI
- 
- // NavigationStack on macOS pops only through the toolbar back button. This
--// gives a pushed page the trackpad gesture Safari and Finder use: a two-finger
--// swipe under the "Swipe between pages" preference (tracked through scroll
--// events, so it follows natural scrolling and bounces back when released
--// early), a three-finger swipe delivered as a gesture event, or Command-[ as
--// in Safari. iOS keeps the interactive pop its navigation stack already provides.
-+// gives a pushed page the fluid interactive swipe Safari and Finder use: a
-+// one-finger Magic Mouse or two-finger Trackpad scroll swipe under "Swipe
-+// between pages" that tracks the finger live and holds steady in place, a
-+// three-finger swipe gesture, or Command-[ as in Safari. iOS keeps the
-+// interactive pop its navigation stack already provides.
- extension View {
-     @ViewBuilder
-     func swipeBackNavigationCompat() -> some View {
-@@ -15,49 +15,460 @@ extension View {
-         self
-         #endif
-     }
-+
-+    @ViewBuilder
-+    func swipeBackRootCompat() -> some View {
-+        #if os(macOS)
-+        background(SwipeBackRootSnapshotMonitor())
-+        #else
-+        self
-+        #endif
++    func triggerDeferredForegroundCatchUpIfNeeded() {
++        guard let trigger = deferredForegroundCatchUpTrigger else { return }
++        deferredForegroundCatchUpTrigger = nil
++        runForegroundAutoUpdate(trigger: trigger, forceWhenOverdue: true, logSchedule: false)
 +    }
  }
  
- #if os(macOS)
- import AppKit
+ private extension AppDelegate {
+@@ -137,6 +157,70 @@ private extension AppDelegate {
+         )
+     }
  
-+/// Pure state machine governing horizontal back-swipe detection and live
-+/// tracking progress so the gesture lifecycle is deterministic and testable.
-+struct SwipeBackGestureState: Equatable {
-+    enum Mode: Equatable {
-+        case idle
-+        case pendingAxis(dx: CGFloat, dy: CGFloat)
-+        case tracking(progress: CGFloat, didRelease: Bool, reduceMotion: Bool)
-+        case committing
++    private func waitForFilterManagerReady() async {
++        let manager: AppFilterManager = if let filterManager {
++            filterManager
++        } else {
++            await withCheckedContinuation { filterManagerWaiters.append($0) }
++        }
++        await manager.waitUntilReady()
 +    }
 +
-+    enum ScrollOutcome: Equatable {
-+        case passThrough
-+        case startTracking
-+    }
++    /// Runs foreground catch-up once the filter manager finishes launch setup so progress
++    /// updates are connected and an upgrade rebuild is not racing the scheduler. If skipped
++    /// for an upgrade rebuild or foreground apply, remembers the trigger to run right after.
++    private func runForegroundAutoUpdate(
++        trigger: String,
++        forceWhenOverdue: Bool,
++        logSchedule: Bool
++    ) {
++        #if os(macOS)
++        guard !HeadlessLaunch.isHeadlessProcess else { return }
++        #endif
++        guard !BlockingPauseStore.isPaused(.filters) else { return }
 +
-+    enum TrackAction: Equatable {
-+        case ignore
-+        case update(progress: CGFloat)
-+        case cancel(stop: Bool)
-+        case commit(stop: Bool)
-+    }
++        // The catch-up recompiles every list. At the UI's inherited priority it
++        // stalled scrolling for seconds right after launch, so it yields the CPU.
++        Task(priority: .utility) {
++            await self.waitForFilterManagerReady()
++            let status = await SharedAutoUpdateManager.shared.nextScheduleStatus()
++            let isDueSoon = status.remaining.map { $0 < self.dueSoonThresholdSeconds } ?? false
++            let shouldForce: Bool
++            let catchUpReason: AutoUpdateDiagnosticResult?
++            if forceWhenOverdue {
++                shouldForce = status.isOverdue || (isDueSoon && !status.isRunning)
++                catchUpReason = shouldForce ? (status.isOverdue ? .overdue : .dueSoon) : nil
++            } else {
++                let oneHourInSeconds: TimeInterval = 3600
++                let isSignificantlyOverdue = status.remaining == 0
++                    && status.scheduledAt.map { Date().timeIntervalSince($0) > oneHourInSeconds } ?? false
++                shouldForce = isSignificantlyOverdue && !status.isRunning
++                catchUpReason = shouldForce ? .overdue : nil
++            }
 +
-+    /// A swipe declares its axis once this far along; shorter drags stay
-+    /// ambiguous so a slow vertical scroll does not start a back gesture.
-+    static let axisDecisionDistance: CGFloat = 8
-+    static let commitThreshold: CGFloat = 0.5
-+    /// Once the finger is released and AppKit's settle animation has slid the
-+    /// page 99.5% off-screen, snap cleanly instead of waiting out the sub-pixel tail.
-+    static let tailSnapThreshold: CGFloat = 0.995
-+    static let reduceMotionReleaseThreshold: CGFloat = 0.3
++            let outcome: SharedAutoUpdateManager.AutoUpdateRunOutcome
++            if shouldForce {
++                os_log("App active with overdue/due update (%{public}@) - forcing update", type: .info, trigger)
++                outcome = await self.runForcedAutoUpdate(trigger: trigger)
++            } else {
++                outcome = await SharedAutoUpdateManager.shared.maybeRunAutoUpdate(trigger: trigger)
++            }
 +
-+    private(set) var mode: Mode = .idle
-+
-+    var isActiveTracking: Bool {
-+        switch mode {
-+        case .tracking, .committing:
-+            return true
-+        case .idle, .pendingAxis:
-+            return false
-+        }
-+    }
-+
-+    mutating func handleScroll(
-+        phase: NSEvent.Phase,
-+        hasMomentum: Bool,
-+        dx: CGFloat,
-+        dy: CGFloat,
-+        swipeEnabled: Bool,
-+        reduceMotion: Bool
-+    ) -> ScrollOutcome {
-+        guard !isActiveTracking, !hasMomentum else { return .passThrough }
-+
-+        switch phase {
-+        case .mayBegin:
-+            mode = .pendingAxis(dx: 0, dy: 0)
-+            return .passThrough
-+        case .began:
-+            return evaluateAxis(dx: dx, dy: dy, swipeEnabled: swipeEnabled, reduceMotion: reduceMotion)
-+        case .changed:
-+            guard case .pendingAxis(let accX, let accY) = mode else { return .passThrough }
-+            return evaluateAxis(
-+                dx: accX + dx,
-+                dy: accY + dy,
-+                swipeEnabled: swipeEnabled,
-+                reduceMotion: reduceMotion
-+            )
-+        default:
-+            mode = .idle
-+            return .passThrough
-+        }
-+    }
-+
-+    private mutating func evaluateAxis(
-+        dx: CGFloat,
-+        dy: CGFloat,
-+        swipeEnabled: Bool,
-+        reduceMotion: Bool
-+    ) -> ScrollOutcome {
-+        guard max(abs(dx), abs(dy)) >= Self.axisDecisionDistance else {
-+            mode = .pendingAxis(dx: dx, dy: dy)
-+            return .passThrough
-+        }
-+        guard abs(dx) > abs(dy), dx > 0, swipeEnabled else {
-+            mode = .idle
-+            return .passThrough
-+        }
-+        mode = .tracking(progress: 0, didRelease: false, reduceMotion: reduceMotion)
-+        return .startTracking
-+    }
-+
-+    mutating func handleTrackUpdate(
-+        amount: CGFloat,
-+        phase: NSEvent.Phase,
-+        isComplete: Bool
-+    ) -> TrackAction {
-+        guard case .tracking(_, var didRelease, let reduceMotion) = mode else {
-+            return .ignore
-+        }
-+        let progress = min(max(abs(amount), 0), 1)
-+        if phase == .ended || phase == .cancelled {
-+            didRelease = true
-+        }
-+
-+        if reduceMotion {
-+            if isComplete {
-+                if progress >= Self.commitThreshold {
-+                    mode = .committing
-+                    return .commit(stop: false)
++            if case .skipped(let reason) = outcome {
++                if Self.shouldDeferForegroundCatchUp(skipReason: reason) {
++                    await MainActor.run { self.deferredForegroundCatchUpTrigger = trigger }
 +                }
-+                mode = .idle
-+                return .cancel(stop: false)
-+           
++            } else if let catchUpReason {
++                await ProtobufDataManager.shared.recordAutoUpdateForegroundCatchUp(reason: catchUpReason)
++            }
++
++            await self.showOverLimitFailure(after: outcome)
++            if logSchedule {
++                await ConcurrentLogManager.shared.info(.autoUpdate, scheduleMessage(from: status), metadata: [:])
++            }
++        }
++    }
++
+     @MainActor
+     func configuredAutoUpdateIntervalHours(defaultValue: Double = 6.0, minimum: Double = 1.0) -> Double {
+         let storedInterval = ProtobufDataManager.shared.autoUpdate
+```
+
+**File**: `wBlock/AppFilterManager+ApplyPipeline.swift` (modified, +9/-1)
+```diff
+@@ -290,7 +290,15 @@ extension AppFilterManager {
+             // when the run was cancelled before it committed. A refused commit keeps the
+             // run's counts on screen instead (see saveRuleCounts).
+             refreshRuleCountsFromStore()
+-            Task { await SharedAutoUpdateManager.shared.endForegroundWork() }
++            let shouldTriggerDeferredCatchUp = lastApplySucceeded && !hasError
++            Task {
++                await SharedAutoUpdateManager.shared.endForegroundWork()
++                if shouldTriggerDeferredCatchUp {
++                    await MainActor.run {
++                        AppDelegate.current?.triggerDeferredForegroundCatchUpIfNeeded()
++                    }
++                }
++            }
+         }
+         ApplyCancellation.reset()
+         let applyTask = Task {
+```
+
+**File**: `wBlock/AppFilterManager+RuleCounts.swift` (modified, +1/-0)
+```diff
+@@ -86,6 +86,7 @@ extension AppFilterManager {
+     func refreshRuleCountsOnForeground() async {
+         _ = await dataManager.refreshFromDiskIfModified()
+         refreshRuleCountsFromStore()
++        await adoptPersistedDownloadMetadata()
+     }
+ 
+     /// Commits the in-memory counts to the store. Callers await it, so the store leads
+```
+
+**File**: `wBlock/AppFilterManager.swift` (modified, +43/-15)
+```diff
+@@ -576,6 +576,7 @@ class AppFilterManager: ObservableObject {
+ 
+         self.pausedComponents = BlockingPauseStore.pausedComponents()
+         self.isBlockingPaused = !self.pausedComponents.isEmpty
++        SharedAutoUpdateManager.runProgressHandler = { [weak self] in self?.showAutoUpdateProgress($0) }
+         registerResumeRequestObserver()
+         registerFilterUpdateRequestObserver()
+ 
+@@ -922,7 +923,6 @@ class AppFilterManager: ObservableObject {
+     @discardableResult
+     func setup() -> Task<Void, Never>? {
+         filterUpdater.filterListManager = self
+-        SharedAutoUpdateManager.runProgressHandler = { [weak self] in self?.showAutoUpdateProgress($0) }
+ 
+         // Load filter lists from protobuf data manager. Keep the in-memory
+         // boundary unique even when older or concurrent data supplies repeats.
+@@ -1289,8 +1289,12 @@ class AppFilterManager: ObservableObject {
+         var lists = filterLists
+         var changed = false
+         for index in lists.indices {
+-            guard let newer = stored[lists[index].id], let date = newer.lastUpdated,
+-                  date > (lists[index].lastUpdated ?? .distantPast) else { continue }
++            guard let newer = stored[lists[index].id], let date = newer.lastUpdated else { continue }
++            let hasNewerDate = date > (lists[index].lastUpdated ?? .distantPast)
++            let hasMetadataChange = newer.version != lists[index].version
++                || newer.sourceRuleCount != lists[index].sourceRuleCount
++                || newer.uniqueRuleCount != lists[index].uniqueRuleCount
++            guard hasNewerDate || (date == lists[index].lastUpdated && hasMetadataChange) else { continue }
+             lists[index].version = newer.version
+             lists[index].lastUpdated = date
+             lists[index].sourceRuleCount = newer.sourceRuleCount
+@@ -1304,23 +1308,47 @@ class AppFilterManager: ObservableObject {
+ 
+     private func showAutoUpdateProgress(_ progress: SharedAutoUpdateManager.RunProgress) {
+         let sheet = applyProgressViewModel
+-        if progress == .finished {
++        if case .finished(let completion) = progress {
+             guard isAutoUpdateRunning else { return }
+             isAutoUpdateRunning = false
+             refreshRuleCountsFromStore()
+-            Task { await adoptPersistedDownloadMetadata() }
+-            if autoApplyWaitingForAutoUpdate {
+-                // Hand the open sheet to the rebuild instead of closing it and
+-                // floating a second "Applying filters" card over the app.
+-                autoApplyWaitingForAutoUpdate = false
+-                if hasUnappliedChanges, !isLoading, !isApplyInFlight, !pausedComponents.contains(.filters) {
+-                    Task { await self.performFilterUpdate(checkForUpdates: false, downloadMissing: true) }
++            let shouldFollowUpApply = autoApplyWaitingForAutoUpdate
++            autoApplyWaitingForAutoUpdate = false
++            let ownedSheet = autoUpdateOwnsProgressSheet
++            let wasWatching = showingApplyProgressSheet
++            Task { @MainActor [weak self] in
++                guard let self else { return }
++                await self.adoptPersistedDownloadMetadata()
++                if shouldFollowUpApply,
++                   self.hasUnappliedChanges, !self.isLoading, !self.isApplyInFlight, !self.pausedComponents.contains(.filters) {
++                    // Hand the open sheet to the rebuild instead of closing it and
++                    // floating a second "Applying filters" card over the app.
++                    await self.performFilterUpdate(checkForUpdates: false, downloadMissing: true)
+                     return
+                 }
+-            }
+-            if autoUpdateOwnsProgressSheet {
+-                sheet.updateIsLoading(false)
+-                showingApplyProgressSheet = false
++                if ownedSheet {
++                    let updatedFilters = completion?.updatedFilters ?? 0
++                    let updatedScripts = completion?.updatedScripts ?? 0
++                    let failedScripts = completion?.failedScripts ?? 0
++                    sheet.updateFilterUpdatesFound(updatedFilters)
++                    sheet.updateScriptsUpdateResult(updated: updatedScripts, failed: failedScripts)
++                    let totalUpdated = updatedFilters + updatedScripts
++                    if let completion, totalUpdated > 0 {
++                        sheet.markFinished()
++                        self.showingApplyProgressSheet = false
++                        if !wasWatching,
++                           UserDefaults.standard.string(forKey: AppMode.storageKey) == AppMode.advanced.rawValue,
++                           !sheet.state.resultNeedsAttention, self.failedReloadTargets.isEmpty {
++                            self.showingAppliedBanner = true
++                        }
++                    } else {
++                        sheet.updateIsLoading(false)
++                        self.showingApplyProgres
 ```
 
 #### Recent Merged Pull Requests:
@@ -3566,33 +2915,68 @@ Replace the delayed isComplete-only dismiss in SwipeBackNavigation with a live C
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. click macOS rows for info, add AdGuard Mini system-wide note, and harden popup/z
+## X. ui): use pause.fill icon with active blue fill on Pause Blocking toolbar button
 
 **RULE**:
-When implementing operations in `Adblock_Comparison.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `wBlock/SettingsView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6aca811d`: click macOS rows for info, add AdGuard Mini system-wide note, and harden popup/zapper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d35480a2`: ui): use pause.fill icon with active blue fill on Pause Blocking toolbar button. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Adblock_Comparison.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `wBlock/SettingsView.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-Mini has six content blockers (General, Privacy, Social, Security, Other, Custom) for a ceiling of 900,000 rules. Filter categories, custom lists, user rules, element blocking, and issue reporting are free. Pro adds real-time filter updates, AdGuard Extra for harder anti-adblock cases, and a few advanced filtering features. Starting in v3.0, Mini also includes an experimental system-wide protection option for macOS 26 and later (with an AdGuard license) built on Apple's URL Filters API with Private Information Retrieval.
-| System-wide | No | No | Filtr (paid, OS 26) | Mini (experimental, paid, macOS 26+), DNS on iOS |
+    private func setPaused(_ pause: Bool) {
+        if pause {
+        Task { await filterManager.setBlockingPaused(pause) }
+        let pauseBinding = Binding(
+            get: { isPaused },
+            set: { newValue in
+                guard newValue != isPaused else { return }
+                setPaused(newValue)
+            }
+        )
+        return Toggle(isOn: pauseBinding) {
+            Label(title, systemImage: "pause.fill")
+        .toggleStyle(.button)
+            let menu = Menu {
+                Label(title, systemImage: "pause.fill")
+                setPaused(!isPaused)
+
+            if isPaused {
+                menu.buttonStyle(.borderedProminent)
+            } else {
+                menu
+            }
+            Toggle(isOn: pauseBinding) {
+                Label(title, systemImage: "pause.fill")
+            .toggleStyle(.button)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-Mini has six content blockers (General, Privacy, Social, Security, Other, Custom) for a ceiling of 900,000 rules. Filter categories, custom lists, user rules, element blocking, and issue reporting are free. Pro adds real-time filter updates, AdGuard Extra for harder anti-adblock cases, and a few advanced filtering features.
-| System-wide | No | No | Filtr (paid, OS 26) | DNS on iOS |
+    private func toggle(isPaused: Bool) {
+        if !isPaused {
+        Task { await filterManager.setBlockingPaused(!isPaused) }
+        return Button {
+            toggle(isPaused: isPaused)
+        } label: {
+            Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
+            Menu {
+                Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
+                toggle(isPaused: isPaused)
+            Button {
+                toggle(isPaused: isPaused)
+            } label: {
+                Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6aca811d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d35480a2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

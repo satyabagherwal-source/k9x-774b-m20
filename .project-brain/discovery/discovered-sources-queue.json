@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T04:48:53.027Z",
+  "updated_at": "2026-11-28T04:57:46.114Z",
   "stats": {
-    "total_discovered": 10745,
-    "approved_pending_harvest": 10198,
+    "total_discovered": 10746,
+    "approved_pending_harvest": 10199,
     "harvested_count": 0,
     "rejected_count": 547,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10211,
+      "COMMUNITY_AND_EXPERT": 10212,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
@@ -232588,6 +232588,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md",
         "fileName": "hf-ai-sage-gigachat4-37b-a4b-learnings.md"
+      }
+    },
+    "SRC-25E5DFED6C26": {
+      "id": "SRC-25E5DFED6C26",
+      "url": "https://debug.challenges.cloudflare.com/",
+      "title": "https://debug.challenges.cloudflare.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:57:46.114Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
+        "fileName": "0xcub3-wblock-learnings.md"
       }
     }
   }

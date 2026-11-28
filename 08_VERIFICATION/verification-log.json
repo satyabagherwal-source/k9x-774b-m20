@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-AVY7",
-    "timestamp": "2026-11-26T15:50:06.655Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "2ea8c522e14c9fd87165a431c97dd187f35e33273af2c0fb10323f4d0653ea66",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-B85B",
-    "timestamp": "2026-11-26T15:50:22.463Z",
-    "repository": "meilisearch/meilisearch",
-    "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "d4d77b305010dc6ee153d3538c6caf48265dc3bbb1b5a4ca3dee028b4791a579",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-NPAZ",
     "timestamp": "2026-11-26T16:00:04.571Z",
     "repository": "PSRben/VisionHOPE",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "8b451207fc0e7a7d03090fa8822f27d5f9cc0b335c34d1182a9c4c7b0d6349d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-VEW5",
+    "timestamp": "2026-11-28T04:57:33.989Z",
+    "repository": "thinkingmachines/Inkling-2-Mini",
+    "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
+    "contentHash": "a9ef6070a1513e2043a3184ad5fa98706128e8b5b171ff255da12508c68d78d2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-VKID",
+    "timestamp": "2026-11-28T04:57:41.269Z",
+    "repository": "0xCUB3/wBlock",
+    "learningId": "learn-github-0xcub3-wblock",
+    "contentHash": "98b763b94cad1990e449eb6c969cc81bdc0ba7b1d8849c0c6939890d4222cda4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

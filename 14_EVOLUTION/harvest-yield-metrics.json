@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T04:48:17.860Z",
-  "total_cycles_completed": 13263,
-  "total_learnings_persisted": 13263,
-  "total_rules_promoted": 11958,
+  "last_updated": "2026-11-28T04:57:41.287Z",
+  "total_cycles_completed": 13265,
+  "total_learnings_persisted": 13265,
+  "total_rules_promoted": 11959,
   "history": [
-    {
-      "timestamp": "2026-11-27T10:51:52.462Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T10:51:56.111Z",
-      "repository": "MelnixDev/seo-crawl-audit",
-      "learningId": "learn-github-melnixdev-seo-crawl-audit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T10:51:56.644Z",
       "repository": "CrossPaste/crosspaste-desktop",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T04:48:17.860Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:57:34.008Z",
+      "repository": "thinkingmachines/Inkling-2-Mini",
+      "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:57:41.287Z",
+      "repository": "0xCUB3/wBlock",
+      "learningId": "learn-github-0xcub3-wblock",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

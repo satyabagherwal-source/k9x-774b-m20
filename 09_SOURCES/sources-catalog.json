@@ -9273,10 +9273,10 @@
     "repository": "0xCUB3/wBlock",
     "platform": "github",
     "sourceUrl": "https://github.com/0xCUB3/wBlock",
-    "sourceVersion": "d439e269",
+    "sourceVersion": "943134a1",
     "license": "GPL-3.0",
-    "contentHash": "10ed56907380abf6d6c983152d1442d186fba5cc56b9596311df94c222917b5f",
-    "lastHarvestedAt": "2026-11-26T03:04:35.018Z",
+    "contentHash": "98b763b94cad1990e449eb6c969cc81bdc0ba7b1d8849c0c6939890d4222cda4",
+    "lastHarvestedAt": "2026-11-28T04:57:41.282Z",
     "learningId": "learn-github-0xcub3-wblock"
   },
   "archivebox-archivebox": {
@@ -13105,8 +13105,8 @@
     "sourceUrl": "https://huggingface.co/thinkingmachines/Inkling-2-Mini",
     "sourceVersion": "hf-thinkingmachines-inkling-2-mini",
     "license": "Open-Source",
-    "contentHash": "094e003860576a2d2c2f89409341826f2be33a54224a7de0cc7adbc4fbba61d5",
-    "lastHarvestedAt": "2026-11-24T19:55:19.338Z",
+    "contentHash": "a9ef6070a1513e2043a3184ad5fa98706128e8b5b171ff255da12508c68d78d2",
+    "lastHarvestedAt": "2026-11-28T04:57:34.002Z",
     "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini"
   },
   "hf-unsloth-inkling-2-mini-gguf": {

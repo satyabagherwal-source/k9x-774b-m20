@@ -4,24 +4,24 @@
 {
   "source_repository": "0xCUB3/wBlock",
   "source_url": "https://github.com/0xCUB3/wBlock",
-  "source_version": "bb1c3e27",
+  "source_version": "943134a1",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-23T17:20:43.209Z",
+  "timestamp": "2026-11-28T04:57:41.524Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-0xcub3-wblock",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [0xCUB3/wBlock](https://github.com/0xCUB3/wBlock) (Revision: `bb1c3e27`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-23T17:20:43.209Z`  
+> **Provenance**: Harvested from [0xCUB3/wBlock](https://github.com/0xCUB3/wBlock) (Revision: `943134a1`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-28T04:57:41.524Z`  
 > **Learning ID**: `learn-github-0xcub3-wblock`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from 0xCUB3/wBlock:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:20:41.589Z  
+> **Harvest Timestamp**: 2026-11-28T04:57:40.006Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Free, open-source Safari ad blocker for macOS, iOS, iPadOS and visionOS. Up to 750,000 rules, custom filter lists, userscripts and userstyles. No subscription.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3259 stars
+- **Stars / Engagement**: 3283 stars
 
 ---
 
@@ -569,7 +569,7 @@ struct Parsed {
     /// 1-based line number, the rule's `source.line`.
     line: u32,
     /// Position of the rule among those its line parses to.
-    index: u32,
+    index: u16,
     identity: u64,
     /// Exceptions and `$badfilter` stay in every shard and drive #681.
     shared: bool,
@@ -583,6 +583,9 @@ struct Parsed {
     route: Route,
     /// Affinity types of the enclosing `!#safari_cb_affinity` block.
     affinity: Option<u8>,
+    /// Byte range `(start, len)` in the rule's line of `StrictHosts::host`,
+    /// when it appears verbatim there; `(0, 0)` otherwise.
+    strict_host: (u16, u16),
 }
 
 struct ParsedList {
@@ -689,9 +692,7 @@ impl ParseCache {
     }
 }
 
-/// The packing decided for one set of plan inputs, kept for the next plan
-/// with the same inputs. One is kept: the app plans again with the same lists
-/// when nothing changed, and the measured comp
+/// The packing decided for one set
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/ast.rs`
@@ -1815,9 +1816,17 @@ impl Context {
         }
     }
 
-    /// Whether `add` keeps anything of `rule`.
-    pub(crate) fn holds(rule: &NetworkRule) -> bool {
-        rule.badfilter || StrictHosts::host(rule).is_some() || genericblock_host(rule).is_some()
+    pub(crate) fn add_strict_host(&mut self, host: &str) {
+        self.strict.add_host(host);
+    }
+
+    pub(crate) fn strict_host(rule: &NetworkRule) -> Option<String> {
+        StrictHosts::host(rule)
+    }
+
+    /// Whether `add` keeps anything of `rule` beyond `StrictHosts`.
+    pub(crate) fn holds_non_strict(rule: &NetworkRule) -> bool {
+        rule.badfilter || genericblock_host(rule).is_some()
     }
 
     /// Whether a `$genericblock` exception covers pages of `domain`.
@@ -2002,14 +2011,7 @@ fn compile_rule(
         // page exception already covers `$document`'s own request.
         let types = r.types.difference(ResourceTypes::DOC);
         let requests = NetworkRule { scope: ExceptionScope::empty(), types, ..r.clone() };
-        let page = compile_scope(r, v, out);
-        if !types.is_empty() {
-            compile_rule(&requests, v, ctx, out, tier)?;
-        }
-        return page;
-    }
-    let exception = r.exception;
-    // `@@...$cnam
+        let pag
 ```
 
 ### Core Architecture Module: `Packages/wblock-engine/crates/wbe/src/compile/prune.rs`
@@ -2218,6 +2220,8 @@ fn pages_meet(a: &Page, b: &Page) -> bool {
     }
 }
 
+const ANY_PAGE: u32 = u32::MAX;
+
 /// A rule without its url, with its page interned in `Pages`.
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 struct Sig {
@@ -2225,6 +2229,13 @@ struct Sig {
     load: u8,
     context: u8,
     page: u32,
+}
+
+fn insert_sig(set: &mut FxHashSet<Sig>, sig: Sig) -> bool {
+    if sig.page != ANY_PAGE && set.contains(&Sig { page: ANY_PAGE, ..sig }) {
+        return false;
+    }
+    set.insert(sig)
 }
 
 /// Interned page conditions and which pairs of them meet.
@@ -2237,14 +2248,17 @@ struct Pages {
 
 impl Pages {
     fn sig(&mut self, shape: &Shape) -> Sig {
-        let page = match self.ids.get(&shape.page) {
-            Some(&id) => id,
-            None => {
-                let id = self.list.len() as u32;
-                self.ids.insert(shape.page.clone(), id);
-                self.list.push(shape.page.clone());
-                id
-            }
+        let page = match &shape.page {
+            Page::Any => ANY_PAGE,
+            page => match self.ids.get(page) {
+                Some(&id) => id,
+                None => {
+                    let id = self.list.len() as u32;
+                    self.ids.insert(page.clone(), id);
+                    self.list.push(page.clone());
+                    id
+                }
+            },
         };
         Sig { types: shape.types, load: shape.load, context: shape.context, page }
     }
@@ -2253,9 +2267,18 @@ impl Pages {
         if a.types & b.types == 0 || a.load & b.load == 0 || a.context & b.context == 0 {
             return false;
         }
-        let key = (a.page.min(b.page), a.page.max(b.page));
+        if a.page == ANY_PAGE || b.page == ANY_PAGE {
+            return true;
+        }
+        let (lo, hi) = (a.page.min(b.page), a.page.max(b.page));
         let list = &self.list;
-        *self.meets.entry(key).or_insert_with(|| pages_meet(&list[a.page as usize], &list[b.page as usize]))
+        if lo == hi {
+            return !matches!(&list[lo as usize], Page::If(hosts) if hosts.is_empty());
+        }
+        if matches!((&list[lo as usize], &list[hi as usize]), (Page::Unless(_), Page::Unless(_))) {
+            return true;
+        }
+        *self.meets.entry((lo, hi)).or_insert_with(|| pages_meet(&list[lo as usize], &list[hi as usize]))
     }
 }
 
@@ -2269,24 +2292,7 @@ pub(crate) struct Seen {
     floating: FxHashSet<Sig>,
     /// Cosmetic hides, which only the page exceptions meant for them cancel.
     hides: FxHashSet<Sig>,
-    /// Host -> (subdomains too, signature) of the rules anchored there.
-    hosts: FxHashMap<Box<str>, FxHashSet<(bool, Sig)>>,
-    /// Host -> signatures of the rules anchored strictly below it.
-    below: FxHashMap<Box<str>, FxHashSet<Sig>>,
-}
-
-impl Seen {
-    /// Records a rule that is not an ignore.
-    pub(crate) fn add(&mut self, shape: &Shape) {
-        let sig = self.pages.sig(shape);
-        self.all.insert(sig);
-        match &shape.url {
-            None => {
-                self.floating.insert(sig);
-            }
-            Some(host) => {
-                self.hosts.entry(host.name.clone()).or_default().insert((host.star, sig));
-                for parent i
+    /// Host -
 ```
 
 
@@ -2295,11 +2301,11 @@ impl Seen {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1152** (2026-11-23): **[BUG]Bypass paywall clean(en) shows the wrong date**
-  *Symptoms*: ### Describe the bug  I found a little bug. Bypass paywall clean script shows last update last month but the script was updated 7 hours ago  ### To reproduce  Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error   ### Expected behavior  _No response_  ### Screenshot or video  <img width="375" height="667" alt="IMG_2770" src="https://github.com/user-attachments/assets/0ddbe219-1b31-46ca-9ac5-7715dbd8de7b" /> <img width="375" height="667" alt="IMG_2769" src="https://github.com/user-attachments/assets/5aa8a482-8fa8-4939-a171-68dde0880979" />  ### Environment  - OS: [e.g. iOS 26.5, macOS 26.5] - wBlock Version: [e.g. 2.0.4] - Intel or Apple Silicon (macOS only): [e.g. Apple M2]   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [x] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
+- **Issue #1173** (2026-11-27): **[BUG] youtube ads not blocked when accessed though webapp**
+  *Symptoms*: ### Describe the bug  i use wblock on my iphone. i really love that in safari it can block the ads on youtube aswell. when i save the youtube website to the homescreen that i can use it as a webapp the blocking of the ads before a video stops working.   ### To reproduce  Steps to reproduce the behavior: 1. Go to youtube.com on safari 2. the ads before videos are blocked, the video starts right away 3. save youtube to the homescreen, keep the 'open as webapp'-toggle enabled 4. open the newly created youtube webapp from the homescren 5. play a video 6. see that there are ads again...:(  ### Expected behavior  youtube ads should not be played in the webapp as well. it should not matter how i access youtube (though the website in safari or the bookmark from the homescreen) that ads are blocked.   ### Screenshot or video  _No response_  ### Environment  - OS: iOS 27.2.1 - wBlock Version: 3.2.3   ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [x] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or
 
-- **Issue #1151** (2026-11-23): **[BUG] support `.tld` which should be considered as any-TLD magic keyword**
-  *Symptoms*: ### Describe the bug  https://github.com/violentmonkey/violentmonkey/issues/2527  ### To reproduce     ### Expected behavior  _No response_  ### Screenshot or video  _No response_  ### Environment  _No response_  ### Troubleshooting checklist  - [ ] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [ ] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [ ] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all 5 content blockers _(Safari → Settings → Extensions)_. - [ ] I have opened wBlock and pressed `Apply Changes` after changing filters, userscripts, whitelist, and/or extension settings. - [ ] For filtering issues, I have restarted iOS/iPadOS and/or macOS, opened wBlock, manually checked for updates 🔄, and reopened Safari. _(Optional)_  ### Additional context  _No response_
+- **Issue #1167** (2026-11-26): **[BUG] Cloudflare Turnstile challenges fail in Safari unless wBlock is completely disabled**
+  *Symptoms*: ### Describe the bug  Safari is unable to pass Cloudflare Turnstile verification screens while wBlock is active. Testing on the [Turnstile Troubleshooter](https://debug.challenges.cloudflare.com/) fails verification and returns the following error: `Turnstile Failed Despite Passing All Checks`. Disabling the wBlock extension completely in Safari settings is currently the only way to pass the challenge.  Whitelisting all cloudflare.com domains and the target domain inside wBlock does not resolve the problem. Disabling filters or content blockers for the specific site via Safari's per-website settings also has no effect. I've also disabledThe Safari Web Inspector Console shows that wBlock detects the challenge and skips its content script: `[wBlock] Cloudflare challenge context detected - skipping content script.` Despite skipping the content script, the extension still interferes with Turnstile verification as long as it remains enabled globally.  Enabled filters: - AdGuard Base Filter - AdGuard Tracking Protection Filter - AdGuard URL Tracking Protection Filter - Actually Legitimate URL Shortener Tool - Dandelion Sprout's Anti-Malware List - Online Malicious URL Blocklist - Peter Lowe's Blocklist - HaGeZi Multi Pro Mini - AdGuard Cookie Notice - AdGuard Popups - AdGuard Mobile App Banners - AdGuard Other Annoyances - AdGuard Widgets - AdGuard Warning Removal List - Bypass Paywalls Clean Filter - AdGuard Experimental Filter - HaGeZi Referral Allowlist - AdGuard Allowlist  Enab
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2316,1113 +2322,583 @@ impl Seen {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2880c43d` (2026-11-23)
-**Commit Message**: Lock Peek sheet detent on open, fix Show All Lists freeze, and animate layout switch
+### Incident Patch 1: `d35480a2` (2026-11-27)
+**Commit Message**: feat(ui): use pause.fill icon with active blue fill on Pause Blocking toolbar button (#1171)
 
-**File**: `wBlock/BasicFiltersView.swift` (modified, +59/-36)
+**File**: `wBlock/SettingsView.swift` (modified, +25/-14)
 ```diff
-@@ -125,8 +125,18 @@ struct BasicFiltersView: View {
-     }
+@@ -1613,43 +1613,54 @@ struct PauseBlockingButton: View {
+     @ObservedObject var filterManager: AppFilterManager
+     var allowsComponentMenu: Bool = true
  
-     private var languageSummary: String {
--        let names = languageOptions.filter { activeLanguageCodes.contains($0.code) }.map(\.nativeName)
--        return names.isEmpty ? String(localized: "None") : ListFormatter.localizedString(byJoining: names)
-+        let codes = activeLanguageCodes
-+        guard !codes.isEmpty else { return String(localized: "None") }
-+        let displayLocale = RegionalLanguageOption.displayLocale
-+        let names = codes
-+            .map { code -> (sortKey: String, native: String) in
-+                let display = displayLocale.localizedString(forLanguageCode: code) ?? code
-+                let native = Locale.nativeLanguageName(for: code) ?? display
-+                return (display, native)
-+            }
-+            .sorted { $0.sortKey.localizedCaseInsensitiveCompare($1.sortKey) == .orderedAscending }
-+            .map(\.native)
-+        return ListFormatter.localizedString(byJoining: names)
-     }
- 
-     private var atmosphereFade: Double {
-@@ -180,6 +190,7 @@ struct BasicFiltersView: View {
-                     resetBundleToRecommended(bundle)
-                 }
-             )
-+            .id(bundle.id)
+-    private func toggle(isPaused: Bool) {
+-        if !isPaused {
++    private func setPaused(_ pause: Bool) {
++        if pause {
+             Haptics.play(.paused)
          }
-         .infoPresentation(item: $unownedSheetItem) { _ in
-             ScopedBundleListsSheet(
-@@ -850,13 +861,21 @@ struct BasicBundlePeekView: View {
-             .padding(16)
-             .frame(width: 360)
+-        Task { await filterManager.setBlockingPaused(!isPaused) }
++        Task { await filterManager.setBlockingPaused(pause) }
+     }
+ 
+     var body: some View {
+         let isPaused = !filterManager.pausedComponents.isEmpty
+         let title: LocalizedStringKey = isPaused ? "Resume Blocking" : "Pause Blocking"
++        let pauseBinding = Binding(
++            get: { isPaused },
++            set: { newValue in
++                guard newValue != isPaused else { return }
++                setPaused(newValue)
++            }
++        )
+         #if os(macOS)
+-        return Button {
+-            toggle(isPaused: isPaused)
+-        } label: {
+-            Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
++        return Toggle(isOn: pauseBinding) {
++            Label(title, systemImage: "pause.fill")
+         }
++        .toggleStyle(.button)
+         .help(title)
+         .disabled(filterManager.isReloadBusy)
          #else
--        ScrollView {
--            peekBody
--                .padding(SheetDesign.contentHorizontalPadding)
-+        if #available(iOS 16.0, *) {
-+            PeekSheetDetentsHost(showAllLists: $showAllLists) {
-+                ScrollView {
-+                    peekBody
-+                        .padding(SheetDesign.contentHorizontalPadding)
-+                }
-+                .scrollBounceBasedOnSizeCompat()
-+                .opaqueSheetBackgroundCompat()
+         if allowsComponentMenu {
+-            Menu {
++            let menu = Menu {
+                 Section("Pause Blocking") { PauseBlockingControls(filterManager: filterManager) }
+             } label: {
+-                Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
++                Label(title, systemImage: "pause.fill")
+             } primaryAction: {
+-                toggle(isPaused: isPaused)
++                setPaused(!isPaused)
+             }
+             // A tap pauses or resumes; a long press opens the menu.
+             .menuIndicator(.hidden)
+             .help(title)
+             .disabled(filterManager.isReloadBusy)
++
++            if isPaused {
++                menu.buttonStyle(.borderedProminent)
++            } else {
++                menu
 +            }
-+        } else {
-+            ScrollView {
-+                peekBody
-+                    .padding(SheetDesign.contentHorizontalPadding)
-+            }
+         } else {
+-            Button {
+-                toggle(isPaused: isPaused)
+-            } label: {
+-                Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
++            Toggle(isOn: pauseBinding) {
++                Label(title, systemImage: "pause.fill")
+             }
++            .toggleStyle(.button)
+             .help(title)
+             .disabled(filterManager.isReloadBusy)
          }
--        .scrollBounceBasedOnSizeCompat()
--        .opaqueSheetBackgroundCompat()
--        .modifier(PeekSheetDetentsCompat(showAllLists: $showAllLists))
-         #endif
+```
+
+---
+
+### Incident Patch 2: `943134a1` (2026-11-27)
+**Commit Message**: fix(ios): reconcile iPadOS floating tab bar safe area before first frame (#1168)
+
+**File**: `wBlock/AppTabView.swift` (modified, +81/-3)
+```diff
+@@ -82,13 +82,19 @@ struct AppTabView<Filters: View, Userscripts: View, Settings: View, Accessory: V
+         if #available(iOS 18.0, *) {
+             TabView(selection: $selection.value) {
+                 Tab("Filters", systemImage: "list.bullet.rectangle", value: 0) {
+-                    NavigationStack { filters }
++                    NavigationStack {
++                        filters.background(tabBarLayoutReconciler)
++                    }
+                 }
+                 Tab(secondTabTitle, systemImage: "doc.text.fill", value: 1) {
+-                    NavigationStack { userscripts }
++                    NavigationStack {
++                        userscripts.background(tabBarLayoutReconciler)
++                    }
+                 }
+                 Tab("Settings", systemImage: "gear", value: 2) {
+-                    NavigationStack { settings }
++                    NavigationStack {
++                        settings.background(tabBarLayoutReconciler)
++                    }
+                 }
+             }
+         } else if #available(iOS 16.0, *) {
+@@ -120,6 +126,14 @@ struct AppTabView<Filters: View, Userscripts: View, Settings: View, Accessory: V
+             }
+         }
      }
++
++    @available(iOS 18.0, *)
++    private var tabBarLayoutReconciler: some View {
++        FloatingTabBarLayoutReconciler()
++            .frame(width: 0, height: 0)
++            .allowsHitTesting(false)
++            .accessibilityHidden(true)
++    }
+     #endif
  
-@@ -1061,41 +1080,45 @@ struct BasicBundlePeekView: View {
+     #if os(macOS)
+@@ -172,6 +186,70 @@ extension AppTabView where Accessory == EmptyView {
  }
  
  #if os(iOS)
--private struct PeekSheetDetentsCompat: ViewModifier {
--    @Binding var showAllLists: Bool
--
--    func body(content: Content) -> some View {
--        if #available(iOS 16.0, *) {
--            content.modifier(PeekSheetDetentsModifier(showAllLists: $showAllLists))
--        } else {
--            content
--        }
--    }
--}
--
- @available(iOS 16.0, *)
--private struct PeekSheetDetentsModifier: ViewModifier {
-+private struct PeekSheetDetentsHost<Content: View>: View {
-     @Binding var showAllLists: Bool
-+    @ViewBuilder let content: () -> Content
-     @State private var selectedDetent: PresentationDetent = .medium
- 
--    func body(content: Content) -> some View {
--        content
--            .presentationDetents([.medium, .large], selection: $selectedDetent)
--            .presentationDragIndicator(.visible)
--            .onChangeCompat(of: showAllLists) { _, expanded in
--                let target: PresentationDetent = expanded ? .large : .medium
--                if selectedDetent != target {
--                    selectedDetent = target
--                }
-+    private var availableDetents: Set<PresentationDetent> {
-+        showAllLists ? [.medium, .large] : [.medium]
++/// Reconciles iPadOS 18+ floating tab bar safe-area integration on initial
++/// launch. SwiftUI's `TabHostingController` is initially laid out by
++/// `UITabBarController` before its child `NavigationStack` registers, leaving
++/// `safeAreaInsets.top` inflated by the floating tab bar height (pushing both
++/// the navigation toolbar and scroll content down until `didBecomeActive`
++/// triggers a bar layout pass). Toggling `setTabBarHidden` once without
++/// animation before the first frame forces `UITabBarController` to recompute
++/// its integrated bar layout immediately (#1168).
++@available(iOS 18.0, *)
++private struct FloatingTabBarLayoutReconciler: UIViewControllerRepresentable {
++    func makeUIViewController(context: Context) -> ReconcilerViewController {
++        ReconcilerViewController()
 +    }
 +
-+    var body: some View {
-+        Group {
-+            if #available(iOS 16.4, *) {
-+                content()
-+                    .presentationContentInteraction(.scrolls)
-+            } else {
-+                content()
-             }
--            .onChangeCompat(of: selectedDetent) { _, detent in
--                let shouldExpand = detent == .large
--                if showAllLists != shouldExpand {
--                    withAnimation(.spring(response: 0.32, dampingFraction: 0.86)) {
--                        showAllLists = shouldExpand
--                    }
-+        }
-+        .presentationDetents(availableDetents, selection: $selectedDetent)
-+        .presentationDragIndicator(.visible)
-+        .onAppear {
-+            if !showAllLists, selectedDetent != .medium {
-+                selectedDetent = .medium
-+            }
-+        }
-+        .onChangeCompat(of: showAllLists) { _, expanded in
-+            let target: PresentationDetent = expanded ? .large : .medium
-+            if selectedDetent != target {
-+                selectedDetent = target
-+            }
-+        }
-+        .onChangeCompat(of: selectedDetent) { _, detent in
-+            if detent == .medium, showAllLists {
-+                withAnimation(.spring(response: 0.32, dampingFraction: 0.86)) {
-+                    showAllLists = false
-                 }
-             }
-+        }
-     }
- }
- #endif
-```
-
-**File**: `wBlock/ContentView.swift` (modified, +70/-6)
-```diff
-@@ -71,7 +71,11 @@ struct ContentView: View {
-     @State private var userScriptSearchRequest = 0
-     @State private var filtersScrollToTopToken = 0
-     @State private var showingLogs = false
-+    @State private var isTransitioningLayout = false
-+    @State private var layoutTransitionTask: Task<Void, Never>?
-+    @State private var deferredModeFlushTask: Task<Void, Never>?
-     @Environment(\.scenePhase) var scenePhase
-+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
- 
-     private var enabledListsCount: Int {
-         filterManager.filterLists.filter { $0.isSelected }.count
-@@ -252,11 +256,60 @@ struct ContentView: View {
-         selectedCategoryInfo = nil
-     }
- 
--    private func switchAppMode(to newMode: AppMode) {
--        guard appMode != newMode else { return }
-+    private func switchAppMode(to newMode: AppMode, fromToggle: Bool = false) {
-+        layoutTransitionTask?.cancel()
-+        layoutTransitionTask = nil
-+        guard appMode != newMode else {
-+            if isTransitioningLayout {
-+                withAnimation(.easeOut(duration: 0.16)) {
-+                    isTransitioningLayout = false
-+                }
-+            }
-+            return
-+        }
-         clearFilterPopoverSelections()
--        filterManager.flushBasicAutoApplyIfNeeded()
--        appMode = newMode
-+        if !fromToggle {
-+            Haptics.play(.tap)
-+        }
-+        layoutTransitionTask = Task { @MainActor in
-+            if fromToggle {
-+                // Let the native switch thumb finish sliding before swapping layouts.
-+                try? await Task.sleep(nanoseconds: 110_000_000)
-+                guard !Task.isCancelled else { return }
-+            }
++    func updateUIViewController(_ uiViewController: ReconcilerViewController, context: Context) {
++        uiViewController.reconcileIfNeeded()
++    }
 +
-+            if reduceMotion {
-+                withAnimation(.easeInOut(duration: 0.14)) {
-+                    isTransitioningLayout = true
-+                }
-+                try? await Task.sleep(nanoseconds: 120_000_000)
-+                guard !Task.isCancelled else { return }
-+                var transaction = Transaction(animation: nil)
-+                transaction.disablesAnimations = true
-+                withTransaction(transaction) {
-+                    appMode = newMode
-+                }
-+                withAnimation(.easeInOut(duration: 0.18)) {
-+                    isTransitioningLayout = false
-+                }
-+            } else {
-+                withAnimation(.easeIn(duration: 0.13)) {
-+                    isTransitioningLayout = true
-+                }
-+                try? await Task.sleep(nanoseconds: 130_000_000)
-+                guard !Task.isCancelled else { return }
-+                var transaction = Transaction(animation: nil)
-+                transaction.disablesAnimations = true
-+                withTransaction(transaction) {
-+                    appMode = newMode
-+                }
-+                try? await Task.sleep(nanoseconds: 16_000_000)
-+                guard !Task.isCancelled else { return }
-+                withAnimation(.spring(response: 0.36, dampingFraction: 0.84)) {
-+                    isTransitioningLayout = false
-+                }
++    final class ReconcilerViewController: UIViewController {
++        private var didReconcile = false
++
++        override func loadView() {
++            let emptyView = UIView(frame: .zero)
++            emptyView.isUserInteractionEnabled = false
++            emptyView.isHidden = true
++            view = emptyView
++        }
++
++        override func viewWillAppear(_ animated: Bool) {
++            super.viewWillAppear(animated)
++            reconcileIfNeeded()
++        }
++
++        override func viewDidLayoutSubviews() {
++            super.viewDidLayoutSubviews()
++            reconcileIfNeeded()
++        }
++
++        override func viewDidAppear(_ animated: Bool) {
++            super.viewDidAppear(animated)
++            reconcileIfNeeded()
++            didReconcile = true
++        }
++
++        func reconcileIfNeeded() {
++            guard !didReconcile,
++                  let tabBarController = tabBarController,
++                  let selected = tabBarController.selectedViewController,
++                  !tabBarController.isTabBarHidden,
++                  selected.children.contains(where: { $0 is UINavigationController }),
++                  selected.view.safeAreaInsets.top > tabBarController.view.safeAreaInsets.top + 1
++            else { return }
++
++            didReconcile = true
++            UIView.performWithoutAnimation {
++                tabBarController.setTabBarHidden(true, animated: false)
++                tabBarController.view.layoutIfNeeded()
++                tabBarController.setTabBarHidden(false, animated: false)
++                tabBarController.view.layoutIfNeeded()
 +            }
 +        }
-     }
- 
-     var body: some View {
-@@ -352,6 +405,9 @@ struct ContentView: View {
-                 onAction: handleHealthAction
-             )
-         }
-+        .scaleEffect(isTransitioningLayout && !reduceMotion ? 0.982 : 1)
-+        .blur(radius: isTransitioningLayout && !reduceMotion ? 7 : 0)
-+        .opacity(isTransitioningLayout ? 0.86 : 1)
-         .background(keyboardShortcutHandlers)
-         .keyboardScrollingCompat()
-         .onAppear {
-@@ -364,7 +420,12 @@ struct ContentView: View {
-             clearFilterPopoverSelections()
-             filterManager.showingAppliedBanner = false
-             filterManager.showingNoUpdatesAlert = false
--            filterManager.flushBasicAutoApplyIfNeeded(includeUnqueued: newMode == .basic)
-+            deferredModeFlushTask?.cancel()
-+            deferredModeFlushTask = Task { @MainActor in
-+                try? await Task.sleep(nanoseconds: 380_000_000)
-+                guard !Task.isCancelled else { return }
-+                filterManager.flushBasicAutoApplyIfNeeded(includeUnqueued: newMode == .basic)
-+            }
-         }
-         .sheet(isPresented: $showingHealthDetail) {
-             SafariHealthDetailView(
-@@ -752,7 +813,10 @@ struct ContentView: View {
-     }
- 
-     private var settingsView: some View {
--        SettingsView(filterManager: filterManager)
-+        SettingsView(
-+            filterManager: filterManager,
-+            onSwitchAppMode: { switchAppMode(to: $0, fromToggle: true) }
-+        )
-     }
- 
-     private var topBanners: some ViewModifier {
-```
-
-**File**: `wBlock/LocalizationHelpers.swift` (modified, +10/-2)
-```diff
-@@ -77,16 +77,24 @@ struct RegionalLanguageOption: Identifiable, Hashable {
-         let nativeName: String = Locale.nativeLanguageName(for: code) ?? self.name
-         self.nativeName = nativeName
-         var terms: [String] = [nativeName, self.name, code, Self.english.localizedString(forLanguageCode: code) ?? code]
--        terms += Self.scriptNamesByCode[code] ?? []
-         terms += Self.synonymsByCode[code] ?? []
-         searchTerms = terms
-     }
- 
-     /// Ignores case and accents, so "espanol" finds español (#951).
-+    /// Defers `scriptNamesByCode` (which scans `Locale.availableIdentifiers`)
-+    /// until an actual search query runs so building language lists never stalls
-+    /// the main thread.
-     func matches(_ query: String) -> Bool {
-         let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-         guard !query.isEmpty else { return false }
--        return searchTerms.contains { $0.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil }
-+        if searchTerms.contains(where: { $0.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil }) {
-+            return true
-+        }
-+        if let scriptNames = Self.scriptNamesByCode[code] {
-+            return scriptNames.contains { $0.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil }
-+        }
-+        return false
-     }
- 
-     /// The locale the app is actually displayed in, so names sort the way the
-```
-
-**File**: `wBlock/SettingsView.swift` (modified, +30/-4)
-```diff
-@@ -8,9 +8,12 @@ import wBlockCoreService
- 
- struct SettingsView: View {
-     let filterManager: AppFilterManager
-+    var onSwitchAppMode: ((AppMode) -> Void)? = nil
-     @ObservedObject private var dataManager = ProtobufDataManager.shared
-     @ObservedObject private var syncManager = CloudSyncManager.shared
-     @AppStorage(AppMode.storageKey) private var appMode: AppMode = .basic
-+    @State private var showAllListsSwitch = UserDefaults.standard.string(forKey: AppMode.storageKey) == AppMode.advanced.rawValue
-+    @State private var preserveAdvancedScrollOnModeChange = false
-     @Environment(\.openURL) private var openURL
-     private static let autoUpdateIntervalPresets: [Double] = [1, 2, 4, 6, 12, 24, 48, 72, 168]
-     static let reportIssueURL = URL(string: "https://github.com/0xCUB3/wBlock/issues/new/choose")!
-@@ -247,12 +250,16 @@ struct SettingsView: View {
- 
-     private var showAllListsBinding: Binding<Bool> {
-         Binding(
--            get: { appMode == .advanced },
-+            get: { showAllListsSwitch },
-             set: { showAll in
-                 let newMode: AppMode = showAll ? .advanced : .basic
--                guard newMode != appMode else { return }
--                filterManager.flushBasicAutoApplyIfNeeded()
--                appMode = newMode
-+                showAllListsSwitch = showAll
-+                preserveAdvancedScrollOnModeChange = (newMode != appMode)
-+                if let onSwitchAppMode {
-+                    onSwitchAppMode(newMode)
-+                } else if newMode != appMode {
-+                    appMode = newMode
-+                }
-             }
-         )
-     }
-@@ -940,6 +947,25 @@ struct SettingsView: View {
-                         withAnimation { proxy.scrollTo(target, anchor: Self.sectionScrollAnchor) }
-                         scrollTarget = nil
-                     }
-+                    .onAppear {
-+                        showAllListsSwitch = (appMode == .advanced)
-+                    }
-+                    .onChangeCompat(of: appMode) { _, newMode in
-+                        let isAdvanced = (newMode == .advanced)
-+                        if showAllListsSwitch != isAdvanced {
-+                            showAllListsSwitch = isAdvanced
-+                        }
-+                        #if os(iOS)
-+                        if preserveAdvancedScrollOnModeChange {
-+                            preserveAdvancedScrollOnModeChange = false
-+                            DispatchQueue.main.async {
-+                                proxy.scrollTo(SettingsSection.advanced, anchor: .center)
-+                            }
-+                        }
-+                        #else
-+                        preserveAdvancedScrollOnModeChange = false
-+                        #endif
-+                    }
-             }
-         }
-     }
++    }
++}
++
+ private struct TabBottomAccessoryCompat<Accessory: View>: ViewModifier {
+     let isEnabled: Bool
+     let accessory: () -> Accessory
 ```
 
 ---
 
-### Incident Patch 2: `0bdfd797` (2026-11-23)
-**Commit Message**: feat(ui): polish default layout updates, Also on peek, Reset to Recommended, and Stricter Blocking (#1150)
+### Incident Patch 3: `0632d0a4` (2026-11-27)
+**Commit Message**: fix(auto-update): fix iPad foreground catch-up, metadata refresh, and applied count banner
 
-**File**: `scripts/test_basic_mode.swift` (modified, +17/-0)
+**File**: `scripts/proofs/PolicyProbe.swift` (modified, +25/-0)
 ```diff
-@@ -147,6 +147,23 @@ struct BasicModeTests {
-         apply(resetChanges, to: &lists)
-         precondition(adsBundle.state(in: lists) == .on, "Reset to Recommended must normalize bundle to .on")
-         precondition(!memory.hasSnapshot(for: adsBundle))
-+
-+        // Custom list inside a core category puts the bundle in .partlyOn and
-+        // Reset to Recommended disables it (#1150).
-+        var customInAds = FilterList(
-+            id: UUID(),
-+            name: "Custom Ads List",
-+            url: URL(string: "https://example.com/custom-ads-reset.txt")!,
-+            category: .ads,
-+            isSelected: true
-+        )
-+        customInAds.isCustom = true
-+        lists.append(customInAds)
-+        precondition(adsBundle.state(in: lists) == .partlyOn, "Custom list enabled in Ads must yield .partlyOn")
-+        let resetCustomChanges = memory.resetToRecommendedChanges(for: adsBundle, in: lists)
-+        apply(resetCustomChanges, to: &lists)
-+        precondition(adsBundle.state(in: lists) == .on, "Reset to Recommended must normalize Ads with custom list to .on")
-+        precondition(!(lists.first { $0.id == customInAds.id }?.isSelected ?? true), "Reset to Recommended must disable custom lists in category")
-     }
- 
-     private static func testBasicBundleUnownedActiveAndDirty() {
+@@ -171,6 +171,31 @@ final class ResumeCount: @unchecked Sendable { var count = 0 }
+           let result = ImportMetadataReview.userProvided(edited, automatic: automatic)
+           return ["override": result != nil, "cleared": result == ""]
+         }
++      case "persistedRunActive":
++        return values.map { e -> Values in
++          [
++            "active": SharedAutoUpdateManager.isPersistedRunActive(
++              persistedIsRunning: e.b("persisted"),
++              runningSince: Int64(e.n("runningSince")),
++              lastCheck: Int64(e.n("lastCheck")),
++              now: TimeInterval(e.n("now")),
++              staleInterval: TimeInterval(e.n("stale"))
++            )
++          ]
++        }
++      case "filterDueCheck":
++        return values.map { e -> Values in
++          [
++            "due": SharedAutoUpdateManager.isFilterDueForCheck(
++              force: e.b("force"),
++              hasPendingRevision: e.b("pending"),
++              lastChecked: Int64(e.n("lastChecked")),
++              expirySeconds: e.b("hasExpiry") ? TimeInterval(e.n("expiry")) : nil,
++              intervalSeconds: TimeInterval(e.n("interval")),
++              now: TimeInterval(e.n("now"))
++            )
++          ]
++        }
+       case "custom", "remote":
+         return values.map { e -> Values in
+           if suite == "custom" {
 ```
 
-**File**: `wBlock/AppFilterManager+Updates.swift` (modified, +33/-14)
+**File**: `scripts/proofs/policies.mjs` (modified, +42/-0)
 ```diff
-@@ -47,15 +47,19 @@ extension AppFilterManager {
+@@ -211,6 +211,48 @@ decision('importReview', booleans('present','same','blank'),
+     m.law('an untouched field stays automatic', ({present}) => present.not(), o => o.override.not().and(o.cleared.not())),
+   ], e => ({override: e.present}));
  
-     func checkForUpdates(
-         scope: UpdateCheckScope = .all,
--        presentation: UpdateCheckPresentation = .blocking
-+        presentation: UpdateCheckPresentation = .blocking,
-+        autoApply: Bool = false
-     ) async {
-         // A running auto-update is already checking and applying the same lists;
-         // show its progress instead of ignoring the request.
-         guard !isAutoUpdateRunning else {
--            showBackgroundApplyProgress()
-+            if !autoApply {
-+                showBackgroundApplyProgress()
-+            }
-             return
-         }
--        if presentation == .refresh {
-+        clearBasicUpToDateStatus()
-+        if presentation == .refresh || autoApply {
-             suppressBlockingOverlay = true
-         }
-         updateCheckProgress = nil
-@@ -64,7 +68,7 @@ extension AppFilterManager {
-         defer {
-             isLoading = false
-             updateCheckProgress = nil
--            if presentation == .refresh {
-+            if presentation == .refresh || autoApply {
-                 suppressBlockingOverlay = false
-             }
-             drainFollowUpBasicApplyIfNeeded()
-@@ -95,15 +99,29 @@ extension AppFilterManager {
- 
-         let totalUpdates = availableUpdates.count + availableScriptUpdates.count
-         if totalUpdates > 0 {
--            applyProgressViewModel.presentReview()
--            showingApplyProgressSheet = true
--            statusDescription = LocalizedStrings.format(
--                "Found %d update(s) available.",
--                comment: "Updates found status",
--                totalUpdates
--            )
-+            if autoApply {
-+                let filtersToUpdate = availableUpdates
-+                let scriptsToUpdate = availableScriptUpdates
-+                await downloadAndApplySelectedUpdates(
-+                    filters: filtersToUpdate,
-+                    scripts: scriptsToUpdate,
-+                    showProgressSheet: false
-+                )
-+            } else {
-+                applyProgressViewModel.presentReview()
-+                showingApplyProgressSheet = true
-+                statusDescription = LocalizedStrings.format(
-+                    "Found %d update(s) available.",
-+                    comment: "Updates found status",
-+                    totalUpdates
-+                )
-+            }
-         } else {
--            showingNoUpdatesAlert = true
-+            if autoApply {
-+                showBasicUpToDateBriefly()
-+            } else {
-+                showingNoUpdatesAlert = true
-+            }
-             statusDescription = LocalizedStrings.text("No updates available.", comment: "No updates status")
-             Task {
-                 await ConcurrentLogManager.shared.info(
-@@ -158,11 +176,12 @@ extension AppFilterManager {
-     /// Downloads the selected filter/script updates, then runs the shared apply pipeline.
-     func downloadAndApplySelectedUpdates(
-         filters selectedFilters: [FilterList],
--        scripts selectedScripts: [UserScript]
-+        scripts selectedScripts: [UserScript],
-+        showProgressSheet: Bool = true
-     ) async {
-         let started = await performExclusiveApply {
-             self.prepareApplyRunState()
--            self.showingApplyProgressSheet = true
-+            self.showingApplyProgressSheet = showProgressSheet
- 
-             let downloadingStatus = LocalizedStrings.text(
-                 "Downloading selected updates...",
++// SharedAutoUpdateManager.isPersistedRunActive: a stale flag left by a killed process stops counting as running.
++decision('persistedRunActive', {persisted:bool, runningSince:nat, lastCheck:nat, now:nat, stale:nat},
++  ({persisted,runningSince,lastCheck,now,stale}) => {
++    const started = when(runningSince.gt(0), runningSince, lastCheck);
++    return {active: persisted.and(now.atMost(started.plus(stale)))};
++  }, m => [
++    m.law('cleared flag is never active', ({persisted}) => persisted.not(), o => o.active.not()),
++    m.law('stale runningSince expires', ({runningSince,now,stale}) => runningSince.gt(0).and(now.gt(runningSince.plus(stale))), o => o.active.not()),
++    m.law('legacy flag without runningSince expires by lastCheck', ({runningSince,lastCheck,now,stale}) => runningSince.eq(0).and(now.gt(lastCheck.plus(stale))), o => o.active.not()),
++    m.law('recent running flag stays active', ({persisted,runningSince,now,stale}) => persisted.and(runningSince.gt(0), now.atMost(runningSince.plus(stale))), o => o.active),
++  ], [
++    e => ({active: e.persisted.or(e.persisted.not())}),
++    e => ({active: e.persisted}),
++    e => ({active: e.persisted.and(e.runningSince.eq(0).or(e.now.atMost(e.runningSince.plus(e.stale))))}),
++    e => ({active: e.persisted.and(e.persisted.not())}),
++  ]);
++
++// SharedAutoUpdateManager.isFilterDueForCheck: non-forced checks honor short list expiry for partial-run resume,
++// but never skip a list past the user's configured auto-update interval.
++decision('filterDueCheck', {force:bool, pending:bool, hasExpiry:bool, lastChecked:nat, expiry:nat, interval:nat, now:nat},
++  ({force,pending,hasExpiry,lastChecked,expiry,interval,now}) => {
++    const effective = when(interval.gt(0), min(expiry, interval), expiry);
++    return {due: force.or(pending, lastChecked.eq(0), hasExpiry.not(), now.atLeast(lastChecked.plus(effective)))};
++  }, m => [
++    m.law('forced runs always check every list', ({force}) => force, o => o.due),
++    m.law('pending revisions always check', ({pending}) => pending, o => o.due),
++    m.law('never-checked lists always check', ({lastChecked}) => lastChecked.eq(0), o => o.due),
++    m.law('lists without expiry always check', ({hasExpiry}) => hasExpiry.not(), o => o.due),
++    m.law('lists are never skipped past configured interval', ({interval,lastChecked,now}) => interval.gt(0).and(now.atLeast(lastChecked.plus(interval))), o => o.due),
++    m.law('recently checked lists within both expiry and interval are skipped',
++      ({force,pending,lastChecked,hasExpiry,expiry,interval,now}) =>
++        force.not().and(pending.not(), lastChecked.gt(0), hasExpiry, now.lt(lastChecked.plus(expiry)), interval.eq(0).or(now.lt(lastChecked.plus(interval)))),
++      o => o.due.not()),
++  ], [
++    e => ({due: e.pending.or(e.lastChecked.eq(0), e.hasExpiry.not(), e.now.atLeast(e.lastChecked.plus(when(e.interval.gt(0), min(e.expiry, e.interval), e.expiry))))}),
++    e => ({due: e.force.or(e.lastChecked.eq(0), e.hasExpiry.not(), e.now.atLeast(e.lastChecked.plus(when(e.interval.gt(0), min(e.expiry, e.interval), e.expiry))))}),
++    e => ({due: e.force.or(e.pending, e.hasExpiry.not(), e.now.atLeast(e.lastChecked.plus(when(e.interval.gt(0), min(e.expiry, e.interval), e.expiry))))}),
++    e => ({due: e.force.or(e.pending, e.lastChecked.eq(0), e.now.atLeast(e.lastChecked.plus(when(e.interval.gt(0), min(e.expiry, e.interval), e.expiry))))}),
++    e => ({due: e.force.or(e.pending, e.lastChecked.eq(0), e.hasExpiry.not(), e.now.atLeast(e.lastChecked.plus(e.expiry)))}),
++    e => ({due: e.force.or(e.force.not())}),
++  ]);
++
+ export const upload = rule('deferred uploads').inputs({take:bool,syncing:bool,trigger:nat}).state({pending:0,kind:0,value:0});
+ const uploadStep = ({take,syncing,trigger,pending}) => ({
+   pending:when(take,0,when(syncing,trigger.plus(1),pending)), kind:when(take,2,when(syncing,1,0)),
 ```
 
-**File**: `wBlock/AppFilterManager.swift` (modified, +20/-0)
+**File**: `scripts/proofs/verify.mjs` (modified, +18/-0)
 ```diff
-@@ -222,7 +222,27 @@ class AppFilterManager: ObservableObject {
-     @Published private(set) var basicApplyCompletionToken = 0
-     @Published private(set) var lastBasicApplyFailed = false
-     @Published private(set) var lastBasicApplyFailedFilterIDs: Set<UUID> = []
-+    @Published private(set) var showingBasicUpToDateStatus = false
-     private var needsFollowUpBasicApply = false
-+    private var basicUpToDateTask: Task<Void, Never>?
-+
-+    func showBasicUpToDateBriefly() {
-+        basicUpToDateTask?.cancel()
-+        showingBasicUpToDateStatus = true
-+        basicUpToDateTask = Task { @MainActor [weak self] in
-+            try? await Task.sleep(nanoseconds: 3_500_000_000)
-+            guard !Task.isCancelled else { return }
-+            self?.showingBasicUpToDateStatus = false
+@@ -81,6 +81,24 @@ for (const e of flags(["custom", "userName", "titlePresent", "titleBlank", "user
+     version: o.versionUnknown ? "Unknown" : "2025.1",
+   }));
+ for (const e of flags(["present", "same", "blank"])) decision("importReview", [e]);
++{
++  const values = [];
++  for (const persisted of [false, true])
++    for (const runningSince of [0, 50, 90, 110])
++      for (const lastCheck of [0, 50, 90, 110])
++        for (const stale of [0, 10, 50])
++          values.push({ persisted, runningSince, lastCheck, now: 100, stale });
++  decision("persistedRunActive", values);
++}
++{
++  const values = [];
++  for (const e of flags(["force", "pending", "hasExpiry"]))
++    for (const lastChecked of [0, 50, 90, 100])
++      for (const expiry of [5, 20, 60])
++        for (const interval of [0, 10, 40])
++          values.push({ ...e, lastChecked, expiry, interval, now: 100 });
++  decision("filterDueCheck", values);
++}
+ for (const e of flags(["tomb", "local", "remote", "existed"]))
+   for (const deletedAt of [0, 99, 100, 101])
+     for (const remoteAt of [0, 99, 100, 101]) decision("custom", [{ ...e, deletedAt, remoteAt }]);
+```
+
+**File**: `scripts/test_apply_progress_presentation.swift` (modified, +10/-0)
+```diff
+@@ -142,6 +142,16 @@ import Foundation
+     precondition(
+       ApplyProgressPresentation.make(from: vm.state).progress == 1
+         && vm.state.phases.allSatisfy { $0.status == .complete })
++    precondition(ApplyProgressPresentation.appliedBannerTitle(filterUpdates: 0, scriptUpdates: 0) == String(localized: "Changes Applied"))
++    precondition(ApplyProgressPresentation.appliedBannerTitle(filterUpdates: -2, scriptUpdates: 0) == String(localized: "Changes Applied"))
++    precondition(ApplyProgressPresentation.appliedBannerTitle(filterUpdates: 1, scriptUpdates: 0) == String(localized: "1 Update Applied"))
++    precondition(ApplyProgressPresentation.appliedBannerTitle(filterUpdates: 0, scriptUpdates: 1) == String(localized: "1 Update Applied"))
++    precondition(
++      ApplyProgressPresentation.appliedBannerTitle(filterUpdates: 21, scriptUpdates: 0)
++        == String.localizedStringWithFormat(String(localized: "%d Updates Applied"), 21))
++    precondition(
++      ApplyProgressPresentation.appliedBannerTitle(filterUpdates: 2, scriptUpdates: 1)
++        == String.localizedStringWithFormat(String(localized: "%d Updates Applied"), 3))
+     print("PASS: progress formatting, numeric boundaries, accessibility, and setters")
+   }
+ }
+```
+
+**File**: `wBlock/AppDelegate.swift` (modified, +88/-58)
+```diff
+@@ -77,8 +77,18 @@ class AppDelegate: NSObject {
+     /// SwiftUI's delegate adaptor wraps this object, so `UIApplication.shared.delegate`
+     /// is not an `AppDelegate` on iOS.
+     private(set) static weak var current: AppDelegate?
+-    var filterManager: AppFilterManager?
++    private var filterManagerWaiters: [CheckedContinuation<AppFilterManager, Never>] = []
++    var filterManager: AppFilterManager? {
++        didSet {
++            guard let filterManager, !filterManagerWaiters.isEmpty else { return }
++            let waiters = filterManagerWaiters
++            filterManagerWaiters = []
++            waiters.forEach { $0.resume(returning: filterManager) }
 +        }
 +    }
+     var hasPendingApplyNotification = false
++    /// Trigger saved when a foreground catch-up was skipped for an upgrade rebuild or active apply.
++    private var deferredForegroundCatchUpTrigger: String?
+ 
+     override init() {
+         super.init()
+@@ -113,6 +123,16 @@ class AppDelegate: NSObject {
+     private let backgroundProcessingIdentifier = "com.alexanderskula.wblock.filter-processing"
+ 
+     #endif
 +
-+    func clearBasicUpToDateStatus() {
-+        basicUpToDateTask?.cancel()
-+        basicUpToDateTask = nil
-+        if showingBasicUpToDateStatus {
-+            showingBasicUpToDateStatus = false
++    nonisolated static func shouldDeferForegroundCatchUp(skipReason: String) -> Bool {
++        skipReason == "awaiting_app_upgrade" || skipReason == "foreground_apply"
++    }
++
++    func triggerDeferredForegroundCatchUpIfNeeded() {
++        guard let trigger = deferredForegroundCatchUpTrigger else { return }
++        deferredForegroundCatchUpTrigger = nil
++        runForegroundAutoUpdate(trigger: trigger, forceWhenOverdue: true, logSchedule: false)
++    }
+ }
+ 
+ private extension AppDelegate {
+@@ -137,6 +157,70 @@ private extension AppDelegate {
+         )
+     }
+ 
++    private func waitForFilterManagerReady() async {
++        let manager: AppFilterManager = if let filterManager {
++            filterManager
++        } else {
++            await withCheckedContinuation { filterManagerWaiters.append($0) }
 +        }
-+    }
- 
-     func markCurrentStateApplied() {
-         appliedSelectedFilterIDs = selectedFilterIDs
-```
-
-**File**: `wBlock/BasicBundle.swift` (modified, +16/-13)
-```diff
-@@ -283,17 +283,19 @@ enum BasicBundle: Hashable, Identifiable, Sendable {
-     }
- 
-     /// Derives `.off`, `.on`, or `.partlyOn` directly from `filters`.
-+    /// Core bundles inspect `scopedFilters` so custom lists placed in that
-+    /// category also participate in custom state and Reset to Recommended.
-     func state(
-         in filters: [FilterList],
-         recommendedNames: Set<String> = FilterListLoader.recommendedFilterNames
-     ) -> BasicBundleState {
--        let owned = ownedFilters(in: filters, recommendedNames: recommendedNames)
--        let selectedOwnedIDs = Set(owned.filter(\.isSelected).map(\.id))
--        if selectedOwnedIDs.isEmpty {
-+        let scoped = scopedFilters(in: filters, recommendedNames: recommendedNames)
-+        let selectedScopedIDs = Set(scoped.filter(\.isSelected).map(\.id))
-+        if selectedScopedIDs.isEmpty {
-             return .off
-         }
-         let memberIDs = Set(memberFilters(in: filters, recommendedNames: recommendedNames).map(\.id))
--        if !memberIDs.isEmpty && selectedOwnedIDs == memberIDs {
-+        if !memberIDs.isEmpty && selectedScopedIDs == memberIDs {
-             return .on
-         }
-         return .partlyOn
-@@ -508,21 +510,21 @@ struct BasicBundleToggleMemory: Sendable {
-         in filters: [FilterList],
-         recommendedNames: Set<String> = FilterListLoader.recommendedFilterNames
-     ) -> [(id: UUID, selected: Bool)] {
--        let owned = bundle.ownedFilters(in: filters, recommendedNames: recommendedNames)
--        let ownedIDs = Set(owned.map(\.id))
-+        let scoped = bundle.scopedFilters(in: filters, recommendedNames: recommendedNames)
-+        let scopedIDs = Set(scoped.map(\.id))
-         let currentState = bundle.state(in: filters, recommendedNames: recommendedNames)
- 
-         if !turnOn {
-             if currentState == .partlyOn {
--                snapshots[bundle.id] = Set(owned.filter(\.isSelected).map(\.id))
-+                snapshots[bundle.id] = Set(scoped.filter(\.isSelected).map(\.id))
-             } else {
-                 snapshots.removeValue(forKey: bundle.id)
-             }
--            return owned.filter(\.isSelected).map { ($0.id, false) }
-+            return scoped.filter(\.isSelected).map { ($0.id, false) }
-         } else {
-             let targetIDs: Set<UUID>
-             if let saved = snapshots.removeValue(forKey: bundle.id) {
--                let valid = saved.intersection(ownedIDs)
-+                let valid = saved.intersection(scopedIDs)
-                 if !valid.isEmpty {
-                     targetIDs = valid
-                 } else {
-@@ -531,23 +533,24 @@ struct BasicBundleToggleMemory: Sendable {
-             } else {
-                 targetIDs = Set(bundle.memberFilters(in: filters, recommendedNames: recommendedNames).map(\.id))
-             }
--            return owned.compactMap { filter in
-+            return scoped.compactMap { filter in
-                 let desired = targetIDs.contains(filter.id)
-                 return filter.isSelected == desired ? nil : (filter.id, desired)
-             }
-         }
-     }
- 
--    /// Normalizes a bundle to its recommended `members` and clears any snapshot.
-+    /// Normalizes a bundle to its recommended `members` (including disabling
-+    /// custom lists placed in the category) and clears any snapshot.
-     mutating func resetToRecommendedChanges(
-         for bundle: BasicBundle,
-         in filters: [FilterList],
-         recommendedNames: Set<String> = FilterListLoader.recommendedFilterNames
-     ) -> [(id: UUID, selected: Bool)] {
-         snapshots.removeValue(forKey: bundle.id)
--        let owned = bundle.ownedFilters(in: filters, recommendedNames: recommendedNames)
-+        let scoped = bundle.scopedFilters(in: filters, recommendedNames: recommendedNames)
-         let memberIDs = Set(bundle.memberFilters(in: filters, recommendedNames: recommendedNames).map(\.id))
--        return owned.compactMap { filter in
-+        return scoped.compactMap { filter in
-             let desired = memberIDs.contains(filter.id)
-             return filter.isSelected == desired ? nil : (filter.id, desired)
-         }
-```
-
-**File**: `wBlock/BasicFiltersView.swift` (modified, +125/-42)
-```diff
-@@ -16,16 +16,53 @@ struct BasicFiltersView: View {
-     let onHeroVisibilityChange: (Bool) -> Void
-     let onSwitchToAdvanced: () -> Void
- 
-+    private struct AlsoOnSheetItem: Identifiable {
-+        let id = "alsoOn"
++        await manager.waitUntilReady()
 +    }
 +
-     @AppStorage(ListDisplayOrder.filtersKey) private var filterDisplayOrder = Data()
-     @State private var toggleMemory = BasicBundleToggleMemory()
-     @State private var peekBundle: BasicBundle?
--    @State private var showingUnownedSheet = false
-+    @State private var unownedSheetItem: AlsoOnSheetItem?
-     @State private var showingLanguagesSheet = false
-     @State private var showingHeroPopover = false
-     private static let stricterBlockingExpandedKey = "wBlock.basicStricterBlockingExpanded"
--    @State private var showStricterBlocking = UserDefaults.standard.bool(forKey: BasicFiltersView.stricterBlockingExpandedKey)
-+    @State private var showStricterBlocking: Bool
-     @State private var scrollOffset: CGFloat = 0
- 
-+    init(
-+        filterManager: AppFilterManager,
-+        safariHealth: SafariHealthMonitor,
-+        lastUpdatedDate: Date?,
-+        onOpenHealthDetail: @escaping () -> Void,
-+        onCheckForUpdates: @escaping () -> Void,
-+        onHealthAction: @escaping (SafariHealthStatus.Action) -> Void,
-+        onHeroVisibilityChange: @escaping (Bool) -> Void,
-+        onSwitchToAdvanced: @escaping () -> Void
++    /// Runs foreground catch-up once the filter manager finishes launch setup so progress
++    /// updates are connected and an upgrade rebuild is not racing the scheduler. If skipped
++    /// for an upgrade rebuild or foreground apply, remembers the trigger to run right after.
++    private func runForegroundAutoUpdate(
++        trigger: String,
++        forceWhenOverdue: Bool,
++        logSchedule: Bool
 +    ) {
-+        self.filterManager = filterManager
-+        self.safariHealth = safariHealth
-+        self.lastUpdatedDate = lastUpdatedDate
-+        self.onOpenHealthDetail = onOpenHealthDetail
-+        self.onCheckForUpdates = onCheckForUpdates
-+        self.onHealthAction = onHealthAction
-+        self.onHeroVisibilityChange = onHeroVisibilityChange
-+        self.onSwitchToAdvanced = onSwitchToAdvanced
++        #if os(macOS)
++        guard !HeadlessLaunch.isHeadlessProcess else { return }
++        #endif
++        guard !BlockingPauseStore.isPaused(.filters) else { return }
 +
-+        // Respect the user's saved dropdown state when set; on first visit,
-+        // start already expanded (without an appear animation) if any stricter
-+        // annoyance list is active (#1150).
-+        let initialExpanded: Bool
-+        if UserDefaults.standard.object(forKey: Self.stricterBlockingExpandedKey) != nil {
-+            initialExpanded = UserDefaults.standard.bool(forKey: Self.stricterBlockingExpandedKey)
-+        } else {
-+            initialExpanded = AnnoyanceChoice.basicStricterChoices.contains {
-+                BasicBundle.annoyance($0).state(in: filterManager.filterLists) != .off
++        // The catch-up recompiles every list. At the UI's inherited priority it
++        // stalled scrolling for seconds right after launch, so it yields the CPU.
++        Task(priority: .utility) {
++            await self.waitForFilterManagerReady()
++            let status = await SharedAutoUpdateManager.shared.nextScheduleStatus()
++            let isDueSoon = status.remaining.map { $0 < self.dueSoonThresholdSeconds } ?? false
++            let shouldForce: Bool
++            let catchUpReason: AutoUpdateDiagnosticResult?
++            if forceWhenOverdue {
++                shouldForce = status.isOverdue || (isDueSoon && !status.isRunning)
++                catchUpReason = shouldForce ? (status.isOverdue ? .overdue : .dueSoon) : nil
++            } else {
++                let oneHourInSeconds: TimeInterval = 3600
++                let isSignificantlyOverdue = status.remaining == 0
++                    && status.scheduledAt.map { Date().timeIntervalSince($0) > oneHourInSeconds } ?? false
++                shouldForce = isSignificantlyOverdue && !status.isRunning
++                catchUpReason = shouldForce ? .overdue : nil
 +            }
-+        }
-+        _showStricterBlocking = State(initialValue: initialExpanded)
-+    }
 +
-     @Environment(\.colorScheme) private var colorScheme
-     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
- 
-@@ -128,14 +165,9 @@ struct BasicFiltersView: View {
-         #if os(iOS)
-         .refreshable {
-             guard !filterManager.isLoading else { return }
--            await filterManager.checkForUpdates(scope: .filters, presentation: .refresh)
-+            await filterManager.checkForUpdates(scope: .filters, presentation: .refresh, autoApply: true)
-         }
-         #endif
--        .onAppear {
--            if hasActiveStricterAnnoyance {
--                showStricterBlocking = true
--            }
--        }
-         .infoPresentation(item: $peekBundle) { bundle in
-             BasicBundlePeekView(
-                 bundle: bundle,
-@@ -149,7 +181,7 @@ struct BasicFiltersView: View {
-                 }
-             )
-         }
--        .sheet(isPresented: $showingUnownedSheet) {
-+        .infoPresentation(item: $unownedSheetItem) { _ in
-             ScopedBundleListsSheet(
-                 title: String(localized: "Also on"),
-                 filters: FilterListPresentation.ordered(unownedActiveFilters, order: filterDisplayOrder),
-@@ -178,6 +210,9 @@ struct BasicFiltersView: View {
-             isWelded: safariHealth.hysteresis.isWelded,
-             weldCelebrationCount: safariHealth.weldCelebrationCount,
-             applyProgress: applyProgress,
-+            statusSubtitleOverride: filterManager.showingBasicUpToDateStatus
-+                ? String(localized: "Filters are up to date.")
-+                : nil,
-             onTapHero: {
-                 #if os(macOS)
-                 showingHeroPopover = true
-@@ -624,7 +659,7 @@ struct BasicFiltersView: View {
-             isBypassPaywallsCleanEnabled: isBypassPaywallsCleanEnabled
-         )
-         return Button {
--            showingUnownedSheet = true
-+            unownedSheetItem = AlsoOnSheetItem()
-         } label: {
-             HStack(spacing: 12) {
-                 IconBadge(
-@@ -654,6 +689,7 @@ struct BasicFiltersView: View {
-         }
-         .buttonStyle(.plain)
-         .noFocusRingCompat()
-+        .infoPopoverAnchor("alsoOn")
-     }
- 
-     // MARK: - Footer
-@@ -923,13 +959,8 @@ struct BasicBundlePeekView: View {
-                     }
-                 } label: {
-                     HStack {
--                        Text(
--                            String.localizedStringWithFormat(
--                                NSLocalizedString("All %d list
-```
-
-**File**: `wBlock/ContentView.swift` (modified, +9/-3)
-```diff
-@@ -222,7 +222,10 @@ struct ContentView: View {
-     }
- 
-     private var showBasicBottomAccessory: Bool {
--        appMode == .basic && !healthStatus.isProtected && (!isBasicHeroVisible || tabSelection.value != 0)
-+        appMode == .basic
-+            && !healthStatus.isProtected
-+            && healthStatus != .applying
-+            && (!isBasicHeroVisible || tabSelection.value != 0)
-     }
- 
-     private func handleHealthAction(_ action: SafariHealthStatus.Action) {
-@@ -535,7 +538,10 @@ struct ContentView: View {
-                     safariHealth: safariHealth,
-                     lastUpdatedDate: latestFilterUpdateDate,
-                     onOpenHealthDetail: { showingHealthDetail = true },
--                    onCheckForUpdates: { checkForUpdates(scope: .all) },
-+                    onCheckForUpdates: {
-+                        guard !filterManager.isLoading else { return }
-+                        Task { await filterManager.checkForUpdates(scope: .all, presentation: .refresh, autoApply: true) }
-+                    },
-                     onHealthAction: handleHealthAction,
-                     onHeroVisibilityChange: { visible in
-                         if isBasicHeroVisible != visible { isBasicHeroVisible = visible }
-@@ -608,7 +614,7 @@ struct ContentView: View {
-             hasPendingChanges: false,
-             onTap: {
-                 guard !filterManager.isLoading else { return }
--                Task { await filterManager.checkForUpdates(scope: .all, presentation: .blocking) }
-+                Task { await filterManager.checkForUpdates(scope: .all, presentation: .refresh, autoApply: true) }
-             },
-             onBusyTap: filterManager.showBackgroundApplyProgress
-         ) {
-```
-
-**File**: `wBlock/OnboardingView.swift` (modified, +11/-2)
-```diff
-@@ -637,7 +637,7 @@ struct OnboardingView: View {
-                     Text("Extras")
-                         .font(.headline)
-                     SelectableRowGroup(data: featuredExtras) { item in
--                        userscriptCard(for: item)
-+                        userscriptCard(for: item, showLanguageCaption: true)
-                     }
-                 }
-             }
-@@ -1098,11 +1098,20 @@ struct OnboardingView: View {
-         }
-     }
- 
--    private func userscriptCard(for script: OnboardingUserScriptItem) -> some View {
-+    private func userscriptCard(
-+        for script: OnboardingUserScriptItem,
-+        showLanguageCaption: Bool = false
-+    ) -> some View {
-         let isSelected = selectedUserscripts.contains(script.id)
-+        let languageCaption: String = showLanguageCaption && !script.languageCodes.isEmpty
-+            ? script.languageCodes
-+                .map { RegionalLanguageOption(code: $0).nativeName }
-+                .joined(separator: ", ")
-+            : ""
- 
-         return SelectableRow(
-             title: Text(script.name),
-+            caption: languageCaption,
-             subtitle: script.description,
-             badge: script.isBeta ? "Beta" : nil,
-             isSelected: isSelected
-```
-
-**File**: `wBlock/ProtectionHero.swift` (modified, +5/-2)
-```diff
-@@ -261,11 +261,14 @@ struct ProtectionHero: View {
-     let isWelded: Bool
-     let weldCelebrationCount: Int
-     var applyProgress: Double? = nil
-+    var statusSubtitleOverride: String? = nil
-     let onTapHero: () -> Void
-     let onAction: (SafariHealthStatus.Action) -> Void
- 
-     var body: some View {
-         TimelineView(.periodic(from: .now, by: 30)) { context in
-+            let subtitleText = (status.isProtected ? statusSubtitleOverride : nil)
-+                ?? status.subtitle(now: context.date)
-             VStack(spacing: 10) {
-                 Button(action: onTapHero) {
-                     VStack(spacing: 8) {
-@@ -288,7 +291,7 @@ struct ProtectionHero: View {
-                                     .foregroundStyle(.tertiary)
-                                     .accessibilityHidden(true)
-                             }
--                            Text(status.subtitle(now: context.date))
-+                            Text(subtitleText)
-                                 .font(.footnote)
-                                 .foregroundStyle(.secondary)
-                                 .multilineTextAlignment(.center)
-@@ -301,7 +304,7 @@ struct ProtectionHero: View {
-                 .buttonStyle(.plain)
-                 .noFocusRingCompat()
-                 .accessibilityElement(children: .combine)
--                .accessibilityLabel(Text("\(status.title). \(status.subtitle(now: context.date))"))
-+                .accessibilityLabel(Text("\(status.title). \(subtitleText)"))
-                 .accessibilityHint(Text("Shows Safari extension status"))
- 
-                 if let action = status.action, let ctaTitle = status.ctaTitle {
-```
-
----
-
-### Incident Patch 3: `bb1c3e27` (2026-11-23)
-**Commit Message**: Fix Show All Lists toggle glitch and Settings separator alignment
-
-**File**: `wBlock/ContentView.swift` (modified, +16/-48)
-```diff
-@@ -71,7 +71,6 @@ struct ContentView: View {
-     @State private var userScriptSearchRequest = 0
-     @State private var filtersScrollToTopToken = 0
-     @State private var showingLogs = false
--    @State private var isTransitioningLayout = false
-     @State private var layoutTransitionTask: Task<Void, Never>?
-     @State private var deferredModeFlushTask: Task<Void, Never>?
-     @Environment(\.scenePhase) var scenePhase
-@@ -259,55 +258,23 @@ struct ContentView: View {
-     private func switchAppMode(to newMode: AppMode, fromToggle: Bool = false) {
-         layoutTransitionTask?.cancel()
-         layoutTransitionTask = nil
--        guard appMode != newMode else {
--            if isTransitioningLayout {
--                withAnimation(.easeOut(duration: 0.16)) {
--                    isTransitioningLayout = false
--                }
--            }
--            return
--        }
-+        guard appMode != newMode else { return }
-         clearFilterPopoverSelections()
-         if !fromToggle {
-             Haptics.play(.tap)
-+            withAnimation(reduceMotion ? .easeInOut(duration: 0.16) : .easeInOut(duration: 0.24)) {
-+                appMode = newMode
++            let outcome: SharedAutoUpdateManager.AutoUpdateRunOutcome
++            if shouldForce {
++                os_log("App active with overdue/due update (%{public}@) - forcing update", type: .info, trigger)
++                outcome = await self.runForcedAutoUpdate(trigger: trigger)
++            } else {
++                outcome = await SharedAutoUpdateManager.shared.maybeRunAutoUpdate(trigger: trigger)
 +            }
-+            return
-         }
-         layoutTransitionTask = Task { @MainActor in
--            if fromToggle {
--                // Let the native switch thumb finish sliding before swapping layouts.
--                try? await Task.sleep(nanoseconds: 110_000_000)
--                guard !Task.isCancelled else { return }
--            }
--
--            if reduceMotion {
--                withAnimation(.easeInOut(duration: 0.14)) {
--                    isTransitioningLayout = true
--                }
--                try? await Task.sleep(nanoseconds: 120_000_000)
--                guard !Task.isCancelled else { return }
--                var transaction = Transaction(animation: nil)
--                transaction.disablesAnimations = true
--                withTransaction(transaction) {
--                    appMode = newMode
--                }
--                withAnimation(.easeInOut(duration: 0.18)) {
--                    isTransitioningLayout = false
--                }
--            } else {
--                withAnimation(.easeIn(duration: 0.13)) {
--                    isTransitioningLayout = true
--                }
--                try? await Task.sleep(nanoseconds: 130_000_000)
--                guard !Task.isCancelled else { return }
--                var transaction = Transaction(animation: nil)
--                transaction.disablesAnimations = true
--                withTransaction(transaction) {
--                    appMode = newMode
--                }
--                try? await Task.sleep(nanoseconds: 16_000_000)
--                guard !Task.isCancelled else { return }
--                withAnimation(.spring(response: 0.36, dampingFraction: 0.84)) {
--                    isTransitioningLayout = false
--                }
-+            // Let the native switch thumb finish gliding before rebuilding off-screen tabs.
-+            try? await Task.sleep(nanoseconds: 140_000_000)
-+            guard !Task.isCancelled else { return }
-+            var transaction = Transaction(animation: nil)
-+            transaction.disablesAnimations = true
-+            withTransaction(transaction) {
-+                appMode = newMode
-             }
-         }
-     }
-@@ -405,9 +372,6 @@ struct ContentView: View {
-                 onAction: handleHealthAction
-             )
-         }
--        .scaleEffect(isTransitioningLayout && !reduceMotion ? 0.982 : 1)
--        .blur(radius: isTransitioningLayout && !reduceMotion ? 7 : 0)
--        .opacity(isTransitioningLayout ? 0.86 : 1)
-         .background(keyboardShortcutHandlers)
-         .keyboardScrollingCompat()
-         .onAppear {
-@@ -620,6 +584,7 @@ struct ContentView: View {
-                 #endif
-                 .modifier(basicToolbar)
-             }
-+            .transition(.opacity)
-             #if os(macOS)
-             .frame(
-                 minWidth: 480, idealWidth: 540, maxWidth: .infinity,
-@@ -636,6 +601,7 @@ struct ContentView: View {
-                     // Inside the stack, like Userscripts; iOS ignores toolbar items attached outside it.
-                     .modifier(filtersToolbar)
-             }
-+            .transition(.opacity)
-             #if os(iOS)
-                 .searchableCompat(
-                     text: $filterSearchText,
-@@ -788,6 +754,7 @@ struct ContentView: View {
-                 .navigationBarTitleDisplayMode(.inline)
-                 #endif
-             }
-+            .transition(.opacity)
-         } else {
-             CompatibleNavigationStack(requiresNavigationView: false) {
-                 UserScriptManagerView(
-@@ -809,6 +776,7 @@ struct ContentView: View {
-                         .navigationBarTitleDisplayMode(.inline)
-                     #endif
-             }
-+            .transition(.opacity)
-         }
-     }
- 
-```
-
-**File**: `wBlock/SettingsRowLabel.swift` (modified, +10/-7)
-```diff
-@@ -54,13 +54,16 @@ struct SettingsRowLabel: View {
-         // iOS lists draw disclosure chevrons for NavigationLink only, so a
-         // sheet-presenting button borrows one to read the same way.
-         if accessory == .popover {
--            HStack {
--                Label(title, systemImage: systemImage)
--                    .foregroundStyle(.primary)
--                Spacer()
--                Image(systemName: "chevron.right")
--                    .font(.footnote.weight(.semibold))
--                    .foregroundStyle(.tertiary)
-+            Label {
-+                HStack {
-+                    Text(title)
-+                    Spacer()
-+                    Image(systemName: "chevron.right")
-+                        .font(.footnote.weight(.semibold))
-+                        .foregroundStyle(.tertiary)
++
++            if case .skipped(let reason) = outcome {
++                if Self.shouldDeferForegroundCatchUp(skipReason: reason) {
++                    await MainActor.run { self.deferredForegroundCatchUpTrigger = trigger }
 +                }
-+            } icon: {
-+                Image(systemName: systemImage)
-             }
-         } else {
-             Label(title, systemImage: systemImage)
-```
-
-**File**: `wBlock/SettingsView.swift` (modified, +63/-11)
-```diff
-@@ -13,7 +13,11 @@ struct SettingsView: View {
-     @ObservedObject private var syncManager = CloudSyncManager.shared
-     @AppStorage(AppMode.storageKey) private var appMode: AppMode = .basic
-     @State private var showAllListsSwitch = UserDefaults.standard.string(forKey: AppMode.storageKey) == AppMode.advanced.rawValue
--    @State private var preserveAdvancedScrollOnModeChange = false
-+    #if os(iOS)
-+    @State private var showsStatusPills = UserDefaults.standard.string(forKey: AppMode.storageKey) == AppMode.advanced.rawValue
-+    @State private var deferStatusPillsSyncOnModeChange = false
-+    @State private var isListNearTop = false
-+    #endif
-     @Environment(\.openURL) private var openURL
-     private static let autoUpdateIntervalPresets: [Double] = [1, 2, 4, 6, 12, 24, 48, 72, 168]
-     static let reportIssueURL = URL(string: "https://github.com/0xCUB3/wBlock/issues/new/choose")!
-@@ -79,7 +83,13 @@ struct SettingsView: View {
-             guard !Task.isCancelled else { return }
-             await MainActor.run { startTimer() }
-         }
--        .onDisappear { stopTimer() }
-+        .onDisappear {
-+            stopTimer()
-+            #if os(iOS)
-+            showsStatusPills = (appMode == .advanced)
-+            deferStatusPillsSyncOnModeChange = false
-+            #endif
-+        }
-         .alert("Restart Onboarding?", isPresented: $showingRestartConfirmation) {
-             Button("Cancel", role: .cancel) {}
-             Button("Restart", role: .destructive) { restartOnboarding() }
-@@ -254,7 +264,9 @@ struct SettingsView: View {
-             set: { showAll in
-                 let newMode: AppMode = showAll ? .advanced : .basic
-                 showAllListsSwitch = showAll
--                preserveAdvancedScrollOnModeChange = (newMode != appMode)
-+                #if os(iOS)
-+                deferStatusPillsSyncOnModeChange = (newMode != appMode)
-+                #endif
-                 if let onSwitchAppMode {
-                     onSwitchAppMode(newMode)
-                 } else if newMode != appMode {
-@@ -405,6 +417,7 @@ struct SettingsView: View {
-             }
- 
-             cosmeticFilteringControls
-+                .leadingAlignedListRowSeparatorCompat()
- 
-             // Opt-in and partial, so it sits with the other power-user settings.
-             Toggle(isOn: blockedRequestCountBinding) {
-@@ -948,22 +961,29 @@ struct SettingsView: View {
-                         scrollTarget = nil
-                     }
-                     .onAppear {
--                        showAllListsSwitch = (appMode == .advanced)
-+                        let isAdvanced = (appMode == .advanced)
-+                        showAllListsSwitch = isAdvanced
-+                        #if os(iOS)
-+                        showsStatusPills = isAdvanced
-+                        deferStatusPillsSyncOnModeChange = false
-+                        #endif
-                     }
-                     .onChangeCompat(of: appMode) { _, newMode in
-                         let isAdvanced = (newMode == .advanced)
-                         if showAllListsSwitch != isAdvanced {
-                             showAllListsSwitch = isAdvanced
-                         }
-                         #if os(iOS)
--                        if preserveAdvancedScrollOnModeChange {
--                            preserveAdvancedScrollOnModeChange = false
--                            DispatchQueue.main.async {
--                                proxy.scrollTo(SettingsSection.advanced, anchor: .center)
-+                        if deferStatusPillsSyncOnModeChange {
-+                            deferStatusPillsSyncOnModeChange = false
-+                            if isListNearTop, showsStatusPills != isAdvanced {
-+                                withAnimation(.easeInOut(duration: 0.22)) {
-+                                    showsStatusPills = isAdvanced
-+                                }
-                             }
-+                        } else if showsStatusPills != isAdvanced {
-+                            showsStatusPills = isAdvanced
-                         }
--                        #else
--                        preserveAdvancedScrollOnModeChange = false
-                         #endif
-                     }
-             }
-@@ -974,7 +994,7 @@ struct SettingsView: View {
-     private var settingsList: some View {
-         #if os(iOS)
-         List {
--            if appMode == .advanced {
-+            if showsStatusPills {
-                 Section {
-                     statusPills
-                         .unifiedTabCardSectionRow()
-@@ -983,6 +1003,14 @@ struct SettingsView: View {
-             settingsSections
-         }
-         .unifiedTabListStyle()
-+        .modifier(SettingsTopTrackingModifier(isNearTop: $isListNearTop) {
-+            let isAdvanced = (appMode == .advanced)
-+            if showsStatusPills != isAdvanced {
-+                withAnimation(.easeInOut(duration: 0.22)) {
-+                    showsStatusPills = isAdvanced
-+           
-```
-
-**File**: `wBlock/SwiftUICompatibility.swift` (modified, +11/-0)
-```diff
-@@ -367,6 +367,17 @@ extension View {
-             self
-         }
-     }
++            } else if let catchUpReason {
++                await ProtobufDataManager.shared.recordAutoUpdateForegroundCatchUp(reason: catchUpReason)
++            }
 +
-+    /// Starts the row's bottom separator at the leading content edge instead of
-+    /// indenting past a `Label` icon, for rows followed by an iconless row.
-+    @ViewBuilder
-+    func leadingAlignedListRowSeparatorCompat() -> some View {
-+        if #available(iOS 16.0, macOS 13.0, *) {
-+            alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
-+        } else {
-+            self
++            await self.showOverLimitFailure(after: outcome)
++            if logSchedule {
++                await ConcurrentLogManager.shared.info(.autoUpdate, scheduleMessage(from: status), metadata: [:])
++            }
 +        }
 +    }
- }
++
+     @MainActor
+     func configuredAutoUpdateIntervalHours(defaultValue: Double = 6.0, minimum: Double = 1.0) -> Double {
+         let storedInterval = ProtobufDataManager.shared.autoUpdate
+```
+
+**File**: `wBlock/AppFilterManager+ApplyPipeline.swift` (modified, +9/-1)
+```diff
+@@ -290,7 +290,15 @@ extension AppFilterManager {
+             // when the run was cancelled before it committed. A refused commit keeps the
+             // run's counts on screen instead (see saveRuleCounts).
+             refreshRuleCountsFromStore()
+-            Task { await SharedAutoUpdateManager.shared.endForegroundWork() }
++            let shouldTriggerDeferredCatchUp = lastApplySucceeded && !hasError
++            Task {
++                await SharedAutoUpdateManager.shared.endForegroundWork()
++                if shouldTriggerDeferredCatchUp {
++                    await MainActor.run {
++                        AppDelegate.current?.triggerDeferredForegroundCatchUpIfNeeded()
++                    }
++                }
++            }
+         }
+         ApplyCancellation.reset()
+         let applyTask = Task {
+```
+
+**File**: `wBlock/AppFilterManager+RuleCounts.swift` (modified, +1/-0)
+```diff
+@@ -86,6 +86,7 @@ extension AppFilterManager {
+     func refreshRuleCountsOnForeground() async {
+         _ = await dataManager.refreshFromDiskIfModified()
+         refreshRuleCountsFromStore()
++        await adoptPersistedDownloadMetadata()
+     }
  
- struct CompatibleLabeledContent<Label: View, Content: View>: View {
+     /// Commits the in-memory counts to the store. Callers await it, so the store leads
+```
+
+**File**: `wBlock/AppFilterManager.swift` (modified, +43/-15)
+```diff
+@@ -576,6 +576,7 @@ class AppFilterManager: ObservableObject {
+ 
+         self.pausedComponents = BlockingPauseStore.pausedComponents()
+         self.isBlockingPaused = !self.pausedComponents.isEmpty
++        SharedAutoUpdateManager.runProgressHandler = { [weak self] in self?.showAutoUpdateProgress($0) }
+         registerResumeRequestObserver()
+         registerFilterUpdateRequestObserver()
+ 
+@@ -922,7 +923,6 @@ class AppFilterManager: ObservableObject {
+     @discardableResult
+     func setup() -> Task<Void, Never>? {
+         filterUpdater.filterListManager = self
+-        SharedAutoUpdateManager.runProgressHandler = { [weak self] in self?.showAutoUpdateProgress($0) }
+ 
+         // Load filter lists from protobuf data manager. Keep the in-memory
+         // boundary unique even when older or concurrent data supplies repeats.
+@@ -1289,8 +1289,12 @@ class AppFilterManager: ObservableObject {
+         var lists = filterLists
+         var changed = false
+         for index in lists.indices {
+-            guard let newer = stored[lists[index].id], let date = newer.lastUpdated,
+-                  date > (lists[index].lastUpdated ?? .distantPast) else { continue }
++            guard let newer = stored[lists[index].id], let date = newer.lastUpdated else { continue }
++            let hasNewerDate = date > (lists[index].lastUpdated ?? .distantPast)
++            let hasMetadataChange = newer.version != lists[index].version
++                || newer.sourceRuleCount != lists[index].sourceRuleCount
++                || newer.uniqueRuleCount != lists[index].uniqueRuleCount
++            guard hasNewerDate || (date == lists[index].lastUpdated && hasMetadataChange) else { continue }
+             lists[index].version = newer.version
+             lists[index].lastUpdated = date
+             lists[index].sourceRuleCount = newer.sourceRuleCount
+@@ -1304,23 +1308,47 @@ class AppFilterManager: ObservableObject {
+ 
+     private func showAutoUpdateProgress(_ progress: SharedAutoUpdateManager.RunProgress) {
+         let sheet = applyProgressViewModel
+-        if progress == .finished {
++        if case .finished(let completion) = progress {
+             guard isAutoUpdateRunning else { return }
+             isAutoUpdateRunning = false
+             refreshRuleCountsFromStore()
+-            Task { await adoptPersistedDownloadMetadata() }
+-            if autoApplyWaitingForAutoUpdate {
+-                // Hand the open sheet to the rebuild instead of closing it and
+-                // floating a second "Applying filters" card over the app.
+-                autoApplyWaitingForAutoUpdate = false
+-                if hasUnappliedChanges, !isLoading, !isApplyInFlight, !pausedComponents.contains(.filters) {
+-                    Task { await self.performFilterUpdate(checkForUpdates: false, downloadMissing: true) }
++            let shouldFollowUpApply = autoApplyWaitingForAutoUpdate
++            autoApplyWaitingForAutoUpdate = false
++            let ownedSheet = autoUpdateOwnsProgressSheet
++            let wasWatching = showingApplyProgressSheet
++            Task { @MainActor [weak self] in
++                guard let self else { return }
++                await self.adoptPersistedDownloadMetadata()
++                if shouldFollowUpApply,
++                   self.hasUnappliedChanges, !self.isLoading, !self.isApplyInFlight, !self.pausedComponents.contains(.filters) {
++                    // Hand the open sheet to the rebuild instead of closing it and
++                    // floating a second "Applying filters" card over the app.
++                    await self.performFilterUpdate(checkForUpdates: false, downloadMissing: true)
+                     return
+                 }
+-            }
+-            if autoUpdateOwnsProgressSheet {
+-                sheet.updateIsLoading(false)
+-                showingApplyProgressSheet = false
++                if ownedSheet {
++                    let updatedFilters = completion?.updatedFilters ?? 0
++                    let updatedScripts = completion?.updatedScripts ?? 0
++                    let failedScripts = completion?.failedScripts ?? 0
++                    sheet.updateFilterUpdatesFound(updatedFilters)
++                    sheet.updateScriptsUpdateResult(updated: updatedScripts, failed: failedScripts)
++                    let totalUpdated = updatedFilters + updatedScripts
++                    if let completion, totalUpdated > 0 {
++                        sheet.markFinished()
++                        self.showingApplyProgressSheet = false
++                        if !wasWatching,
++                           UserDefaults.standard.string(forKey: AppMode.storageKey) == AppMode.advanced.rawValue,
++                           !sheet.state.resultNeedsAttention, self.failedReloadTargets.isEmpty {
++                            self.showingAppliedBanner = true
++                        }
++                    } else {
++                        sheet.updateIsLoading(false)
++                        self.showingApplyProgres
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1165** (2026-11-24): Skip unchanged DNR rule parsing, Safari API dumps, and cache retention on sync (@huseyinbal05)
+- **PR #1161** (2026-11-24): Share one WBEngine.Plan across blockers with zapper rules and mid-apply writes (@huseyinbal05)
+- **PR #1159** (2026-11-23): perf(engine): trim runtime cold-start regex heap, iframe scan and exclusions (@huseyinbal05)
+- **PR #1158** (2026-11-23): perf(engine): read strict hosts from list lines and trim prune allocations (@huseyinbal05)
+- **PR #1154** (2026-11-23): Speed up the filter download and update pipeline (@huseyinbal05)
 - **PR #1153** (2026-11-23): Simplify onboarding to 2-step Express Setup and replace mode naming with Show All Lists (@0xCUB3)
-- **PR #1149** (2026-11-23): Revert "Add target.microsoft.com to ad-tracking hosts (#1145)" (@braverug)
-- **PR #1147** (2026-11-22): [ImgBot] Optimize images (@imgbot[bot])
-- **PR #1146** (2026-11-22): perf(content-blocker): skip redundant cache reads and reload re-hashing (@huseyinbal05)
-- **PR #1145** (2026-11-22): Add target.microsoft.com to ad-tracking hosts (@braverug)
-- **PR #1144** (2026-11-22): feat(mode): add Basic and Advanced modes (#404) (@0xCUB3)
 
 ---
 
@@ -3442,84 +2918,68 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Lock Peek sheet detent on open, fix Show All Lists freeze, and animate layout sw
+## X. ui): use pause.fill icon with active blue fill on Pause Blocking toolbar button
 
 **RULE**:
-When implementing operations in `wBlock/BasicFiltersView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `wBlock/SettingsView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2880c43d`: Lock Peek sheet detent on open, fix Show All Lists freeze, and animate layout switch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d35480a2`: ui): use pause.fill icon with active blue fill on Pause Blocking toolbar button. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `wBlock/BasicFiltersView.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `wBlock/SettingsView.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        let codes = activeLanguageCodes
-        guard !codes.isEmpty else { return String(localized: "None") }
-        let displayLocale = RegionalLanguageOption.displayLocale
-        let names = codes
-            .map { code -> (sortKey: String, native: String) in
-                let display = displayLocale.localizedString(forLanguageCode: code) ?? code
-                let native = Locale.nativeLanguageName(for: code) ?? display
-                return (display, native)
+    private func setPaused(_ pause: Bool) {
+        if pause {
+        Task { await filterManager.setBlockingPaused(pause) }
+        let pauseBinding = Binding(
+            get: { isPaused },
+            set: { newValue in
+                guard newValue != isPaused else { return }
+                setPaused(newValue)
             }
-            .sorted { $0.sortKey.localizedCaseInsensitiveCompare($1.sortKey) == .orderedAscending }
-            .map(\.native)
-        return ListFormatter.localizedString(byJoining: names)
-            .id(bundle.id)
-        if #available(iOS 16.0, *) {
-            PeekSheetDetentsHost(showAllLists: $showAllLists) {
-                ScrollView {
-                    peekBody
-                        .padding(SheetDesign.contentHorizontalPadding)
-                }
-                .scrollBounceBasedOnSizeCompat()
-                .opaqueSheetBackgroundCompat()
+        )
+        return Toggle(isOn: pauseBinding) {
+            Label(title, systemImage: "pause.fill")
+        .toggleStyle(.button)
+            let menu = Menu {
+                Label(title, systemImage: "pause.fill")
+                setPaused(!isPaused)
+
+            if isPaused {
+                menu.buttonStyle(.borderedProminent)
+            } else {
+                menu
             }
-        } else {
-            ScrollView {
-                peekBody
-                    .padding(SheetDesign.contentHorizontalPadding)
-  
+            Toggle(isOn: pauseBinding) {
+                Label(title, systemImage: "pause.fill")
+            .toggleStyle(.button)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-        let names = languageOptions.filter { activeLanguageCodes.contains($0.code) }.map(\.nativeName)
-        return names.isEmpty ? String(localized: "None") : ListFormatter.localizedString(byJoining: names)
-        ScrollView {
-            peekBody
-                .padding(SheetDesign.contentHorizontalPadding)
-        .scrollBounceBasedOnSizeCompat()
-        .opaqueSheetBackgroundCompat()
-        .modifier(PeekSheetDetentsCompat(showAllLists: $showAllLists))
-private struct PeekSheetDetentsCompat: ViewModifier {
-    @Binding var showAllLists: Bool
-
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content.modifier(PeekSheetDetentsModifier(showAllLists: $showAllLists))
-        } else {
-            content
-        }
-    }
-}
-
-private struct PeekSheetDetentsModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .presentationDetents([.medium, .large], selection: $selectedDetent)
-            .presentationDragIndicator(.visible)
-            .onChangeCompat(of: showAllLists) { _, expanded in
-                let target: PresentationDetent = expanded ? .large : .medium
-                if selectedDete
+    private func toggle(isPaused: Bool) {
+        if !isPaused {
+        Task { await filterManager.setBlockingPaused(!isPaused) }
+        return Button {
+            toggle(isPaused: isPaused)
+        } label: {
+            Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
+            Menu {
+                Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
+                toggle(isPaused: isPaused)
+            Button {
+                toggle(isPaused: isPaused)
+            } label: {
+                Label(title, systemImage: isPaused ? "pause.circle.fill" : "pause.circle")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2880c43d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d35480a2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

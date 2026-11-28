@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T04:48:55.540Z",
+  "last_updated": "2026-11-28T04:57:48.137Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26960,
+  "total_items": 26963,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -240136,9 +240136,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "756dbbe1ed893dcc5fcffcd0957184c69f9aea9fbb3121a5f7213b94ad6d6a56",
+      "content_hash": "6bc64745762885a61347848bb0f2d300f4207db24485b24dfbd79926c650f9c0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T04:21:21.448Z"
+      "persisted_at": "2026-11-28T04:57:48.137Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -263224,8 +263224,8 @@
       "slug": "0xcub3-wblock",
       "platform": "github",
       "source_url": "https://github.com/0xCUB3/wBlock",
-      "source_version": "d439e269",
-      "content_hash": "10ed56907380abf6d6c983152d1442d186fba5cc56b9596311df94c222917b5f",
+      "source_version": "943134a1",
+      "content_hash": "98b763b94cad1990e449eb6c969cc81bdc0ba7b1d8849c0c6939890d4222cda4",
       "dossier_path": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "promoted_rules": [
@@ -263248,6 +263248,11 @@
           "number": 10590,
           "title": "click macOS rows for info, add AdGuard Mini system-wide note, and harden popup/z",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11039,
+          "title": "use pause.fill icon with active blue fill on Pause Blocking toolbar button",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -263255,7 +263260,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T03:04:34.718Z",
+      "verified_at": "2026-11-28T04:57:41.013Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263297,10 +263302,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-technical-construction-intelligence-0xcub3-wblock-core-invariants.md",
       "title": "Technical Construction Intelligence: 0xCUB3/wBlock Core Invariants",
       "repository": "0xCUB3/wBlock",
-      "source_version": "bb1c3e27",
-      "content_hash": "fe6bbae14fa956b6982dda89000c78b2b779426601b7c590a4a8d73ee4840052",
+      "source_version": "943134a1",
+      "content_hash": "ee3a6d369d1ff358d82e7c6a36cc7f2a63046035547539961da0332f39c78e24",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T17:20:43.435Z"
+      "persisted_at": "2026-11-28T04:57:41.728Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock",
@@ -263309,10 +263314,10 @@
       "relative_path": "08_VERIFICATION/0xcub3-wblock-verification-protocol-empirical-defect-shield-for-0xcub3-wblock.md",
       "title": "Verification Protocol: Empirical Defect Shield for 0xCUB3/wBlock",
       "repository": "0xCUB3/wBlock",
-      "source_version": "d439e269",
-      "content_hash": "e7e6b1a5efbd951b01ef38f8f07480c07240383c0b9551ef542a20b8363a2eb6",
+      "source_version": "943134a1",
+      "content_hash": "368cd5a20c5d1b6c0779d6a402877e160adeae26ef9f6bead053160ead270905",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T03:04:35.884Z"
+      "persisted_at": "2026-11-28T04:57:41.925Z"
     },
     "candidate_directive-update-cilium-runtime-builder": {
       "item_id": "candidate_directive-update-cilium-runtime-builder",
@@ -263464,9 +263469,9 @@
       "title": "Technical Construction Intelligence: 0xcub3-wblock-learnings Core Invariants",
       "repository": "0xcub3-wblock-learnings",
       "source_version": "HEAD",
-      "content_hash": "40a5f6363dd1658f0a26a27f731ea770ce4a99db8646c48663fb83675cc799a3",
+      "content_hash": "b1d81722850174661078317e54ef113f9202082f1cd4f3e0b074f07f73cc060b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T17:20:56.914Z"
+      "persisted_at": "2026-11-28T04:57:46.597Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-0xcub3-wblock-learnings",
@@ -263476,9 +263481,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for 0xcub3-wblock-learnings",
       "repository": "0xcub3-wblock-learnings",
       "source_version": "HEAD",
-      "content_hash": "b200650bdb978159745c85f0ce077ab4515af6105910e618fd09c9d073dc7791",
+      "content_hash": "baed4df0245645946b236b10b0d0678d7626a588f1b1e6f522d105065195b366",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T03:04:46.588Z"
+      "persisted_at": "2026-11-28T04:57:46.803Z"
     },
     "learn-github-louis-cfm-coucou": {
       "learning_id": "learn-github-louis-cfm-coucou",
@@ -313693,7 +313698,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/thinkingmachines/Inkling-2-Mini",
       "source_version": "hf-thinkingmachines-inkling-2-mini",
-      "content_hash": "094e003860576a2d2c2f89409341826f2be33a54224a7de0cc7adbc4fbba61d5",
+      "content_hash": "a9ef6070a1513e2043a3184ad5fa98706128e8b5b171ff255da12508c68d78d2",
       "dossier_path": "07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md",
       "promoted_rules": [],
@@ -313702,7 +313707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T19:55:19.106Z",
+      "verified_at": "2026-11-28T04:57:33.718Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -313719,9 +313724,9 @@
       "title": "Research & Knowledge Intelligence: thinkingmachines/Inkling-2-Mini Core Invariants",
       "repository": "thinkingmachines/Inkling-2-Mini",
       "source_version": "hf-thinkingmachines-inkling-2-mini",
-      "content_hash": "b7d02ff9a827c8b84d252ab539ae422d4546a778f6f4ca012d25fa3a7d110d3f",
+      "content_hash": "9cc0f1d84e273c166c4932a8c64ad48cc5af97399569c956e368f6f9082353be",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T19:55:19.565Z"
+      "persisted_at": "2026-11-28T04:57:34.243Z"
     },
     "rule-9639": {
       "learning_id": "rule-9639",
@@ -313769,9 +313774,9 @@
       "title": "Research & Knowledge Intelligence: hf-thinkingmachines-inkling-2-mini-learnings Core Invariants",
       "repository": "hf-thinkingmachines-inkling-2-mini-learnings",
       "source_version": "HEAD",
-      "content_hash": "8dd016a2bd2a4d88784cc7cba2acdf19be82efede9f1ab0df9fd11eeb1665194",
+      "content_hash": "485db98b6c16b2bc2f577b56319ff7dc152ce9aa5de97158db2bb53df5e5db9e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T19:56:00.166Z"
+      "persisted_at": "2026-11-28T04:57:45.780Z"
     },
     "candidate_directive-trafficpolicy-prefer-the-parent-on-conflicts-under-deepmergepreferparent": {
       "item_id": "candidate_directive-trafficpolicy-prefer-the-parent-on-conflicts-under-deepmergepreferparent",
@@ -370476,6 +370481,44 @@
       "content_hash": "c1591ebbdc81f92f926a9e8e147749ac1a045876a6a68fad6898f0f5c9a83e71",
       "domain_letter": "D",
       "persisted_at": "2026-11-28T04:48:53.361Z"
+    },
+    "rule-11039": {
+      "learning_id": "rule-11039",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11039,
+      "title": "use pause.fill icon with active blue fill on Pause Blocking toolbar button",
+      "source_url": "https://github.com/0xCUB3/wBlock",
+      "source_version": "943134a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T04:57:41.013Z"
+    },
+    "candidate_directive-use-pause-fill-icon-with-active-blue-fill-on-pause-blocking-toolbar-button": {
+      "item_id": "candidate_directive-use-pause-fill-icon-with-active-blue-fill-on-pause-blocking-toolbar-button",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VKPF-use-pause-fill-icon-with-active-blue-fill-on-pause-blocking-toolbar-button.md",
+      "title": "use pause.fill icon with active blue fill on Pause Blocking toolbar button",
+      "repository": "0xCUB3/wBlock",
+      "source_version": "943134a1",
+      "content_hash": "f80a73abb8104b364ccf4c9fde72ebd2618db517fa0593bc58d2674b86ef1912",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T04:57:41.527Z"
+    },
+    "candidate_directive-ui-use-pause-fill-icon-with-active-blue-fill-on-pause-blocking-toolbar-button": {
+      "item_id": "candidate_directive-ui-use-pause-fill-icon-with-active-blue-fill-on-pause-blocking-toolbar-button",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VOGG-ui-use-pause-fill-icon-with-active-blue-fill-on-pause-blocking-toolbar-button.md",
+      "title": "ui): use pause.fill icon with active blue fill on Pause Blocking toolbar button",
+      "repository": "0xcub3-wblock-learnings",
+      "source_version": "HEAD",
+      "content_hash": "72b527198af8726a1396cd198dfe4bb0a53afdeb5218662438327454e6703c07",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T04:57:46.388Z"
     }
   },
   "ai-builder-brain": {

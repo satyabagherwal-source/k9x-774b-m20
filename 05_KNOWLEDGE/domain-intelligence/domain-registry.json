@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T04:48:55.295Z",
+  "last_updated": "2026-11-28T04:57:48.137Z",
   "total_records": 2877,
   "domains": {
     "A": {
@@ -18527,8 +18527,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "756dbbe1ed893dcc5fcffcd0957184c69f9aea9fbb3121a5f7213b94ad6d6a56",
-      "created_at": "2026-11-28T04:21:21.448Z"
+      "content_hash": "6bc64745762885a61347848bb0f2d300f4207db24485b24dfbd79926c650f9c0",
+      "created_at": "2026-11-28T04:57:48.137Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -24843,8 +24843,8 @@
       "title": "Technical Construction Intelligence: 0xCUB3/wBlock Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-technical-construction-intelligence-0xcub3-wblock-core-invariants.md",
       "repository": "0xCUB3/wBlock",
-      "content_hash": "fe6bbae14fa956b6982dda89000c78b2b779426601b7c590a4a8d73ee4840052",
-      "created_at": "2026-11-23T17:20:43.435Z"
+      "content_hash": "ee3a6d369d1ff358d82e7c6a36cc7f2a63046035547539961da0332f39c78e24",
+      "created_at": "2026-11-28T04:57:41.728Z"
     },
     "DOM-L-497D3321": {
       "record_id": "DOM-L-497D3321",
@@ -24895,8 +24895,8 @@
       "title": "Technical Construction Intelligence: 0xcub3-wblock-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-0xcub3-wblock-learnings-technical-construction-intelligence-0xcub3-wblock-learni.md",
       "repository": "0xcub3-wblock-learnings",
-      "content_hash": "40a5f6363dd1658f0a26a27f731ea770ce4a99db8646c48663fb83675cc799a3",
-      "created_at": "2026-11-23T17:20:56.914Z"
+      "content_hash": "b1d81722850174661078317e54ef113f9202082f1cd4f3e0b074f07f73cc060b",
+      "created_at": "2026-11-28T04:57:46.597Z"
     },
     "domain_intelligence-architecture-intelligence-louis-cfm-coucou-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-louis-cfm-coucou-core-invariants",
@@ -37258,8 +37258,8 @@
       "title": "Research & Knowledge Intelligence: thinkingmachines/Inkling-2-Mini Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-mini-research-knowledge-intelligence-thinkingmachi.md",
       "repository": "thinkingmachines/Inkling-2-Mini",
-      "content_hash": "b7d02ff9a827c8b84d252ab539ae422d4546a778f6f4ca012d25fa3a7d110d3f",
-      "created_at": "2026-11-24T19:55:19.565Z"
+      "content_hash": "9cc0f1d84e273c166c4932a8c64ad48cc5af97399569c956e368f6f9082353be",
+      "created_at": "2026-11-28T04:57:34.243Z"
     },
     "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-core-invariants",
@@ -37318,8 +37318,8 @@
       "title": "Research & Knowledge Intelligence: hf-thinkingmachines-inkling-2-mini-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-mini-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-thinkingmachines-inkling-2-mini-learnings",
-      "content_hash": "8dd016a2bd2a4d88784cc7cba2acdf19be82efede9f1ab0df9fd11eeb1665194",
-      "created_at": "2026-11-24T19:56:00.166Z"
+      "content_hash": "485db98b6c16b2bc2f577b56319ff7dc152ce9aa5de97158db2bb53df5e5db9e",
+      "created_at": "2026-11-28T04:57:45.780Z"
     },
     "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kgateway-dev-kgateway-learnings-core-invaria",

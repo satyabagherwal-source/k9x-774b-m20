@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T04:48:17.864Z",
+  "last_updated": "2026-11-28T04:57:41.290Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13956,14 +13956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-0xcub3-wblock",
-      "content_hash": "10ed56907380abf6d6c983152d1442d186fba5cc56b9596311df94c222917b5f",
-      "verified_at": "2026-11-26T03:04:35.045Z",
+      "content_hash": "98b763b94cad1990e449eb6c969cc81bdc0ba7b1d8849c0c6939890d4222cda4",
+      "verified_at": "2026-11-28T04:57:41.290Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T03:04:35.045Z"
+      "last_updated": "2026-11-28T04:57:41.290Z"
     },
     "ArchiveBox/ArchiveBox": {
       "repository": "ArchiveBox/ArchiveBox",
@@ -19746,14 +19746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-thinkingmachines-inkling-2-mini",
-      "content_hash": "094e003860576a2d2c2f89409341826f2be33a54224a7de0cc7adbc4fbba61d5",
-      "verified_at": "2026-11-24T19:55:19.354Z",
+      "content_hash": "a9ef6070a1513e2043a3184ad5fa98706128e8b5b171ff255da12508c68d78d2",
+      "verified_at": "2026-11-28T04:57:34.010Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T19:55:19.354Z"
+      "last_updated": "2026-11-28T04:57:34.010Z"
     },
     "unsloth/Inkling-2-Mini-GGUF": {
       "repository": "unsloth/Inkling-2-Mini-GGUF",
