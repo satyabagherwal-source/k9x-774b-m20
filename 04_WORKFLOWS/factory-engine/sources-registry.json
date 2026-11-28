@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T12:58:51.723Z",
-    "lastVerified": "2026-11-28T12:58:51.723Z",
+    "lastChecked": "2026-11-28T13:18:20.720Z",
+    "lastVerified": "2026-11-28T13:18:20.720Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -194,22 +194,21 @@
     "revisionIdentifier": "9fb6a904"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T11:47:43.499Z",
-    "lastVerified": "2026-11-28T11:47:43.499Z",
+    "lastChecked": "2026-11-28T13:17:55.504Z",
+    "lastVerified": "2026-11-28T13:17:55.504Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "07c258d242460e69131ad13ab01c7afff9bcf3255b1815a3aa72f8aba0d0a0cf",
+    "contentHash": "3a9795e0c180718a4016539b3b98eed212e486cdea92bbd233b7caa35e12fc5c",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "23809a00"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -2186,8 +2185,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-28T05:55:30.735Z",
-    "lastVerified": "2026-11-28T05:55:30.735Z",
+    "lastChecked": "2026-11-28T13:17:46.523Z",
+    "lastVerified": "2026-11-28T13:17:46.523Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -3012,9 +3011,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-11-27T16:12:56.478Z",
+    "lastChecked": "2026-11-28T13:17:48.992Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-11-27T16:12:56.478Z"
+    "lastVerified": "2026-11-28T13:17:48.992Z"
   },
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
@@ -7216,12 +7215,12 @@
     "lastVerified": "2026-11-27T06:54:53.445Z"
   },
   "opentofu-opentofu": {
-    "name": "opentofu/opentofu",
+    "name": "opentofu",
     "officialUrl": "https://github.com/opentofu/opentofu",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T17:32:15.279Z",
-    "lastVerified": "2026-11-27T17:32:15.279Z",
+    "lastChecked": "2026-11-28T13:17:43.992Z",
+    "lastVerified": "2026-11-28T13:17:43.992Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-opentofu-opentofu",
@@ -7230,7 +7229,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b71d43c2"
   },
   "genkit-ai-genkit": {
     "name": "genkit-ai/genkit",
@@ -12012,9 +12012,9 @@
   "pointfreeco-sqlite-data": {
     "name": "sqlite-data",
     "officialUrl": "https://github.com/pointfreeco/sqlite-data",
-    "lastChecked": "2026-11-26T07:57:48.696Z",
+    "lastChecked": "2026-11-28T13:17:41.430Z",
     "revisionIdentifier": "e72164ce",
-    "lastVerified": "2026-11-26T07:57:48.696Z"
+    "lastVerified": "2026-11-28T13:17:41.430Z"
   },
   "vitejs-vite": {
     "name": "vitejs/vite",
@@ -12447,9 +12447,9 @@
   "testing-library-dom-testing-library": {
     "name": "dom-testing-library",
     "officialUrl": "https://github.com/testing-library/dom-testing-library",
-    "lastChecked": "2026-11-25T01:26:49.304Z",
+    "lastChecked": "2026-11-28T13:17:38.998Z",
     "revisionIdentifier": "6049cc0b",
-    "lastVerified": "2026-11-25T01:26:49.304Z"
+    "lastVerified": "2026-11-28T13:17:38.998Z"
   },
   "software-mansion-react-native-screens": {
     "name": "software-mansion/react-native-screens",
@@ -16017,6 +16017,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gitroomhq-postiz-app": {
+    "name": "gitroomhq/postiz-app",
+    "officialUrl": "https://github.com/gitroomhq/postiz-app",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-28T13:17:35.649Z",
+    "lastVerified": "2026-11-28T13:17:35.649Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-gitroomhq-postiz-app",
+    "contentHash": "4592fa4ae2bff83d8fbc3d5b52ce49882f1a2a3cb7011368c5388a818f3a60d5",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 18,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

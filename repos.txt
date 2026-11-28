@@ -5490,3 +5490,7 @@ https://huggingface.co/OpenUncensored/Inkling-2-Mini-Uncensored
 # --- Automatically Discovered by AI Scout Engine [2026-11-28T04:47:52.364Z] ---
 # [HUGGINGFACE-AI-MODELS] ai-sage/GigaChat4-37B-A4B (1308 score) - Verified Hugging Face Model: ai-sage/GigaChat4-37B-A4B (96 likes, 348 downloads)
 https://huggingface.co/ai-sage/GigaChat4-37B-A4B
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-28T13:17:30.769Z] ---
+# [AI-AGENTS] gitroomhq/postiz-app (24084 score) - 📨 The ultimate agentic social media scheduling tool 🤖
+https://github.com/gitroomhq/postiz-app

@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "23809a00",
+  "source_version": "42a602c0",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-27T22:54:51.125Z",
+  "timestamp": "2026-11-28T13:17:57.347Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `23809a00`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-27T22:54:51.125Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `42a602c0`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-28T13:17:57.347Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `23809a00`)
+- **Target Repository**: `dathere/qsv` (Commit: `42a602c0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T22:54:49.531Z  
+> **Harvest Timestamp**: 2026-11-28T13:17:55.504Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3877 stars
+- **Stars / Engagement**: 3881 stars
 
 ---
 
@@ -2269,11 +2269,11 @@ mod tests;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5126** (2026-11-28): **sqlp/joinp read a positional .jsonl input as CSV (first line becomes the header)**
+  *Symptoms*: Since the `polars` feature, qsv can read `.jsonl`/`.ndjson` inputs, and `count`, `slice` and other commands convert them correctly. `sqlp` and `joinp`, though, give a positional `.jsonl` input straight to Polars' **CSV** reader. Nothing warns that the result is garbage: line 1 becomes the header, and each comma inside a JSON object splits it into fields.  Seen on 29.0.0 (polars `2d9938d`) and on the #5125 pin (`4ba28fb`); this isn't caused by #5125.  ``` $ printf '{"id": 1, "v": "a"}\n{"id": 2, "v": "b"}\n{"id": 3, "v": "c"}\n' > s.jsonl $ qsv count s.jsonl 3 $ qsv sqlp s.jsonl "SELECT COUNT(*) AS n FROM s" n 2                                   # one record short: line 1 was taken as the header $ qsv sqlp s.jsonl "SELECT * FROM s LIMIT 1" "{""id"": 1"," ""v"": ""a""}"       # the header row: JSON split at the comma $ printf 'id,w\n1,x\n2,y\n3,z\n' > k.csv $ qsv joinp id s.jsonl id k.csv Polars error: ... ColumnNotFound("unable to find column \"id\"; valid columns: [\"{\\\"id\\\": 1\", \" \\\"v\\\": \\\"a\\\"}\"]") ... ```  The plans show `Csv SCAN [s.jsonl]`. The sqlp USAGE only documents `read_ndjson('file.jsonl')` for JSONL, but a positional `.jsonl` doesn't fail; it silently produces wrong counts and results.  Possible fixes: 1. Register positional `.jsonl`/`.ndjson` inputs with Polars' NDJSON scan, like `read_ndjson()` does. Infer from the whole file: since pola-rs/polars#31139, a key that first appears after the inferred rows fails the read. 2. Or refuse them with an err
+
 - **Issue #5123** (2026-11-27): **pivotp: default --values can produce an output name that collides with an --index column ("Duplicate: column with name ... has more than one occurrence")**
   *Symptoms*: ## Problem  Without `--values`, every remaining column is a value column, and Polars names the outputs `<value col>_<pivot value>`. If one of those names equals an `--index` column name, the pivot fails:  ```console $ qsv readstat --sentinels-as value resources/test/readstat_sentinels.sav -o survey.csv $ cat survey.csv id,income,income_null,rating,rating_null,name,name_null,plain 1.0,1500.5,,3.0,,Ana,,1.0 2.0,,99,,8,,NA,2.0 3.0,,950,4.0,,Cy,,3.0 4.0,,,,9,,,4.0 $ qsv pivotp rating_null --index name_null survey.csv Polars error: Duplicate(ErrString("column with name 'name_null' has more than one occurrence")) ```  The value column `name` with the pivot value `null` (the empty `rating_null` cells) produces `name_null`, the name of the `--index` column. `readstat --sentinels-as` creates `<col>_null` columns next to `<col>`, so this layout is common for files converted from SPSS/Stata/SAS.  With explicit `--values`, it works:  ```console $ qsv pivotp rating_null --index name_null --values income survey.csv name_null,null,8,9 ... ```  ## Expected  The output column names never collide with the index columns. For example, qsv could detect the collision and add a suffix to the generated names, or stop with a qsv error that names the colliding column and suggests `--values`.  Found while writing the wiki page "qsv for SAS / Stata / SPSS Users". qsv 29.0.0, master `5feb8f1ec`.
-
-- **Issue #5122** (2026-11-27): **pivotp: --agg len without --values fails with a raw Polars error when no columns remain**
-  *Symptoms*: ## Problem  When every column is used as `<on-cols>` or `--index`, there is nothing left for `--values` to default to, and `pivotp` stops with a raw Polars error instead of a qsv message:  ```console $ printf 'region,sex\nN,M\nN,F\nS,M\n' > ct.csv $ qsv pivotp region --index sex --agg len ct.csv Polars error: InvalidOperation(ErrString("`pivot` called without `values` columns.")) ```  The help says `--values` defaults to "all remaining columns not specified on --on and --index", and that `len` is a "Count of values". For a crosstab-style count (SPSS `CROSSTABS`, Stata `tabulate a b`) a user expects counts here.  The form that works today is to repeat the `on` column as the values:  ```console $ qsv pivotp region --index sex --values region --agg len ct.csv ```  ## Expected  One of: - with `--agg len` and no remaining columns, count rows per index/on combination; or - a clear qsv error that names the problem and suggests `--values <on-col>`.  Found while writing the wiki page "qsv for SAS / Stata / SPSS Users". qsv 29.0.0, master `5feb8f1ec`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2290,219 +2290,310 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `23809a00` (2026-11-27)
-**Commit Message**: fix: write nested JSONL values as JSON text (#5125 follow-up) (#5127)
+### Incident Patch 1: `60956a31` (2026-11-28)
+**Commit Message**: fix(sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson() (#5128)
 
-* fix: write nested JSONL values as JSON text; qualify sqlp help (#5125 follow-up)
+* fix(sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson()
 
-#5125 made the JSONL/NDJSON input conversion infer its schema from the
-whole file. A key that first appears late now becomes a column, but if its
-value is an object or array, the CSV writer rejected the nested column:
-"CSV format does not support nested data". On 29.0.0 such a key was
-silently dropped, so this was a regression from #5125. A nested value in
-the first rows already failed on 29.0.0.
+Both commands read their positional inputs with Polars' CSV reader, so a
+.jsonl/.ndjson file's first line became the header and each object was
+split at its commas, with no warning: sqlp's COUNT(*) was one record short,
+and joinp failed with "unable to find column". Refuse such inputs (detected
+the same way as qsv's special-format conversion, extension case-insensitive)
+with a usage error. sqlp points to the read_ndjson() table function with
+SKIP_INPUT; joinp points to `qsv jsonl`, or sqlp + read_ndjson().
 
-The conversion now infers once and, when a column is nested (struct, list
-or array), re-reads the file with an explicit schema that types those
-columns as String, so they hold the value's JSON text (as sqlp's
-read_ndjson() schema_overrides => VARCHAR does). A .pschema.json still
-decides the columns.
-
-sqlp help: only a query that selects a late read_ndjson() key fails, and a
-.pschema.json can type a column as a date before CAST runs.
+Closes #5126.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #5127
+* docs(changelog): cite #5128
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
----------
+* fix(sqlp, joinp): catch .jsonl.sz, check names before input expansion
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+roborev follow-ups on the JSONL refusal:
+- joinp checked the extension before Snappy decompression, so
+  events.jsonl.sz reached the CSV reader. A name-based is_jsonl_path()
+  (shared with sqlp) also looks under a .sz suffix.
+- joinp's hint suggested `qsv jsonl <input> > data.csv`, which truncates
+  data.csv when
 
-**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +2/-2)
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +1/-1)
 ```diff
-@@ -117,7 +117,7 @@
-       {
-         "flag": "--try-parsedates",
-         "type": "flag",
--        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
-+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+@@ -10,7 +10,7 @@
+         "name": "input",
+         "type": "file",
+         "required": true,
+-        "description": "The CSV file/s to query. Use '-' for standard input. If input is a directory, all files in the directory will be read as input. If the input is a file with a '.infile-list' extension, the file will be read as a list of files to use as input. If the input are snappy compressed file(s), it will be decompressed automatically. Column headers are required. Use 'qsv rename _all_generic --no-headers' to add generic column names (_col_N) to a CSV with no headers. If you are using Polars SQL's table functions like read_csv() & read_parquet() to read input files directly in the SQL statement, you can use the sentinel value 'SKIP_INPUT' to skip input preprocessing. If pschema.json file/s exists for the input file/s, they will automatically be used to optimize the query even if --cache-schema is not set."
++        "description": "The CSV file/s to query. Use '-' for standard input. If input is a directory, all files in the directory will be read as input. If the input is a file with a '.infile-list' extension, the file will be read as a list of files to use as input. If the input are snappy compressed file(s), it will be decompressed automatically. Column headers are required. Use 'qsv rename _all_generic --no-headers' to add generic column names (_col_N) to a CSV with no headers. A JSONL/NDJSON (.jsonl/.ndjson) input is refused: query it with the read_ndjson() table function and SKIP_INPUT instead. If you are using Polars SQL's table functions like read_csv() & read_parquet() to read input files directly in the SQL statement, you can use the sentinel value 'SKIP_INPUT' to skip input preprocessing. If pschema.json file/s exists for the input file/s, they will automatically be used to optimize the query even if --cache-schema is not set."
        },
        {
-         "flag": "--wnull-value",
-@@ -249,7 +249,7 @@
-       "command": "qsv sqlp SKIP_INPUT \"select * from read_csv('data.csv', separator => ';', comment_prefix => '#', has_header => false)\""
-     },
-     {
--      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file. By default only the first 100 rows are used, and a key that first appears later fails the query with \"extra field in NDJSON data\":",
-+      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file, so keys that first appear late can be queried. By default only the first 100 rows are used, and selecting a key that first appears later (e.g. with select *) fails with \"extra field in NDJSON data\":",
-       "command": "qsv sqlp SKIP_INPUT \"select * from read_ndjson('events.jsonl', infer_schema_length => NULL)\""
-     },
-     {
+         "name": "sql",
 ```
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
+@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `joinp`: with a key transformation (`-i`, `-z` or `-N`), the temporary transformed key columns were still in the join result when `--sql-filter` ran, so a positional `ORDER BY` or `GROUP BY` could hit a temporary key instead of the intended column. They were then removed by matching any column name containing `-transformed`, which also dropped user columns and SQL aliases with that in their name, such as `status-transformed`. Now the temporary columns are dropped by their exact names before `--sql-filter` runs. ([#5118](https://github.com/dathere/qsv/pull/5118))
  
- ### Fixed
-+- JSONL/NDJSON inputs: object and array values are written as their JSON text (e.g. `{"k": 1}`, `["a", "b"]`), so a file with nested values converts instead of failing with "CSV format does not support nested data". This also covers a nested key that first appears after the first 100 rows, which #5125's whole-file inference would otherwise have turned into that error (before #5125 such a key was silently dropped). A `.pschema.json` still decides the columns. The `sqlp` help also notes that only a query selecting a late `read_ndjson()` key fails, and that a `.pschema.json` can type a column as a date before `CAST` runs. ([#5127](https://github.com/dathere/qsv/pull/5127))
- - `pivotp`: when every column was a pivot or `--index` column, the default `--values` (all remaining columns) was empty, and the pivot failed with a raw Polars error ("`pivot` called without `values` columns"). `pivotp region --index sex` now counts the rows of each cell, as `--values region --agg len` already did. Any aggregation other than `len` (the default here) stops with an error asking for `--values`. Fixes [#5122](https://github.com/dathere/qsv/issues/5122). ([#5124](https://github.com/dathere/qsv/pull/5124))
- - `pivotp`: a generated pivot column could take the name of an `--index` column, and the pivot failed with "Duplicate: column with name '...' has more than one occurrence". Generated columns are named `<value column><--col-separator><pivot value>` (or just the pivot value with one value column), so `readstat --sentinels-as` output, where `name` sits next to `name_null`, hit this when `name_null` was the `--index`, `name` a value column, and the pivot column had empty cells. Such a generated column is now renamed to the first free `<name>_<n>` (from 2), with a warning on stderr (unless `--quiet`). Two generated names that coincide (e.g. `a_b` × `c` and `a` × `b_c`) still stop the pivot, now with an error suggesting `--col-separator` or `--values`. Fixes [#5123](https://github.com/dathere/qsv/issues/5123). ([#5124](https://github.com/dathere/qsv/pull/5124))
- - `joinp`: `--nulls` did the opposite of its help for text keys. Empty text join keys matched without `--nulls` and stopped matching with it, and empty numeric keys never matched. In the standard joins (not cross, non-equi or asof), `--nulls` now makes empty keys match each other, including a quoted `""` and an unquoted empty. Without it they never match, whatever the key's type. Outer joins still output such rows, unmatched, with their key values unchanged. `--ignore-leading-zeros` (`-z`) now keeps a key's last zero, so `000` becomes `0` and still matches `0`, but no longer becomes empty and matches an empty key. The `--ignore-errors` help now says that in the standard joins, a key that can't be parsed, like an empty one, matches only with `--nulls`. **Behavior change:** an inner join on a text key no longer pairs rows whose keys are both empty unless `--nulls` is given. ([#5116](https://github.com/dathere/qsv/pull/5116))
+ ### Changed
++- `sqlp`, `joinp`: a `.jsonl`/`.ndjson` input is refused with a usage error. Both commands read inputs with Polars' CSV reader, so a JSONL file's first line became the header and each object was split at its commas: `sqlp`'s `COUNT(*)` came out one record short, and `joinp` failed with a confusing "unable to find column". For `sqlp`, use the `read_ndjson()` table function instead (`qsv sqlp SKIP_INPUT "SELECT * FROM read_ndjson('events.jsonl')"`). For `joinp`, convert first with `qsv jsonl`. ([#5126](https://github.com/dathere/qsv/issues/5126), [#5128](https://github.com/dathere/qsv/pull/5128))
+ - **deps: Polars bumped to upstream rev [`4ba28fb`](https://github.com/pola-rs/polars/commit/4ba28fb5c5d911fdf8a42b40d842158b19456347)** (41 commits past py-2.2.0; crates stay 0.55.1). A SQL cast of a string to `DATE` or `TIMESTAMP` (`CAST`, `TRY_CAST`, `::`, and one-argument `DATE`/`TO_DATE`) reads only year-first dates such as `2024-03-05` or `2024/3/5` ([#31082](https://github.com/pola-rs/polars/pull/31082)). Before, the format was guessed from the column's first value: a column starting with `3/5/2024` read it as 2024-05-03 and turned the year-first rows into NULL. Now `TRY_CAST('3/5/2024' AS DATE)` is NULL and `CAST` fails; read such dates with a format, e.g. `STRPTIME(s, '%d/%m/%Y')`. New SQL function `version()` returns the Polars version ([#31077](https://github.com/pola-rs/polars/pull/31077)). NDJSON reads with an inferred schema fail on a key that first appears after the inference window ([#31139](https://github.com/pola-rs/polars/pull/31139)); before, the key was silently dropped. In `sqlp`, `read_ndjson()` infers from the first 100 rows by default, so pass `infer_schema_length => NULL` or a `schema`. qsv's own loading of `.jsonl`/`.ndjson` inputs (e.g. `qsv slice events.jsonl`) now infers the schema from the whole file, so such keys become columns instead of being dropped or failing the read. The rest is performance and fixes outside qsv's SQL use (Iceberg/Delta sinks, Python). ([#5125](https://github.com/dathere/qsv/pull/5125))
+ - **deps: Polars bumped to upstream rev [`08b2814`](https://github.com/pola-rs/polars/commit/08b2814ce6386c0efe0fea512912353f42a8b7b6)** (94 commits past `93d31f0`; crates stay 0.55.1). `08b2814` was then tagged [py-2.2.0](https://github.com/pola-rs/polars/releases/tag/py-2.2.0), so qsv now reports that release tag in `--version`. Some `sqlp` results that already worked change:
+   - `UNNEST` of an empty or NULL list returns no rows ([#30996](https://github.com/pola-rs/polars/pull/30996)); it used to return one NULL row. So `SELECT id, UNNEST(STRING_TO_ARRAY(data, ',')) AS value FROM t` now leaves out the rows whose `data` is empty, where it used to keep them with an empty `value`. It does so without a warning. To keep those rows, unnest `STRING_TO_ARRAY(COALESCE(data, ''), ',')` instead.
 ```
 
-**File**: `docs/help/sqlp.md` (modified, +4/-3)
+**File**: `src/cmd/joinp.rs` (modified, +15/-2)
 ```diff
-@@ -258,8 +258,9 @@ qsv sqlp SKIP_INPUT "select * from read_csv('data.csv', separator => ';', commen
+@@ -21,7 +21,8 @@ Usage:
  
- > read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides,
- > infer_schema_length, ignore_errors and include_file_paths.
--> Infer the schema from the whole file. By default only the first 100 rows are used, and
--> a key that first appears later fails the query with "extra field in NDJSON data":
-+> Infer the schema from the whole file, so keys that first appear late can be queried.
-+> By default only the first 100 rows are used, and selecting a key that first appears
-+> later (e.g. with select *) fails with "extra field in NDJSON data":
+ joinp arguments:
+     Both <input1> aka <left> & <input2> aka <right> files need to have headers.
+-    Stdin is not supported.
++    Stdin is not supported. JSONL/NDJSON (.jsonl/.ndjson) inputs are refused: convert them
++    with `qsv jsonl` first, or join them in sqlp with the read_ndjson() table function.
  
- ```console
- qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', infer_schema_length => NULL)"
-@@ -365,7 +366,7 @@ qsv sqlp --help
+     The columns arguments specify the columns to join for each input. Columns are
+     referenced by name. Specify multiple columns by separating them with a comma.
+@@ -293,7 +294,7 @@ use tempfile::tempdir;
+ use crate::{
+     CliResult,
+     cmd::sqlp::{
+-        STREAM_BATCH_ROWS, SharedOutput, StreamWriter, compress_output_if_needed,
++        STREAM_BATCH_ROWS, SharedOutput, StreamWriter, compress_output_if_needed, is_jsonl_path,
+         open_staged_output, sink_to,
+     },
+     config::Delimiter,
+@@ -1287,6 +1288,18 @@ impl Args {
+         if !input2_path.exists() {
+             return fail_clierror!("Input file {} does not exist.", self.arg_input2);
+         }
++        // Inputs are read with Polars' CSV reader, which would take a JSONL file's first line
++        // as the header and split each object at its commas (#5126).
++        // Checked before the .sz decompression below, so a .jsonl.sz is caught too.
++        for input in [&self.arg_input1, &self.arg_input2] {
++            if is_jsonl_path(Path::new(input)) {
++                return fail_incorrectusage_clierror!(
++                    "{input} is a JSONL/NDJSON file, which joinp can't read. Convert it to a new \
++                     CSV file with `qsv jsonl` (decompress a .sz file first), or join it in sqlp \
++                     with the read_ndjson() table function."
++                );
++            }
++        }
  
- | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
- |--------|------|-------------|--------|
--| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
-+| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
- | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
- | &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
- | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it. |  |
+         // Handle snappy compression for left input
+         if input1_path.extension().and_then(std::ffi::OsStr::to_str) == Some("sz") {
 ```
 
-**File**: `src/cmd/sqlp.rs` (modified, +8/-6)
+**File**: `src/cmd/sqlp.rs` (modified, +53/-0)
 ```diff
-@@ -137,8 +137,9 @@ Examples:
- 
-   # read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides,
-   # infer_schema_length, ignore_errors and include_file_paths.
--  # Infer the schema from the whole file. By default only the first 100 rows are used, and
--  # a key that first appears later fails the query with "extra field in NDJSON data":
-+  # Infer the schema from the whole file, so keys that first appear late can be queried.
-+  # By default only the first 100 rows are used, and selecting a key that first appears
-+  # later (e.g. with select *) fails with "extra field in NDJSON data":
-   $ qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', infer_schema_length => NULL)"
-   # Type a column, and read a nested object as its JSON text. CSV output can't hold nested
-   # data, so this avoids the "CSV format does not support nested data" error:
-@@ -224,10 +225,11 @@ sqlp options:
-                               that you may want to try to set `--ignore-errors` to relax
-                               the CSV parsing of dates.
-                               Polars reads slash, dash and dot dates as day-first, so
--                              01/05/2024 becomes 2024-05-01. Without this option, the
--                              column stays a string, and CAST(col AS DATE) of a string
--                              reads only year-first dates (2024-05-01, 2024/5/1): it
--                              fails on 01/05/2024, and TRY_CAST returns NULL.
-+                              01/05/2024 becomes 2024-05-01. Without this option (and
-+                              without a .pschema.json that types the column as a date),
-+                              the column stays a string, and CAST(col AS DATE) of a
-+                              string reads only year-first dates (2024-05-01, 2024/5/1):
-+                              it fails on 01/05/2024, and TRY_CAST returns NULL.
-                               For month-first (US) dates, leave this off and use
-                               STRPTIME(col, '%m/%d/%Y') in the query instead.
-     --infer-len <arg>         The number of rows to scan when inferring the schema of the CSV.
-```
-
-**File**: `src/util/special_format.rs` (modified, +23/-3)
-```diff
-@@ -333,11 +333,13 @@ pub fn convert_special_format(
-     format: SpecialFormat,
-     delim: u8,
- ) -> Result<PathBuf, Box<dyn std::error::Error>> {
-+    use std::sync::Arc;
-+
-     use polars::{
-         io::avro::AvroReader,
-         prelude::{
--            CsvWriter, IpcReader, JsonReader, LazyFileListReader, LazyJsonLineReader,
--            ParquetReader, PlRefPath, SerReader, SerWriter,
-+            CsvWriter, DataType, IpcReader, JsonReader, LazyFileListReader, LazyJsonLineReader,
-+            ParquetReader, PlRefPath, Schema, SerReader, SerWriter,
-         },
-     };
- 
-@@ -379,7 +381,25 @@ pub fn convert_special_format(
-             } else {
-                 // Infer from every row: Polars raises on a key that first appears past the
-                 // inference window (pola-rs/polars#31139), and before that it dropped the key.
--                lf.with_infer_schema_length(None).finish()?
-+                let mut inferred = lf.clone().with_infer_schema_length(None).finish()?;
-+                let schema = inferred.collect_schema()?;
-+                if schema.iter_values().any(DataType::is_nested) {
-+                    // CSV can't hold nested data, so read nested values as their JSON text.
-+                    let as_text: Schema = schema
-+                        .iter()
-+                        .map(|(name, dtype)| {
-+                            let dtype = if dtype.is_nested() {
-+                                DataType::String
-+                            } else {
-+                                dtype.clone()
-+                            };
-+                            (name.clone(), dtype)
-+                        })
-+                        .collect();
-+                    lf.with_schema(Some(Arc::new(as_text))).finish()?
-+                } else {
-+                    inferred
-+                }
-             }
-             .collect()?
-         },
-```
-
-**File**: `tests/test_slice.rs` (modified, +26/-0)
-```diff
-@@ -742,6 +742,32 @@ fn slice_from_jsonl_with_late_key() {
-     );
+@@ -193,6 +193,8 @@ sqlp arguments:
+                            decompressed automatically.
+                            Column headers are required. Use 'qsv rename _all_generic --no-headers'
+                            to add generic column names (_col_N) to a CSV with no headers.
++                           A JSONL/NDJSON (.jsonl/.ndjson) input is refused: query it with
++                           the read_ndjson() table function and SKIP_INPUT instead.
+                            If you are using Polars SQL's table functions like read_csv() & read_parquet()
+                            to read input files directly in the SQL statement, you can use the sentinel value
+                            'SKIP_INPUT' to skip input preprocessing.
+@@ -1029,12 +1031,53 @@ impl FromStr for QsvAvroCompression {
+     }
  }
  
-+#[cfg(feature = "polars")]
-+#[test]
-+fn slice_from_jsonl_nested_values_as_json_text() {
-+    // CSV can't hold nested data, so a JSONL object or array value is written as its JSON text,
-+    // whether it appears in the first rows or (now that the whole file is inferred) only later.
-+    // Before, an early nested value failed the conversion and a late one was dropped.
-+    let wrk = Workdir::new("slice_from_jsonl_nested_values_as_json_text");
-+    let mut jsonl: String = (1..150)
-+        .map(|i| format!("{{\"id\":{i},\"tags\":[\"t{i}\"]}}\n"))
-+        .collect();
-+    jsonl.push_str("{\"id\":150,\"tags\":[],\"late\":{\"k\":1}}\n");
-+    wrk.create_from_string("nested.jsonl", &jsonl);
-+
-+    let mut cmd = wrk.command("slice");
-+    cmd.arg("nested.jsonl").args(["--start", "148"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["id", "tags", "late"],
-+            svec!["149", r#"["t149"]"#, ""],
-+            svec!["150", "[]", r#"{"k": 1}"#],
-+        ]
-+    );
++/// Whether `path` names a JSONL/NDJSON file (`.jsonl`/`.ndjson`, any case), also under a
++/// Snappy `.sz` suffix. sqlp and joinp read inputs as CSV, so they refuse these (#5126).
++pub(crate) fn is_jsonl_path(path: &Path) -> bool {
++    let has_ext = |p: &Path, exts: &[&str]| {
++        p.extension()
++            .and_then(std::ffi::OsStr::to_str)
++            .is_some_and(|ext| exts.iter().any(|e| ext.eq_ignore_ascii_case(e)))
++    };
++    if has_ext(path, &["sz"]) {
++        has_ext(&path.with_extension(""), &["jsonl", "ndjson"])
++    } else {
++        has_ext(path, &["jsonl", "ndjson"])
++    }
 +}
 +
- #[cfg(feature = "polars")]
+ pub fn run(argv: &[&str]) -> CliResult<()> {
+     let mut args: Args = util::get_args(USAGE, argv)?;
+ 
+     let tmpdir = tempfile::tempdir()?;
+ 
+     let mut skip_input = false;
++    // An input table is read with Polars' CSV reader, which would take a JSONL file's first
++    // line as the header and split each object at its commas (#5126). Check the names as
++    // given first, so the hint names the user's file (not a temp copy) and stdin isn't spooled.
++    // (only existing files: a directory or a `dc:` handle may carry such a name and resolve to
++    // CSVs; the check after expansion covers what they hold)
++    if let Some(jsonl) = args
++        .arg_input
++        .iter()
++        .find(|path| path.is_file() && is_jsonl_path(path))
++    {
++        let (decompress, example) = if jsonl
++            .extension()
++            .is_some_and(|ext| ext.eq_ignore_ascii_case("sz"))
++        {
++            (" Decompress it first.", jsonl.with_extension(""))
++        } else {
++            ("", jsonl.clone())
++        };
++        return fail_incorrectusage_clierror!(
++            "{} is a JSONL/NDJSON file, which sqlp can't read as an input table.{decompress} Use \
++             the read_ndjson() table function instead, e.g.:\n  qsv sqlp SKIP_INPUT \"SELECT * \
++             FROM read_ndjson('{}')\"",
++            jsonl.display(),
++            example.display()
++        );
++    }
+     // stdin is copied to a temp `stdin.csv`, whose made-up extension must not pick the delimiter
+     let mut stdin_input: Option<PathBuf> = None;
+     args.arg_input = if args.arg_input == [PathBuf::from("SKIP_INPUT")] {
+@@ -1050,6 +1093,16 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         }
+         inputs
+     };
++    // A JSONL file can also come from a directory, an .infile-list or an archive. Its path may
++    // be a temp copy that is gone once sqlp exits, so name only the file.
++    if let Some(jsonl) = args.arg_input.iter().find(|path| is_jsonl_path(path)) {
++        let name = jsonl.file_name().unwrap_or_default().to_string_lossy();
++        return fail_incorrectusage_clierror!(
++            "{name} (from a directory, .infile-list or archive input) is a JSONL/NDJSON file, \
++             which sqlp can't read as an input table. Extract it and query it with the \
++             read_ndjson() table function and SKIP_INPUT instead."
++        );
++    }
+ 
+     let rnull_values = if args.flag_rnull_values == "<empty string>" {
+         vec![PlSmallStr::EMPTY]
+```
+
+**File**: `tests/test_joinp.rs` (modified, +30/-0)
+```diff
+@@ -705,6 +705,36 @@ joinp_test_comments!(
+     }
+ );
+ 
++#[test]
++fn joinp_refuses_jsonl_input() {
++    // #5126: joinp read a JSONL input with the CSV reader (its first line became the header),
++    // so the join failed with a confusing ColumnNotFound. It now refuses it up front.
++    let wrk = Workdir::new("joinp_refuses_jsonl_input");
++    wrk.create_from_string(
++        "s.jsonl",
++        "{\"id\": 1, \"v\": \"a\"}\n{\"id\": 2, \"v\": \"b\"}\n",
++    );
++    wrk.create("k.csv", vec![svec!["id", "w"], svec!["1", "x"]]);
++    // refused by its name, before the .sz is decompressed
++    wrk.create_from_string("z.NDJSON.sz", "not read");
++
++    for (left, right, jsonl) in [
++        ("s.jsonl", "k.csv", "s.jsonl"),
++        ("k.csv", "s.jsonl", "s.jsonl"),
++        ("z.NDJSON.sz", "k.csv", "z.NDJSON.sz"),
++    ] {
++        let mut cmd = wrk.command("joinp");
++        cmd.args(["id", left, "id", right]);
++        let stderr = wrk.stderr_on_error(&mut cmd);
++        assert!(
++            stderr.contains(&format!(
++                "{jsonl} is a JSONL/NDJSON file, which joinp can't read"
++            )) && stderr.contains("qsv jsonl"),
++            "unexpected stderr ({left} {right}): {stderr}"
++        );
++    }
++}
++
  #[test]
- fn slice_from_avro() {
+ fn joinp_cross() {
+     let wrk = Workdir::new("join_cross");
+```
+
+**File**: `tests/test_sqlp.rs` (modified, +67/-0)
+```diff
+@@ -8793,3 +8793,70 @@ fn sqlp_version_function() {
+         got[1][0]
+     );
+ }
++
++#[test]
++fn sqlp_refuses_jsonl_input() {
++    // #5126: an input table is read with the CSV reader, so a JSONL file's first line became
++    // the header and COUNT(*) was one short. sqlp now refuses it and points to read_ndjson().
++    let wrk = Workdir::new("sqlp_refuses_jsonl_input");
++    let jsonl = "{\"id\": 1, \"v\": \"a\"}\n{\"id\": 2, \"v\": \"b\"}\n{\"id\": 3, \"v\": \"c\"}\n";
++    wrk.create_from_string("s.jsonl", jsonl);
++    wrk.create_from_string("s2.NDJSON", jsonl);
++    wrk.create("k.csv", vec![svec!["id"], svec!["1"]]);
++
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("s.jsonl").arg("SELECT COUNT(*) AS n FROM s");
++    let stderr = wrk.stderr_on_error(&mut cmd);
++    assert!(
++        stderr.contains("s.jsonl is a JSONL/NDJSON file")
++            && stderr.contains("read_ndjson('s.jsonl')"),
++        "unexpected stderr: {stderr}"
++    );
++
++    // any position, any case of the extension
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("k.csv").arg("s2.NDJSON").arg("SELECT 1 AS x");
++    let stderr = wrk.stderr_on_error(&mut cmd);
++    assert!(
++        stderr.contains("s2.NDJSON is a JSONL/NDJSON file"),
++        "unexpected stderr: {stderr}"
++    );
++
++    // a Snappy-compressed JSONL is refused by its name, before it is decompressed
++    wrk.create_from_string("s3.jsonl.sz", "not read");
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("s3.jsonl.sz").arg("SELECT 1 AS x");
++    let stderr = wrk.stderr_on_error(&mut cmd);
++    assert!(
++        stderr.contains("s3.jsonl.sz is a JSONL/NDJSON file")
++            && stderr.contains("Decompress it first")
++            && stderr.contains("read_ndjson('s3.jsonl')"),
++        "unexpected stderr: {stderr}"
++    );
++
++    // a directory that only carries a JSONL-looking name is expanded, not refused
++    std::fs::create_dir(wrk.path("batch.jsonl")).unwrap();
++    std::fs::write(wrk.path("batch.jsonl").join("b.csv"), "id\n7\n").unwrap();
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("batch.jsonl").arg("SELECT id FROM b");
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(got, vec![svec!["id"], svec!["7"]]);
++
++    // a JSONL file found by expanding a directory input is named without its temp path
++    std::fs::create_dir(wrk.path("dir")).unwrap();
++    std::fs::write(wrk.path("dir").join("d.jsonl"), jsonl).unwrap();
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("dir").arg("SELECT 1 AS x");
++    let stderr = wrk.stderr_on_error(&mut cmd);
++    assert!(
++        stderr.contains("d.jsonl (from a directory, .infile-list or archive input)"),
++        "unexpected stderr: {stderr}"
++    );
++
++    // the documented route reads every record
++    let mut cmd = wrk.command("sqlp");
++    cmd.arg("SKIP_INPUT")
++        .arg("SELECT COUNT(*) AS n FROM read_ndjson('s.jsonl')");
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(got, vec![svec!["n"], svec!["3"]]);
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5128** (2026-11-28): fix(sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson() (@jqnatividad)
 - **PR #5127** (2026-11-27): fix: write nested JSONL values as JSON text (#5125 follow-up) (@jqnatividad)
 - **PR #5125** (2026-11-27): deps: bump Polars to upstream 4ba28fb (41 commits past py-2.2.0) (@jqnatividad)
 - **PR #5124** (2026-11-27): fix(pivotp): count rows when no columns remain for --values; rename clashing generated columns (@jqnatividad)
 - **PR #5121** (2026-11-27): deps: bump polars-readstat-rs to 0.27.1 (rebased fork) (@jqnatividad)
 - **PR #5120** (2026-11-27): build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289 (@dependabot[bot])
-- **PR #5119** (2026-11-26): refactor: replace deprecated filetime calls with std::fs (@jqnatividad)
 
 ---
 
@@ -2522,13 +2613,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. write nested JSONL values as JSON text (#5125 follow-up)
+## X. sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson()
 
 **RULE**:
 When implementing operations in `.claude/skills/qsv/qsv-sqlp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `23809a00`: write nested JSONL values as JSON text (#5125 follow-up). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `60956a31`: sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson(). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-sqlp.json`.
@@ -2536,19 +2627,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
-      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file, so keys that first appear late can be queried. By default only the first 100 rows are used, and selecting a key that first appears later (e.g. with select *) fails with \"extra field in NDJSON data\":",
+        "description": "The CSV file/s to query. Use '-' for standard input. If input is a directory, all files in the directory will be read as input. If the input is a file with a '.infile-list' extension, the file will be read as a list of files to use as input. If the input are snappy compressed file(s), it will be decompressed automatically. Column headers are required. Use 'qsv rename _all_generic --no-headers' to add generic column names (_col_N) to a CSV with no headers. A JSONL/NDJSON (.jsonl/.ndjson) input is refused: query it with the read_ndjson() table function and SKIP_INPUT instead. If you are using Polars SQL's table functions like read_csv() & read_parquet() to read input files directly in the SQL statement, you can use the sentinel value 'SKIP_INPUT' to skip input preprocessing. If pschema.json file/s exists for the input file/s, they will automatically be used to optimize the query even if --cache-schema is not set."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
-      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file. By default only the first 100 rows are used, and a key that first appears later fails the query with \"extra field in NDJSON data\":",
+        "description": "The CSV file/s to query. Use '-' for standard input. If input is a directory, all files in the directory will be read as input. If the input is a file with a '.infile-list' extension, the file will be read as a list of files to use as input. If the input are snappy compressed file(s), it will be decompressed automatically. Column headers are required. Use 'qsv rename _all_generic --no-headers' to add generic column names (_col_N) to a CSV with no headers. If you are using Polars SQL's table functions like read_csv() & read_parquet() to read input files directly in the SQL statement, you can use the sentinel value 'SKIP_INPUT' to skip input preprocessing. If pschema.json file/s exists for the input file/s, they will automatically be used to optimize the query even if --cache-schema is not set."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `23809a00` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `60956a31` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

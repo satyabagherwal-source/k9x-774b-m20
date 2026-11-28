@@ -22561,5 +22561,20 @@
     "downloads": 348,
     "qualityScore": 1308,
     "discoveredAt": "2026-11-28T04:45:44.350Z"
+  },
+  {
+    "name": "postiz-app",
+    "fullName": "gitroomhq/postiz-app",
+    "url": "https://github.com/gitroomhq/postiz-app",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "📨 The ultimate agentic social media scheduling tool 🤖",
+    "stars": 42574,
+    "forks": 8157,
+    "openIssues": 203,
+    "language": "TypeScript",
+    "qualityScore": 24084,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-28T13:14:02.450Z"
   }
 ]

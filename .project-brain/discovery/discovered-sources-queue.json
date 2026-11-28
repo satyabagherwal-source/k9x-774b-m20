@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T12:36:02.463Z",
+  "updated_at": "2026-11-28T13:18:24.371Z",
   "stats": {
-    "total_discovered": 10924,
-    "approved_pending_harvest": 10374,
+    "total_discovered": 10943,
+    "approved_pending_harvest": 10391,
     "harvested_count": 0,
-    "rejected_count": 550,
+    "rejected_count": 552,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10383,
+      "COMMUNITY_AND_EXPERT": 10401,
       "OFFICIAL_DOCUMENTATION": 299,
-      "STANDARDS_AND_SPECIFICATIONS": 165,
+      "STANDARDS_AND_SPECIFICATIONS": 166,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 59,
       "LEGAL_AND_REGULATORY": 2,
@@ -236505,6 +236505,410 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
         "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-63DAA2753F23": {
+      "id": "SRC-63DAA2753F23",
+      "url": "https://github.com/gitroomhq/postiz-app",
+      "title": "https://github.com/gitroomhq/postiz-app",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:20.962Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitroomhq-postiz-app-learnings.md",
+        "fileName": "gitroomhq-postiz-app-learnings.md"
+      }
+    },
+    "SRC-027A62690305": {
+      "id": "SRC-027A62690305",
+      "url": "https://facebook.com/release/release",
+      "title": "https://facebook.com/release/release",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:21.104Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitroomhq-postiz-app-learnings.md",
+        "fileName": "gitroomhq-postiz-app-learnings.md"
+      }
+    },
+    "SRC-D156846855FF": {
+      "id": "SRC-D156846855FF",
+      "url": "https://uploads.gitroom.com/F6LSCD8wrrQ.jpeg",
+      "title": "https://uploads.gitroom.com/F6LSCD8wrrQ.jpeg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:21.194Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitroomhq-postiz-app-learnings.md",
+        "fileName": "gitroomhq-postiz-app-learnings.md"
+      }
+    },
+    "SRC-7BC0E62D7BCB": {
+      "id": "SRC-7BC0E62D7BCB",
+      "url": "https://facebook.com/release2/release2",
+      "title": "https://facebook.com/release2/release2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:21.288Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitroomhq-postiz-app-learnings.md",
+        "fileName": "gitroomhq-postiz-app-learnings.md"
+      }
+    },
+    "SRC-43ABDD0D89D6": {
+      "id": "SRC-43ABDD0D89D6",
+      "url": "https://contribute.postiz.com/p/postiz",
+      "title": "https://contribute.postiz.com/p/postiz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:21.379Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitroomhq-postiz-app-learnings.md",
+        "fileName": "gitroomhq-postiz-app-learnings.md"
+      }
+    },
+    "SRC-891ECE3DC75E": {
+      "id": "SRC-891ECE3DC75E",
+      "url": "https://contribute.postiz.com/p/postiz/cla",
+      "title": "https://contribute.postiz.com/p/postiz/cla",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:21.472Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitroomhq-postiz-app-learnings.md",
+        "fileName": "gitroomhq-postiz-app-learnings.md"
+      }
+    },
+    "SRC-E5602F1D749C": {
+      "id": "SRC-E5602F1D749C",
+      "url": "http://169.254.169.254/",
+      "title": "http://169.254.169.254/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-28T13:18:21.624Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitroomhq-postiz-app-learnings.md",
+        "fileName": "gitroomhq-postiz-app-learnings.md"
+      }
+    },
+    "SRC-EEB831207F63": {
+      "id": "SRC-EEB831207F63",
+      "url": "http://10.0.0.5/",
+      "title": "http://10.0.0.5/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-28T13:18:21.713Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitroomhq-postiz-app-learnings.md",
+        "fileName": "gitroomhq-postiz-app-learnings.md"
+      }
+    },
+    "SRC-7EDAA0C30832": {
+      "id": "SRC-7EDAA0C30832",
+      "url": "https://www.rfc-editor.org/rfc/rfc8215",
+      "title": "IETF RFC 8215",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:21.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitroomhq-postiz-app-learnings.md",
+        "fileName": "gitroomhq-postiz-app-learnings.md"
+      }
+    },
+    "SRC-8C5E42355166": {
+      "id": "SRC-8C5E42355166",
+      "url": "https://github.com/dathere/qsv/pull/5118",
+      "title": "https://github.com/dathere/qsv/pull/5118",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:23.527Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-29FBEE0F5D22": {
+      "id": "SRC-29FBEE0F5D22",
+      "url": "https://github.com/dathere/qsv/issues/5126",
+      "title": "https://github.com/dathere/qsv/issues/5126",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:23.619Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-CEE1368DF007": {
+      "id": "SRC-CEE1368DF007",
+      "url": "https://github.com/dathere/qsv/pull/5128",
+      "title": "https://github.com/dathere/qsv/pull/5128",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:23.707Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-2B402EB80600": {
+      "id": "SRC-2B402EB80600",
+      "url": "https://github.com/pola-rs/polars/commit/4ba28fb5c5d911fdf8a42b40d842158b19456347",
+      "title": "https://github.com/pola-rs/polars/commit/4ba28fb5c5d911fdf8a42b40d842158b19456347",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:23.806Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-D015E41511C1": {
+      "id": "SRC-D015E41511C1",
+      "url": "https://github.com/pola-rs/polars/pull/31082",
+      "title": "https://github.com/pola-rs/polars/pull/31082",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:23.887Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-CA9E3A81E50D": {
+      "id": "SRC-CA9E3A81E50D",
+      "url": "https://github.com/pola-rs/polars/pull/31077",
+      "title": "https://github.com/pola-rs/polars/pull/31077",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:23.974Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-0AF7B80CD36F": {
+      "id": "SRC-0AF7B80CD36F",
+      "url": "https://github.com/pola-rs/polars/pull/31139",
+      "title": "https://github.com/pola-rs/polars/pull/31139",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:24.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-C227FA51B3E8": {
+      "id": "SRC-C227FA51B3E8",
+      "url": "https://github.com/dathere/qsv/pull/5125",
+      "title": "https://github.com/dathere/qsv/pull/5125",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:24.148Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-3B9AD5A8D6FA": {
+      "id": "SRC-3B9AD5A8D6FA",
+      "url": "https://github.com/pola-rs/polars/releases/tag/py-2.2.0",
+      "title": "https://github.com/pola-rs/polars/releases/tag/py-2.2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:24.278Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-EE760EA67098": {
+      "id": "SRC-EE760EA67098",
+      "url": "https://github.com/pola-rs/polars/pull/30996",
+      "title": "https://github.com/pola-rs/polars/pull/30996",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T13:18:24.371Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

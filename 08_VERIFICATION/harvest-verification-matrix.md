@@ -14054,3 +14054,5 @@
 | `CYCLE-20261128-8LH8` | `2026-11-28T12:35:42.908Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11100` | Yes (`17bd37fc...`) |
 | `CYCLE-20261128-8NL5` | `2026-11-28T12:35:45.641Z` | `mswjs/msw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11101` | Yes (`9d13aee3...`) |
 | `CYCLE-20261128-8WFR` | `2026-11-28T12:35:57.111Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3556` | Yes (`e082739e...`) |
+| `CYCLE-20261128-QWTT` | `2026-11-28T13:17:57.041Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11102` | Yes (`3a9795e0...`) |
+| `CYCLE-20261128-RCCO` | `2026-11-28T13:18:17.160Z` | `gitroomhq/postiz-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11103` | Yes (`4592fa4a...`) |

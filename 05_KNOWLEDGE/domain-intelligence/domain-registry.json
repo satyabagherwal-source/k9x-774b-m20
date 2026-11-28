@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T12:58:55.484Z",
-  "total_records": 2900,
+  "last_updated": "2026-11-28T13:18:26.401Z",
+  "total_records": 2902,
   "domains": {
     "A": {
       "total": 27,
@@ -1779,7 +1779,7 @@
       ]
     },
     "H": {
-      "total": 707,
+      "total": 709,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2487,7 +2487,9 @@
         "domain_intelligence-technical-construction-intelligence-biomejs-biome-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tanstack-router-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-devexpress-testcafe-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-devexpress-testcafe-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-devexpress-testcafe-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-learnings-core-invarian"
       ]
     },
     "I": {
@@ -12957,8 +12959,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "a4afe7172ff965d8f2d4a12172f3b3cc87ddea2f60256263238f94c265d97cc3",
-      "created_at": "2026-11-27T21:39:09.600Z"
+      "content_hash": "1e47e95d1def823fe1f72e1a6ea3b3be16c23475d486f9c823cd24fd9b4acd65",
+      "created_at": "2026-11-28T13:17:57.638Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -13026,8 +13028,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "38818b56485570433fb61323d1d53ce89fb51352d76ef2295f0a7f12ad5e2223",
-      "created_at": "2026-11-27T21:39:14.530Z"
+      "content_hash": "4c87efcd06969e7a5d150a3fcdd2946692892126c254f26e50fec8db287013ef",
+      "created_at": "2026-11-28T13:18:24.973Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -46847,8 +46849,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "8d6ac0eddbc3e61ea6f2dbdd77445df42d7d07c1087a0eb656843e22351aed0e",
-      "created_at": "2026-11-28T12:58:52.608Z"
+      "content_hash": "cf6f48cb970268a6c2c69e6beb514b6457a0ede69cc1dd8a9c9a0b1fa74228f6",
+      "created_at": "2026-11-28T13:18:26.401Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -49267,6 +49269,24 @@
       "repository": "devexpress-testcafe-learnings",
       "content_hash": "2a163b1e5b9b87b8974fe9f4d0ec3ec4d6aa0e690ecc14c1a72abada2bdba69a",
       "created_at": "2026-11-28T12:09:37.564Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: gitroomhq/postiz-app Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gitroomhq-postiz-app-technical-construction-intelligence-gitroomhq-postiz-app-co.md",
+      "repository": "gitroomhq/postiz-app",
+      "content_hash": "4ce374a609bb1ce97e80908438909049d46bb734eb05f9fa6affe486fe1aede0",
+      "created_at": "2026-11-28T13:18:17.749Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-learnings-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-learnings-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: gitroomhq-postiz-app-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gitroomhq-postiz-app-learnings-technical-construction-intelligence-gitroomhq-pos.md",
+      "repository": "gitroomhq-postiz-app-learnings",
+      "content_hash": "394613810e7f3bfa101ec116147d3246cdd422253c9770343426390875136c3b",
+      "created_at": "2026-11-28T13:18:22.427Z"
     }
   }
 }

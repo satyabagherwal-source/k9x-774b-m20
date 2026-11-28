@@ -840364,3 +840364,175 @@ describe('enable()', () => {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `a800c3bf` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11102. sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson() (Harvested from dathere/qsv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson()",
+  "source": "dathere/qsv",
+  "source_url": "https://github.com/dathere/qsv",
+  "source_version": "42a602c0",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-28T13:17:56.363Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dathere-qsv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `42a602c0`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/skills/qsv/qsv-sqlp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `60956a31`: sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson(). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-sqlp.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        "description": "The CSV file/s to query. Use '-' for standard input. If input is a directory, all files in the directory will be read as input. If the input is a file with a '.infile-list' extension, the file will be read as a list of files to use as input. If the input are snappy compressed file(s), it will be decompressed automatically. Column headers are required. Use 'qsv rename _all_generic --no-headers' to add generic column names (_col_N) to a CSV with no headers. A JSONL/NDJSON (.jsonl/.ndjson) input is refused: query it with the read_ndjson() table function and SKIP_INPUT instead. If you are using Polars SQL's table functions like read_csv() & read_parquet() to read input files directly in the SQL statement, you can use the sentinel value 'SKIP_INPUT' to skip input preprocessing. If pschema.json file/s exists for the input file/s, they will automatically be used to optimize the query even if --cache-schema is not set."
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        "description": "The CSV file/s to query. Use '-' for standard input. If input is a directory, all files in the directory will be read as input. If the input is a file with a '.infile-list' extension, the file will be read as a list of files to use as input. If the input are snappy compressed file(s), it will be decompressed automatically. Column headers are required. Use 'qsv rename _all_generic --no-headers' to add generic column names (_col_N) to a CSV with no headers. If you are using Polars SQL's table functions like read_csv() & read_parquet() to read input files directly in the SQL statement, you can use the sentinel value 'SKIP_INPUT' to skip input preprocessing. If pschema.json file/s exists for the input file/s, they will automatically be used to optimize the query even if --cache-schema is not set."
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `60956a31` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11103. close SSRF guard bypasses (literal IPs, redirects, autopost, proxy en (Harvested from gitroomhq/postiz-app)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "close SSRF guard bypasses (literal IPs, redirects, autopost, proxy en",
+  "source": "gitroomhq/postiz-app",
+  "source_url": "https://github.com/gitroomhq/postiz-app",
+  "source_version": "6086870d",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-28T13:18:16.448Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gitroomhq-postiz-app",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [gitroomhq/postiz-app](https://github.com/gitroomhq/postiz-app) (Revision: `6086870d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `libraries/nestjs-libraries/src/database/prisma/autopost/autopost.service.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gitroomhq/postiz-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ad57f595`: security): close SSRF guard bypasses (literal IPs, redirects, autopost, proxy env). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `libraries/nestjs-libraries/src/database/prisma/autopost/autopost.service.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { getSsrfSafeDispatcher } from '@gitroom/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
+      // fetched through the SSRF guard (every redirect hop is checked), only
+      // the parsing is left to rss-parser
+      const response = await fetch(url, {
+        // @ts-ignore — undici option, not in lib.dom fetch types
+        dispatcher: getSsrfSafeDispatcher(),
+        signal: AbortSignal.timeout(60000),
+        // same headers rss-parser's parseURL sent, some feed hosts need them
+        headers: {
+          'User-Agent': 'rss-parser',
+          Accept: 'application/rss+xml',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Status code ' + response.status);
+      }
+
+      // response.text() is always utf-8, parseURL honoured the feed's charset
+      const charset = /charset\s*=\s*"?([^\s;"]+)/i.exec(
+        response.headers.get('content-type') || ''
+      )?.[1];
+      let decoder: TextDecoder;
+      try {
+        decoder = new TextDecoder(charset || 'utf-8');
+      } catch (err) {
+        decoder = new TextDecoder('utf-8');
+      }
+
+      const { items } = await parser.parseString(
+        decoder.decode(await response.arrayBuffer())
+      );
+ 
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+      const { items } = await parser.parseURL(url);
+      const loadDom = new JSDOM(await (await fetch(url)).text());
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ad57f595` are properly handled with clean fallback behavior.

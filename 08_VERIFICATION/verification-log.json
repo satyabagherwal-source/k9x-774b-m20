@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-FOW2",
-    "timestamp": "2026-11-26T18:41:48.482Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "1ae857f5f82da40b62945d7b3b2ade301c210d03f15d227fbc4ce64e82d1b2a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-FRWB",
-    "timestamp": "2026-11-26T18:41:52.379Z",
-    "repository": "alibaba/zvec",
-    "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "203fd4c9b04584c92f94c5e9598fa1b0f6bd65323a5647b945ad23454f54b8ac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-QIML",
     "timestamp": "2026-11-26T18:50:13.581Z",
     "repository": "meta-llama/Meta-Llama-3-8B",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "e082739e7aa4ff6876a254ab4204989fa4d5a1ce179ce142261e2f2f7d5e735f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-QWTT",
+    "timestamp": "2026-11-28T13:17:57.041Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "3a9795e0c180718a4016539b3b98eed212e486cdea92bbd233b7caa35e12fc5c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-RCCO",
+    "timestamp": "2026-11-28T13:18:17.160Z",
+    "repository": "gitroomhq/postiz-app",
+    "learningId": "learn-github-gitroomhq-postiz-app",
+    "contentHash": "4592fa4ae2bff83d8fbc3d5b52ce49882f1a2a3cb7011368c5388a818f3a60d5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

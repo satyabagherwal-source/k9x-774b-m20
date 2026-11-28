@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T12:58:55.691Z",
+  "last_updated": "2026-11-28T13:18:26.861Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-28T12:58:51.891Z",
+      "processed_at": "2026-11-28T13:18:25.502Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-27T22:55:28.784Z",
+      "processed_at": "2026-11-28T13:18:22.902Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4071,9 +4071,14 @@
       "processed_at": "2026-11-28T11:47:44.666Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "gitroomhq-postiz-app-learnings.md": {
+      "processed_at": "2026-11-28T13:18:20.914Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5349,
+  "total_dossiers_evaluated": 5352,
   "total_canonical_promoted": 604,
-  "total_staged_for_review": 4071
+  "total_staged_for_review": 4074
 }

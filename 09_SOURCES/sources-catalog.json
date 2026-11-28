@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "23809a00",
+    "sourceVersion": "42a602c0",
     "license": "NOASSERTION",
-    "contentHash": "07c258d242460e69131ad13ab01c7afff9bcf3255b1815a3aa72f8aba0d0a0cf",
-    "lastHarvestedAt": "2026-11-27T22:54:50.857Z",
+    "contentHash": "3a9795e0c180718a4016539b3b98eed212e486cdea92bbd233b7caa35e12fc5c",
+    "lastHarvestedAt": "2026-11-28T13:17:57.045Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -13658,5 +13658,15 @@
     "contentHash": "d17e7fb4ffb349d7e59b8f9de15d7786c5d669c1f8d64ea433aba736809873d7",
     "lastHarvestedAt": "2026-11-28T04:47:58.633Z",
     "learningId": "learn-huggingface-ai-sage-gigachat4-37b-a4b"
+  },
+  "gitroomhq-postiz-app": {
+    "repository": "gitroomhq/postiz-app",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gitroomhq/postiz-app",
+    "sourceVersion": "6086870d",
+    "license": "AGPL-3.0",
+    "contentHash": "4592fa4ae2bff83d8fbc3d5b52ce49882f1a2a3cb7011368c5388a818f3a60d5",
+    "lastHarvestedAt": "2026-11-28T13:18:17.164Z",
+    "learningId": "learn-github-gitroomhq-postiz-app"
   }
 }

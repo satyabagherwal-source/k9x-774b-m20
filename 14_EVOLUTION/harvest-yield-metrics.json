@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T12:35:57.122Z",
-  "total_cycles_completed": 13328,
-  "total_learnings_persisted": 13328,
-  "total_rules_promoted": 12026,
+  "last_updated": "2026-11-28T13:18:17.171Z",
+  "total_cycles_completed": 13330,
+  "total_learnings_persisted": 13330,
+  "total_rules_promoted": 12028,
   "history": [
-    {
-      "timestamp": "2026-11-27T17:42:02.061Z",
-      "repository": "neuron-core/neuron-ai",
-      "learningId": "learn-github-neuron-core-neuron-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T17:50:16.026Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T17:50:18.413Z",
       "repository": "matrixorigin/matrixone",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T12:35:57.122Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T13:17:57.051Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T13:18:17.171Z",
+      "repository": "gitroomhq/postiz-app",
+      "learningId": "learn-github-gitroomhq-postiz-app",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

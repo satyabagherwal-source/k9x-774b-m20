@@ -14087,3 +14087,5 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `5ef973da` | Multi-dimensional audit evidence | 2026-11-28T12:35:42.913Z |
 | `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `0f87d469` | Multi-dimensional audit evidence | 2026-11-28T12:35:45.646Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6e57e554` | Multi-dimensional audit evidence | 2026-11-28T12:35:57.116Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `42a602c0` | Multi-dimensional audit evidence | 2026-11-28T13:17:57.045Z |
+| `learn-github-gitroomhq-postiz-app` | `https://github.com/gitroomhq/postiz-app` | `6086870d` | Multi-dimensional audit evidence | 2026-11-28T13:18:17.164Z |
