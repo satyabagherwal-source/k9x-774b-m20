@@ -13999,3 +13999,5 @@ Every entry in this ledger must capture:
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `71c87d50` | Multi-dimensional audit evidence | 2026-11-28T04:03:33.063Z |
 | `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `9b58d05a` | Multi-dimensional audit evidence | 2026-11-28T04:03:35.852Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `280caf35` | Multi-dimensional audit evidence | 2026-11-28T04:12:26.721Z |
+| `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `3db5970f` | Multi-dimensional audit evidence | 2026-11-28T04:21:03.459Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `5260361d` | Multi-dimensional audit evidence | 2026-11-28T04:21:13.813Z |

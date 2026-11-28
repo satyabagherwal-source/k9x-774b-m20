@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-LK9B",
-    "timestamp": "2026-11-26T15:02:25.487Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "f03b2add7b726dd6b0937b245ed884f059dd8d44f5ca34c8c48d654023d3899b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-XH91",
-    "timestamp": "2026-11-26T15:11:41.461Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "50eb52913855cd82bb38556f61f16ff5c23e9e747a96121a3c611d6d89caf08e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-XLRK",
     "timestamp": "2026-11-26T15:11:47.312Z",
     "repository": "react/react-native",
@@ -7490,6 +7460,36 @@
     "repository": "volcengine/OpenViking",
     "learningId": "learn-github-volcengine-openviking",
     "contentHash": "52ec2a8ee89abf90da2e2dcc00b93a650274018485700e510d0abaa91f5b6644",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-KGNR",
+    "timestamp": "2026-11-28T04:21:03.447Z",
+    "repository": "urllib3/urllib3",
+    "learningId": "learn-github-urllib3-urllib3",
+    "contentHash": "5bebc72e876716c88288bac1924b9f6786ad47f7c42546245874d706de37e5f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-KOND",
+    "timestamp": "2026-11-28T04:21:13.801Z",
+    "repository": "apache/pinot",
+    "learningId": "learn-github-apache-pinot",
+    "contentHash": "cbc5f78aad5158f1b2d9279985fa77013d85ff238eaefe68f608269e47437c90",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

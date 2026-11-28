@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T04:12:32.731Z",
+  "last_updated": "2026-11-28T04:21:21.448Z",
   "total_records": 2871,
   "domains": {
     "A": {
@@ -17666,8 +17666,8 @@
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "repository": "apache/pinot",
-      "content_hash": "942c0acd5534cb0867de59496f131eb82f83a464ee6072c88ff7fbc2f58a750f",
-      "created_at": "2026-11-25T14:05:09.373Z"
+      "content_hash": "5cbad313c32a1d1e460df5b54cbc3f334ff69faa2f41c308145ab79ce105935c",
+      "created_at": "2026-11-28T04:21:14.275Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -18521,8 +18521,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "db20326c0c7d7cc214836de2d9b706761326689bcb10405c49d5c32a5fe70726",
-      "created_at": "2026-11-28T03:36:10.709Z"
+      "content_hash": "756dbbe1ed893dcc5fcffcd0957184c69f9aea9fbb3121a5f7213b94ad6d6a56",
+      "created_at": "2026-11-28T04:21:21.448Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -25648,8 +25648,8 @@
       "title": "Technical Construction Intelligence: urllib3/urllib3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-urllib3-urllib3-technical-construction-intelligence-urllib3-urllib3-core-invaria.md",
       "repository": "urllib3/urllib3",
-      "content_hash": "ea51ca3482e1772018df51b8fcede903099305588909a48b52dc694b0f864b14",
-      "created_at": "2026-11-16T23:14:45.394Z"
+      "content_hash": "b7edaf8c0a56402752778966487e3f991f05b75e136c0600d758005ddda15541",
+      "created_at": "2026-11-28T04:21:03.906Z"
     },
     "domain_intelligence-content-information-intelligence-sigstore-cosign-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-sigstore-cosign-core-invariants",
@@ -25666,8 +25666,8 @@
       "title": "Technical Construction Intelligence: urllib3-urllib3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-urllib3-urllib3-learnings-technical-construction-intelligence-urllib3-urllib3-le.md",
       "repository": "urllib3-urllib3-learnings",
-      "content_hash": "8a7d4454192d08e093add9418819ab74f875c18204c6cd90d600a3f73671d373",
-      "created_at": "2026-11-16T23:14:59.837Z"
+      "content_hash": "882aa6fcadbb4e27278f7024a7ac770d151b107ff796e22a36d4ea9e85b02c8f",
+      "created_at": "2026-11-28T04:21:18.566Z"
     },
     "domain_intelligence-content-information-intelligence-sigstore-cosign-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-sigstore-cosign-learnings-core-invariants",
@@ -27795,8 +27795,8 @@
       "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-learnings-content-information-intelligence-apache-pinot-learnings-c.md",
       "repository": "apache-pinot-learnings",
-      "content_hash": "1a1bad18eb47c16118423bc57e20ac9d75f01c4678889da1af4eb154f10d0997",
-      "created_at": "2026-11-25T14:05:14.906Z"
+      "content_hash": "8b0044d01f4fbeb0a6f25abcb4fcbd448410ad0b9ca607030ea0f8bd3ff4ef14",
+      "created_at": "2026-11-28T04:21:19.965Z"
     },
     "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants",

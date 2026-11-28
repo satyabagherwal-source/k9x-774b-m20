@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T04:12:32.944Z",
+  "last_updated": "2026-11-28T04:21:21.448Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26940,
+  "total_items": 26944,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -237056,8 +237056,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "d197e0b5",
-      "content_hash": "113824aa67d4feeb7815f74d2fb2ad5031193ddf375e7c78c14767da7a53dead",
+      "source_version": "5260361d",
+      "content_hash": "cbc5f78aad5158f1b2d9279985fa77013d85ff238eaefe68f608269e47437c90",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -237115,6 +237115,11 @@
           "number": 10713,
           "title": "Add a Foreign Function & Memory (Panama) based PinotDataBuffer implementation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11033,
+          "title": "Bump com.github.luben:zstd-jni from 1.5.7-28 to 1.5.7-29",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237122,7 +237127,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T15:11:54.824Z",
+      "verified_at": "2026-11-28T04:21:13.546Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237164,10 +237169,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "repository": "apache/pinot",
-      "source_version": "95ec60fa",
-      "content_hash": "942c0acd5534cb0867de59496f131eb82f83a464ee6072c88ff7fbc2f58a750f",
+      "source_version": "5260361d",
+      "content_hash": "5cbad313c32a1d1e460df5b54cbc3f334ff69faa2f41c308145ab79ce105935c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T14:05:09.373Z"
+      "persisted_at": "2026-11-28T04:21:14.275Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot",
@@ -237176,10 +237181,10 @@
       "relative_path": "08_VERIFICATION/apache-pinot-verification-protocol-empirical-defect-shield-for-apache-pinot.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/pinot",
       "repository": "apache/pinot",
-      "source_version": "d197e0b5",
-      "content_hash": "40c897aa1db5a51b0b93b29afc385f245a47d9b681bc7f73306a4c0a13f4b0e4",
+      "source_version": "5260361d",
+      "content_hash": "930f7affac5b4961f628312cc07d48f2df22d76aff4e427ba4d82626f91b05e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T15:11:56.096Z"
+      "persisted_at": "2026-11-28T04:21:14.483Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -240126,9 +240131,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "db20326c0c7d7cc214836de2d9b706761326689bcb10405c49d5c32a5fe70726",
+      "content_hash": "756dbbe1ed893dcc5fcffcd0957184c69f9aea9fbb3121a5f7213b94ad6d6a56",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T03:36:10.709Z"
+      "persisted_at": "2026-11-28T04:21:21.448Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -267806,14 +267811,19 @@
       "slug": "urllib3-urllib3",
       "platform": "github",
       "source_url": "https://github.com/urllib3/urllib3",
-      "source_version": "d9f9b0ad",
-      "content_hash": "d2e8fee056a0eaa2d9ee9bc718907eb1d06debe426bb66883835e72fdcd0a678",
+      "source_version": "3db5970f",
+      "content_hash": "5bebc72e876716c88288bac1924b9f6786ad47f7c42546245874d706de37e5f9",
       "dossier_path": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "promoted_rules": [
         {
           "number": 8809,
           "title": "Reject decoding mode switches before consuming response data",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11032,
+          "title": "Empirical Invariant Guard in CHANGES.rst",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -267822,7 +267832,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T23:14:44.936Z",
+      "verified_at": "2026-11-28T04:21:03.180Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267864,10 +267874,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-urllib3-urllib3-technical-construction-intelligence-urllib3-urllib3-core-invaria.md",
       "title": "Technical Construction Intelligence: urllib3/urllib3 Core Invariants",
       "repository": "urllib3/urllib3",
-      "source_version": "d9f9b0ad",
-      "content_hash": "ea51ca3482e1772018df51b8fcede903099305588909a48b52dc694b0f864b14",
+      "source_version": "3db5970f",
+      "content_hash": "b7edaf8c0a56402752778966487e3f991f05b75e136c0600d758005ddda15541",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T23:14:45.394Z"
+      "persisted_at": "2026-11-28T04:21:03.906Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-urllib3-urllib3": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-urllib3-urllib3",
@@ -267876,10 +267886,10 @@
       "relative_path": "08_VERIFICATION/urllib3-urllib3-verification-protocol-empirical-defect-shield-for-urllib3-urllib.md",
       "title": "Verification Protocol: Empirical Defect Shield for urllib3/urllib3",
       "repository": "urllib3/urllib3",
-      "source_version": "d9f9b0ad",
-      "content_hash": "7d41317996a767c955a68b3290b9a4bbbbf4c1ee6b4318a8a7bf59eef0f7dee5",
+      "source_version": "3db5970f",
+      "content_hash": "78ff0717bbed68e545920994b23c32727b5e593f706bad9aa80eff4cba7e20c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:14:45.508Z"
+      "persisted_at": "2026-11-28T04:21:04.105Z"
     },
     "learn-github-sigstore-cosign": {
       "learning_id": "learn-github-sigstore-cosign",
@@ -268039,9 +268049,9 @@
       "title": "Technical Construction Intelligence: urllib3-urllib3-learnings Core Invariants",
       "repository": "urllib3-urllib3-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a7d4454192d08e093add9418819ab74f875c18204c6cd90d600a3f73671d373",
+      "content_hash": "882aa6fcadbb4e27278f7024a7ac770d151b107ff796e22a36d4ea9e85b02c8f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T23:14:59.837Z"
+      "persisted_at": "2026-11-28T04:21:18.566Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-urllib3-urllib3-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-urllib3-urllib3-learnings",
@@ -268051,9 +268061,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for urllib3-urllib3-learnings",
       "repository": "urllib3-urllib3-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e84d00ee8af26841ee63709dbc8230bed8a0eef41a5849d6b946f579cbfb264",
+      "content_hash": "8dde0160b56437b071993f1e294003c12d1b3a2acbe8c3c9e47c940d0e6d50ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:14:59.960Z"
+      "persisted_at": "2026-11-28T04:21:18.755Z"
     },
     "domain_intelligence-content-information-intelligence-sigstore-cosign-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-sigstore-cosign-learnings-core-invariants",
@@ -277957,9 +277967,9 @@
       "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
       "repository": "apache-pinot-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a1bad18eb47c16118423bc57e20ac9d75f01c4678889da1af4eb154f10d0997",
+      "content_hash": "8b0044d01f4fbeb0a6f25abcb4fcbd448410ad0b9ca607030ea0f8bd3ff4ef14",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T14:05:14.906Z"
+      "persisted_at": "2026-11-28T04:21:19.965Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot-learnings",
@@ -277969,9 +277979,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-pinot-learnings",
       "repository": "apache-pinot-learnings",
       "source_version": "HEAD",
-      "content_hash": "096c8d7113c1ee3991b7580bbbb784483031a563e370f854cf9beb3c91aae9f6",
+      "content_hash": "b7c366ce64071e019f9357c918b146d7577196373a0f45cda919f5622d66827c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T15:12:43.654Z"
+      "persisted_at": "2026-11-28T04:21:20.172Z"
     },
     "learn-huggingface-speridlabs-idol": {
       "learning_id": "learn-huggingface-speridlabs-idol",
@@ -370171,6 +370181,58 @@
       "content_hash": "4ede6d24ab11715eac77caecacde1732c5c3b6cf4553b8abded79e6ecb838ab1",
       "domain_letter": "B",
       "persisted_at": "2026-11-28T04:12:30.580Z"
+    },
+    "rule-11032": {
+      "learning_id": "rule-11032",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11032,
+      "title": "Empirical Invariant Guard in CHANGES.rst",
+      "source_url": "https://github.com/urllib3/urllib3",
+      "source_version": "3db5970f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T04:21:03.180Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-changes-rst": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-changes-rst",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KS68-empirical-invariant-guard-in-changes-rst.md",
+      "title": "Empirical Invariant Guard in CHANGES.rst",
+      "repository": "urllib3-urllib3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d85f4256da7ec87b678183c5811a003b8f9c3b07f9e9330c653086c45369f14",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T04:21:18.372Z"
+    },
+    "rule-11033": {
+      "learning_id": "rule-11033",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11033,
+      "title": "Bump com.github.luben:zstd-jni from 1.5.7-28 to 1.5.7-29",
+      "source_url": "https://github.com/apache/pinot",
+      "source_version": "5260361d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T04:21:13.546Z"
+    },
+    "candidate_directive-bump-com-github-luben-zstd-jni-from-1-5-7-28-to-1-5-7-29": {
+      "item_id": "candidate_directive-bump-com-github-luben-zstd-jni-from-1-5-7-28-to-1-5-7-29",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KT98-bump-com-github-luben-zstd-jni-from-1-5-7-28-to-1-5-7-29.md",
+      "title": "Bump com.github.luben:zstd-jni from 1.5.7-28 to 1.5.7-29",
+      "repository": "apache-pinot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cca08f4605cee3185dc499c1f93f0b9f21614f106a918fde71ac369f699d15fe",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-28T04:21:19.775Z"
     }
   },
   "ai-builder-brain": {

@@ -9633,10 +9633,10 @@
     "repository": "urllib3/urllib3",
     "platform": "github",
     "sourceUrl": "https://github.com/urllib3/urllib3",
-    "sourceVersion": "d9f9b0ad",
+    "sourceVersion": "3db5970f",
     "license": "MIT",
-    "contentHash": "d2e8fee056a0eaa2d9ee9bc718907eb1d06debe426bb66883835e72fdcd0a678",
-    "lastHarvestedAt": "2026-11-16T23:14:45.099Z",
+    "contentHash": "5bebc72e876716c88288bac1924b9f6786ad47f7c42546245874d706de37e5f9",
+    "lastHarvestedAt": "2026-11-28T04:21:03.459Z",
     "learningId": "learn-github-urllib3-urllib3"
   },
   "simibac-confettiswiftui": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "d197e0b5",
+    "sourceVersion": "5260361d",
     "license": "Apache-2.0",
-    "contentHash": "113824aa67d4feeb7815f74d2fb2ad5031193ddf375e7c78c14767da7a53dead",
-    "lastHarvestedAt": "2026-11-26T15:11:55.165Z",
+    "contentHash": "cbc5f78aad5158f1b2d9279985fa77013d85ff238eaefe68f608269e47437c90",
+    "lastHarvestedAt": "2026-11-28T04:21:13.813Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

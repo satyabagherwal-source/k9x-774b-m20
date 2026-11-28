@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T04:12:32.526Z",
+  "last_updated": "2026-11-28T04:21:20.355Z",
   "directives": [
     {
       "id": "CD-001",
@@ -74500,6 +74500,55 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EA3579-renderer-refuse-last-error-reads-off-the.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-KS68",
+      "directive_title": "Empirical Invariant Guard in CHANGES.rst",
+      "source_repo": "urllib3-urllib3-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KS68-empirical-invariant-guard-in-changes-rst.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-KT98",
+      "directive_title": "Bump com.github.luben:zstd-jni from 1.5.7-28 to 1.5.7-29",
+      "source_repo": "apache-pinot-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KT98-bump-com-github-luben-zstd-jni-from-1-5-7-28-to-1-5-7-29.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-63E851",
+      "directive_title": "Empirical Invariant Guard in CHANGES.rst",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "urllib3-urllib3",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-63E851-empirical-invariant-guard-in-changes-rst.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-B7C614",
+      "directive_title": "Bump com.github.luben:zstd-jni from 1.5.7-28 to 1.5.7-29",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-pinot",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B7C614-bump-com-github-luben-zstd-jni-from-1-5-.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-D8A4A4",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D8A4A4-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-28"
     }
   ]

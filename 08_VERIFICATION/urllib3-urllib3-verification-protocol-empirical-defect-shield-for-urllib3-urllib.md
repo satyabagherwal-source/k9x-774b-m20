@@ -4,22 +4,22 @@
 {
   "source_repository": "urllib3/urllib3",
   "source_url": "https://github.com/urllib3/urllib3",
-  "source_version": "d9f9b0ad",
+  "source_version": "3db5970f",
   "license": "MIT",
-  "timestamp": "2026-11-16T23:14:45.278Z",
+  "timestamp": "2026-11-28T04:21:03.702Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-urllib3-urllib3",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [urllib3/urllib3](https://github.com/urllib3/urllib3) (Revision: `d9f9b0ad`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T23:14:45.278Z`  
+> **Provenance**: Harvested from [urllib3/urllib3](https://github.com/urllib3/urllib3) (Revision: `3db5970f`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T04:21:03.702Z`  
 > **Learning ID**: `learn-github-urllib3-urllib3`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `urllib3/urllib3` (Commit: `d9f9b0ad`)
+- **Target Repository**: `urllib3/urllib3` (Commit: `3db5970f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T23:14:43.973Z  
+> **Harvest Timestamp**: 2026-11-28T04:21:02.036Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: urllib3 is a user-friendly HTTP client library for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4084 stars
+- **Stars / Engagement**: 4088 stars
 
 ---
 
@@ -1806,11 +1806,11 @@ class SSLTransport:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5376** (2026-11-13): **Bump Ubuntu and macOS versions in CI and Read the Docs**
-  *Symptoms*: 
+- **Issue #5402** (2026-11-27): **Honor check_hostname=False in user-provided SSLContexts**
+  *Symptoms*: Fixes #3619.  When a caller provides an SSLContext with `check_hostname=False`, urllib3 still performed its own hostname verification because `assert_hostname` defaulted to `None`. The context setting therefore had no effect unless the caller also knew to pass `assert_hostname=False`.  Capture the user-provided context setting before urllib3 can mutate it. If hostname checking is disabled there and `assert_hostname` was not explicitly configured, treat it as `assert_hostname=False`. Explicit `assert_hostname` values still take precedence, certificate verification through `verify_mode` is unchanged, and urllib3-created contexts are unchanged.  pyOpenSSL behavior is unchanged. Its contexts use `check_hostname=False` internally rather than as a caller opt-out, so urllib3 continues to perform hostname verification for them.  I noticed #5335 was closed unmerged without review. This version additionally preserves pyOpenSSL hostname verification.  ## Validation  - `.venv/bin/python -m pytest test/test_connection.py -q` passed all 298 tests. - `uvx nox -s lint` passed, including pre-commit and mypy. - End-to-end localhost validation passed. The opt-out context completed a request with a mismatched certificate, explicit `assert_hostname` still rejected it, and a default context still rejected it. 
 
-- **Issue #5372** (2026-11-11): **Run dummyserver tests over both HTTP and HTTPS**
-  *Symptoms*: Many existing connection pool, retry, and pool manager tests run only over HTTP. This change runs the applicable tests over HTTPS too, using shared fixtures.  These fixtures also prepare the tests for HTTP/2 coverage in #5278. That PR can add protocol selection to the shared configuration:  ```python @pytest.fixture def connection_pool_kw(     server_scheme: str, http_version: str ) -> dict[str, typing.Any]:     options: dict[str, typing.Any] = {         "http1": http_version == "h11",         "http2": http_version == "h2",     }     if server_scheme == "https":         options["ca_certs"] = DEFAULT_CA     return options ```  Tests using the pool factories can then cover both protocols without changing their bodies.
+- **Issue #5386** (2026-11-18): **Allow None as a multipart file tuple filename in typing**
+  *Symptoms*: Fixes #5366.  `_TYPE_FIELD_VALUE_TUPLE` declares the filename as `str`, while `None` is accepted and meaningful at runtime: it produces a part with no `filename` parameter, which is how a typed part such as JSON metadata is sent alongside a file.  The runtime already treats it as optional. `RequestField.from_tuples` declares `filename: str | None` and unpacks the tuple into it, and `guess_content_type` takes `str | None`. Only the exported type disagreed.  ### Before and after  Checking the snippet from the issue with mypy 2.4.1:  ```python RequestField.from_tuples("metadata", (None, b"{}", "application/json")) encode_multipart_formdata({"metadata": (None, b"{}", "application/json")}, boundary="example") ```  On main:  ``` error: Argument 2 to "from_tuples" of "RequestField" has incompatible type        "tuple[None, bytes, str]"; expected "str | bytes | tuple[str, str | bytes] | ..."  [arg-type] error: Dict entry 0 has incompatible type "str": "tuple[None, bytes, str]"; expected ...  [dict-item] ```  With this change both are gone. The remaining mypy output in my run is `import-not-found` for `h2`, which is an optional dependency I do not have installed, and is unrelated.  ### Tests  `test_no_filename` in `test/test_filepost.py`, beside `test_textplain` and `test_explicit`, asserting the generated part is  ``` Content-Disposition: form-data; name="k" Content-Type: application/json ```  with no `filename` parameter.  Worth being explicit about what it does and does not prove: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1827,265 +1827,120 @@ class SSLTransport:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9f9b0ad` (2026-11-14)
-**Commit Message**: Reject decoding mode switches before consuming response data (#5344)
+### Incident Patch 1: `3db5970f` (2026-11-25)
+**Commit Message**: Fix typos (#5288)
 
-**File**: `changelog/5344.bugfix.rst` (added, +1/-0)
+**File**: `CHANGES.rst` (modified, +1/-1)
 ```diff
-@@ -0,0 +1 @@
-+Fixed rejected decoding-mode switches in ``HTTPResponse.read()`` consuming or returning response data before raising ``RuntimeError``.
+@@ -350,7 +350,7 @@ Bugfixes
+ Misc
+ ----
+ 
+-- Switched to uv for installing development dependecies. (`#3550 <https://github.com/urllib3/urllib3/issues/3550>`__)
++- Switched to uv for installing development dependencies. (`#3550 <https://github.com/urllib3/urllib3/issues/3550>`__)
+ - Removed the ``multiple.intoto.jsonl`` asset from GitHub releases. Attestation of release files since v2.3.0 can be found on PyPI. (`#3566 <https://github.com/urllib3/urllib3/issues/3566>`__)
+ 
+ 
 ```
 
-**File**: `src/urllib3/response.py` (modified, +6/-5)
+**File**: `docs/advanced-usage.rst` (modified, +1/-1)
 ```diff
-@@ -1130,6 +1130,12 @@ def read(
-         if decode_content is None:
-             decode_content = self.decode_content
+@@ -298,7 +298,7 @@ starts with ``http://`` instead of ``https://``:
+      http = urllib3.ProxyManager("https://...")
  
-+        if amt != 0 and not decode_content and self._has_decoded_content:
-+            raise RuntimeError(
-+                "Calling read(decode_content=False) is not supported after "
-+                "read(decode_content=True) was called."
-+            )
-+
-         if amt and amt < 0:
-             # Negative numbers and `None` should be treated the same.
-             amt = None
-@@ -1178,11 +1184,6 @@ def read(
-         else:
-             # do not waste memory on buffer when not decoding
-             if not decode_content:
--                if self._has_decoded_content:
--                    raise RuntimeError(
--                        "Calling read(decode_content=False) is not supported after "
--                        "read(decode_content=True) was called."
--                    )
-                 return data
+ If instead you're using ``urllib3`` through another library like Requests
+-there are multiple ways your proxy could be mis-configured. You need to figure out
++there are multiple ways your proxy could be misconfigured. You need to figure out
+ where the configuration isn't correct and make the fix there. Some common places
+ to look are environment variables like ``HTTP_PROXY``, ``HTTPS_PROXY``, and ``ALL_PROXY``.
  
-             decoded_data = self._decode(
 ```
 
-**File**: `test/test_response.py` (modified, +66/-11)
+**File**: `docs/contributing.rst` (modified, +1/-1)
 ```diff
-@@ -1419,16 +1419,26 @@ def test_io_not_autoclose_textiowrapper(self) -> None:
-         with pytest.raises(ValueError, match="I/O operation on closed file.?"):
-             next(reader)
+@@ -97,7 +97,7 @@ After the ``--`` indicator, any arguments will be passed to pytest.
+ To specify an exact test case the following syntax also works:
+ ``test/dir/module_name.py::TestClassName::test_method_name``
+ (eg.: ``test/with_dummyserver/test_https.py::TestHTTPS::test_simple``).
+-The following argument is another valid example to pass to pytest: ``-k test_methode_name``.
++The following argument is another valid example to pass to pytest: ``-k test_method_name``.
+ These are useful when developing new test cases and there is no point
+ re-running the entire test suite every iteration. It is also possible to
+ further parameterize pytest for local testing.
+```
+
+**File**: `test/conftest.py` (modified, +1/-1)
+```diff
+@@ -150,7 +150,7 @@ def no_san_server(
  
--    def test_read_with_illegal_mix_decode_toggle(self) -> None:
--        data = zlib.compress(b"foo")
-+    @pytest.mark.parametrize("amt", [None, 1, -1])
-+    @pytest.mark.parametrize(
-+        "encoding,compress", [("gzip", gzip.compress), ("deflate", zlib.compress)]
-+    )
-+    def test_read_with_illegal_mix_decode_toggle(
-+        self,
-+        amt: int | None,
-+        encoding: str,
-+        compress: typing.Callable[[bytes], bytes],
-+    ) -> None:
-+        data = compress(b"foo")
+ 
+ @pytest.fixture()
+-def no_san_server_with_different_commmon_name(
++def no_san_server_with_different_common_name(
+     tmp_path_factory: pytest.TempPathFactory,
+ ) -> typing.Generator[ServerConfig]:
+     tmpdir = tmp_path_factory.mktemp("certs")
+```
+
+**File**: `test/contrib/emscripten/test_emscripten.py` (modified, +1/-1)
+```diff
+@@ -491,7 +491,7 @@ def test_streaming_close(
+             conn = HTTPConnection("{testserver_http.http_host}", {testserver_http.http_port})
+             conn.request("GET", "{url}",preload_content=False)
+             response = conn.getresponse()
+-            # check body is a RawIOBase stream and isn't seekable, writeable
++            # check body is a RawIOBase stream and isn't seekable, writable
+             body_internal = response._response.body
+             assert(isinstance(body_internal,RawIOBase))
+             assert(body_internal.writable() is False)
+```
+
+**File**: `test/test_exceptions.py` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@ class TestPickle:
+         [
+             HTTPError(None),
+             MaxRetryError(DUMMY_POOL, "", None),
+-            MaxRetryError(DUMMY_POOL, "", Exception("Error occured")),
++            MaxRetryError(DUMMY_POOL, "", Exception("Error occurred")),
+             LocationParseError(""),
+             ConnectTimeoutError(None),
+             HTTPError("foo"),
+```
+
+**File**: `test/test_poolmanager.py` (modified, +1/-1)
+```diff
+@@ -514,7 +514,7 @@ def test_connection_from_host_port_zero(self) -> None:
+         pool = p.connection_from_host("example.com", port=0, scheme="http")
+         assert pool.port == 0
+ 
+-    def test_thread_safty(self) -> None:
++    def test_thread_safety(self) -> None:
+         pool_manager = PoolManager(num_pools=2)
+ 
+         # thread 1 gets a pool for host x
+```
+
+**File**: `test/test_response.py` (modified, +1/-1)
+```diff
+@@ -410,7 +410,7 @@ def test_decode_deflate(self) -> None:
+ 
+         assert r.data == b"foo"
+ 
+-    def test_decode_deflate_case_insensitve(self) -> None:
++    def test_decode_deflate_case_insensitive(self) -> None:
+         data = zlib.compress(b"foo")
  
          fp = BytesIO(data)
- 
-         resp = HTTPResponse(
--            fp, headers={"content-encoding": "deflate"}, preload_content=False
-+            fp, headers={"content-encoding": encoding}, preload_content=False
-         )
- 
-         assert resp.read(1) == b"f"
-+        position = fp.tell()
- 
-         with pytest.raises(
-             RuntimeError,
-@@ -1437,16 +1447,44 @@ def test_read_with_illegal_mix_decode_toggle(self) -> None:
-                 r"read\(decode_content=True\) was called"
-             ),
-         ):
-+            resp.read(amt, decode_content=False)
-+
-+        assert fp.tell() == position
-+        assert resp.read() == b"oo"
-+
-+    @pytest.mark.parametrize(
-+        "encoding,compress", [("gzip", gzip.compress), ("deflate", zlib.compress)]
-+    )
-+    def test_read_zero_with_decode_disabled_after_decoded_read(
-+        self, encoding: str, compress: typing.Callable[[bytes], bytes]
-+    ) -> None:
-+        fp = BytesIO(compress(b"foo"))
-+        resp = HTTPResponse(
-+            fp, headers={"content-encoding": encoding}, preload_content=False
-+        )
-+        assert resp.read(1) == b"f"
-+        position = fp.tell()
-+
-+        assert resp.read(0, decode_content=False) == b""
-+        assert fp.tell() == position
-+        assert resp.read() == b"oo"
-+
-+    def test_read_with_illegal_mix_decode_toggle_and_buffered_data(self) -> None:
-+        fp = BytesIO(zlib.compress(b"foobarbaz"))
-+        resp = HTTPResponse(
-+            fp, headers={"content-encoding": "deflate"}, preload_content=False
-+        )
-+        assert resp.read(3) == b"foo"
-+        decoded = resp._decode(
-+            resp._raw_read(), decode_content=True, flush_decoder=False, max_length=3
-+        )
-+        assert decoded == b"bar"
-+        resp._decoded_buffer.put(decoded)
-+
-+        with pytest.raises(RuntimeError, match="decode_content=False"):
-             resp.read(1, decode_content=False)
- 
--        with pytest.raises(
--            RuntimeError,
--            match=(
--                r"Calling read\(decode_content=False\) is not supported after "
--                r"read\(decode_content=True\) was called"
--            ),
--        ):
--            resp.read(decode_content=False)
-+        assert resp.read() == b"barbaz"
- 
-     def test_read1_with_illegal_mix_decode_toggle(self) -> None:
-         data = zlib.compress(b"foo")
-@@ -1477,6 +1515,23 @@ def test_read1_with_illegal_mix_decode_toggle(self) -> None:
-         ):
-             resp.read1(decode_content=False)
- 
-+    def test_read_chunked_with_illegal_mix_decode_toggle(self) -> None:
-+        fp = MockChunkedEncodingResponse([zlib.compress(b"foo")])
-+        raw = httplib.HTTPResponse(MockSock)  # type: ignore[arg-type]
-+        raw.fp = fp  # type: ignore[assignment]
-+        resp = HTTPResponse(
-+            raw,
-+            headers={"transfer-encoding": "chunked", "content-encoding": "deflate"},
-+            preload_content=False,
-+        )
-+        decoded = resp.read_chunked(1, decode_content=True)
-+        assert next(decoded) == b"f"
-+
-+        with pytest.raises(RuntimeError, match="decode_content=False"):
-+            next(resp.read_chunked(1, decode_content=False))
-+
-+        decoded.close()
-+
-     def test_read_with_mix_decode_toggle(self) -> None:
-         data = zlib.compress(b"foo")
- 
-```
-
----
-
-### Incident Patch 2: `01f386e3` (2026-11-13)
-**Commit Message**: Bump Ubuntu and macOS versions in CI and Read the Docs (#5376)
-
-Co-authored-by: Quentin Pradet <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +12/-12)
-```diff
-@@ -46,58 +46,58 @@ jobs:
-       matrix:
-         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.14t", "3.15"]
-         os:
--          - macos-15
-+          - macos-26
-           - windows-latest
--          - ubuntu-24.04
-+          - ubuntu-26.04
-         nox-session: ['']
-         container: ['']
-         include:
-           - experimental: false
-           - python-version: "3.12"
--            os: ubuntu-24.04
-+            os: ubuntu-26.04
-             experimental: false
-             nox-session: test_integration
-           # Test with 3.12.2 for https://github.com/urllib3/urllib3/pull/3620 patch
-           - python-version: "3.12.2"
--            os: ubuntu-24.04
-+            os: ubuntu-24.04 # setup-python has no 26.04 build for 3.12.2.
-             experimental: false
-             nox-session: test-3.12
-           # pypy
-           - python-version: "pypy-3.11"
--            os: ubuntu-24.04
-+            os: ubuntu-26.04
-             experimental: false
-             nox-session: test-pypy3.11
-           # Test with the minimum supported pyOpenSSL for OpenSSL 1.1.1.
-           # Debian Bullseye was the last release with OpenSSL 1.1.1, and
-           # 3.13-bullsey was the last published image.
-           - python-version: "3.13"
--            os: ubuntu-24.04
-+            os: ubuntu-26.04
-             container: python:3.13-bullseye
-             experimental: false
-             nox-session: test_min_pyopenssl
-           - python-version: "3.x"
-           # brotli
--            os: ubuntu-24.04
-+            os: ubuntu-26.04
-             experimental: false
-             nox-session: test_brotlipy
-           - python-version: "3.12"
--            os: ubuntu-24.04
-+            os: ubuntu-26.04
-             nox-session: emscripten(node)
-             experimental: true
-           - python-version: "3.12"
--            os: ubuntu-24.04
-+            os: ubuntu-26.04
-             nox-session: emscripten(firefox)
-             experimental: true
-           - python-version: "3.12"
--            os: ubuntu-24.04
-+            os: ubuntu-26.04
-             nox-session: emscripten(chrome)
-             experimental: true
-           - python-version: "3.15"
-             experimental: true
- 
-     runs-on: ${{ matrix.os }}
-     container: ${{ matrix.container }}
--    name: ${{ fromJson('{"macos-15":"macOS","windows-latest":"Windows","ubuntu-24.04":"Ubuntu"}')[matrix.os] }} ${{ matrix.python-version }} ${{ matrix.nox-session}}
-+    name: ${{ fromJson('{"macos-26":"macOS","windows-latest":"Windows","ubuntu-24.04":"Ubuntu","ubuntu-26.04":"Ubuntu"}')[matrix.os] }} ${{ matrix.python-version }} ${{ matrix.nox-session}}
-     continue-on-error: ${{ matrix.experimental }}
-     timeout-minutes: 10
-     steps:
-@@ -179,7 +179,7 @@ jobs:
- 
-   coverage:
-     if: always()
--    runs-on: "ubuntu-24.04"
-+    runs-on: "ubuntu-26.04"
-     needs: test
-     steps:
-       - name: "Checkout repository"
-```
-
-**File**: `.readthedocs.yml` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- version: 2
- 
- build:
--  os: ubuntu-24.04
-+  os: ubuntu-26.04
-   tools:
-     python: "3.13"
-   jobs:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5402** (closed): Honor check_hostname=False in user-provided SSLContexts (@draarivpatel-ui)
+- **PR #5386** (closed): Allow None as a multipart file tuple filename in typing (@ihamzatarar)
 - **PR #5376** (2026-11-13): Bump Ubuntu and macOS versions in CI and Read the Docs (@illia-v)
 - **PR #5372** (2026-11-11): Run dummyserver tests over both HTTP and HTTPS (@illia-v)
 - **PR #5364** (closed): Handle JsNull and null response body in Emscripten streaming (@yashpatadiya1724-cmyk)
 - **PR #5360** (2026-11-11): Upgrade dev dependencies to fix alerts (@illia-v)
-- **PR #5359** (closed): Accept bytes in request header type annotations and normalize lookups (@HarsH-1877)
-- **PR #5358** (closed): Support bytes values in HTTPHeaderDict without normalization loss (@HarsH-1877)
 
 ---
 
@@ -2105,31 +1960,31 @@ Co-authored-by: Quentin Pradet <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reject decoding mode switches before consuming response data
+## X. Empirical Invariant Guard in CHANGES.rst
 
 **RULE**:
-When implementing operations in `changelog/5344.bugfix.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGES.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9f9b0ad`: Reject decoding mode switches before consuming response data. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3db5970f`: typos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/5344.bugfix.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGES.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Fixed rejected decoding-mode switches in ``HTTPResponse.read()`` consuming or returning response data before raising ``RuntimeError``.
+- Switched to uv for installing development dependencies. (`#3550 <https://github.com/urllib3/urllib3/issues/3550>`__)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- Switched to uv for installing development dependecies. (`#3550 <https://github.com/urllib3/urllib3/issues/3550>`__)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9f9b0ad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3db5970f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

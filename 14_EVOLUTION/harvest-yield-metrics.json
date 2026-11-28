@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T04:12:26.727Z",
-  "total_cycles_completed": 13253,
-  "total_learnings_persisted": 13253,
-  "total_rules_promoted": 11951,
+  "last_updated": "2026-11-28T04:21:13.819Z",
+  "total_cycles_completed": 13255,
+  "total_learnings_persisted": 13255,
+  "total_rules_promoted": 11953,
   "history": [
-    {
-      "timestamp": "2026-11-27T10:16:41.015Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T10:16:43.487Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T10:16:50.584Z",
       "repository": "NativeScript/NativeScript",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T04:12:26.727Z",
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:21:03.464Z",
+      "repository": "urllib3/urllib3",
+      "learningId": "learn-github-urllib3-urllib3",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:21:13.819Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

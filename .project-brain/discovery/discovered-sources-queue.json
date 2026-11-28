@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T04:03:44.882Z",
+  "updated_at": "2026-11-28T04:21:19.524Z",
   "stats": {
-    "total_discovered": 10732,
-    "approved_pending_harvest": 10186,
+    "total_discovered": 10741,
+    "approved_pending_harvest": 10194,
     "harvested_count": 0,
-    "rejected_count": 546,
+    "rejected_count": 547,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10200,
+      "COMMUNITY_AND_EXPERT": 10209,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -232309,6 +232309,197 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
         "fileName": "duongductrong-snapzy-learnings.md"
+      }
+    },
+    "SRC-A73478F3F883": {
+      "id": "SRC-A73478F3F883",
+      "url": "https://github.com/urllib3/urllib3/issues/3550",
+      "title": "https://github.com/urllib3/urllib3/issues/3550",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:21:17.732Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-77039C35F21E": {
+      "id": "SRC-77039C35F21E",
+      "url": "https://github.com/urllib3/urllib3/issues/3566",
+      "title": "https://github.com/urllib3/urllib3/issues/3566",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:21:17.807Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-2635ED3FE548": {
+      "id": "SRC-2635ED3FE548",
+      "url": "http://``/",
+      "title": "http://``/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-28T04:21:17.881Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-0E7E8EAC550E": {
+      "id": "SRC-0E7E8EAC550E",
+      "url": "https://``/",
+      "title": "https://``/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:21:17.953Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
+        "fileName": "urllib3-urllib3-learnings.md"
+      }
+    },
+    "SRC-0731C1D50E1C": {
+      "id": "SRC-0731C1D50E1C",
+      "url": "https://github.com/luben/zstd-jni",
+      "title": "https://github.com/luben/zstd-jni",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:21:19.231Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-BBC3105EFB53": {
+      "id": "SRC-BBC3105EFB53",
+      "url": "https://github.com/luben/zstd-jni/compare/v1.5.7-28...v1.5.7-29",
+      "title": "https://github.com/luben/zstd-jni/compare/v1.5.7-28...v1.5.7-29",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:21:19.301Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-BCF57980A014": {
+      "id": "SRC-BCF57980A014",
+      "url": "https://github.com/grpc/grpc-java",
+      "title": "https://github.com/grpc/grpc-java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:21:19.380Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-B26E1CC6478E": {
+      "id": "SRC-B26E1CC6478E",
+      "url": "https://github.com/grpc/grpc-java/releases",
+      "title": "https://github.com/grpc/grpc-java/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:21:19.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-1677FC380BDF": {
+      "id": "SRC-1677FC380BDF",
+      "url": "https://github.com/grpc/grpc-java/compare/v1.85.1...v1.86.0",
+      "title": "https://github.com/grpc/grpc-java/compare/v1.85.1...v1.86.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:21:19.524Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
       }
     }
   }

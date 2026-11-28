@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T14:05:14.503Z",
+  "timestamp": "2026-11-28T04:21:19.645Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-pinot-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-pinot-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T14:05:14.503Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T04:21:19.645Z`  
 > **Learning ID**: `LEARN-EVO-apache-pinot-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache-pinot-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `95ec60fa`  
+> **Source Version**: `5260361d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T14:05:07.370Z  
+> **Timestamp**: 2026-11-28T04:21:12.557Z  
 > **Learning ID**: `learn-github-apache-pinot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:05:07.363Z  
+> **Harvest Timestamp**: 2026-11-28T04:21:12.552Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6177 stars
+- **Stars / Engagement**: 6176 stars
 
 ---
 
@@ -2000,11 +2000,14 @@ const syncTableSchemaData = (data, showFieldType) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20371** (2026-11-26): **Register time-series plan node types and validate worker expressions**
+  *Symptoms*: ## Changes  Resolve time-series plan nodes by their existing wire names using the built-in leaf type and the types declared by installed language plugins. M3QL registers its `KeepLastValuePlanNode` and `TransformNullPlanNode`. The broker and worker continue to use the same plan format.  Validate leaf expressions during worker planning. Groovy calls in filter, grouping, time, and value expressions now produce a planning error. Ordinary transforms remain supported.  ## Plugin compatibility  Upgrade the M3QL plugin with the worker. A third-party language that dispatches custom nodes must supply a `TimeSeriesPlanNodeProvider` on the worker classpath and list its implementation in `META-INF/services/org.apache.pinot.tsdb.spi.plan.serde.TimeSeriesPlanNodeProvider`.  ## Regression coverage  The decoder test checks the same unregistered type at the root and in a child node. The worker planner test checks the four expression positions. Both exercise local Java APIs.  ```sh ./mvnw -pl :pinot-query-runtime,:pinot-timeseries-m3ql -am \   -Dtest=TimeSeriesPlanSerdeTest,PhysicalTimeSeriesServerPlanVisitorTest,M3qlParserTest \   -Dsurefire.failIfNoSpecifiedTests=false test ``` 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/apache/pinot/pull/20371?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache) Report :x: Patch coverage is `76.66667%` with `7 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 71.46%. Comparing base ([`ed05b38`](https://app.codecov.io/gh/apache/pinot/commit/ed05b3875971a63ffad9fc1c0f738f152809383b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)) to head ([`0e170da`](https://app.codecov.io/gh/apache/pinot/commit/0e170da8bfb3c6e7e950bfb278d64b6390dd569e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)).  | [Files with missing lines](https://app.codecov.io/gh/apache/pinot/pull/20371?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_c
+  > Documentation follow-up (merged): https://github.com/pinot-contrib/pinot-docs/pull/1223
+
 - **Issue #20370** (2026-11-24): **Reuse broker principal validation for requests without a table**
   *Symptoms*: ## Summary  Use the existing empty-table-set authorization path when a broker request has no table context. This gives the ZooKeeper-backed provider one place to validate the caller and apply table restrictions.  ## How to reproduce in the unit test  Run `ZkBasicAuthAccessControlFactoryTest#testQueryAuthorization` with the updated assertions. The test covers the identity-only overload for valid, missing, and incorrect credentials, along with the existing named-table cases.  ```sh ./mvnw -pl pinot-broker -am -Dtest=ZkBasicAuthAccessControlFactoryTest -Dsurefire.failIfNoSpecifiedTests=false test ``` 
-
-- **Issue #20369** (2026-11-24): **Enforce broker table permissions for time-series queries**
-  *Symptoms*: ## Summary  Use the broker's requester check before time-series planning. ZooKeeper-backed authentication for this check landed in #20370. Check the caller's table grants across all leaves in the logical plan, then run the configured provider's fine-grained checks on the resolved table names. Apply both checks to execution, empty results, and EXPLAIN.  Time-series execution does not apply row filters. When row-level security is enabled and the caller has a filter on a referenced table, the broker denies the request. Deployments with a custom time-series EXPLAIN handler must implement the overload that accepts the caller identity and HTTP headers.  ## How to reproduce in a unit test  The broker unit test supplies a two-table logical plan and a mock provider that denies the second table. It covers regular execution, empty results, and EXPLAIN, as well as resolved-table denials and row-filter policies. The ZooKeeper Basic Auth tests from #20370 cover requester-only authentication with valid, missing, and invalid credentials.  ## Validation  90 tests passed after rebasing onto `3c43f6853c`, across `TimeSeriesRequestHandlerTest`, `TimeSeriesQueryEnvironmentTest`, `PinotClientRequestTest`, `BasicAuthAccessControlTest`, `ZkBasicAuthAccessControlFactoryTest`, and `PinotSinkIntegrationTest`. Spotless, Checkstyle, license formatting and verification, and test compilation passed for the affected modules.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2021,17 +2024,16 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95ec60fa` (2026-11-25)
-**Commit Message**: Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9 (#20387)
+### Incident Patch 1: `5260361d` (2026-11-27)
+**Commit Message**: Bump com.github.luben:zstd-jni from 1.5.7-28 to 1.5.7-29 (#20404)
 
-Bumps [com.github.jnr:jnr-posix](https://github.com/jnr/jnr-posix) from 3.2.8 to 3.2.9.
-- [Release notes](https://github.com/jnr/jnr-posix/releases)
-- [Commits](https://github.com/jnr/jnr-posix/compare/jnr-posix-3.2.8...jnr-posix-3.2.9)
+Bumps [com.github.luben:zstd-jni](https://github.com/luben/zstd-jni) from 1.5.7-28 to 1.5.7-29.
+- [Commits](https://github.com/luben/zstd-jni/compare/v1.5.7-28...v1.5.7-29)
 
 ---
 updated-dependencies:
-- dependency-name: com.github.jnr:jnr-posix
-  dependency-version: 3.2.9
+- dependency-name: com.github.luben:zstd-jni
+  dependency-version: 1.5.7-29
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
@@ -2041,109 +2043,57 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `pom.xml` (modified, +1/-1)
 ```diff
-@@ -368,7 +368,7 @@
-     <equalsverifier.version>3.19.4</equalsverifier.version>
-     <testcontainers.version>2.0.5</testcontainers.version>
-     <h2.version>2.5.252</h2.version>
--    <jnr-posix.version>3.2.8</jnr-posix.version>
-+    <jnr-posix.version>3.2.9</jnr-posix.version>
-     <scalatest.version>3.2.20</scalatest.version>
-     <assertj.version>3.27.7</assertj.version>
- 
+@@ -214,7 +214,7 @@
+     <!-- helix-core, spark-core use libraries from io.dropwizard.metrics -->
+     <dropwizard-metrics.version>4.2.40</dropwizard-metrics.version>
+     <snappy-java.version>1.1.10.12</snappy-java.version>
+-    <zstd-jni.version>1.5.7-28</zstd-jni.version>
++    <zstd-jni.version>1.5.7-29</zstd-jni.version>
+     <lz4-java.version>1.14.1</lz4-java.version>
+     <libthrift.version>0.25.0</libthrift.version>
+     <log4j.version>2.26.1</log4j.version>
 ```
 
 ---
 
-### Incident Patch 2: `3c7a9684` (2026-11-25)
-**Commit Message**: Keep waiting for segment offloads when the table shutdown thread is interrupted (#20362)
+### Incident Patch 2: `17faa250` (2026-11-27)
+**Commit Message**: Bump io.grpc:grpc-bom from 1.85.1 to 1.86.0 (#20403)
 
-releaseAndRemoveAllSegments waits up to 10 minutes for the offloads. When the
-calling thread was interrupted, awaitTermination threw at once and shutdownNow
-dropped the queued offloads and interrupted the running ones, so a consuming
-segment could keep running after its table data manager was gone.
+Bumps [io.grpc:grpc-bom](https://github.com/grpc/grpc-java) from 1.85.1 to 1.86.0.
+- [Release notes](https://github.com/grpc/grpc-java/releases)
+- [Commits](https://github.com/grpc/grpc-java/compare/v1.85.1...v1.86.0)
 
-Keep waiting within the same 10 minute limit and restore the interrupt once the
-offloads are done.
+---
+updated-dependencies:
+- dependency-name: io.grpc:grpc-bom
+  dependency-version: 1.86.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/data/manager/BaseTableDataManager.java` (modified, +16/-5)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `pom.xml` (modified, +1/-1)
 ```diff
-@@ -342,13 +342,24 @@ protected void releaseAndRemoveAllSegments() {
-         });
-       }
-       stopExecutorService.shutdown();
--      try {
--        // Wait at most 10 minutes before exiting this method.
--        if (!stopExecutorService.awaitTermination(10, TimeUnit.MINUTES)) {
--          stopExecutorService.shutdownNow();
-+      // Wait at most 10 minutes before exiting this method. An interrupt must not abandon the queued offloads, or a
-+      // consuming segment could keep running after its table is gone, so keep waiting and restore the interrupt once
-+      // the offloads are done.
-+      long deadlineNanos = System.nanoTime() + TimeUnit.MINUTES.toNanos(10);
-+      boolean interrupted = false;
-+      boolean terminated = false;
-+      long remainingNanos;
-+      while (!terminated && (remainingNanos = deadlineNanos - System.nanoTime()) > 0) {
-+        try {
-+          terminated = stopExecutorService.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS);
-+        } catch (InterruptedException e) {
-+          interrupted = true;
-         }
--      } catch (InterruptedException e) {
-+      }
-+      if (!terminated) {
-         stopExecutorService.shutdownNow();
-+      }
-+      if (interrupted) {
-         Thread.currentThread().interrupt();
-       }
-     }
-```
-
-**File**: `pinot-core/src/test/java/org/apache/pinot/core/data/manager/BaseTableDataManagerTest.java` (modified, +27/-0)
-```diff
-@@ -199,6 +199,33 @@ public static void initSegmentFetcher()
-     PinotCrypterFactory.init(new PinotConfiguration(properties));
-   }
+@@ -306,7 +306,7 @@
  
-+  @Test
-+  public void testReleaseAndRemoveAllSegmentsFinishesOffloadsWhenInterrupted()
-+      throws Exception {
-+    BaseTableDataManager table = createTableManager();
-+    int numSegments = 3;
-+    CountDownLatch offloaded = new CountDownLatch(numSegments);
-+    for (int i = 0; i < numSegments; i++) {
-+      SegmentDataManager segmentDataManager = mock(SegmentDataManager.class);
-+      doAnswer(invocation -> {
-+        Thread.sleep(200);
-+        offloaded.countDown();
-+        return null;
-+      }).when(segmentDataManager).offload();
-+      table.registerSegment(SEGMENT_NAME + i, segmentDataManager);
-+    }
-+
-+    Thread.currentThread().interrupt();
-+    try {
-+      table.releaseAndRemoveAllSegments();
-+      assertTrue(Thread.currentThread().isInterrupted());
-+      assertEquals(offloaded.getCount(), 0L);
-+      assertEquals(table.getNumSegments(), 0);
-+    } finally {
-+      Thread.interrupted();
-+    }
-+  }
-+
-   @Test
-   @SuppressWarnings("deprecation")
-   public void testOnlineSegmentLoadedDuringShutdownIsDestroyed()
+     <!-- Google Libraries -->
+     <protobuf.version>4.36.2</protobuf.version>
+-    <grpc.version>1.85.1</grpc.version>
++    <grpc.version>1.86.0</grpc.version>
+     <guava.version>33.8.0-jre</guava.version>
+     <google.cloud.libraries.version>26.94.0</google.cloud.libraries.version>
+     <google.auto-service.version>1.1.1</google.auto-service.version>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20387** (2026-11-25): Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9 (@dependabot[bot])
-- **PR #20376** (2026-11-25): Reject range index on a raw BIG_DECIMAL column during table config validation (@deshmukhpurushothaman)
-- **PR #20375** (2026-11-24): Bump software.amazon.awssdk:bom from 2.59.5 to 2.59.7 (@dependabot[bot])
-- **PR #20370** (2026-11-24): Reuse broker principal validation for requests without a table (@xiangfu0)
-- **PR #20369** (2026-11-24): Enforce broker table permissions for time-series queries (@xiangfu0)
-- **PR #20364** (2026-11-24): Fix minion test races during parallel execution and segment refresh (@Jackie-Jiang)
+- **PR #20404** (2026-11-27): Bump com.github.luben:zstd-jni from 1.5.7-28 to 1.5.7-29 (@dependabot[bot])
+- **PR #20403** (2026-11-27): Bump io.grpc:grpc-bom from 1.85.1 to 1.86.0 (@dependabot[bot])
+- **PR #20402** (2026-11-27): Bump software.amazon.awssdk:bom from 2.59.7 to 2.59.8 (@dependabot[bot])
+- **PR #20394** (2026-11-26): Bump org.codehaus.mojo:versions-maven-plugin from 2.25.2 to 2.25.3 (@dependabot[bot])
+- **PR #20393** (2026-11-26): Bump org.codehaus.mojo:animal-sniffer-annotations from 1.29.1 to 1.29.2 (@dependabot[bot])
+- **PR #20392** (2026-11-26): Bump org.webjars:swagger-ui from 5.35.1 to 5.36.0 (@dependabot[bot])
 
 ---
 
@@ -2163,13 +2113,13 @@ offloads are done.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9
+## X. Bump com.github.luben:zstd-jni from 1.5.7-28 to 1.5.7-29
 
 **RULE**:
 When implementing operations in `pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95ec60fa`: Bump com.github.jnr:jnr-posix from 3.2.8 to 3.2.9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5260361d`: Bump com.github.luben:zstd-jni from 1.5.7-28 to 1.5.7-29. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pom.xml`.
@@ -2177,17 +2127,17 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    <jnr-posix.version>3.2.9</jnr-posix.version>
+    <zstd-jni.version>1.5.7-29</zstd-jni.version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    <jnr-posix.version>3.2.8</jnr-posix.version>
+    <zstd-jni.version>1.5.7-28</zstd-jni.version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95ec60fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5260361d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

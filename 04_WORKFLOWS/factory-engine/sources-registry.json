@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-28T03:44:59.439Z",
-    "lastVerified": "2026-11-28T03:44:59.439Z",
+    "lastChecked": "2026-11-28T04:21:10.473Z",
+    "lastVerified": "2026-11-28T04:21:10.473Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T04:12:30.131Z",
-    "lastVerified": "2026-11-28T04:12:30.131Z",
+    "lastChecked": "2026-11-28T04:21:17.206Z",
+    "lastVerified": "2026-11-28T04:21:17.206Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1279,12 +1279,12 @@
     "revisionIdentifier": "549d8f57"
   },
   "freenet-freenet-core": {
-    "name": "freenet/freenet-core",
+    "name": "freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T00:09:41.331Z",
-    "lastVerified": "2026-11-28T00:09:41.331Z",
+    "lastChecked": "2026-11-28T04:21:05.645Z",
+    "lastVerified": "2026-11-28T04:21:05.645Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -1293,7 +1293,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0c0198d2"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -4763,9 +4764,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-27T11:03:02.957Z",
+    "lastChecked": "2026-11-28T04:21:03.053Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-27T11:03:02.957Z"
+    "lastVerified": "2026-11-28T04:21:03.053Z"
   },
   "typedb-typedb": {
     "name": "typedb",
@@ -7334,9 +7335,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-11-27T04:45:14.470Z",
+    "lastChecked": "2026-11-28T04:20:55.465Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-11-27T04:45:14.470Z"
+    "lastVerified": "2026-11-28T04:20:55.465Z"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
     "name": "mudler/locate-anything.cpp-gguf",
@@ -7969,22 +7970,21 @@
     "lastVerified": "2026-11-27T08:58:16.304Z"
   },
   "apache-pinot": {
-    "name": "pinot",
+    "name": "apache/pinot",
     "officialUrl": "https://github.com/apache/pinot",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-27T09:32:53.943Z",
-    "lastVerified": "2026-11-27T09:32:53.943Z",
+    "lastChecked": "2026-11-28T04:21:12.552Z",
+    "lastVerified": "2026-11-28T04:21:12.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-pinot",
-    "contentHash": "113824aa67d4feeb7815f74d2fb2ad5031193ddf375e7c78c14767da7a53dead",
+    "contentHash": "cbc5f78aad5158f1b2d9279985fa77013d85ff238eaefe68f608269e47437c90",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d197e0b5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "arxanas-git-branchless": {
     "name": "git-branchless",
@@ -11116,9 +11116,9 @@
   "yannickl-dynamiccolor": {
     "name": "DynamicColor",
     "officialUrl": "https://github.com/yannickl/DynamicColor",
-    "lastChecked": "2026-11-26T02:27:00.741Z",
+    "lastChecked": "2026-11-28T04:21:00.408Z",
     "revisionIdentifier": "cf7c6eed",
-    "lastVerified": "2026-11-26T02:27:00.741Z"
+    "lastVerified": "2026-11-28T04:21:00.408Z"
   },
   "buriy-python-readability": {
     "name": "python-readability",
@@ -11550,11 +11550,21 @@
     "lastVerified": "2026-11-26T05:05:11.038Z"
   },
   "urllib3-urllib3": {
-    "name": "urllib3",
+    "name": "urllib3/urllib3",
     "officialUrl": "https://github.com/urllib3/urllib3",
-    "lastChecked": "2026-11-24T19:27:35.022Z",
-    "revisionIdentifier": "d9f9b0ad",
-    "lastVerified": "2026-11-24T19:27:35.022Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-28T04:21:02.036Z",
+    "lastVerified": "2026-11-28T04:21:02.036Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-urllib3-urllib3",
+    "contentHash": "5bebc72e876716c88288bac1924b9f6786ad47f7c42546245874d706de37e5f9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "jordansinger-swiftui-kit": {
     "name": "SwiftUI-Kit",

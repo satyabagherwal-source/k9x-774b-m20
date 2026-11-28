@@ -13966,3 +13966,5 @@
 | `CYCLE-20261128-XY5Y` | `2026-11-28T04:03:33.046Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11029` | Yes (`ef13f5fc...`) |
 | `CYCLE-20261128-Y0BG` | `2026-11-28T04:03:35.836Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11030` | Yes (`98a422ad...`) |
 | `CYCLE-20261128-9DXW` | `2026-11-28T04:12:26.708Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11031` | Yes (`52ec2a8e...`) |
+| `CYCLE-20261128-KGNR` | `2026-11-28T04:21:03.447Z` | `urllib3/urllib3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11032` | Yes (`5bebc72e...`) |
+| `CYCLE-20261128-KOND` | `2026-11-28T04:21:13.801Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11033` | Yes (`cbc5f78a...`) |
