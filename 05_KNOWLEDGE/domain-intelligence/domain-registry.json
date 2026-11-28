@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T15:27:55.134Z",
-  "total_records": 2910,
+  "last_updated": "2026-11-28T15:36:48.370Z",
+  "total_records": 2914,
   "domains": {
     "A": {
-      "total": 27,
+      "total": 29,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -33,7 +33,9 @@
         "domain_intelligence-human-need-intelligence-flox-flox-core-invariants",
         "domain_intelligence-human-need-intelligence-flox-flox-learnings-core-invariants",
         "domain_intelligence-human-need-intelligence-chaos-mesh-chaos-mesh-core-invariants",
-        "domain_intelligence-human-need-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants"
+        "domain_intelligence-human-need-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants",
+        "domain_intelligence-human-need-intelligence-rtk-ai-rtk-core-invariants",
+        "domain_intelligence-human-need-intelligence-rtk-ai-rtk-learnings-core-invariants"
       ]
     },
     "B": {
@@ -77,7 +79,7 @@
       ]
     },
     "D": {
-      "total": 1062,
+      "total": 1063,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1140,7 +1142,8 @@
         "DOM-D-5456C5F2",
         "DOM-D-095C01F1",
         "DOM-D-3BCEAD45",
-        "DOM-D-EA0B2006"
+        "DOM-D-EA0B2006",
+        "DOM-D-3E604043"
       ]
     },
     "E": {
@@ -1281,7 +1284,7 @@
       ]
     },
     "G": {
-      "total": 498,
+      "total": 499,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1780,7 +1783,8 @@
         "domain_intelligence-architecture-intelligence-dubzzz-fast-check-core-invariants",
         "domain_intelligence-architecture-intelligence-dubzzz-fast-check-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-exyte-chat-core-invariants",
-        "domain_intelligence-architecture-intelligence-exyte-chat-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-exyte-chat-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-learnings-core-invariants"
       ]
     },
     "H": {
@@ -15989,8 +15993,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "821bce98a39408dc2d9c9c66d2f0f3aa372e3f665678be919532159b2cf3b500",
-      "created_at": "2026-11-28T09:33:45.478Z"
+      "content_hash": "7fb1aa9d5a9e8665eb044886a6eb837de37cdceec48119e9a036d2bfaccb61c0",
+      "created_at": "2026-11-28T15:36:18.323Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16439,8 +16443,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "b128425c8fe63495d6fc3db49359abc6bcfaea1a3a88b5942f4a04ed99f7126c",
-      "created_at": "2026-11-28T07:59:30.394Z"
+      "content_hash": "f63138b57561d496b6f4ecfeda33136498d1221520aa63d143dd4f02938727a4",
+      "created_at": "2026-11-28T15:36:48.370Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -30169,8 +30173,8 @@
       "title": "Architecture Intelligence: matrixorigin/matrixone Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matrixorigin-matrixone-architecture-intelligence-matrixorigin-matrixone-core-inv.md",
       "repository": "matrixorigin/matrixone",
-      "content_hash": "9f0560eb6d6d1981682ff31bd115b066a275ca414cdadf7094448c96d4b44ad1",
-      "created_at": "2026-11-18T16:41:22.327Z"
+      "content_hash": "682ba0bd728a8013253d7663ba03513b7d7a69a9756bbac843571fd267a3e505",
+      "created_at": "2026-11-28T15:36:15.883Z"
     },
     "domain_intelligence-technical-construction-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-unce": {
       "record_id": "domain_intelligence-technical-construction-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-unce",
@@ -49433,6 +49437,75 @@
       "repository": "tuist-tuist-learnings",
       "content_hash": "32fd91c09cb976d7c2cf711283459a646a0b95d9e06407324c33b93088d94de5",
       "created_at": "2026-11-28T15:19:39.479Z"
+    },
+    "domain_intelligence-human-need-intelligence-rtk-ai-rtk-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-rtk-ai-rtk-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: rtk-ai/rtk Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-rtk-ai-rtk-human-need-intelligence-rtk-ai-rtk-core-invariants.md",
+      "repository": "rtk-ai/rtk",
+      "content_hash": "c8b53d692b3e804635833dbe6b491ac5dcd48114361a804676c37dd03d672a90",
+      "created_at": "2026-11-28T15:36:03.063Z"
+    },
+    "domain_intelligence-human-need-intelligence-rtk-ai-rtk-learnings-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-rtk-ai-rtk-learnings-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: rtk-ai-rtk-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-rtk-ai-rtk-learnings-human-need-intelligence-rtk-ai-rtk-learnings-core-invariant.md",
+      "repository": "rtk-ai-rtk-learnings",
+      "content_hash": "7c5bd5cf311254b54edc87ae5fda17c58416a52d97e232e6bc3691820a17b53f",
+      "created_at": "2026-11-28T15:36:22.637Z"
+    },
+    "DOM-D-3E604043": {
+      "record_id": "DOM-D-3E604043",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): matrixorigin/matrixone",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  \n> **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  \n> **Source Version**: `56989d8e`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clo",
+      "content_hash": "907965176cf67555095d6c04f0cd4630908054f6e01cea749e1f1760058e7175",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  \n> **Source**: github ([https://github.com/mat -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  \n> **Source**: github ([https://github.com/mat",
+      "provenance": {
+        "source_uri": "project://matrixorigin-matrixone/matrixorigin-matrixone-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T15:36:22.985Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (matrixorigin-matrixone)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of matrixorigin-matrixone"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T15:36:46.584Z"
+    },
+    "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: matrixorigin-matrixone-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matrixorigin-matrixone-learnings-architecture-intelligence-matrixorigin-matrixon.md",
+      "repository": "matrixorigin-matrixone-learnings",
+      "content_hash": "398330ecab3d905f5e338f749952b931d58621ea7b27c6dfb0d49c6ed41cc5e9",
+      "created_at": "2026-11-28T15:36:47.257Z"
     }
   }
 }

@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "42b3267e",
+  "source_version": "30bfd633",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-28T09:33:45.275Z",
+  "timestamp": "2026-11-28T15:36:18.104Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `42b3267e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T09:33:45.275Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `30bfd633`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T15:36:18.104Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-28T09:28:41.938Z  
+> **Harvest Timestamp**: 2026-11-28T15:36:16.805Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1873,125 +1873,98 @@ export function document(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42b3267e` (2026-11-28)
-**Commit Message**: Draft NUC 160 C# String Trimming Method Alias
+### Incident Patch 1: `30bfd633` (2026-11-28)
+**Commit Message**: Draft NUC 163 C# Ceiling Method Alias
 
-Category: Language compatibility. Continuous mode; runtime applicability N/A.
-The one unbiased live-registry draw selected index 4 of five categories;
-token comparison is categorically skipped, not a passing gate.
-
-Add only String receiver Trim() as an exact alias of accepted trim()/strip().
-Reuse the existing Unicode trimming arm, preserve every accepted routing,
-argument boundary, dependency, diagnostic and protected corpus/test case.
-No overloads, TrimStart/TrimEnd, case normalization, new grammar or version.
-
-No hint, advisory rubric or strategy learner is configured. This allocates
-the Draft and both index rows only, before immutable baseline recording and
-fresh independent preparation/evaluation. No outcome is recorded.
+Category: Language compatibility. Add only case-sensitive Math.Ceiling as an exact optional alias of accepted Math.ceil. Continuous mode; token comparison categorically skipped. Preserve accepted semantics; no parser, numeric-algorithm, decimal, overload or namespace changes. Complete the prototype and independent evaluation only after the immutable allocation baseline is captured.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -203,6 +203,7 @@ Created: 31-Jul-2026
- | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Accepted |
+@@ -206,6 +206,7 @@ Created: 31-Jul-2026
  | [150](nuc-0150.md) | C# Truncation Method Alias | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
  | [157](nuc-0157.md) | Padding Method Aliases | Accepted |
-+| [160](nuc-0160.md) | C# String Trimming Method Alias | Draft |
+ | [160](nuc-0160.md) | C# String Trimming Method Alias | Accepted |
++| [163](nuc-0163.md) | C# Ceiling Method Alias | Draft |
  
  ### Documentation
  
-@@ -373,6 +374,7 @@ Created: 31-Jul-2026
- | [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Accepted |
- | [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
- | [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Draft |
-+| [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Draft |
+@@ -379,6 +380,7 @@ Created: 31-Jul-2026
+ | [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Accepted |
+ | [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Accepted |
+ | [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Draft |
++| [163](nuc-0163.md) | C# Ceiling Method Alias | Standards Track | Language compatibility | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0160.md` (added, +85/-0)
+**File**: `docs/nuc-0163.md` (added, +69/-0)
 ```diff
-@@ -0,0 +1,85 @@
-+# NUC 160 -- C# String Trimming Method Alias
+@@ -0,0 +1,69 @@
++# NUC 163 -- C# Ceiling Method Alias
 +
 +```
-+NUC: 160
-+Title: C# String Trimming Method Alias
++NUC: 163
++Title: C# Ceiling Method Alias
 +Author: Copilot <223556219+Copilot@users.noreply.github.com>
 +Status: Draft
 +Type: Standards Track
 +Category: Language compatibility
 +Created: 28-Nov-2026
-+Requires: 110
 +```
 +
 +## Abstract
 +
-+- Add only `TEXT.Trim()` on String receivers as an exact alias of accepted
-+  `TEXT.trim()` and `TEXT.strip()`. Reuse the same Unicode-whitespace
-+  trimming arm, preserving internal whitespace, result text, live
-+  dependencies and the written call name.
-+- Preserve the accepted receiver and argument evaluation boundaries, including
-+  evaluation and ignoring of supplied arguments. Other receivers, object
-+  properties, class methods, ordinary member reads, static `String.Trim`
-+  calls and existing diagnostics keep their meanings.
-+- Add one familiar C# method name, not C# overloads, character/pattern
-+  trimming, `TrimStart`, `TrimEnd`, case-insensitive dispatch, new grammar,
-+  keywords, public types, dependencies or versions. This advances the
-+  language-superset aspiration, not full .NET compatibility.
-+- The caller's one unbiased live-registry draw selected Language
-+  compatibility, index 4 of five eligible categories. Continuous evaluation
-+  skips token comparison categorically, while preserving immutable accepted
-+  replay, independent behavior/integrity and every hard criterion.
++- Add only `Math.Ceiling(value)` as an optional, case-sensitive C#-style
++  spelling of accepted `Math.ceil(value)`, wherever existing call resolution
++  reaches native Math.
++- Reuse the existing ceiling operation and preserve intrinsic conversion,
++  argument evaluation, supplied-Undefined handling, numeric edge behavior,
++  dependencies, transactions, namespace shadowing and every accepted form.
++- Add no numeric algorithm, decimal type, overload system, first-class native
++  method, global helper, parser rule or family of Pascal-case aliases.
++- This caller-selected continuous cycle retains its one uniform
++  Language compatibility draw. Token comparison is categorically skipped;
++  immutable accepted-source replay, behavior/integrity, compatibility,
++  development checks and independent evaluation remain mandatory.
 +
 +## Motivation
 +
-+- C# programs and language models use `label.Trim()` to remove surrounding
-+  whitespace. Accepted Nucleoid already implements that operation under
-+  `trim` and `strip`, but the capitalized instance call is unsupported.
-+  Extend the existing arm rather than introduce a second trimming algorithm.
-+- Preserve every original executable case and native test, including source
-+  bytes, canonical assertions, expected returns, executed coverage and
-+  historical locators/seals/partitions. Exercise this bounded alias with
-+  focused new non-ARC Rust behavior tests and synchronized authoritative
-+  prose/fine-tuning examples without rewriting the protected corpus.
-+- Keep this alias separate from accepted NUC 157's padding names and rejected
-+  NUC 150's numeric truncation name; neither pending nor rejected code is a
-+  dependency.
++- C# exposes `System.Math.Ceiling` for the smallest integral value greater
++  than or equal to its argument. Nucleoid already provides this operation as
++  `Math.ceil`; a familiar spelling can share that implementation without
++  claiming full C#/.NET compatibility.
++- Microsoft's [Math.Ceiling reference](https://learn.microsoft.com/en-us/dotnet/api/system.math.ceiling)
++  establishes the spelling. Nucleoid's accepted numeric model and call
++  behavior, not .NET overloads or coercion rules, govern this alias.
++- The all-status proposal review found no existing proposal for this
++  spelling. Rejected NUC 150 concerns `Math.Truncate` and explicitly excludes
++  `Ceiling`; this revision neither revisits nor depends on that candidate.
 +
 +## Rationale
 +
-+To be completed by the fresh proposer against the pushed allocation, with
-+the preserved Language compatibility category and continuous mode.
++Pending the fresh proposal agent's completion after allocation and the
++immutable accepted-baseline capture.
 +
 +## Specification
 +
-+To be completed with exact accepted trimming semantics, argument evaluation,
-+standing reactivity and unchanged routing for every other receiver.
-+
-+## Errors
-+
-+To be completed without weakening accepted diagnostics or adding overloads.
++Pending the isolated prototype and its behavior evidence.
 +
 +## Backwards Compatibility
 +
-+To be completed with pinned accepted-source replay, ordinary names/member
-+reads/object methods, nullish safety and preserved test/corpus integrity.
++Preserve all accepted parser forms and successful behavior. Only the native
++unknown-method error for the newly supported spelling may become its ceiling
++result; existing argument gates and ordinary receivers retain their behavior.
 +
 +## Reference Implementation
 +
-+To be completed only in the isolated candidate after immutable accepted inputs
-+are recorded. Reuse the existing string-transform arm; accepted grammar stays.
++Pending the isolated prototype and the caller-owned Rust improvement pass.
 +
 +## Evaluation
 +
-+This allocation records no outcome. A fresh proposer, exactly one required
-+Rust improvement pass and a fresh independent evaluator will check the frozen
-+candidate. Token comparison is skipped as `language_compatibility`, not a
-+passing gate. Runtime applicability is N/A. No hint, rubric or strategy learner
-+is configured.
++Pending the separate fresh evaluator. This Draft records no outcome.
 +
 +## Copyright
 +
@@ -2003,148 +1976,249 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ---
 
-### Incident Patch 2: `9c1ff719` (2026-11-28)
-**Commit Message**: NUC 158 List Invocation of Function Values
+### Incident Patch 2: `486c38c2` (2026-11-28)
+**Commit Message**: NUC 161 Reactive Base Ten Exponentiation
 
-Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail.
+Accepted under automatic acceptance: the independent policy decision is
+Accepted and all three hard criteria pass. This is a continuous Utility
+enhancement; runtime applicability is not applicable.
 
-The frozen candidate passes all-target compilation, warning-denied Clippy,
-formatting and backward-compatibility checks. Its independent full suite,
-including doctests, reports 4,226 passed, 33 original tests failed and
-25 ignored. All 15 new tests pass; all 4,269 original IDs, ignored reasons,
-expected panics, assertions and diagnostics are preserved. The every-test
-hard criterion fails; the deterministic core's Accepted result does not
-waive those native guard failures.
+Integrate the unchanged frozen Math.exp10 semantic delta, computing exactly
+10.0_f64.powf(first), while preserving concurrent accepted NUC 159, Draft
+NUC 162 and ARC changes. Reconcile only necessary count/tail metadata and
+generated append ordinals; preserve all current accepted sources and tests.
 
-Continuous mode, Runtime features, new_feature: token comparison skipped
-entirely, not a passing token gate. Advisory reward unscored missing_rubric;
-strategy not_configured/unattributed, with no learning update.
+All-target build, formatting, warning-denied Clippy (including all features)
+and private warning-denied rustdoc pass. Integrated full cargo test passes
+4320, fails 0, retains 25 ignored tests and all 4335 current identities plus
+10 additions. All 4303 original statuses and 11 expected panics remain.
+Original and current accepted-source replays pass 1341 and 1348 cases,
+respectively; all eleven frozen CLI witnesses match.
 
-Independent outcome 18e838f3a71ff9da16199ec017149e3f21200dc8;
-core report 57959bf4a766a11897ae2d81b98950015c22eec2;
-caller verification 95f8f5d1c233362a446b206eab592247fab9d2d1.
+Required lexer-token comparison ran on all 1341 original-baseline pairs:
+1 less, 1340 same, 0 more; the new decimal-scale case is 163 -> 161.
+Full per-case counts and independent/integrated evidence pins are recorded.
+Usefulness/rew
 
-Only rejection documentation and both index rows are committed.
-Rejected runtime, executable documents, tests, datasets and exports stay
-isolated at frozen candidate tree af6a36914e66078bd5dde
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
+```diff
+@@ -896,3 +896,4 @@
+ {"id":"spec-0896","description":"Nucleoid runs deferred suites on block exit","code":"audit = []\ndef complete(value):\n    defer:\n        audit.push(value)\n    if value > 0:\n        return value * 2\n    if value < 0:\n        return -value\n    return 0\nassert(complete(3), 6)\nassert(audit, [3])\nassert(complete(-4), 4)\nassert(audit, [3, -4])\nassert(complete(0), 0)\nassert(audit, [3, -4, 0])\n1","return":"1"}
+ {"id":"spec-0897","description":"Nucleoid separates list elements on new lines","code":"seed = 2\nreadings = [\n    seed\n    seed + 1\n    seed * 2\n]\nassert(readings, [2, 3, 4])\nassert(readings.length, 3)\nassert(readings[0], 2)\nseed = 5\nassert(readings, [5, 6, 10])\nassert(readings.length, 3)\nassert(readings[2], 10)\n1","return":"1"}
+ {"id":"spec-0898","description":"Nucleoid writes truthy values with one-shot assignments","code":"input = 3\nslot = input + 1\nslot &&:= 9\nassert(slot, 9)\ninput = 7\nassert(slot, 9)\nempty = 0\nempty &&:= missing\nassert(empty, 0)\nactive = true\nactive &&:= 5\nassert(active, 5)\ntext = \"\"\ntext &&:= missing\nassert(text, \"\")\nassert(input, 7)\n1","return":"1"}
++{"id":"spec-0899","description":"Nucleoid keeps base ten exponentiation reactive","code":"power = 2\nscale = Math.exp10(power)\nassert(scale, 100)\npower = 3\nassert(scale, 1000)\npower = -1\nassert(scale, 0.1)\npower = 0\nassert(scale, 1)\npower = \"2\"\nassert(scale, 100)\npower = -2\nassert(scale, 0.01)\npower = 1.5\nassert(scale, Math.pow(10, power))\npower = 309\nassert(scale, Number.POSITIVE_INFINITY)\npower = -400\nassert(scale, 0)\npower = Number.NEGATIVE_INFINITY\nassert(scale, 0)\npower = Number.NaN\nassert(String(scale), \"NaN\")\npower = 3\nassert(scale, 1000)\nscale","return":"1000"}
+```
+
+**File**: `dataset/nucleoid.synth.161.jsonl` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++{"id":"synth-161-0001","description":"A standing decimal scale stays live through coercion, fractional powers, overflow, underflow, NaN and recovery","code":"power = 2\nscale = Math.exp10(power)\nassert(scale, 100)\npower = 3\nassert(scale, 1000)\npower = -1\nassert(scale, 0.1)\npower = 0\nassert(scale, 1)\npower = \"2\"\nassert(scale, 100)\npower = -2\nassert(scale, 0.01)\npower = 1.5\nassert(scale, Math.pow(10, power))\npower = 309\nassert(scale, Number.POSITIVE_INFINITY)\npower = -400\nassert(scale, 0)\npower = Number.NEGATIVE_INFINITY\nassert(scale, 0)\npower = Number.NaN\nassert(String(scale), \"NaN\")\npower = 3\nassert(scale, 1000)\nscale","return":"1000"}
+```
+
+**File**: `docs/README.md` (modified, +36/-0)
+```diff
+@@ -3980,6 +3980,41 @@ assert(radians, -Math.PI / 2)
+ 
+ ---
+ 
++## Reactive base ten exponentiation
++
++- Accepted [NUC 161](nuc-0161.md) and the
++  [root contract](../nucleoid.spec.md#reactive-base-ten-exponentiation)
++  add only unshadowed static `Math.exp10(value)`, exactly the accepted
++  `Math.pow(10, value)` numeric operation. Accepted pow and exp2 stay unchanged.
++- Reuse Math's any-supplied-top-level-Undefined gate, intrinsic first-input
++  conversion and `10.0_f64.powf(first)`. Omission yields numeric NaN.
++  Non-NaN results match accepted pow by bits and NaNs by classification,
++  including fractional powers, overflow, subnormals and positive-zero
++  underflow. Both zero exponent signs yield one.
++- Literal null converts to zero without changing live-null or parameter
++  deferral. Other values retain their intrinsic conversions and NaN results.
++  No native decimal exponentiation, exponent/log identities, integer
++  shortcuts, rescaling, reordered math or accuracy/speed claim is introduced.
++- All supplied expressions evaluate once left to right before gating.
++  Numerically ignored extras retain reads, dependencies, effects and strict
++  errors. Standing rules, independent instances, functions, scopes,
++  deletion/recovery, savepoints and transaction rollback remain unchanged.
++- The fixed base and conversion do not resolve shadowable Number or Math
++  constants. State/local Math and ordinary `.Math` members retain lookup.
++  Native `Math.exp10` value reads remain Undefined, not stored functions.
++- Add no arity, numeric or range error. Strict unknown reads, unknown/random
++  native errors, ordinary receiver errors, positions and rollback remain
++  unchanged; numeric `Math = 7` gives
++  `TypeError("number.exp10 is not a function")`.
++- The single appended specification case
++  `Nucleoid keeps base ten exponentiation reactive` retains the caller's
++  twelve accepted-pow assertions and explicit return `1000`, changing only
++  the standing RHS. No reference executable case or accepted source changes.
++- This is a utility-only extension. The grammar, aliases, public Rust APIs,
++  dependencies, versions and resource limits are unchanged.
++
++---
++
+ ## Reactive base two exponentiation
+ 
+ ### Nucleoid names reactive base two powers
+@@ -6443,6 +6478,7 @@ items.flat()  items.flat(depth)        exactly items.flatMap(v => v), depth time
+ Math.remap(start, end, targetStart, targetEnd, value) unclamped static remapping (Accepted NUC 39)
+ Math.toRadians(value)                   static division-first degree conversion (NUC 50 candidate)
+ Math.exp2(value)                        static powf-based base-two power (Accepted NUC 56)
++Math.exp10(value)                       static powf-based base-ten power (Accepted NUC 161)
+ Math.cot(value)                         static reciprocal of tangent in radians (NUC 100 candidate)
+ Math.sec(value)                         static reciprocal of cosine in radians (NUC 138)
+ Math.csc(value)                         static reciprocal of sine in radians (NUC 141)
+```
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -110,7 +110,7 @@ Created: 31-Jul-2026
- | [147](nuc-0147.md) | Deferred Suites | Accepted |
- | [151](nuc-0151.md) | Truthy Value Assignment | Accepted |
- | [152](nuc-0152.md) | Falsy Value Assignment | Rejected: protected truthy-assignment parser rejection test fails |
--| [158](nuc-0158.md) | List Invocation of Function Values | Draft |
-+| [158](nuc-0158.md) | List Invocation of Function Values | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
+@@ -156,7 +156,7 @@ Created: 31-Jul-2026
+ | [146](nuc-0146.md) | Reactive Cubing | Accepted |
+ | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Rejected: 74 existing corpus-count and historical-locator tests fail |
+ | [159](nuc-0159.md) | Reactive Hypotenuse | Accepted |
+-| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Draft |
++| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Accepted |
  
- ### Utility enhancement
+ ### Reasoning enhancement
  
-@@ -371,7 +371,7 @@ Created: 31-Jul-2026
- | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Standards Track | Utility enhancement | Rejected: 74 existing corpus-count and historical-locator tests fail |
- | [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail |
- | [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Accepted |
--| [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Draft |
-+| [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
- | [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Draft |
+@@ -377,7 +377,7 @@ Created: 31-Jul-2026
+ | [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
+ | [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Accepted |
+ | [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Accepted |
+-| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Draft |
++| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Accepted |
+ | [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Draft |
  
  ## Copyright
 ```
 
-**File**: `docs/nuc-0158.md` (modified, +244/-15)
+**File**: `nucleoid.spec.md` (modified, +72/-0)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 158
- Title: List Invocation of Function Values
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
--Status: Draft
-+Status: Rejected
- Type: Standards Track
- Category: Runtime features
- Created: 28-Nov-2026
-@@ -31,6 +31,10 @@ Requires: 8, 54, 74
-   runtime-length List to an arbitrary Function as positional arguments.
-   Continuous evaluation skips token comparison entirely, while retaining
-   immutable accepted replay, behavior/integrity and every hard criterion.
-+- **Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail.**
-+  Independent compilation and compatibility checks pass, but the full suite
-+  fails the every-test-passes hard criterion. The implementation remains
-+  isolated; none of its language changes is integrated.
+@@ -4219,6 +4219,49 @@ statement positions; caught values and transaction recovery are unchanged.
+   behavior without requiring identical rule-source strings or immediate
+   dependency graphs. Unchanged historical programs retain their complete ASTs.
  
- ## Motivation
- 
-@@ -48,35 +52,260 @@ Requires: 8, 54, 74
- 
- ## Rationale
- 
--To be completed by the fresh proposal agent against the pushed allocation,
--including independent verification of the new-feature applicability.
-+- Keep one Function-value operation and reuse the accepted parameter binder;
-+  the feature is argument delivery, not another signature or binding scheme.
-+- The accepted `call_method` dispatcher has no Function route, and the pinned
-+  unsupported probe reports `TypeError: function.invoke is not a function`.
-+  The existing Rust `Runtime::invoke` is not a language-level calling protocol.
-+- Passing a List as one ordinary argument binds one value. A fixed number of
-+  indexed expressions fixes arity and cannot deliver an arbitrary runtime-length
-+  List to an arbitrary Function. This is a new core execution feature, not a
-+  utility query or equivalent spelling of an existing language protocol.
-+- Preserve the caller's confirmed Runtime features category and continuous
-+  mode. Applicability is `new_feature`; token comparison is skipped entirely as
-+  `new_runtime_feature`, without comparisons, before-counts or counterparts.
-+- Do not add `.call` or `.apply`, call-site spread, String/population expansion,
-+  bound-method receivers, closures, implicit `this`, Function construction,
-+  globals, flags, dependencies or a version change.
- 
- ## Specification
- 
--To be completed with ordinary List argument delivery, existing Function-value
--context and parameter binding, source-order evaluation and nullish recovery.
-+The following is the rejected, isolated contract, not accepted language
-+behavior. Its root specification section and four new executable cases are
-+not integrated.
++## Reactive base ten exponentiation
 +
-+- The candidate synchronized this contract with its root specification's
-+  `List invocation of function values` section and two appended entries,
-+  `Nucleoid delivers list elements as positional function values` and
-+  `Nucleoid preserves callable storage and nullish invocation recovery`.
-+- Evaluate the receiver at the existing member-call point, capturing its
-+  Function definition before arguments run. Evaluate every supplied call argument
-+  expression once, left to right, per actual invocation. Evaluate and ignore
-+  surplus call arguments after the first container; do not add a guarantee that
-+  a whole standing declaration invokes only once.
-+- Deliver the first ordinary List's elements, in order, through
-+  `Runtime::invoke`. Empty Lists supply no positions. Fixed slots use their
-+  existing absent/default behavior; final rest slots collect remaining values
-+  into their existing fresh local List.
-+- Nested Lists remain single positional values. Contained Null and Undefined
-+  are supplied values rather than absent slots and never select defaults.
-+  Ordinary null propagation and Value-copy boundaries remain; caller List
-+  bindings are not mutated and contained Object identities remain shared.
-+- A Null or Undefined receiver retains its existing argument-skipping Undefined
-+  result. A missing, Null or Undefined first argument returns Undefined without
-+  entering the Function, permitting ordinary dependent recovery. Other
-+  containers are not coerced. Argument-expression failures still propagate
-+  before container validation.
-+- Invoke the Function Value through its ordinary context, not through an Object
-+  method binding. `Runtime::invoke` continues to call `invoke_with_this` with
-+  `None`, preserving fresh Scope frames, local histories, lack of captures and
-+  the active class-instance context.
-+- Live references observe redefinitions. Stored, frozen and historical Function
-+  Values retain their definition identities while reading ordinary live state.
-+  Dependencies, observers, records, snapshots, standing re-evaluation and
-+  State/graph rollback use their existing paths.
++- Accepted [NUC 161](docs/nuc-0161.md) adds only unshadowed static `Math.exp10(value)`,
++  naming accepted `Math.pow(10, value)` without changing that operation.
++- Keep Math's any-supplied-top-level-Undefined gate before intrinsic
++  `Value::to_number` conversion of the first input. Omission supplies numeric
++  NaN; only the first supplied value is numerically converted.
++- Compute exactly `10.0_f64.powf(first)`, preserving the accepted pow kernel.
++  Non-NaN results agree by bits and NaNs by their accepted classification,
++  without a new payload, accuracy or speed guarantee. Do not substitute native
++  decimal exponentiation, exponent/log identities, integer shortcuts,
++  rescaling or another floating-point evaluation order.
++- Both zero exponent signs yield one. Finite and fractional exponents,
++  overflow, subnormal rounding, positive-zero underflow and nonfinite results
++  match accepted powf. Positive infinity yields positive infinity, negative
++  infinity yields positive zero, and NaN yields NaN.
++- Literal null converts to zero. Booleans, strings, empty/singleton lists,
++  dates and nonnumeric values retain intrinsic conversion. Live-null and
++  parameter-null deferral remain unchanged.
++- Every supplied expression evaluates once left to right, before the gate,
++  including ignored extras and expressions after Undefined. Extras retain
++  dependency reads, effects and strict errors without numeric conversion.
++- Standing propagation, independent class rules, wrappers, receivers,
++  scopes, frames, deletion/recovery, subscriptions, savepoints and rollback
++  retain the existing runtime machinery.
++- Conversion and the fixed base consult neither shadowable Number nor Math
++  constants. Local/state Math and ordinary `.Math` members keep their lookup.
++  Native `Math.exp10` value reads remain Undefined, not first-class functions.
++- Add no arity, conversion, numeric or range error. Strict unknown arguments
++  keep `ReferenceError("<name> is not defined")`; unsupported native helpers
++  keep `TypeError("Math.<name> is not a function")`, and `Math.random()` keeps
++  `TypeError("Math.random is not supported")` after the unchanged gate.
++  Numeric `Math = 7` keeps `TypeError("number.exp10 is not a function")`.
++- Only the previously unsupported unshadowed static call gains this utility.
++  Sibling helpers, constants, accepted syntax and inherited scope limitations
++  remain unchanged; add no alias, public Rust type/API, dependency or limit.
++- The appended case `Nucleoid keeps base ten exponentiation reactive` changes
++  only its standing scale RHS from the caller's accepted-pow counterpart,
++  preserving all twelve ordered assertions, explicit return `1000`,
++  fractional pow control and Number/String special-value spellings.
++- `docs/nucleoid.ebnf` remains unchanged: existing member-call syntax already
++  parses `exp10` as an ordinary name; no lexer or parser behavior changes.
 +
-+```nuc
-+def pack(head = 7, ...tail) => [head, tail]
-+arguments = [1, 2, 3]
-+result = pack.invoke(arguments)
-+assert(result, [1, [2, 3]])
-+arguments = []
-+assert(result, [7, []])
-+arguments = [0, [4, 5]]
-+assert(result, [0, [[4, 5]]])
-+assert(pack(arguments), [[0, [4, 5]], []])
-+assert(pack.invoke([]), [7, []])
-+assert(pack(1, 2, 3), [1,
+ ## Reactive base two exponentiation
+ 
+ - Accepted [NUC 56](docs/nuc-0056.md) adds only unshadowed static
+@@ -30258,6 +30301,35 @@ assert(text, "")
+ assert(input, 7)
+ 1
+ # return: 1
++---
++# Nucleoid keeps base ten exponentiation reactive
++power = 2
++scale = Math.exp10(power)
++assert(scale, 100)
++power = 3
++assert(scale, 1000)
++power = -1
++assert(scale, 0.1)
++power = 0
++assert(scale, 1)
++power = "2"
++assert(scale, 100)
++power = -2
++assert(scale, 0.01)
++power = 1.5
++assert(scale, Math.pow(10, power))
++power = 309
++assert(scale, Number.POSITIVE_INFINITY)
++power = -400
++assert(scale, 0)
++power = Number.NEGATIVE_INFINITY
++assert(scale, 0)
++power = Number.NaN
++assert(String(scale), "NaN")
++power = 3
++assert(scale, 1000)
++scale
++# return: 1000
+ ```
+ 
+ ## Floating-point absolute value alias
+```
+
+**File**: `src/builtins/numeric.rs` (modified, +1/-0)
+```diff
+@@ -73,6 +73,7 @@ fn math_unary(name: &str, first: f64) -> Option<f64> {
+         }
+         "exp" => first.exp(),
+         "exp2" => 2.0_f64.powf(first),
++        "exp10" => 10.0_f64.powf(first),
+         "log" => first.ln(),
+         "log2" => first.log2(),
+         "log10" => first.log10(),
+```
+
+**File**: `tests/case_conversion_aliases.rs` (modified, +1/-1)
+```diff
+@@ -370,7 +370,7 @@ fn only_the_appended_cases_call_the_aliases_and_they_run_every_assertion() {
+         }
+     }
+     assert_eq!(assertions, 23);
+-    assert_eq!(cases, 1347);
++    assert_eq!(cases, 1348);
+ }
+ 
+ #[test]
+```
+
+**File**: `tests/dataset.rs` (modified, +2/-2)
+```diff
+@@ -33,8 +33,8 @@ struct Record {
+ 
+ const SPEC_DOCUMENT: &str = include_str!("../nucleoid.spec.md");
+ 
+-const SPEC_RECORDS: usize = 898;
+-const SYNTH_RECORDS: usize = 1_829;
++const SPEC_RECORDS: usize = 899;
++const SYNTH_RECORDS: usize = 1_830;
+ const SYNTH_19_RECORDS: usize = 51;
+ const SYNTH_21_RECORDS: usize = 120;
+ const SYNTH_22_RECORDS: usize = 5;
 ```
 
 #### Recent Merged Pull Requests:
@@ -2173,13 +2247,13 @@ isolated at frozen candidate tree af6a36914e66078bd5dde
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 160 C# String Trimming Method Alias
+## X. Draft NUC 163 C# Ceiling Method Alias
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42b3267e`: Draft NUC 160 C# String Trimming Method Alias. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `30bfd633`: Draft NUC 163 C# Ceiling Method Alias. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -2187,8 +2261,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [160](nuc-0160.md) | C# String Trimming Method Alias | Draft |
-| [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Draft |
+| [163](nuc-0163.md) | C# Ceiling Method Alias | Draft |
+| [163](nuc-0163.md) | C# Ceiling Method Alias | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2198,7 +2272,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42b3267e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `30bfd633` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

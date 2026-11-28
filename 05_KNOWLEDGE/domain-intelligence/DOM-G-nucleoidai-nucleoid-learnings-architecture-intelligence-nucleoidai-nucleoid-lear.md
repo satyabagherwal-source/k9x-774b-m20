@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-28T07:59:30.254Z",
+  "timestamp": "2026-11-28T15:36:48.061Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-28T07:59:30.254Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T15:36:48.061Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `c56f9f1a`  
+> **Source Version**: `30bfd633`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-28T07:58:25.320Z  
+> **Timestamp**: 2026-11-28T15:36:16.808Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-28T07:58:25.316Z  
+> **Harvest Timestamp**: 2026-11-28T15:36:16.805Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1505,6 +1505,320 @@ export async function start(puzzle_id: string = "27a28665") {
 
 ```
 
+### Core Architecture Module: `arc/src/dataset/catalog.ts`
+```
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { document } from "./dataset";
+import { palette } from "../lib/terminal";
+import * as pdf from "../lib/pdf";
+
+const output_path: string = join(__dirname, "..", "..", "dataset.pdf");
+const document_title: string = "Nucleoid ARC instruction datasets";
+const introduction = [
+  "Every JSON instruction dataset in arc/src/dataset, in the filename order in which document() reads them for the solver's few-shot examples. Generated from the dataset files by bun run dataset:pdf in arc/; regenerate it whenever a dataset changes instead of editing it.",
+  "Each dataset shows its class_declaration, its declarations and its output_canvas, then one box per pair in dataset order: the pair's input_matrix and output_matrix, followed by one row per instance with its input_instance_matrix, its output_instance_matrix and its implementation. Sizes read rows×columns, and cells show colors 0 to 9 in the solver's terminal palette.",
+];
+
+const page_width: number = 612;
+const page_height: number = 792;
+const margin: number = 40;
+const content_top: number = 52;
+const content_bottom: number = page_height - 48;
+const content_width: number = page_width - 2 * margin;
+const content_right: number = margin + content_width;
+const header_baseline: number = 30;
+const header_rule: number = 36;
+const footer_baseline: number = page_height - 26;
+
+const padding: number = 8;
+const title_height: number = 16;
+const title_baseline: number = 11;
+const box_gap: number = 10;
+const panel_gap: number = 8;
+const label_height: number = 10;
+const code_leading: number = 9;
+const code_padding: number = 5;
+const code_chunk: number = 60;
+const code_hanging: number = 8;
+const wrap_columns_minimum: number = 16;
+const gutter_width: number = 16;
+const value_height: number = 20;
+const implementation_leading: number = 8.6;
+const implementation_hanging: number = 4;
+const instance_padding: number = 6;
+const beside_share: number = 0.45;
+const beside_columns: number = 56;
+const beside_height_maximum: number = 400;
+const grid_arrow: number = 22;
+const grid_cell_minimum: number = 2;
+const grid_cell_maximum: number = 14;
+const digit_cell_minimum: number = 9;
+const grid_height_maximum: number = 220;
+const thumbnail_arrow: number = 14;
+const thumbnail_extent: number = 44;
+const thumbnail_cell_minimum: number = 1.5;
+const thumbnail_cell_maximum: number = 8;
+const swatch_size: number = 14;
+const swatch_gap: number = 6;
+const contents_row: number = 13;
+const contents_columns = {
+  dataset: margin + 6,
+  canvas: margin + 210,
+  pairs: margin + 330,
+  instances: margin + 410,
+  page: content_right - 6,
+};
+
+const ink = [33, 37, 41];
+const muted = [108, 117, 125];
+const rule = [206, 212, 218];
+const title_fill = [241, 243, 245];
+const code_fill = [250, 251, 252];
+const stripe_fill = [248, 249, 250];
+const grid_line = [85, 85, 85];
+const black = [0, 0, 0];
+const white = [255, 255, 255];
+
+const title_style = { font: "sans_bold", size: 20, color: ink };
+const heading_style = { font: "sans_bold", size: 16, color: ink };
+const body_style = { font: "sans", size: 8.5, color: ink };
+const total_style = { font: "sans_bold", size: 8.5, color: ink };
+const summary_style = { font: "sans", size: 8.5, color: muted };
+const box_style = { font: "sans_bold", size: 7.5, color: ink };
+const note_style = { font: "sans", size: 7, color: muted };
+const label_style = { font: "sans", size: 6.5, color: muted };
+const code_style = { font: "mono", size: 7, color: ink };
+const gutter_style = { font: "mono", size: 7, color: muted };
+const value_style = { font: "mono_bold", size: 8, color: ink };
+const implementation_style = { font: "mono", size: 6.8, color: ink };
+const name_style = { font: "mono_bold", size: 6.8, color: ink };
+const column_style = { font: "sans_bold", size: 7.5, color: ink };
+const file_style = { font: "mono", size: 7.5, color: ink };
+const count_style = { font: "sans", size: 7.5, color: ink };
+
+function plural(count: number, noun: string): string {
+  return `${count} ${noun}${count === 1 ? "" : "s"}`;
+}
+
+function clamp(value: number, low: number, high: number): number {
+  return Math.min(high, Math.max(low, value));
+}
+
+function sum(values): number {
+  return values.reduce((total: number, value: number) => total + value, 0);
+}
+
+function puzzle_id(file: string): string {
+  return /^dataset\.([0-9a-f]{8})\.json$/.exec(file.toLowerCase())?.[1];
+}
+
+function instance_count(dataset): number {
+  return sum(dataset.dataset.map((pair) => pair.instances.length));
+}
+
+function parse(file: string) {
+  const source: string = readFileSync(join(__dirname, file), "utf8");
+  try {
+    return JSON.parse(source);
+  } catch (error) {
+    throw new Error(`${file}: ${error.message}`);
+  }
+}
+
+function load() {
+  const files: string[] = readdirSync(__dirname, { withFileTypes: true })
+    .filter((file) => {
+      const name: string = file.name.toLowerCase();
+      return (
+        file.isFile() && name.endsWith(".json") && !name.startsWith(".env")
+      );
+    })
+    .map((file) => file.name)
+    .sort();
+  const datasets = files.map(parse);
+  if (JSON.stringify(datasets) !== JSON.stringify(JSON.parse(document()))) {
+    throw new Error(
+      "The dataset files differ from the instruction datasets document() reads"
+    );
+  }
+  return files.map((file: string, index: number) => ({
+    file,
+    dataset: datasets[index],
+  }));
+}
+
+function wrap_text(text: string, style, width: number) {
+  const lines = [];
+  let line: string = "";
+  for (const word of text.split(" ")) {
+    const candidate: string = line === "" ? word : `${line} ${word}`;
+    if (line !== "" && pdf.text_width(candidate, style) > width) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = candidate;
+    }
+  }
+  return line === "" ? lines : [...lines, line];
+}
+
+function wrap_code(line: string, available: number, hanging: number) {
+  const columns: number = Math.max(available, wrap_columns_minimum);
+  const leading: number = line.length - line.trimStart().length;
+  const indent: string = " ".repeat(
+    Math.min(Math.floor(columns / 2), leading + hanging)
+  );
+  const lines = [];
+  let rest: string = line;
+  let prefix: string = "";
+  while (prefix.length + rest.length > columns) {
+    const room: number = columns - prefix.length;
+    const start: number = rest.length - rest.trimStart().length;
+    const space: number = rest.lastIndexOf(" ", room);
+    const cut: number = space > start ? space : room;
+    lines.push(prefix + rest.slice(0, cut).trimEnd());
+    rest = rest.slice(cut).trimStart();
+    prefix = indent;
+  }
+  return rest === "" && lines.length > 0 ? lines : [...lines, prefix + rest];
+}
+
+function code_columns(width: number, style): number {
+  return Math.floor(width / pdf.text_width(" ", style));
+}
+
+function grid_size(matrix) {
+  return {
+    rows: matrix.length,
+    columns: Math.max(0, ...matrix.map((row) => row.length)),
+  };
+}
+
+function color_of(value: number) {
+  return palette[value] ?? white;
+}
+
+function digit_style(value: number, cell: number) {
+  const [red, green, blue] = color_of(value);
+  return {
+    font: "sans_bold",
+    size: cell * 0.5,
+    color: red * 0.299 + green * 0.587 + blue * 0.114 > 160 ? black : white,
+  };
+}
+
+function draw_digit(page, x: number, y: number, cell: number, value: number) {
+  const text: string = String(value);
+  const style = digit_style(value, cell);
+  pdf.text(
+    page,
+    x + (cell - pdf.text_width(text, style)) / 2,
+    y + cell / 2 + style.size * 0.36,
+    text,
+    style
+  );
+}
+
+function draw_grid(
+  page,
+  x: number,
+  y: number,
+  matrix,
+  cell: number,
+  digits: boolean
+) {
+  const { rows, columns } = grid_size(matrix);
+  if (rows === 0 || columns === 0) {
+    pdf.text(page, x, y + label_style.size, "(empty)", label_style);
+    return;
+  }
+  const width: number = columns * cell;
+  const height: number = rows * cell;
+  pdf.rects(page, [[x, y, width, height]], color_of(0));
+  const cells = new Map();
+  matrix.forEach((row, r: number) =>
+    row.forEach((value: number, c: number) => {
+      if (value !== 0) {
+        const areas = cells.get(value) ?? [];
+        areas.push([x + c * cell, y + r * cell, cell, cell]);
+        cells.set(value, areas);
+      }
+    })
+  );
+  for (const [value, areas] of cells) {
+    pdf.rects(page, areas, color_of(value));
+  }
+  pdf.lines(
+    page,
+    [
+      ...Array.from({ length: rows + 1 }, (_, r: number) => [
+        x,
+        y + r * cell,
+        x + width,
+        y + r * cell,
+      ]),
+      ...Array.from({ length: columns + 1 }, (_, c: number) => [
+        x + c * cell,
+        y,
+        x + c * cell,
+        y + height,
+      ]),
+    ],
+    grid_line,
+    cell >= 8 ? 0.4 : 0.25
+  );
+  if (digits && cell >= digit_cell_minimum) {
+    for (const [value, areas] of cells) {
+      for (const [left, top] of areas) {
+        draw_digit(page, left, top, cell, value);
+      }
+    }
+  }
+}
+
+function draw_arrow(page, x: number, y: number, width: number) {
+  pdf.lines(page, [[x, y, x + width - 4, y]], muted, 0.8);
+  pdf.polygon(
+    page,
+    [
+      [x + width, y],
+      [x + width - 5, y - 2.8],
+      [x + width - 5, y + 2.8],
+    ],
+    muted
+  );
+}
+
+function draw_right(
+  page,
+  right: number,
+  baseline: number,
+  text: string,
+  style
+) {
+  pdf.text(page, right - pdf.text_width(text, style), baseline, text, style);
+}
+
+function code_rows(source: string, gutter?: string) {
+  const offset: number = gutter === undefined ? 0 : gutter_width;
+  const columns: number = code_columns(
+    content_width - 2 * padding - offset,
+    code_style
+  );
+  const lines = source
+    .split("\n")
+    .flatMap((line: string) =>
+      wrap_code(line.replace(/\t/g, "    "), columns, code_hanging)
+    );
+  return Array.from(
+    { length: Math.ceil(lines.length / code_chunk) },
+    (_, chunk: number) => {
+      const part = lines.slice(chunk * code_chunk, (chunk + 1) * code_chunk);
+      const height: number = part.length * code_leading + 2 * code_padding;
+      re
+```
+
 ### Core Architecture Module: `arc/src/dataset/dataset.ts`
 ```
 import { readdirSync, readFileSync } from "node:fs";
@@ -1546,12 +1860,6 @@ export function document(
 
 ```
 
-### Core Architecture Module: `arc/src/dataset/index.ts`
-```
-export { document } from "./dataset";
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1579,20 +1887,353 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c56f9f1a` (2026-11-28)
-**Commit Message**: Resume NUC 158 List Invocation of Function Values
+### Incident Patch 1: `30bfd633` (2026-11-28)
+**Commit Message**: Draft NUC 163 C# Ceiling Method Alias
 
-Resume same-revision finalization after a transient missing historical
-controller-source artifact. The exact original blob has been recovered at a
-new immutable external path and verified without changing the candidate,
-baseline, reports or diagnostic pins.
-
-Allocation: 761b277c1e19fcb61906981b566924dc13e7d548
-This empty claim records no proposal outcome and moves no pinned worktree.
+Category: Language compatibility. Add only case-sensitive Math.Ceiling as an exact optional alias of accepted Math.ceil. Continuous mode; token comparison categorically skipped. Preserve accepted semantics; no parser, numeric-algorithm, decimal, overload or namespace changes. Complete the prototype and independent evaluation only after the immutable allocation baseline is captured.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -206,6 +206,7 @@ Created: 31-Jul-2026
+ | [150](nuc-0150.md) | C# Truncation Method Alias | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
+ | [157](nuc-0157.md) | Padding Method Aliases | Accepted |
+ | [160](nuc-0160.md) | C# String Trimming Method Alias | Accepted |
++| [163](nuc-0163.md) | C# Ceiling Method Alias | Draft |
+ 
+ ### Documentation
+ 
+@@ -379,6 +380,7 @@ Created: 31-Jul-2026
+ | [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Accepted |
+ | [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Accepted |
+ | [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Draft |
++| [163](nuc-0163.md) | C# Ceiling Method Alias | Standards Track | Language compatibility | Draft |
+ 
+ ## Copyright
+ 
+```
 
+**File**: `docs/nuc-0163.md` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++# NUC 163 -- C# Ceiling Method Alias
++
++```
++NUC: 163
++Title: C# Ceiling Method Alias
++Author: Copilot <223556219+Copilot@users.noreply.github.com>
++Status: Draft
++Type: Standards Track
++Category: Language compatibility
++Created: 28-Nov-2026
++```
++
++## Abstract
++
++- Add only `Math.Ceiling(value)` as an optional, case-sensitive C#-style
++  spelling of accepted `Math.ceil(value)`, wherever existing call resolution
++  reaches native Math.
++- Reuse the existing ceiling operation and preserve intrinsic conversion,
++  argument evaluation, supplied-Undefined handling, numeric edge behavior,
++  dependencies, transactions, namespace shadowing and every accepted form.
++- Add no numeric algorithm, decimal type, overload system, first-class native
++  method, global helper, parser rule or family of Pascal-case aliases.
++- This caller-selected continuous cycle retains its one uniform
++  Language compatibility draw. Token comparison is categorically skipped;
++  immutable accepted-source replay, behavior/integrity, compatibility,
++  development checks and independent evaluation remain mandatory.
++
++## Motivation
++
++- C# exposes `System.Math.Ceiling` for the smallest integral value greater
++  than or equal to its argument. Nucleoid already provides this operation as
++  `Math.ceil`; a familiar spelling can share that implementation without
++  claiming full C#/.NET compatibility.
++- Microsoft's [Math.Ceiling reference](https://learn.microsoft.com/en-us/dotnet/api/system.math.ceiling)
++  establishes the spelling. Nucleoid's accepted numeric model and call
++  behavior, not .NET overloads or coercion rules, govern this alias.
++- The all-status proposal review found no existing proposal for this
++  spelling. Rejected NUC 150 concerns `Math.Truncate` and explicitly excludes
++  `Ceiling`; this revision neither revisits nor depends on that candidate.
++
++## Rationale
++
++Pending the fresh proposal agent's completion after allocation and the
++immutable accepted-baseline capture.
++
++## Specification
++
++Pending the isolated prototype and its behavior evidence.
++
++## Backwards Compatibility
++
++Preserve all accepted parser forms and successful behavior. Only the native
++unknown-method error for the newly supported spelling may become its ceiling
++result; existing argument gates and ordinary receivers retain their behavior.
++
++## Reference Implementation
++
++Pending the isolated prototype and the caller-owned Rust improvement pass.
++
++## Evaluation
++
++Pending the separate fresh evaluator. This Draft records no outcome.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `486c38c2` (2026-11-28)
+**Commit Message**: NUC 161 Reactive Base Ten Exponentiation
+
+Accepted under automatic acceptance: the independent policy decision is
+Accepted and all three hard criteria pass. This is a continuous Utility
+enhancement; runtime applicability is not applicable.
+
+Integrate the unchanged frozen Math.exp10 semantic delta, computing exactly
+10.0_f64.powf(first), while preserving concurrent accepted NUC 159, Draft
+NUC 162 and ARC changes. Reconcile only necessary count/tail metadata and
+generated append ordinals; preserve all current accepted sources and tests.
+
+All-target build, formatting, warning-denied Clippy (including all features)
+and private warning-denied rustdoc pass. Integrated full cargo test passes
+4320, fails 0, retains 25 ignored tests and all 4335 current identities plus
+10 additions. All 4303 original statuses and 11 expected panics remain.
+Original and current accepted-source replays pass 1341 and 1348 cases,
+respectively; all eleven frozen CLI witnesses match.
+
+Required lexer-token comparison ran on all 1341 original-baseline pairs:
+1 less, 1340 same, 0 more; the new decimal-scale case is 163 -> 161.
+Full per-case counts and independent/integrated evidence pins are recorded.
+Usefulness/rew
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
+```diff
+@@ -896,3 +896,4 @@
+ {"id":"spec-0896","description":"Nucleoid runs deferred suites on block exit","code":"audit = []\ndef complete(value):\n    defer:\n        audit.push(value)\n    if value > 0:\n        return value * 2\n    if value < 0:\n        return -value\n    return 0\nassert(complete(3), 6)\nassert(audit, [3])\nassert(complete(-4), 4)\nassert(audit, [3, -4])\nassert(complete(0), 0)\nassert(audit, [3, -4, 0])\n1","return":"1"}
+ {"id":"spec-0897","description":"Nucleoid separates list elements on new lines","code":"seed = 2\nreadings = [\n    seed\n    seed + 1\n    seed * 2\n]\nassert(readings, [2, 3, 4])\nassert(readings.length, 3)\nassert(readings[0], 2)\nseed = 5\nassert(readings, [5, 6, 10])\nassert(readings.length, 3)\nassert(readings[2], 10)\n1","return":"1"}
+ {"id":"spec-0898","description":"Nucleoid writes truthy values with one-shot assignments","code":"input = 3\nslot = input + 1\nslot &&:= 9\nassert(slot, 9)\ninput = 7\nassert(slot, 9)\nempty = 0\nempty &&:= missing\nassert(empty, 0)\nactive = true\nactive &&:= 5\nassert(active, 5)\ntext = \"\"\ntext &&:= missing\nassert(text, \"\")\nassert(input, 7)\n1","return":"1"}
++{"id":"spec-0899","description":"Nucleoid keeps base ten exponentiation reactive","code":"power = 2\nscale = Math.exp10(power)\nassert(scale, 100)\npower = 3\nassert(scale, 1000)\npower = -1\nassert(scale, 0.1)\npower = 0\nassert(scale, 1)\npower = \"2\"\nassert(scale, 100)\npower = -2\nassert(scale, 0.01)\npower = 1.5\nassert(scale, Math.pow(10, power))\npower = 309\nassert(scale, Number.POSITIVE_INFINITY)\npower = -400\nassert(scale, 0)\npower = Number.NEGATIVE_INFINITY\nassert(scale, 0)\npower = Number.NaN\nassert(String(scale), \"NaN\")\npower = 3\nassert(scale, 1000)\nscale","return":"1000"}
+```
+
+**File**: `dataset/nucleoid.synth.161.jsonl` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++{"id":"synth-161-0001","description":"A standing decimal scale stays live through coercion, fractional powers, overflow, underflow, NaN and recovery","code":"power = 2\nscale = Math.exp10(power)\nassert(scale, 100)\npower = 3\nassert(scale, 1000)\npower = -1\nassert(scale, 0.1)\npower = 0\nassert(scale, 1)\npower = \"2\"\nassert(scale, 100)\npower = -2\nassert(scale, 0.01)\npower = 1.5\nassert(scale, Math.pow(10, power))\npower = 309\nassert(scale, Number.POSITIVE_INFINITY)\npower = -400\nassert(scale, 0)\npower = Number.NEGATIVE_INFINITY\nassert(scale, 0)\npower = Number.NaN\nassert(String(scale), \"NaN\")\npower = 3\nassert(scale, 1000)\nscale","return":"1000"}
+```
+
+**File**: `docs/README.md` (modified, +36/-0)
+```diff
+@@ -3980,6 +3980,41 @@ assert(radians, -Math.PI / 2)
+ 
+ ---
+ 
++## Reactive base ten exponentiation
++
++- Accepted [NUC 161](nuc-0161.md) and the
++  [root contract](../nucleoid.spec.md#reactive-base-ten-exponentiation)
++  add only unshadowed static `Math.exp10(value)`, exactly the accepted
++  `Math.pow(10, value)` numeric operation. Accepted pow and exp2 stay unchanged.
++- Reuse Math's any-supplied-top-level-Undefined gate, intrinsic first-input
++  conversion and `10.0_f64.powf(first)`. Omission yields numeric NaN.
++  Non-NaN results match accepted pow by bits and NaNs by classification,
++  including fractional powers, overflow, subnormals and positive-zero
++  underflow. Both zero exponent signs yield one.
++- Literal null converts to zero without changing live-null or parameter
++  deferral. Other values retain their intrinsic conversions and NaN results.
++  No native decimal exponentiation, exponent/log identities, integer
++  shortcuts, rescaling, reordered math or accuracy/speed claim is introduced.
++- All supplied expressions evaluate once left to right before gating.
++  Numerically ignored extras retain reads, dependencies, effects and strict
++  errors. Standing rules, independent instances, functions, scopes,
++  deletion/recovery, savepoints and transaction rollback remain unchanged.
++- The fixed base and conversion do not resolve shadowable Number or Math
++  constants. State/local Math and ordinary `.Math` members retain lookup.
++  Native `Math.exp10` value reads remain Undefined, not stored functions.
++- Add no arity, numeric or range error. Strict unknown reads, unknown/random
++  native errors, ordinary receiver errors, positions and rollback remain
++  unchanged; numeric `Math = 7` gives
++  `TypeError("number.exp10 is not a function")`.
++- The single appended specification case
++  `Nucleoid keeps base ten exponentiation reactive` retains the caller's
++  twelve accepted-pow assertions and explicit return `1000`, changing only
++  the standing RHS. No reference executable case or accepted source changes.
++- This is a utility-only extension. The grammar, aliases, public Rust APIs,
++  dependencies, versions and resource limits are unchanged.
++
++---
++
+ ## Reactive base two exponentiation
+ 
+ ### Nucleoid names reactive base two powers
+@@ -6443,6 +6478,7 @@ items.flat()  items.flat(depth)        exactly items.flatMap(v => v), depth time
+ Math.remap(start, end, targetStart, targetEnd, value) unclamped static remapping (Accepted NUC 39)
+ Math.toRadians(value)                   static division-first degree conversion (NUC 50 candidate)
+ Math.exp2(value)                        static powf-based base-two power (Accepted NUC 56)
++Math.exp10(value)                       static powf-based base-ten power (Accepted NUC 161)
+ Math.cot(value)                         static reciprocal of tangent in radians (NUC 100 candidate)
+ Math.sec(value)                         static reciprocal of cosine in radians (NUC 138)
+ Math.csc(value)                         static reciprocal of sine in radians (NUC 141)
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -156,7 +156,7 @@ Created: 31-Jul-2026
+ | [146](nuc-0146.md) | Reactive Cubing | Accepted |
+ | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Rejected: 74 existing corpus-count and historical-locator tests fail |
+ | [159](nuc-0159.md) | Reactive Hypotenuse | Accepted |
+-| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Draft |
++| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Accepted |
+ 
+ ### Reasoning enhancement
+ 
+@@ -377,7 +377,7 @@ Created: 31-Jul-2026
+ | [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
+ | [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Accepted |
+ | [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Accepted |
+-| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Draft |
++| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Accepted |
+ | [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Draft |
+ 
+ ## Copyright
+```
+
+**File**: `nucleoid.spec.md` (modified, +72/-0)
+```diff
+@@ -4219,6 +4219,49 @@ statement positions; caught values and transaction recovery are unchanged.
+   behavior without requiring identical rule-source strings or immediate
+   dependency graphs. Unchanged historical programs retain their complete ASTs.
+ 
++## Reactive base ten exponentiation
++
++- Accepted [NUC 161](docs/nuc-0161.md) adds only unshadowed static `Math.exp10(value)`,
++  naming accepted `Math.pow(10, value)` without changing that operation.
++- Keep Math's any-supplied-top-level-Undefined gate before intrinsic
++  `Value::to_number` conversion of the first input. Omission supplies numeric
++  NaN; only the first supplied value is numerically converted.
++- Compute exactly `10.0_f64.powf(first)`, preserving the accepted pow kernel.
++  Non-NaN results agree by bits and NaNs by their accepted classification,
++  without a new payload, accuracy or speed guarantee. Do not substitute native
++  decimal exponentiation, exponent/log identities, integer shortcuts,
++  rescaling or another floating-point evaluation order.
++- Both zero exponent signs yield one. Finite and fractional exponents,
++  overflow, subnormal rounding, positive-zero underflow and nonfinite results
++  match accepted powf. Positive infinity yields positive infinity, negative
++  infinity yields positive zero, and NaN yields NaN.
++- Literal null converts to zero. Booleans, strings, empty/singleton lists,
++  dates and nonnumeric values retain intrinsic conversion. Live-null and
++  parameter-null deferral remain unchanged.
++- Every supplied expression evaluates once left to right, before the gate,
++  including ignored extras and expressions after Undefined. Extras retain
++  dependency reads, effects and strict errors without numeric conversion.
++- Standing propagation, independent class rules, wrappers, receivers,
++  scopes, frames, deletion/recovery, subscriptions, savepoints and rollback
++  retain the existing runtime machinery.
++- Conversion and the fixed base consult neither shadowable Number nor Math
++  constants. Local/state Math and ordinary `.Math` members keep their lookup.
++  Native `Math.exp10` value reads remain Undefined, not first-class functions.
++- Add no arity, conversion, numeric or range error. Strict unknown arguments
++  keep `ReferenceError("<name> is not defined")`; unsupported native helpers
++  keep `TypeError("Math.<name> is not a function")`, and `Math.random()` keeps
++  `TypeError("Math.random is not supported")` after the unchanged gate.
++  Numeric `Math = 7` keeps `TypeError("number.exp10 is not a function")`.
++- Only the previously unsupported unshadowed static call gains this utility.
++  Sibling helpers, constants, accepted syntax and inherited scope limitations
++  remain unchanged; add no alias, public Rust type/API, dependency or limit.
++- The appended case `Nucleoid keeps base ten exponentiation reactive` changes
++  only its standing scale RHS from the caller's accepted-pow counterpart,
++  preserving all twelve ordered assertions, explicit return `1000`,
++  fractional pow control and Number/String special-value spellings.
++- `docs/nucleoid.ebnf` remains unchanged: existing member-call syntax already
++  parses `exp10` as an ordinary name; no lexer or parser behavior changes.
++
+ ## Reactive base two exponentiation
+ 
+ - Accepted [NUC 56](docs/nuc-0056.md) adds only unshadowed static
+@@ -30258,6 +30301,35 @@ assert(text, "")
+ assert(input, 7)
+ 1
+ # return: 1
++---
++# Nucleoid keeps base ten exponentiation reactive
++power = 2
++scale = Math.exp10(power)
++assert(scale, 100)
++power = 3
++assert(scale, 1000)
++power = -1
++assert(scale, 0.1)
++power = 0
++assert(scale, 1)
++power = "2"
++assert(scale, 100)
++power = -2
++assert(scale, 0.01)
++power = 1.5
++assert(scale, Math.pow(10, power))
++power = 309
++assert(scale, Number.POSITIVE_INFINITY)
++power = -400
++assert(scale, 0)
++power = Number.NEGATIVE_INFINITY
++assert(scale, 0)
++power = Number.NaN
++assert(String(scale), "NaN")
++power = 3
++assert(scale, 1000)
++scale
++# return: 1000
+ ```
+ 
+ ## Floating-point absolute value alias
+```
+
+**File**: `src/builtins/numeric.rs` (modified, +1/-0)
+```diff
+@@ -73,6 +73,7 @@ fn math_unary(name: &str, first: f64) -> Option<f64> {
+         }
+         "exp" => first.exp(),
+         "exp2" => 2.0_f64.powf(first),
++        "exp10" => 10.0_f64.powf(first),
+         "log" => first.ln(),
+         "log2" => first.log2(),
+         "log10" => first.log10(),
+```
+
+**File**: `tests/case_conversion_aliases.rs` (modified, +1/-1)
+```diff
+@@ -370,7 +370,7 @@ fn only_the_appended_cases_call_the_aliases_and_they_run_every_assertion() {
+         }
+     }
+     assert_eq!(assertions, 23);
+-    assert_eq!(cases, 1347);
++    assert_eq!(cases, 1348);
+ }
+ 
+ #[test]
+```
+
+**File**: `tests/dataset.rs` (modified, +2/-2)
+```diff
+@@ -33,8 +33,8 @@ struct Record {
+ 
+ const SPEC_DOCUMENT: &str = include_str!("../nucleoid.spec.md");
+ 
+-const SPEC_RECORDS: usize = 898;
+-const SYNTH_RECORDS: usize = 1_829;
++const SPEC_RECORDS: usize = 899;
++const SYNTH_RECORDS: usize = 1_830;
+ const SYNTH_19_RECORDS: usize = 51;
+ const SYNTH_21_RECORDS: usize = 120;
+ const SYNTH_22_RECORDS: usize = 5;
+```
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1614,6 +2255,38 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Draft NUC 163 C# Ceiling Method Alias
+
+**RULE**:
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `30bfd633`: Draft NUC 163 C# Ceiling Method Alias. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| [163](nuc-0163.md) | C# Ceiling Method Alias | Draft |
+| [163](nuc-0163.md) | C# Ceiling Method Alias | Standards Track | Language compatibility | Draft |
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `30bfd633` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

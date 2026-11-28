@@ -4,24 +4,24 @@
 {
   "source_repository": "matrixorigin/matrixone",
   "source_url": "https://github.com/matrixorigin/matrixone",
-  "source_version": "87c44445",
+  "source_version": "56989d8e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T16:41:22.183Z",
+  "timestamp": "2026-11-28T15:36:15.876Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-matrixorigin-matrixone",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `87c44445`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T16:41:22.183Z`  
+> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `56989d8e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T15:36:15.876Z`  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from matrixorigin/matrixone:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T16:41:21.491Z  
+> **Harvest Timestamp**: 2026-11-28T15:36:15.125Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: AI-native HTAP database with Git-for-Data and built-in vector search, serving as the data and memory backbone for intelligent agents and applications.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2068 stars
+- **Stars / Engagement**: 2069 stars
 
 ---
 
@@ -1455,6 +1455,10 @@ type serviceRoleState struct {
 type serviceSupervisor struct {
 	roles [serviceRoleCount]serviceRoleState
 
+	// Set before any role starts. A Python-only process must exit on worker
+	// failure so its process supervisor can restart it.
+	pythonWorkerRequired bool
+
 	shutdownOnce       sync.Once
 	shutdownErr        error
 	dynamicCleanupOnce sync.Once
@@ -2363,11 +2367,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32898** (2026-11-18): **[4.2-dev] Preserve normal completion on local stop during serial reader construction**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32389. The original nightly failure still needs independent confirmation.  ## What this PR does / why we need it:  When Scope.Run builds a reader on demand, a pipeline-local stop during construction can return context.Canceled while the query remains active. The early return carried that error into deferred cleanup and the downstream receiver. Apply the existing scope cancellation classifier at this return so the receiver sees normal completion for a local stop and still receives query cancellation and independent storage errors.  The regression test drives Scope.Run and checks both its result and the receiver's terminal result. The local-stop case failed on the base revision. All three cases passed after the change, the focused serial and parallel reader tests passed five repetitions, and the full pkg/sql/compile package passed locally. 
+- **Issue #33433** (2026-11-28): **[4.2-dev] test: stabilize cross-CN publication lock assertions**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32744.  ## What this PR does / why we need it:  The publication lock test called `syncCommit` after startup and assumed CN0 already knew both fixture CNs. In Coverage, both subtests failed at the membership count before reaching ALTER. [Failing Coverage job](https://github.com/matrixorigin/matrixone/actions/runs/46115958423/job/140889742152)  Refresh CN0's member inventory once after both CNs start and verify their IDs for the lock views. After each CREATE, wait for CN1 to apply CN0's commit before issuing ALTER. The `wide` and `singleton` cases exercise the original target and unrelated account lock assertions.  ### Validation  - Go 1.26.4 on macOS arm64. The full `./pkg/tests/issues/isolated` package passed with `-race -short -tags matrixone_test -count=1` (388 s), including both publication subtests. - Incremental SCA passed for the same package with `go vet`, pinned `molint`, and golangci-lint v2.6.2 (0 issues). Formatting, `git diff --check`, and `make err-check` also passed. 
 
-- **Issue #32894** (2026-11-18): **[4.2-dev] perf: reduce clone metadata work and isolate checkpoint replay**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #29383. Backports #29769 (merge commit `72d4a49db7`) to `4.2-dev`.  ## What this PR does / why we need it:  - Reuses source table definitions already collected by `CLONE DATABASE` when selecting foreign-key tables. The backport reuses the existing 4.2 source collector and retains fresh collection after locking. - Moves checkpoint replay outside the global subscription lock while keeping one active replay. Before publishing readiness or returning a replay error, the caller verifies the subscription entry, its incarnation, and the active partition. This preserves 4.2 replay fencing when a subscription or partition is replaced. - Coalesces the v13+ table-specific checkpoint metadata columns into a single read. While the columns are pinned, it selects the requested table and copies only its rows. This cuts cold backing-store column reads from two to one with a memory-only cache and preserves owned output. An absent table still requires loading the metadata columns but produces no owned row copies. The checkpoint format and older reader paths are unchanged.  ### Validation  The S3FS disk-adapter regression verifies one cold backing-store GET for metadata columns and zero additional GETs on a warm read, with identical data and tombstone ranges. The object header is primed separately. The wa
+- **Issue #33432** (2026-11-28): **ci: use S3-only PR Coverage and expose manual OSS COS checks**
+  *Symptoms*: ## What type of PR is this?  - [x] Test and CI  ## Which issue(s) this PR fixes:  Related to #33429.  ## What this PR does / why we need it:  Use the two existing UT Coverage groups for main and 4.2-dev. The legacy and standby Shanghai paths share the prefix-scoped IDC fixture and require successful basic and streaming-write tests. The manual OSS/COS workflow tests the official 4.2-dev source and reports fixed identifiers for both SDK and S3FS failures, even when provider metadata appears later in the Go report. The manual check validates both configs before source checkout and reports Go test timeouts separately.  [matrixorigin/CI#505](https://github.com/matrixorigin/CI/pull/505) has merged. All five references use the published commit `d94028c93e14f8054a7cd4d1e2535bbaf59a8ec8`. Its tree is identical to the reviewed CI head.  Linux actionlint, 140 companion CI tests, 86 MatrixOne CI tests and the cross-repository retry and cleanup replay passed against the published revision. Exact legacy workflow setup and pass gates were exercised with local MinIO on both source branches. Healthy requests passed and invalid credentials and zero-request reports failed. Replayed the real UT and BVT profiles from [4.2-dev PR #33424, attempt 2](https://github.com/matrixorigin/matrixone/actions/runs/46107411827/attempts/2). Removing the OSS/COS profile kept changed-code coverage at 100% and changed overall block coverage from 76.784% to 76.752%. Live IDC/CS and the manual provider run remain ro
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2384,350 +2388,722 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87c44445` (2026-11-18)
-**Commit Message**: fix: preserve accepted UNIQUE keys in multi-target UPDATE IGNORE (#32827)
+### Incident Patch 1: `a9ba8ca8` (2026-11-28)
+**Commit Message**: Rebuild Python UDF with typed revisions and Arrow Flight execution (#29152)
 
 ## What type of PR is this?
 
+- [x] API-change
 - [x] BUG
+- [x] Improvement
+- [x] Documentation
+- [x] Feature
+- [x] Test and CI
+- [x] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Related to #31824. This PR addresses repeated-target **UPDATE IGNORE**;
-the non-IGNORE case was handled by #32821.
+Related to #28132. This PR delivers the opt-in external Python UDF
+adapter for test and development. Production sandboxing and tenant
+isolation remain outside this stage.
 
 ## What this PR does / why we need it:
 
-When an UPDATE IGNORE writes the same physical table through multiple
-aliases, an earlier alias may have already accepted or rejected a
-change. Checking a later candidate against the original snapshot alone
-can commit duplicate UNIQUE keys. A CHECK-rejected candidate can leave
-an accepted key unprotected if arbitration depends on the arrival order
-of concurrent UNION inputs. A later alias can also emit a false CHECK
-warning when it is validated against a snapshot value already changed by
-an accepted alias.
+### Python type-family checks and launch config
 
-- Use the preceding accepted row image for current key ownership, while
-carrying snapshot-key release evidence separately.
-- Reuse the existing HashBuild/DedupJoin path to prioritize current
-owners and reservations over competing claims independent of input
-arrival order. Preserve the auxiliary-row contract in parallel copies,
-remote codecs and spill/rebuild.
-- Report warnings on
+Commit `b23ac8120eb6c71223ef9c3688f86522c3808c4f` declares the intended
+Python decimal and temporal subsets checked by `TestTypeSwitchFamilies`.
+DECIMAL256 and YEAR remain outside the Python ABI. TIME keeps the Arrow
+Duration representation, and TIMESTAMP NULLs use an explicit typed
+branch. The type-check baseline is unchanged. The rebase onto
+`940d135ce8c0af3e0d855fb19f71e87d5ff8904d` also preserves both the
+upstream Sirius settings and the Python UDF client settings in
+`etc/launch/cn.toml`. Both remain disabled by default. [Failing Coverage
+worker](https://github.com/matrixorigin/matrixone/actions/runs/46110161943/job/140871682350)
 
-**File**: `docs/design/20261117-update-ignore-unique-arbitration.md` (added, +126/-0)
+New Darwin/arm64 validation reprodu
+
+**File**: `.gitignore` (modified, +0/-2)
 ```diff
-@@ -0,0 +1,126 @@
-+# Unique arbitration for repeated-target UPDATE IGNORE
-+
-+Issue: [#31824](https://github.com/matrixorigin/matrixone/issues/31824)
-+
-+Implementation: [#32827](https://github.com/matrixorigin/matrixone/pull/32827)
-+
-+## Problem and contract
-+
-+An UPDATE can write the same physical table through more than one alias. Under
-+IGNORE, each alias can change a row that an earlier alias already changed or
-+rejected. Checking each alias against the statement snapshot independently is
-+not sufficient: a later alias can claim a key already accepted for another row,
-+or a surviving key can be mistaken for a released snapshot key. In either
-+case the table or its unique index can contain conflicting entries.
-+
-+Keep the existing ordered alias stages. For each physical row, S is its
-+statement-snapshot image and C its latest accepted image, initially S. Each
-+active alias forms a candidate N from C, including recomputed generated
-+columns. If its constraints reject it under IGNORE, retain C and report the
-+rejected candidate; otherwise N becomes the next C. Earlier rejected
-+assignments are not resurrected. Each accepted physical key must have at most
-+one owner under the actual index equality and encoding, including NULL,
-+composite, prefix and collation keys. Internal rows and inactive or no-op
-+assignments do not themselves create duplicate warnings. A later failure of any
-+constraint must reject the candidate atomically.
-+
-+The existing transaction remains the publication and rollback owner. A normal
-+non-IGNORE UPDATE continues to validate the final merged physical image; this
-+design does not replace that path. A single writable target and another physical
-+table in the same statement retain their existing independent checks. Existing
-+guards for repeated targets changing primary or partition identity, including
-+generated dependencies, remain in force.
-+
-+## Existing owners and data flow
-+
-+The planner owns ordered candidate stages, S, C, and the projections used
-+by each affected unique index. A candidate's old key is derived from C, not
-+from S. Before checking an alias stage, the planner also represents:
-+
-+* **Reservation:** an accepted C key, even if its owner has no surviving
-+  candidate after CHECK or a preceding unique-index check.
-+* **Release:** the snapshot key of a row whose accepted C has a different
-+  key for this unique index, using the index's actual encoding and null-safe
-+  equality. A payload-only change does not release an unchanged key. This
-+  evidence travels with the snapshot key and only exempts that old snapshot
-+  entry from a probe; it cannot claim a candidate.
-+
-+These are auxiliary rows in the existing build input; a NULL physical row ID
-+distinguishes them from candidate rows. The delete marker distinguishes release
-+from reservation. They cannot reach the DML output or create warnings.
-+
-+HashBuild owns per-key arbitration using the priority **current-key owner >
-+reservation > changed claimant > release**. Thus a current owner survives its
-+own reservation, and a reservation defeats a competing changed claimant
-+regardless of input arrival order. Release evidence survives compaction and
-+rebuild, but never displaces an owner or claimant. The ordinary key and NULL
-+rules remain authoritative; priority does not impose an order between unrelated
-+keys. Within the existing alias-order contract, a failed candidate retains C.
-+
-+DedupJoin probes snapshot keys, observes releases, filters rejected candidates
-+and renders diagnostics for real candidates. Compiler/operator-copy and
-+pipeline serialization preserve the auxiliary-row column reference, including
-+parallel copies; spill rebuild carries the same metadata and row roles. A
-+selection mapping used for warnings must refer to the retained physical build
-+row after compaction, including NULL keys and batch boundaries.
-+
-+## Alternatives and bounds
-+
-+Keeping per-alias snapshot checks cannot establish the accepted-image invariant.
-+Depending on UNION arrival order is invalid when inputs execute concurrently.
-+A separate global arbiter or new storage/state machine duplicates the existing
-+materialized alias stages and introduces additional ownership and failure
-+contracts. Arbitration inside the existing build/probe path keeps one owner for
-+each part of the work and requires no new long-lived service or persistent
-+format.
-+
-+For N retained rows, A affected alias stages and I affected unique
-+indexes, each index stage can materialize up to approximately N candidate,
-+N reservation and N release rows. It must also probe the snapshot index: if
-+M is the number of index rows examined per stage, work can scale with
-+A * I * (N + M), and M may be much larger than the affected-row set. The
-+existing base also scans/probes the index; the comparison must measure the
-+whole stage. Transient candidate state scales with N and carried key/row width,
-+plus the existing hash, selection and spill costs. HashBuild owns and accounts
-+
+@@ -78,8 +78,6 @@ node-*-data/
+ pkg/catalog/test/
+ pkg/config/system_vars.go
+ pkg/config/system_vars_test.go
+-pkg/udf/pythonservice/pyserver/udf/
+-pkg/udf/pythonservice/pyserver/__pycache__/
+ path_to_file
+ tester-log/
+ ut-report/
 ```
 
-**File**: `pkg/sql/colexec/dedupjoin/join.go` (modified, +50/-2)
+**File**: `.golangci.yml` (modified, +14/-7)
 ```diff
-@@ -469,14 +469,15 @@ func (dedupJoin *DedupJoin) build(analyzer process.Analyzer, proc *process.Proce
- 				SpillThreshold:            ctr.spillThreshold,
- 				AdaptiveMemory:            ctr.autoSpill,
- 				NeedsBuildForEmptyProbe:   true,
--				NeedAllocateSels:          dedupJoin.OnDuplicateAction == plan.Node_UPDATE,
-+				NeedAllocateSels:          dedupJoin.OnDuplicateAction == plan.Node_UPDATE || dedupJoin.OnDuplicateAction == plan.Node_IGNORE,
- 				NeedBatches:               true,
- 				IsDedup:                   true,
- 				OnDuplicateAction:         dedupJoin.OnDuplicateAction,
- 				DedupBuildKeepLast:        dedupJoin.DedupBuildKeepLast,
- 				DedupColName:              dedupJoin.DedupColName,
- 				DedupColTypes:             dedupJoin.DedupColTypes,
- 				DedupKeyExprs:             dedupJoin.DedupKeyExprs,
-+				AuxiliaryRowIdColIdx:      dedupJoin.AuxiliaryRowIdColIdx,
- 				DelColIdx:                 dedupJoin.DelColIdx,
- 				DedupDeleteMarkerColIdx:   dedupJoin.DedupDeleteMarkerColIdx,
- 				DedupDeleteKeepColIdxList: dedupJoin.DedupDeleteKeepColIdxList,
-@@ -2136,6 +2137,15 @@ func (ctr *container) probe(bat *batch.Batch, ap *DedupJoin, proc *process.Proce
- 		if !warningsEnabled {
- 			return
- 		}
-+		suppressed, err := ctr.duplicateWarningSuppressed(ap, proc, group)
-+		if err != nil {
-+			// Diagnostics are optional; never turn IGNORE into a statement error.
-+			duplicateWarnings.AddCount()
-+			return
-+		}
-+		if suppressed {
-+			return
-+		}
- 		if !duplicateWarnings.NeedsDiagnostic() {
- 			duplicateWarnings.AddCount()
- 			return
-@@ -2361,6 +2371,44 @@ func (dedupJoin *DedupJoin) resetRBat() error {
- 	return nil
+@@ -35,20 +35,27 @@ linters:
+             - $all
+             - '!$test'
+             - '!pkg/iceberg/adapter/iceberggo/**/*.go'
+-            # Arrow IPC is isolated to the ingestion bridge and its external
+-            # scan reader. Keep the dependency out of all other production
+-            # packages, including the Iceberg-facing layers.
++          deny:
++            - pkg: github.com/apache/iceberg-go
++              desc: Iceberg dependency must stay behind pkg/iceberg/adapter/iceberggo
++        arrow-boundary:
++          list-mode: lax
++          files:
++            - $all
++            - '!$test'
++            - '!pkg/iceberg/adapter/iceberggo/**/*.go'
++            # Arrow belongs to the ingestion and external UDF boundaries.
++            # These owners do not also receive permission to import Iceberg.
+             - '!**/pkg/container/arrowbridge/*.go'
+             - '!**/pkg/sql/colexec/external/arrowio/*.go'
+             - '!**/pkg/sql/colexec/external/reader_arrow.go'
+             - '!**/pkg/sql/compile/compile.go'
++            - '!**/pkg/udf/python/*.go'
+           deny:
+-            - pkg: github.com/apache/iceberg-go
+-              desc: Iceberg dependency must stay behind pkg/iceberg/adapter/iceberggo
+             - pkg: github.com/apache/arrow-go
+-              desc: Arrow dependency must not leak outside the Iceberg adapter
++              desc: Arrow dependency must stay behind an approved Arrow owner
+             - pkg: github.com/apache/arrow/go
+-              desc: Arrow dependency must not leak outside the Iceberg adapter
++              desc: Arrow dependency must stay behind an approved Arrow owner
+     govet:
+       disable:
+         - fieldalignment
+```
+
+**File**: `cmd/mo-service/config.go` (modified, +14/-5)
+```diff
+@@ -44,7 +44,7 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/perfcounter"
+ 	"github.com/matrixorigin/matrixone/pkg/proxy"
+ 	"github.com/matrixorigin/matrixone/pkg/tnservice"
+-	"github.com/matrixorigin/matrixone/pkg/udf/pythonservice"
++	"github.com/matrixorigin/matrixone/pkg/udf/python"
+ 	"github.com/matrixorigin/matrixone/pkg/util/debug/goroutine"
+ 	tomlutil "github.com/matrixorigin/matrixone/pkg/util/toml"
+ 	"github.com/matrixorigin/matrixone/pkg/version"
+@@ -117,8 +117,10 @@ type Config struct {
+ 	CN cnservice.Config `toml:"cn"`
+ 	// ProxyConfig is the config of proxy.
+ 	ProxyConfig proxy.Config `toml:"proxy"`
+-	// PythonUdfServerConfig is the config of python udf server
+-	PythonUdfServerConfig pythonservice.Config `toml:"python-udf-server"`
++	// PythonUdfWorkerConfig is the config of the Python UDF worker.
++	PythonUdfWorkerConfig python.Config `toml:"python-udf-worker"`
++	// Released manifests used this role for the retired Python server.
++	legacyPythonUdfServer bool
+ 	// Observability parameters for the metric/trace
+ 	Observability config.ObservabilityParameters `toml:"observability"`
+ 
+@@ -194,7 +196,14 @@ func parseFromString(data string, cfg any) error {
+ 	if err != nil {
+ 		return err
+ 	}
+-	return cnservice.ValidateSiriusConfigKeys(metadata)
++	if err := cnservice.ValidateSiriusConfigKeys(metadata); err != nil {
++		return err
++	}
++	if serviceConfig, ok := cfg.(*Config); ok {
++		serviceConfig.legacyPythonUdfServer =
++			metadata.IsDefined("python-udf-server") && !metadata.IsDefined("python-udf-worker")
++	}
++	return nil
  }
  
-+func (ctr *container) duplicateWarningSuppressed(ap *DedupJoin, proc *process.Process, group uint64) (bool, error) {
-+	if ap.AuxiliaryRowIdColIdx == 0 {
-+		return false, nil
-+	}
-+	colIdx := ap.AuxiliaryRowIdColIdx - 1
-+	checkBatchRow := func(bat *batch.Batch, row int) (bool, error) {
-+		if row < 0 {
-+			return false, moerr.NewInternalError(proc.Ctx, "negative duplicate diagnostic row")
-+		}
-+		if bat == nil || row >= bat.RowCount() {
-+			return false, moerr.NewInternalError(proc.Ctx, "invalid duplicate warning suppression row")
-+		}
-+		if colIdx < 0 || int(colIdx) >= len(bat.Vecs) {
-+			return false, moerr.NewInternalError(proc.Ctx, "invalid duplicate warning suppression column")
-+		}
-+		return bat.Vecs[colIdx].IsNull(uint64(row)), nil
-+	}
-+	checkRow := func(row int) (bool, error) {
-+		if row < 0 {
-+			return false, moerr.NewInternalError(proc.Ctx, "negative duplicate diagnostic row")
-+		}
-+		batIdx := row / colexec.DefaultBatchSize
-+		if batIdx >= len(ctr.batches) {
-+			return false, moerr.NewInternalError(proc.Ctx, "invalid duplicate warning suppression row")
-+		}
-+		return checkBatchRow(ctr.batches[batIdx], row%colexec.DefaultBatchSize)
-+	}
-+	if sels := ctr.mp.GetSels(group); len(sels) > 0 {
-+		return checkRow(int(sels[0]))
-+	}
-+	if group == 0 {
-+		return false, moerr.NewInternalError(proc.Ctx, "invalid duplicate warning suppression group")
-+	}
-+	// Marked HashBuilds always collect selections. With no explicit selections,
-+	// GroupSels.Finalize proved this identity even if trailing keys are NULL.
-+	return checkRow(int(group - 1))
+ func (c *Config) validate() error {
+@@ -564,7 +573,7 @@ func (c *Config) mustGetServiceUUID() string {
+ 	case metadata.ServiceType_PROXY:
+ 		return c.ProxyConfig.UUID
+ 	case metadata.ServiceType_PYTHON_UDF:
+-		return c.PythonUdfServerConfig.UUID
++		return c.PythonUdfWorkerConfig.UUID
+ 	}
+ 	panic("impossible")
+ }
+```
+
+**File**: `cmd/mo-service/launch_test.go` (modified, +30/-0)
+```diff
+@@ -713,6 +713,36 @@ func TestServiceClusterValidationAndErrors(t *testing.T) {
+ 	}
+ }
+ 
++func TestLaunchSkipsReleasedPythonServerRole(t *testing.T) {
++	setLaunchTestHooks(t)
++	// v4.2.6, etc/launch-with-python-udf-server/python-udf-server.toml.
++	const legacy = `service-type = "PYTHON_UDF"
++
++[python-udf-server]
++uuid = "dd1dccb4-4d3c-41f8-b482-5251dc7a41b2"
++address = "127.0.0.1:50051"
++path = "pkg/udf/pythonservice/pyserver"
++`
++	file := writeLaunchTestFile(t, "python-udf-server.toml", legacy)
++	serviceLifecycle = newServiceSupervisor()
++	launchStartService = startService
++	require.NoError(t, startPythonUdfServiceCluster(t.Context(), []string{file}, nil, nil))
++	serviceLifecycle.pythonWorkerRequired = true
++	dedicated := NewConfig()
++	require.NoError(t, parseConfigFromFile(file, dedicated))
++	require.ErrorContains(t, startService(t.Context(), dedicated, nil, nil), "use [python-udf-worker]")
++
++	// An explicit replacement block takes precedence in a migrated file.
++	cfg := NewConfig()
++	require.NoError(t, parseFromString(legacy+`
++[python-udf-worker]
++address = "127.0.0.1:50052"
++path = "pkg/udf/python/worker"
++`, cfg))
++	require.False(t, cfg.legacyPythonUdfServer)
++	require.Equal(t, "127.0.0.1:50052", cfg.PythonUdfWorkerConfig.Address)
 +}
 +
- func (ctr *container) formatDuplicateEntry(ap *DedupJoin, proc *process.Process, probeRow int, group uint64) (string, error) {
- 	if len(ap.DedupKeyExprs) == 0 {
- 		return colexec.FormatDedupEntry(ctr.vecs[0], probeRow, ap.DedupColName, ap.DedupColTypes)
-@@ -2372,7 +2420,7 @@ func (ctr *container) formatDuplicateEntry(ap *DedupJoin, proc *process.Process,
- 	if sels := ctr.mp.GetSels(group); len(sels) > 0 {
- 		return render(int(sels[0]))
- 	}
--	if ctr.mp.GetGroupCount() == uint64(ctr.batchRowCount) {
-+	if ap.AuxiliaryRowIdColIdx > 0 || ctr.mp.GetGroupCount() == uint64(ctr.batchRowCount) {
- 		return render(int(group - 1))
- 	}
- 	// Compact maps omit row selections. NULL keys do not get a bucket, so a
+ func TestLaunchRejectsMisclassifiedServiceConfigs(t *testing.T) {
+ 	setLaunchTestHooks(t)
+ 	started := make([]metadata.ServiceType, 0, 2)
 ```
 
-**File**: `pkg/sql/colexec/dedupjoin/key_contract_test.go` (modified, +125/-0)
+**File**: `cmd/mo-service/lifecycle.go` (modified, +4/-0)
 ```diff
-@@ -50,6 +50,131 @@ func TestDedupJoinAllocationSiteLedger(t *testing.T) {
- 	require.Equal(t, uint8(113), uint8(dedupJoinAllocationSiteResultGrouping))
+@@ -65,6 +65,10 @@ type serviceRoleState struct {
+ type serviceSupervisor struct {
+ 	roles [serviceRoleCount]serviceRoleState
+ 
++	// Set before any role starts. A Python-only process must exit on worker
++	// failure so its process supervisor can restart it.
++	pythonWorkerRequired bool
++
+ 	shutdownOnce       sync.Once
+ 	shutdownErr        error
+ 	dynamicCleanupOnce sync.Once
+```
+
+**File**: `cmd/mo-service/lifecycle_test.go` (modified, +124/-0)
+```diff
+@@ -18,12 +18,14 @@ import (
+ 	"context"
+ 	"errors"
+ 	"os"
++	"path/filepath"
+ 	"sync"
+ 	"syscall"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/common/stopper"
++	"github.com/matrixorigin/matrixone/pkg/udf/python"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -55,6 +57,128 @@ func TestServiceSupervisorStopsRolesInDependencyOrder(t *testing.T) {
+ 	require.Equal(t, roles, stopped)
  }
  
-+func TestDedupJoinAuxiliaryArbitration(t *testing.T) {
-+	for _, mode := range []dedupKeyContractMode{
-+		{name: "resident"},
-+		{name: "spill", shuffle: true, spillThreshold: hashmap.UnitLimit + 1, wantInitialSpill: true},
-+		{name: "re-spill", shuffle: true, spillThreshold: 2, wantInitialSpill: true, wantReSpill: true},
++func TestManagedPythonWorkerExitDoesNotFailServiceSupervisor(t *testing.T) {
++	for _, exit := range []string{"0", "17"} {
++		t.Run(exit, func(t *testing.T) {
++			dir := t.TempDir()
++			require.NoError(t, os.WriteFile(filepath.Join(dir, "worker.py"), []byte("exit "+exit+"\n"), 0600))
++			lifecycle := newServiceSupervisor()
++			tasks := stopper.NewStopper("worker-exit-test")
++			t.Cleanup(tasks.Stop)
++			require.NoError(t, startManagedPythonWorker(python.Config{
++				Address: "127.0.0.1:0", Path: dir, Python: "/bin/sh",
++			}, tasks, lifecycle))
++
++			done := make(chan struct{})
++			go func() {
++				lifecycle.roles[serviceRolePython].wg.Wait()
++				close(done)
++			}()
++			select {
++			case <-done:
++			case <-time.After(5 * time.Second):
++				t.Fatal("Python worker role did not finish")
++			}
++			select {
++			case err := <-lifecycle.failureC():
++				t.Fatalf("worker exit delivered a database service failure: %v", err)
++			default:
++			}
++			require.NoError(t, lifecycle.stopRole(t.Context(), serviceRolePython))
++		})
++	}
++}
++
++func TestManagedPythonWorkerStartupFailureIsIsolated(t *testing.T) {
++	dir := t.TempDir()
++	require.NoError(t, os.WriteFile(filepath.Join(dir, "worker.py"), nil, 0600))
++	for _, tc := range []struct {
++		name string
++		cfg  python.Config
++	}{
++		{name: "invalid config"},
++		{name: "missing interpreter", cfg: python.Config{
++			Address: "127.0.0.1:0", Path: dir, Python: filepath.Join(dir, "missing-python"),
++		}},
 +	} {
-+		for _, reservationFirst := range []bool{false, true} {
-+			t.Run(mode.name+"/reservationFirst="+strconv.FormatBool(reservationFirst), func(t *testing.T) {
-+				proc, ctrl := newCaptureTestProc(t)
-+				defer ctrl.Finish()
-+				proc.Base.Lim.Size = 8 << 20
-+				proc.Base.Lim.SpillSize = 64 << 20
-+				session := &dedupJoinWarningSession{}
-+				proc.Session = session
-+				proc.SetStmtProfile(&process.StmtProfile{})
-+				proc.GetStmtProfile().SetStatementRuntimeProfile("Update", "DML", true)
-+				var join *DedupJoin
-+				var build *hashbuild.HashBuild
-+				buildBat, probeBat := batch.NewWithSize(4), batch.NewWithSize(1)
-+				defer func() {
-+					if join != nil {
-+						join.Free(proc, false, nil)
-+					}
-+					if build != nil {
-+						build.Free(proc, false, nil)
-+					}
-+					buildBat.Clean(proc.Mp())
-+					probeBat.Clean(proc.Mp())
-+					budget, err := proc.GetExecutionResourceBudget()
-+					var used, disk, descriptors uint64
-+					if err == nil {
-+						used, disk, descriptors = budget.Used(), budget.SpillDiskUsed(), budget.SpillFDUsed()
-+					}
-+					proc.Free()
-+					require.NoError(t, err)
-+					require.Zero(t, used)
-+					require.Zero(t, disk)
-+					require.Zero(t, descriptors)
-+					require.Zero(t, proc.Mp().CurrNB())
-+				}()
-+				intType, boolType := types.T_int32.ToType(), types.T_bool.ToType()
-+				rightTypes := []types.Type{intType, intType, boolType, intType}
-+				for i, typ := range rightTypes {
-+					buildBat.Vecs[i] = vector.NewVec(typ)
-+				}
-+				probeBat.Vecs[0] = vector.NewVec(intType)
-+				appendBuild := func(key, previous, id int32, auxiliary, release bool) {
-+					require.NoError(t, vector.AppendFixed(buildBat.Vecs[0], key, false, proc.Mp()))
-+					require.NoError(t, vector.AppendFixed(buildBat.Vecs[1], previous, auxiliary && !release, proc.Mp()))
-+					require.NoError(t, vector.AppendFixed(buildBat.Vecs[2], release, false, proc.Mp()))
-+					require.NoError(t, vector.AppendFixed(buildBat.Vecs[3], id, auxiliary, proc.Mp()))
-+				}
-+				// These unchanged, rejected rows retain reservations and exercise
-+				// snapshot diagnostic suppression in every materialized partition.
-+				for i := 0; i < hashmap.UnitLimit; i++ {
-+					key := int32(1000 + i)
-+					appendBuild(key, 0, 0, true, false)
-+					require.NoError(t, vector.AppendFixed(probeBat.Vecs[0], key, false, proc.Mp()))
-+				}
-+				if reservationFirst {
-+					appendBuild(30, 0, 0, true, false)
-+				}
-+				appendBuild(30, 20, 2, false, false) // B cannot steal A's accepted 30.
-+				if !reservationFirst {
-+					appendBuild(30, 0, 0, true, false)
-+				}
-+				appendBuild(20, 0, 0, true, false)
-+				appendBuild(10, 10, 0, true, true)   // S=10 was released when A accepted 30.
-+				appendBuild(10, 30, 1, false, false) // A may reclaim the now-unowned 10.
-+				buildBat.SetRowCount(buildBat.Vecs[0].Length())
-+				for _, key := range []int32{10, 20} {
-+					require.NoError(t, vector.AppendFixed(probeBat.Vecs[0], key, false, proc.Mp()))
-+				}
-+				probeBat.SetRowCount(probeBat.Vecs[0].Length())
-+				if mode.wantReSpill {
-+					requireDedupTargetBucketReSpills(t, buildBat.Vecs[0], buildBat.RowCount()-1, mode.spillThreshold)
-+				}
-+				conditions := [][]*plan.Expr{{newExpr(0, intType)}, {newExpr(0, intType)}}
-+				const mapTag = 328270
-+				join = &DedupJoin{LeftTypes: []types.Type{intType}, RightTypes: rightTypes, Conditions: conditions,
-+					Result:            []colexec.ResultPos{colexec.NewResultPos(1, 3), colexec.NewResultPos(1, 0)},
-+					OnDuplicateAction: plan.Node_IGNORE, DelColIdx: 1, DedupDeleteMarkerColIdx: 2, AuxiliaryRowIdColIdx: 4,
-+					DedupColName: "uk", DedupColTypes: []plan.Type{conditions[0][0].Typ},
-+					IsShuffle: mode.shuffle, SpillThreshold: mode.spillThreshold, JoinMapTag: mapTag}
-+				build = &hashbuild.HashBuild{NeedHashMap: true, NeedBatches: true, NeedAllocateSels: true, Conditions: conditions[1],
-+					IsDedup: true, OnDuplicateAction: plan.Node_IGNORE, DelColIdx: 1, DedupDeleteMarkerColIdx: 2, AuxiliaryRowIdColIdx: 4,
-+					DedupColName: join.DedupColName, DedupColTypes: join.DedupColTypes,
-+					IsShuffle: mode.shuffle, SpillThreshold: mode.spillThreshold, JoinMapTag: mapTag, JoinMapRefCnt: 1}
-+				if mode.shuffle {
-+					build.RuntimeFilterSpec = &plan.RuntimeFilterSpec{Tag: mapTag + 1}
-+				}
-+				join.AppendChild(colexec.NewMockOperator().WithBatchs([]*batch.Batch{probeBat}))
-+				build.AppendChild(colexec.NewMockOperator().WithBatchs([]*batch.Batch{buildBat}))
-+				installTestAllocation(t, join, build)
-+				spillMetric := metricv
++		t.Run(tc.name, func(t *testing.T) {
++			lifecycle := newServiceSupervisor()
++			tasks := stopper.NewStopper("worker-startup-test")
++			t.Cleanup(tasks.Stop)
++			require.NoError(t, startManagedPythonWorker(tc.cfg, tasks, lifecycle))
++
++			ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
++			defer cancel()
++			require.NoError(t, lifecycle.stopRole(ctx, serviceRolePython))
++			select {
++			case err := <-lifecycle.failureC():
++				t.Fatalf("worker startup delivered a database service failure: %v", err)
++			default:
++			}
++		})
++	}
++}
++
++func TestDedicatedPythonWorkerFailureWakesShutdown(t *testing.T) {
++	setLaunchTestHooks(t)
++	oldProfileInterval := *profileInterval
++	t.Cleanup(func() { *profileInterval = oldProfileInterval })
++	*profileInterval = 0
++	launchSleep = func(time.Duration) {}
++
++	dir := t.TempDir()
++	require.NoError(t, os.WriteFile(filepath.Join(dir, "worker.py"), []byte("exit 17\n"), 0600))
++	for _, tc := range []struct {
++		name string
++		cfg  python.Config
++		want string
++	}{
++		{
++			name: "invalid config",
++			want: "invalid Python UDF worker configuration: internal error: missing python udf address",
++		},
++		{
++			name: "missing interpreter",
++			cfg: python.Config{
++				Address: "127.0.0.1:0", Path: dir, Python: filepath.Join(dir, "missing-python"),
++			},
++			want: "failed to start Python UDF worker",
++		},
++		{
++			name: "unexpected exit",
++			cfg:  python.Config{Address: "127.0.0.1:0", Path: dir, Python: "/bin/sh"},
++			want: "Python UDF worker exited unexpectedly: exit status 17",
++		},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			lifecycle := newServiceSupervisor()
++			lifecycle.pythonWorkerRequired = true
++			serviceLifecycle = lifecycle
++			tasks := stopper.NewStopper("dedicated-python-worker-test")
++			t.Cleanup(tasks.Stop)
++			require.NoError(t, startManagedPythonWorker(tc.cfg, tasks, lifecycle))
++
++			shutdownC := make(chan struct{})
++			done := make(chan struct{})
++			var shutdownErr error
++			go func() {
++				shutdownErr = waitSignalToStop(tasks, shutdownC)
++				close(done)
++			}()
++			t.Cleanup(func() {
++				close(shutdownC)
++				<-done
++			})
++			select {
++			case <-done:
++				require.ErrorContains(t, shutdownErr, tc.want)
++			case <-time.After(5 * time.Second):
++				t.Fatal("dedicated Python worker failure did not wake shutdown")
++			}
++		})
++	}
++}
++
+ func TestServiceSupervisorKeepsPythonProviderUntilCNDrains(t *testing.T) {
+ 	s := newServiceSupervisor()
+ 	var mu sync.Mutex
 ```
 
-**File**: `pkg/sql/colexec/dedupjoin/types.go` (modified, +9/-6)
+**File**: `cmd/mo-service/main.go` (modified, +48/-14)
 ```diff
-@@ -329,12 +329,15 @@ type DedupJoin struct {
- 	NumCPU   uint64
- 	IsMerger bool
+@@ -53,7 +53,7 @@ import (
+ 	qclient "github.com/matrixorigin/matrixone/pkg/queryservice/client"
+ 	"github.com/matrixorigin/matrixone/pkg/sql/compile"
+ 	"github.com/matrixorigin/matrixone/pkg/tnservice"
+-	"github.com/matrixorigin/matrixone/pkg/udf/pythonservice"
++	"github.com/matrixorigin/matrixone/pkg/udf/python"
+ 	"github.com/matrixorigin/matrixone/pkg/util/debug/goroutine"
+ 	"github.com/matrixorigin/matrixone/pkg/util/export"
+ 	"github.com/matrixorigin/matrixone/pkg/util/export/table"
+@@ -147,6 +147,7 @@ func main() {
+ 	if *launchFile != "" {
+ 		startErr = startCluster(ctx, stopper, shutdownC)
+ 	} else if *configFile != "" {
++		serviceLifecycle.pythonWorkerRequired = true
+ 		cfg := NewConfig()
+ 		if err := parseConfigFromFile(*configFile, cfg); err != nil {
+ 			startErr = fmt.Errorf("failed to parse config from %s, error: %w", *configFile, err)
+@@ -264,6 +265,14 @@ func startService(
+ 	if err != nil {
+ 		return err
+ 	}
++	if st == metadata.ServiceType_PYTHON_UDF && cfg.legacyPythonUdfServer {
++		const migration = "retired [python-udf-server] role; use [python-udf-worker] and explicitly enable the CN Python UDF client to use Arrow Flight"
++		if serviceLifecycle != nil && serviceLifecycle.pythonWorkerRequired {
++			return errors.New(migration)
++		}
++		logutil.GetGlobalLogger().Warn("skipping " + migration)
++		return nil
++	}
  
--	OnDuplicateAction         plan.Node_OnDuplicateAction
--	DedupBuildKeepLast        bool
--	DedupColName              string
--	SpillThreshold            int64
--	DedupColTypes             []plan.Type
--	DedupKeyExprs             []*plan.Expr
-+	OnDuplicateAction  plan.Node_OnDuplicateAction
-+	DedupBuildKeepLast bool
-+	DedupColName       string
-+	SpillThreshold     int64
-+	DedupColTypes      []plan.Type
-+	DedupKeyExprs      []*plan.Expr
-+	// AuxiliaryRowIdColIdx is a one-based build-side row-ID column. NULL marks
-+	// reservation/release evidence for IGNORE; zero disables that contract.
-+	AuxiliaryRowIdColIdx      int32
- 	DelColIdx                 int32
- 	DedupDeleteMarkerColIdx   int32
- 	DedupDeleteKeepColIdxList []int32
+ 	setupServiceRuntime(cfg, stopper)
+ 
+@@ -316,7 +325,7 @@ func startService(
+ 	case metadata.ServiceType_LOG:
+ 		return startLogService(cfg, stopper, fs, shutdownC)
+ 	case metadata.ServiceType_PYTHON_UDF:
+-		return startPythonUdfService(cfg, stopper)
++		return startPythonUdfWorker(cfg, stopper)
+ 	default:
+ 		panic("unknown service type")
+ 	}
+@@ -773,12 +782,16 @@ func waitProxyFileServiceRetry(ctx context.Context, delay time.Duration) error {
+ 	}
+ }
+ 
+-// startPythonUdfService starts the python udf service.
+-func startPythonUdfService(cfg *Config, stopper *stopper.Stopper) error {
++// startPythonUdfWorker starts the Python UDF worker.
++func startPythonUdfWorker(cfg *Config, stopper *stopper.Stopper) error {
+ 	if err := waitClusterCondition(cfg.mustGetServiceUUID(), cfg.HAKeeperClient, waitHAKeeperRunning); err != nil {
+ 		return err
+ 	}
+-	finish := serviceLifecycle.registerTask(serviceRolePython)
++	return startManagedPythonWorker(cfg.PythonUdfWorkerConfig, stopper, serviceLifecycle)
++}
++
++func startManagedPythonWorker(cfg python.Config, stopper *stopper.Stopper, lifecycle *serviceSupervisor) error {
++	finish := lifecycle.registerTask(serviceRolePython)
+ 	serviceWG.Add(1)
+ 	var taskDone sync.Once
+ 	finishTask := func(err error) {
+@@ -787,22 +800,43 @@ func startPythonUdfService(cfg *Config, stopper *stopper.Stopper) error {
+ 			finish(err)
+ 		})
+ 	}
+-	err := stopper.RunNamedTask("python-udf-service", func(ctx context.Context) {
++	err := stopper.RunNamedTask("python-udf-worker", func(ctx context.Context) {
+ 		var closeErr error
+ 		defer func() { finishTask(closeErr) }()
+-		roleCtx, cancelRole := serviceLifecycle.roleContext(ctx, serviceRolePython)
++		roleCtx, cancelRole := lifecycle.roleContext(ctx, serviceRolePython)
+ 		defer cancelRole()
+-		s, err := pythonservice.NewService(cfg.PythonUdfServerConfig)
++		reportFailure := func(message string, err error) {
++			logutil.GetGlobalLogger().Error(message, zap.Error(err))
++			if lifecycle != nil && lifecycle.pythonWorkerRequired && roleCtx.Err() == nil {
++				lifecycle.notifyFatal(fmt.Errorf("%s: %w", message, err))
++			}
++		}
++		s, err := python.NewSupervisor(cfg)
+ 		if err != nil {
+-			panic(err)
++			reportFailure("invalid Python UDF worker configuration", err)
++			return
+ 		}
+ 		if err := s.Start(); err != nil {
+-			panic(err)
++			reportFailure("failed to start Python UDF worker", err)
++			return
+ 		}
+-		<-roleCtx.Done()
+-		if err := s.Close(); err != nil {
+-			closeErr = err
+-			logutil.GetGlobalLogger().Error("failed to close python udf service", zap.Error(err))
++		workerDone := s.Done()
++		select {
++		case <-roleCtx.Done():
++			if err := s.Close(); err != nil {
++				closeErr = err
++				logutil.GetGlobalLogger().Error("failed to close Python UDF worker", zap.Error(err))
++			}
++		case <-workerDone:
++			// The supervisor has reaped the worker. A shutdown-driven exit
++			// is already handled by the role's lifecycle.
++			if roleCtx.Err() == nil {
++				workerErr := s.Err()
++				if workerErr == nil {
++					workerErr = errors.New("process exited without an error")
++				}
++				reportFailure("Python UDF worker exited unexpectedly", workerErr)
++			}
+ 		}
+ 	})
+ 	if err != nil {
 ```
 
-**File**: `pkg/sql/colexec/dedupjoin/warning_suppression_test.go` (added, +143/-0)
+**File**: `cmd/mo-service/toml_fileservice_test.go` (modified, +31/-0)
 ```diff
-@@ -0,0 +1,143 @@
+@@ -21,6 +21,9 @@ import (
+ 	"strings"
+ 	"testing"
+ 
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/fileservice"
++	"github.com/matrixorigin/matrixone/pkg/udf/python"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -30,6 +33,34 @@ var knownFileServiceBackends = map[string]bool{
+ 	"DISK-ETL": true, "DISK-TMP": true, "S3": true, "MINIO": true,
+ }
+ 
++func TestBundledPythonWorkerLaunchPublishesArtifacts(t *testing.T) {
++	configPath := filepath.Join("..", "..", "etc", "launch-with-python-udf-worker", "cn.toml")
++	data, err := os.ReadFile(configPath)
++	require.NoError(t, err)
++	var cfg Config
++	require.NoError(t, parseFromString(string(data), &cfg))
++
++	for _, config := range cfg.FileServices {
++		if config.Name != defines.SharedFileServiceName {
++			continue
++		}
++		config.DataDir = t.TempDir()
++		fs, err := fileservice.NewFileService(t.Context(), config, nil)
++		require.NoError(t, err)
++		t.Cleanup(func() { fs.Close(t.Context()) })
++		store, err := python.NewFileArtifactStore(fs, python.DefaultMaxArtifactBytes)
++		require.NoError(t, err)
++		const source = "def f(ctx): return 1"
++		digest, err := store.Publish(t.Context(), 7, "f", source)
++		require.NoError(t, err)
++		resolved, err := store.Resolve(t.Context(), 7, "f", digest)
++		require.NoError(t, err)
++		require.Equal(t, source, resolved)
++		return
++	}
++	t.Fatal("bundled Python worker launch has no shared file service")
++}
++
+ func launchTomlFiles(t *testing.T, patterns ...string) []string {
+ 	root := filepath.Join("..", "..")
+ 	var files []string
+```
+
+---
+
+### Incident Patch 2: `a843ded3` (2026-11-28)
+**Commit Message**: fix(frontend): invalidate parent DELETE plans when foreign key checks change (#33409)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #33190
+
+## What this PR does / why we need it:
+
+A cached parent-table DELETE can retain the foreign-key behavior that
+was active when the plan was built. A literal prepared DELETE can
+therefore remove a referenced parent after checks are enabled or reject
+a deletion after checks are disabled.
+
+When the normalized session value of `foreign_key_checks` changes,
+invalidate cached DELETEs whose target tables have incoming foreign
+keys. Prepared handles rebuild through the existing EXECUTE path.
+Ordinary cache entries remain intact until the cache can release their
+ASTs. The DELETE execution path retains its existing cache policy.
+
+### Validation
+
+- Rebased onto main at `f1063bd47d0045d49a2a56cf4d8a089b842ee011`.
+- Extended `foreign_key/issue_26892.sql` with separate parent rows for
+OFF→ON and ON→OFF so the first failure cannot mask the reverse case. The
+regression checks the parent row sets, surviving child rows, 
+
+**File**: `pkg/frontend/plan_cache.go` (modified, +24/-1)
+```diff
+@@ -16,10 +16,11 @@ package frontend
+ 
+ import (
+ 	"container/list"
++	"slices"
+ 
++	"github.com/matrixorigin/matrixone/pkg/pb/plan"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/timestamp"
+ 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
+-	"github.com/matrixorigin/matrixone/pkg/sql/plan"
+ )
+ 
+ type cachedPlan struct {
+@@ -300,6 +301,28 @@ func (pc *planCache) invalidatePlanGeneration(
+ 	cached.invalid = true
+ }
+ 
++func (pc *planCache) invalidateForeignKeyDeletePlans() {
++	for _, element := range pc.cachePool {
++		cached := element.Value.(*cachedPlan)
++		if !cached.invalid && slices.ContainsFunc(cached.plans, deletePlanDependsOnForeignKeyChecks) {
++			// A running wrapper may still borrow this entry's AST.
++			cached.invalid = true
++		}
++	}
++}
++
++func deletePlanDependsOnForeignKeyChecks(p *plan.Plan) bool {
++	query := p.GetQuery()
++	if query.GetStmtType() != plan.Query_DELETE {
++		return false
++	}
++	// Legacy DELETE retains the target definition even when checks are OFF
++	// and the plan can truncate instead of checking referencing rows.
++	return slices.ContainsFunc(query.Nodes, func(node *plan.Node) bool {
++		return len(node.GetDeleteCtx().GetTableDef().GetRefChildTbls()) != 0
++	})
++}
++
+ func (pc *planCache) clean() {
+ 	if pc.lruList == nil {
+ 		pc.cachePool = nil
+```
+
+**File**: `pkg/frontend/plan_cache_test.go` (modified, +47/-0)
+```diff
+@@ -624,6 +624,53 @@ func TestSessionDivPrecisionIncrementChangeClearsPlanCache(t *testing.T) {
+ 	require.Equal(t, 1, stmt.freed)
+ }
+ 
++func TestSessionForeignKeyChecksInvalidatesParentDeletePlans(t *testing.T) {
++	ctx := defines.AttachAccountId(t.Context(), catalog.System_Account)
++	setPu("", config.NewParameterUnit(&config.FrontendParameters{}, nil, nil, nil))
++	ses := NewSession(ctx, "", &testMysqlWriter{}, nil)
++
++	deleteNode := func(refChildren ...uint64) *plan.Node {
++		return &plan.Node{
++			NodeType:  pbplan.Node_DELETE,
++			DeleteCtx: &pbplan.DeleteCtx{TableDef: &plan.TableDef{RefChildTbls: refChildren}},
++		}
++	}
++	deleteQuery := func(nodes ...*plan.Node) *plan.Plan {
++		return &plan.Plan{Plan: &pbplan.Plan_Query{Query: &plan.Query{
++			StmtType: pbplan.Query_DELETE,
++			Nodes:    nodes,
++		}}}
++	}
++	parent, plain := deleteQuery(deleteNode(), deleteNode(2)), deleteQuery(deleteNode())
++	cachedParent, cachedPlain := &trackedStatement{}, &trackedStatement{}
++	ses.cachePlan("parent", []tree.Statement{&trackedStatement{}, cachedParent}, []*plan.Plan{plain, parent})
++	ses.cachePlan("plain", []tree.Statement{cachedPlain}, []*plan.Plan{plain})
++	prepare := func(name string, p *plan.Plan) *PrepareStmt {
++		stmt := &PrepareStmt{Name: name, PreparePlan: &plan.Plan{Plan: &pbplan.Plan_Dcl{Dcl: &pbplan.DataControl{
++			Control: &pbplan.DataControl_Prepare{Prepare: &pbplan.Prepare{Plan: p}},
++		}}}}
++		require.NoError(t, ses.SetPrepareStmt(ctx, name, stmt))
++		return stmt
++	}
++	preparedParent, preparedPlain := prepare("parent", parent), prepare("plain", plain)
++
++	// Equivalent and invalid SETs leave both warmed generations eligible.
++	require.NoError(t, ses.SetSessionSysVar(ctx, "FOREIGN_KEY_CHECKS", "ON"))
++	require.Error(t, ses.SetSessionSysVar(ctx, "foreign_key_checks", "invalid"))
++	require.True(t, ses.isCached("parent"))
++	require.False(t, preparedParent.needsRebuild)
++
++	require.NoError(t, ses.SetSessionSysVar(ctx, "foreign_key_checks", 0))
++	require.True(t, preparedParent.needsRebuild)
++	require.False(t, preparedPlain.needsRebuild)
++	require.False(t, ses.isCached("parent"))
++	require.True(t, ses.isCached("plain"))
++	require.Zero(t, cachedParent.freed, "SET must leave borrowed ASTs alive")
++	require.Nil(t, ses.getCachedPlan("parent"))
++	require.Equal(t, 1, cachedParent.freed)
++	require.Zero(t, cachedPlain.freed)
++}
++
+ func TestSessionRollupAlgorithmChangeClearsPlanCache(t *testing.T) {
+ 	ctx := defines.AttachAccountId(context.Background(), catalog.System_Account)
+ 	setPu("", config.NewParameterUnit(&config.FrontendParameters{}, nil, nil, nil))
+```
+
+**File**: `pkg/frontend/session.go` (modified, +13/-0)
+```diff
+@@ -2502,6 +2502,19 @@ func (ses *Session) invalidateCachedPlans(prepared bool) {
+ 	}
+ }
+ 
++func (ses *Session) invalidateForeignKeyDeletePlans() {
++	ses.mu.Lock()
++	defer ses.mu.Unlock()
++	if ses.planCache != nil {
++		ses.planCache.invalidateForeignKeyDeletePlans()
++	}
++	for _, stmt := range ses.prepareStmts {
++		if deletePlanDependsOnForeignKeyChecks(stmt.PreparePlan.GetDcl().GetPrepare().GetPlan()) {
++			stmt.needsRebuild = true
++		}
++	}
++}
++
+ // markPreparedPlansForRollupAlgorithmChange marks prepared plan generations
+ // stale without closing their handles. The session variable is read while
+ // building the physical rollup plan, so EXECUTE must rebuild the plan after
+```
+
+**File**: `pkg/frontend/types.go` (modified, +8/-3)
+```diff
+@@ -2004,8 +2004,9 @@ func (ses *Session) setSessionSysVar(ctx context.Context, name string, val inter
+ 	planDependencyVariable := name == "sql_mode" || name == "optimizer_hints" || name == "lc_time_names" || name == "time_zone" || name == "explicit_defaults_for_timestamp" || name == "mo_pk_check_by_cn" ||
+ 		name == "fulltext2_search_df_cutoff" || name == "fulltext2_threads_search" || name == "fulltext_bloom_filter_pushdown" ||
+ 		name == "join_spill_mem" || name == "agg_spill_mem" || name == "sort_spill_mem"
++	foreignKeyChecks := name == "foreign_key_checks"
+ 	var oldPlanDependency interface{}
+-	if planDependencyVariable {
++	if planDependencyVariable || foreignKeyChecks {
+ 		oldValue, getErr := ses.GetSessionSysVar(name)
+ 		if getErr != nil {
+ 			return getErr
+@@ -2076,7 +2077,7 @@ func (ses *Session) setSessionSysVar(ctx context.Context, name string, val inter
+ 	if err == nil && name == "sql_mode" {
+ 		ses.updateSqlModeNoAutoValueOnZero(val)
+ 	}
+-	if err == nil && planDependencyVariable {
++	if err == nil && (planDependencyVariable || foreignKeyChecks) {
+ 		newValue, getErr := ses.GetSessionSysVar(name)
+ 		if getErr != nil {
+ 			return getErr
+@@ -2086,7 +2087,11 @@ func (ses *Session) setSessionSysVar(ctx context.Context, name string, val inter
+ 			return getErr
+ 		}
+ 		if oldPlanDependency != newValue {
+-			ses.invalidateCachedPlans(true)
++			if foreignKeyChecks {
++				ses.invalidateForeignKeyDeletePlans()
++			} else {
++				ses.invalidateCachedPlans(true)
++			}
+ 		}
+ 	}
+ 	if err == nil && name == "div_precision_increment" {
+```
+
+**File**: `pkg/tests/sqlintegration/prepared_delete_fk_test.go` (added, +111/-0)
+```diff
+@@ -0,0 +1,111 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2742,841 +3118,884 @@ remote codecs and spill/rebuild.
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package dedupjoin
++package sqlintegration
 +
 +import (
++	"context"
++	"database/sql"
++	"fmt"
 +	"testing"
++	"time"
 +
-+	"github.com/matrixorigin/matrixone/pkg/common/mpool"
-+	"github.com/matrixorigin/matrixone/pkg/container/batch"
-+	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/container/vector"
-+	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/colexec"
-+	"github.com/matrixorigin/matrixone/pkg/sql/colexec/hashbuild"
-+	"github.com/matrixorigin/matrixone/pkg/vm"
-+	"github.com/matrixorigin/matrixone/pkg/vm/process"
++	"github.com/go-sql-driver/mysql"
++	"github.com/matrixorigin/matrixone/pkg/embed"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestAuxiliaryWarningGroupRows(t *testing.T) {
-+	for _, prefixNull := range []bool{false, true} {
-+		name := "trailing_NULL_compact_identity"
-+		if prefixNull {
-+			name = "prefix_NULL_explicit_selections"
-+		}
-+		t.Run(name, func(t *testing.T) {
-+			proc, ctrl := newCaptureTestProc(t)
-+			defer ctrl.Finish()
-+			session := &dedupJoinWarningSession{}
-+			proc.Session = session
-+			proc.SetStmtProfile(&process.StmtProfile{})
-+			proc.GetStmtProfile().SetStatementRuntimeProfile("Update", "DML", true)
-+			buildBat, probeBat := batch.NewWithSize(4), batch.NewWithSize(1)
-+			var join *DedupJoin
-+			var build *hashbuild.HashBuild
-+			var account *mpool.AllocationAccount
-+			defer func() {
-+				if join != nil {
-+					join.Free(proc, false, nil)
-+				}
-+				if build != nil {
-+					build.Free(proc, false, nil)
-+				}
-+				buildBat.Clean(proc.Mp())
-+				probeBat.Clean(proc.Mp())
-+				proc.Free()
-+				require.Zero(t, proc.Mp().CurrNB())
-+				if account != nil {
-+					require.Zero(t, account.Snapshot().Used)
-+				}
-+			}()
-+			intType, boolType := types.T_int32.ToType(), types.T_bool.ToType()
-+			rightTypes := []types.Type{intType, intType, boolType, intType}
-+			for i, typ := range rightTypes {
-+				buildBat.Vecs[i] = vector.NewVec(typ)
-+			}
-+			probeBat.Vecs[0] = vector.NewVec(intType)
-+			appendRow := func(key, id int32, keyNull, auxiliary bool) {
-+				require.NoError(t, vector.AppendFixed(buildBat.Vecs[0], key, keyNull, proc.Mp()))
-+				require.NoError(t, vector.AppendFixed(buildBat.Vecs[1], int32(0), true, proc.Mp()))
-+				require.NoError(t, vector.AppendFixed(buildBat.Vecs[2], false, false, proc.Mp()))
-+				require.NoError(t, vector.AppendFixed(buildBat.Vecs[3], id, auxiliary, proc.Mp()))
-+			}
-+			if prefixNull {
-+				appendRow(0, 0, true, true)
-+			}
-+			appendRow(10, 1, false, false) // Conflicts with an untargeted snapshot row.
-+			appendRow(20, 2, false, false) // The only accepted real candidate.
-+			for i := 0; i < colexec.DefaultBatchSize; i++ {
-+				appendRow(int32(1000+i), 0, false, true)
-+			}
-+			if !prefixNull {
-+				appendRow(0, 0, true, true)
-+			}
-+			buildBat.SetRowCount(buildBat.Vecs[0].Length())
-+			for _, key := range []int32{10, 1000 + colexec.DefaultBatchSize - 1} {
-+				require.NoError(t, vector.AppendFixed(probeBat.Vecs[0], key, false, proc.Mp()))
-+			}
-+			probeBat.SetRowCount(2)
-+			conditions := [][]*plan.Expr{{newExpr(0, intType)}, {newExpr(0, intType)}}
-+			const mapTag = 918273
-+			join = &DedupJoin{LeftTypes: []types.Type{intType}, RightTypes: rightTypes, Conditions: conditions,
-+				Result:            []colexec.ResultPos{colexec.NewResultPos(1, 3), colexec.NewResultPos(1, 0)},
-+				OnDuplicateAction: plan.Node_IGNORE, DelColIdx: 1, DedupDeleteMarkerColIdx: 2, AuxiliaryRowIdColIdx: 4,
-+				DedupColName: "uk_named", DedupColTypes: []plan.Type{conditions[0][0].Typ},
-+				DedupKeyExprs: []*plan.Expr{newExpr(0, intType)}, JoinMapTag: mapTag}
-+			build = &hashbuild.HashBuild{NeedHashMap: true, NeedBatches: true, Conditions: conditions[1],
-+				// The marked producer owns this requirement, including direct callers.
-+				NeedAllocateSels: false, IsDedup: true, OnDuplicateAction: plan.Node_IGNORE,
-+				DelColIdx: 1, DedupDeleteMarkerColIdx: 2, AuxiliaryRowIdColIdx: 4,
-+				DedupColName: join.DedupColName, DedupColTypes: join.DedupColTypes,
-+				JoinMapTag: mapTag, JoinMapRefCnt: 1}
-+			join.AppendChild(colexec.NewMockOperator().WithBatchs([]*batch.Batch{probeBat}))
-+			build.AppendChild(colexec.NewMockOperator().WithBatchs([]*batch.Batch{buildBat}))
-+			account = installTestAllocation(t, join, build)
-+			require.NoError(t, build.Prepare(proc))
-+			require.NoError(t, join.Prepare(proc))
-+			_, err := vm.Exec(build, proc)
-+			require.NoError(t, err)
-+			result, err := vm.Exec(join, proc)
-+			require.
-```
-
-**File**: `pkg/sql/colexec/hashbuild/build.go` (modified, +1/-0)
-```diff
-@@ -105,6 +105,7 @@ func (hashBuild *HashBuild) Prepare(proc *process.Process) (err error) {
- 	hashBuild.ctr.hashmapBuilder.DedupColName = hashBuild.DedupColName
- 	hashBuild.ctr.hashmapBuilder.DedupColTypes = hashBuild.DedupColTypes
- 	hashBuild.ctr.hashmapBuilder.DedupKeyExprs = hashBuild.DedupKeyExprs
-+	hashBuild.ctr.hashmapBuilder.AuxiliaryRowIdColIdx = hashBuild.AuxiliaryRowIdColIdx
- 	hashBuild.ctr.hashmapBuilder.TrackNullKeys = hashBuild.TrackNullKeys
- 	hashBuild.ctr.hashmapBuilder.joinDiagnostic = hashBuild.JoinDiagnostic
- 	if hashBuild.JoinDiagnostic != nil {
-```
-
-**File**: `pkg/sql/colexec/hashbuild/hashmap.go` (modified, +94/-21)
-```diff
-@@ -58,6 +58,9 @@ type HashmapBuilder struct {
- 	DedupColName       string
- 	DedupColTypes      []plan.Type
- 	DedupKeyExprs      []*plan.Expr
-+	// AuxiliaryRowIdColIdx is one-based; zero disables auxiliary arbitration.
-+	// NULL identifies a reservation or release, rather than a real candidate.
-+	AuxiliaryRowIdColIdx int32
- 
- 	IgnoreRows *bitmap.Bitmap
- 
-@@ -195,6 +198,10 @@ func (hb *HashmapBuilder) Prepare(
- 	proc *process.Process,
- 	foldOwnedConstantCasts ...bool,
- ) error {
-+	if hb.AuxiliaryRowIdColIdx < 0 || hb.AuxiliaryRowIdColIdx > 0 &&
-+		(!hb.IsDedup || hb.OnDuplicateAction != plan.Node_IGNORE || delColIdx < 0 || dedupDeleteMarkerColIdx < 0) {
-+		return moerr.NewInternalError(proc.Ctx, "invalid auxiliary IGNORE arbitration metadata")
-+	}
- 	if len(hb.executors) == 0 {
- 		needDupVec := false
- 		keyWidth := 0
-@@ -501,6 +508,17 @@ func (hb *HashmapBuilder) RetainedBatchRecoverySafe() bool {
- 	return hb.retainedBatchRecoverySafe
- }
- 
-+// An auxiliary IGNORE stage protects the preceding accepted image before
-+// admitting a changed key. Releases are persistent evidence, not competitors.
-+// Without auxiliary metadata, only claimant/owner priorities are used, retaining
-+// the generic IGNORE original-key-owner rule.
-+const (
-+	ignoreReleasePriority uint8 = iota
-+	ignoreClaimPriority
-+	ignoreReservationPriority
-+	ignoreOwnerPriority
-+)
++func TestPreparedDeleteForeignKeyChecks(t *testing.T) {
++	runSQLIntegration(t, func(c embed.Cluster) {
++		cn, err := c.GetCNService(0)
++		require.NoError(t, err)
++		db, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", cn.GetServiceConfig().CN.Frontend.Port))
++		require.NoError(t, err)
++		defer db.Close()
 +
- func (hb *HashmapBuilder) buildHashmap(
- 	hashOnPK bool,
- 	needAllocateSels bool,
-@@ -509,6 +527,9 @@ func (hb *HashmapBuilder) buildHashmap(
- 	dedupBuildKeepLast bool,
- 	proc *process.Process,
- ) (retErr error) {
-+	// Auxiliary diagnostics need a physical build row for every group. Finalize
-+	// keeps explicit selections unless the mapping is the compact g -> g-1 form.
-+	needAllocateSels = needAllocateSels || hb.AuxiliaryRowIdColIdx > 0
- 	runtimeFilterRequested := needUniqueVec
- 	warningsEnabled := proc != nil && proc.GetStmtProfile() != nil &&
- 		proc.GetStmtProfile().GetStatementIgnore() && hb.IsDedup &&
-@@ -529,6 +550,17 @@ func (hb *HashmapBuilder) buildHashmap(
- 		if !warningsEnabled {
- 			return
- 		}
-+		if hb.AuxiliaryRowIdColIdx > 0 {
-+			batIdx := inputRow / colexec.DefaultBatchSize
-+			colIdx := hb.AuxiliaryRowIdColIdx - 1
-+			if batIdx < 0 || batIdx >= len(hb.Batches.Buf) || int(colIdx) >= len(hb.Batches.Buf[batIdx].Vecs) {
-+				duplicateWarnings.AddCount()
-+				return
-+			}
-+			if hb.Batches.Buf[batIdx].Vecs[colIdx].IsNull(uint64(inputRow % colexec.DefaultBatchSize)) {
-+				return
-+			}
-+		}
- 		if !duplicateWarnings.NeedsDiagnostic() {
- 			duplicateWarnings.AddCount()
- 			return
-@@ -555,6 +587,19 @@ func (hb *HashmapBuilder) buildHashmap(
- 	if hb.InputBatchRowCount == 0 {
- 		return nil
- 	}
-+	if hb.AuxiliaryRowIdColIdx > 0 {
-+		for _, bat := range hb.Batches.Buf {
-+			if int(hb.AuxiliaryRowIdColIdx) > len(bat.Vecs) ||
-+				hb.delColIdx < 0 || int(hb.delColIdx) >= len(bat.Vecs) ||
-+				hb.dedupDeleteMarkerColIdx < 0 || int(hb.dedupDeleteMarkerColIdx) >= len(bat.Vecs) ||
-+				bat.Vecs[hb.AuxiliaryRowIdColIdx-1] == nil ||
-+				bat.Vecs[hb.delColIdx] == nil ||
-+				bat.Vecs[hb.dedupDeleteMarkerColIdx] == nil ||
-+				bat.Vecs[hb.dedupDeleteMarkerColIdx].GetType().Oid != types.T_bool {
-+				return moerr.NewInternalError(proc.Ctx, "invalid auxiliary IGNORE arbitration columns")
-+			}
-+		}
-+	}
- 	dedupBuildKeepLast = dedupBuildKeepLast && hb.IsDedup && hb.OnDuplicateAction == plan.Node_FAIL
- 	defer func() {
- 		if retErr != nil {
-@@ -690,24 +735,24 @@ func (hb *HashmapBuilder) buildHashmap(
- 	}
- 
- 	var (
--		vOld                   uint64
--		cardinality            uint64
--		lastBatch              = -1
--		lastRows               []int64
--		ignoreSurvivorRows     []int64
--		ignoreSurvivorOwnsKey  []bool
--		ignoreBuildGroups      []uint64
--		ignoreBuildZvals       []int64
--		ignoreCandidateOwnsKey []bool
--		ignoreCandidateOldKey  []*vector.Vector
-+		vOld                    uint64
-+		cardinality             uint64
-+		lastBatch               = -1
-+		lastRows                []int64
-+		ignoreSurvivorRows      []int64
-+		ignoreSurvivorPriority  []uint8
-+		ignoreBuildGroups       []uint64
-+		ignoreBuildZvals        []int64
-+		ignoreCandidatePriority []uint8
-+		ignoreCandidateOldKey   []*vector.Vector
- 	)
- 	cleanupDedupScratch := func() {
- 		freeDedupSlice(hb, lastRows, proc.Mp())
- 		lastRows = nil
- 		freeDedupSlice(hb, ignoreSurvivorRows, proc.Mp())
- 		ignoreSurvivorRows = nil
--		freeDedupSlice(hb, ignoreSurvivorOwnsKey, proc.Mp())
--		ignoreSurvivorOwnsKey = nil
-+		freeDedupSlice(hb, ignoreSurvivorPriority, proc.Mp())
-+		ignoreSurvivorPriority = nil
- 	}
- 	defer cleanupDedupScratch()
- 	if dedupBuildKeepLast {
-@@ -734,18 +779,18 @@ func (hb *HashmapBuilder) buildHashmap(
- 		if err != nil {
- 			return err
- 		}
--		ignoreSurvivorOwnsKey, err = makeDedupSlice[bool](
-+		ignoreSurvivorPriority, err = makeDedupSlice[uint8](
- 			hb,
- 			hb.InputBatchRowCount+1,
- 			proc.Mp(),
--			HashBuildAllocationSiteDedupSurvivorOwnsKey,
-+			HashBuildAllocationSiteDedupSurvivorPriority,
- 		)
- 		if err != n
-```
-
-**File**: `pkg/sql/colexec/hashbuild/hashmap_test.go` (modified, +89/-0)
-```diff
-@@ -1440,6 +1440,95 @@ func TestDedupBuildIgnoreRebuildsAfterOwnerReplacement(t *testing.T) {
- 	require.True(t, hb.DelRows.Contains(1), "delRows=%s count=%d", hb.DelRows.String(), hb.DelRows.Count())
- }
- 
-+func TestDedupBuildIgnoreAuxiliaryPriority(t *testing.T) {
-+	type row struct {
-+		key, previous, id  int32
-+		auxiliary, release bool
-+	}
-+	reservation := row{key: 30, auxiliary: true}
-+	claimant := row{key: 30, previous: 20, id: 2}
-+	owner := row{key: 30, previous: 30, id: 1}
-+	release := row{key: 30, previous: 30, auxiliary: true, release: true}
-+	for _, tt := range []struct {
-+		name     string
-+		rows     []row
-+		wantIDs  []int32
-+		warnings uint64
-+	}{
-+		{"reservation first", []row{reservation, claimant}, nil, 1},
-+		{"claimant first", []row{claimant, reservation}, nil, 1},
-+		{"owner after reservation", []row{reservation, claimant, owner}, []int32{1}, 1},
-+		{"owner before reservation", []row{owner, reservation, claimant}, []int32{1}, 1},
-+		{"claimant reservation owner", []row{claimant, reservation, owner}, []int32{1}, 1},
-+		{"claimant owner reservation", []row{claimant, owner, reservation}, []int32{1}, 1},
-+		{"release before claimant", []row{release, claimant}, []int32{2}, 0},
-+		{"release after claimant", []row{claimant, release}, []int32{2}, 0},
-+		{"release survives discarded claimant", []row{claimant, release, reservation}, nil, 1},
-+		{"release reservation claimant", []row{release, reservation, claimant}, nil, 1},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			proc := testutil.NewProcessWithOwnedMPool(t, "", mpool.MustNewZero())
-+			hb := newTestHashmapBuilder(t)
-+			defer func() {
-+				hb.Reset(proc, true)
-+				hb.Free(proc)
-+				proc.Free()
-+				require.Zero(t, proc.Mp().CurrNB())
-+			}()
-+			session := &hashBuildWarningSession{}
-+			proc.Session = session
-+			proc.SetStmtProfile(&process.StmtProfile{})
-+			proc.GetStmtProfile().SetStatementRuntimeProfile("Update", "DML", true)
-+			hb.IsDedup = true
-+			hb.OnDuplicateAction = plan.Node_IGNORE
-+			hb.DedupColName = "uk"
-+			hb.DedupColTypes = []plan.Type{newExpr(0, types.T_int32.ToType()).Typ}
-+			hb.AuxiliaryRowIdColIdx = 4
-+			require.NoError(t, hb.Prepare([]*plan.Expr{newExpr(0, types.T_int32.ToType())}, 1, 2, nil, proc))
-+			bat := batch.NewWithSize(4)
-+			defer bat.Clean(proc.Mp())
-+			for i, typ := range []types.Type{types.T_int32.ToType(), types.T_int32.ToType(), types.T_bool.ToType(), types.T_int32.ToType()} {
-+				bat.Vecs[i] = vector.NewVec(typ)
-+			}
-+			wantReleases := 0
-+			for _, r := range tt.rows {
-+				require.NoError(t, vector.AppendFixed(bat.Vecs[0], r.key, false, proc.Mp()))
-+				require.NoError(t, vector.AppendFixed(bat.Vecs[1], r.previous, r.auxiliary && !r.release, proc.Mp()))
-+				require.NoError(t, vector.AppendFixed(bat.Vecs[2], r.release, false, proc.Mp()))
-+				require.NoError(t, vector.AppendFixed(bat.Vecs[3], r.id, r.auxiliary, proc.Mp()))
-+				if r.release {
-+					wantReleases++
++		for _, protocol := range []string{"text", "binary", "direct"} {
++			t.Run(protocol, func(t *testing.T) {
++				ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
++				defer cancel()
++				conn, err := db.Conn(ctx)
++				require.NoError(t, err)
++				defer conn.Close()
++				defer cleanupSQLIntegration(t, cn,
++					"drop table if exists prepared_delete_fk.child",
++					"drop database if exists prepared_delete_fk")
++				exec := func(query string) {
++					t.Helper()
++					_, err := conn.ExecContext(ctx, query)
++					require.NoError(t, err, query)
 +				}
-+			}
-+			bat.SetRowCount(len(tt.rows))
-+			require.NoError(t, hb.CopyBuildBatch(bat, proc))
-+			hb.InputBatchRowCount = bat.RowCount()
-+			require.NoError(t, hb.BuildHashmap(false, true, false, proc))
-+			var ids []int32
-+			releases := 0
-+			for _, output := range hb.Batches.Buf {
-+				for i := 0; i < output.RowCount(); i++ {
-+					if !output.Vecs[3].IsNull(uint64(i)) {
-+						ids = append(ids, vector.GetFixedAtNoTypeCheck[int32](output.Vecs[3], i))
++				count := func(query string) int {
++					t.Helper()
++					var n int
++					require.NoError(t, conn.QueryRowContext(ctx, query).Scan(&n), query)
++					return n
++				}
++
++				exec("create database prepared_delete_fk")
++				exec("use prepared_delete_fk")
++				exec("create table parent (id int primary key)")
++				exec("create table child (id int primary key, parent_id int, foreign key (parent_id) references parent(id) on delete restrict)")
++				exec("insert into parent values (1), (2)")
++				exec("insert into child values (10, 1)")
++				exec("set foreign_key_checks = 0")
++
++				const deleteParent = "delete from parent where id = 1"
++				var execute func() (sql.Result, error)
++				switch protocol {
++				case "text":
++					exec("prepare delete_parent from '" + deleteParent + "'")
++					defer exec("deallocate prepare delete_parent")
++					execute = func() (sql.Result, error) {
++						return conn.ExecContext(ctx, "execute delete_parent")
 +					}
-+					if vector.GetFixedAtNoTypeCheck[bool](output.Vecs[2], i) {
-+						releases++
++				case "binary":
++					stmt, err := conn.PrepareContext(ctx, deleteParent)
++					require.NoError(t, err)
++					defer func() { require.NoError(t, stmt.Close()) }()
++					execute = func() (sql.Result, error) {
++						return stmt.ExecContext(ctx)
++					}
++				case "direct":
++					execute = func() (sql.Result, error) {
++						return conn.ExecContext(ctx, deleteParent)
 +					}
 +				}
-+			}
-+			require.Equal(t, tt.wantIDs, ids)
-+			require.Equal(t, wantReleases, releases, "release evidence must survive compaction")
-+			require.Equal(t, tt.warnings, session.total)
-+			if tt.warnings > 0 {
-+				require.Equal(t, []hashBuildWarning{{code: moerr.ER_DUP_ENTRY, msg: "Duplicate entry '30' for key 'uk'"}}, session.warnings)
-+			}
-+			if wantReleases > 0 {
-+				require.True(t, hb.DelRows.Contains(0))
-+			}
-+		})
-+	}
++
++				for _, checks := range []int{0, 1, 0, 1} {
++					exec(fmt.Sprintf("set foreign_key_checks = %d", checks))
++					result, err := execute()
++					if checks == 1 {
++						var mysqlErr *mysql.MySQLError
++						require.ErrorAs(t, err, &mysqlErr)
++						require.Equal(t, uint16(1451), mysqlErr.Number)
++						require.Equal(t, 1, count("select count(*) from parent where id = 1"))
++					} else {
++						require.NoError(t, err)
++						rows, err := result.RowsAffected()
++						require.NoError(t, err)
++						require.EqualValues(t, 1, rows)
++						require.Zero(t, count("select count(*) from parent where id = 1"))
++						exec("insert into parent values (1)")
++					}
++					require.Equal(t, 1, count("select count(*) from parent where id = 2"))
++					require.Equal(t, 1, count("select count(*) from child where id = 10 and parent_id = 1"))
++				}
++			})
++		}
++	})
 +}
+```
+
+**File**: `test/distributed/cases/foreign_key/issue_26892.result` (modified, +41/-0)
+```diff
+@@ -17,6 +17,47 @@ select id, parent_id from child order by id;
+ ➤ id[4,32,0]  ¦  parent_id[4,32,0]  𝄀
+ 1  ¦  101
+ truncate table child;
++insert into parent values (2), (3);
++insert into child values (3, 2), (4, 3), (5, 1);
++prepare fk_delete_child from 'delete from child where id = 5';
++set foreign_key_checks = 0;
++prepare fk_delete_off from 'delete from parent where id = 2';
++set foreign_key_checks = 1;
++execute fk_delete_off;
++Cannot delete or update a parent row: a foreign key constraint fails
++select id from parent order by id;
++➤ id[4,32,0]  𝄀
++1  𝄀
++2  𝄀
++3
++select id, parent_id from child order by id;
++➤ id[4,32,0]  ¦  parent_id[4,32,0]  𝄀
++3  ¦  2  𝄀
++4  ¦  3  𝄀
++5  ¦  1
++deallocate prepare fk_delete_off;
++prepare fk_delete_on from 'delete from parent where id = 3';
++set foreign_key_checks = 0;
++execute fk_delete_on;
++select id from parent order by id;
++➤ id[4,32,0]  𝄀
++1  𝄀
++2
++select id, parent_id from child order by id;
++➤ id[4,32,0]  ¦  parent_id[4,32,0]  𝄀
++3  ¦  2  𝄀
++4  ¦  3  𝄀
++5  ¦  1
++deallocate prepare fk_delete_on;
++set foreign_key_checks = 1;
++execute fk_delete_child;
++select id, parent_id from child order by id;
++➤ id[4,32,0]  ¦  parent_id[4,32,0]  𝄀
++3  ¦  2  𝄀
++4  ¦  3
++deallocate prepare fk_delete_child;
++truncate table child;
++delete from parent where id in (2, 3);
+ set foreign_key_checks = 0;
+ prepare fk_plain_off from 'insert into child values (?, ?)';
+ set @id = 10, @parent_id = 110;
+```
+
+**File**: `test/distributed/cases/foreign_key/issue_26892.sql` (modified, +29/-0)
+```diff
+@@ -18,6 +18,35 @@ insert into child values (2, 102);
+ select id, parent_id from child order by id;
+ truncate table child;
+ 
++-- A prepared parent DELETE must honor the execution-time setting (#33190).
++insert into parent values (2), (3);
++insert into child values (3, 2), (4, 3), (5, 1);
++prepare fk_delete_child from 'delete from child where id = 5';
 +
- func TestBuildHashmapErrorDoesNotLeakIterators(t *testing.T) {
- 	hb := newTestHashmapBuilder(t)
- 	mp := mpool.MustNewZero()
++set foreign_key_checks = 0;
++prepare fk_delete_off from 'delete from parent where id = 2';
++set foreign_key_checks = 1;
++execute fk_delete_off;
++select id from parent order by id;
++select id, parent_id from child order by id;
++deallocate prepare fk_delete_off;
++
++-- Use a different parent so the reverse case also fails independently on old code.
++prepare fk_delete_on from 'delete from parent where id = 3';
++set foreign_key_checks = 0;
++execute fk_delete_on;
++select id from parent order by id;
++select id, parent_id from child order by id;
++deallocate prepare fk_delete_on;
++
++-- A child-only DELETE remains usable after the same toggles.
++set foreign_key_checks = 1;
++execute fk_delete_child;
++select id, parent_id from child order by id;
++deallocate prepare fk_delete_child;
++truncate table child;
++delete from parent where id in (2, 3);
++
+ -- Plain INSERT prepared while checks are disabled: OFF -> ON -> OFF.
+ set foreign_key_checks = 0;
+ prepare fk_plain_off from 'insert into child values (?, ?)';
 ```
 
 ---
 
-### Incident Patch 2: `5d63cf6b` (2026-11-18)
-**Commit Message**: ci: reduce race UT work and harden fixture retirement (#32872)
+### Incident Patch 3: `f1063bd4` (2026-11-28)
+**Commit Message**: fix(hakeeper): keep stores alive during replica recovery (#33010)
 
 ## What type of PR is this?
 
-- [x] Improvement
-- [x] Test and CI
+- [x] BUG
+- [x] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Refs #32745 (FLAKY-001). The issue is a long-lived tracker and should
-remain open.
+issue #33008
+
+This is the main-branch counterpart of the recovery fix merged into
+4.2-dev in #33009.
 
 ## What this PR does / why we need it:
 
-Reduce repeated race-test cluster setup and large query construction
-while retaining the distinct contracts:
+A lost LogStore and an incomplete replica report could make HAKeeper
+repeatedly shut down surviving LogStores and TNs. Remove the global
+teardown and its latch. LogService and TN consume historical shutdown
+commands while continuing to handle sibling commands and retaining
+existing TN batch acknowledgement.
 
-- Reuse one dedicated cluster for five compatible inventory CAS cases;
-verify each case's database, catalog table and writer transactions are
-retired before the next one. Keep restart and topology-sensitive cases
-separate.
-- Run one complete same-row-count collation repair, then verify each
-other field corruption using the real upgrade predicate and an
-independently rolled-back transaction. Keep the other repair and retry
-cases.
-- Keep real 256-branch planner boundary witnesses, but test budget reuse
-and case-insensitive admission without repeatedly building equivalent
-wide plans. Check that separate builds obtain a fresh budget and
-enumerate their own metadata.
-- Preserve all 24 strict CTAS error, alias-reuse and cleanup cases. For
-each successful mode and table type, keep the standalone co
+HAKeeper selects one ordinary membership change per shard from valid
+reports. Fresh and retried changes require a retained reporting voter
+and a majority in the current and projected configurations. Configured
+replicas can still be started to restore quorum. A Start can reopen
+existing Raft files when the replica is authorized. An orphaned initial
+bootstrap retains its exact manifest, and a newer removal prevents the
+old identity from restarting. Pending local replicas keep their metadata
+and exported snapshots while cleanup observes their ownership. Catalog
+permits retain thei
 
-**File**: `pkg/cnservice/server_heartbeat.go` (modified, +30/-2)
+**File**: `cmd/mo-service/main.go` (modified, +1/-3)
 ```diff
-@@ -16,6 +16,7 @@ package cnservice
- 
- import (
- 	"context"
-+	"errors"
- 	"time"
- 
- 	"go.uber.org/zap"
-@@ -30,6 +31,33 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/version"
- )
- 
-+// ViewMetadataWithdrawalError identifies a failed final admission withdrawal.
-+// Close still returns the underlying diagnostic through Unwrap.
-+type ViewMetadataWithdrawalError struct{ Err error }
+@@ -312,7 +312,7 @@ func startService(
+ 	case metadata.ServiceType_CN:
+ 		return startCNService(cfg, stopper, fs, gossipNode)
+ 	case metadata.ServiceType_TN:
+-		return startTNService(cfg, stopper, fs, shutdownC)
++		return startTNService(cfg, stopper, fs)
+ 	case metadata.ServiceType_LOG:
+ 		return startLogService(cfg, stopper, fs, shutdownC)
+ 	case metadata.ServiceType_PYTHON_UDF:
+@@ -457,7 +457,6 @@ func startTNService(
+ 	cfg *Config,
+ 	stopper *stopper.Stopper,
+ 	fileService fileservice.FileService,
+-	shutdownC chan struct{},
+ ) error {
+ 	if err := waitClusterCondition(cfg.mustGetServiceUUID(), cfg.HAKeeperClient, waitHAKeeperRunning); err != nil {
+ 		return err
+@@ -497,7 +496,6 @@ func startTNService(
+ 			&c,
+ 			mustGetRuntime(cfg),
+ 			fileService,
+-			shutdownC,
+ 			func(value tnservice.Service) {
+ 				owner = value
+ 			},
+```
+
+**File**: `pkg/embed/operator.go` (modified, +0/-1)
+```diff
+@@ -355,7 +355,6 @@ func (op *operator) startTNServiceAfterReadyLocked(
+ 		&c,
+ 		op.reset.rt,
+ 		fs,
+-		op.reset.shutdownC,
+ 		func(owner tnservice.Service) { op.reset.svc = owner },
+ 		tnservice.WithConfigData(commonConfigKVMap),
+ 	)
+```
+
+**File**: `pkg/hakeeper/bootstrap_partial_33008_test.go` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+func (e *ViewMetadataWithdrawalError) Error() string { return e.Err.Error() }
-+func (e *ViewMetadataWithdrawalError) Unwrap() error { return e.Err }
++package hakeeper
 +
-+// IsOnlyViewMetadataWithdrawalTimeout rejects mixed and unknown close errors.
-+func IsOnlyViewMetadataWithdrawalTimeout(err error) bool {
-+	if e, ok := err.(*ViewMetadataWithdrawalError); ok {
-+		return errors.Is(e.Err, context.DeadlineExceeded)
++import (
++	"testing"
++
++	sm "github.com/lni/dragonboat/v4/statemachine"
++	pb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
++	"github.com/stretchr/testify/require"
++)
++
++func TestBootstrapCommandSurvivesPartialInitialMembership(t *testing.T) {
++	const store = "c"
++	machine := NewStateMachine(0, 1).(*stateMachine)
++	// Three initial AddNode entries are applied individually. The existing
++	// CheckBootstrap accepts two reported members as enough to enter Running.
++	machine.state.State = pb.HAKeeperRunning
++	machine.state.LogState.Shards[1] = pb.LogShardInfo{
++		ShardID: 1, Epoch: 2, Replicas: map[uint64]string{1: "a", 2: "b"},
 +	}
-+	if joined, ok := err.(interface{ Unwrap() []error }); ok {
-+		children := joined.Unwrap()
-+		if len(children) == 0 {
-+			return false
++	start := pb.ScheduleCommand{UUID: store, ServiceType: pb.LogService, Bootstrapping: true,
++		ConfigChange: &pb.ConfigChange{ChangeType: pb.StartReplica,
++			Replica:        pb.Replica{UUID: store, ShardID: 1, ReplicaID: 3},
++			InitialMembers: map[uint64]string{1: "a", 2: "b", 3: store}}}
++	machine.state.ScheduleCommands[store] = pb.CommandBatch{Commands: []pb.ScheduleCommand{start}}
++	data, err := (&pb.LogStoreHeartbeat{UUID: store}).Marshal()
++	require.NoError(t, err)
++	_, err = machine.Update(sm.Entry{Cmd: GetLogStoreHeartbeatCmd(data)})
++	require.NoError(t, err)
++	require.Equal(t, []pb.ScheduleCommand{start}, machine.state.ScheduleCommands[store].Commands,
++		"a not-yet-applied initial member is not an obsolete member")
++}
+```
+
+**File**: `pkg/hakeeper/checkers/bootstrap_prefix_kill_test.go` (added, +171/-0)
+```diff
+@@ -0,0 +1,171 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package checkers
++
++import (
++	"bytes"
++	"maps"
++	"slices"
++	"testing"
++
++	sm "github.com/lni/dragonboat/v4/statemachine"
++	"github.com/matrixorigin/matrixone/pkg/hakeeper"
++	"github.com/matrixorigin/matrixone/pkg/hakeeper/bootstrap"
++	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/util"
++	pb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
++	"github.com/stretchr/testify/require"
++)
++
++func TestInitialPrefixCannotRetireFutureVoter(t *testing.T) {
++	t.Run("initial_cluster", func(t *testing.T) { testInitialPrefixCannotRetireFutureVoter(t, false) })
++	t.Run("dynamic", func(t *testing.T) { testInitialPrefixCannotRetireFutureVoter(t, true) })
++}
++
++func testInitialPrefixCannotRetireFutureVoter(t *testing.T, dynamic bool) {
++	t.Helper()
++	shardID := uint64(1)
++	if dynamic {
++		shardID = 77
++	}
++	cfg := hakeeper.Config{}
++	cfg.Fill()
++	s := hakeeper.NewStateMachine(0, 1)
++	var index uint64
++	apply := func(cmd []byte) sm.Result {
++		t.Helper()
++		index++
++		res, err := s.Update(sm.Entry{Index: index, Cmd: cmd})
++		require.NoError(t, err)
++		return res
++	}
++	heartbeat := func(uuid string, replicas ...pb.LogReplicaInfo) pb.CommandBatch {
++		t.Helper()
++		hb := pb.LogStoreHeartbeat{UUID: uuid, TaskServiceCreated: true, StoreIncarnation: "disk-" + uuid, Replicas: replicas}
++		data, err := hb.Marshal()
++		require.NoError(t, err)
++		result := apply(hakeeper.GetGuardedLogStoreHeartbeatCmd(data))
++		var batch pb.CommandBatch
++		require.NoError(t, batch.Unmarshal(result.Data))
++		return batch
++	}
++	state := func() *pb.CheckerState {
++		t.Helper()
++		value, err := s.Lookup(&hakeeper.StateQuery{Scheduling: true})
++		require.NoError(t, err)
++		return value.(*pb.CheckerState)
++	}
++	check := func() []pb.ScheduleCommand {
++		return NewCoordinator("", cfg).Check(util.NewTestIDAllocator(100), *state(), false)
++	}
++	apply(hakeeper.GetInitialClusterRequestCmd(1, 1, 3, 0, nil, nil))
++	apply(hakeeper.GetTickCmdWithLogStorePolicy(1, cfg.LogStoreTimeoutTicks()))
++	ha := pb.LogShardInfo{ShardID: 0, Epoch: 3, Replicas: map[uint64]string{1: "a", 2: "b", 3: "c"}}
++	for id, uuid := range ha.Replicas {
++		heartbeat(uuid, pb.LogReplicaInfo{LogShardInfo: ha, ReplicaID: id})
++	}
++	var approved []pb.ScheduleCommand
++	var members map[uint64]string
++	if dynamic {
++		apply(hakeeper.GetSetStateCmd(pb.HAKeeperBootstrapCommandsReceived))
++		apply(hakeeper.GetSetStateCmd(pb.HAKeeperRunning))
++		apply(hakeeper.GetAddLogShardCmd(pb.AddLogShard{ShardID: shardID}))
++		approved = check()
++		require.Len(t, approved, 3)
++		require.NotNil(t, approved[0].BootstrapShard)
++		members = approved[0].BootstrapShard.InitialMembers
++	} else {
++		current := state()
++		var err error
++		approved, err = bootstrap.NewBootstrapManager(current.ClusterInfo).
++			Bootstrap("", util.NewTestIDAllocator(100), current.TNState, current.LogState)
++		require.NoError(t, err)
++		require.Len(t, approved, 3)
++		require.True(t, approved[0].Bootstrapping)
++		members = approved[0].ConfigChange.InitialMembers
++	}
++	ids := slices.Sorted(maps.Keys(members))
++	a, b, c := members[ids[0]], members[ids[1]], members[ids[2]]
++	apply(hakeeper.GetUpdateCommandsCmd(1, approved))
++
++	first := pb.LogShardInfo{ShardID: shardID, Epoch: 1, Replicas: map[uint64]string{ids[0]: a}}
++	majority := pb.LogShardInfo{ShardID: shardID, Epoch: 2, Replicas: map[uint64]string{ids[0]: a, ids[1]: b}}
++	localBeforeOwnAdd := pb.LogReplicaInfo{LogShardInfo: first, ReplicaID: ids[2]}
++	heartbeat(a, pb.LogReplicaInfo{LogShardInfo: majority, ReplicaID: ids[0]})
++	heartbeat(b, pb.LogReplicaInfo{LogShardInfo: majority, ReplicaID: ids[1]})
++	heartbeat(c, localBeforeOwnAdd)
++	if !dynamic {
++		current := state()
++		require.True(t, bootstrap.NewBootstrapManager(current.ClusterInfo).CheckBootstrap(current.LogState),
++			"initial cluster can enter Running on the first majority")
++		apply(hakeeper.GetSetStateCmd(pb.HAKeeperRunning))
++	}
++	var kill pb.ScheduleCommand
++	for _, cmd := range check() {
++		if cmd.UUID == c && cmd.ConfigChange != nil && cmd.ConfigChange.ChangeType == pb.KillZombie {
++			kill = cmd
 +		}
-+		for _, child := range children {
-+			if !IsOnlyViewMetadataWithdrawalTimeout(child) {
-+				return false
++	}
++	require.NotNil(t, kill.ConfigChange, "the real checker can classify a report that precedes its own initial AddNode as a zombie")
++	require.Equal(t, ids[2], kill.ConfigChange.Replica.ReplicaID)
++	apply(hakeeper.GetUpdateCommandsCmd(2, []pb.ScheduleCommand{kill}))
++
++	var saved bytes.Buffer
++	require.
+```
+
+**File**: `pkg/hakeeper/checkers/bootstrap_start_ownership_test.go` (added, +105/-0)
+```diff
+@@ -0,0 +1,105 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package checkers
++
++import (
++	"testing"
++	"time"
++
++	"github.com/matrixorigin/matrixone/pkg/hakeeper"
++	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/util"
++	pb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
++	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
++	"github.com/stretchr/testify/require"
++)
++
++func TestBootstrapOwnsUnreportedReplicaStart(t *testing.T) {
++	c := NewCoordinator("", hakeeper.Config{})
++	alloc := util.NewTestIDAllocator(100)
++	state := pb.CheckerState{Tick: 1,
++		ClusterInfo: pb.ClusterInfo{LogShards: []metadata.LogShardRecord{{ShardID: 1, NumberOfReplicas: 3}}},
++		LogState: pb.LogState{Shards: map[uint64]pb.LogShardInfo{1: {ShardID: 1, Replicas: map[uint64]string{}}}, Stores: map[string]pb.LogStoreInfo{
++			"a": {Tick: 1, TaskServiceCreated: true}, "b": {Tick: 1, TaskServiceCreated: true}, "c": {Tick: 1, TaskServiceCreated: true},
++		}},
++	}
++	first := c.Check(alloc, state, false)
++	var bootstrap []pb.ScheduleCommand
++	for _, cmd := range first {
++		if cmd.BootstrapShard != nil {
++			bootstrap = append(bootstrap, cmd)
++		}
++	}
++	require.Len(t, bootstrap, 3, "the first real scheduling round must bootstrap all replicas")
++	shard := pb.LogShardInfo{ShardID: 1, Epoch: 1, Replicas: bootstrap[0].BootstrapShard.InitialMembers}
++	state.LogState.Shards[1] = shard
++	var missing pb.ScheduleCommand
++	for i, cmd := range bootstrap {
++		if i == 0 {
++			missing = cmd
++			continue
++		}
++		store := state.LogState.Stores[cmd.UUID]
++		store.Replicas = []pb.LogReplicaInfo{{LogShardInfo: shard, ReplicaID: cmd.BootstrapShard.ReplicaID}}
++		state.LogState.Stores[cmd.UUID] = store
++	}
++	second := c.Check(alloc, state, false)
++	t.Logf("unreported bootstrap store=%s id=%d commands=%+v", missing.UUID, missing.BootstrapShard.ReplicaID, second)
++	for _, cmd := range second {
++		if cmd.ConfigChange != nil && cmd.ConfigChange.Replica.ReplicaID == missing.BootstrapShard.ReplicaID {
++			require.NotEqual(t, pb.StartReplica, cmd.ConfigChange.ChangeType, "an in-flight bootstrap already owns this local start")
++			require.NotEqual(t, pb.RemoveReplica, cmd.ConfigChange.ChangeType)
++		}
++	}
++}
++
++func TestFreshCoordinatorReplansMembershipAndIndependentTNWork(t *testing.T) {
++	// Initialize and restore the TN checker's service runtime around this test.
++	_, _, _ = tnStartScenario(t)
++	cfg := hakeeper.Config{TickPerSecond: 1, LogStoreTimeout: 5 * time.Second}
++	shard := pb.LogShardInfo{ShardID: 1, Epoch: 7, Replicas: map[uint64]string{1: "a", 2: "b", 3: "c"}}
++	state := pb.CheckerState{
++		Tick:          10,
++		ClusterInfo:   pb.ClusterInfo{LogShards: []metadata.LogShardRecord{{ShardID: 1, NumberOfReplicas: 3}}},
++		TaskTableUser: pb.TaskTableUser{Username: "task"},
++		LogState: pb.LogState{Shards: map[uint64]pb.LogShardInfo{1: shard}, Stores: map[string]pb.LogStoreInfo{
++			"a": {Tick: 10, TaskServiceCreated: true, Replicas: []pb.LogReplicaInfo{{LogShardInfo: shard, ReplicaID: 1}}},
++			"b": {Tick: 1, TaskServiceCreated: true, Replicas: []pb.LogReplicaInfo{{LogShardInfo: shard, ReplicaID: 2}}},
++			"c": {Tick: 10, TaskServiceCreated: true, Replicas: []pb.LogReplicaInfo{{LogShardInfo: shard, ReplicaID: 3}}},
++		}},
++		TNState: pb.TNState{Stores: map[string]pb.TNStoreInfo{"tn": {Tick: 10}}},
++	}
++	check := func() (bool, bool) {
++		commands := NewCoordinator("", cfg).Check(util.NewTestIDAllocator(100), state, false)
++		var remove, tnTask bool
++		for _, cmd := range commands {
++			if cmd.ConfigChange != nil && cmd.ConfigChange.ChangeType == pb.RemoveReplica && cmd.ConfigChange.Replica.UUID == "b" {
++				remove = true
++			}
++			if cmd.UUID == "tn" && cmd.CreateTaskService != nil {
++				tnTask = true
 +			}
 +		}
-+		return true
++		return remove, tnTask
 +	}
-+	return false
++	remove, tnTask := check()
++	require.True(t, remove, "the current plan should remove the expired voter")
++	require.True(t, tnTask, "unrelated TN work must remain in the new batch")
++	b := state.LogState.Stores["b"]
++	b.Tick = state.Tick
++	state.LogState.Stores["b"] = b
++	remove, tnTask = check()
++	require.False(t, remove, "a recovered voter is no longer a removal candidate")
++	require.True(t, tnTask)
 +}
-+
- var cnCommandPollFailed = logutil.Event{
- 	Name:    "cn.schedule-command.poll.failed",
- 	Message: "failed to poll cn schedule commands",
-@@ -257,13 +285,13 @@ func (s *service) withdrawViewMetadataAdmission() error {
- 		err = moerr.AttachCause(ctx, err)
- 		s.logger.Error("failed to publish final view metadata withdrawal",
- 			zap.Bool("clean_handoff", false), zap.Error(err))
--		return err
-+		return &ViewMetadataWithdrawalError{Err: err}
- 	}
- 	if ctx.Err() != nil {
- 		err = moerr.AttachCause(ctx, ctx.Err())
- 		s.logger.Error("final view metadata withdrawal timed out",
- 			zap.Bool("clean_handoff", false), zap.Error(err))
--		return err
-+		return &ViewMetadataWithdrawalError{Err: err}
- 	}
- 	s.logger.Info("published final view metadata withdrawal",
- 		zap.Bool("clean_handoff", true),
 ```
 
-**File**: `pkg/cnservice/server_heartbeat_test.go` (modified, +5/-1)
+**File**: `pkg/hakeeper/checkers/coordinator.go` (modified, +2/-38)
 ```diff
-@@ -318,7 +318,11 @@ func TestWithdrawViewMetadataAdmissionFailureIsNotCleanHandoff(t *testing.T) {
- 			logger:                          zap.NewNop(),
- 			viewMetadataAdmissionGeneration: 8,
- 		}
--		require.ErrorIs(t, s.withdrawViewMetadataAdmission(), context.DeadlineExceeded)
-+		err := s.withdrawViewMetadataAdmission()
-+		require.ErrorIs(t, err, context.DeadlineExceeded)
-+		require.True(t, IsOnlyViewMetadataWithdrawalTimeout(errors.Join(err)))
-+		require.False(t, IsOnlyViewMetadataWithdrawalTimeout(errors.Join(err, errors.New("local teardown failed"))))
-+		require.False(t, IsOnlyViewMetadataWithdrawalTimeout(context.DeadlineExceeded))
- 	})
- }
+@@ -22,7 +22,6 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/cnservice"
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/logservice"
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/proxy"
+-	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/syshealth"
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/tnservice"
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/util"
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/operator"
+@@ -34,11 +33,6 @@ import (
+ type Coordinator struct {
+ 	OperatorController *operator.Controller
  
-```
-
-**File**: `pkg/embed/cdc_watermark_lifetime_test.go` (modified, +1/-1)
-```diff
-@@ -68,7 +68,7 @@ func (p *watermarkRetirementProbeExecutor) Query(ctx context.Context, sql string
- func TestCDCWatermarkUpdaterRuntimeRetirement(t *testing.T) {
- 	// This scenario owns its cluster independently of earlier shared-fixture tests.
- 	require.NoError(t, CloseBaseClusterTests())
--	require.NoError(t, CloseSingleCNBaseClusterTests())
-+	require.NoError(t, discardSingleCNBaseClusterTests())
- 	c, err := NewCluster(WithTesting(), WithCNCount(1))
- 	require.NoError(t, err)
- 	defer func() { require.NoError(t, c.Close()) }()
-```
-
-**File**: `pkg/embed/testing.go` (modified, +17/-1)
-```diff
-@@ -22,7 +22,9 @@ import (
- 	"sync"
- 	"time"
- 
-+	"github.com/matrixorigin/matrixone/pkg/cnservice"
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/logutil"
- 	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
- 	"github.com/matrixorigin/matrixone/pkg/testutil"
- 	"github.com/matrixorigin/matrixone/pkg/util/metric/stats"
-@@ -469,6 +471,10 @@ func (c *SharedTestCluster) CloseIfActive() error {
- // A topology switch may release an idle fixture, but must not wait for a
- // callback that could be making the switch itself or bypass its cleanup.
- func (c *SharedTestCluster) closeIfActive(waitForCallback bool) error {
-+	return c.closeIfActiveWithDiscard(waitForCallback, false)
-+}
-+
-+func (c *SharedTestCluster) closeIfActiveWithDiscard(waitForCallback, discard bool) error {
- 	c.initializeRunCondition()
- 	c.mu.Lock()
- 	defer c.mu.Unlock()
-@@ -487,7 +493,7 @@ func (c *SharedTestCluster) closeIfActive(waitForCallback bool) error {
- 	// automatic attempt has happened, this method remains the explicit retry
- 	// path for incomplete cleanup.
- 	if c.sealed && !c.cleanupTried && len(c.cleanupRegistrations) > 0 {
--		if !waitForCallback {
-+		if !waitForCallback || discard {
- 			return moerr.NewInvalidStateNoCtx("shared cluster callback cleanup is still pending")
- 		}
- 		return nil
-@@ -501,6 +507,10 @@ func (c *SharedTestCluster) closeIfActive(waitForCallback bool) error {
- 		return errors.Join(err, moerr.NewInvalidStateNoCtx("shared cluster cleanup is incomplete"))
- 	}
- 	c.resetGenerationLocked()
-+	if discard && cnservice.IsOnlyViewMetadataWithdrawalTimeout(err) {
-+		logutil.Warnf("discarded complete test cluster after final admission withdrawal timed out: %v", err)
-+		return nil
-+	}
- 	return err
- }
- 
-@@ -735,6 +745,12 @@ func CloseSingleCNBaseClusterTests() error {
- 	return singleCNClusterState.CloseIfActive()
- }
- 
-+// discardSingleCNBaseClusterTests destroys the complete shared topology. A
-+// timed-out remote handoff is diagnostic once its HAKeeper is also gone.
-+func discardSingleCNBaseClusterTests() error {
-+	return singleCNClusterState.closeIfActiveWithDiscard(true, true)
-+}
-+
- // Admission is exclusive and all owners of this generation have completed
- // cleanup. Keep the generation number monotonic so stale finalizers cannot
- // affect a replacement fixture.
-```
-
-**File**: `pkg/embed/testing_test.go` (modified, +53/-0)
-```diff
-@@ -23,13 +23,66 @@ import (
- 	"testing"
- 	"time"
- 
-+	"github.com/matrixorigin/matrixone/pkg/cnservice"
- 	mruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
- 	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
- 	"github.com/matrixorigin/matrixone/pkg/taskservice"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- )
- 
-+func TestDiscardSharedClusterOnlyAcceptsCompletedWithdrawalTimeout(t *testing.T) {
-+	remote := &cnservice.ViewMetadataWithdrawalError{Err: context.DeadlineExceeded}
-+	local := errors.New("local teardown failed")
-+	for _, tc := range []struct {
-+		name     string
-+		err      error
-+		complete bool
-+		wantOK   bool
-+	}{
-+		{"completed withdrawal timeout", remote, true, true},
-+		{"nested withdrawal timeouts", errors.Join(remote, errors.Join(remote)), true, true},
-+		{"plain local deadline", context.DeadlineExceeded, true, false},
-+		{"other withdrawal error", &cnservice.ViewMetadataWithdrawalError{Err: local}, true, false},
-+		{"mixed withdrawal and local error", errors.Join(remote, local), true, false},
-+		{"incomplete teardown", remote, false, false},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			svc := &completedCloseService{closeTrackingService: closeTrackingService{closeErr: tc.err}, complete: tc.complete}
-+			op := &operator{state: started}
-+			op.reset.svc = svc
-+			value := &cluster{state: started, services: []*operator{op}}
-+			state := SharedTestCluster{cluster: value}
-+			err := state.closeIfActiveWithDiscard(true, true)
-+			if tc.wantOK {
-+				require.NoError(t, err)
-+				require.Nil(t, state.cluster)
-+				require.True(t, value.CloseComplete())
-+			} else {
-+				require.Error(t, err)
-+				require.ErrorIs(t, err, tc.err)
-+				if !tc.complete {
-+					require.Same(t, value, state.cluster)
-+				}
-+			}
-+		})
-+	}
-+	t.Run("pending callback cleanup", func(t *testing.T) {
-+		svc := &completedCloseService{complete: true}
-+		op := &operator{state: started}
-+		op.reset.svc = svc
-+		value := &cluster{state: started, services: []*operator{op}}
-+		state := SharedTestCluster{
-+			cluster:              value,
-+			sealed:               true,
-+			cleanupRegistrations: map[sharedCleanupRegistration]struct{}{{}: {}},
-+		}
-+		require.ErrorContains(t, state.closeIfActiveWithDiscard(true, true), "callback cleanup is still pending")
-+		require.Same(t, value, state.cluster)
-+		require.Zero(t, svc.closeCount.Load())
-+	})
-+}
-+
- func TestWaitBasicClusterTaskServicesRejectsMissingCN(t *testing.T) {
- 	err := waitBasicClusterTaskServices(context.Background(), &cluster{}, 1)
- 	require.ErrorContains(t, err, "service not found")
-```
-
-**File**: `pkg/fileservice/disk_cache_download_test.go` (modified, +23/-1)
-```diff
-@@ -38,9 +38,14 @@ func downloading(t *testing.T) (*DiskCache, *io.PipeWriter, chan error) {
- 	require.NoError(t, err)
- 	t.Cleanup(func() { cache.Close(ctx) })
- 	pr, pw := io.Pipe()
--	t.Cleanup(func() { _ = pw.Close() })
- 	filled := make(chan error, 1)
-+	done := make(chan struct{})
-+	t.Cleanup(func() {
-+		_ = pw.CloseWithError(io.ErrClosedPipe)
-+		<-done
-+	})
- 	go func() {
-+		defer close(done)
- 		filled <- cache.SetFile(ctx, "obj", func(context.Context) (io.ReadCloser, error) { return pr, nil })
- 	}()
- 	require.Eventually(t, func() bool { return cache.download(cache.pathForFile("obj")) != nil },
-@@ -130,6 +135,23 @@ func TestDiskCacheReadOfDownloadStopsOnCancel(t *testing.T) {
- 	require.False(t, waitVector(t, pending).Entries[0].done)
- }
- 
-+func TestDiskCacheDownloadCleanupJoinsAbandonedFill(t *testing.T) {
-+	var filled chan error
-+	// Establish TempDir's cleanup before registering the witness. downloading
-+	// creates another directory under the same test-owned parent.
-+	t.TempDir()
-+	// The witness runs after downloading's cleanups and before TempDir removal.
-+	t.Cleanup(func() {
-+		select {
-+		case err := <-filled:
-+			require.ErrorIs(t, err, io.ErrClosedPipe)
-+		default:
-+			t.Error("abandoned cache fill outlived its cleanup")
-+		}
-+	})
-+	_, _, filled = downloading(t)
-+}
-+
- // A download that ends with the object shorter than a read leaves the read unserved.
- func TestDiskCacheReadBeyondDownloadedObject(t *testing.T) {
- 	rangeReadsCost(t, time.Hour)
-```
-
-**File**: `pkg/sql/plan/subscription_metadata_test.go` (modified, +51/-11)
-```diff
-@@ -603,37 +603,77 @@ func TestSubscriptionStatisticsBudgetUsesIdentifierCaseMode(t *testing.T) {
- 
- 	for _, mode := range []int64{1, 2} {
- 		t.Run(fmt.Sprintf("case-insensitive mode %d deduplicates", mode), func(t *testing.T) {
--			optimizer, ctx := newSubscriptionMetadataTestOptimizer(t)
-+			_, ctx := newSubscriptionMetadataTestOptimizer(t)
- 			ctx.lowerCaseTableNames = mode
- 			ctx.metadata = metadata
+-	// Considering the context of `Coordinator`,
+-	// there is no need for a mutext to protect.
+-	teardown    bool
+-	teardownOps []*operator.Operator
 -
--			queryPlan, err := runOneStmt(optimizer, t,
--				"select count(*) from information_schema.statistics")
-+			builder := NewQueryBuilder(plan.Query_SELECT, ctx, false, false)
-+			visible, err := builder.visibleSubscriptionMetadata(nil)
- 			require.NoError(t, err)
--			require.Len(t, statisticsPublisherScanCounts(queryPlan.GetQuery()),
--				maxSubscriptionStatisticsPublisherBranches)
--			require.Equal(t, maxSubscriptionStatisticsPublisherBranches, ctx.publisherBindCount)
-+			require.Len(t, visible, maxSubscriptionStatisticsPublisherBranches)
-+			var matching []string
-+			for _, subscription := range visible {
-+				if strings.EqualFold(subscription.Meta.SubName, "SubCase") {
-+					matching = append(matching, subscription.Meta.SubName)
-+				}
-+			}
-+			require.Equal(t, []string{"SubCase"}, matching)
-+			require.Equal(t, []int{maxSubscriptionStatisticsPublisherBranches}, ctx.metadataLimits)
-+			require.Zero(t, ctx.publisherBindCount)
- 			require.Nil(t, ctx.GetQueryingSubscription())
-+			_, err = builder.visibleSubscriptionMetadata(nil)
-+			require.ErrorContains(t, err, "publisher expansion exceeds planning budget of 256 branches")
-+			if mode == 1 {
-+				// Retain one complete boundary-sized plan without an outer filter.
-+				optimizer, full := newSubscriptionMetadataTestOptimizer(t)
-+				full.lowerCaseTableNames = mode
-+				full.metadata = metadata
-+				queryPlan, err := runOneStmt(optimizer, t, "select count(*) from information_schema.statistics")
-+				require.NoError(t, err)
-+				require.Len(t, statisticsPublisherScanCounts(queryPlan.GetQuery()), maxSubscriptionStatisticsPublisherBranches)
-+				require.Equal(t, maxSubscriptionStatisticsPublisherBranches, full.publisherBindCount)
-+				require.Nil(t, full.GetQueryingSubscription())
-+			}
- 		})
- 	}
+ 	service string
+ 	cfg     hakeeper.Config
  }
+@@ -71,38 +65,8 @@ func (c *Coordinator) Check(alloc util.IDAllocator, state pb.CheckerState, stand
+ 		zap.Uint64("current tick", currentTick),
+ 	)
  
- func TestSubscriptionStatisticsBudgetDoesNotLeakAcrossBuilds(t *testing.T) {
-+	t.Run("admission is per builder", func(t *testing.T) {
-+		_, ctx := newSubscriptionMetadataTestOptimizer(t)
-+		ctx.metadata = subscriptionMetadataTestSet(129)
-+		builder := NewQueryBuilder(plan.Query_SELECT, ctx, false, false)
-+		visible, err := builder.visibleSubscriptionMetadata(nil)
-+		require.NoError(t, err)
-+		require.Len(t, visible, 129)
-+		_, err = builder.visibleSubscriptionMetadata(nil)
-+		require.ErrorContains(t, err, "publisher expansion exceeds planning budget of 256 branches")
-+		fresh := NewQueryBuilder(plan.Query_SELECT, ctx, false, false)
-+		visible, err = fresh.visibleSubscriptionMetadata(nil)
-+		require.NoError(t, err)
-+		require.Len(t, visible, 129)
-+		require.Equal(t, []int{256, 256}, ctx.metadataLimits)
-+	})
-+
- 	_, ctx := newSubscriptionMetadataTestOptimizer(t)
--	ctx.metadata = subscriptionMetadataTestSet(129)
- 	statements, err := mysql.Parse(context.Background(),
- 		"select count(*) from information_schema.statistics", 1)
- 	require.NoError(t, err)
- 	require.Len(t, statements, 1)
- 	defer statements[0].Free()
+-	defer func() {
+-		if !c.teardown {
+-			runtime.ServiceRuntime(c.service).Logger().Debug("MO is working.")
+-		}
+-	}()
+-
+ 	c.OperatorController.RemoveFinishedOperator(logState, tnState, cnState, proxyState)
  
--	for build := 0; build < 2; build++ {
-+	wantScans := []map[string]int{
-+		{"sub_00": 1, "sub_01": 1},
-+		{"sub_00": 1, "sub_01": 1, "sub_02": 1},
-+	}
-+	for build := range wantScans {
-+		ctx.metadata = subscriptionMetadataTestSet(build + 2)
- 		queryPlan, buildErr := BuildPlan(ctx, statements[0], false, nil)
- 		require.NoError(t, buildErr)
--		require.Len(t, statisticsPublisherScanCounts(queryPlan.GetQuery()), 129)
-+		require.Equal(t, wantScans[build], statisticsPublisherScanCounts(queryPlan.GetQuery()))
- 		require.Nil(t, ctx.GetQueryingSubscription())
+-	// if we've discovered unhealthy already, no need to keep alive anymore.
+-	if c.teardown {
+-		return c.OperatorController.Dispatch(c.teardownOps, logState, tnState, cnState, proxyState)
+-	}
+-
+-	// check whether system health or not.
+-	if operators, health := syshealth.Check(c.cfg, cluster, tnState, logState, currentTick); !health {
+-		// TN starts have a report/target lifetime. Teardown ends their ownership
+-		// before ordinary checks stop running.
+-		for _, record := range cluster.TNShards {
+-			for _, op := range slices.Clone(c.OperatorController.GetOperators(record.ShardID)) {
+-				if steps := op.OpSteps(); len(steps) == 1 {
+-					if _, ok := steps[0].(operator.AddTnReplica); ok {
+-						c.OperatorController.RemoveOperator(op)
+-					}
+-				}
+-			}
+-		}
+-		c.teardown = true
+-		c.teardownOps = operators
+-		return c.OperatorController.Dispatch(c.teardownOps, logState, tnState, cnState, proxyState)
+-	}
+-
+-	// system health, try to keep alive.
+ 	executing := c.OperatorController.GetExecutingReplicas()
+ 	executingNonVoting := c.OperatorController.GetNonVotingExecutingReplicas()
+ 
+@@ -141,11 +105,11 @@ func (c *Coordinator) Check(alloc util.IDAllocator, state pb.CheckerState, stand
+ 			shardIDs = append(shardIDs, shard.ShardID)
+ 		}
+ 		slices.Sort(shardIDs)
+-		var existing []*operator.Operator
++		existing := make([]*operator.Operator, 0, len(shardIDs))
+ 		for _, shardID := range slices.Compact(shardIDs) {
+ 			existing = append(existing, c.OperatorController.GetOperators(shardID)...)
+ 		}
+-		pending := logservice.PendingOperators(commonFields, logState, state.NonVotingReplicaNum, existing)
++		pending := logservice.PendingOperators(commonFields, logState, executing, executingNonVoting, state.NonVotingReplicaNum, state.NonVotingLocality, existing)
+ 		operators = append(pending, operators...)
  	}
--	require.Equal(t, 258, ctx.publisherBindCount,
-+	require.Equal(t, []int{256, 256}, ctx.metadataLimits)
-+	require.Equal(t, 5, ctx.publisherBindCount,
- 		"the statement-wide budget must be fresh for each independent build")
- }
- 
+ 	return c.OperatorController.Dispatch(operators, logState, tnState, cnState, proxyState)
 ```
 
-**File**: `pkg/tests/issues/issue_28605_test.go` (modified, +36/-7)
+**File**: `pkg/hakeeper/checkers/coordinator_test.go` (modified, +14/-14)
 ```diff
-@@ -18,6 +18,7 @@ import (
- 	"context"
- 	"database/sql"
- 	"fmt"
-+	"strings"
- 	"testing"
- 	"time"
+@@ -347,7 +347,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 4,
++							ReplicaID: 4, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"e": {
+@@ -359,7 +359,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 5,
++							ReplicaID: 5, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"f": {
+@@ -371,7 +371,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 6,
++							ReplicaID: 6, IsNonVoting: true,
+ 						}},
+ 					},
+ 				},
+@@ -407,7 +407,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 2,
++							ReplicaID: 1,
+ 						}},
+ 					},
+ 					"b": {
+@@ -443,7 +443,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 4,
++							ReplicaID: 4, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"e": {
+@@ -455,7 +455,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 5,
++							ReplicaID: 5, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"f": {Tick: 0, Replicas: []pb.LogReplicaInfo{}},
+@@ -539,7 +539,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 4,
++							ReplicaID: 4, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"e": {
+@@ -551,7 +551,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 5,
++							ReplicaID: 5, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"f": {
+@@ -563,7 +563,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 6,
++							ReplicaID: 6, IsNonVoting: true,
+ 						}},
+ 					},
+ 				},
+@@ -611,7 +611,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 2,
++							ReplicaID: 1,
+ 						}},
+ 					},
+ 					"b": {
+@@ -647,7 +647,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 3,
++							ReplicaID: 4, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"e": {
+@@ -659,7 +659,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 3,
++							ReplicaID: 5, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"f": {
+@@ -766,7 +766,7 @@ func TestFixZombie(t *testing.T) {
+ 								Replicas: map[uint64]string{1: "a", 2: "b", 4: "d"},
+ 								Epoch:    2,
+ 								LeaderID: 1},
+-							ReplicaID: 3,
++							ReplicaID: 4,
+ 						}},
+ 					},
+ 				},
+@@ -843,7 +843,7 @@ func TestFixZombie(t *testing.T) {
+ 								Replicas: map[uint64]string{1: "a", 2: "b", 4: "d"},
+ 								Epoch:    2,
+ 								LeaderID: 1},
+-							ReplicaID: 3,
++							ReplicaID: 4,
+ 						}},
+ 					},
+ 				},
+```
+
+**File**: `pkg/hakeeper/checkers/coordinator_tn_test.go` (modified, +139/-15)
+```diff
+@@ -216,7 +216,7 @@ func TestTNStartReservationsAndPartialReports(t *testing.T) {
+ 	require.Len(t, c.OperatorController.GetOperators(3), 1)
+ }
  
-@@ -67,6 +68,8 @@ func TestCTASDivisionByZero(t *testing.T) {
- 		exec("USE `" + name + "`")
- 		exec("CREATE TABLE src(id INT PRIMARY KEY,n INT,d INT)")
- 		exec("INSERT INTO src VALUES(1,10,2),(2,10,0),(3,9,3)")
-+		runtimeExpressions := []string{"n/d", "n DIV d", "n % d", "CAST(n AS DECIMAL(18,4))/d", "CAST(n AS DOUBLE)/d"}
-+		allExpressions := append([]string{runtimeExpressions[0], "10/0"}, runtimeExpressions[1:]...)
- 		for _, temporary := range []bool{false, true} {
- 			t.Run(fmt.Sprintf("temporary=%t", temporary), func(t *testing.T) {
- 				prefix := "CREATE TABLE copied"
-@@ -77,14 +80,19 @@ func TestCTASDivisionByZero(t *testing.T) {
- 					t.Run(mode, func(t *testing.T) {
- 						err := execSQL("SET SESSION sql_mode='" + mode + "'")
- 						require.NoError(t, err)
--						for _, expression := range []string{"n/d", "10/0", "n DIV d", "n % d", "CAST(n AS DECIMAL(18,4))/d", "CAST(n AS DOUBLE)/d"} {
-+						strict := mode == "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO" || mode == "STRICT_ALL_TABLES,ERROR_FOR_DIVISION_BY_ZERO"
-+						for _, expression := range allExpressions {
-+							// Keep strict failures and constant folding in standalone CTAS
-+							// statements. Successful runtime expressions are checked together.
-+							if !strict && expression != "10/0" {
-+								continue
-+							}
- 							t.Run(expression, func(t *testing.T) {
- 								t.Cleanup(func() {
- 									err := execSQL("DROP TABLE IF EXISTS copied")
- 									require.NoError(t, err)
- 								})
- 								err := execSQL(prefix + " AS SELECT id," + expression + " AS v FROM src ORDER BY id")
--								strict := mode == "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO" || mode == "STRICT_ALL_TABLES,ERROR_FOR_DIVISION_BY_ZERO"
- 								if strict {
- 									var sqlErr *mysql.MySQLError
- 									require.ErrorAs(t, err, &sqlErr)
-@@ -99,11 +107,32 @@ func TestCTASDivisionByZero(t *testing.T) {
- 									var count, nulls int
- 									require.NoError(t, queryScan("SELECT COUNT(*),COUNT(*)-COUNT(v) FROM copied", &count, &nulls))
- 									require.Equal(t, 3, count)
--									wantNulls := 1
--									if expression == "10/0" {
--										wantNulls = 3
--									}
--									require.Equal(t, wantNulls, nulls)
-+									require.Equal(t, 3, nulls)
-+								}
-+							})
-+						}
-+						if !strict {
-+							t.Run("runtime expressions", func(t *testing.T) {
-+								t.Cleanup(func() {
-+									err := execSQL("DROP TABLE IF EXISTS copied")
-+									require.NoError(t, err)
-+								})
-+								projections := make([]string, len(runtimeExpressions))
-+								for i, expression := range runtimeExpressions {
-+									projections[i] = fmt.Sprintf("%s AS v%d", expression, i)
-+								}
-+								err := execSQL(prefix + " AS SELECT id," + strings.Join(projections, ",") + " FROM src ORDER BY id")
-+								require.NoError(t, err)
-+								for i, expression := range runtimeExpressions {
-+									t.Run(expression, func(t *testing.T) {
-+										var count, nulls, zeroDenominatorNulls int
-+										column := fmt.Sprintf("v%d", i)
-+										require.NoError(t, queryScan("SELECT COUNT(*),COUNT(*)-COUNT("+column+"),"+
-+											"COUNT(CASE WHEN id=2 AND "+column+" IS NULL THEN 1 END) FROM copied", &count, &nulls, &zeroDenominatorNulls))
-+										require.Equal(t, 3, count)
-+										require.Equal(t, 1, nulls)
-+										require.Equal(t, 1, zeroDenominatorNulls)
-+									})
- 								}
- 							})
- 						}
+-func TestTNStartRebuildAndTeardown(t *testing.T) {
++func TestTNStartRebuildAndRecovery(t *testing.T) {
+ 	c, state, alloc := tnStartScenario(t)
+ 	first := c.Check(alloc, state, false)
+ 	require.Len(t, first, 1)
+@@ -237,26 +237,23 @@ func TestTNStartRebuildAndTeardown(t *testing.T) {
+ 	state.TNState.Stores["tn-a"] = info
+ 	require.Empty(t, stale.Check(alloc, state, false))
+ 	require.Empty(t, stale.OperatorController.GetOperators(2))
+-	// Keep this coordinator's start unfinished when entering teardown.
++	// A temporary shortage of Log replica reports leaves the TN start in flight.
+ 	info.Shards = nil
+ 	state.TNState.Stores["tn-a"] = info
+ 	pending := c.OperatorController.GetOperators(2)[0]
+-	// Expired majority forces the actual syshealth teardown branch.
+ 	state.ClusterInfo.LogShards = []metadata.LogShardRecord{{ShardID: 1, NumberOfReplicas: 3}}
+ 	state.LogState = pb.LogState{Stores: map[string]pb.LogStoreInfo{}}
+ 	for i, id := range []string{"log-a", "log-b"} {
+ 		state.LogState.Stores[id] = pb.LogStoreInfo{Replicas: []pb.LogReplicaInfo{{LogShardInfo: pb.LogShardInfo{ShardID: 1}, ReplicaID: uint64(i + 1)}}}
+ 	}
+-	for i := 0; i < 2; i++ {
+-		commands := c.Check(alloc, state, false)
+-		require.NotEmpty(t, commands)
+-		for _, cmd := range commands {
+-			require.Nil(t, cmd.ConfigChange)
+-			require.NotNil(t, cmd.ShutdownStore)
+-		}
+-		require.Empty(t, c.OperatorController.GetOperators(2))
+-		require.Equal(t, operator.CANCELED, pending.Status())
++	for _, cmd := range c.Check(alloc, state, false) {
++		require.Nil(t, cmd.ShutdownStore)
+ 	}
++	require.Same(t, pending, c.OperatorController.GetOperators(2)[0])
++	info.Shards = []pb.TNShardInfo{{ShardID: 2, ReplicaID: restarted[0].ConfigChange.Replica.ReplicaID}}
++	state.TNState.Stores["tn-a"] = info
++	c.Check(alloc, state, false)
++	require.Empty(t, c.OperatorController.GetOperators(2))
+ }
+ 
+ func TestTNRetryPreservesPendingLogStart(t *testing.T) {
+@@ -288,6 +285,12 @@ func TestTNRetryPreservesPendingLogStart(t *testing.T) {
+ 				require.NoError(t, err)
+ 				return r
+ 			}
++			// The delivery RSM must observe the same membership as the checker.
++			for _, id := range []string{"a", "b"} {
++				report, err := (&pb.LogStoreHeartbeat{UUID: id, Replicas: state.LogState.Stores[id].Replicas}).Marshal()
++				require.NoError(t, err)
++				apply(hakeeper.GetLogStoreHeartbeatCmd(report))
++			}
+ 			first := coordinator.Check(alloc, state, false)
+ 			var logStart *pb.ScheduleCommand
+ 			for i := range first {
+@@ -297,14 +300,17 @@ func TestTNRetryPreservesPendingLogStart(t *testing.T) {
+ 				}
+ 			}
+ 			require.NotNil(t, logStart, "fixture must schedule the actual missing log replica")
+-			t.Logf("first batch: %+v", first)
++			confirmedStart := *logStart
++			change := *logStart.ConfigChange
++			change.Replica.Epoch = shard.Epoch
++			confirmedStart.ConfigChange = &change
+ 			apply(hakeeper.GetUpdateCommandsCmd(1, first))
+ 			hb, err := (&pb.LogStoreHeartbeat{UUID: "c"}).Marshal()
+ 			require.NoError(t, err)
+ 			if tt.consumed {
+ 				var original pb.CommandBatch
+ 				require.NoError(t, original.Unmarshal(apply(hakeeper.GetLogStoreHeartbeatCmd(hb)).Data))
+-				require.Contains(t, original.Commands, *logStart)
++				require.Contains(t, original.Commands, confirmedStart)
+ 			}
+ 			state.Tick++
+ 			second := coordinator.Check(alloc, state, false)
+@@ -315,7 +321,7 @@ func TestTNRetryPreservesPendingLogStart(t *testing.T) {
+ 			var received pb.CommandBatch
+ 			require.NoError(t, received.Unmarshal(apply(hakeeper.GetLogStoreHeartbeatCmd(hb)).Data))
+ 			t.Logf("log heartbeat commands: %+v", received.Commands)
+-			require.Contains(t, received.Commands, *logStart, "a TN-only retry must not erase an unrelated undelivered log start")
++			require.Contains(t, received.Commands, confirmedStart, "a TN-only retry must not erase an unrelated undelivered log start")
+ 			// A real report ends the retained Log intent, even while TN still retries.
+ 			store := state.LogState.Stores["c"]
+ 			store.Replicas = []pb.LogReplicaInfo{{LogShardInfo: shard, ReplicaID: 3}}
+@@ -346,3 +352,121 @@ func TestTNRetryDoesNotResurrectObsoleteRemoval(t *testing.T) {
+ 	require.Equal(t, first, next)
+ 	require.Equal(t, operator.STARTED, old.Status())
+ }
++
++func TestCoordinatorRepairsAfterMissingReplicaReport(t *testing.T) {
++	c, state, alloc := tnStartScenario(t)
++	state.Tick = 10000
++	state.TNState.Stores["tn-a"] = pb.TNStoreInfo{Tick: state.Tick, TaskServiceCreated: true}
++	state.ClusterInfo.LogShards = []metadata.LogShardRecord{
++		{ShardID: 0, NumberOfReplicas: 3}, {ShardID: 1, NumberOfReplicas: 3},
++	}
++	members := map[uint64]string{1: "log-a", 2: "log-b", 3: "log-c"}
++	data := pb.LogShardInfo{ShardID: 1, Replicas: members, LeaderID: 1, Epoch: 1}
++	control := pb.LogShardInfo{Replicas: members, LeaderID: 1, Epoch: 1}
++	state.LogState = pb.LogState{
++		Shards: map[uint64]pb.LogShardIn
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32898** (2026-11-18): [4.2-dev] Preserve normal completion on local stop during serial reader construction (@VioletQwQ-0)
-- **PR #32894** (2026-11-18): [4.2-dev] perf: reduce clone metadata work and isolate checkpoint replay (@gouhongshen)
-- **PR #32888** (closed): fix(bitmap): preserve sparse tails during ordered remap (cherry-pick #32846) (@ck89119)
-- **PR #32887** (2026-11-18): [4.2-dev] Preserve ENUM definitions across schema rebuilds and honor explicit redefinition (@XuPeng-SH)
-- **PR #32877** (2026-11-18): [4.2-dev] fix: preserve SQL S3 environment region fallback (@Ariznawlll)
-- **PR #32874** (closed): fix: respect ci collations in ENUM/SET comparisons (@gouhongshen)
+- **PR #33433** (2026-11-28): [4.2-dev] test: stabilize cross-CN publication lock assertions (@XuPeng-SH)
+- **PR #33432** (2026-11-28): ci: use S3-only PR Coverage and expose manual OSS COS checks (@XuPeng-SH)
+- **PR #33431** (2026-11-28): ci: roll out the narrowed CS S3 Coverage smoke (@XuPeng-SH)
+- **PR #33430** (2026-11-28): ci: pin Coverage standby to merged CI #499 (@Ariznawlll)
+- **PR #33426** (closed): fix(compile): metadata MIN/MAX and merge-group codec through shared type functions (#10181) (@fengttt)
+- **PR #33425** (2026-11-28): Assign code owners for thirdparties/sirius (@zuyu)
 
 ---
 
@@ -3590,58 +4009,6 @@ each successful mode and table type, keep the standalone co
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. preserve accepted UNIQUE keys in multi-target UPDATE IGNORE
-
-**RULE**:
-When implementing operations in `docs/design/20261117-update-ignore-unique-arbitration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `87c44445`: preserve accepted UNIQUE keys in multi-target UPDATE IGNORE. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/20261117-update-ignore-unique-arbitration.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-# Unique arbitration for repeated-target UPDATE IGNORE
-
-Issue: [#31824](https://github.com/matrixorigin/matrixone/issues/31824)
-
-Implementation: [#32827](https://github.com/matrixorigin/matrixone/pull/32827)
-
-## Problem and contract
-
-An UPDATE can write the same physical table through more than one alias. Under
-IGNORE, each alias can change a row that an earlier alias already changed or
-rejected. Checking each alias against the statement snapshot independently is
-not sufficient: a later alias can claim a key already accepted for another row,
-or a surviving key can be mistaken for a released snapshot key. In either
-case the table or its unique index can contain conflicting entries.
-
-Keep the existing ordered alias stages. For each physical row, S is its
-statement-snapshot image and C its latest accepted image, initially S. Each
-active alias forms a candidate N from C, including recomputed generated
-columns. If its constraints reject it under IGNORE, retain C and report the
-rejected candidate; otherwise N becomes the next C. Earlier rejected
-assignments are not resurrected. Each accepted physical key must have at most
-one owner under the actual index equality and encoding, including 
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87c44445` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

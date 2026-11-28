@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-28T13:56:03.705Z",
+  "timestamp": "2026-11-28T15:36:48.061Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-28T13:56:03.705Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T15:36:48.061Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `1772058f`  
+> **Source Version**: `30bfd633`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-28T13:55:56.283Z  
+> **Timestamp**: 2026-11-28T15:36:16.808Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-28T13:55:56.277Z  
+> **Harvest Timestamp**: 2026-11-28T15:36:16.805Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1884,124 +1884,98 @@ export function document(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1772058f` (2026-11-28)
-**Commit Message**: Draft NUC 162 Population Instance Removal
+### Incident Patch 1: `30bfd633` (2026-11-28)
+**Commit Message**: Draft NUC 163 C# Ceiling Method Alias
 
-Category: Runtime features, drawn uniformly at random (index 1 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw, at
-07:57 on 28-Nov) for a continuous /nuc-proposal cycle. Runtime
-applicability: an existing comparable feature (deletion of properties
-and instances), so the token comparison runs.
+Category: Language compatibility. Add only case-sensitive Math.Ceiling as an exact optional alias of accepted Math.ceil. Continuous mode; token comparison categorically skipped. Preserve accepted semantics; no parser, numeric-algorithm, decimal, overload or namespace changes. Complete the prototype and independent evaluation only after the immutable allocation baseline is captured.
 
-Requested change: class populations gain Name.remove(instance), which
-removes one instance of Name in one statement: every property it holds,
-its own and those class-level rules derive, and then the instance
-itself, as `delete instance.property` for each property followed by
-`delete instance` does at the accepted revision, with the same
-propagation to dependents and the same rollback of a failed statement
-or transaction. An argument that is not an instance of Name raises a
-TypeError, further arguments are evaluated and ignored, and the call is
-undefined. Only calls that raised TypeError("<Name>.remove is not a
-function") change; `delete` keeps its accepted rule (an instance that
-still has properties keeps raising TypeError("Cannot delete object
-'<id>'")), and lists, instances, user methods, variables and object
-members named r
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -111,6 +111,7 @@ Created: 31-Jul-2026
- | [151](nuc-0151.md) | Truthy Value Assignment | Accepted |
- | [152](nuc-0152.md) | Falsy Value Assignment | Rejected: protected truthy-assignment parser rejection test fails |
- | [158](nuc-0158.md) | List Invocation of Function Values | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
-+| [162](nuc-0162.md) | Population Instance Removal | Draft |
+@@ -206,6 +206,7 @@ Created: 31-Jul-2026
+ | [150](nuc-0150.md) | C# Truncation Method Alias | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
+ | [157](nuc-0157.md) | Padding Method Aliases | Accepted |
+ | [160](nuc-0160.md) | C# String Trimming Method Alias | Accepted |
++| [163](nuc-0163.md) | C# Ceiling Method Alias | Draft |
  
- ### Utility enhancement
+ ### Documentation
  
-@@ -377,6 +378,7 @@ Created: 31-Jul-2026
- | [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Accepted |
+@@ -379,6 +380,7 @@ Created: 31-Jul-2026
  | [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Accepted |
- | [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Draft |
-+| [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Draft |
+ | [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Accepted |
+ | [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Draft |
++| [163](nuc-0163.md) | C# Ceiling Method Alias | Standards Track | Language compatibility | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0162.md` (added, +79/-0)
+**File**: `docs/nuc-0163.md` (added, +69/-0)
 ```diff
-@@ -0,0 +1,79 @@
-+# NUC 162 -- Population Instance Removal
+@@ -0,0 +1,69 @@
++# NUC 163 -- C# Ceiling Method Alias
 +
 +```
-+NUC: 162
-+Title: Population Instance Removal
-+Author: Can Mingir <canmingir@gmail.com>
++NUC: 163
++Title: C# Ceiling Method Alias
++Author: Copilot <223556219+Copilot@users.noreply.github.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Runtime features
++Category: Language compatibility
 +Created: 28-Nov-2026
 +```
 +
 +## Abstract
 +
-+- Class populations gain `Name.remove(instance)`, which removes one
-+  instance of `Name` from the world model in one statement: every property
-+  the instance holds, its own and those that class-level rules derive,
-+  and then the instance itself, as deleting each property with
-+  `delete instance.property` and then `delete instance` does at the
-+  accepted revision.
-+- Dependents follow, as they follow those deletions: population mappings,
-+  filters, counts and reads of the removed instance's properties
-+  re-evaluate, and a failed statement or transaction restores the
-+  instance, its properties and their dependencies.
-+- An argument that is not an instance of `Name` raises a `TypeError`,
-+  further arguments are evaluated and ignored, and the call is undefined.
-+- At the accepted revision every such call raises
-+  `TypeError("<Name>.remove is not a function")`, and only those calls
-+  change. `delete` keeps its accepted rule, so deleting an instance that
-+  still has properties keeps raising
-+  `TypeError("Cannot delete object '<id>'")`; lists, instances, user
-+  methods, variables and object members named `remove` keep their
-+  readings.
-+- This continuous Runtime features proposal extends an existing comparable
-+  feature, deletion, so the token comparison runs: each new case is paired
-+  with its accepted spelling through `delete`.
++- Add only `Math.Ceiling(value)` as an optional, case-sensitive C#-style
++  spelling of accepted `Math.ceil(value)`, wherever existing call resolution
++  reaches native Math.
++- Reuse the existing ceiling operation and preserve intrinsic conversion,
++  argument evaluation, supplied-Undefined handling, numeric edge behavior,
++  dependencies, transactions, namespace shadowing and every accepted form.
++- Add no numeric algorithm, decimal type, overload system, first-class native
++  method, global helper, parser rule or family of Pascal-case aliases.
++- This caller-selected continuous cycle retains its one uniform
++  Language compatibility draw. Token comparison is categorically skipped;
++  immutable accepted-source replay, behavior/integrity, compatibility,
++  development checks and independent evaluation remain mandatory.
 +
 +## Motivation
 +
-+- World models gain and lose objects: an order is fulfilled, a vehicle
-+  leaves the lot, a task is cancelled. Nucleoid creates an instance with
-+  one call, but removing one that holds properties takes a `delete` for
-+  every property it holds, including each property a class-level rule
-+  derived, before `delete instance` succeeds; a forgotten property leaves
-+  `TypeError("Cannot delete object '<id>'")`.
-+- At the accepted revision, with `class Robot(name)` and
-+  `a = Robot("a")`, `delete a` raises
-+  `TypeError("Cannot delete object 'a'")`, while `delete a.name` followed
-+  by `delete a` removes the instance from `Robot`'s population, and
-+  `Robot.remove(a)` raises `TypeError("Robot.remove is not a function")`.
-+- The removal reuses the accepted deletion of properties and instances,
-+  with their propagation and rollback, so dependents and transactions
-+  behave as they already do for those deletions.
-+- Python's `list.remove(item)`, Kotlin's `remove(element)` and C#'s
-+  `Remove(item)` name the operation on collections; Nucleoid's class
-+  populations already answer `map`, `filter` and the other list queries.
++- C# exposes `System.Math.Ceiling` for the smallest integral value greater
++  than or equal to its argument. Nucleoid already provides this operation as
++  `Math.ceil`; a familiar spelling can share that implementation without
++  claiming full C#/.NET compatibility.
++- Microsoft's [Math.Ceiling reference](https://learn.microsoft.com/en-us/dotnet/api/system.math.ceiling)
++  establishes the spelling. Nucleoid's accepted numeric model and call
++  behavior, not .NET overloads or coercion rules, govern this alias.
++- The all-status proposal review found no existing proposal for this
++  spelling. Rejected NUC 150 concerns `Math.Truncate` and explicitly excludes
++  `Ceiling`; this revision neither revisits nor depends on that candidate.
 +
 +## Rationale
 +
-+- Pending: the proposer completes this section.
++Pending the fresh proposal agent's completion after allocation and the
++immutable accepted-baseline capture.
 +
 +## Specification
 +
-+- Pending: the proposer completes this section.
++Pending the isolated prototype and its behavior evidence.
 +
-+## Errors
++## Backwards Compatibility
 +
-+- Pending: the proposer completes this section.
++Preserve all accepted parser forms and successful behavior. Only the native
++unknown-method error for the newly supported spelling may become its ceiling
++result; existing argument gates and ordinary receivers retain their behavior.
 +
 +## Reference Implementation
 +
-+- Pending: the proposer completes this section.
++Pending the isolated prototype and the caller-owned Rust improvement pass.
++
++## Evaluation
++
++Pending the separate fresh evaluator. This Draft records no outcome.
 +
 +## Copyright
 +
@@ -2013,455 +1987,249 @@ members named r
 
 ---
 
-### Incident Patch 2: `3093baaa` (2026-11-28)
-**Commit Message**: NUC 159 Reactive Hypotenuse
+### Incident Patch 2: `486c38c2` (2026-11-28)
+**Commit Message**: NUC 161 Reactive Base Ten Exponentiation
 
-Accepted under the automatic acceptance rule, in a continuous cycle:
-every hard criterion passes and every policy check passes. Category
-Utility enhancement, so the token non-regression gate ran and passed:
-7 cases use fewer tokens, 1,340 the same and none more (1,094 against
-1,144 for the seven new cases). Counterparts judged fair. The
-independent evaluator's overall decision is Accepted, with two low and
-one informational finding.
+Accepted under automatic acceptance: the independent policy decision is
+Accepted and all three hard criteria pass. This is a continuous Utility
+enhancement; runtime applicability is not applicable.
 
-Math.hypot(value, ...) is the Euclidean norm of its arguments: Math's
-undefined gate first, conversion as for Math.max, +Infinity before NaN,
-+0 for no arguments, and the sum of squares in argument order, computed
-directly within [2^-450, 2^450] and with an exact power-of-two scaling
-outside it, so there is no intermediate overflow or underflow and every
-integer Pythagorean tuple is exact. One arm and two private helpers in
-src/builtins/numeric.rs. Only calls of Math.hypot change, each a
-TypeError("Math.hypot is not a function") at the accepted revision.
+Integrate the unchanged frozen Math.exp10 semantic delta, computing exactly
+10.0_f64.powf(first), while preserving concurrent accepted NUC 159, Draft
+NUC 162 and ARC changes. Reconcile only necessary count/tail metadata and
+generated append ordinals; preserve all current accepted sources and tests.
 
-Hard criteria (evaluator against the pin 4caa973e; caller rerun on the
-integrated tree, main 6e57e554 plus the frozen candidate):
-- No compile errors: cargo fmt --check, c
+All-target build, formatting, warning-denied Clippy (including all features)
+and private warning-denied rustdoc pass. Integrated full cargo test passes
+4320, fails 0, retains 25 ignored tests and all 4335 current identities plus
+10 additions. All 4303 original statuses and 11 expected panics remain.
+Original and current accepted-source replays pass 1341 and 1348 cases,
+respectively; all eleven frozen CLI witnesses match.
 
-**File**: `README.md` (modified, +30/-0)
+Required lexer-token comparison ran on all 1341 original-baseline pairs:
+1 less, 1340 same, 0 more; the new decimal-scale case is 163 -> 161.
+Full per-case counts and independent/integrated evidence pins are recorded.
+Usefulness/rew
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
 ```diff
-@@ -3166,6 +3166,36 @@ row
-   already holds ten characters, such as `"Badge reader"`, is not padded.
-   See the [root contract](nucleoid.spec.md#padding-method-aliases).
- 
-+## Reactive hypotenuse
-+
-+**Math.hypot keeps a drone's distance to its landing pad live**
-+
-+```nuc
-+drone = {x: 7, y: 10}
-+pad = {x: 1, y: 2}
-+distance = Math.hypot(drone.x - pad.x, drone.y - pad.y)
-+assert(distance, 10)
-+drone.x = 16
-+assert(distance, 17)
-+drone.y = 22
-+assert(distance, 25)
-+distance
-+# return: 25
-+```
-+
-+- [NUC 159](docs/nuc-0159.md) adds `Math.hypot(value, ...)`, the square
-+  root of the sum of the squares of its arguments: the straight-line
-+  distance between two points from the differences of their coordinates,
-+  or the length of a vector from its components, as JavaScript's
-+  `Math.hypot` and Python's `math.hypot` compute it.
-+- `distance` is a standing declaration, so it follows every move of the
-+  drone. Each distance here is whole, as `Math.hypot` gives it exactly
-+  for every integer Pythagorean triple, and it is what
-+  `((drone.x - pad.x) ** 2 + (drone.y - pad.y) ** 2) ** 0.5` gives,
-+  without squaring each difference by hand or overflowing for large
-+  coordinates. See the
-+  [root contract](nucleoid.spec.md#reactive-hypotenuse).
-+
- ## Symmetric difference reasoning selections
- 
- **Xor tells two alarms apart**
+@@ -896,3 +896,4 @@
+ {"id":"spec-0896","description":"Nucleoid runs deferred suites on block exit","code":"audit = []\ndef complete(value):\n    defer:\n        audit.push(value)\n    if value > 0:\n        return value * 2\n    if value < 0:\n        return -value\n    return 0\nassert(complete(3), 6)\nassert(audit, [3])\nassert(complete(-4), 4)\nassert(audit, [3, -4])\nassert(complete(0), 0)\nassert(audit, [3, -4, 0])\n1","return":"1"}
+ {"id":"spec-0897","description":"Nucleoid separates list elements on new lines","code":"seed = 2\nreadings = [\n    seed\n    seed + 1\n    seed * 2\n]\nassert(readings, [2, 3, 4])\nassert(readings.length, 3)\nassert(readings[0], 2)\nseed = 5\nassert(readings, [5, 6, 10])\nassert(readings.length, 3)\nassert(readings[2], 10)\n1","return":"1"}
+ {"id":"spec-0898","description":"Nucleoid writes truthy values with one-shot assignments","code":"input = 3\nslot = input + 1\nslot &&:= 9\nassert(slot, 9)\ninput = 7\nassert(slot, 9)\nempty = 0\nempty &&:= missing\nassert(empty, 0)\nactive = true\nactive &&:= 5\nassert(active, 5)\ntext = \"\"\ntext &&:= missing\nassert(text, \"\")\nassert(input, 7)\n1","return":"1"}
++{"id":"spec-0899","description":"Nucleoid keeps base ten exponentiation reactive","code":"power = 2\nscale = Math.exp10(power)\nassert(scale, 100)\npower = 3\nassert(scale, 1000)\npower = -1\nassert(scale, 0.1)\npower = 0\nassert(scale, 1)\npower = \"2\"\nassert(scale, 100)\npower = -2\nassert(scale, 0.01)\npower = 1.5\nassert(scale, Math.pow(10, power))\npower = 309\nassert(scale, Number.POSITIVE_INFINITY)\npower = -400\nassert(scale, 0)\npower = Number.NEGATIVE_INFINITY\nassert(scale, 0)\npower = Number.NaN\nassert(String(scale), \"NaN\")\npower = 3\nassert(scale, 1000)\nscale","return":"1000"}
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +21/-17)
+**File**: `dataset/nucleoid.synth.161.jsonl` (added, +1/-0)
 ```diff
-@@ -875,20 +875,24 @@
- {"id":"spec-0875","description":"Nucleoid pads strings with C#'s PadLeft and PadRight","code":"name = \"Zoë\"\ncode = \"7\"\ncell = name.PadRight(6, \"·\") + code.PadLeft(3, \"0\")\nassert(cell, \"Zoë···007\")\nname = \"Ana\"\ncode = \"12\"\nassert(cell, \"Ana···012\")\nassert([\"😀\".PadLeft(3), \"añejo\".PadRight(7, \"*\"), \"x\".PadLeft(4, \"😀é\")], [\"  😀\", \"añejo**\", \"😀é😀x\"])\nmark = String.fromCharCode(101, 769)\nassert([mark.PadLeft(3, \"-\"), mark.PadLeft(3, \"-\").length], [\"-\" + mark, 3])\ncell.length","return":"9"}
- {"id":"spec-0876","description":"Nucleoid keeps padding aliases live in class level rules","code":"class Room(floor, number):\n    this.floor = floor\n    this.number = number\n$Room.label = String($Room.floor).rjust(2, \"0\") + \"-\" + String($Room.number).PadLeft(3, \"0\")\nsuite = Room(3, 7)\nhall = Room(12, 45)\nassert([suite.label, hall.label], [\"03-007\", \"12-045\"])\nsuite.number = 120\nhall.floor = 4\nassert([suite.label, hall.label], [\"03-120\", \"04-045\"])\nsigns = Room.map(room -> room.label.ljust(8, \".\"))\nRoom(1, 1)\nassert(signs, [\"03-120..\", \"04-045..\", \"01-001..\"])\nsigns.length","return":"3"}
- {"id":"spec-0877","description":"Nucleoid rolls back failed updates through padding aliases","code":"width = 4\nfill = \"0\"\nticket = \"42\".rjust(width, fill)\nfailure = \"\"\ntry:\n    width = 1 / 0\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Padded string is too large\"))\nassert([width, ticket], [4, \"0042\"])\nids = []\ntags = ids.map(id -> id.PadRight(size, \"-\"))\ntry:\n    ids.push(\"a\")\ncatch error:\n    failure = error\nassert(failure, ReferenceError(\"size is not defined\"))\nassert([ids, tags], [[], []])\nsize = 3\nids.push(\"a\", \"bb\")\nassert(tags, [\"a--\", \"bb-\"])\ntry:\n    fill = \"*\"\n    size = 4\n    assert([ticket, tags], [\"**42\", [\"a---\", \"bb--\"]])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([ticket, fill, tags], [\"0042\", \"0\", [\"a--\", \"bb-\"]])\nticket","return":"\"0042\""}
--{"id":"spec-0878","description":"Nucleoid tells two explanations apart with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\napart = total |> why |> xor(freight |> why)\ncontrast = why freight |> xor(why total)\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"price\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"price\"])\nshipping = price + 1\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"quantity\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"quantity\"])\nquantity = 5\nassert(apart.map(s -> s.holds), [60, 50, 10, 5, 11.2, 11])","return":null}
--{"id":"spec-0879","description":"Nucleoid finds what a change of only one of two inputs reaches with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\nmoved = price |> affects |> xor(rate |> affects)\nspread = affects quantity |> xor(affects price)\nassert(moved.map(s -> s.node), [\"subtotal\", \"freight\"])\nassert(spread.map(s -> s.node), [\"shipping\", \"freight\"])\nfreight = shipping + rate * price\nassert(moved.map(s -> s.node), [\"subtotal\"])\nassert(spread.map(s -> s.node), [\"shipping\"])\nprice = 20\nassert(moved.map(s -> s.holds), [60])\nmoved.length","return":"1"}
--{"id":"spec-0880","description":"Nucleoid separates what two changes of each instance reach with xor","code":"class Part(cost, weight):\n    this.cost = cost\n    this.weight = weight\n$Part.price = $Part.cost * 2\n$Part.freight = $Part.weight * 3\n$Part.charge = $Part.price + $Part.freight\n$Part.split = $Part.cost |> affects |> xor($Part.weight |> affects)\nbolt = Part(4, 1)\nnut = Part(2, 5)\nassert(bolt.split.map(s -> s.node), [\"bolt.price\", \"bolt.freight\"])\nassert(nut.split.map(s -> s.node), [\"nut.price\", \"nut.freight\"])\n$Part.duty = $Part.weight * 0.1\nassert(nut.split.map(s -> s.node), [\"nut.price\", \"nut.freight\", \"nut.duty\"])\n$Part.price = $Part.cost * 2 + $Part.weight\nassert(bolt.split.map(s -> s.node), [\"bolt.freight\", \"bolt.duty\"])\nnut.weight = 10\nassert(nut.split.map(s -> s.holds), [30, 1])\nnut.split.length","return":"2"}
--{"id":"spec-0881","description":"Nucleoid restores symmetric differences after failed changes","code":"price = 10\nquantity = 3\nsubtotal = price * quantity\nshipping = quantity * 2\napart = why subtotal |> xor(why shipping)\nfailure = \"\"\ntry:\n    apart = why subtotal |> xor(1)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(apart.map(s -> s.node), [\"subtotal\", \"price\", \"shipping\"])\ntry:\n 
+@@ -0,0 +1 @@
++{"id":"synth-161-0001","description":"A standing decimal scale stays live through coercion, fractional powers, overflow, underflow, NaN and recovery","code":"power = 2\nscale = Math.exp10(power)\nassert(scale, 100)\npower = 3\nassert(scale, 1000)\npower = -1\nassert(scale, 0.1)\npower = 0\nassert(scale, 1)\npower = \"2\"\nassert(scale, 100)\npower = -2\nassert(scale, 0.01)\npower = 1.5\nassert(scale, Math.pow(10, power))\npower = 309\nassert(scale, Number.POSITIVE_INFINITY)\npower = -400\nassert(scale, 0)\npower = Number.NEGATIVE_INFINITY\nassert(scale, 0)\npower = Number.NaN\nassert(String(scale), \"NaN\")\npower = 3\nassert(scale, 1000)\nscale","return":"1000"}
 ```
 
-**File**: `dataset/nucleoid.synth.159.jsonl` (added, +12/-0)
+**File**: `docs/README.md` (modified, +36/-0)
 ```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-159-0001","description":"Math.hypot keeps the distance between two points in step with a move","code":"home = {x: 1, y: 1}\nrobot = {x: 4, y: 5}\ndistance = Math.hypot(robot.x - home.x, robot.y - home.y)\nassert(distance, 5)\nrobot.x = 6\nrobot.y = 13\ndistance","return":"13"}
-+{"id":"synth-159-0002","description":"Math.hypot measures the speed of a velocity from its three components","code":"velocity = {x: 2, y: 3, z: 6}\nspeed = Math.hypot(velocity.x, velocity.y, velocity.z)\nassert(speed, 7)\nvelocity.z = 0\nvelocity.x = 4\nspeed","return":"5"}
-+{"id":"synth-159-0003","description":"A class-level rule gives every point its distance from the origin","code":"class Point(x, y):\n    this.x = x\n    this.y = y\n$Point.radius = Math.hypot($Point.x, $Point.y)\np = Point(3, 4)\nq = Point(5, 12)\nassert([p.radius, q.radius], [5, 13])\nq.x = 9\nq.y = 40\n[p.radius, q.radius]","return":"[5,41]"}
-+{"id":"synth-159-0004","description":"A mapping turns a list of moves into their lengths and follows a push","code":"moves = [{dx: 3, dy: 4}]\nlengths = moves.map(move -> Math.hypot(move.dx, move.dy))\nassert(lengths, [5])\nmoves.push({dx: 8, dy: 15})\nlengths","return":"[5,17]"}
-+{"id":"synth-159-0005","description":"Math.hypot stays finite where squaring large coordinates overflows","code":"big = 1e200\nnaive = (big ** 2 + big ** 2) ** 0.5\nsafe = Math.hypot(big, big)\n[naive == Number.POSITIVE_INFINITY, safe > big, safe < 2 * big]","return":"[true,true,true]"}
-+{"id":"synth-159-0006","description":"Math.hypot keeps tiny components that squaring would lose","code":"small = 3e-200\nnaive = (small ** 2 + (4e-200) ** 2) ** 0.5\nsafe = Math.hypot(small, 4e-200)\n[naive, safe]","return":"[0,5e-200]"}
-+{"id":"synth-159-0007","description":"An infinite component makes Math.hypot infinite even beside NaN","code":"[Math.hypot(1 / 0, 0 / 0) == Number.POSITIVE_INFINITY, Number.isNaN(Math.hypot(0 / 0, 3))]","return":"[true,true]"}
-+{"id":"synth-159-0008","description":"Math.hypot of nothing is zero and of one value is its magnitude","code":"[Math.hypot(), Math.hypot(-7), Math.hypot(0, -0), 1 / Math.hypot(-0) > 0]","return":"[0,7,0,true]"}
-+{"id":"synth-159-0009","description":"Math.hypot converts its arguments as Math.max does","code":"[Math.hypot(\"3\", [4]), Math.hypot(true, null, \" 2 \", 2), Number.isNaN(Math.hypot(\"x\", 4))]","return":"[5,3,true]"}
-+{"id":"synth-159-0010","description":"An undefined argument makes Math.hypot undefined until it is defined","code":"target = {}\nreach = Math.hypot(target.x, 4)\nfirst = reach.value\ntarget.x = 3\n[first, reach]","return":"[null,5]"}
-+{"id":"synth-159-0011","description":"A failed push rolls back a mapping that measures lengths with Math.hypot","code":"legs = []\nlengths = legs.map(leg -> Math.hypot(leg.dx, leg.dy, rise))\nfailure = \"\"\ntry:\n    legs.push({dx: 2, dy: 3})\ncatch error:\n    failure = error\nassert([failure, legs, lengths], [ReferenceError(\"rise is not defined\"), [], []])\nrise = 6\nlegs.push({dx: 2, dy: 3})\nlengths","return":"[7]"}
-+{"id":"synth-159-0012","description":"Drones within range of a moving base follow it through Math.hypot","code":"class Drone(name, x, y):\n    this.name = name\n    this.x = x\n    this.y = y\nbase = {x: 0, y: 0}\n$Drone.range = Math.hypot($Drone.x - base.x, $Drone.y - base.y)\nDrone(\"near\", 6, 8)\nDrone(\"far\", 15, 20)\ninRange = Drone.filter(drone -> drone.range <= 10).map(drone -> drone.name)\nassert(inRange, [\"near\"])\nbase.x = 12\nbase.y = 16\ninRange","return":"[\"near\",\"far\"]"}
-```
-
-**File**: `docs/README.md` (modified, +40/-1)
-```diff
-@@ -3039,6 +3039,44 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
-   No aliases, receiver methods or syntax are added. See the
-   [cubing contract](../nucleoid.spec.md#reactive-cubing).
+@@ -3980,6 +3980,41 @@ assert(radians, -Math.PI / 2)
  
-+- [NUC 159](nuc-0159.md) adds native static `Math.hypot(value, ...)`, the
-+  square root of the sum of the squares of its arguments: the length of a
-+  vector from its components, or the distance between two points from the
-+  differences of their coordinates. It takes any number of arguments, and
-+  `Math.hypot()` is `0`. The arguments evaluate once, left to right, the
-+  supplied-Undefined gate applies, and every argument then converts as the
-+  arguments of `Math.max` do, none ignored. An infinite argument gives
-+  `Infinity`, even beside NaN; otherwise a NaN gives NaN. Signs do not
-+  matter, so `Math.hypot(-7)` is `7` and `Math.hypot(-0)` is `0`. While the
-+  largest magnitude lies between 2^-450 and 2^450, the result is exactly
-+  `Math.sqrt(a * a + b * b + ...)`, exact for every integer Pythagorean
-+  tuple; outside that range the arguments are scaled by a power of two
-+  first, so `Math.hypot(1e200, 1e200)` stays finite and
-+  `Math.hypot(3e-200, 4e-200)` is `5e-200`. Dependencies, live-null
-+  deferral and rollback are those of every Math call, and native
-+  `Math.hypot` value reads stay Undefined. No alias, receiver method or
-+  syntax is added. See the
-+  [hypotenuse contract](../nucleoid.spec.md#reactive-hypotenuse).
-+
-+### Reactive hypotenuse
-+
-+```
-+velocity = {x: -3, y: 4, z: 12}
-+speed = Math.hypot(velocity.x, velocity.y, velocity.z)
-+dx = 5
-+dy = -12
-+ground = Math.hypot(dx, dy)
-+assert([speed, ground], [13, 13])
-+velocity.x = 6
-+dx = -9
-+assert([speed, ground], [14, 15])
-+speed + ground
-+```
-+
-+- This is the complete `Nucleoid keeps Euclidean lengths live with Math.hypot`
-+  program in `tests/reference.md`, without title or expected-return metadata;
-+  its expected return is `29`.
-+
- ### Reactive cubing argument dependencies
+ ---
  
- ```
-@@ -3221,7 +3259,7 @@ assert(copied, -3)
- | `Object` | `Object()` -- a plain object, not an instance of any type |
- | `Boolean` | `Boolean(value)` |
- | `Number` | `Number.MAX_INTEGER` |
--| `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)), `copySign(value, sign)` ([NUC 142](nuc-0142.md)) |
-+| `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)), `copySign(value, sign)` ([NUC 142](nuc-0142.md)), `hypot(value, ...)` ([NUC 159](nuc-0159.md)) |
- | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `trim` and `strip`, their C# alias `Trim()` ([NUC 160](nuc-0160.md)), `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), their padding aliases `rjust` and `PadLeft` of `padStart` and `ljust` and `PadRight` of `padEnd` ([NUC 157](nuc-0157.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), Rust's `starts_with(prefix)` and `ends_with(suffix)` ([NUC 132](nuc-0132.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)), and the reversals `reverse()` and `reversed()`, exactly `text[::-1]` ([NUC 131](nuc-0131.md)) |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
- | `List` | `push`, `pop`, `filter`, `map`, their Ruby aliases `select` and `collect` ([NUC 134](nuc-0134.md)), `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `reverse` (a new list in reverse order), `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median`
-```
-
-**File**: `docs/examples.md` (modified, +36/-0)
-```diff
-@@ -4672,6 +4672,42 @@ receipt.length
-   padded. See [NUC 157](nuc-0157.md) and the
-   [root contract](../nucleoid.spec.md#padding-method-aliases).
++## Reactive base ten exponentiation
++
++- Accepted [NUC 161](nuc-0161.md) and the
++  [root contract](../nucleoid.spec.md#reactive-base-ten-exponentiation)
++  add only unshadowed static `Math.exp10(value)`, exactly the accepted
++  `Math.pow(10, value)` numeric operation. Accepted pow and exp2 stay unchanged.
++- Reuse Math's any-supplied-top-level-Undefined gate, intrinsic first-input
++  conversion and `10.0_f64.powf(first)`. Omission yields numeric NaN.
++  Non-NaN results match accepted pow by bits and NaNs by classification,
++  including fractional powers, overflow, subnormals and positive-zero
++  underflow. Both zero exponent signs yield one.
++- Literal null converts to zero without changing live-null or parameter
++  deferral. Other values retain their intrinsic conversions and NaN results.
++  No native decimal exponentiation, exponent/log identities, integer
++  shortcuts, rescaling, reordered math or accuracy/speed claim is introduced.
++- All supplied expressions evaluate once left to right before gating.
++  Numerically ignored extras retain reads, dependencies, effects and strict
++  errors. Standing rules, independent instances, functions, scopes,
++  deletion/recovery, savepoints and transaction rollback remain unchanged.
++- The fixed base and conversion do not resolve shadowable Number or Math
++  constants. State/local Math and ordinary `.Math` members retain lookup.
++  Native `Math.exp10` value reads remain Undefined, not stored functions.
++- Add no arity, numeric or range error. Strict unknown reads, unknown/random
++  native errors, ordinary receiver errors, positions and rollback remain
++  unchanged; numeric `Math = 7` gives
++  `TypeError("number.exp10 is not a function")`.
++- The single appended specification case
++  `Nucleoid keeps base ten exponentiation reactive` retains the caller's
++  twelve accepted-pow assertions and explicit return `1000`, changing only
++  the standing RHS. No reference executable case or accepted source changes.
++- This is a utility-only extension. The grammar, aliases, public Rust APIs,
++  dependencies, versions and resource limits are unchanged.
++
++---
++
+ ## Reactive base two exponentiation
  
-+## Reactive hypotenuse
-+
-+**Math.hypot keeps the antennas that serve a moving phone live**
-+
-+```nuc
-+class Antenna(name, x, y, reach):
-+    this.name = name
-+    this.x = x
-+    this.y = y
-+    this.reach = reach
-+phone = {x: 3, y: 2}
-+$Antenna.distance = Math.hypot($Antenna.x - phone.x, $Antenna.y - phone.y)
-+tower = Antenna("tower", 15, 7, 13)
-+mast = Antenna("mast", -9, -7, 14)
-+assert([tower.distance, mast.distance], [13, 15])
-+serving = Antenna.filter(antenna -> antenna.distance <= antenna.reach).map(antenna -> antenna.name)
-+assert(serving, ["tower"])
-+phone.y = -2
-+assert([tower.distance, mast.distance], [15, 13])
-+assert(serving, ["mast"])
-+Antenna("relay", 6, 2, 5)
-+assert(serving, ["mast", "relay"])
-+serving
-+# return: ["mast","relay"]
-+```
-+
-+- Each antenna's class-level rule measures its distance to the phone,
-+  `Math.hypot($Antenna.x - phone.x, $Antenna.y - phone.y)`, and an antenna
-+  serves the phone while that distance is within its reach. The tower's
-+  distance of exactly 13 is within its reach of 13, because `Math.hypot`
-+  gives whole distances exactly.
-+- When the phone moves, every antenna's distance follows, so the tower
-+  hands the phone over to the mast, and the relay built last joins the
-+  antennas that serve it. See [NUC 159](nuc-0159.md) and the
-+  [root contract](../nucleoid.spec.md#reactive-hypotenuse).
-+
- ## Symmetric difference reasoning selections
- 
- **Xor lists what tells two diagnoses apart**
+ ### Nucleoid names reactive base two powers
+@@ -6443,6 +6478,7 @@ items.flat()  items.flat(depth)        exactly items.flatMap(v => v), depth time
+ Math.remap(start, end, targetStart, targetEnd, value) unclamped static remapping (Accepted NUC 39)
+ Math.toRadians(value)                   static division-first degree conversion (NUC 50 candidate)
+ Math.exp2(value)                        static powf-based base-two power (Accepted NUC 56)
++Math.exp10(value)                       static powf-based base-ten power (Accepted NUC 161)
+ Math.cot(value)                         static reciprocal of tangent in radians (NUC 100 candidate)
+ Math.sec(value)                         static reciprocal of cosine in radians (NUC 138)
+ Math.csc(value)                         static reciprocal of sine in radians (NUC 141)
 ```
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -154,7 +154,7 @@ Created: 31-Jul-2026
- | [143](nuc-0143.md) | Reactive Squaring | Accepted |
+@@ -156,7 +156,7 @@ Created: 31-Jul-2026
  | [146](nuc-0146.md) | Reactive Cubing | Accepted |
  | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Rejected: 74 existing corpus-count and historical-locator tests fail |
--| [159](nuc-0159.md) | Reactive Hypotenuse | Draft |
-+| [159](nuc-0159.md) | Reactive Hypotenuse | Accepted |
- | [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Draft |
+ | [159](nuc-0159.md) | Reactive Hypotenuse | Accepted |
+-| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Draft |
++| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Accepted |
  
  ### Reasoning enhancement
-@@ -374,7 +374,7 @@ Created: 31-Jul-2026
- | [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail |
- | [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Accepted |
+ 
+@@ -377,7 +377,7 @@ Created: 31-Jul-2026
  | [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
--| [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Draft |
-+| [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Accepted |
+ | [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Accepted |
  | [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Accepted |
- | [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Draft |
+-| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Draft |
++| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Accepted |
+ | [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Draft |
  
+ ## Copyright
 ```
 
-**File**: `docs/nuc-0159.md` (modified, +915/-13)
+**File**: `nucleoid.spec.md` (modified, +72/-0)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 159
- Title: Reactive Hypotenuse
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Utility enhancement
- Created: 28-Nov-2026
-@@ -19,29 +19,37 @@ Created: 28-Nov-2026
-   `Math.hypot()` is `0`.
- - Every argument converts as the arguments of `Math.max` do. An infinite
-   argument makes the result `Infinity`, even beside `NaN`; otherwise any
--  `NaN` makes it `NaN`. The result is computed without intermediate
--  overflow or underflow, so `Math.hypot(1e200, 1e200)` is finite where
-+  `NaN` makes it `NaN`. While the largest magnitude lies between 2^-450 and
-+  2^450, the result is exactly `Math.sqrt(a * a + b * b + ...)` over the
-+  converted arguments, so it is exact for every integer Pythagorean tuple;
-+  outside that range every argument is first scaled by the same power of
-+  two, so the result is computed without intermediate overflow or
-+  underflow: `Math.hypot(1e200, 1e200)` is finite where
-   `(1e200 ** 2 + 1e200 ** 2) ** 0.5` is `Infinity`.
- - A declaration or class-level rule that calls it stays live with the
-   dependencies of its arguments, as every Math call does, and an undefined
-   argument makes the call undefined, as Math's gate does for every
-   function.
--- At the accepted revision `Math.hypot(...)` raises
-+- At the accepted revision every call of `Math.hypot` whose arguments
-+  evaluate without error and are not undefined raises
-   `TypeError("Math.hypot is not a function")`, and only those calls change.
-   A bare `Math.hypot` read stays undefined, as the read of every Math
-   function does.
- - This continuous Utility enhancement runs the token comparison: each new
-   case is paired with its most compact accepted spelling, such as
--  `(dx ** 2 + dy ** 2) ** 0.5`.
-+  `(dx ** 2 + dy ** 2) ** 0.5`, with the implicit receivers `.x` of
-+  [NUC 102](nuc-0102.md) in class-level rules.
-+- The authoritative contract is
-+  [Reactive hypotenuse](../nucleoid.spec.md#reactive-hypotenuse).
+@@ -4219,6 +4219,49 @@ statement positions; caught values and transaction recovery are unchanged.
+   behavior without requiring identical rule-source strings or immediate
+   dependency graphs. Unchanged historical programs retain their complete ASTs.
  
- ## Motivation
++## Reactive base ten exponentiation
++
++- Accepted [NUC 161](docs/nuc-0161.md) adds only unshadowed static `Math.exp10(value)`,
++  naming accepted `Math.pow(10, value)` without changing that operation.
++- Keep Math's any-supplied-top-level-Undefined gate before intrinsic
++  `Value::to_number` conversion of the first input. Omission supplies numeric
++  NaN; only the first supplied value is numerically converted.
++- Compute exactly `10.0_f64.powf(first)`, preserving the accepted pow kernel.
++  Non-NaN results agree by bits and NaNs by their accepted classification,
++  without a new payload, accuracy or speed guarantee. Do not substitute native
++  decimal exponentiation, exponent/log identities, integer shortcuts,
++  rescaling or another floating-point evaluation order.
++- Both zero exponent signs yield one. Finite and fractional exponents,
++  overflow, subnormal rounding, positive-zero underflow and nonfinite results
++  match accepted powf. Positive infinity yields positive infinity, negative
++  infinity yields positive zero, and NaN yields NaN.
++- Literal null converts to zero. Booleans, strings, empty/singleton lists,
++  dates and nonnumeric values retain intrinsic conversion. Live-null and
++  parameter-null deferral remain unchanged.
++- Every supplied expression evaluates once left to right, before the gate,
++  including ignored extras and expressions after Undefined. Extras retain
++  dependency reads, effects and strict errors without numeric conversion.
++- Standing propagation, independent class rules, wrappers, receivers,
++  scopes, frames, deletion/recovery, subscriptions, savepoints and rollback
++  retain the existing runtime machinery.
++- Conversion and the fixed base consult neither shadowable Number nor Math
++  constants. Local/state Math and ordinary `.Math` members keep their lookup.
++  Native `Math.exp10` value reads remain Undefined, not first-class functions.
++- Add no arity, conversion, numeric or range error. Strict unknown arguments
++  keep `ReferenceError("<name> is not defined")`; unsupported native helpers
++  keep `TypeError("Math.<name> is not a function")`, and `Math.random()` keeps
++  `TypeError("Math.random is not supported")` after the unchanged gate.
++  Numeric `Math = 7` keeps `TypeError("number.exp10 is not a function")`.
++- Only the previously unsupported unshadowed static call gains this utility.
++  Sibling helpers, constants, accepted syntax and inherited scope limitations
++  remain unchanged; add no alias, public Rust type/API, dependency or limit.
++- The appended case `Nucleoid keeps base ten exponentiation reactive` changes
++  only its standing scale RHS from the caller's accepted-pow counterpart,
++  preserving all twelve ordered assertions, explicit return `1000`,
++  fractional pow control and Number/String special-value spellings.
++- `docs/nucleoid.ebnf` remains unchanged: existing member-call syntax already
++  parses `exp10` as an ordinary name; no lexer or parser behavior changes.
++
+ ## Reactive base two exponentiation
  
- - World models measure distances and magnitudes from live coordinates: how
-   far one object is from another, the length of a velocity or an offset,
-   the diagonal of a box. Today that is
-   `((p.x - q.x) ** 2 + (p.y - q.y) ** 2) ** 0.5` or
--  `Math.sqrt(dx * dx + dy * dy)`, which square each difference by hand and
--  overflow for large coordinates.
-+  `Math.sqrt(dx * dx + dy * dy)`, which square each difference by hand,
-+  overflow for large coordinates and vanish for tiny ones.
- - JavaScript (`Math.hypot`), Python (`math.hypot`), C and C++ (`hypot`),
-   Java (`Math.hypot`), Kotlin (`hypot`), Go (`math.Hypot`) and Rust
-   (`f64::hypot`) name this operation, so programmers and language models
-@@ -50,25 +58,919 @@ Created: 28-Nov-2026
-   `TypeError("Math.hypot is not a function")` at column 1 of its statement,
-   and `Math.hypot` read without a call is undefined, as `Math.sqrt` is. No
-   document case, dataset record or test calls it, and no NUC proposes it.
--- One arm in the existing Math dispatcher, folding the converted arguments
--  with an overflow-safe `hypot`, keeps the change bounded: no syntax,
-+- One arm in the existing Math dispatcher, summing the squares of the
-+  converted arguments and scaling them by a power of two only when they
-+  would overflow or underflow, keeps the change bounded: no syntax,
-   keyword, token, error message or public item.
+ - Accepted [NUC 56](docs/nuc-0056.md) adds only unshadowed static
+@@ -30258,6 +30301,35 @@ assert(text, "")
+ assert(input, 7)
+ 1
+ # return: 1
++---
++# Nucleoid keeps base ten exponentiation reactive
++power = 2
++scale = Math.exp10(power)
++assert(scale, 100)
++power = 3
++assert(scale, 1000)
++power = -1
++assert(scale, 0.1)
++power = 0
++assert(scale, 1)
++power = "2"
++assert(scale, 100)
++power = -2
++assert(scale, 0.01)
++power = 1.5
++assert(scale, Math.pow(10, power))
++power = 309
++assert(scale, Number.POSITIVE_INFINITY)
++power = -400
++assert(scale, 0)
++power = Number.NEGATIVE_INFINITY
++assert(scale, 0)
++power = Number.NaN
++assert(String(scale), "NaN")
++power = 3
++assert(scale, 1000)
++scale
++# return: 1000
+ ```
  
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- **Category and mode.** The allocating continuous cycle found no stale
-+  Draft: NUC 158 is another session's, claimed an hour earlier, and the
-+  reference NUCs 2 to 11 have no allocation commit. It drew Utility
-+  enhancement with one tool-backed uniform draw over the five categories
-+  that NUC 1's registry marks eligible for automatic selection, index 2
-+  with probability 1/5 at 03:42:36 on 28-Nov-2026 and no redraw, and
-+  recorded the requested change in the allocation commit `4caa973e`, which
-+  this revision pins. Utility enhancement requires the token comparison in
-+  a continuous cycle. Runtime applicability does not apply to this
-+  category, and neither the ARC-requested nor the user-requested basis
-+  applies.
-+- **Counterparts.** Every new case has a behavior-equivalent counterpart in
-+  accepted syntax among the extra baselines, with the case's document,
-+  title, canonical assertions and expected return. Each differs from its
-+  case only where `Math.hypot` is written, in the most compact fair
-+  spelling of the families searched: `**` and `*` squares under `** 0.5`,
-+  `Math.sqrt`, `Math.square` and `Math.pow` over the same sums, helper
-+  functions in both arrow forms, list folds and the class-level
-+  `$Name` and `.name` forms. Hard-coded results and hand-evaluated
-+  substitutions are not fair counterparts; they were counted too, and none
-+  is shorter than its case. Every case changes a value after its call is
-+  declared and keeps every value on an integer Pythagorean tuple, so
+ ## Floating-point absolute value alias
 ```
 
-**File**: `nucleoid.spec.md` (modified, +149/-0)
+**File**: `src/builtins/numeric.rs` (modified, +1/-0)
 ```diff
-@@ -29822,6 +29822,89 @@ assert([ticket, fill, tags], ["0042", "0", ["a--", "bb-"]])
- ticket
- # return: "0042"
- ---
-+# Nucleoid keeps the distance between two instances live with Math.hypot
-+
-+class Point(x, y):
-+    this.x = x
-+    this.y = y
-+robot = Point(1, 2)
-+charger = Point(9, 17)
-+gap = Math.hypot(charger.x - robot.x, charger.y - robot.y)
-+assert(gap, 17)
-+charger.x = 21
-+assert(gap, 25)
-+robot.y = -4
-+assert(gap, 29)
-+gap
-+# return: 29
-+---
-+# Nucleoid keeps Math.hypot distances live in class level rules
-+
-+class Drone(name, x, y):
-+    this.name = name
-+    this.x = x
-+    this.y = y
-+home = {x: 2, y: 1}
-+$Drone.reach = Math.hypot($Drone.x - home.x, $Drone.y - home.y)
-+scout = Drone("scout", -4, 9)
-+hauler = Drone("hauler", 17, 9)
-+assert([scout.reach, hauler.reach], [10, 17])
-+near = Drone.filter(drone -> drone.reach <= 10).map(drone -> drone.name)
-+assert(near, ["scout"])
-+home.x = 11
-+assert([scout.reach, hauler.reach], [17, 10])
-+assert(near, ["hauler"])
-+scout.x = 5
-+Drone("relay", 14, 5)
-+assert(near, ["scout", "hauler", "relay"])
-+near.length
-+# return: 3
-+---
-+# Nucleoid measures lengths in three dimensions with Math.hypot
-+
-+crate = {w: 2, d: 3, h: 6}
-+diagonal = Math.hypot(crate.w, crate.d, crate.h)
-+assert(diagonal, 7)
-+crate.w = 6
-+assert(diagonal, 9)
-+crate.d = 7
-+assert(diagonal, 11)
-+moves = [{x: 1, y: 2, z: 2}]
-+lengths = moves.map(move -> Math.hypot(move.x, move.y, move.z))
-+assert(lengths, [3])
-+moves.push({x: -2, y: 6, z: -9})
-+assert(lengths, [3, 11])
-+lengths
-+# return: [3,11]
-+---
-+# Nucleoid rolls back failed updates through Math.hypot
-+
-+dx = 6
-+dy = 8
-+step = Math.hypot(dx, dy)
-+legs = []
-+lengths = legs.map(leg -> Math.hypot(leg.dx, leg.dy, rise))
-+failure = ""
-+try:
-+    legs.push({dx: 2, dy: 3})
-+catch error:
-+    failure = error
-+assert(failure, ReferenceError("rise is not defined"))
-+assert([legs, lengths], [[], []])
-+rise = 6
-+legs.push({dx: 2, dy: 3}, {dx: 6, dy: 7})
-+assert(lengths, [7, 11])
-+try:
-+    dx = 15
-+    legs.push({dx: 2, dy: 9})
-+    assert([step, lengths], [17, [7, 11, 11]])
-+    throw "UNDO"
-+catch error:
-+    assert(error, "UNDO")
-+assert([step, legs.length, lengths], [10, 2, [7, 11]])
-+step
-+# return: 10
-+---
- # Nucleoid tells two explanations apart with xor
+@@ -73,6 +73,7 @@ fn math_unary(name: &str, first: f64) -> Option<f64> {
+         }
+         "exp" => first.exp(),
+         "exp2" => 2.0_f64.powf(first),
++        "exp10" => 10.0_f64.powf(first),
+         "log" => first.ln(),
+         "log2" => first.log2(),
+         "log10" => first.log10(),
+```
+
+**File**: `tests/case_conversion_aliases.rs` (modified, +1/-1)
+```diff
+@@ -370,7 +370,7 @@ fn only_the_appended_cases_call_the_aliases_and_they_run_every_assertion() {
+         }
+     }
+     assert_eq!(assertions, 23);
+-    assert_eq!(cases, 1347);
++    assert_eq!(cases, 1348);
+ }
  
- price = 10
-@@ -30479,6 +30562,72 @@ assert(input, 7)
-   fair ordered-arithmetic counterpart, not a promise to duplicate a future
-   call argument's effects. Every historical executable case is unchanged.
+ #[test]
+```
+
+**File**: `tests/dataset.rs` (modified, +2/-2)
+```diff
+@@ -33,8 +33,8 @@ struct Record {
  
-+## Reactive hypotenuse
-+
-+- [NUC 159](docs/nuc-0159.md) adds `Math.hypot(value, ...)`, the square
-+  root of the sum of the squares of its arguments: the length of a vector
-+  from its components, or the distance between two points from the
-+  differences of their coordinates, as JavaScript's `Math.hypot` and
-+  Python's `math.hypot` compute it. `Math.hypot(3, 4)` is `5`,
-+  `Math.hypot(1, 2, 2)` is `3`, `Math.hypot(-7)` is `7` and `Math.hypot()`
-+  is `0`. No token, keyword, syntax tree node, error type or message is
-+  added.
-+- **Arguments.** It takes any number of arguments, none included. They are
-+  evaluated once, left to right, as for every Math call, and an argument's
-+  error propagates before the call runs. Then Math's undefined gate
-+  applies: any undefined argument, such as a missing property, makes the
-+  call undefined. Otherwise every argument converts as the arguments of
-+  `Math.max` do, and none is ignored: `null` and an empty or blank string
-+  are `0`, booleans `0` and `1`, a numeric string its trimmed value, an
-+  empty list `0`, a one-item list its item, a date its milliseconds, and
-+  everything else, such as `"x"`, a longer list, an object or a function,
-+  NaN. The keyword `undefined` reads as `null`, so it converts to `0`.
-+- **Result.** `Infinity` when any converted argument is infinite, of either
-+  sign, even beside NaN; otherwise NaN when any is NaN; otherwise the
-+  square root of the sum of the squares, which is never negative, so
-+  `Math.hypot(-0)` and `Math.hypot(0, -0)` are `0`.
-+- **Exactness.** While the largest magnitude lies between 2^-450 and
-+  2^450, the result is exactly `Math.sqrt(a * a + b * b + ...)` over the
-+  converted arguments, squared and summed in argument order. It is exact
-+  whenever the squares and their sum are exact and the sum is a perfect
-+  square, as for every integer Pythagorean tuple: `Math.hypot(20, 21)` is
-+  `29` and `Math.hypot(2, 3, 6)` is `7`. Otherwise it rounds as that sum
-+  and square root round.
-+- **No overflow or underflow.** Outside that range every argument is first
-+  multiplied by the same power of two, 2^-600 above it and 2^600 below it,
-+  and the result is multiplied back, which keeps those results exact and
-+  avoids squares that overflow or vanish: `Math.hypot(1e200, 1e200)` is
-+  `1.414213562373095e200` and `Math.hypot(3e-200, 4e-200)` is `5e-200`,
-+  where `(1e200 ** 2 + 1e200 ** 2) ** 0.5` is `Infinity` and
-+  `(3e-200 ** 2 + 4e-200 ** 2) ** 0.5` is `0`. Only a result beyond the
-+  largest number i
+ const SPEC_DOCUMENT: &str = include_str!("../nucleoid.spec.md");
+ 
+-const SPEC_RECORDS: usize = 898;
+-const SYNTH_RECORDS: usize = 1_829;
++const SPEC_RECORDS: usize = 899;
++const SYNTH_RECORDS: usize = 1_830;
+ const SYNTH_19_RECORDS: usize = 51;
+ const SYNTH_21_RECORDS: usize = 120;
+ const SYNTH_22_RECORDS: usize = 5;
 ```
 
 #### Recent Merged Pull Requests:
@@ -2490,13 +2258,13 @@ integrated tree, main 6e57e554 plus the frozen candidate):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 162 Population Instance Removal
+## X. Draft NUC 163 C# Ceiling Method Alias
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1772058f`: Draft NUC 162 Population Instance Removal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `30bfd633`: Draft NUC 163 C# Ceiling Method Alias. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -2504,8 +2272,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [162](nuc-0162.md) | Population Instance Removal | Draft |
-| [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Draft |
+| [163](nuc-0163.md) | C# Ceiling Method Alias | Draft |
+| [163](nuc-0163.md) | C# Ceiling Method Alias | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2515,7 +2283,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1772058f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `30bfd633` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T15:27:41.173Z",
-  "total_cycles_completed": 13348,
-  "total_learnings_persisted": 13348,
-  "total_rules_promoted": 12044,
+  "last_updated": "2026-11-28T15:36:17.867Z",
+  "total_cycles_completed": 13351,
+  "total_learnings_persisted": 13351,
+  "total_rules_promoted": 12046,
   "history": [
-    {
-      "timestamp": "2026-11-27T19:44:14.031Z",
-      "repository": "buresdv/Cork",
-      "learningId": "learn-github-buresdv-cork",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T19:44:23.476Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T19:52:09.830Z",
-      "repository": "thejagstudio/tessera-small",
-      "learningId": "learn-huggingface-thejagstudio-tessera-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T19:52:27.437Z",
       "repository": "MaterializeInc/materialize",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T15:27:41.173Z",
       "repository": "Folkbench/folkbench",
       "learningId": "learn-github-folkbench-folkbench",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T15:36:02.548Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T15:36:15.645Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T15:36:17.867Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

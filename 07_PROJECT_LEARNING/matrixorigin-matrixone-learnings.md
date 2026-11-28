@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `b1999539`  
+> **Source Version**: `56989d8e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T17:50:17.348Z  
+> **Timestamp**: 2026-11-28T15:36:15.129Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T17:50:17.343Z  
+> **Harvest Timestamp**: 2026-11-28T15:36:15.125Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1441,6 +1441,10 @@ type serviceRoleState struct {
 type serviceSupervisor struct {
 	roles [serviceRoleCount]serviceRoleState
 
+	// Set before any role starts. A Python-only process must exit on worker
+	// failure so its process supervisor can restart it.
+	pythonWorkerRequired bool
+
 	shutdownOnce       sync.Once
 	shutdownErr        error
 	dynamicCleanupOnce sync.Once
@@ -2349,17 +2353,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #33403** (2026-11-27): **Update main CODEOWNERS**
-  *Symptoms*: ## What type of PR is this?  - [x] Improvement  ## What this PR does / why we need it  Update main CODEOWNERS consistently with the 4.2-dev change in #33402. Remove the requested former owners, replace @XuPeng with @XuPeng-SH, and include @XuPeng-SH in every ownership rule. Add a default owner for paths without an explicit rule. Preserve other existing owners.  ## Validation  - Checked every rule against the current main branch and verified the requested owner changes and default rule. - Verified each retained GitHub account has write access to the repository. - `git diff --check` passed.
-  **Post-Mortem & Fix Analysis**:
-  > ### Qodo reviews are paused for this user.  Troubleshooting steps vary by plan [Learn more →](https://docs.qodo.ai/subscription-plans#what-you%E2%80%99ll-see-when-reviews-are-paused)   **On a Teams plan?** Reviews resume once this user has a paid seat *and* their Git account is linked in Qodo. [Link Git account →](https://docs.qodo.ai/subscription-plans#linking-a-git-account)  **Using GitHub Enterprise Server, GitLab Self-Managed, or Bitbucket Data Center?** These require an Enterprise plan - Contact us [Contact us →](https://docs.qodo.ai/qodo-support#support) 
-  > This pull request is merged. <!-- mergify:queue-control-withdrawn:queue -->
+- **Issue #33433** (2026-11-28): **[4.2-dev] test: stabilize cross-CN publication lock assertions**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32744.  ## What this PR does / why we need it:  The publication lock test called `syncCommit` after startup and assumed CN0 already knew both fixture CNs. In Coverage, both subtests failed at the membership count before reaching ALTER. [Failing Coverage job](https://github.com/matrixorigin/matrixone/actions/runs/46115958423/job/140889742152)  Refresh CN0's member inventory once after both CNs start and verify their IDs for the lock views. After each CREATE, wait for CN1 to apply CN0's commit before issuing ALTER. The `wide` and `singleton` cases exercise the original target and unrelated account lock assertions.  ### Validation  - Go 1.26.4 on macOS arm64. The full `./pkg/tests/issues/isolated` package passed with `-race -short -tags matrixone_test -count=1` (388 s), including both publication subtests. - Incremental SCA passed for the same package with `go vet`, pinned `molint`, and golangci-lint v2.6.2 (0 issues). Formatting, `git diff --check`, and `make err-check` also passed. 
 
-- **Issue #33402** (2026-11-27): **[4.2-dev] Update CODEOWNERS**
-  *Symptoms*: ## What type of PR is this?  - [x] Improvement  ## What this PR does / why we need it  Update the 4.2-dev code owners, add @XuPeng-SH to every existing ownership rule, and provide a default owner for paths without an explicit rule.  Remove the requested former owners and replace @XuPeng with @XuPeng-SH. Other owners remain on their existing rules.  ## Validation  - Checked every existing rule against the base and verified the requested owner changes and default rule. - Verified each retained GitHub account has write access to the repository. - `git diff --check` passed.
-  **Post-Mortem & Fix Analysis**:
-  > ### Qodo reviews are paused for this user.  Troubleshooting steps vary by plan [Learn more →](https://docs.qodo.ai/subscription-plans#what-you%E2%80%99ll-see-when-reviews-are-paused)   **On a Teams plan?** Reviews resume once this user has a paid seat *and* their Git account is linked in Qodo. [Link Git account →](https://docs.qodo.ai/subscription-plans#linking-a-git-account)  **Using GitHub Enterprise Server, GitLab Self-Managed, or Bitbucket Data Center?** These require an Enterprise plan - Contact us [Contact us →](https://docs.qodo.ai/qodo-support#support) 
-  > This pull request is merged. <!-- mergify:queue-control-withdrawn:queue -->
+- **Issue #33432** (2026-11-28): **ci: use S3-only PR Coverage and expose manual OSS COS checks**
+  *Symptoms*: ## What type of PR is this?  - [x] Test and CI  ## Which issue(s) this PR fixes:  Related to #33429.  ## What this PR does / why we need it:  Use the two existing UT Coverage groups for main and 4.2-dev. The legacy and standby Shanghai paths share the prefix-scoped IDC fixture and require successful basic and streaming-write tests. The manual OSS/COS workflow tests the official 4.2-dev source and reports fixed identifiers for both SDK and S3FS failures, even when provider metadata appears later in the Go report. The manual check validates both configs before source checkout and reports Go test timeouts separately.  [matrixorigin/CI#505](https://github.com/matrixorigin/CI/pull/505) has merged. All five references use the published commit `d94028c93e14f8054a7cd4d1e2535bbaf59a8ec8`. Its tree is identical to the reviewed CI head.  Linux actionlint, 140 companion CI tests, 86 MatrixOne CI tests and the cross-repository retry and cleanup replay passed against the published revision. Exact legacy workflow setup and pass gates were exercised with local MinIO on both source branches. Healthy requests passed and invalid credentials and zero-request reports failed. Replayed the real UT and BVT profiles from [4.2-dev PR #33424, attempt 2](https://github.com/matrixorigin/matrixone/actions/runs/46107411827/attempts/2). Removing the OSS/COS profile kept changed-code coverage at 100% and changed overall block coverage from 76.784% to 76.752%. Live IDC/CS and the manual provider run remain ro
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2376,77 +2374,519 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3aae79f` (2026-11-27)
-**Commit Message**: ci: roll out Coverage UT worker metadata fix (#33375)
+### Incident Patch 1: `a9ba8ca8` (2026-11-28)
+**Commit Message**: Rebuild Python UDF with typed revisions and Arrow Flight execution (#29152)
 
 ## What type of PR is this?
 
+- [x] API-change
+- [x] BUG
+- [x] Improvement
+- [x] Documentation
+- [x] Feature
 - [x] Test and CI
+- [x] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Related to #33358.
+Related to #28132. This PR delivers the opt-in external Python UDF
+adapter for test and development. Production sandboxing and tenant
+isolation remain outside this stage.
 
 ## What this PR does / why we need it:
 
-Pin the Coverage UT coordinator and both standby workers to the merged
-fix in matrixorigin/CI#495 (`4972bd963f4cc9510266323b14446a8edcda2bfc`).
-When a newly dispatched worker briefly returns HTTP 404 or its title has
-not been indexed, the coordinator re-reads the same run within its
-existing budget and still requires the complete worker identity before
-granting admission. Both failure paths were observed in [the Coverage
-rerun for
-#32989](https://github.com/matrixorigin/matrixone/actions/runs/45938589770/attempts/3).
+### Python type-family checks and launch config
 
-This rollout updates the three references only. #33176 also contains
-these pins alongside its worker display and cleanup changes.
+Commit `b23ac8120eb6c71223ef9c3688f86522c3808c4f` declares the intended
+Python decimal and temporal subsets checked by `TestTypeSwitchFamilies`.
+DECIMAL256 and YEAR remain outside the Python ABI. TIME keeps the Arrow
+Duration representation, and TIMESTAMP NULLs use an explicit typed
+branch. The type-check baseline is unchanged. The rebase onto
+`940d135ce8c0af3e0d855fb19f71e87d5ff8904d` also preserves both the
+upstream Sirius settings and the Python UDF client settings in
+`etc/launch/cn.toml`. Both remain disabled by default. [Failing Coverage
+worker](https://github.com/matrixorigin/matrixone/actions/runs/46110161943/job/140871682350)
 
-- Local validation at `b089e42fd54d`: actionlint passed for both caller
-workflows, all three calls match the unchanged reusable workflow input
-and secret declarations, and `git diff --check` passed.
-- BVT: N/A for GitHub Actions workflow configuration.
-- Production verification after merge: start a fresh two-group Coverage
-UT run for an affected 
+New Darwin/arm64 validation reprodu
 
-**File**: `.github/workflows/coverage-standby-worker.yaml` (modified, +2/-2)
+**File**: `.gitignore` (modified, +0/-2)
 ```diff
-@@ -12,7 +12,7 @@ permissions:
- jobs:
-   cs:
-     if: github.repository == 'matrixorigin/matrixone' && github.ref == 'refs/heads/main' && github.run_attempt == 1 && inputs.pool == 'cs'
--    uses: matrixorigin/CI/.github/workflows/coverage-worker-cs.yaml@3d7dce54bdb6ec099102ca2f3aa3a05e96f1f738
-+    uses: matrixorigin/CI/.github/workflows/coverage-worker-cs.yaml@4972bd963f4cc9510266323b14446a8edcda2bfc
-     with:
-       group: ${{ fromJSON(inputs.ticket).group }}
-       source: ${{ fromJSON(inputs.ticket).source }}
-@@ -27,7 +27,7 @@ jobs:
-       CS_S3_RUH_CONFIG: ${{ secrets.CS_S3_RUH_CONFIG }}
-   idc:
-     if: github.repository == 'matrixorigin/matrixone' && github.ref == 'refs/heads/main' && github.run_attempt == 1 && inputs.pool == 'idc'
--    uses: matrixorigin/CI/.github/workflows/coverage-worker-idc.yaml@3d7dce54bdb6ec099102ca2f3aa3a05e96f1f738
-+    uses: matrixorigin/CI/.github/workflows/coverage-worker-idc.yaml@4972bd963f4cc9510266323b14446a8edcda2bfc
-     with:
-       group: ${{ fromJSON(inputs.ticket).group }}
-       source: ${{ fromJSON(inputs.ticket).source }}
+@@ -78,8 +78,6 @@ node-*-data/
+ pkg/catalog/test/
+ pkg/config/system_vars.go
+ pkg/config/system_vars_test.go
+-pkg/udf/pythonservice/pyserver/udf/
+-pkg/udf/pythonservice/pyserver/__pycache__/
+ path_to_file
+ tester-log/
+ ut-report/
 ```
 
-**File**: `.github/workflows/entrypoint.yaml` (modified, +1/-1)
+**File**: `.golangci.yml` (modified, +14/-7)
 ```diff
-@@ -140,7 +140,7 @@ jobs:
-     permissions:
-       contents: read
-       actions: write
--    uses: matrixorigin/CI/.github/workflows/coverage-ut-standby.yaml@3d7dce54bdb6ec099102ca2f3aa3a05e96f1f738
-+    uses: matrixorigin/CI/.github/workflows/coverage-ut-standby.yaml@4972bd963f4cc9510266323b14446a8edcda2bfc
-     with:
-       bvt_generation: ${{ needs.preflight.outputs.generation }}
-     secrets: inherit
+@@ -35,20 +35,27 @@ linters:
+             - $all
+             - '!$test'
+             - '!pkg/iceberg/adapter/iceberggo/**/*.go'
+-            # Arrow IPC is isolated to the ingestion bridge and its external
+-            # scan reader. Keep the dependency out of all other production
+-            # packages, including the Iceberg-facing layers.
++          deny:
++            - pkg: github.com/apache/iceberg-go
++              desc: Iceberg dependency must stay behind pkg/iceberg/adapter/iceberggo
++        arrow-boundary:
++          list-mode: lax
++          files:
++            - $all
++            - '!$test'
++            - '!pkg/iceberg/adapter/iceberggo/**/*.go'
++            # Arrow belongs to the ingestion and external UDF boundaries.
++            # These owners do not also receive permission to import Iceberg.
+             - '!**/pkg/container/arrowbridge/*.go'
+             - '!**/pkg/sql/colexec/external/arrowio/*.go'
+             - '!**/pkg/sql/colexec/external/reader_arrow.go'
+             - '!**/pkg/sql/compile/compile.go'
++            - '!**/pkg/udf/python/*.go'
+           deny:
+-            - pkg: github.com/apache/iceberg-go
+-              desc: Iceberg dependency must stay behind pkg/iceberg/adapter/iceberggo
+             - pkg: github.com/apache/arrow-go
+-              desc: Arrow dependency must not leak outside the Iceberg adapter
++              desc: Arrow dependency must stay behind an approved Arrow owner
+             - pkg: github.com/apache/arrow/go
+-              desc: Arrow dependency must not leak outside the Iceberg adapter
++              desc: Arrow dependency must stay behind an approved Arrow owner
+     govet:
+       disable:
+         - fieldalignment
+```
+
+**File**: `cmd/mo-service/config.go` (modified, +14/-5)
+```diff
+@@ -44,7 +44,7 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/perfcounter"
+ 	"github.com/matrixorigin/matrixone/pkg/proxy"
+ 	"github.com/matrixorigin/matrixone/pkg/tnservice"
+-	"github.com/matrixorigin/matrixone/pkg/udf/pythonservice"
++	"github.com/matrixorigin/matrixone/pkg/udf/python"
+ 	"github.com/matrixorigin/matrixone/pkg/util/debug/goroutine"
+ 	tomlutil "github.com/matrixorigin/matrixone/pkg/util/toml"
+ 	"github.com/matrixorigin/matrixone/pkg/version"
+@@ -117,8 +117,10 @@ type Config struct {
+ 	CN cnservice.Config `toml:"cn"`
+ 	// ProxyConfig is the config of proxy.
+ 	ProxyConfig proxy.Config `toml:"proxy"`
+-	// PythonUdfServerConfig is the config of python udf server
+-	PythonUdfServerConfig pythonservice.Config `toml:"python-udf-server"`
++	// PythonUdfWorkerConfig is the config of the Python UDF worker.
++	PythonUdfWorkerConfig python.Config `toml:"python-udf-worker"`
++	// Released manifests used this role for the retired Python server.
++	legacyPythonUdfServer bool
+ 	// Observability parameters for the metric/trace
+ 	Observability config.ObservabilityParameters `toml:"observability"`
+ 
+@@ -194,7 +196,14 @@ func parseFromString(data string, cfg any) error {
+ 	if err != nil {
+ 		return err
+ 	}
+-	return cnservice.ValidateSiriusConfigKeys(metadata)
++	if err := cnservice.ValidateSiriusConfigKeys(metadata); err != nil {
++		return err
++	}
++	if serviceConfig, ok := cfg.(*Config); ok {
++		serviceConfig.legacyPythonUdfServer =
++			metadata.IsDefined("python-udf-server") && !metadata.IsDefined("python-udf-worker")
++	}
++	return nil
+ }
+ 
+ func (c *Config) validate() error {
+@@ -564,7 +573,7 @@ func (c *Config) mustGetServiceUUID() string {
+ 	case metadata.ServiceType_PROXY:
+ 		return c.ProxyConfig.UUID
+ 	case metadata.ServiceType_PYTHON_UDF:
+-		return c.PythonUdfServerConfig.UUID
++		return c.PythonUdfWorkerConfig.UUID
+ 	}
+ 	panic("impossible")
+ }
+```
+
+**File**: `cmd/mo-service/launch_test.go` (modified, +30/-0)
+```diff
+@@ -713,6 +713,36 @@ func TestServiceClusterValidationAndErrors(t *testing.T) {
+ 	}
+ }
+ 
++func TestLaunchSkipsReleasedPythonServerRole(t *testing.T) {
++	setLaunchTestHooks(t)
++	// v4.2.6, etc/launch-with-python-udf-server/python-udf-server.toml.
++	const legacy = `service-type = "PYTHON_UDF"
++
++[python-udf-server]
++uuid = "dd1dccb4-4d3c-41f8-b482-5251dc7a41b2"
++address = "127.0.0.1:50051"
++path = "pkg/udf/pythonservice/pyserver"
++`
++	file := writeLaunchTestFile(t, "python-udf-server.toml", legacy)
++	serviceLifecycle = newServiceSupervisor()
++	launchStartService = startService
++	require.NoError(t, startPythonUdfServiceCluster(t.Context(), []string{file}, nil, nil))
++	serviceLifecycle.pythonWorkerRequired = true
++	dedicated := NewConfig()
++	require.NoError(t, parseConfigFromFile(file, dedicated))
++	require.ErrorContains(t, startService(t.Context(), dedicated, nil, nil), "use [python-udf-worker]")
++
++	// An explicit replacement block takes precedence in a migrated file.
++	cfg := NewConfig()
++	require.NoError(t, parseFromString(legacy+`
++[python-udf-worker]
++address = "127.0.0.1:50052"
++path = "pkg/udf/python/worker"
++`, cfg))
++	require.False(t, cfg.legacyPythonUdfServer)
++	require.Equal(t, "127.0.0.1:50052", cfg.PythonUdfWorkerConfig.Address)
++}
++
+ func TestLaunchRejectsMisclassifiedServiceConfigs(t *testing.T) {
+ 	setLaunchTestHooks(t)
+ 	started := make([]metadata.ServiceType, 0, 2)
+```
+
+**File**: `cmd/mo-service/lifecycle.go` (modified, +4/-0)
+```diff
+@@ -65,6 +65,10 @@ type serviceRoleState struct {
+ type serviceSupervisor struct {
+ 	roles [serviceRoleCount]serviceRoleState
+ 
++	// Set before any role starts. A Python-only process must exit on worker
++	// failure so its process supervisor can restart it.
++	pythonWorkerRequired bool
++
+ 	shutdownOnce       sync.Once
+ 	shutdownErr        error
+ 	dynamicCleanupOnce sync.Once
+```
+
+**File**: `cmd/mo-service/lifecycle_test.go` (modified, +124/-0)
+```diff
+@@ -18,12 +18,14 @@ import (
+ 	"context"
+ 	"errors"
+ 	"os"
++	"path/filepath"
+ 	"sync"
+ 	"syscall"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/common/stopper"
++	"github.com/matrixorigin/matrixone/pkg/udf/python"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -55,6 +57,128 @@ func TestServiceSupervisorStopsRolesInDependencyOrder(t *testing.T) {
+ 	require.Equal(t, roles, stopped)
+ }
+ 
++func TestManagedPythonWorkerExitDoesNotFailServiceSupervisor(t *testing.T) {
++	for _, exit := range []string{"0", "17"} {
++		t.Run(exit, func(t *testing.T) {
++			dir := t.TempDir()
++			require.NoError(t, os.WriteFile(filepath.Join(dir, "worker.py"), []byte("exit "+exit+"\n"), 0600))
++			lifecycle := newServiceSupervisor()
++			tasks := stopper.NewStopper("worker-exit-test")
++			t.Cleanup(tasks.Stop)
++			require.NoError(t, startManagedPythonWorker(python.Config{
++				Address: "127.0.0.1:0", Path: dir, Python: "/bin/sh",
++			}, tasks, lifecycle))
++
++			done := make(chan struct{})
++			go func() {
++				lifecycle.roles[serviceRolePython].wg.Wait()
++				close(done)
++			}()
++			select {
++			case <-done:
++			case <-time.After(5 * time.Second):
++				t.Fatal("Python worker role did not finish")
++			}
++			select {
++			case err := <-lifecycle.failureC():
++				t.Fatalf("worker exit delivered a database service failure: %v", err)
++			default:
++			}
++			require.NoError(t, lifecycle.stopRole(t.Context(), serviceRolePython))
++		})
++	}
++}
++
++func TestManagedPythonWorkerStartupFailureIsIsolated(t *testing.T) {
++	dir := t.TempDir()
++	require.NoError(t, os.WriteFile(filepath.Join(dir, "worker.py"), nil, 0600))
++	for _, tc := range []struct {
++		name string
++		cfg  python.Config
++	}{
++		{name: "invalid config"},
++		{name: "missing interpreter", cfg: python.Config{
++			Address: "127.0.0.1:0", Path: dir, Python: filepath.Join(dir, "missing-python"),
++		}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			lifecycle := newServiceSupervisor()
++			tasks := stopper.NewStopper("worker-startup-test")
++			t.Cleanup(tasks.Stop)
++			require.NoError(t, startManagedPythonWorker(tc.cfg, tasks, lifecycle))
++
++			ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
++			defer cancel()
++			require.NoError(t, lifecycle.stopRole(ctx, serviceRolePython))
++			select {
++			case err := <-lifecycle.failureC():
++				t.Fatalf("worker startup delivered a database service failure: %v", err)
++			default:
++			}
++		})
++	}
++}
++
++func TestDedicatedPythonWorkerFailureWakesShutdown(t *testing.T) {
++	setLaunchTestHooks(t)
++	oldProfileInterval := *profileInterval
++	t.Cleanup(func() { *profileInterval = oldProfileInterval })
++	*profileInterval = 0
++	launchSleep = func(time.Duration) {}
++
++	dir := t.TempDir()
++	require.NoError(t, os.WriteFile(filepath.Join(dir, "worker.py"), []byte("exit 17\n"), 0600))
++	for _, tc := range []struct {
++		name string
++		cfg  python.Config
++		want string
++	}{
++		{
++			name: "invalid config",
++			want: "invalid Python UDF worker configuration: internal error: missing python udf address",
++		},
++		{
++			name: "missing interpreter",
++			cfg: python.Config{
++				Address: "127.0.0.1:0", Path: dir, Python: filepath.Join(dir, "missing-python"),
++			},
++			want: "failed to start Python UDF worker",
++		},
++		{
++			name: "unexpected exit",
++			cfg:  python.Config{Address: "127.0.0.1:0", Path: dir, Python: "/bin/sh"},
++			want: "Python UDF worker exited unexpectedly: exit status 17",
++		},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			lifecycle := newServiceSupervisor()
++			lifecycle.pythonWorkerRequired = true
++			serviceLifecycle = lifecycle
++			tasks := stopper.NewStopper("dedicated-python-worker-test")
++			t.Cleanup(tasks.Stop)
++			require.NoError(t, startManagedPythonWorker(tc.cfg, tasks, lifecycle))
++
++			shutdownC := make(chan struct{})
++			done := make(chan struct{})
++			var shutdownErr error
++			go func() {
++				shutdownErr = waitSignalToStop(tasks, shutdownC)
++				close(done)
++			}()
++			t.Cleanup(func() {
++				close(shutdownC)
++				<-done
++			})
++			select {
++			case <-done:
++				require.ErrorContains(t, shutdownErr, tc.want)
++			case <-time.After(5 * time.Second):
++				t.Fatal("dedicated Python worker failure did not wake shutdown")
++			}
++		})
++	}
++}
++
+ func TestServiceSupervisorKeepsPythonProviderUntilCNDrains(t *testing.T) {
+ 	s := newServiceSupervisor()
+ 	var mu sync.Mutex
+```
+
+**File**: `cmd/mo-service/main.go` (modified, +48/-14)
+```diff
+@@ -53,7 +53,7 @@ import (
+ 	qclient "github.com/matrixorigin/matrixone/pkg/queryservice/client"
+ 	"github.com/matrixorigin/matrixone/pkg/sql/compile"
+ 	"github.com/matrixorigin/matrixone/pkg/tnservice"
+-	"github.com/matrixorigin/matrixone/pkg/udf/pythonservice"
++	"github.com/matrixorigin/matrixone/pkg/udf/python"
+ 	"github.com/matrixorigin/matrixone/pkg/util/debug/goroutine"
+ 	"github.com/matrixorigin/matrixone/pkg/util/export"
+ 	"github.com/matrixorigin/matrixone/pkg/util/export/table"
+@@ -147,6 +147,7 @@ func main() {
+ 	if *launchFile != "" {
+ 		startErr = startCluster(ctx, stopper, shutdownC)
+ 	} else if *configFile != "" {
++		serviceLifecycle.pythonWorkerRequired = true
+ 		cfg := NewConfig()
+ 		if err := parseConfigFromFile(*configFile, cfg); err != nil {
+ 			startErr = fmt.Errorf("failed to parse config from %s, error: %w", *configFile, err)
+@@ -264,6 +265,14 @@ func startService(
+ 	if err != nil {
+ 		return err
+ 	}
++	if st == metadata.ServiceType_PYTHON_UDF && cfg.legacyPythonUdfServer {
++		const migration = "retired [python-udf-server] role; use [python-udf-worker] and explicitly enable the CN Python UDF client to use Arrow Flight"
++		if serviceLifecycle != nil && serviceLifecycle.pythonWorkerRequired {
++			return errors.New(migration)
++		}
++		logutil.GetGlobalLogger().Warn("skipping " + migration)
++		return nil
++	}
+ 
+ 	setupServiceRuntime(cfg, stopper)
+ 
+@@ -316,7 +325,7 @@ func startService(
+ 	case metadata.ServiceType_LOG:
+ 		return startLogService(cfg, stopper, fs, shutdownC)
+ 	case metadata.ServiceType_PYTHON_UDF:
+-		return startPythonUdfService(cfg, stopper)
++		return startPythonUdfWorker(cfg, stopper)
+ 	default:
+ 		panic("unknown service type")
+ 	}
+@@ -773,12 +782,16 @@ func waitProxyFileServiceRetry(ctx context.Context, delay time.Duration) error {
+ 	}
+ }
+ 
+-// startPythonUdfService starts the python udf service.
+-func startPythonUdfService(cfg *Config, stopper *stopper.Stopper) error {
++// startPythonUdfWorker starts the Python UDF worker.
++func startPythonUdfWorker(cfg *Config, stopper *stopper.Stopper) error {
+ 	if err := waitClusterCondition(cfg.mustGetServiceUUID(), cfg.HAKeeperClient, waitHAKeeperRunning); err != nil {
+ 		return err
+ 	}
+-	finish := serviceLifecycle.registerTask(serviceRolePython)
++	return startManagedPythonWorker(cfg.PythonUdfWorkerConfig, stopper, serviceLifecycle)
++}
++
++func startManagedPythonWorker(cfg python.Config, stopper *stopper.Stopper, lifecycle *serviceSupervisor) error {
++	finish := lifecycle.registerTask(serviceRolePython)
+ 	serviceWG.Add(1)
+ 	var taskDone sync.Once
+ 	finishTask := func(err error) {
+@@ -787,22 +800,43 @@ func startPythonUdfService(cfg *Config, stopper *stopper.Stopper) error {
+ 			finish(err)
+ 		})
+ 	}
+-	err := stopper.RunNamedTask("python-udf-service", func(ctx context.Context) {
++	err := stopper.RunNamedTask("python-udf-worker", func(ctx context.Context) {
+ 		var closeErr error
+ 		defer func() { finishTask(closeErr) }()
+-		roleCtx, cancelRole := serviceLifecycle.roleContext(ctx, serviceRolePython)
++		roleCtx, cancelRole := lifecycle.roleContext(ctx, serviceRolePython)
+ 		defer cancelRole()
+-		s, err := pythonservice.NewService(cfg.PythonUdfServerConfig)
++		reportFailure := func(message string, err error) {
++			logutil.GetGlobalLogger().Error(message, zap.Error(err))
++			if lifecycle != nil && lifecycle.pythonWorkerRequired && roleCtx.Err() == nil {
++				lifecycle.notifyFatal(fmt.Errorf("%s: %w", message, err))
++			}
++		}
++		s, err := python.NewSupervisor(cfg)
+ 		if err != nil {
+-			panic(err)
++			reportFailure("invalid Python UDF worker configuration", err)
++			return
+ 		}
+ 		if err := s.Start(); err != nil {
+-			panic(err)
++			reportFailure("failed to start Python UDF worker", err)
++			return
+ 		}
+-		<-roleCtx.Done()
+-		if err := s.Close(); err != nil {
+-			closeErr = err
+-			logutil.GetGlobalLogger().Error("failed to close python udf service", zap.Error(err))
++		workerDone := s.Done()
++		select {
++		case <-roleCtx.Done():
++			if err := s.Close(); err != nil {
++				closeErr = err
++				logutil.GetGlobalLogger().Error("failed to close Python UDF worker", zap.Error(err))
++			}
++		case <-workerDone:
++			// The supervisor has reaped the worker. A shutdown-driven exit
++			// is already handled by the role's lifecycle.
++			if roleCtx.Err() == nil {
++				workerErr := s.Err()
++				if workerErr == nil {
++					workerErr = errors.New("process exited without an error")
++				}
++				reportFailure("Python UDF worker exited unexpectedly", workerErr)
++			}
+ 		}
+ 	})
+ 	if err != nil {
+```
+
+**File**: `cmd/mo-service/toml_fileservice_test.go` (modified, +31/-0)
+```diff
+@@ -21,6 +21,9 @@ import (
+ 	"strings"
+ 	"testing"
+ 
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/fileservice"
++	"github.com/matrixorigin/matrixone/pkg/udf/python"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -30,6 +33,34 @@ var knownFileServiceBackends = map[string]bool{
+ 	"DISK-ETL": true, "DISK-TMP": true, "S3": true, "MINIO": true,
+ }
+ 
++func TestBundledPythonWorkerLaunchPublishesArtifacts(t *testing.T) {
++	configPath := filepath.Join("..", "..", "etc", "launch-with-python-udf-worker", "cn.toml")
++	data, err := os.ReadFile(configPath)
++	require.NoError(t, err)
++	var cfg Config
++	require.NoError(t, parseFromString(string(data), &cfg))
++
++	for _, config := range cfg.FileServices {
++		if config.Name != defines.SharedFileServiceName {
++			continue
++		}
++		config.DataDir = t.TempDir()
++		fs, err := fileservice.NewFileService(t.Context(), config, nil)
++		require.NoError(t, err)
++		t.Cleanup(func() { fs.Close(t.Context()) })
++		store, err := python.NewFileArtifactStore(fs, python.DefaultMaxArtifactBytes)
++		require.NoError(t, err)
++		const source = "def f(ctx): return 1"
++		digest, err := store.Publish(t.Context(), 7, "f", source)
++		require.NoError(t, err)
++		resolved, err := store.Resolve(t.Context(), 7, "f", digest)
++		require.NoError(t, err)
++		require.Equal(t, source, resolved)
++		return
++	}
++	t.Fatal("bundled Python worker launch has no shared file service")
++}
++
+ func launchTomlFiles(t *testing.T, patterns ...string) []string {
+ 	root := filepath.Join("..", "..")
+ 	var files []string
 ```
 
 ---
 
-### Incident Patch 2: `926e3e95` (2026-11-27)
-**Commit Message**: fix(geo): validate required GeoJSON members (#33398)
+### Incident Patch 2: `a843ded3` (2026-11-28)
+**Commit Message**: fix(frontend): invalidate parent DELETE plans when foreign key checks change (#33409)
 
 ## What type of PR is this?
 
@@ -2460,135 +2900,197 @@ UT run for an affected
 
 ## Which issue(s) this PR fixes:
 
-Fixes #33195
+Fixes #33190
 
 ## What this PR does / why we need it:
 
-Require exact, case-sensitive GeoJSON member names for top-level and nested geometries. Differently cased foreign members cannot replace canonical values or make a missing or null required array valid. Explicit empty arrays still produce EMPTY geometries. Both SQL constructor overloads use the shared validation.
+A cached parent-table DELETE can retain the foreign-key behavior that
+was active when the plan was built. A literal prepared DELETE can
+therefore remove a referenced parent after checks are enabled or reject
+a deletion after checks are disabled.
+
+When the normalized session value of `foreign_key_checks` changes,
+invalidate cached DELETEs whose target tables have incoming foreign
+keys. Prepared handles rebuild through the existing EXECUTE path.
+Ordinary cache entries remain intact until the cache can release their
+ASTs. The DELETE execution path retains its existing cache policy.
 
 ### Validation
 
-- Verified focused native GeoJSON cases and the owning geo package. The original implementation failed the case-folding regression.
-- Compared the maintained `geo_geojson` BVT in normal mo-tester mode against the final native binary on `3f9bb69ad6`. All 53 checks passed, including both overloads and explicit empty geometries. The service exited gracefully with status 0.
-- On the same upstream base, ran the official SCA selector independently in default and `GOFLAGS=-tags=integration` modes. Both selected 173 affected packages. Repository-pinned `molint` and `golangci-lin
+- Rebased onto main at `f1063bd47d0045d49a2a56cf4d8a089b842ee011`.
+- Extended `foreign_key/issue_26892.sql` with separate parent rows for
+OFF→ON and ON→OFF so the first failure cannot mask the reverse case. The
+regression checks the parent row sets, surviving child rows, 
 
-**File**: `pkg/geo/geojson.go` (modified, +91/-14)
+**File**: `pkg/frontend/plan_cache.go` (modified, +24/-1)
 ```diff
-@@ -15,6 +15,7 @@
- package geo
+@@ -16,10 +16,11 @@ package frontend
  
  import (
-+	"bytes"
- 	"encoding/json"
- 	"math"
- 	"strconv"
-@@ -186,20 +187,93 @@ func geoJSONFractionDigits(s string) int {
+ 	"container/list"
++	"slices"
+ 
++	"github.com/matrixorigin/matrixone/pkg/pb/plan"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/timestamp"
+ 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
+-	"github.com/matrixorigin/matrixone/pkg/sql/plan"
+ )
+ 
+ type cachedPlan struct {
+@@ -300,6 +301,28 @@ func (pc *planCache) invalidatePlanGeneration(
+ 	cached.invalid = true
  }
  
- // ParseGeoJSON decodes an RFC 7946 GeoJSON geometry object. Feature and
--// FeatureCollection objects are not geometries and are rejected.
-+// FeatureCollection objects are not geometries and are rejected. Every
-+// Geometry object must carry its type's required array member — coordinates
-+// for the coordinate-bearing types, geometries for a GeometryCollection — at
-+// the top level and in every child Geometry object. Members are matched by
-+// exact, case-sensitive name: a member that differs only in case is a
-+// foreign member, so it can never substitute the canonical value and can
-+// never turn a missing or null required member into a success.
- func ParseGeoJSON(data []byte) (Geometry, error) {
--	var raw struct {
--		Type        string            `json:"type"`
--		Coordinates json.RawMessage   `json:"coordinates"`
--		Geometries  []json.RawMessage `json:"geometries"`
--	}
--	if err := json.Unmarshal(data, &raw); err != nil {
-+	var obj map[string]json.RawMessage
-+	if err := json.Unmarshal(data, &obj); err != nil {
- 		return nil, moerr.NewInvalidInputNoCtxf("invalid GeoJSON: %v", err)
- 	}
--	return parseGeoJSONObj(raw.Type, raw.Coordinates, raw.Geometries)
-+	typ, coords, geoms, err := geoJSONExactMembers(obj)
-+	if err != nil {
-+		return nil, err
++func (pc *planCache) invalidateForeignKeyDeletePlans() {
++	for _, element := range pc.cachePool {
++		cached := element.Value.(*cachedPlan)
++		if !cached.invalid && slices.ContainsFunc(cached.plans, deletePlanDependsOnForeignKeyChecks) {
++			// A running wrapper may still borrow this entry's AST.
++			cached.invalid = true
++		}
 +	}
-+	return parseGeoJSONObj(typ, coords, geoms)
 +}
 +
-+// geoJSONExactMembers extracts the members every Geometry object is decoded
-+// from, using exact, case-sensitive member lookup. GeoJSON member names are
-+// the exact lowercase names, so differently-cased members such as "Type",
-+// "Coordinates" or "Geometries" are foreign members: like bbox or any other
-+// unrecognized member they are ignored, whatever their position in the
-+// object. An explicitly present geometries member keeps its typed shape check
-+// on every Geometry type. Duplicate exact member names follow the decoder's
-+// own duplicate-name handling; this reader adds no policy of its own.
-+func geoJSONExactMembers(obj map[string]json.RawMessage) (typ string, coords json.RawMessage, geoms []json.RawMessage, err error) {
-+	rawTyp, ok := obj["type"]
-+	if !ok {
-+		return "", nil, nil, moerr.NewInvalidInputNoCtx("invalid GeoJSON: missing type")
++func deletePlanDependsOnForeignKeyChecks(p *plan.Plan) bool {
++	query := p.GetQuery()
++	if query.GetStmtType() != plan.Query_DELETE {
++		return false
 +	}
-+	if err := json.Unmarshal(rawTyp, &typ); err != nil {
-+		return "", nil, nil, moerr.NewInvalidInputNoCtxf("invalid GeoJSON: %v", err)
-+	}
-+	if rawGeoms, ok := obj["geometries"]; ok {
-+		// Keep the typed shape check of an explicitly present geometries
-+		// member on every Geometry type, not only GeometryCollection.
-+		if err := json.Unmarshal(rawGeoms, &geoms); err != nil {
-+			return "", nil, nil, moerr.NewInvalidInputNoCtxf("invalid GeoJSON: %v", err)
-+		}
-+	}
-+	coords = obj["coordinates"]
-+	return typ, coords, geoms, nil
++	// Legacy DELETE retains the target definition even when checks are OFF
++	// and the plan can truncate instead of checking referencing rows.
++	return slices.ContainsFunc(query.Nodes, func(node *plan.Node) bool {
++		return len(node.GetDeleteCtx().GetTableDef().GetRefChildTbls()) != 0
++	})
 +}
 +
-+// geoJSONNull is the raw text of a JSON null member value.
-+var geoJSONNull = []byte("null")
-+
-+// requireGeoJSONMemberArray enforces the RFC 7946 section-3.1 required-member
-+// rule for the raw coordinates member of a coordinate-bearing Geometry object:
-+// an absent member and a JSON null member are both invalid geometry, while any
-+// other value — an explicit empty array included — decodes normally so EMPTY
-+// geometry behavior is unchanged. A GeometryCollection's geometries member is
-+// validated from its typed decode instead: a malformed value fails the
-+// exact-member decode, and an absent or JSON null member yields a nil slice.
-+func requireGeoJSONMemberArray(member json.RawMessage, typ, name string) error {
-+	if len(member) == 0 {
-+		return moerr.NewInvalidInputNoCtxf("invalid GeoJSON %s: missing %s", typ, name)
-+	}
-+	if bytes.Equal(member, geoJSONNull) {
-+		return moerr.NewInvalidInputNoCtxf("invalid GeoJSON %s: %s is null", typ, name)
-+	}
-+	return nil
- }
- 
- func parseGeoJSONObj(typ string, coords json.RawMessage, geoms []json.RawMessage) (Geometry, error) {
-+	// Validate the required member at the common parser boundary before any
-+	// member decoding; this covers the top level and every child dispatch. The
-+	// geometries member arrives already typed from exact-member extraction,
-+	// where a malformed value fails that member's unmarshal, and an absent or
-+	// JSON null member yields a nil slice while an explicit [] stays non-nil;
-+	// the raw coordinates member keeps its explicit absence/null guard here.
-+	switch typ {
-+	case "Point", "LineString", "Polygon", "MultiPoint", "MultiLineString", "MultiPolygon":
-+		if err := requireGeoJSONMemberArray(coords, typ, "coordinates"); err != nil {
-+			return nil, err
-+		}
-+	case "GeometryCollection":
-+		if geoms == nil {
-+			return nil, moerr.NewInvalidInputNoCtxf("invalid GeoJSON %s: geometries is required", typ)
-+		}
-+	case "":
-+		return nil, moerr.NewInvalidInputNoCtxf("invalid GeoJSON: missing type")
-+	default:
-+		return nil, moerr.NewInvalidInputNoCtxf("unsupported GeoJSON type %q", typ)
-+	}
- 	switch typ {
- 	
+ func (pc *planCache) clean() {
+ 	if pc.lruList == nil {
+ 		pc.cachePool = nil
 ```
 
-**File**: `pkg/geo/geojson_member_test.go` (added, +171/-0)
+**File**: `pkg/frontend/plan_cache_test.go` (modified, +47/-0)
 ```diff
-@@ -0,0 +1,171 @@
-+// Copyright 2021 - 2026 Matrix Origin
+@@ -624,6 +624,53 @@ func TestSessionDivPrecisionIncrementChangeClearsPlanCache(t *testing.T) {
+ 	require.Equal(t, 1, stmt.freed)
+ }
+ 
++func TestSessionForeignKeyChecksInvalidatesParentDeletePlans(t *testing.T) {
++	ctx := defines.AttachAccountId(t.Context(), catalog.System_Account)
++	setPu("", config.NewParameterUnit(&config.FrontendParameters{}, nil, nil, nil))
++	ses := NewSession(ctx, "", &testMysqlWriter{}, nil)
++
++	deleteNode := func(refChildren ...uint64) *plan.Node {
++		return &plan.Node{
++			NodeType:  pbplan.Node_DELETE,
++			DeleteCtx: &pbplan.DeleteCtx{TableDef: &plan.TableDef{RefChildTbls: refChildren}},
++		}
++	}
++	deleteQuery := func(nodes ...*plan.Node) *plan.Plan {
++		return &plan.Plan{Plan: &pbplan.Plan_Query{Query: &plan.Query{
++			StmtType: pbplan.Query_DELETE,
++			Nodes:    nodes,
++		}}}
++	}
++	parent, plain := deleteQuery(deleteNode(), deleteNode(2)), deleteQuery(deleteNode())
++	cachedParent, cachedPlain := &trackedStatement{}, &trackedStatement{}
++	ses.cachePlan("parent", []tree.Statement{&trackedStatement{}, cachedParent}, []*plan.Plan{plain, parent})
++	ses.cachePlan("plain", []tree.Statement{cachedPlain}, []*plan.Plan{plain})
++	prepare := func(name string, p *plan.Plan) *PrepareStmt {
++		stmt := &PrepareStmt{Name: name, PreparePlan: &plan.Plan{Plan: &pbplan.Plan_Dcl{Dcl: &pbplan.DataControl{
++			Control: &pbplan.DataControl_Prepare{Prepare: &pbplan.Prepare{Plan: p}},
++		}}}}
++		require.NoError(t, ses.SetPrepareStmt(ctx, name, stmt))
++		return stmt
++	}
++	preparedParent, preparedPlain := prepare("parent", parent), prepare("plain", plain)
++
++	// Equivalent and invalid SETs leave both warmed generations eligible.
++	require.NoError(t, ses.SetSessionSysVar(ctx, "FOREIGN_KEY_CHECKS", "ON"))
++	require.Error(t, ses.SetSessionSysVar(ctx, "foreign_key_checks", "invalid"))
++	require.True(t, ses.isCached("parent"))
++	require.False(t, preparedParent.needsRebuild)
++
++	require.NoError(t, ses.SetSessionSysVar(ctx, "foreign_key_checks", 0))
++	require.True(t, preparedParent.needsRebuild)
++	require.False(t, preparedPlain.needsRebuild)
++	require.False(t, ses.isCached("parent"))
++	require.True(t, ses.isCached("plain"))
++	require.Zero(t, cachedParent.freed, "SET must leave borrowed ASTs alive")
++	require.Nil(t, ses.getCachedPlan("parent"))
++	require.Equal(t, 1, cachedParent.freed)
++	require.Zero(t, cachedPlain.freed)
++}
++
+ func TestSessionRollupAlgorithmChangeClearsPlanCache(t *testing.T) {
+ 	ctx := defines.AttachAccountId(context.Background(), catalog.System_Account)
+ 	setPu("", config.NewParameterUnit(&config.FrontendParameters{}, nil, nil, nil))
+```
+
+**File**: `pkg/frontend/session.go` (modified, +13/-0)
+```diff
+@@ -2502,6 +2502,19 @@ func (ses *Session) invalidateCachedPlans(prepared bool) {
+ 	}
+ }
+ 
++func (ses *Session) invalidateForeignKeyDeletePlans() {
++	ses.mu.Lock()
++	defer ses.mu.Unlock()
++	if ses.planCache != nil {
++		ses.planCache.invalidateForeignKeyDeletePlans()
++	}
++	for _, stmt := range ses.prepareStmts {
++		if deletePlanDependsOnForeignKeyChecks(stmt.PreparePlan.GetDcl().GetPrepare().GetPlan()) {
++			stmt.needsRebuild = true
++		}
++	}
++}
++
+ // markPreparedPlansForRollupAlgorithmChange marks prepared plan generations
+ // stale without closing their handles. The session variable is read while
+ // building the physical rollup plan, so EXECUTE must rebuild the plan after
+```
+
+**File**: `pkg/frontend/types.go` (modified, +8/-3)
+```diff
+@@ -2004,8 +2004,9 @@ func (ses *Session) setSessionSysVar(ctx context.Context, name string, val inter
+ 	planDependencyVariable := name == "sql_mode" || name == "optimizer_hints" || name == "lc_time_names" || name == "time_zone" || name == "explicit_defaults_for_timestamp" || name == "mo_pk_check_by_cn" ||
+ 		name == "fulltext2_search_df_cutoff" || name == "fulltext2_threads_search" || name == "fulltext_bloom_filter_pushdown" ||
+ 		name == "join_spill_mem" || name == "agg_spill_mem" || name == "sort_spill_mem"
++	foreignKeyChecks := name == "foreign_key_checks"
+ 	var oldPlanDependency interface{}
+-	if planDependencyVariable {
++	if planDependencyVariable || foreignKeyChecks {
+ 		oldValue, getErr := ses.GetSessionSysVar(name)
+ 		if getErr != nil {
+ 			return getErr
+@@ -2076,7 +2077,7 @@ func (ses *Session) setSessionSysVar(ctx context.Context, name string, val inter
+ 	if err == nil && name == "sql_mode" {
+ 		ses.updateSqlModeNoAutoValueOnZero(val)
+ 	}
+-	if err == nil && planDependencyVariable {
++	if err == nil && (planDependencyVariable || foreignKeyChecks) {
+ 		newValue, getErr := ses.GetSessionSysVar(name)
+ 		if getErr != nil {
+ 			return getErr
+@@ -2086,7 +2087,11 @@ func (ses *Session) setSessionSysVar(ctx context.Context, name string, val inter
+ 			return getErr
+ 		}
+ 		if oldPlanDependency != newValue {
+-			ses.invalidateCachedPlans(true)
++			if foreignKeyChecks {
++				ses.invalidateForeignKeyDeletePlans()
++			} else {
++				ses.invalidateCachedPlans(true)
++			}
+ 		}
+ 	}
+ 	if err == nil && name == "div_precision_increment" {
+```
+
+**File**: `pkg/tests/sqlintegration/prepared_delete_fk_test.go` (added, +111/-0)
+```diff
+@@ -0,0 +1,111 @@
++// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
@@ -2602,194 +3104,884 @@ Require exact, case-sensitive GeoJSON member names for top-level and nested geom
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package geo
++package sqlintegration
++
++import (
++	"context"
++	"database/sql"
++	"fmt"
++	"testing"
++	"time"
++
++	"github.com/go-sql-driver/mysql"
++	"github.com/matrixorigin/matrixone/pkg/embed"
++	"github.com/stretchr/testify/require"
++)
++
++func TestPreparedDeleteForeignKeyChecks(t *testing.T) {
++	runSQLIntegration(t, func(c embed.Cluster) {
++		cn, err := c.GetCNService(0)
++		require.NoError(t, err)
++		db, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", cn.GetServiceConfig().CN.Frontend.Port))
++		require.NoError(t, err)
++		defer db.Close()
++
++		for _, protocol := range []string{"text", "binary", "direct"} {
++			t.Run(protocol, func(t *testing.T) {
++				ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
++				defer cancel()
++				conn, err := db.Conn(ctx)
++				require.NoError(t, err)
++				defer conn.Close()
++				defer cleanupSQLIntegration(t, cn,
++					"drop table if exists prepared_delete_fk.child",
++					"drop database if exists prepared_delete_fk")
++				exec := func(query string) {
++					t.Helper()
++					_, err := conn.ExecContext(ctx, query)
++					require.NoError(t, err, query)
++				}
++				count := func(query string) int {
++					t.Helper()
++					var n int
++					require.NoError(t, conn.QueryRowContext(ctx, query).Scan(&n), query)
++					return n
++				}
++
++				exec("create database prepared_delete_fk")
++				exec("use prepared_delete_fk")
++				exec("create table parent (id int primary key)")
++				exec("create table child (id int primary key, parent_id int, foreign key (parent_id) references parent(id) on delete restrict)")
++				exec("insert into parent values (1), (2)")
++				exec("insert into child values (10, 1)")
++				exec("set foreign_key_checks = 0")
++
++				const deleteParent = "delete from parent where id = 1"
++				var execute func() (sql.Result, error)
++				switch protocol {
++				case "text":
++					exec("prepare delete_parent from '" + deleteParent + "'")
++					defer exec("deallocate prepare delete_parent")
++					execute = func() (sql.Result, error) {
++						return conn.ExecContext(ctx, "execute delete_parent")
++					}
++				case "binary":
++					stmt, err := conn.PrepareContext(ctx, deleteParent)
++					require.NoError(t, err)
++					defer func() { require.NoError(t, stmt.Close()) }()
++					execute = func() (sql.Result, error) {
++						return stmt.ExecContext(ctx)
++					}
++				case "direct":
++					execute = func() (sql.Result, error) {
++						return conn.ExecContext(ctx, deleteParent)
++					}
++				}
++
++				for _, checks := range []int{0, 1, 0, 1} {
++					exec(fmt.Sprintf("set foreign_key_checks = %d", checks))
++					result, err := execute()
++					if checks == 1 {
++						var mysqlErr *mysql.MySQLError
++						require.ErrorAs(t, err, &mysqlErr)
++						require.Equal(t, uint16(1451), mysqlErr.Number)
++						require.Equal(t, 1, count("select count(*) from parent where id = 1"))
++					} else {
++						require.NoError(t, err)
++						rows, err := result.RowsAffected()
++						require.NoError(t, err)
++						require.EqualValues(t, 1, rows)
++						require.Zero(t, count("select count(*) from parent where id = 1"))
++						exec("insert into parent values (1)")
++					}
++					require.Equal(t, 1, count("select count(*) from parent where id = 2"))
++					require.Equal(t, 1, count("select count(*) from child where id = 10 and parent_id = 1"))
++				}
++			})
++		}
++	})
++}
+```
+
+**File**: `test/distributed/cases/foreign_key/issue_26892.result` (modified, +41/-0)
+```diff
+@@ -17,6 +17,47 @@ select id, parent_id from child order by id;
+ ➤ id[4,32,0]  ¦  parent_id[4,32,0]  𝄀
+ 1  ¦  101
+ truncate table child;
++insert into parent values (2), (3);
++insert into child values (3, 2), (4, 3), (5, 1);
++prepare fk_delete_child from 'delete from child where id = 5';
++set foreign_key_checks = 0;
++prepare fk_delete_off from 'delete from parent where id = 2';
++set foreign_key_checks = 1;
++execute fk_delete_off;
++Cannot delete or update a parent row: a foreign key constraint fails
++select id from parent order by id;
++➤ id[4,32,0]  𝄀
++1  𝄀
++2  𝄀
++3
++select id, parent_id from child order by id;
++➤ id[4,32,0]  ¦  parent_id[4,32,0]  𝄀
++3  ¦  2  𝄀
++4  ¦  3  𝄀
++5  ¦  1
++deallocate prepare fk_delete_off;
++prepare fk_delete_on from 'delete from parent where id = 3';
++set foreign_key_checks = 0;
++execute fk_delete_on;
++select id from parent order by id;
++➤ id[4,32,0]  𝄀
++1  𝄀
++2
++select id, parent_id from child order by id;
++➤ id[4,32,0]  ¦  parent_id[4,32,0]  𝄀
++3  ¦  2  𝄀
++4  ¦  3  𝄀
++5  ¦  1
++deallocate prepare fk_delete_on;
++set foreign_key_checks = 1;
++execute fk_delete_child;
++select id, parent_id from child order by id;
++➤ id[4,32,0]  ¦  parent_id[4,32,0]  𝄀
++3  ¦  2  𝄀
++4  ¦  3
++deallocate prepare fk_delete_child;
++truncate table child;
++delete from parent where id in (2, 3);
+ set foreign_key_checks = 0;
+ prepare fk_plain_off from 'insert into child values (?, ?)';
+ set @id = 10, @parent_id = 110;
+```
+
+**File**: `test/distributed/cases/foreign_key/issue_26892.sql` (modified, +29/-0)
+```diff
+@@ -18,6 +18,35 @@ insert into child values (2, 102);
+ select id, parent_id from child order by id;
+ truncate table child;
+ 
++-- A prepared parent DELETE must honor the execution-time setting (#33190).
++insert into parent values (2), (3);
++insert into child values (3, 2), (4, 3), (5, 1);
++prepare fk_delete_child from 'delete from child where id = 5';
++
++set foreign_key_checks = 0;
++prepare fk_delete_off from 'delete from parent where id = 2';
++set foreign_key_checks = 1;
++execute fk_delete_off;
++select id from parent order by id;
++select id, parent_id from child order by id;
++deallocate prepare fk_delete_off;
++
++-- Use a different parent so the reverse case also fails independently on old code.
++prepare fk_delete_on from 'delete from parent where id = 3';
++set foreign_key_checks = 0;
++execute fk_delete_on;
++select id from parent order by id;
++select id, parent_id from child order by id;
++deallocate prepare fk_delete_on;
++
++-- A child-only DELETE remains usable after the same toggles.
++set foreign_key_checks = 1;
++execute fk_delete_child;
++select id, parent_id from child order by id;
++deallocate prepare fk_delete_child;
++truncate table child;
++delete from parent where id in (2, 3);
++
+ -- Plain INSERT prepared while checks are disabled: OFF -> ON -> OFF.
+ set foreign_key_checks = 0;
+ prepare fk_plain_off from 'insert into child values (?, ?)';
+```
+
+---
+
+### Incident Patch 3: `f1063bd4` (2026-11-28)
+**Commit Message**: fix(hakeeper): keep stores alive during replica recovery (#33010)
+
+## What type of PR is this?
+
+- [x] BUG
+- [x] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+issue #33008
+
+This is the main-branch counterpart of the recovery fix merged into
+4.2-dev in #33009.
+
+## What this PR does / why we need it:
+
+A lost LogStore and an incomplete replica report could make HAKeeper
+repeatedly shut down surviving LogStores and TNs. Remove the global
+teardown and its latch. LogService and TN consume historical shutdown
+commands while continuing to handle sibling commands and retaining
+existing TN batch acknowledgement.
+
+HAKeeper selects one ordinary membership change per shard from valid
+reports. Fresh and retried changes require a retained reporting voter
+and a majority in the current and projected configurations. Configured
+replicas can still be started to restore quorum. A Start can reopen
+existing Raft files when the replica is authorized. An orphaned initial
+bootstrap retains its exact manifest, and a newer removal prevents the
+old identity from restarting. Pending local replicas keep their metadata
+and exported snapshots while cleanup observes their ownership. Catalog
+permits retain thei
+
+**File**: `cmd/mo-service/main.go` (modified, +1/-3)
+```diff
+@@ -312,7 +312,7 @@ func startService(
+ 	case metadata.ServiceType_CN:
+ 		return startCNService(cfg, stopper, fs, gossipNode)
+ 	case metadata.ServiceType_TN:
+-		return startTNService(cfg, stopper, fs, shutdownC)
++		return startTNService(cfg, stopper, fs)
+ 	case metadata.ServiceType_LOG:
+ 		return startLogService(cfg, stopper, fs, shutdownC)
+ 	case metadata.ServiceType_PYTHON_UDF:
+@@ -457,7 +457,6 @@ func startTNService(
+ 	cfg *Config,
+ 	stopper *stopper.Stopper,
+ 	fileService fileservice.FileService,
+-	shutdownC chan struct{},
+ ) error {
+ 	if err := waitClusterCondition(cfg.mustGetServiceUUID(), cfg.HAKeeperClient, waitHAKeeperRunning); err != nil {
+ 		return err
+@@ -497,7 +496,6 @@ func startTNService(
+ 			&c,
+ 			mustGetRuntime(cfg),
+ 			fileService,
+-			shutdownC,
+ 			func(value tnservice.Service) {
+ 				owner = value
+ 			},
+```
+
+**File**: `pkg/embed/operator.go` (modified, +0/-1)
+```diff
+@@ -355,7 +355,6 @@ func (op *operator) startTNServiceAfterReadyLocked(
+ 		&c,
+ 		op.reset.rt,
+ 		fs,
+-		op.reset.shutdownC,
+ 		func(owner tnservice.Service) { op.reset.svc = owner },
+ 		tnservice.WithConfigData(commonConfigKVMap),
+ 	)
+```
+
+**File**: `pkg/hakeeper/bootstrap_partial_33008_test.go` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package hakeeper
 +
 +import (
 +	"testing"
 +
++	sm "github.com/lni/dragonboat/v4/statemachine"
++	pb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+// parseGeoJSONOrFatal parses one GeoJSON geometry object, failing the test when
-+// the input is rejected, and returns the geometry for WKT comparisons.
-+func parseGeoJSONOrFatal(t *testing.T, input string) Geometry {
-+	t.Helper()
-+	g, err := ParseGeoJSON([]byte(input))
-+	require.NoError(t, err, input)
-+	return g
++func TestBootstrapCommandSurvivesPartialInitialMembership(t *testing.T) {
++	const store = "c"
++	machine := NewStateMachine(0, 1).(*stateMachine)
++	// Three initial AddNode entries are applied individually. The existing
++	// CheckBootstrap accepts two reported members as enough to enter Running.
++	machine.state.State = pb.HAKeeperRunning
++	machine.state.LogState.Shards[1] = pb.LogShardInfo{
++		ShardID: 1, Epoch: 2, Replicas: map[uint64]string{1: "a", 2: "b"},
++	}
++	start := pb.ScheduleCommand{UUID: store, ServiceType: pb.LogService, Bootstrapping: true,
++		ConfigChange: &pb.ConfigChange{ChangeType: pb.StartReplica,
++			Replica:        pb.Replica{UUID: store, ShardID: 1, ReplicaID: 3},
++			InitialMembers: map[uint64]string{1: "a", 2: "b", 3: store}}}
++	machine.state.ScheduleCommands[store] = pb.CommandBatch{Commands: []pb.ScheduleCommand{start}}
++	data, err := (&pb.LogStoreHeartbeat{UUID: store}).Marshal()
++	require.NoError(t, err)
++	_, err = machine.Update(sm.Entry{Cmd: GetLogStoreHeartbeatCmd(data)})
++	require.NoError(t, err)
++	require.Equal(t, []pb.ScheduleCommand{start}, machine.state.ScheduleCommands[store].Commands,
++		"a not-yet-applied initial member is not an obsolete member")
 +}
-+
-+// rejectGeoJSON requires input to be an invalid GeoJSON geometry. When the
-+// parser wrongly accepts it, the failure message carries the parsed WKT so the
-+// wrongly produced geometry (for example an EMPTY one) is visible.
-+func rejectGeoJSON(t *testing.T, input string) {
-+	t.Helper()
-+	g, err := ParseGeoJSON([]byte(input))
-+	if err != nil {
-+		return
-+	}
-+	t.Fatalf("invalid GeoJSON %s was accepted as geometry %s", input, WriteWKT(g))
-+}
-+
-+// TestGeoJSONRequiredMember pins the RFC 7946 section-3.1 rule that every
-+// Geometry object carries its type's required array member: coordinates for
-+// the six coordinate-bearing types, geometries for a GeometryCollection. An
-+// absent or JSON null member is an invalid geometry, while an explicit empty
-+// array keeps the established EMPTY geometry behavior. The rule applies to
-+// child Geometry objects at any depth, and optional metadata stays inert.
-+func TestGeoJSONRequiredMember(t *testing.T) {
-+	coordinateTypes := []struct {
-+		typ         string
-+		nonEmpty    string
-+		nonEmptyWKT string
-+	}{
-+		{"Point", `[1,2]`, "POINT(1 2)"},
-+		{"LineString", `[[0,0],[1,1]]`, "LINESTRING(0 0,1 1)"},
-+		{"Polygon", `[[[0,0],[1,0],[1,1],[0,0]]]`, "POLYGON((0 0,1 0,1 1,0 0))"},
-+		{"MultiPoint", `[[0,0],[1,1]]`, "MULTIPOINT(0 0,1 1)"},
-+		{"MultiLineString", `[[[0,0],[1,1]],[[2,2],[3,3]]]`, "MULTILINESTRING((0 0,1 1),(2 2,3 3))"},
-+		{"MultiPolygon", `[[[[1,1],[3,1],[3,3],[1,3],[1,1]]]]`, "MULTIPOLYGON(((1 1,3 1,3 3,1 3,1 1)))"},
-+	}
-+	emptyWKT := map[string]string{
-+		"Point":           "POINT EMPTY",
-+		"LineString":      "LINESTRING EMPTY",
-+		"Polygon":         "POLYGON EMPTY",
-+		"MultiPoint":      "MULTIPOINT EMPTY",
-+		"MultiLineString": "MULTILINESTRING EMPTY",
-+		"MultiPolygon":    "MULTIPOLYGON EMPTY",
-+	}
-+	for _, ct := range coordinateTypes {
-+		t.Run(ct.typ, func(t *testing.T) {
-+			// The coordinates member is required: neither absent...
-+			rejectGeoJSON(t, `{"type":"`+ct.typ+`"}`)
-+			// ...nor JSON null is a valid geometry.
-+			rejectGeoJSON(t, `{"type":"`+ct.typ+`","coordinates":null}`)
-+			// An explicit empty array stays a valid EMPTY geometry.
-+			require.Equal(t, emptyWKT[ct.typ],
-+				WriteWKT(parseGeoJSONOrFatal(t, `{"type":"`+ct.typ+`","coordinates":[]}`)))
-+			// A valid non-empty member round-trips to the expected geometry.
-+			require.Equal(t, ct.nonEmptyWKT,
-+				WriteWKT(parseGeoJSONOrFatal(t, `{"type":"`+ct.typ+`","coordinates":`+ct.nonEmpty+`}`)))
-+		})
-+	}
-+
-+	t.Run("GeometryCollection", func(t *testing.T) {
-+		// The geometries member is required: neither absent...
-+		rejectGeoJSON(t, `{"type":"GeometryCollection"}`)
-+		// ...nor JSON null is a valid geometry.
-+		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":null}`)
-+		// An explicit empty array stays a valid EMPTY collection, and a
-+		// non-empty member keeps parsing its children.
-+		require.Equal(t, "GEOMETRYCOLLECTION EMPTY",
-+			WriteWKT(parseGeoJSONOrFatal(t, `{"type":"GeometryCollection","geometries":[]}`)))
-+		require.Equal(t, "GEOMETRYCOLLECTION(POINT(1 2))",
-+			WriteWKT(parseGeoJSONOrFatal(t, `{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[1,2]}]}`)))
-+	})
-+
-+	t.Run("ChildGeometryObjects", func(t *testing.T) {
-+		// Child coordinate-bearing objects require their coordinates member.
-+		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":[{"type":"Point"}]}`)
-+		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":null}]}`)
-+		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":[{"type":"LineString","coordinates":null}]}`)
-+		// Child collections require their geometries member at any depth.
-+		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":[{"type":"GeometryCollection"}]}`)
-+		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":[{"type":"GeometryCollection","geometries":null}]}`)
-+		// Explicit empty arrays keep producing EMPTY child geometries,
 ```
 
-**File**: `test/distributed/cases/geo/geo_geojson.result` (modified, +40/-0)
+**File**: `pkg/hakeeper/checkers/bootstrap_prefix_kill_test.go` (added, +171/-0)
 ```diff
-@@ -82,3 +82,43 @@ select id, st_astext(g) from gj_t;
- id    st_astext(g)
- 1    POINT(10 20)
- drop table gj_t;
-+select st_geomfromgeojson('{"type":"Point","coordinates":null}');
-+invalid input: invalid GeoJSON Point: coordinates is null
-+select st_geomfromgeojson('{"type":"Point","coordinates":null}', 0);
-+invalid input: invalid GeoJSON Point: coordinates is null
-+select st_geomfromgeojson('{"type":"Point","coordinates":null,"Coordinates":[1,2]}');
-+invalid input: invalid GeoJSON Point: coordinates is null
-+select st_geomfromgeojson('{"type":"Point","Coordinates":[1,2],"coordinates":null}');
-+invalid input: invalid GeoJSON Point: coordinates is null
-+select st_geomfromgeojson('{"type":"Point","Coordinates":[1,2]}');
-+invalid input: invalid GeoJSON Point: missing coordinates
-+select st_geomfromgeojson('{"type":"GeometryCollection"}');
-+invalid input: invalid GeoJSON GeometryCollection: geometries is required
-+select st_geomfromgeojson('{"type":"GeometryCollection","geometries":null,"Geometries":[{"type":"Point","coordinates":[1,2]}]}');
-+invalid input: invalid GeoJSON GeometryCollection: geometries is required
-+select st_geomfromgeojson('{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":null,"Coordinates":[1,2]}]}');
-+invalid input: invalid GeoJSON Point: coordinates is null
-+select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[]}')) as pt_empty;
-+pt_empty
-+POINT EMPTY
-+select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[],"Coordinates":[1,2]}')) as pt_empty_shadowed;
-+pt_empty_shadowed
-+POINT EMPTY
-+select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[]}')) as gc_empty;
-+gc_empty
-+GEOMETRYCOLLECTION EMPTY
-+select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[],"Geometries":[{"type":"Point","coordinates":[1,2]}]}')) as gc_empty_shadowed;
-+gc_empty_shadowed
-+GEOMETRYCOLLECTION EMPTY
-+select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[5,6],"Coordinates":[9,9]}')) as pt_canonical;
-+pt_canonical
-+POINT(5 6)
-+select st_srid(st_geomfromgeojson('{"type":"Point","coordinates":[5,6],"Coordinates":[9,9]}', 0)) as pt_srid0_kept;
-+pt_srid0_kept
-+0
-+select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[1,2]}],"Geometries":[]}', 0)) as gc_child_kept;
-+gc_child_kept
-+GEOMETRYCOLLECTION(POINT(1 2))
-+select 2 as after_case_fold_checks;
-+after_case_fold_checks
-+2
+@@ -0,0 +1,171 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package checkers
++
++import (
++	"bytes"
++	"maps"
++	"slices"
++	"testing"
++
++	sm "github.com/lni/dragonboat/v4/statemachine"
++	"github.com/matrixorigin/matrixone/pkg/hakeeper"
++	"github.com/matrixorigin/matrixone/pkg/hakeeper/bootstrap"
++	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/util"
++	pb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
++	"github.com/stretchr/testify/require"
++)
++
++func TestInitialPrefixCannotRetireFutureVoter(t *testing.T) {
++	t.Run("initial_cluster", func(t *testing.T) { testInitialPrefixCannotRetireFutureVoter(t, false) })
++	t.Run("dynamic", func(t *testing.T) { testInitialPrefixCannotRetireFutureVoter(t, true) })
++}
++
++func testInitialPrefixCannotRetireFutureVoter(t *testing.T, dynamic bool) {
++	t.Helper()
++	shardID := uint64(1)
++	if dynamic {
++		shardID = 77
++	}
++	cfg := hakeeper.Config{}
++	cfg.Fill()
++	s := hakeeper.NewStateMachine(0, 1)
++	var index uint64
++	apply := func(cmd []byte) sm.Result {
++		t.Helper()
++		index++
++		res, err := s.Update(sm.Entry{Index: index, Cmd: cmd})
++		require.NoError(t, err)
++		return res
++	}
++	heartbeat := func(uuid string, replicas ...pb.LogReplicaInfo) pb.CommandBatch {
++		t.Helper()
++		hb := pb.LogStoreHeartbeat{UUID: uuid, TaskServiceCreated: true, StoreIncarnation: "disk-" + uuid, Replicas: replicas}
++		data, err := hb.Marshal()
++		require.NoError(t, err)
++		result := apply(hakeeper.GetGuardedLogStoreHeartbeatCmd(data))
++		var batch pb.CommandBatch
++		require.NoError(t, batch.Unmarshal(result.Data))
++		return batch
++	}
++	state := func() *pb.CheckerState {
++		t.Helper()
++		value, err := s.Lookup(&hakeeper.StateQuery{Scheduling: true})
++		require.NoError(t, err)
++		return value.(*pb.CheckerState)
++	}
++	check := func() []pb.ScheduleCommand {
++		return NewCoordinator("", cfg).Check(util.NewTestIDAllocator(100), *state(), false)
++	}
++	apply(hakeeper.GetInitialClusterRequestCmd(1, 1, 3, 0, nil, nil))
++	apply(hakeeper.GetTickCmdWithLogStorePolicy(1, cfg.LogStoreTimeoutTicks()))
++	ha := pb.LogShardInfo{ShardID: 0, Epoch: 3, Replicas: map[uint64]string{1: "a", 2: "b", 3: "c"}}
++	for id, uuid := range ha.Replicas {
++		heartbeat(uuid, pb.LogReplicaInfo{LogShardInfo: ha, ReplicaID: id})
++	}
++	var approved []pb.ScheduleCommand
++	var members map[uint64]string
++	if dynamic {
++		apply(hakeeper.GetSetStateCmd(pb.HAKeeperBootstrapCommandsReceived))
++		apply(hakeeper.GetSetStateCmd(pb.HAKeeperRunning))
++		apply(hakeeper.GetAddLogShardCmd(pb.AddLogShard{ShardID: shardID}))
++		approved = check()
++		require.Len(t, approved, 3)
++		require.NotNil(t, approved[0].BootstrapShard)
++		members = approved[0].BootstrapShard.InitialMembers
++	} else {
++		current := state()
++		var err error
++		approved, err = bootstrap.NewBootstrapManager(current.ClusterInfo).
++			Bootstrap("", util.NewTestIDAllocator(100), current.TNState, current.LogState)
++		require.NoError(t, err)
++		require.Len(t, approved, 3)
++		require.True(t, approved[0].Bootstrapping)
++		members = approved[0].ConfigChange.InitialMembers
++	}
++	ids := slices.Sorted(maps.Keys(members))
++	a, b, c := members[ids[0]], members[ids[1]], members[ids[2]]
++	apply(hakeeper.GetUpdateCommandsCmd(1, approved))
++
++	first := pb.LogShardInfo{ShardID: shardID, Epoch: 1, Replicas: map[uint64]string{ids[0]: a}}
++	majority := pb.LogShardInfo{ShardID: shardID, Epoch: 2, Replicas: map[uint64]string{ids[0]: a, ids[1]: b}}
++	localBeforeOwnAdd := pb.LogReplicaInfo{LogShardInfo: first, ReplicaID: ids[2]}
++	heartbeat(a, pb.LogReplicaInfo{LogShardInfo: majority, ReplicaID: ids[0]})
++	heartbeat(b, pb.LogReplicaInfo{LogShardInfo: majority, ReplicaID: ids[1]})
++	heartbeat(c, localBeforeOwnAdd)
++	if !dynamic {
++		current := state()
++		require.True(t, bootstrap.NewBootstrapManager(current.ClusterInfo).CheckBootstrap(current.LogState),
++			"initial cluster can enter Running on the first majority")
++		apply(hakeeper.GetSetStateCmd(pb.HAKeeperRunning))
++	}
++	var kill pb.ScheduleCommand
++	for _, cmd := range check() {
++		if cmd.UUID == c && cmd.ConfigChange != nil && cmd.ConfigChange.ChangeType == pb.KillZombie {
++			kill = cmd
++		}
++	}
++	require.NotNil(t, kill.ConfigChange, "the real checker can classify a report that precedes its own initial AddNode as a zombie")
++	require.Equal(t, ids[2], kill.ConfigChange.Replica.ReplicaID)
++	apply(hakeeper.GetUpdateCommandsCmd(2, []pb.ScheduleCommand{kill}))
++
++	var saved bytes.Buffer
++	require.
 ```
 
-**File**: `test/distributed/cases/geo/geo_geojson.sql` (modified, +30/-0)
+**File**: `pkg/hakeeper/checkers/bootstrap_start_ownership_test.go` (added, +105/-0)
 ```diff
-@@ -60,3 +60,33 @@ create table gj_t(id int, g geometry);
- insert into gj_t values (1, st_geomfromgeojson('{"type":"Point","coordinates":[10,20]}'));
- select id, st_astext(g) from gj_t;
- drop table gj_t;
+@@ -0,0 +1,105 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+-- Null or missing required members are invalid even when a differently-cased
-+-- member would case-fold onto them; member order does not matter, the
-+-- canonical value always wins, and explicit empty arrays keep their EMPTY
-+-- acceptance. Both public overloads behave the same.
++package checkers
 +
-+-- @regex("invalid GeoJSON Point: coordinates is null",true)
-+select st_geomfromgeojson('{"type":"Point","coordinates":null}');
-+-- @regex("invalid GeoJSON Point: coordinates is null",true)
-+select st_geomfromgeojson('{"type":"Point","coordinates":null}', 0);
-+-- @regex("invalid GeoJSON Point: coordinates is null",true)
-+select st_geomfromgeojson('{"type":"Point","coordinates":null,"Coordinates":[1,2]}');
-+-- @regex("invalid GeoJSON Point: coordinates is null",true)
-+select st_geomfromgeojson('{"type":"Point","Coordinates":[1,2],"coordinates":null}');
-+-- @regex("invalid GeoJSON Point: missing coordinates",true)
-+select st_geomfromgeojson('{"type":"Point","Coordinates":[1,2]}');
-+-- @regex("invalid GeoJSON GeometryCollection: geometries is required",true)
-+select st_geomfromgeojson('{"type":"GeometryCollection"}');
-+-- @regex("invalid GeoJSON GeometryCollection: geometries is required",true)
-+select st_geomfromgeojson('{"type":"GeometryCollection","geometries":null,"Geometries":[{"type":"Point","coordinates":[1,2]}]}');
-+-- @regex("invalid GeoJSON Point",true)
-+select st_geomfromgeojson('{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":null,"Coordinates":[1,2]}]}');
-+select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[]}')) as pt_empty;
-+select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[],"Coordinates":[1,2]}')) as pt_empty_shadowed;
-+select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[]}')) as gc_empty;
-+select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[],"Geometries":[{"type":"Point","coordinates":[1,2]}]}')) as gc_empty_shadowed;
-+select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[5,6],"Coordinates":[9,9]}')) as pt_canonical;
-+select st_srid(st_geomfromgeojson('{"type":"Point","coordinates":[5,6],"Coordinates":[9,9]}', 0)) as pt_srid0_kept;
-+select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[1,2]}],"Geometries":[]}', 0)) as gc_child_kept;
-+select 2 as after_case_fold_checks;
++import (
++	"testing"
++	"time"
++
++	"github.com/matrixorigin/matrixone/pkg/hakeeper"
++	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/util"
++	pb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
++	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
++	"github.com/stretchr/testify/require"
++)
++
++func TestBootstrapOwnsUnreportedReplicaStart(t *testing.T) {
++	c := NewCoordinator("", hakeeper.Config{})
++	alloc := util.NewTestIDAllocator(100)
++	state := pb.CheckerState{Tick: 1,
++		ClusterInfo: pb.ClusterInfo{LogShards: []metadata.LogShardRecord{{ShardID: 1, NumberOfReplicas: 3}}},
++		LogState: pb.LogState{Shards: map[uint64]pb.LogShardInfo{1: {ShardID: 1, Replicas: map[uint64]string{}}}, Stores: map[string]pb.LogStoreInfo{
++			"a": {Tick: 1, TaskServiceCreated: true}, "b": {Tick: 1, TaskServiceCreated: true}, "c": {Tick: 1, TaskServiceCreated: true},
++		}},
++	}
++	first := c.Check(alloc, state, false)
++	var bootstrap []pb.ScheduleCommand
++	for _, cmd := range first {
++		if cmd.BootstrapShard != nil {
++			bootstrap = append(bootstrap, cmd)
++		}
++	}
++	require.Len(t, bootstrap, 3, "the first real scheduling round must bootstrap all replicas")
++	shard := pb.LogShardInfo{ShardID: 1, Epoch: 1, Replicas: bootstrap[0].BootstrapShard.InitialMembers}
++	state.LogState.Shards[1] = shard
++	var missing pb.ScheduleCommand
++	for i, cmd := range bootstrap {
++		if i == 0 {
++			missing = cmd
++			continue
++		}
++		store := state.LogState.Stores[cmd.UUID]
++		store.Replicas = []pb.LogReplicaInfo{{LogShardInfo: shard, ReplicaID: cmd.BootstrapShard.ReplicaID}}
++		state.LogState.Stores[cmd.UUID] = store
++	}
++	second := c.Check(alloc, state, false)
++	t.Logf("unreported bootstrap store=%s id=%d commands=%+v", missing.UUID, missing.BootstrapShard.ReplicaID, second)
++	for _, cmd := range second {
++		if cmd.ConfigChange != nil && cmd.ConfigChange.Replica.ReplicaID == missing.BootstrapShard.ReplicaID {
++			require.NotEqual(t, pb.StartReplica, cmd.ConfigChange.ChangeType, "an in-flight bootstrap already owns this local start")
++			require.NotEqual(t, pb.RemoveReplica, cmd.ConfigChange.ChangeType)
++		}
++	}
++}
++
++func TestFreshCoordinatorReplansMembershipAndIndependentTNWork(t *testing.T) {
++	// Initialize and restore the TN checker's service runtime around this test.
++	_, _, _ = tnStartScenario(t)
++	cfg := hakeeper.Config{TickPerSecond: 1, LogStoreTimeout: 5 * time.Second}
++	shard := pb.LogShardInfo{ShardID: 1, Epoch: 7, Replicas: map[uint64]string{1: "a", 2: "b", 3: "c"}}
++	state := pb.CheckerState{
++		Tick:          10,
++		ClusterInfo:   pb.ClusterInfo{LogShards: []metadata.LogShardRecord{{ShardID: 1, NumberOfReplicas: 3}}},
++		TaskTableUser: pb.TaskTableUser{Username: "task"},
++		LogState: pb.LogState{Shards: map[uint64]pb.LogShardInfo{1: shard}, Stores: map[string]pb.LogStoreInfo{
++			"a": {Tick: 10, TaskServiceCreated: true, Replicas: []pb.LogReplicaInfo{{LogShardInfo: shard, ReplicaID: 1}}},
++			"b": {Tick: 1, TaskServiceCreated: true, Replicas: []pb.LogReplicaInfo{{LogShardInfo: shard, ReplicaID: 2}}},
++			"c": {Tick: 10, TaskServiceCreated: true, Replicas: []pb.LogReplicaInfo{{LogShardInfo: shard, ReplicaID: 3}}},
++		}},
++		TNState: pb.TNState{Stores: map[string]pb.TNStoreInfo{"tn": {Tick: 10}}},
++	}
++	check := func() (bool, bool) {
++		commands := NewCoordinator("", cfg).Check(util.NewTestIDAllocator(100), state, false)
++		var remove, tnTask bool
++		for _, cmd := range commands {
++			if cmd.ConfigChange != nil && cmd.ConfigChange.ChangeType == pb.RemoveReplica && cmd.ConfigChange.Replica.UUID == "b" {
++				remove = true
++			}
++			if cmd.UUID == "tn" && cmd.CreateTaskService != nil {
++				tnTask = true
++			}
++		}
++		return remove, tnTask
++	}
++	remove, tnTask := check()
++	require.True(t, remove, "the current plan should remove the expired voter")
++	require.True(t, tnTask, "unrelated TN work must remain in the new batch")
++	b := state.LogState.Stores["b"]
++	b.Tick = state.Tick
++	state.LogState.Stores["b"] = b
++	remove, tnTask = check()
++	require.False(t, remove, "a recovered voter is no longer a removal candidate")
++	require.True(t, tnTask)
++}
+```
+
+**File**: `pkg/hakeeper/checkers/coordinator.go` (modified, +2/-38)
+```diff
+@@ -22,7 +22,6 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/cnservice"
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/logservice"
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/proxy"
+-	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/syshealth"
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/tnservice"
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/checkers/util"
+ 	"github.com/matrixorigin/matrixone/pkg/hakeeper/operator"
+@@ -34,11 +33,6 @@ import (
+ type Coordinator struct {
+ 	OperatorController *operator.Controller
+ 
+-	// Considering the context of `Coordinator`,
+-	// there is no need for a mutext to protect.
+-	teardown    bool
+-	teardownOps []*operator.Operator
+-
+ 	service string
+ 	cfg     hakeeper.Config
+ }
+@@ -71,38 +65,8 @@ func (c *Coordinator) Check(alloc util.IDAllocator, state pb.CheckerState, stand
+ 		zap.Uint64("current tick", currentTick),
+ 	)
+ 
+-	defer func() {
+-		if !c.teardown {
+-			runtime.ServiceRuntime(c.service).Logger().Debug("MO is working.")
+-		}
+-	}()
+-
+ 	c.OperatorController.RemoveFinishedOperator(logState, tnState, cnState, proxyState)
+ 
+-	// if we've discovered unhealthy already, no need to keep alive anymore.
+-	if c.teardown {
+-		return c.OperatorController.Dispatch(c.teardownOps, logState, tnState, cnState, proxyState)
+-	}
+-
+-	// check whether system health or not.
+-	if operators, health := syshealth.Check(c.cfg, cluster, tnState, logState, currentTick); !health {
+-		// TN starts have a report/target lifetime. Teardown ends their ownership
+-		// before ordinary checks stop running.
+-		for _, record := range cluster.TNShards {
+-			for _, op := range slices.Clone(c.OperatorController.GetOperators(record.ShardID)) {
+-				if steps := op.OpSteps(); len(steps) == 1 {
+-					if _, ok := steps[0].(operator.AddTnReplica); ok {
+-						c.OperatorController.RemoveOperator(op)
+-					}
+-				}
+-			}
+-		}
+-		c.teardown = true
+-		c.teardownOps = operators
+-		return c.OperatorController.Dispatch(c.teardownOps, logState, tnState, cnState, proxyState)
+-	}
+-
+-	// system health, try to keep alive.
+ 	executing := c.OperatorController.GetExecutingReplicas()
+ 	executingNonVoting := c.OperatorController.GetNonVotingExecutingReplicas()
+ 
+@@ -141,11 +105,11 @@ func (c *Coordinator) Check(alloc util.IDAllocator, state pb.CheckerState, stand
+ 			shardIDs = append(shardIDs, shard.ShardID)
+ 		}
+ 		slices.Sort(shardIDs)
+-		var existing []*operator.Operator
++		existing := make([]*operator.Operator, 0, len(shardIDs))
+ 		for _, shardID := range slices.Compact(shardIDs) {
+ 			existing = append(existing, c.OperatorController.GetOperators(shardID)...)
+ 		}
+-		pending := logservice.PendingOperators(commonFields, logState, state.NonVotingReplicaNum, existing)
++		pending := logservice.PendingOperators(commonFields, logState, executing, executingNonVoting, state.NonVotingReplicaNum, state.NonVotingLocality, existing)
+ 		operators = append(pending, operators...)
+ 	}
+ 	return c.OperatorController.Dispatch(operators, logState, tnState, cnState, proxyState)
+```
+
+**File**: `pkg/hakeeper/checkers/coordinator_test.go` (modified, +14/-14)
+```diff
+@@ -347,7 +347,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 4,
++							ReplicaID: 4, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"e": {
+@@ -359,7 +359,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 5,
++							ReplicaID: 5, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"f": {
+@@ -371,7 +371,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 6,
++							ReplicaID: 6, IsNonVoting: true,
+ 						}},
+ 					},
+ 				},
+@@ -407,7 +407,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 2,
++							ReplicaID: 1,
+ 						}},
+ 					},
+ 					"b": {
+@@ -443,7 +443,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 4,
++							ReplicaID: 4, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"e": {
+@@ -455,7 +455,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 5,
++							ReplicaID: 5, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"f": {Tick: 0, Replicas: []pb.LogReplicaInfo{}},
+@@ -539,7 +539,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 4,
++							ReplicaID: 4, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"e": {
+@@ -551,7 +551,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 5,
++							ReplicaID: 5, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"f": {
+@@ -563,7 +563,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e", 6: "f"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 6,
++							ReplicaID: 6, IsNonVoting: true,
+ 						}},
+ 					},
+ 				},
+@@ -611,7 +611,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 2,
++							ReplicaID: 1,
+ 						}},
+ 					},
+ 					"b": {
+@@ -647,7 +647,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 3,
++							ReplicaID: 4, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"e": {
+@@ -659,7 +659,7 @@ func TestFixExpiredStore(t *testing.T) {
+ 								NonVotingReplicas: map[uint64]string{4: "d", 5: "e"},
+ 								Epoch:             1,
+ 								LeaderID:          1},
+-							ReplicaID: 3,
++							ReplicaID: 5, IsNonVoting: true,
+ 						}},
+ 					},
+ 					"f": {
+@@ -766,7 +766,7 @@ func TestFixZombie(t *testing.T) {
+ 								Replicas: map[uint64]string{1: "a", 2: "b", 4: "d"},
+ 								Epoch:    2,
+ 								LeaderID: 1},
+-							ReplicaID: 3,
++							ReplicaID: 4,
+ 						}},
+ 					},
+ 				},
+@@ -843,7 +843,7 @@ func TestFixZombie(t *testing.T) {
+ 								Replicas: map[uint64]string{1: "a", 2: "b", 4: "d"},
+ 								Epoch:    2,
+ 								LeaderID: 1},
+-							ReplicaID: 3,
++							ReplicaID: 4,
+ 						}},
+ 					},
+ 				},
+```
+
+**File**: `pkg/hakeeper/checkers/coordinator_tn_test.go` (modified, +139/-15)
+```diff
+@@ -216,7 +216,7 @@ func TestTNStartReservationsAndPartialReports(t *testing.T) {
+ 	require.Len(t, c.OperatorController.GetOperators(3), 1)
+ }
+ 
+-func TestTNStartRebuildAndTeardown(t *testing.T) {
++func TestTNStartRebuildAndRecovery(t *testing.T) {
+ 	c, state, alloc := tnStartScenario(t)
+ 	first := c.Check(alloc, state, false)
+ 	require.Len(t, first, 1)
+@@ -237,26 +237,23 @@ func TestTNStartRebuildAndTeardown(t *testing.T) {
+ 	state.TNState.Stores["tn-a"] = info
+ 	require.Empty(t, stale.Check(alloc, state, false))
+ 	require.Empty(t, stale.OperatorController.GetOperators(2))
+-	// Keep this coordinator's start unfinished when entering teardown.
++	// A temporary shortage of Log replica reports leaves the TN start in flight.
+ 	info.Shards = nil
+ 	state.TNState.Stores["tn-a"] = info
+ 	pending := c.OperatorController.GetOperators(2)[0]
+-	// Expired majority forces the actual syshealth teardown branch.
+ 	state.ClusterInfo.LogShards = []metadata.LogShardRecord{{ShardID: 1, NumberOfReplicas: 3}}
+ 	state.LogState = pb.LogState{Stores: map[string]pb.LogStoreInfo{}}
+ 	for i, id := range []string{"log-a", "log-b"} {
+ 		state.LogState.Stores[id] = pb.LogStoreInfo{Replicas: []pb.LogReplicaInfo{{LogShardInfo: pb.LogShardInfo{ShardID: 1}, ReplicaID: uint64(i + 1)}}}
+ 	}
+-	for i := 0; i < 2; i++ {
+-		commands := c.Check(alloc, state, false)
+-		require.NotEmpty(t, commands)
+-		for _, cmd := range commands {
+-			require.Nil(t, cmd.ConfigChange)
+-			require.NotNil(t, cmd.ShutdownStore)
+-		}
+-		require.Empty(t, c.OperatorController.GetOperators(2))
+-		require.Equal(t, operator.CANCELED, pending.Status())
++	for _, cmd := range c.Check(alloc, state, false) {
++		require.Nil(t, cmd.ShutdownStore)
+ 	}
++	require.Same(t, pending, c.OperatorController.GetOperators(2)[0])
++	info.Shards = []pb.TNShardInfo{{ShardID: 2, ReplicaID: restarted[0].ConfigChange.Replica.ReplicaID}}
++	state.TNState.Stores["tn-a"] = info
++	c.Check(alloc, state, false)
++	require.Empty(t, c.OperatorController.GetOperators(2))
+ }
+ 
+ func TestTNRetryPreservesPendingLogStart(t *testing.T) {
+@@ -288,6 +285,12 @@ func TestTNRetryPreservesPendingLogStart(t *testing.T) {
+ 				require.NoError(t, err)
+ 				return r
+ 			}
++			// The delivery RSM must observe the same membership as the checker.
++			for _, id := range []string{"a", "b"} {
++				report, err := (&pb.LogStoreHeartbeat{UUID: id, Replicas: state.LogState.Stores[id].Replicas}).Marshal()
++				require.NoError(t, err)
++				apply(hakeeper.GetLogStoreHeartbeatCmd(report))
++			}
+ 			first := coordinator.Check(alloc, state, false)
+ 			var logStart *pb.ScheduleCommand
+ 			for i := range first {
+@@ -297,14 +300,17 @@ func TestTNRetryPreservesPendingLogStart(t *testing.T) {
+ 				}
+ 			}
+ 			require.NotNil(t, logStart, "fixture must schedule the actual missing log replica")
+-			t.Logf("first batch: %+v", first)
++			confirmedStart := *logStart
++			change := *logStart.ConfigChange
++			change.Replica.Epoch = shard.Epoch
++			confirmedStart.ConfigChange = &change
+ 			apply(hakeeper.GetUpdateCommandsCmd(1, first))
+ 			hb, err := (&pb.LogStoreHeartbeat{UUID: "c"}).Marshal()
+ 			require.NoError(t, err)
+ 			if tt.consumed {
+ 				var original pb.CommandBatch
+ 				require.NoError(t, original.Unmarshal(apply(hakeeper.GetLogStoreHeartbeatCmd(hb)).Data))
+-				require.Contains(t, original.Commands, *logStart)
++				require.Contains(t, original.Commands, confirmedStart)
+ 			}
+ 			state.Tick++
+ 			second := coordinator.Check(alloc, state, false)
+@@ -315,7 +321,7 @@ func TestTNRetryPreservesPendingLogStart(t *testing.T) {
+ 			var received pb.CommandBatch
+ 			require.NoError(t, received.Unmarshal(apply(hakeeper.GetLogStoreHeartbeatCmd(hb)).Data))
+ 			t.Logf("log heartbeat commands: %+v", received.Commands)
+-			require.Contains(t, received.Commands, *logStart, "a TN-only retry must not erase an unrelated undelivered log start")
++			require.Contains(t, received.Commands, confirmedStart, "a TN-only retry must not erase an unrelated undelivered log start")
+ 			// A real report ends the retained Log intent, even while TN still retries.
+ 			store := state.LogState.Stores["c"]
+ 			store.Replicas = []pb.LogReplicaInfo{{LogShardInfo: shard, ReplicaID: 3}}
+@@ -346,3 +352,121 @@ func TestTNRetryDoesNotResurrectObsoleteRemoval(t *testing.T) {
+ 	require.Equal(t, first, next)
+ 	require.Equal(t, operator.STARTED, old.Status())
+ }
++
++func TestCoordinatorRepairsAfterMissingReplicaReport(t *testing.T) {
++	c, state, alloc := tnStartScenario(t)
++	state.Tick = 10000
++	state.TNState.Stores["tn-a"] = pb.TNStoreInfo{Tick: state.Tick, TaskServiceCreated: true}
++	state.ClusterInfo.LogShards = []metadata.LogShardRecord{
++		{ShardID: 0, NumberOfReplicas: 3}, {ShardID: 1, NumberOfReplicas: 3},
++	}
++	members := map[uint64]string{1: "log-a", 2: "log-b", 3: "log-c"}
++	data := pb.LogShardInfo{ShardID: 1, Replicas: members, LeaderID: 1, Epoch: 1}
++	control := pb.LogShardInfo{Replicas: members, LeaderID: 1, Epoch: 1}
++	state.LogState = pb.LogState{
++		Shards: map[uint64]pb.LogShardIn
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #33403** (2026-11-27): Update main CODEOWNERS (@XuPeng-SH)
-- **PR #33402** (2026-11-27): [4.2-dev] Update CODEOWNERS (@XuPeng-SH)
-- **PR #33401** (2026-11-27): ci: pilot Coverage UT cross-site retry on PR #32922 only (@Ariznawlll)
-- **PR #33400** (2026-11-27): [4.2-dev] test: sync publication commits before cross-CN ALTER (@XuPeng-SH)
-- **PR #33398** (2026-11-27): fix(geo): validate required GeoJSON members (@aptend)
-- **PR #33386** (2026-11-27): [4.2-dev] ci: route Coverage UT to CS standby (@Ariznawlll)
+- **PR #33433** (2026-11-28): [4.2-dev] test: stabilize cross-CN publication lock assertions (@XuPeng-SH)
+- **PR #33432** (2026-11-28): ci: use S3-only PR Coverage and expose manual OSS COS checks (@XuPeng-SH)
+- **PR #33431** (2026-11-28): ci: roll out the narrowed CS S3 Coverage smoke (@XuPeng-SH)
+- **PR #33430** (2026-11-28): ci: pin Coverage standby to merged CI #499 (@Ariznawlll)
+- **PR #33426** (closed): fix(compile): metadata MIN/MAX and merge-group codec through shared type functions (#10181) (@fengttt)
+- **PR #33425** (2026-11-28): Assign code owners for thirdparties/sirius (@zuyu)
 
 ---
 
@@ -2803,36 +3995,3 @@ Require exact, case-sensitive GeoJSON member names for top-level and nested geom
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. ci: roll out Coverage UT worker metadata fix
-
-**RULE**:
-When implementing operations in `.github/workflows/coverage-standby-worker.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `a3aae79f`: ci: roll out Coverage UT worker metadata fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/coverage-standby-worker.yaml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-    uses: matrixorigin/CI/.github/workflows/coverage-worker-cs.yaml@4972bd963f4cc9510266323b14446a8edcda2bfc
-    uses: matrixorigin/CI/.github/workflows/coverage-worker-idc.yaml@4972bd963f4cc9510266323b14446a8edcda2bfc
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-    uses: matrixorigin/CI/.github/workflows/coverage-worker-cs.yaml@3d7dce54bdb6ec099102ca2f3aa3a05e96f1f738
-    uses: matrixorigin/CI/.github/workflows/coverage-worker-idc.yaml@3d7dce54bdb6ec099102ca2f3aa3a05e96f1f738
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3aae79f` are properly handled with clean fallback behavior.

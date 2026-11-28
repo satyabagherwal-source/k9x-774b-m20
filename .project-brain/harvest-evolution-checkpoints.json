@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T15:27:55.579Z",
+  "last_updated": "2026-11-28T15:36:48.757Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T13:18:25.502Z",
@@ -208,7 +208,7 @@
       "staged_for_review": 1
     },
     "rtk-ai-rtk-learnings.md": {
-      "processed_at": "2026-11-27T12:59:24.728Z",
+      "processed_at": "2026-11-28T15:36:21.353Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -363,9 +363,9 @@
       "staged_for_review": 1
     },
     "matrixorigin-matrixone-learnings.md": {
-      "processed_at": "2026-11-27T17:50:26.710Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-28T15:36:46.618Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "arkivanov-decompose-learnings.md": {
       "processed_at": "2026-11-27T09:35:10.944Z",
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-28T13:56:03.207Z",
+      "processed_at": "2026-11-28T15:36:47.464Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4083,7 +4083,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5379,
-  "total_canonical_promoted": 606,
-  "total_staged_for_review": 4098
+  "total_dossiers_evaluated": 5382,
+  "total_canonical_promoted": 607,
+  "total_staged_for_review": 4100
 }

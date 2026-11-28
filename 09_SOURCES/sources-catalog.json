@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "1772058f",
+    "sourceVersion": "30bfd633",
     "license": "Apache-2.0",
-    "contentHash": "67f6933b032a67b3abe1738c97bf77515c61c72bb303c0b4f196bf0d343f70e5",
-    "lastHarvestedAt": "2026-11-28T13:55:57.603Z",
+    "contentHash": "0f3bd3152c70b5be47fd9fd769ae51b6ea6be5c45624bda11c484ab127a525cd",
+    "lastHarvestedAt": "2026-11-28T15:36:17.862Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "b1999539",
+    "sourceVersion": "56989d8e",
     "license": "Apache-2.0",
-    "contentHash": "9c76863d5b4aaac69363491cdc7e4ff18059c0ce626901911d702cf1b70438b9",
-    "lastHarvestedAt": "2026-11-27T17:50:18.408Z",
+    "contentHash": "a2272c0fc3eb37d6d6c2ebb50212c8b2fb99a2b84c7dc0ece5d4c988ae1f1c60",
+    "lastHarvestedAt": "2026-11-28T15:36:15.640Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "16b02ac8",
+    "sourceVersion": "10630563",
     "license": "Apache-2.0",
-    "contentHash": "7e54294a8d40c46012034c16fbd49c58a09025dd2d3519b6a410cebf5d3f0f6e",
-    "lastHarvestedAt": "2026-11-27T12:59:14.531Z",
+    "contentHash": "dde3e538a5476139733405e80ec6154f6532fa8a8fc6e22a3123f926334b5d8a",
+    "lastHarvestedAt": "2026-11-28T15:36:02.543Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

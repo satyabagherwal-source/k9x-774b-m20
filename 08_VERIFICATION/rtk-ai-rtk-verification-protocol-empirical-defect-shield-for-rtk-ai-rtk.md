@@ -4,22 +4,22 @@
 {
   "source_repository": "rtk-ai/rtk",
   "source_url": "https://github.com/rtk-ai/rtk",
-  "source_version": "16b02ac8",
+  "source_version": "10630563",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T12:59:14.841Z",
+  "timestamp": "2026-11-28T15:36:02.785Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rtk-ai-rtk",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rtk-ai/rtk](https://github.com/rtk-ai/rtk) (Revision: `16b02ac8`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T12:59:14.841Z`  
+> **Provenance**: Harvested from [rtk-ai/rtk](https://github.com/rtk-ai/rtk) (Revision: `10630563`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T15:36:02.785Z`  
 > **Learning ID**: `learn-github-rtk-ai-rtk`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `rtk-ai/rtk` (Commit: `16b02ac8`)
+- **Target Repository**: `rtk-ai/rtk` (Commit: `10630563`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T12:59:13.070Z  
+> **Harvest Timestamp**: 2026-11-28T15:36:01.232Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 88013 stars
+- **Stars / Engagement**: 88096 stars
 
 ---
 
@@ -1733,11 +1733,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5122** (2026-11-23): **fix(engine): stop rtk:delegate-reads from shunting images and PDFs**
-  *Symptoms*: ## Summary  - `rtk:delegate-reads` no longer routes whole-file reads of png, jpg, jpeg, gif, webp and pdf files to `bulk-read`: an agent's read tool renders those itself, and `bulk-read` cannot show an image. - The exclusion lists each extension in lower and upper case (`png`, `PNG`, ...), so `.PNG` is covered without changing how conditions compare strings. - Notebooks (`.ipynb`) stay in the shunt: they are text and one of the most verbose files an agent opens.  Fixes #5106  ## Root cause  `shunt-large-read` fires on `file_lines_gt = 350`, and `file_lines` counts `\n` bytes (`file_line_count` in `src/core/pipeline_config.rs`). A binary file has no real lines, but any PNG with a few hundred 0x0A bytes counts as "1083 lines" and is denied with a pointer to `rtk bulk-read`, which cannot read it (`stream did not contain valid UTF-8`).  ## Fix  - `engine/builtin/delegate-reads.toml`: add `extension_not_in = [...]` (images and PDFs, both cases) to the rule's `when` (a user `[override.shunt-large-read] when.file_lines_gt = 500` keeps it, since `when` keys merge). The header comment is scoped to the rule. - `docs/guide/pipelines/reference-pipelines.md`: the literal copy of the built-in, plus one sentence scoped to the rule. - `engine/src/pipeline/eval.rs`: tests for the rule. `conditions.rs` is untouched.  Alternative considered: skip any file the binary detection in `rtk read` flags (8886c14, #822). It would also cover unlisted binary formats, but it needs a new fact (a file read o
+- **Issue #5131** (2026-11-28): **fix(hooks): gate the rewrite hooks on 0.25.0, the release that added rtk rewrite**
+  *Symptoms*: Fixes #5126  ## Problem  The Claude and Cursor shell hooks (`hooks/{claude,cursor}/rtk-rewrite.sh`) and the Pi extension (`hooks/pi/rtk.ts`) require rtk >= 0.23.0, "when `rtk rewrite` was introduced". `rtk rewrite` first shipped in 0.25.0: f447a3d is not an ancestor of v0.24.0, is in v0.25.0, and `CHANGELOG.md` lists it under 0.25.0. So rtk 0.23 and 0.24 pass the guard, are told nothing, and get no rewrites.  ## Change  - Floor 23 → 25 and the messages `need >= 0.23.0` → `need >= 0.25.0` in the three hooks (the shell `-lt` checks, `MIN_SUPPORTED_RTK_MINOR`, header and guard comments). - The same wording in `hooks/README.md`, `hooks/claude/README.md`, `hooks/cursor/README.md` and `hooks/pi/README.md`. - `hooks/pi/rtk.ts` is embedded by `rtk init --agent pi`, so its new hash is added to `KNOWN_PI_PLUGIN_HASHES` (`test_all_git_pi_plugin_revisions_are_allowlisted` requires it).  ## Test  `test_shipped_hooks_gate_on_the_release_that_added_rewrite` (`src/hooks/hook_check.rs`) takes the release from the `CHANGELOG.md` heading above f447a3d (0.25.0) and asserts that each hook's guard uses that minor, each states `too old (need >= 0.25.0)` the expected number of times (1, 1, 2), and none still names 0.23.0. Each of these mutations fails it: claude `-lt 25` → `23`, the claude and cursor messages, `MIN_SUPPORTED_RTK_MINOR = 24`, and one of the two Pi messages.  Also checked by hand (not pinned by a test): the shell hooks and the Pi extension run against a stub `rtk` reporting 0.23.0 / 0
 
-- **Issue #5115** (2026-11-14): **rtk x86_64-unknown-linux-musl binary crashes with SIGILL on CPUs without AVX2 (Ivy Bridge / Sandy Bridge) — request a baseline build**
-  *Symptoms*: # `rtk` x86_64-unknown-linux-musl binary crashes with SIGILL on CPUs without AVX2 (Ivy Bridge / Sandy Bridge) — request a baseline build  ## Summary  The prebuilt `rtk-x86_64-unknown-linux-musl` binary from the latest release (v1.2.0) crashes immediately with `SIGILL` (Illegal instruction, exit code 132) on x86-64 CPUs that lack AVX2. The binary contains unguarded AVX2 instructions that execute before any runtime CPU-feature dispatch can pick a scalar fallback. A baseline build artifact (compiled with `target-cpu=x86-64` and AVX2/BMI2/FMA disabled at codegen) is needed for the many homelab and older-server machines still on Ivy Bridge / Sandy Bridge / pre-Excavator AMD.  ## Environment  - **OS:** Alpine Linux edge (musl), kernel 6.x - **CPU:** Intel Xeon E5-2695 v2 (Ivy Bridge, 2012) — has AVX, **no AVX2, no BMI1/BMI2, no FMA** - **CPU flags:** `sse sse2 ssse3 sse4_1 sse4_2 avx` (no `avx2`, no `bmi1`, no `bmi2`, no `fma`) - **rtk:** `v1.2.0`, installed via `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh` (asset `rtk-x86_64-unknown-linux-musl.tar.gz`) - **Reproduced commands:** `rtk`, `rtk --help`, `rtk --version` — all exit 132  ## Steps to reproduce  1. On any x86-64 CPU without AVX2 (Ivy Bridge, Sandy Bridge, pre-Ryzen AMD), run:    ```bash    curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh    rtk --version    ``` 2. Alternatively, on an AVX2-capable machine, reproduce under QEMU:    ```bas
+- **Issue #5126** (2026-11-28): **hooks: version floor says `rtk rewrite` came in 0.23.0; it came in 0.25.0**
+  *Symptoms*: The Pi extension and the legacy shell hooks gate on rtk >= 0.23.0 "when `rtk rewrite` was introduced":  - `hooks/pi/rtk.ts`: header comment, `MIN_SUPPORTED_RTK_MINOR = 23`, the two "need >= 0.23.0" messages - `hooks/claude/rtk-rewrite.sh` and `hooks/cursor/rtk-rewrite.sh`: `Requires:` line, version guard comment and warning - `hooks/README.md` ("rtk version too old (< 0.23.0)"), `hooks/claude/README.md`, `hooks/cursor/README.md`  `rtk rewrite` first shipped in 0.25.0: commit f447a3d (`feat: rtk rewrite — single source of truth for LLM hook rewrites (#241)`) is not an ancestor of v0.24.0 and is first contained in v0.25.0, and `CHANGELOG.md` lists it under 0.25.0. #3918 reports that the v0.23.0 and v0.24.0 release binaries answer `rtk rewrite "git status"` with exit 2 and empty stdout.  Nothing breaks today, because every one of these hooks passes the command through on a non-0/3 exit, so 0.23.0 and 0.24.0 fall open. The floor and its messages are still wrong: a user on 0.24.0 is told their rtk is recent enough and gets no rewrites. The fix is the floor (23 → 25) and the wording in the files above. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1754,224 +1754,786 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `16b02ac8` (2026-11-27)
-**Commit Message**: Merge pull request #5308 from rtk-ai/fix/grep-recursive-directories-filename-prefix
+### Incident Patch 1: `895e1e1e` (2026-11-28)
+**Commit Message**: Merge pull request #4850 from TechWizard9999/fix/4839-pipeline-log-noop-decisions
 
-fix(search): keep the filename prefix when -d read or -d skip follows -r
+fix(pipeline): log no-op and unchanged rule decisions with reasons (fixes #4839)
 
-**File**: `src/cmds/system/search.rs` (modified, +27/-7)
+**File**: `docs/guide/pipelines/commands.md` (modified, +3/-1)
 ```diff
-@@ -313,8 +313,8 @@ fn extract_pattern_path(
-                 if is_show_file_token(t) {
-                     show_file_flag = Some(true);
-                 }
--                if let Some(recurses) = recursion_set_by(engine, t, tokens) {
--                    recursive = recurses;
-+                if recursion_set_by(engine, t, tokens) == Some(true) {
-+                    recursive = true;
-                 }
-                 if is_show_line_on_token(t) {
-                     show_line_flag = Some(true);
-@@ -378,8 +378,8 @@ fn extract_pattern_path(
-                     } else if is_show_line_off_token(engine, c) {
-                         show_line_flag = Some(false);
-                     }
--                    if let Some(recurses) = recursion_set_by(engine, c, tokens) {
--                        recursive = recurses;
-+                    if recursion_set_by(engine, c, tokens) == Some(true) {
-+                        recursive = true;
-                     }
-                 }
-                 if cluster.iter().any(|c| is_context_token(engine, c)) {
-@@ -2294,16 +2294,36 @@ mod tests {
-             &["-d", "re"][..],
-             &["-d", "=recurse"][..],
-             &["-d"][..],
--            &["-r", "-d", "read"][..],
--            &["-rd", "skip"][..],
--            &["-d", "recurse", "-d", "read"][..],
-+            &["-d", "read", "-d", "skip"][..],
-         ] {
-             assert!(!detected(args).recursive, "{args:?} does not recurse");
-         }
-         // ripgrep's `-d` is `--max-depth`.
-         assert!(!detected_for(Engine::Rg, &["-d", "recurse"]).recursive);
-     }
+@@ -126,12 +126,14 @@ rtk pipeline log show --limit 200
+ rtk pipeline log off
+ ```
  
-+    #[test]
-+    fn recursion_keeps_the_filename_default_under_a_later_directory_action() {
-+        for args in [
-+            &["-r", "-d", "read"][..],
-+            &["-r", "-d", "skip"][..],
-+            &["-R", "-d", "read"][..],
-+            &["-rd", "skip"][..],
-+            &["-rnd", "read"][..],
-+            &["--recursive", "--directories=read"][..],
-+            &["--dereference-recursive", "--directories", "skip"][..],
-+            &["-d", "recurse", "-d", "read"][..],
-+            &["-d", "recurse", "-d", "skip"][..],
-+        ] {
-+            let d = detected(args);
-+            assert!(d.recursive, "{args:?} keeps the filename default");
-+            assert_eq!(d.show_file, None, "{args:?} is not an explicit request");
-+        }
-+        assert_eq!(detected(&["-r", "-d", "read", "-h"]).show_file, Some(false));
-+        assert_eq!(detected(&["-h", "-r", "-d", "read"]).show_file, Some(false));
-+        assert!(!detected_for(Engine::Rg, &["-r", "X", "-d", "1"]).recursive);
-+    }
-+
-     /// Recursion prefixes the filename for every operand, as BSD grep does: a lone file as well
-     /// as a directory or no operand at all.
-     #[test]
+-Each entry records timestamp, session, position, tool category, the command as the agent issued it, the rule that fired, action or methods, tokens before and after, shadow flag and recovery hint — never a tool's output, a file's contents or a directive's text. It lives at `~/.local/share/rtk/pipeline.log` (JSON lines).
++Each entry records timestamp, session, position, tool category, the command as the agent issued it, the rule that fired, action or methods, tokens before and after, shadow flag, recovery hint, and the reason a matching rule left the output as it was (`kept as is (no change)`, `(no smaller result)`, `(partial read, N of M lines)`) — never a tool's output, a file's contents or a directive's text. It lives at `~/.local/share/rtk/pipeline.log` (JSON lines).
+ 
+ ```text
+ 12:04:11  hook.after_tool.shell   cargo test        term-default    term        3,812 → 640   recall 1f3a9c
+ 12:04:15  hook.before_tool.read   src/Service.java  shunt-large-read route → bulk-read
+ 12:04:31  hook.after_tool.shell   rtk bulk-read …   —               skipped: is_rtk_command
++12:04:35  hook.after_tool.search  src               grep-group      grep-group  kept as is (no smaller result)
++12:04:40  hook.after_tool.read    package-lock.json lockfiles       lockfile    kept as is (partial read, 757 of 966 lines)
+ ```
+ 
+ Enable it while debugging a pipeline, then turn it off — it is the input `rtk pipeline explain --last` reads.
 ```
 
-**File**: `tests/grep_faithful_format_test.rs` (modified, +20/-0)
+**File**: `src/core/pipeline_cmd.rs` (modified, +66/-9)
 ```diff
-@@ -87,6 +87,26 @@ fn single_multi_recursive_and_h_match_grep() {
-     assert_eq_grep_with_and_without_n(&["-r", "a", d.path().to_str().unwrap()]);
+@@ -1963,34 +1963,44 @@ pub fn run_explain_last() -> Result<i32> {
+         );
+         return Ok(1);
+     };
+-    println!("{}", crate::core::pipeline_log::render(entry));
++    for line in explain_last_lines(entry) {
++        println!("{line}");
++    }
++    Ok(0)
++}
++
++/// The lines `rtk pipeline explain --last` prints for one logged decision.
++fn explain_last_lines(entry: &crate::core::pipeline_log::LogEntry) -> Vec<String> {
++    let mut lines = vec![crate::core::pipeline_log::render(entry)];
+     let position = format!("{}.{}.{}", entry.site, entry.event, entry.subject);
+     match (&entry.action, entry.methods.is_empty()) {
+-        (Some(action), _) => println!(
++        (Some(action), _) => lines.push(format!(
+             "rule `{}` fired at {position} with action `{action}`",
+             entry.rule
+-        ),
++        )),
+         (None, false) => {
+-            println!(
++            lines.push(format!(
+                 "rule `{}` fired at {position}; methods applied: [{}]",
+                 entry.rule,
+                 entry.methods.join(", ")
+-            );
+-            if let (Some(before), Some(after)) = (entry.tokens_before, entry.tokens_after) {
++            ));
++            if let Some(outcome) = &entry.outcome {
++                lines.push(format!("outcome: {outcome}"));
++            } else if let (Some(before), Some(after)) = (entry.tokens_before, entry.tokens_after) {
+                 let savings = if before > 0 {
+                     100.0 - (after as f64 / before as f64 * 100.0)
+                 } else {
+                     0.0
+                 };
+-                println!("tokens {before} -> {after} ({savings:.1}% saved)");
++                lines.push(format!("tokens {before} -> {after} ({savings:.1}% saved)"));
+             }
+         }
+         _ => {}
+     }
+     if entry.shadow {
+-        println!("shadow rule: recorded only, nothing was emitted");
++        lines.push("shadow rule: recorded only, nothing was emitted".to_string());
+     }
+-    Ok(0)
++    lines
  }
  
-+#[test]
-+fn directory_action_after_recursion_keeps_the_filename() {
-+    let d = tempfile::tempdir().unwrap();
-+    let f = write(d.path(), "f1.txt", "apple\nzebra apple\nbanana\n");
-+    let (recursive, _) = rtk_grep(&["-rn", "apple", &f]);
-+    assert_eq!(recursive, format!("{f}:1:apple\n{f}:2:zebra apple\n"));
-+    for flags in [
-+        &["-rn", "-d", "read"][..],
-+        &["-rn", "-d", "skip"][..],
-+        &["-rnd", "read"][..],
-+        &["-Rn", "--directories=skip"][..],
-+        &["-n", "-d", "recurse", "-d", "read"][..],
-+    ] {
-+        let args = [flags, &["apple", f.as_str()]].concat();
-+        let (out, code) = rtk_grep(&args);
-+        assert_eq!(out, recursive, "stdout for {args:?}");
-+        assert_eq!(code, Some(0), "exit code for {args:?}");
+ pub fn run_bench(file: &std::path::Path) -> Result<i32> {
+@@ -2165,6 +2175,53 @@ mod tests {
+         validate,
+     };
+ 
++    fn kept_as_is_entry() -> crate::core::pipeline_log::LogEntry {
++        crate::core::pipeline_log::LogEntry {
++            site: "hook".into(),
++            event: "after_tool".into(),
++            subject: "search".into(),
++            rule: "grep-group".into(),
++            methods: vec!["grep-group".into()],
++            tokens_before: Some(120),
++            tokens_after: Some(120),
++            outcome: Some("kept as is (no smaller result)".into()),
++            ..Default::default()
++        }
++    }
++
++    #[test]
++    fn explain_last_prints_the_outcome_instead_of_tokens_when_kept_as_is() {
++        let lines = super::explain_last_lines(&kept_as_is_entry());
++        assert!(
++            lines
++                .iter()
++                .any(|l| l == "outcome: kept as is (no smaller result)"),
++            "{lines:#?}"
++        );
++        assert!(
++            !lines.iter().any(|l| l.starts_with("tokens ")),
++            "a kept-as-is decision saved nothing: {lines:#?}"
++        );
++    }
++
++    #[test]
++    fn explain_last_prints_tokens_when_no_outcome_is_set() {
++        let entry = crate::core::pipeline_log::LogEntry {
++            tokens_after: Some(30),
++            outcome: None,
++            ..kept_as_is_entry()
++        };
++        let lines = super::explain_last_lines(&entry);
++        assert!(
++            lines.iter().any(|l| l == "tokens 120 -> 30 (75.0% saved)"),
++            "{lines:#?}"
++        );
++        assert!(
++            !lines.iter().any(|l| l.starts_with("outcome:")),
++            "{lines:#?}"
++        );
++    }
++
+     #[test]
+     fn extract_toml_pulls_the_fenced_block_from_a_share_card() {
+         let card = "# rtk pipeline: demo\n\nprose\n\n```toml\n[pipeline]\nname = \"demo\"\n```\n\ntrailing";
+```
+
+**File**: `src/core/pipeline_log.rs` (modified, +44/-2)
+```diff
+@@ -36,6 +36,8 @@ pub struct LogEntry {
+     pub shadow: bool,
+     #[serde(default, skip_serializing_if = "Option::is_none")]
+     pub recovery: Option<String>,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub outcome: Option<String>,
+ }
+ 
+ pub fn log_path() -> Option<PathBuf> {
+@@ -145,8 +147,13 @@ pub fn render(entry: &LogEntry) -> String {
+         (None, false) => entry.methods.join(","),
+         (None, true) => "-".to_string(),
+     };
++    let outcome = entry
++        .outcome
++        .as_deref()
++        .map(|o| format!("  {o}"))
++        .unwrap_or_default();
+     let tokens = match (entry.tokens_before, entry.tokens_after) {
+-        (Some(before), Some(after)) => format!("  {before} -> {after}"),
++        (Some(before), Some(after)) if entry.outcome.is_none() => format!("  {before} -> {after}"),
+         _ => String::new(),
+     };
+     let shadow = if entry.shadow { "  (shadow)" } else { "" };
+@@ -156,7 +163,7 @@ pub fn render(entry: &LogEntry) -> String {
+         .map(|r| format!("  recovery {r}"))
+         .unwrap_or_default();
+     format!(
+-        "{}  {:<28} {:<24} {:<16} {}{}{}{}",
++        "{}  {:<28} {:<24} {:<16} {}{}{}{}{}",
+         entry.ts,
+         position,
+         entry
+@@ -165,6 +172,7 @@ pub fn render(entry: &LogEntry) -> String {
+             .unwrap_or(entry.tool.as_deref().unwrap_or("")),
+         entry.rule,
+         what,
++        outcome,
+         tokens,
+         shadow,
+         recovery
+@@ -192,6 +200,7 @@ mod tests {
+             tokens_after: Some(640),
+             shadow: false,
+             recovery: Some("recall 1f3a9c".to_string()),
++            outcome: None,
+         };
+         let line = serde_json::to_string(&entry).expect("serializes");
+         let back: LogEntry = serde_json::from_str(&line).expect("parses");
+@@ -201,4 +210,37 @@ mod tests {
+         assert!(rendered.contains("cargo test"));
+         assert!(rendered.contains("3812 -> 640"));
+     }
++
++    #[test]
++    fn test_render_with_outcome_reason() {
++        let entry = LogEntry {
++            ts: "2026-10-30T10:00:00Z".to_string(),
++            session: None,
++            site: "hook".to_string(),
++            event: "after_tool".to_string(),
++            subject: "search".to_string(),
++            tool: Some("search".to_string()),
++            command: Some("src".to_string()),
++            rule: "grep-group".to_string(),
++            action: None,
++            methods: vec!["grep-group".to_string()],
++            tokens_before: Some(660),
++            tokens_after: Some(660),
++            shadow: false,
++            recovery: None,
++            outcome: Some("kept as is (no smaller result)".to_string()),
++        };
++        let line = serde_json::to_string(&entry).expect("serializes");
++        let back: LogEntry = serde_json::from_str(&line).expect("parses");
++        assert_eq!(
++            back.outcome.as_deref(),
++            Some("kept as is (no smaller result)")
++        );
++        let rendered = render(&back);
++        assert!(rendered.contains("hook.after_tool.search"));
++        assert!(rendered.contains("src"));
++        assert!(rendered.contains("grep-group"));
++        assert!(rendered.contains("kept as is (no smaller result)"));
++        assert!(!rendered.contains("660 -> 660"));
++    }
+ }
+```
+
+**File**: `src/hooks/posthook.rs` (modified, +517/-16)
+```diff
+@@ -139,6 +139,7 @@ fn process_with_config(event: &Value, config: &Config, pipeline: &Resolved) -> O
+     };
+ 
+     let composed = filter_and_compose(
++        event,
+         config,
+         pipeline,
+         subject,
+@@ -220,6 +221,7 @@ fn log_entry_for(
+     applied: &Applied,
+     before: usize,
+     after: usize,
++    outcome: Option<String>,
+ ) -> pipeline_log::LogEntry {
+     pipeline_log::LogEntry {
+         ts: pipeline_log::now_ts(),
+@@ -238,6 +240,7 @@ fn log_entry_for(
+         tokens_after: Some(after),
+         shadow: applied.shadow,
+         recovery: None,
++        outcome,
+     }
+ }
+ 
+@@ -248,15 +251,27 @@ fn queue_log(
+     applied: &Applied,
+     before: usize,
+     after: usize,
++    outcome: Option<String>,
+ ) {
+     if !pipeline_log::enabled() {
+         return;
+     }
+     pipeline_log::queue(log_entry_for(
+-        subject, command, source, applied, before, after,
++        subject, command, source, applied, before, after, outcome,
+     ));
+ }
+ 
++fn partial_read_info(event: &Value) -> Option<(u64, u64)> {
++    let file = event.pointer("/tool_response/file")?;
++    let num_lines = file.get("numLines").and_then(|v| v.as_u64())?;
++    let total_lines = file.get("totalLines").and_then(|v| v.as_u64())?;
++    if num_lines < total_lines {
++        Some((num_lines, total_lines))
++    } else {
++        None
 +    }
 +}
 +
- #[test]
- fn no_match_matches_grep() {
-     let d = tempfile::tempdir().unwrap();
+ #[allow(clippy::too_many_arguments)]
+ fn run_selected(
+     pipeline: &Resolved,
+@@ -478,6 +493,7 @@ fn record_recovery(command: &str) {
+ /// `None` = no matching rule, chain was a no-op, not smaller, or shadow.
+ #[allow(clippy::too_many_arguments)]
+ fn filter_and_compose(
++    event: &Value,
+     config: &Config,
+     pipeline: &Resolved,
+     subject: Subject,
+@@ -501,6 +517,20 @@ fn filter_and_compose(
+ 
+     if filtered == raw {
+         // No-op chain: skip the recall store entirely.
++        let outcome = if let Some((num, total)) = partial_read_info(event) {
++            format!("kept as is (partial read, {num} of {total} lines)")
++        } else {
++            "kept as is (no change)".to_string()
++        };
++        queue_log(
++            subject,
++            None,
++            source,
++            &applied,
++            estimate_tokens(raw),
++            estimate_tokens(raw),
++            Some(outcome),
++        );
+         track(tool_name, format.as_str(), source, raw, raw, duration_ms);
+         return None;
+     }
+@@ -515,6 +545,15 @@ fn filter_and_compose(
+     };
+ 
+     if estimate_tokens(&composed) > estimate_tokens(raw) {
++        queue_log(
++            subject,
++            None,
++            source,
++            &applied,
++            estimate_tokens(raw),
++            estimate_tokens(raw),
++            Some("kept as is (no smaller result)".to_string()),
++        );
+         track(tool_name, format.as_str(), source, raw, raw, duration_ms);
+         return None;
+     }
+@@ -526,6 +565,7 @@ fn filter_and_compose(
+         &applied,
+         estimate_tokens(raw),
+         estimate_tokens(&composed),
++        None,
+     );
+     if applied.shadow {
+         track(tool_name, format.as_str(), source, raw, raw, duration_ms);
+@@ -596,10 +636,29 @@ fn process_websearch(
+     }
+ 
+     if !changed || shadow {
+-        if let Some(applied) = &last_applied
+-            && shadow
+-        {
+-            attribute(applied, &raw_concat, &filtered_concat);
++        if let Some(applied) = &last_applied {
++            if shadow {
++                attribute(applied, &raw_concat, &filtered_concat);
++                queue_log(
++                    Subject::Web,
++                    None,
++                    source,
++                    applied,
++                    estimate_tokens(&raw_concat),
++                    estimate_tokens(&filtered_concat),
++                    None,
++                );
++            } else {
++                queue_log(
++                    Subject::Web,
++                    None,
++                    source,
++                    applied,
++                    estimate_tokens(&raw_concat),
++                    estimate_tokens(&raw_concat),
++                    Some("kept as is (no change)".to_string()),
++                );
++            }
+         }
+         track(
+             "WebSearch",
+@@ -623,11 +682,24 @@ fn process_websearch(
+     ) {
+         last.push('\n');
+         last.push_str(&h);
++        // `filtered_concat` already ends with the filtered text; only the
++        // hint is new.
+         filtered_concat.push('\n');
+-        filtered_concat.push_str(last);
++        filtered_concat.push_str(&h);
+     }
+ 
+     if estimate_tokens(&filtered_concat) > estimate_tokens(&raw_concat) {
++        if let Some(applied) = &last_applied {
++            queue_log(
++                Subject::Web,
++                None,
++                source,
++                applied,
++                estimate_tokens(&raw_concat),
++                estimate_tokens(&raw_concat),
++                Some("kept as is (no smaller result)".to_string()),
++            );
++        }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `644fcc70` (2026-11-26)
-**Commit Message**: fix(search): keep the filename prefix when -d read or -d skip follows -r
+### Incident Patch 2: `bf1d1366` (2026-11-27)
+**Commit Message**: Merge pull request #5313 from rtk-ai/fix/release-candidate-regressions
 
-`rtk grep -r -d read PAT FILE` printed the matches of a lone file without
-their `FILE:` prefix, where BSD grep and rtk 1.2.1 print it. The last of
-`-r`, `-R` and `-d` decided the filename default, but BSD grep keeps the
-prefix once one of them asked for recursion, whatever directory action
-follows. A recursion flag now sets that default for the rest of the line;
-an explicit `-h` still wins.
+fix: regressions found while testing the release candidate
 
-**File**: `src/cmds/system/search.rs` (modified, +27/-7)
+**File**: `src/cmds/git/git_cmd.rs` (modified, +1/-1)
 ```diff
-@@ -313,8 +313,8 @@ fn extract_pattern_path(
-                 if is_show_file_token(t) {
-                     show_file_flag = Some(true);
-                 }
--                if let Some(recurses) = recursion_set_by(engine, t, tokens) {
--                    recursive = recurses;
-+                if recursion_set_by(engine, t, tokens) == Some(true) {
-+                    recursive = true;
-                 }
-                 if is_show_line_on_token(t) {
-                     show_line_flag = Some(true);
-@@ -378,8 +378,8 @@ fn extract_pattern_path(
-                     } else if is_show_line_off_token(engine, c) {
-                         show_line_flag = Some(false);
-                     }
--                    if let Some(recurses) = recursion_set_by(engine, c, tokens) {
--                        recursive = recurses;
-+                    if recursion_set_by(engine, c, tokens) == Some(true) {
-+                        recursive = true;
-                     }
-                 }
-                 if cluster.iter().any(|c| is_context_token(engine, c)) {
-@@ -2294,16 +2294,36 @@ mod tests {
-             &["-d", "re"][..],
-             &["-d", "=recurse"][..],
-             &["-d"][..],
--            &["-r", "-d", "read"][..],
--            &["-rd", "skip"][..],
--            &["-d", "recurse", "-d", "read"][..],
-+            &["-d", "read", "-d", "skip"][..],
-         ] {
-             assert!(!detected(args).recursive, "{args:?} does not recurse");
-         }
-         // ripgrep's `-d` is `--max-depth`.
-         assert!(!detected_for(Engine::Rg, &["-d", "recurse"]).recursive);
-     }
+@@ -357,7 +357,7 @@ fn run_diff(
  
-+    #[test]
-+    fn recursion_keeps_the_filename_default_under_a_later_directory_action() {
-+        for args in [
-+            &["-r", "-d", "read"][..],
-+            &["-r", "-d", "skip"][..],
-+            &["-R", "-d", "read"][..],
-+            &["-rd", "skip"][..],
-+            &["-rnd", "read"][..],
-+            &["--recursive", "--directories=read"][..],
-+            &["--dereference-recursive", "--directories", "skip"][..],
-+            &["-d", "recurse", "-d", "read"][..],
-+            &["-d", "recurse", "-d", "skip"][..],
-+        ] {
-+            let d = detected(args);
-+            assert!(d.recursive, "{args:?} keeps the filename default");
-+            assert_eq!(d.show_file, None, "{args:?} is not an explicit request");
-+        }
-+        assert_eq!(detected(&["-r", "-d", "read", "-h"]).show_file, Some(false));
-+        assert_eq!(detected(&["-h", "-r", "-d", "read"]).show_file, Some(false));
-+        assert!(!detected_for(Engine::Rg, &["-r", "X", "-d", "1"]).recursive);
-+    }
-+
-     /// Recursion prefixes the filename for every operand, as BSD grep does: a lone file as well
-     /// as a directory or no operand at all.
-     #[test]
+         if !result.success() {
+             if !result.stderr.trim().is_empty() {
+-                eprintln!("{}", result.stderr.trim());
++                eprint!("{}", result.stderr);
+             }
+             timer.track(
+                 &tracked,
 ```
 
-**File**: `tests/grep_faithful_format_test.rs` (modified, +20/-0)
+**File**: `src/discover/registry.rs` (modified, +1/-0)
 ```diff
-@@ -87,6 +87,26 @@ fn single_multi_recursive_and_h_match_grep() {
-     assert_eq_grep_with_and_without_n(&["-r", "a", d.path().to_str().unwrap()]);
+@@ -4225,6 +4225,7 @@ mod tests {
+             "nix eval --expr 1",
+             "nix flake show",
+             "nix searchx",
++            "nix -- search nixpkgs jq",
+             "nix shell nixpkgs#cargo -c cargo build",
+         ] {
+             assert_eq!(
+```
+
+**File**: `src/discover/rules.rs` (modified, +1/-1)
+```diff
+@@ -1076,7 +1076,7 @@ pub const RULES: &[RtkRule] = &[
+         ..RtkRule::DEFAULT
+     },
+     RtkRule {
+-        pattern: r"^nix(?:\s+--?\S+)*\s+search(?:\s|$|[;|&()<>])",
++        pattern: r"^nix(?:\s+--?[^\s-]\S*)*\s+search(?:\s|$|[;|&()<>])",
+         rtk_cmd: "rtk nix",
+         rewrite_prefixes: &["nix"],
+         category: "Infra",
+```
+
+**File**: `src/hooks/session_start.rs` (modified, +2/-17)
+```diff
+@@ -15,6 +15,8 @@ use std::time::{Duration, Instant};
+ 
+ use anyhow::Context;
+ 
++use crate::llm_proxy::loopback_addrs;
++
+ pub(super) fn run() {
+     if let Some(message) = ensure_proxy() {
+         let payload = serde_json::json!({ "systemMessage": message });
+@@ -80,23 +82,6 @@ fn ensure_proxy_impl(
+     }
  }
  
-+#[test]
-+fn directory_action_after_recursion_keeps_the_filename() {
-+    let d = tempfile::tempdir().unwrap();
-+    let f = write(d.path(), "f1.txt", "apple\nzebra apple\nbanana\n");
-+    let (recursive, _) = rtk_grep(&["-rn", "apple", &f]);
-+    assert_eq!(recursive, format!("{f}:1:apple\n{f}:2:zebra apple\n"));
-+    for flags in [
-+        &["-rn", "-d", "read"][..],
-+        &["-rn", "-d", "skip"][..],
-+        &["-rnd", "read"][..],
-+        &["-Rn", "--directories=skip"][..],
-+        &["-n", "-d", "recurse", "-d", "read"][..],
-+    ] {
-+        let args = [flags, &["apple", f.as_str()]].concat();
-+        let (out, code) = rtk_grep(&args);
-+        assert_eq!(out, recursive, "stdout for {args:?}");
-+        assert_eq!(code, Some(0), "exit code for {args:?}");
+-/// Every address a client of `url` can land on, the one RTK binds first.
+-/// `localhost` may resolve to either loopback family, so a listener on `[::1]`
+-/// alone still takes the session's requests.
+-fn loopback_addrs(url: &str) -> Option<Vec<String>> {
+-    let rest = url
+-        .strip_prefix("http://")
+-        .or_else(|| url.strip_prefix("https://"))?;
+-    let hostport = rest.split('/').next()?;
+-    let (host, port) = hostport.rsplit_once(':')?;
+-    port.parse::<u16>().ok()?;
+-    match host {
+-        "localhost" => Some(vec![format!("127.0.0.1:{port}"), format!("[::1]:{port}")]),
+-        "127.0.0.1" | "[::1]" => Some(vec![format!("{host}:{port}")]),
+-        _ => None,
+-    }
+-}
+-
+ /// Whether RTK was set up to serve one of `addrs`: the settings value the
+ /// on-ramp writes, or a daemon moved with `RTK_PROXY_BIND`. `daemon_bind` does
+ /// not fit here, because its default would claim any gateway on port 8080.
+```
+
+**File**: `src/llm_proxy.rs` (modified, +59/-1)
+```diff
+@@ -704,6 +704,30 @@ fn launch_plan(existing: Option<&str>, proxy_url: &str, daemon_up: bool) -> Laun
+     }
+ }
+ 
++/// Every address a client of `url` can land on, the one RTK binds first.
++/// `localhost` may resolve to either loopback family, so a listener on `[::1]`
++/// alone still takes the session's requests.
++pub(crate) fn loopback_addrs(url: &str) -> Option<Vec<String>> {
++    let rest = url
++        .strip_prefix("http://")
++        .or_else(|| url.strip_prefix("https://"))?;
++    let hostport = rest.split('/').next()?;
++    let (host, port) = hostport.rsplit_once(':')?;
++    port.parse::<u16>().ok()?;
++    match host {
++        "localhost" => Some(vec![format!("127.0.0.1:{port}"), format!("[::1]:{port}")]),
++        "127.0.0.1" | "[::1]" => Some(vec![format!("{host}:{port}")]),
++        _ => None,
 +    }
 +}
 +
++fn routes_to_daemon(url: &str, base_url: &str) -> bool {
++    url.trim_end_matches('/') == base_url
++        || loopback_addrs(url)
++            .zip(loopback_addrs(base_url))
++            .is_some_and(|(addrs, ours)| addrs.iter().any(|addr| ours.contains(addr)))
++}
++
+ /// Preserve an existing provider route, starting the daemon only when this
+ /// agent will use it, and hand over the process. On Unix this `exec`s, so
+ /// signals, stdio and the exit code behave exactly as if the agent had been
+@@ -720,7 +744,7 @@ pub fn run_agent(agent: &ProxyAgent, args: &[String]) -> Result<i32> {
+     let existing = std::env::var(agent.base_url_var).ok();
+     let needs_proxy = existing
+         .as_deref()
+-        .is_none_or(|url| url.is_empty() || url.trim_end_matches('/') == base_url);
++        .is_none_or(|url| url.is_empty() || routes_to_daemon(url, &base_url));
+     let daemon_up = needs_proxy
+         && match ensure_running(&bind) {
+             Ok(_) => true,
+@@ -1009,6 +1033,40 @@ mod tests {
+         assert_eq!(launch_plan(Some(""), ours, false), LaunchPlan::Unproxied);
+     }
+ 
++    #[test]
++    fn a_route_to_the_daemon_port_needs_the_daemon() {
++        let ours = "http://127.0.0.1:8080";
++        for url in [
++            "http://127.0.0.1:8080",
++            "http://127.0.0.1:8080/",
++            "http://localhost:8080",
++            "http://localhost:8080/",
++            "http://localhost:8080/v1",
++            "https://127.0.0.1:8080",
++        ] {
++            assert!(routes_to_daemon(url, ours), "{url}");
++        }
++        for url in [
++            "http://localhost:8081",
++            "http://127.0.0.1:9090",
++            "http://[::1]:8080",
++            "http://localhost",
++            "https://api.anthropic.com",
++            "https://gateway.example/v1",
++            "http://localhost.example:8080",
++        ] {
++            assert!(!routes_to_daemon(url, ours), "{url}");
++        }
++        assert!(routes_to_daemon(
++            "http://localhost:8080",
++            "http://[::1]:8080"
++        ));
++        assert!(routes_to_daemon(
++            "http://0.0.0.0:8080/",
++            "http://0.0.0.0:8080"
++        ));
++    }
++
+     #[test]
+     fn cli_name_is_a_bare_command_name() {
+         let n = cli_name();
+```
+
+**File**: `tests/agent_launcher_test.rs` (modified, +3/-0)
+```diff
+@@ -31,6 +31,9 @@ fn the_launcher_only_starts_the_proxy_for_its_own_route() {
+         (Some(""), true, ""),
+         (Some("http://127.0.0.1:0"), true, ""),
+         (Some("http://127.0.0.1:0/"), true, "http://127.0.0.1:0/"),
++        (Some("http://localhost:0"), true, "http://localhost:0"),
++        (Some("http://localhost:0/v1"), true, "http://localhost:0/v1"),
++        (Some("http://localhost:1"), false, "http://localhost:1"),
+         (
+             Some("https://gateway.example/v1"),
+             false,
+```
+
+**File**: `tests/git_diff_error_test.rs` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++use std::path::Path;
++use std::process::Output;
++
++mod common;
++
++fn native(repo: &Path, args: &[&str]) -> Output {
++    let mut cmd = common::native_command("git");
++    common::isolate_git(&mut cmd);
++    cmd.env("LC_ALL", "C")
++        .current_dir(repo)
++        .arg("diff")
++        .args(args)
++        .output()
++        .expect("git diff")
++}
++
++fn rtk(repo: &Path, args: &[&str]) -> Output {
++    common::rtk_command()
++        .env("RTK_NO_TRACK", "1")
++        .env("LC_ALL", "C")
++        .current_dir(repo)
++        .args(["git", "diff"])
++        .args(args)
++        .output()
++        .expect("rtk git diff")
++}
++
++#[test]
++fn a_rejected_diff_prints_gits_error() {
++    let repo = common::temp_git_repo();
++    for args in [
++        &["--bogus"][..],
++        &["-z", "--bogus"],
++        &["--stat", "--bogus"],
++        &["--numstat", "--bogus"],
++        &["--stat", "no-such-ref"],
++    ] {
++        let native = native(repo.path(), args);
++        let rtk = rtk(repo.path(), args);
++
++        assert_ne!(native.status.code(), Some(0), "{args:?} fails in git");
++        assert_eq!(rtk.status.code(), native.status.code(), "{args:?}");
++        assert_eq!(
++            String::from_utf8_lossy(&rtk.stderr),
++            String::from_utf8_lossy(&native.stderr),
++            "{args:?}"
++        );
++    }
++}
+```
+
+---
+
+### Incident Patch 3: `10630563` (2026-11-28)
+**Commit Message**: Merge pull request #5185 from JayPokale/fix/git-branch-plain-lists-local-only
+
+fix(git): list local branches only for a plain git branch
+
+**File**: `docs/usage/FEATURES.md` (modified, +1/-1)
+```diff
+@@ -519,7 +519,7 @@ rtk git pull [args...]
+ rtk git branch [args...]    # Supports -d, -D, -m, etc.
+ ```
+ 
+-Shows the current branch, local branches and remote branches compactly.
++Shows the current branch and the local branches. `-a` adds the remote branches, compacted, and `-r` lists only the remote branches.
+ 
+ ---
+ 
+```
+
+**File**: `src/cmds/git/git_cmd.rs` (modified, +24/-9)
+```diff
+@@ -4207,15 +4207,7 @@ fn run_branch(args: &[String], verbose: u8, global_args: &[String]) -> Result<i3
+     }
+ 
+     // List mode: show compact branch list
+-    let mut cmd = git_cmd(global_args);
+-    cmd.arg("branch");
+-    if !has_list_flag {
+-        cmd.arg("-a");
+-    }
+-    cmd.arg("--no-color");
+-    for arg in args {
+-        cmd.arg(arg);
+-    }
++    let mut cmd = branch_list_cmd(args, global_args);
+ 
+     let result = exec_capture(&mut cmd).context("Failed to run git branch")?;
+ 
+@@ -4251,6 +4243,14 @@ fn run_branch(args: &[String], verbose: u8, global_args: &[String]) -> Result<i3
+     Ok(0)
+ }
+ 
++/// Plain `git branch` lists local branches only, so `-a` is never added for the user.
++fn branch_list_cmd(args: &[String], global_args: &[String]) -> Command {
++    let mut cmd = git_cmd(global_args);
++    cmd.arg("branch").arg("--no-color");
++    cmd.args(args);
++    cmd
++}
++
+ /// Compacts a `git branch` listing, one newline-terminated line per entry. An empty listing
+ /// (`-r` with no remotes, `--list` matching nothing) stays empty, as git prints it. A listing
+ /// whose every line is a remote's `HEAD -> ...` alias, which the compact form leaves out
+@@ -6438,6 +6438,21 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn branch_list_cmd_does_not_add_all_flag_for_plain_branch() {
++        let cmd = branch_list_cmd(&[], &[]);
++        let args: Vec<_> = cmd.get_args().collect();
++        assert_eq!(args, ["branch", "--no-color"]);
++    }
++
++    #[test]
++    fn branch_list_cmd_keeps_the_users_list_flags() {
++        let user = vec!["-a".to_string()];
++        let cmd = branch_list_cmd(&user, &[]);
++        let args: Vec<_> = cmd.get_args().collect();
++        assert_eq!(args, ["branch", "--no-color", "-a"]);
++    }
++
+     #[test]
+     fn test_filter_branch_output() {
+         let output = "* main\n  feature/auth\n  fix/bug-123\n  remotes/origin/HEAD -> origin/main\n  remotes/origin/main\n  remotes/origin/feature/auth\n  remotes/origin/release/v2\n";
+```
+
+**File**: `tests/guard_integration_test.rs` (modified, +53/-0)
+```diff
+@@ -326,6 +326,59 @@ fn git_branch_dash_prefixed_name_after_double_dash_attempts_creation_not_a_silen
+     );
+ }
+ 
++#[test]
++fn git_branch_in_repo_with_no_branches_prints_nothing() {
++    let dir = tempfile::tempdir().expect("tempdir");
++    git_in_dir(dir.path(), &["init", "-q", "-b", "main"]);
++
++    let (stdout, stderr, code) = rtk_output_in_dir(dir.path(), &["git", "branch"]);
++
++    assert_eq!(code, Some(0), "stderr={stderr:?}");
++    assert_eq!(stdout, "", "git prints nothing for an unborn repo");
++}
++
++#[test]
++fn git_branch_plain_listing_leaves_out_remote_only_refs() {
++    let dir = init_git_repo();
++    git_in_dir(
++        dir.path(),
++        &["update-ref", "refs/remotes/origin/remote-only", "HEAD"],
++    );
++
++    let (stdout, _, code) = rtk_output_in_dir(dir.path(), &["git", "branch"]);
++    let raw = git(dir.path()).arg("branch").output().expect("spawn git");
++
++    assert_eq!(code, Some(0));
++    assert!(
++        !stdout.contains("remote-only"),
++        "a plain listing is local only: {stdout:?}"
++    );
++    assert_eq!(stdout, String::from_utf8_lossy(&raw.stdout));
++}
++
++#[test]
++fn git_branch_verbose_listing_leaves_out_remote_only_refs() {
++    // `-v` reaches the same list path as a plain `git branch`, so the listing stays local.
++    let dir = init_git_repo();
++    git_in_dir(
++        dir.path(),
++        &["update-ref", "refs/remotes/origin/only-upstream", "HEAD"],
++    );
++
++    let (stdout, _, code) = rtk_output_in_dir(dir.path(), &["git", "branch", "-v"]);
++    let raw = git(dir.path())
++        .args(["branch", "-v"])
++        .output()
++        .expect("spawn git");
++
++    assert_eq!(code, Some(0));
++    assert!(
++        !stdout.contains("only-upstream"),
++        "a verbose listing is local only: {stdout:?}"
++    );
++    assert_eq!(stdout, String::from_utf8_lossy(&raw.stdout));
++}
++
  #[test]
- fn no_match_matches_grep() {
-     let d = tempfile::tempdir().unwrap();
+ fn git_log_malformed_digit_run_propagates_real_git_error() {
+     // "-5x" isn't a valid git log limit; real git rejects it outright ("fatal: '5x': not an
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5313** (2026-11-27): fix: regressions found while testing the release candidate (@aeppling)
 - **PR #5308** (2026-11-27): fix(search): keep the filename prefix when -d read or -d skip follows -r (@aeppling)
-- **PR #5230** (2026-11-23): fix(gain): mark the console-mode unsafe block for semgrep (@pszymkowiak)
-- **PR #5188** (2026-11-19): chore(master): release 1.2.1 (@rtk-release-bot[bot])
-- **PR #5186** (2026-11-22): fix(gain): suppress ANSI on Windows consoles without VT support (@zhiwuyazhe-fjr)
-- **PR #5183** (2026-11-22): fix(exit): read an MSYS signal exit (signal << 8) as 128 + signal on Windows (@LeviReisJs)
-- **PR #5181** (2026-11-19): fix: Pro line in rtk gain, stale proxy lockfile, proxy variable docs (@aeppling)
+- **PR #5293** (2026-11-28): chore(deps): bump toml_edit from 0.22.27 to 0.25.19+spec-1.1.0 (@dependabot[bot])
+- **PR #5292** (2026-11-28): chore(deps): bump rusqlite from 0.42.0 to 0.43.0 (@dependabot[bot])
+- **PR #5291** (2026-11-28): chore(deps): bump regex from 1.12.3 to 1.13.1 (@dependabot[bot])
+- **PR #5290** (2026-11-28): chore(deps): bump encoding_rs from 0.8.42 to 0.8.44 (@dependabot[bot])
 
 ---
 
@@ -1991,61 +2553,33 @@ an explicit `-h` still wins.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in search.rs
+## X. Empirical Invariant Guard in commands.md
 
 **RULE**:
-When implementing operations in `src/cmds/system/search.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/pipelines/commands.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `16b02ac8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `895e1e1e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmds/system/search.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/pipelines/commands.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                if recursion_set_by(engine, t, tokens) == Some(true) {
-                    recursive = true;
-                    if recursion_set_by(engine, c, tokens) == Some(true) {
-                        recursive = true;
-            &["-d", "read", "-d", "skip"][..],
-    #[test]
-    fn recursion_keeps_the_filename_default_under_a_later_directory_action() {
-        for args in [
-            &["-r", "-d", "read"][..],
-            &["-r", "-d", "skip"][..],
-            &["-R", "-d", "read"][..],
-            &["-rd", "skip"][..],
-            &["-rnd", "read"][..],
-            &["--recursive", "--directories=read"][..],
-            &["--dereference-recursive", "--directories", "skip"][..],
-            &["-d", "recurse", "-d", "read"][..],
-            &["-d", "recurse", "-d", "skip"][..],
-        ] {
-            let d = detected(args);
-            assert!(d.recursive, "{args:?} keeps the filename default");
-            assert_eq!(d.show_file, None, "{args:?} is not an explicit request");
-        }
-        assert_eq!(detected(&["-r", "-d", "read", "-h"]).show_file, Some(false));
-        assert_eq!(detected(&["-h", "-r", "-d", "read"]).show_file, Some(false));
-        assert!(!detecte
+Each entry records timestamp, session, position, tool category, the command as the agent issued it, the rule that fired, action or methods, tokens before and after, shadow flag, recovery hint, and the reason a matching rule left the output as it was (`kept as is (no change)`, `(no smaller result)`, `(partial read, N of M lines)`) — never a tool's output, a file's contents or a directive's text. It lives at `~/.local/share/rtk/pipeline.log` (JSON lines).
+12:04:35  hook.after_tool.search  src               grep-group      grep-group  kept as is (no smaller result)
+12:04:40  hook.after_tool.read    package-lock.json lockfiles       lockfile    kept as is (partial read, 757 of 966 lines)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                if let Some(recurses) = recursion_set_by(engine, t, tokens) {
-                    recursive = recurses;
-                    if let Some(recurses) = recursion_set_by(engine, c, tokens) {
-                        recursive = recurses;
-            &["-r", "-d", "read"][..],
-            &["-rd", "skip"][..],
-            &["-d", "recurse", "-d", "read"][..],
+Each entry records timestamp, session, position, tool category, the command as the agent issued it, the rule that fired, action or methods, tokens before and after, shadow flag and recovery hint — never a tool's output, a file's contents or a directive's text. It lives at `~/.local/share/rtk/pipeline.log` (JSON lines).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `16b02ac8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `895e1e1e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

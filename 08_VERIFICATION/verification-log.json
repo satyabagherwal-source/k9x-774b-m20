@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-DQKH",
-    "timestamp": "2026-11-26T20:04:16.193Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "c458ee42b7aeddd6b3844e9da7678b109f869ae92938915ceb615fde66c01dbf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-DTDX",
-    "timestamp": "2026-11-26T20:04:19.845Z",
-    "repository": "Nasiko-Labs/nasiko",
-    "learningId": "learn-github-nasiko-labs-nasiko",
-    "contentHash": "a6168fa492ce778c933741fd75eee30dfd0ef1c4acecc8ade4cb9a3e0069178f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-DW2O",
-    "timestamp": "2026-11-26T20:04:23.328Z",
-    "repository": "invertase/react-native-firebase",
-    "learningId": "learn-github-invertase-react-native-firebase",
-    "contentHash": "90f884d1ab6988f7e112d9fc13572834f764ee6a3f3668c067cea0d49bcd61f3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-DYJL",
     "timestamp": "2026-11-26T20:04:26.529Z",
     "repository": "gocd/gocd",
@@ -7490,6 +7445,51 @@
     "repository": "Folkbench/folkbench",
     "learningId": "learn-github-folkbench-folkbench",
     "contentHash": "8ad12a0fb82ab39c647c32831b1a38792a7c67af882a63ed40cae36ae624e361",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-OHYJ",
+    "timestamp": "2026-11-28T15:36:02.539Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "dde3e538a5476139733405e80ec6154f6532fa8a8fc6e22a3123f926334b5d8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-OS2D",
+    "timestamp": "2026-11-28T15:36:15.637Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "a2272c0fc3eb37d6d6c2ebb50212c8b2fb99a2b84c7dc0ece5d4c988ae1f1c60",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-OTS3",
+    "timestamp": "2026-11-28T15:36:17.859Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "0f3bd3152c70b5be47fd9fd769ae51b6ea6be5c45624bda11c484ab127a525cd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

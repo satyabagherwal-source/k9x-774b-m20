@@ -14109,3 +14109,7 @@ Every entry in this ledger must capture:
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `8e35bfec` | Multi-dimensional audit evidence | 2026-11-28T15:19:24.251Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e6479ba8` | Multi-dimensional audit evidence | 2026-11-28T15:19:33.612Z |
 | `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `41524b3e` | Multi-dimensional audit evidence | 2026-11-28T15:27:41.167Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `10630563` | Multi-dimensional audit evidence | 2026-11-28T15:36:02.543Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `56989d8e` | Multi-dimensional audit evidence | 2026-11-28T15:36:15.640Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `30bfd633` | Multi-dimensional audit evidence | 2026-11-28T15:36:17.862Z |
+| `learn-dom-d-3e604043` | `project://matrixorigin-matrixone` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | 2026-11-28T15:36:46.618Z |

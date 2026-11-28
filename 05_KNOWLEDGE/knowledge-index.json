@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T15:27:55.381Z",
+  "last_updated": "2026-11-28T15:36:48.569Z",
   "total_verified_learnings": 9153,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27185,
+  "total_items": 27192,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -224314,8 +224314,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "b1999539",
-      "content_hash": "9c76863d5b4aaac69363491cdc7e4ff18059c0ce626901911d702cf1b70438b9",
+      "source_version": "56989d8e",
+      "content_hash": "a2272c0fc3eb37d6d6c2ebb50212c8b2fb99a2b84c7dc0ece5d4c988ae1f1c60",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -224380,7 +224380,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T17:50:18.130Z",
+      "verified_at": "2026-11-28T15:36:15.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231676,8 +231676,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "1772058f",
-      "content_hash": "67f6933b032a67b3abe1738c97bf77515c61c72bb303c0b4f196bf0d343f70e5",
+      "source_version": "30bfd633",
+      "content_hash": "0f3bd3152c70b5be47fd9fd769ae51b6ea6be5c45624bda11c484ab127a525cd",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -232035,6 +232035,11 @@
           "number": 11106,
           "title": "Draft NUC 162 Population Instance Removal",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11120,
+          "title": "Draft NUC 163 C# Ceiling Method Alias",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232042,7 +232047,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T13:55:57.326Z",
+      "verified_at": "2026-11-28T15:36:17.612Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232084,10 +232089,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "42b3267e",
-      "content_hash": "821bce98a39408dc2d9c9c66d2f0f3aa372e3f665678be919532159b2cf3b500",
+      "source_version": "30bfd633",
+      "content_hash": "7fb1aa9d5a9e8665eb044886a6eb837de37cdceec48119e9a036d2bfaccb61c0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T09:33:45.478Z"
+      "persisted_at": "2026-11-28T15:36:18.323Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -232096,10 +232101,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "1772058f",
-      "content_hash": "d39eb309b1ea56fe107dcce770c74ba99a59403e89e148fff636bb5e9861f64c",
+      "source_version": "30bfd633",
+      "content_hash": "0c1a7ad589f6131638e982f54eb4eeac94716638fc1f44a7db255b653244c587",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T13:55:58.297Z"
+      "persisted_at": "2026-11-28T15:36:18.497Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -233287,9 +233292,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "b128425c8fe63495d6fc3db49359abc6bcfaea1a3a88b5942f4a04ed99f7126c",
+      "content_hash": "f63138b57561d496b6f4ecfeda33136498d1221520aa63d143dd4f02938727a4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T07:59:30.394Z"
+      "persisted_at": "2026-11-28T15:36:48.370Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -233299,9 +233304,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "862c2875b2d4ea451753d8173c4667dcafc3a62d9d275375e9c15461c735f439",
+      "content_hash": "cb15e5a4f715a51e6996711afd5806f20e3ad4f7db2786f0aa33a447e2090488",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T13:56:04.284Z"
+      "persisted_at": "2026-11-28T15:36:48.569Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -264184,8 +264189,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "16b02ac8",
-      "content_hash": "7e54294a8d40c46012034c16fbd49c58a09025dd2d3519b6a410cebf5d3f0f6e",
+      "source_version": "10630563",
+      "content_hash": "dde3e538a5476139733405e80ec6154f6532fa8a8fc6e22a3123f926334b5d8a",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -264243,6 +264248,11 @@
           "number": 10905,
           "title": "Empirical Invariant Guard in search.rs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11119,
+          "title": "Empirical Invariant Guard in commands.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -264250,7 +264260,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T12:59:14.235Z",
+      "verified_at": "2026-11-28T15:36:02.317Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264304,10 +264314,10 @@
       "relative_path": "08_VERIFICATION/rtk-ai-rtk-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk.md",
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai/rtk",
       "repository": "rtk-ai/rtk",
-      "source_version": "16b02ac8",
-      "content_hash": "3dc6159ebdc235b608386eeb93310b530bf3176df4b6c28a3dd06e231b2a12cc",
+      "source_version": "10630563",
+      "content_hash": "97d88c24b79a9f47e5bc1872458ebda479833a69ceab8f28d181f5fdd511c190",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:59:15.332Z"
+      "persisted_at": "2026-11-28T15:36:03.253Z"
     },
     "rule-8761": {
       "learning_id": "rule-8761",
@@ -264355,9 +264365,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai-rtk-learnings",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "9cedac188bb89a9521c77777412a57de47913eb5b9cd8c0650d122a5e7c9644f",
+      "content_hash": "f804a7f8f1b437f28c2557c02f195c8cc83e44144185ccee295960d168017fd9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:59:25.659Z"
+      "persisted_at": "2026-11-28T15:36:22.825Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -288060,10 +288070,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matrixorigin-matrixone-architecture-intelligence-matrixorigin-matrixone-core-inv.md",
       "title": "Architecture Intelligence: matrixorigin/matrixone Core Invariants",
       "repository": "matrixorigin/matrixone",
-      "source_version": "87c44445",
-      "content_hash": "9f0560eb6d6d1981682ff31bd115b066a275ca414cdadf7094448c96d4b44ad1",
+      "source_version": "56989d8e",
+      "content_hash": "682ba0bd728a8013253d7663ba03513b7d7a69a9756bbac843571fd267a3e505",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T16:41:22.327Z"
+      "persisted_at": "2026-11-28T15:36:15.883Z"
     },
     "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf": {
       "learning_id": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
@@ -373820,6 +373830,94 @@
       "content_hash": "e51d9e2003922726cd9ba58a171f0ee92f8acb51c9ed11d9edbf6e4cc631d446",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T15:27:52.188Z"
+    },
+    "rule-11119": {
+      "learning_id": "rule-11119",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11119,
+      "title": "Empirical Invariant Guard in commands.md",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "10630563",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T15:36:02.317Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-commands-md": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-commands-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OXBU-empirical-invariant-guard-in-commands-md.md",
+      "title": "Empirical Invariant Guard in commands.md",
+      "repository": "rtk-ai-rtk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "39112ea3968d338cc7e98bf87600b82a271f1bf2e0b4a406f1b52d5d17d73218",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T15:36:22.464Z"
+    },
+    "domain_intelligence-human-need-intelligence-rtk-ai-rtk-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-rtk-ai-rtk-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-rtk-ai-rtk-human-need-intelligence-rtk-ai-rtk-core-invariants.md",
+      "title": "Human & Need Intelligence: rtk-ai/rtk Core Invariants",
+      "repository": "rtk-ai/rtk",
+      "source_version": "10630563",
+      "content_hash": "c8b53d692b3e804635833dbe6b491ac5dcd48114361a804676c37dd03d672a90",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-28T15:36:03.063Z"
+    },
+    "rule-11120": {
+      "learning_id": "rule-11120",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11120,
+      "title": "Draft NUC 163 C# Ceiling Method Alias",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "30bfd633",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T15:36:17.612Z"
+    },
+    "candidate_directive-draft-nuc-163-c-ceiling-method-alias": {
+      "item_id": "candidate_directive-draft-nuc-163-c-ceiling-method-alias",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PH5X-draft-nuc-163-c-ceiling-method-alias.md",
+      "title": "Draft NUC 163 C# Ceiling Method Alias",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2896e094bf8798ce0801f8f1739dbbc0d3caa14194c0440bee711a8c41d7abcf",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T15:36:48.177Z"
+    },
+    "domain_intelligence-human-need-intelligence-rtk-ai-rtk-learnings-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-rtk-ai-rtk-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-rtk-ai-rtk-learnings-human-need-intelligence-rtk-ai-rtk-learnings-core-invariant.md",
+      "title": "Human & Need Intelligence: rtk-ai-rtk-learnings Core Invariants",
+      "repository": "rtk-ai-rtk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7c5bd5cf311254b54edc87ae5fda17c58416a52d97e232e6bc3691820a17b53f",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-28T15:36:22.637Z"
+    },
+    "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matrixorigin-matrixone-learnings-architecture-intelligence-matrixorigin-matrixon.md",
+      "title": "Architecture Intelligence: matrixorigin-matrixone-learnings Core Invariants",
+      "repository": "matrixorigin-matrixone-learnings",
+      "source_version": "HEAD",
+      "content_hash": "398330ecab3d905f5e338f749952b931d58621ea7b27c6dfb0d49c6ed41cc5e9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T15:36:47.257Z"
     }
   },
   "ai-builder-brain": {

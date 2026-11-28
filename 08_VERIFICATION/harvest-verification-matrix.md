@@ -14076,3 +14076,7 @@
 | `CYCLE-20261128-33O5` | `2026-11-28T15:19:24.245Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11116` | Yes (`5a904249...`) |
 | `CYCLE-20261128-3AW7` | `2026-11-28T15:19:33.607Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11117` | Yes (`61162dd8...`) |
 | `CYCLE-20261128-DR3D` | `2026-11-28T15:27:41.161Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11118` | Yes (`8ad12a0f...`) |
+| `CYCLE-20261128-OHYJ` | `2026-11-28T15:36:02.539Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11119` | Yes (`dde3e538...`) |
+| `CYCLE-20261128-OS2D` | `2026-11-28T15:36:15.637Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`a2272c0f...`) |
+| `CYCLE-20261128-OTS3` | `2026-11-28T15:36:17.859Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11120` | Yes (`0f3bd315...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T15:36:46.618Z` | `matrixorigin-matrixone` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3E604043` [Domain D] | Yes (`90796517...`) |

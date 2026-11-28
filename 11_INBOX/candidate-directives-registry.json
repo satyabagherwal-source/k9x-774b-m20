@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T15:27:54.912Z",
+  "last_updated": "2026-11-28T15:36:48.177Z",
   "directives": [
     {
       "id": "CD-001",
@@ -76676,6 +76676,46 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1B92CE-bump-version-number.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-OXBU",
+      "directive_title": "Empirical Invariant Guard in commands.md",
+      "source_repo": "rtk-ai-rtk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OXBU-empirical-invariant-guard-in-commands-md.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-PH5X",
+      "directive_title": "Draft NUC 163 C# Ceiling Method Alias",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PH5X-draft-nuc-163-c-ceiling-method-alias.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-0212AC",
+      "directive_title": "Empirical Invariant Guard in commands.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rtk-ai-rtk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0212AC-empirical-invariant-guard-in-commands-md.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-8948A7",
+      "directive_title": "Draft NUC 163 C# Ceiling Method Alias",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8948A7-draft-nuc-163-c-ceiling-method-alias.md",
       "staged_date": "2026-11-28"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T15:27:41.177Z",
+  "last_updated": "2026-11-28T15:36:17.870Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "67f6933b032a67b3abe1738c97bf77515c61c72bb303c0b4f196bf0d343f70e5",
-      "verified_at": "2026-11-28T13:55:57.611Z",
+      "content_hash": "0f3bd3152c70b5be47fd9fd769ae51b6ea6be5c45624bda11c484ab127a525cd",
+      "verified_at": "2026-11-28T15:36:17.869Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-28T13:55:57.611Z"
+      "last_updated": "2026-11-28T15:36:17.869Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "9c76863d5b4aaac69363491cdc7e4ff18059c0ce626901911d702cf1b70438b9",
-      "verified_at": "2026-11-27T17:50:18.415Z",
+      "content_hash": "a2272c0fc3eb37d6d6c2ebb50212c8b2fb99a2b84c7dc0ece5d4c988ae1f1c60",
+      "verified_at": "2026-11-28T15:36:15.647Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T17:50:18.415Z"
+      "last_updated": "2026-11-28T15:36:15.647Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "7e54294a8d40c46012034c16fbd49c58a09025dd2d3519b6a410cebf5d3f0f6e",
-      "verified_at": "2026-11-27T12:59:14.549Z",
+      "content_hash": "dde3e538a5476139733405e80ec6154f6532fa8a8fc6e22a3123f926334b5d8a",
+      "verified_at": "2026-11-28T15:36:02.550Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T12:59:14.549Z"
+      "last_updated": "2026-11-28T15:36:02.550Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",
