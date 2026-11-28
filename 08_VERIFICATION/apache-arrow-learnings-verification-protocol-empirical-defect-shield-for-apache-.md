@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T11:03:10.974Z",
+  "timestamp": "2026-11-28T12:36:00.996Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-arrow-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-arrow-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T11:03:10.974Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T12:36:00.996Z`  
 > **Learning ID**: `LEARN-EVO-apache-arrow-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `83b4c539`  
+> **Source Version**: `5ef973da`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T11:03:05.626Z  
+> **Timestamp**: 2026-11-28T12:35:41.649Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T11:02:59.088Z  
+> **Harvest Timestamp**: 2026-11-28T12:35:41.501Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17358 stars
+- **Stars / Engagement**: 17365 stars
 
 ---
 
@@ -1417,11 +1417,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55765** (2026-11-25): **MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates**
-  *Symptoms*: Bumps the apache-infrastructure-actions-stash group with 2 updates: [apache/infrastructure-actions/stash/restore](https://github.com/apache/infrastructure-actions) and [apache/infrastructure-actions/stash/save](https://github.com/apache/infrastructure-actions).  Updates `apache/infrastructure-actions/stash/restore` from 1.0.4 to 1.0.5 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/apache/infrastructure-actions/commit/05004b32a492c4c39567cd8aea55ed9c27388d19"><code>05004b3</code></a> fork-ci: read up to 100 annotations per failed job (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1538">#1538</a>)</li> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/compare/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5...05004b32a492c4c39567cd8aea55ed9c27388d19">compare view</a></li> </ul> </details> <br />  Updates `apache/infrastructure-actions/stash/save` from 1.0.4 to 1.0.5 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/apache/infrastructure-actions/commit/05004b32a492c4c39567cd8aea55ed9c27388d19"><code>05004b3</code></a> fork-ci: read up to 100 annotations per failed job (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1538">#1538</a>)</li> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/compare/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5...05004b32a492c4c39567cd8aea55ed9c27388d19">compare view</a></li> </ul> </details> <br />   D
+- **Issue #55823** (2026-11-27): **GH-49836: [R] Reject unrepresentable Date values before converting to Arrow**
+  *Symptoms*: ### Rationale for this change  An R `Date` can contain infinity or NaN. On Windows with Arrow 26.0.1.1, converting any of those values to a table, or writing and reading it through Feather or Parquet, produced a date 2,147,483,648 days before the epoch. A date comparison can then return the wrong answer.  ### What changes are included in this PR?  Check that the day or millisecond count fits the signed storage type before casting it. R's `NA` still produces an Arrow null. NaN, either infinity and finite dates outside the storage range raise a conversion error. This preserves the R binding's distinction between `NA` and NaN.  ### Are these changes tested?  Yes. The regression covers both Arrow date types, ordinary dates on either side of the epoch, missing dates, NaN, both infinities and storage limits. I built the patched R package on Windows with R 4.6.2. The Array test file passed 1,189 expectations with 10 skips. I also verified the table, Feather V2 and Parquet examples before and after the change.  ### Are there any user-facing changes?  **This PR contains a Critical Fix.** Previously, converting an unrepresentable R date could write a finite date into the output. Conversion now reports the value and target type.  ### Was AI used for this PR?  OpenAI Codex wrote the code, regression tests and PR description. Codex also reviewed the change and ran the tests.  **PR code and description written by**  - [ ] Human - [x] AI  **Reviewed before submission by**  - [ ] Human - [x]
 
-- **Issue #55745** (2026-11-23): **[FlightRPC][C++][CI] ODBC macOS jobs failure caused by bundled Boost 1.92.0 Locale with CMake 4.5.0**
-  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  Seeing ODBC macOS failures relating to boost since Nov 21st. The issue is due to bundled boost locale 1.92.0 incompatibility with CMake 4.5.0. Boost upstream has fixed this issue in https://github.com/boostorg/boost/issues/1162, expected in a later Boost release.   AC: Resolve CI failures  Example failure: https://github.com/apache/arrow/actions/runs/45088349844/job/137412030347 ```   -- Boost: Performing Test Iconv_IS_BUILT_IN   -- Boost: Performing Test Iconv_IS_BUILT_IN - Failed   -- Boost: Found Iconv: /Applications/Xcode_26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libiconv.tbd   CMake Error at /Users/runner/work/arrow/arrow/build/cpp/_deps/boost-src/libs/locale/CMakeLists.txt:236 (source_group):     source_group     "/Users/runner/work/arrow/arrow/build/cpp/_deps/boost-src/libs/locale/include/boost/locale"     is not a prefix of file     "/Users/runner/work/arrow/arrow/build/cpp/_deps/boost-src/libs/locale/include/boost/locale.hpp"         -- Configuring incomplete, errors occurred!   Error: Process completed with exit code 1. ```  ### Component(s)  C++, FlightRPC
+- **Issue #55822** (2026-11-27): **GH-55769: [C++][Python] Preserve leading NaNs in cumulative min and max**
+  *Symptoms*: ### Rationale for this change  With the default start, `cumulative_max([NaN])` returns negative infinity and `cumulative_min([NaN])` returns positive infinity. The corresponding aggregates return NaN.  ### What changes are included in this PR?  Use quiet NaN as the floating-point identity for min and max. The existing operators select the numeric operand when only one operand is NaN, so the first number establishes the running extremum. Update the function docs and point `cumulative_mean` at its own docstring so it does not inherit the maximum's NaN behavior in its documentation.  ### Are these changes tested?  Reproduced the bug with the PyArrow 25.0.1 and 26.0.1 wheels on macOS 15.8.2 arm64 with Python 3.12.10. On the patched source build, all 1,157 C++ vector tests passed. The reported Python examples passed for float32 and float64, as did checks for chunk boundaries, null handling, and explicit starts. [Validation run](https://github.com/karthiksenv/arrow/actions/runs/46077170127)  ### Are there any user-facing changes?  With the default start, a leading run of NaNs now produces NaNs. For example, `cumulative_max([NaN, 1, NaN, 2])` returns `[NaN, 1, 1, 2]`. An explicit numeric start participates from the first element.  **This PR contains a "Critical Fix".** The previous default could introduce an infinity into a result even when the input contained only NaNs.  ### Was AI used for this PR?  AI wrote and reviewed the patch, tests, and description.  Closes #55769. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1438,540 +1438,143 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83b4c539` (2026-11-27)
-**Commit Message**: GH-55475: [Dev] Use merge button instead of merge script (#55484)
+### Incident Patch 1: `c5800ec2` (2026-11-27)
+**Commit Message**: GH-55613: [C++][Gandiva] Fix wrong results for negative integer constants (#55607)
 
 ### Rationale for this change
 
-Committers currently need a GitHub personal access token and `dev/merge_arrow_pr.py` to merge pull requests. This change lets committers use GitHub's "Squash and merge" button directly while preserving automatic issue closure, milestone tracking, and release-note committer counts.
+`LLVMTypes::int_constant` builds `llvm::APInt(N, val)` without the signed flag. For a negative value narrower than 64 bits, the `APInt` has bits set above its width, and an `i128` value is not sign-extended. The effect depends on the LLVM version:
+
+- LLVM 21, optimization on: Gandiva returns wrong results. For example `if (k == 0) 10 else -5` returns `-5` for every row.
+- LLVM 23: assertion `Value is not an N-bit unsigned value` in the `APInt` constructor.
+- LLVM 18: the constructor always clears the unused bits, so 16, 32 and 64 bit constants are correct. An `i128` constant is wrong on every version.
+
+The same fix exists in the Dremio fork (dremio/arrow 3950ea6e41).
 
 ### What changes are included in this PR?
 
-* **Automatic issue closure with partial-fix opt-out** (`.github/boring-cyborg.yml`, `.github/pull_request_template.md`): For PRs targeting `main`, Boring Cyborg populates `* GitHub Issue: Closes #XXX` so GitHub natively closes and links the issue on merge. Changing `Closes` to `Refs` keeps the issue open for partial fixes and is preserved by the bot. The non-blocking "PR Title" check no longer accepts `WIP:` prefixes, and the template guidance lives inside the placeholder so nothing leaks into squash commit messages.
-* **Self-healing milestone assignment from the commit graph** (`dev/archery/archery/release/`, `.github/workflows/dev_update_milestones.yml`): Adds `archery release update-milestones` and runs it every 6 hours (plus `workflow_dispatch`) to set mileston
+The fix is a one-line change in `llvm_types.h`: pass `std::is_signed<ctype>::value` as the signed flag of `APInt` in `LLVMTypes::int_constant`.
 
-**File**: `.asf.yaml` (modified, +6/-0)
+The PR has two commits: the tests first, then the fix.
+
+### Are these changes tested?
+
+Yes. Two new tests:
+
+- `TestLLVMTypes.SignedIntegerConstants` checks the 8, 16, 32, 64 and 128 bit constants. Before the fix it fails
+
+**File**: `cpp/src/gandiva/llvm_types.h` (modified, +5/-1)
 ```diff
-@@ -27,6 +27,12 @@ github:
-     projects: true
-     discussions: true
+@@ -18,6 +18,7 @@
+ #pragma once
  
-+  enabled_merge_buttons:
-+    merge: false
-+    rebase: false
-+    squash: true
-+    squash_commit_message: PR_TITLE_AND_DESC
-+
-   protected_branches:
-     # protect main against force push
-     main: {}
+ #include <map>
++#include <type_traits>
+ #include <vector>
+ 
+ #include "arrow/util/logging.h"
+@@ -73,7 +74,10 @@ class GANDIVA_EXPORT LLVMTypes {
+ 
+   template <typename ctype, size_t N = (sizeof(ctype) * CHAR_BIT)>
+   llvm::Constant* int_constant(ctype val) {
+-    return llvm::ConstantInt::get(context_, llvm::APInt(N, val));
++    // Preserve signedness so negative narrow values are canonical APInts and
++    // negative values widened to i128 are sign-extended.
++    return llvm::ConstantInt::get(context_,
++                                  llvm::APInt(N, val, std::is_signed<ctype>::value));
+   }
+ 
+   llvm::Constant* i1_constant(bool val) { return int_constant<bool, 1>(val); }
 ```
 
-**File**: `.github/boring-cyborg.yml` (modified, +6/-2)
+**File**: `cpp/src/gandiva/llvm_types_test.cc` (modified, +17/-0)
 ```diff
-@@ -59,16 +59,20 @@ labelPRBasedOnFilePath:
-     - "**/*.Rd"
+@@ -58,4 +58,21 @@ TEST_F(TestLLVMTypes, TestNotFound) {
+   EXPECT_EQ(types_->DataVecType(arrow::null()), nullptr);
+ }
  
- verifyTitles:
--  titleRegexp: '^(WIP:?\s*)?GH-[0-9]+|^MINOR: '
-+  titleRegexp: '^GH-[0-9]+|^MINOR: '
-   alwaysUsePrTitle: true
-   validateEitherPrOrSingleCommitTitle: false
-   statusTitle: "PR Title"
-   successMessage: "PR title format is valid"
-   failureMessage: "Title must start with 'GH-<issue>: [Component]' or 'MINOR: [Component]'"
- 
- insertIssueLinkInPrDescription:
--  descriptionIssuePlaceholderRegexp: '^\* GitHub Issue: (.*)$'
-+  descriptionIssuePlaceholderRegexp: '^\* GitHub Issue: (?![Rr]efs\b)(.*)$'
-   matchers:
-+    closedIssue:
-+      targetBranchFilter: '^main$'
-+      titleIssueIdRegexp: '^GH-([0-9]+)'
-+      descriptionIssueLink: 'Closes #${1}'
-     githubIssue:
-       titleIssueIdRegexp: '^(?:WIP:?\s*)?GH-([0-9]+)'
-       descriptionIssueLink: '#${1}'
++TEST_F(TestLLVMTypes, SignedIntegerConstants) {
++  auto value = [](llvm::Constant* constant) -> const llvm::APInt& {
++    return llvm::cast<llvm::ConstantInt>(constant)->getValue();
++  };
++  EXPECT_EQ(255U, value(types_->i8_constant(-1)).getZExtValue());
++  EXPECT_EQ(32768U, value(types_->i16_constant(-32768)).getZExtValue());
++  EXPECT_EQ(static_cast<uint32_t>(-447906508),
++            value(types_->i32_constant(-447906508)).getZExtValue());
++  EXPECT_EQ(int64_t{-447906508}, value(types_->i32_constant(-447906508)).getSExtValue());
++  EXPECT_TRUE(value(types_->i64_constant(-1)).isAllOnes());
++  EXPECT_TRUE(value(types_->i128_constant(-1)).isAllOnes());
++  EXPECT_EQ(int64_t{-447906508}, value(types_->i128_constant(-447906508)).getSExtValue());
++  EXPECT_EQ(0U, value(types_->i128_constant(1)).getHiBits(64).getZExtValue());
++  EXPECT_TRUE(value(types_->true_constant()).isOne());
++  EXPECT_TRUE(value(types_->false_constant()).isZero());
++}
++
+ }  // namespace gandiva
 ```
 
-**File**: `.github/pull_request_template.md` (modified, +1/-1)
+**File**: `cpp/src/gandiva/tests/if_expr_test.cc` (modified, +46/-0)
 ```diff
-@@ -34,4 +34,4 @@ In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/de
- - [ ] AI
- - [ ] Not reviewed
+@@ -375,4 +375,50 @@ TEST_F(TestIfExpr, TestBigNested) {
+   EXPECT_ARROW_ARRAY_EQUALS(exp, outputs.at(0));
+ }
  
--* GitHub Issue: (filled in automatically from the PR title)
-+* GitHub Issue: (filled in automatically from the PR title; change "Closes" to "Refs" for a partial fix)
-```
-
-**File**: `.github/workflows/dev_update_milestones.yml` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+# Licensed to the Apache Software Foundation (ASF) under one
-+# or more contributor license agreements.  See the NOTICE file
-+# distributed with this work for additional information
-+# regarding copyright ownership.  The ASF licenses this file
-+# to you under the Apache License, Version 2.0 (the
-+# "License"); you may not use this file except in compliance
-+# with the License.  You may obtain a copy of the License at
-+#
-+#   http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing,
-+# software distributed under the License is distributed on an
-+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+# KIND, either express or implied.  See the License for the
-+# specific language governing permissions and limitations
-+# under the License.
++namespace {
 +
-+name: Update issue milestones
++template <typename ArrowType, typename CType>
++void CheckNegativeConstantResults(arrow::MemoryPool* pool, bool optimize) {
++  auto type = arrow::TypeTraits<ArrowType>::type_singleton();
++  SCOPED_TRACE(type->ToString());
++  auto key_field = field("k", type);
++  auto schema = arrow::schema({key_field});
++  auto key = TreeExprBuilder::MakeField(key_field);
++  auto is_zero = TreeExprBuilder::MakeFunction(
++      "equal", {key, TreeExprBuilder::MakeLiteral(CType{0})}, boolean());
++  auto ten = TreeExprBuilder::MakeLiteral(CType{10});
++  auto minus_five = TreeExprBuilder::MakeLiteral(CType{-5});
 +
-+on:
-+  schedule:
-+    - cron: "17 */6 * * *" # Every 6 hours
-+  workflow_dispatch:
++  // if (k == 0) 10 else -5, and if (k == 0) -5 else 10
++  auto negative_else = TreeExprBuilder::MakeIf(is_zero, ten, minus_five, type);
++  auto negative_then = TreeExprBuilder::MakeIf(is_zero, minus_five, ten, type);
 +
-+permissions:
-+  contents: read
-+  issues: write
++  std::shared_ptr<Projector> projector;
++  ASSERT_OK(Projector::Make(
++      schema,
++      {TreeExprBuilder::MakeExpression(negative_else, field("negative_else", type)),
++       TreeExprBuilder::MakeExpression(negative_then, field("negative_then", type))},
++      ConfigurationBuilder().build(optimize), &projector));
 +
-+jobs:
-+  update:
-+    name: Update milestones
-+    if: github.repository == 'apache/arrow'
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 10
-+    steps:
-+      - name: Checkout Arrow
-+        uses: actions/checkout@v7
-+        with:
-+          persist-credentials: false
-+          fetch-depth: 0
-+      - name: Setup Python
-+        uses: actions/setup-python@v7
-+        with:
-+          python-version: '3.12'
-+      - name: Install Archery
-+        run: |
-+          pip install "dev/archery[release]"
-+      - name: Update milestones
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+        run: |
-+          archery release update-milestones --execute
-```
-
-**File**: `dev/README.md` (modified, +36/-2)
-```diff
-@@ -33,8 +33,42 @@ committer.
- 
- ## How to Merge a Pull Request
- 
--Please don't merge PRs using the GitHub Web interface. Instead, run
--the following command:
-+Use the "Squash and merge" button of the GitHub Web interface. Before
-+you merge, check that:
++  auto input = MakeArrowArray<ArrowType, CType>({0, 1, 2});
++  auto batch = arrow::RecordBatch::Make(schema, 3, {input});
++  arrow::ArrayVector outputs;
++  ASSERT_OK(projector->Evaluate(*batch, pool, &outputs));
++  EXPECT_ARROW_ARRAY_EQUALS((MakeArrowArray<ArrowType, CType>({10, -5, -5})),
++                            outputs.at(0));
++  EXPECT_ARROW_ARRAY_EQUALS((MakeArrowArray<ArrowType, CType>({-5, 10, 10})),
++                            outputs.at(1));
++}
 +
-+* The pull request title is what you want as the commit title:
-+  `GH-XXX: [Component] Title` or `MINOR: [Component] Title`. The
-+  "PR Title" status of the Boring Cyborg app
-+  (`.github/boring-cyborg.yml`) fails unless the title starts with
-+  `GH-XXX` or `MINOR: ` but it doesn't block the merge.
-+* The last line of the pull request description is
-+  `* GitHub Issue: Closes #XXX`. The Boring Cyborg app writes it for a
-+  pull request to `main` and GitHub closes the issue on merge because
-+  of it. If the pull request fixes only a part of the issue, change
-+  the line to `* GitHub Issue: Refs #XXX` before you merge: the issue
-+  stays open. If the line doesn't say `Closes #XXX`, for example
-+  because the app is down, change it or close the issue yourself.
-+* The pull request description is what you want as the commit
-+  message. Remove leftovers of the pull request template in the
-+  merge dialog if needed.
++}  // namespace
 +
-+A scheduled GitHub Actions workflow (`Update issue milestones`,
-+`.github/workflows/dev_update_milestones.yml`) runs
-+`archery release update-milestones --execute` to set the milestone on
-+closed issues referenced by `GH-XXX` commits since the previous major
-+release. Existing issue milestones are retained, so set a milestone
-+before or after merging if the pull request isn't targeted for the next
-+major release. If the issue doesn't have a milestone, the workflow sets
-+the major release matching the commit's branch (`maint-X.0.0` if
-+already branched, otherwise the next major release). The workflow can
-+also be triggered manually via `workflow_dispatch`.
++TEST_F(TestIfExpr, TestNegativeConstants) {
++  for (bool optimize : {false, true}) {
++    SCOPED_TRACE(optimize);
++    CheckNegativeConstantResults<arrow::Int32Type, int32_t>(pool_, optimize);
++    CheckNegativeConstantResults<arrow::Int16Type, int16_t>(pool_, optimize);
++    CheckNegativeConstantResults<arrow::Int64Type, int64_t>(pool_, optimize);
++  }
++}
 +
-+### Merge script
-+
-+The merge script is still available for now, but using the merge button
-+is encouraged. It additionally adds `Authored-by:`, `Co-authored-by:`
-+and `Signed-off-by:` trailers to the commit message. Run the following
-+command:
- 
- ```bash
- dev/merge_arrow_pr.sh
-```
-
-**File**: `dev/archery/archery/release/cli.py` (modified, +38/-1)
-```diff
-@@ -15,12 +15,19 @@
- # specific language governing permissions and limitations
- # under the License.
- 
-+import os
- import pathlib
- 
- import click
-+from git import Repo
- 
- from ..utils.cli import validate_arrow_sources
--from .core import IssueTracker, Release
-+from .core import (
-+    IssueTracker,
-+    Release,
-+    count_committers,
-+    update_milestones,
-+)
- 
- 
- @click.group('release')
-@@ -52,6 +59,36 @@ def release_curate(obj, version, minimal):
-     click.echo(curation.render('console'))
- 
- 
-+@release.command('committers')
-+@click.argument('previous_version')
-+@click.argument('version')
-+@click.pass_obj
-+def release_committers(obj, previous_version, version):
-+    """Count the pull requests of a release by who merged them."""
-+    commit_range = f"apache-arrow-{previous_version}..apache-arrow-{version}"
-+    commits = Repo(obj['repo']).iter_commits(commit_range)
-+    committers = count_committers(commits, obj['issue_tracker'])
-+    for name, count in committers:
-+        click.echo(f"{count:6d}\t{name}")
-+
-+
-+@release.command('update-milestones')
-+@click.option('--dry-run/--execute', default=True,
-+              help="Display milestone updates instead of applying them.")
-+@click.pass_obj
-+def release_update_milestones(obj, dry_run):
-+    """Set milestones on closed issues merged since the last major release."""
-+    updates = update_milestones(
-+        Repo(obj['repo']),
-+        obj['issue_tracker'],
-+        branch=os.getenv('ARCHERY_DEFAULT_BRANCH', 'main'),
-+        dry_run=dry_run,
-+    )
-+    for issue_number, milestone in updates:
-+        action = "Would set" if dry_run else "Set"
-+        click.echo(f"{action} milestone {milestone} on #{issue_number}")
-+
-+
- @release.group('changelog')
- def release_changelog():
-     """Release changelog."""
-```
-
-**File**: `dev/archery/archery/release/core.py` (modified, +192/-1)
-```diff
-@@ -24,7 +24,7 @@
- import warnings
- 
- from git import Repo
--from github import Github
-+from github import Github, GithubException
- from semver import VersionInfo as SemVer
- 
- from ..utils.source import ArrowSources
-@@ -146,6 +146,52 @@ def project_issues(self, version):
-     def issue(self, key):
-         return Issue.from_github(self.github_repo.get_issue(key))
- 
-+    def open_major_milestones(self):
-+        return sorted(
-+            (Version.parse(m.title), m)
-+            for m in self.github_repo.get_milestones(state="open")
-+            if re.fullmatch(r"\d+\.0\.0", m.title)
-+        )
-+
-+    def set_milestone(self, number, milestone):
-+        self.github_repo.get_issue(number).edit(milestone=milestone)
-+
-+    def query_nodes(self, numbers, selection, batch_size=50):
-+        """Query issueOrPullRequest nodes in GraphQL batches."""
-+        owner, name = self.github_repo.full_name.split("/", 1)
-+        unique = list(dict.fromkeys(numbers))
-+        nodes = {}
-+        for i in range(0, len(unique), batch_size):
-+            batch = unique[i:i + batch_size]
-+            fields = " ".join(
-+                f"n{n}: issueOrPullRequest(number: {n}) {{{selection}}}"
-+                for n in batch
-+            )
-+            query = (
-+                'query($owner: String!, $name: String!) '
-+                f'{{repository(owner: $owner, name: $name) {{{fields}}}}}'
-+            )
-+            variables = {"owner": owner, "name": name}
-+            try:
-+                _, result = self.github_repo.requester.graphql_query(
-+                    query, variables
-+                )
-+            except GithubException as exc:
-+                data = getattr(exc, "data", None)
-+                errors = (
-+                    data.get("errors") if isinstance(data, dict) else None
-+                )
-+                if (errors and data.get("data") and
-+                        all(err.get("type") == "NOT_FOUND"
-+                            for err in errors)):
-+                    result = data
-+                else:
-+                    raise
-+            repository = result["data"]["repository"]
-+            for n in batch:
-+                nodes[n] = repository[f"n{n}"]
-+        return nodes
-+
- 
- _TITLE_REGEX = re.compile(
-     r"(?P<issue>(?P<project>(ARROW|PARQUET|GH))\-(?P<issue_id>(\d+)))?\s*:?\s*"
-@@ -241,6 +287,151 @@ def url(self):
-     def title(self):
-         return self._title
- 
-+    @property
-+    def github_issue_id(self):
-+        if self.project == "GH" and self.issue_id:
-+            return int(self.issue_id)
-+        return None
-+
-+
-+_PULL_REQUEST_NUMBER_REGEX = re.compile(r" \(#(\d+)\)$")
-+
-+
-+def count_committers(commits, issue_tracker, batch_size=50):
-+    """
-+    Count the pull requests of the commits by who merged them.
-+
-+    We ask GitHub because commits merged with the merge button don't
-+    have "Signed-off-by:" trailers.
-+
-+    Returns (name, count) pairs sorted by count (descending) and name.
-+    """
-+    # Release commits and direct pushes don't have a pull request number.
-+    matches = (_PULL_REQUEST_NUMBER_REGEX.search(commit.summary)
-+               for commit in commits)
-+    numbers = [int(match.group(1)) for match in matches if match]
-+
-+    nodes = issue_tracker.query_nodes(
-+        numbers,
-+        "... on PullRequest {mergedBy {login ... on User {name}}}",
-+        batch_size=batch_size,
-+    )
-+    counts = defaultdict(int)
-+    for number in numbers:
-+        node = nodes[number]
-+        merger = node.get("mergedBy") if node is not None else None
-+        if merger is None:
-+            warnings.warn(f"#{number} doesn't have a merger. It isn't "
-+                          "counted.")
-+            continue
-+        counts[merger.get("name") or merger["login"]] += 1
-+    return sorted(counts.items(), key=lambda item: (-item[1], item[0]))
-+
-+
-+def _find_ref(repo, name):
-+    for candidate in (name, f"upstream/{name}", f"origin/{name}"):
-+        if candidate in repo.refs:
-+            return repo.refs[candidate]
-+    return None
-+
-+
-+def _plan_issue_milestones(repo, open_major, branch):
-+    """Map GH issue numbers in commits since the last major tag to milestones."""
-+    main_ref = _find_ref(repo, branch)
-+    if main_ref is None:
-+        raise ValueError(f"Branch `{branch}` not found in repository.")
-+
-+    major_tags = sorted(
-+        (Version.parse(t.name.removeprefix("apache-arrow-")), t.name)
-+        for t in repo.tags
-+        if re.fullmatch(r"apache-arrow-\d+\.0\.0", t.name)
-+    )
-+    previous_tag = next(
-+        (tag for v, tag in reversed(major_tags)
-+         if not open_major or v < open_major[0][0]),
-+        None,
-+    )
-+    if previous_tag is None:
-+        raise ValueError("No released major version tag found in repository.")
-+
-+    branched = []
-+    next_milestone = None
-+    for version, milestone in open_major:
-+        maint_ref = _find_ref(repo, f"maint-{version}")
-+        if maint_ref is not None:
-+            branched.append((mile
-```
-
-**File**: `dev/archery/archery/release/tests/test_release.py` (modified, +202/-1)
-```diff
-@@ -15,11 +15,15 @@
- # specific language governing permissions and limitations
- # under the License.
- 
-+from types import SimpleNamespace
-+
-+from github import GithubException
- import pytest
- 
- from archery.release.core import (
-     Release, MajorRelease, MinorRelease, PatchRelease,
--    IssueTracker, Version, Issue, CommitTitle, Commit
-+    IssueTracker, Version, Issue, CommitTitle, Commit,
-+    count_committers, update_milestones,
- )
- 
- 
-@@ -355,3 +359,200 @@ def test_maintenance_patch_selection(fake_issue_tracker):
-         '9123dadfd123bca7af4eaa9455f5b0d1ca8b929d',
-     ]
-     assert shas_to_pick == expected
-+
-+
-+def _make_issue_tracker(nodes, milestones=(), not_found=()):
-+    queries = []
-+    edited = []
-+
-+    def graphql_query(query, variables):
-+        queries.append((query, variables))
-+        data, errors = {}, []
-+        for number, node in nodes.items():
-+            alias = f"n{number}"
-+            if f"{alias}:" in query:
-+                data[alias] = node
-+                if number in not_found:
-+                    errors.append({
-+                        "type": "NOT_FOUND",
-+                        "path": ["repository", alias],
-+                        "message": f"Not found: {number}",
-+                    })
-+        payload = {"data": {"repository": data}}
-+        if errors:
-+            payload["errors"] = errors
-+            raise GithubException(404, payload, {})
-+        return {}, payload
-+
-+    def get_issue(number):
-+        return SimpleNamespace(
-+            edit=lambda **kw: edited.append((number, kw["milestone"].title))
-+        )
-+
-+    tracker = object.__new__(IssueTracker)
-+    tracker.github_repo = SimpleNamespace(
-+        full_name="apache/arrow",
-+        get_milestones=lambda state="open": [
-+            m for m in milestones if state == "all" or m.state == state
-+        ],
-+        get_issue=get_issue,
-+        requester=SimpleNamespace(graphql_query=graphql_query),
-+    )
-+    return tracker, queries, edited
-+
-+
-+def test_count_committers():
-+    commits = [SimpleNamespace(summary=s) for s in [
-+        "GH-1: [C++] Title (#11)",
-+        "GH-2: [Python] Title (#12)",
-+        "GH-2: [Python] Reland (#12)",
-+        "MINOR: [Release] Update versions for 2.0.0",
-+        "GH-3: [R] Title (#13)",
-+        "GH-4: [Docs] Title (#14)",
-+        "GH-5: [CI] Mention (#10) in the middle",
-+        "GH-6: [Ruby] Title (#15)",
-+        "GH-7: [Go] Title (#16)",
-+        "GH-8: [C++] Issue number (#17)",
-+    ]]
-+    nodes = {
-+        11: {"mergedBy": {"login": "zoe", "name": "Zoe Z"}},
-+        12: {"mergedBy": {"login": "bob", "name": "Bob B"}},
-+        13: {"mergedBy": {"login": "zoe", "name": "Zoe Z"}},
-+        # a user without a name: the login is used
-+        14: {"mergedBy": {"login": "alice", "name": None}},
-+        # no merger: not counted
-+        15: {"mergedBy": None},
-+        # not a user, for example a bot: the login is used
-+        16: {"mergedBy": {"login": "carol"}},
-+        # an issue rather than a pull request: not counted
-+        17: {},
-+    }
-+    tracker, queries, _ = _make_issue_tracker(nodes)
-+
-+    with pytest.warns(UserWarning) as record:
-+        committers = count_committers(commits, tracker, batch_size=4)
-+
-+    assert [str(w.message) for w in record] == [
-+        "#15 doesn't have a merger. It isn't counted.",
-+        "#17 doesn't have a merger. It isn't counted.",
-+    ]
-+    assert committers == [
-+        ("Bob B", 2),
-+        ("Zoe Z", 2),
-+        ("alice", 1),
-+        ("carol", 1),
-+    ]
-+    sel = "... on PullRequest {mergedBy {login ... on User {name}}}"
-+    assert queries == [
-+        (
-+            'query($owner: String!, $name: String!) '
-+            '{repository(owner: $owner, name: $name) {' +
-+            " ".join(f"n{n}: issueOrPullRequest(number: {n}) {{{sel}}}"
-+                     for n in batch) +
-+            '}}',
-+            {"owner": "apache", "name": "arrow"},
-+        )
-+        for batch in ([11, 12, 13, 14], [15, 16, 17])
-+    ]
-+
-+
-+def _make_fake_repo(commits_by_range, refs=("main",),
-+                    tags=("apache-arrow-26.0.0", "apache-arrow-26.0.1")):
-+    return SimpleNamespace(
-+        tags=[SimpleNamespace(name=t) for t in tags],
-+        refs={name: SimpleNamespace(name=name) for name in refs},
-+        iter_commits=lambda r: iter(
-+            SimpleNamespace(summary=s) for s in commits_by_range[r]
-+        ),
-+    )
-+
-+
-+def _ms(title, number, state="open"):
-+    return SimpleNamespace(
-+        title=title, number=number, state=state, due_on=None
-+    )
-+
-+
-+def _issue(state="CLOSED", reason="COMPLETED", milestone=None):
-+    return {"state": state, "stateReason": reason, "milestone": milestone}
-+
-+
-+def test_update_milestones_with_maintenance_branch():
-+    repo = _make_fake_repo(
-+        refs=("main", "origin/maint-27.0.0"),
-+        commits_by_range={
-+            "apache-arrow-26.0.0..origin/maint-27.0.0": [
-+                "GH-110: [CI] Direct maint commit (#11)",
-
+ }  // namespace gandiva
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55765** (2026-11-25): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
-- **PR #55744** (2026-11-24): GH-12681: [C++] Work around FP rounding issues in quantile tests (@pitrou)
-- **PR #55740** (2026-11-24): MINOR: [Dev] Allow andishgar to have more than 3 PRs open (@pitrou)
-- **PR #55739** (2026-11-24): GH-55737: [CI] Use newer CMake for macOS wheels that meets minimum requirements (@raulcd)
-- **PR #55736** (2026-11-25): GH-52357: [CI] Disable automatic GitHub Copilot reviews (@jonkeane)
-- **PR #55725** (closed): GH-33745: [C++][Docs] Document field name support for struct_field kernel (@sameer727)
+- **PR #55823** (closed): GH-49836: [R] Reject unrepresentable Date values before converting to Arrow (@mrbuho-O)
+- **PR #55822** (closed): GH-55769: [C++][Python] Preserve leading NaNs in cumulative min and max (@karthiksenv)
+- **PR #55821** (closed): GH-38789: [Python][Docs] Correct ChunkedArray.to_numpy docstring (@sameer727)
+- **PR #55820** (closed): GH-41936: [Python] Combine chunked arrays in RecordBatch.from_pandas (@sameer727)
+- **PR #55814** (2026-11-27): GH-55813: [Python][Annotations] Add scipy-stubs ignore to the dependabot updates (@AlenkaF)
+- **PR #55810** (closed): GH-55676: [Python][CI] Run type annotation checks independently (@ibrahimmaq14)
 
 ---
 
@@ -1991,36 +1594,35 @@ Committers currently need a GitHub personal access token and `dev/merge_arrow_pr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55475: [Dev] Use merge button instead of merge script
+## X. GH-55613: [C++][Gandiva] Fix wrong results for negative integer constants
 
 **RULE**:
-When implementing operations in `.asf.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cpp/src/gandiva/llvm_types.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `83b4c539`: GH-55475: [Dev] Use merge button instead of merge script. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5800ec2`: GH-55613: [C++][Gandiva] Fix wrong results for negative integer constants. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.asf.yaml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/gandiva/llvm_types.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  enabled_merge_buttons:
-    merge: false
-    rebase: false
-    squash: true
-    squash_commit_message: PR_TITLE_AND_DESC
-
+#include <type_traits>
+    // Preserve signedness so negative narrow values are canonical APInts and
+    // negative values widened to i128 are sign-extended.
+    return llvm::ConstantInt::get(context_,
+                                  llvm::APInt(N, val, std::is_signed<ctype>::value));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    return llvm::ConstantInt::get(context_, llvm::APInt(N, val));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83b4c539` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5800ec2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

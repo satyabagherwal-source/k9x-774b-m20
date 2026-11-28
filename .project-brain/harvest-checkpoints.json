@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T12:09:29.900Z",
+  "last_updated": "2026-11-28T12:35:57.125Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "85fd40064fcd7382490e039601169fa6f5914a28298d305dbe64f220550a2061",
-      "verified_at": "2026-11-28T09:33:45.038Z",
+      "content_hash": "e082739e7aa4ff6876a254ab4204989fa4d5a1ce179ce142261e2f2f7d5e735f",
+      "verified_at": "2026-11-28T12:35:57.124Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-28T09:33:45.038Z"
+      "last_updated": "2026-11-28T12:35:57.124Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "7cfd284d2d79928942c16363d58e390954ed2b66bc3a9c2d60cb768182d3f4cf",
-      "verified_at": "2026-11-27T11:03:06.722Z",
+      "content_hash": "17bd37fc782b0b95aa77f2b308d4c85c4a4b400e13ba28e3d910016e0cf6c838",
+      "verified_at": "2026-11-28T12:35:42.921Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T11:03:06.722Z"
+      "last_updated": "2026-11-28T12:35:42.921Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",
@@ -15276,14 +15276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mswjs-msw",
-      "content_hash": "a3e1abc79d03cf5382cd961f832c7422083cdaceb687df0ea85eee8a04ded881",
-      "verified_at": "2026-11-21T01:34:54.877Z",
+      "content_hash": "9d13aee3899d966511eb360304996cc3f8f8926fce9468ada745da469329afdb",
+      "verified_at": "2026-11-28T12:35:45.654Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T01:34:54.877Z"
+      "last_updated": "2026-11-28T12:35:45.654Z"
     },
     "signerlabs/Klee": {
       "repository": "signerlabs/Klee",

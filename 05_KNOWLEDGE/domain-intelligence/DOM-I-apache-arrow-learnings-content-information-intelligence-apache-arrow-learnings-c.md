@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T10:31:03.179Z",
+  "timestamp": "2026-11-28T12:36:00.996Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-arrow-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-arrow-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T10:31:03.179Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T12:36:00.996Z`  
 > **Learning ID**: `LEARN-EVO-apache-arrow-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache-arrow-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `dd456e00`  
+> **Source Version**: `5ef973da`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T10:30:52.578Z  
+> **Timestamp**: 2026-11-28T12:35:41.649Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T10:30:52.570Z  
+> **Harvest Timestamp**: 2026-11-28T12:35:41.501Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17350 stars
+- **Stars / Engagement**: 17365 stars
 
 ---
 
@@ -1420,11 +1420,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55765** (2026-11-25): **MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates**
-  *Symptoms*: Bumps the apache-infrastructure-actions-stash group with 2 updates: [apache/infrastructure-actions/stash/restore](https://github.com/apache/infrastructure-actions) and [apache/infrastructure-actions/stash/save](https://github.com/apache/infrastructure-actions).  Updates `apache/infrastructure-actions/stash/restore` from 1.0.4 to 1.0.5 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/apache/infrastructure-actions/commit/05004b32a492c4c39567cd8aea55ed9c27388d19"><code>05004b3</code></a> fork-ci: read up to 100 annotations per failed job (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1538">#1538</a>)</li> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/compare/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5...05004b32a492c4c39567cd8aea55ed9c27388d19">compare view</a></li> </ul> </details> <br />  Updates `apache/infrastructure-actions/stash/save` from 1.0.4 to 1.0.5 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/apache/infrastructure-actions/commit/05004b32a492c4c39567cd8aea55ed9c27388d19"><code>05004b3</code></a> fork-ci: read up to 100 annotations per failed job (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1538">#1538</a>)</li> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/compare/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5...05004b32a492c4c39567cd8aea55ed9c27388d19">compare view</a></li> </ul> </details> <br />   D
+- **Issue #55823** (2026-11-27): **GH-49836: [R] Reject unrepresentable Date values before converting to Arrow**
+  *Symptoms*: ### Rationale for this change  An R `Date` can contain infinity or NaN. On Windows with Arrow 26.0.1.1, converting any of those values to a table, or writing and reading it through Feather or Parquet, produced a date 2,147,483,648 days before the epoch. A date comparison can then return the wrong answer.  ### What changes are included in this PR?  Check that the day or millisecond count fits the signed storage type before casting it. R's `NA` still produces an Arrow null. NaN, either infinity and finite dates outside the storage range raise a conversion error. This preserves the R binding's distinction between `NA` and NaN.  ### Are these changes tested?  Yes. The regression covers both Arrow date types, ordinary dates on either side of the epoch, missing dates, NaN, both infinities and storage limits. I built the patched R package on Windows with R 4.6.2. The Array test file passed 1,189 expectations with 10 skips. I also verified the table, Feather V2 and Parquet examples before and after the change.  ### Are there any user-facing changes?  **This PR contains a Critical Fix.** Previously, converting an unrepresentable R date could write a finite date into the output. Conversion now reports the value and target type.  ### Was AI used for this PR?  OpenAI Codex wrote the code, regression tests and PR description. Codex also reviewed the change and ran the tests.  **PR code and description written by**  - [ ] Human - [x] AI  **Reviewed before submission by**  - [ ] Human - [x]
 
-- **Issue #55745** (2026-11-23): **[FlightRPC][C++][CI] ODBC macOS jobs failure caused by bundled Boost 1.92.0 Locale with CMake 4.5.0**
-  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  Seeing ODBC macOS failures relating to boost since Nov 21st. The issue is due to bundled boost locale 1.92.0 incompatibility with CMake 4.5.0. Boost upstream has fixed this issue in https://github.com/boostorg/boost/issues/1162, expected in a later Boost release.   AC: Resolve CI failures  Example failure: https://github.com/apache/arrow/actions/runs/45088349844/job/137412030347 ```   -- Boost: Performing Test Iconv_IS_BUILT_IN   -- Boost: Performing Test Iconv_IS_BUILT_IN - Failed   -- Boost: Found Iconv: /Applications/Xcode_26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libiconv.tbd   CMake Error at /Users/runner/work/arrow/arrow/build/cpp/_deps/boost-src/libs/locale/CMakeLists.txt:236 (source_group):     source_group     "/Users/runner/work/arrow/arrow/build/cpp/_deps/boost-src/libs/locale/include/boost/locale"     is not a prefix of file     "/Users/runner/work/arrow/arrow/build/cpp/_deps/boost-src/libs/locale/include/boost/locale.hpp"         -- Configuring incomplete, errors occurred!   Error: Process completed with exit code 1. ```  ### Component(s)  C++, FlightRPC
+- **Issue #55822** (2026-11-27): **GH-55769: [C++][Python] Preserve leading NaNs in cumulative min and max**
+  *Symptoms*: ### Rationale for this change  With the default start, `cumulative_max([NaN])` returns negative infinity and `cumulative_min([NaN])` returns positive infinity. The corresponding aggregates return NaN.  ### What changes are included in this PR?  Use quiet NaN as the floating-point identity for min and max. The existing operators select the numeric operand when only one operand is NaN, so the first number establishes the running extremum. Update the function docs and point `cumulative_mean` at its own docstring so it does not inherit the maximum's NaN behavior in its documentation.  ### Are these changes tested?  Reproduced the bug with the PyArrow 25.0.1 and 26.0.1 wheels on macOS 15.8.2 arm64 with Python 3.12.10. On the patched source build, all 1,157 C++ vector tests passed. The reported Python examples passed for float32 and float64, as did checks for chunk boundaries, null handling, and explicit starts. [Validation run](https://github.com/karthiksenv/arrow/actions/runs/46077170127)  ### Are there any user-facing changes?  With the default start, a leading run of NaNs now produces NaNs. For example, `cumulative_max([NaN, 1, NaN, 2])` returns `[NaN, 1, 1, 2]`. An explicit numeric start participates from the first element.  **This PR contains a "Critical Fix".** The previous default could introduce an infinity into a result even when the input contained only NaNs.  ### Was AI used for this PR?  AI wrote and reviewed the patch, tests, and description.  Closes #55769. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1441,125 +1441,143 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88e51545` (2026-11-25)
-**Commit Message**: GH-51481: [Python] Fix dlpack related deprecation warnings (#54690)
+### Incident Patch 1: `c5800ec2` (2026-11-27)
+**Commit Message**: GH-55613: [C++][Gandiva] Fix wrong results for negative integer constants (#55607)
 
 ### Rationale for this change
-Deprecation warnings on our CI.
+
+`LLVMTypes::int_constant` builds `llvm::APInt(N, val)` without the signed flag. For a negative value narrower than 64 bits, the `APInt` has bits set above its width, and an `i128` value is not sign-extended. The effect depends on the LLVM version:
+
+- LLVM 21, optimization on: Gandiva returns wrong results. For example `if (k == 0) 10 else -5` returns `-5` for every row.
+- LLVM 23: assertion `Value is not an N-bit unsigned value` in the `APInt` constructor.
+- LLVM 18: the constructor always clears the unused bits, so 16, 32 and 64 bit constants are correct. An `i128` constant is wrong on every version.
+
+The same fix exists in the Dremio fork (dremio/arrow 3950ea6e41).
 
 ### What changes are included in this PR?
-Added filterwarning marks and updated two tests.
+
+The fix is a one-line change in `llvm_types.h`: pass `std::is_signed<ctype>::value` as the signed flag of `APInt` in `LLVMTypes::int_constant`.
+
+The PR has two commits: the tests first, then the fix.
 
 ### Are these changes tested?
-Yes.
 
-### Are there any user-facing changes?
-No.
+Yes. Two new tests:
 
-### Was AI used for this PR?
+- `TestLLVMTypes.SignedIntegerConstants` checks the 8, 16, 32, 64 and 128 bit constants. Before the fix it fails
 
-**PR code and description written by:**
-
-- [X] Human
-- [ ] AI
-
-**Reviewed before submission by:**
-
-- [X] Human
-- [ ] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #51481
-
-Lead-authored-by: AlenkaF <[REDACTED_EMAIL]>
-Co-authored-by: Alenka Frim <[REDACTED_EMAIL]>
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
-Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
-
-**File**: `python/pyarrow/tests/test_dlpack.py` (modified, +20/-5)
+**File**: `cpp/src/gandiva/llvm_types.h` (modified, +5/-1)
 ```diff
-@@ -268,6 +268,8 @@ def immutable_tensor():
+@@ -18,6 +18,7 @@
+ #pragma once
  
- @check_bytes_allocated
- @pytest.mark.parametrize('max_version', [None, (0, 8)])
-+# Filter deprecation warning, already asserted in test_dlpack_legacy_capsule
-+@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
- def test_dlpack_legacy_capsule_immutable_tensor(max_version):
-     tensor = immutable_tensor()
-     with pytest.raises(NotImplementedError,
-@@ -306,6 +308,7 @@ def test_dlpack_versioned_capsule(obj, max_version, copy):
- @requires_numpy_version("2.1.0")
- @check_bytes_allocated
- @pytest.mark.parametrize('obj', dlpack_objects())
-+@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
- def test_dlpack_versioned_roundtrip(obj):
-     expected = np.from_dlpack(DLPackForwarder(obj, max_version=None))
-     for copy in [None, False, True]:
-@@ -331,30 +334,42 @@ def test_dlpack_copy_is_writeable():
-     assert arr.to_pylist() == [1, 2, 3]
+ #include <map>
++#include <type_traits>
+ #include <vector>
  
+ #include "arrow/util/logging.h"
+@@ -73,7 +74,10 @@ class GANDIVA_EXPORT LLVMTypes {
  
-+def from_dlpack_numpy_compat(obj):
-+    if Version(np.__version__) < Version("2.1.0"):
-+        max_version_numpy = None
-+    else:
-+        max_version_numpy = (1, 0)
-+    return np.from_dlpack(DLPackForwarder(obj, max_version=max_version_numpy))
+   template <typename ctype, size_t N = (sizeof(ctype) * CHAR_BIT)>
+   llvm::Constant* int_constant(ctype val) {
+-    return llvm::ConstantInt::get(context_, llvm::APInt(N, val));
++    // Preserve signedness so negative narrow values are canonical APInts and
++    // negative values widened to i128 are sign-extended.
++    return llvm::ConstantInt::get(context_,
++                                  llvm::APInt(N, val, std::is_signed<ctype>::value));
+   }
+ 
+   llvm::Constant* i1_constant(bool val) { return int_constant<bool, 1>(val); }
+```
+
+**File**: `cpp/src/gandiva/llvm_types_test.cc` (modified, +17/-0)
+```diff
+@@ -58,4 +58,21 @@ TEST_F(TestLLVMTypes, TestNotFound) {
+   EXPECT_EQ(types_->DataVecType(arrow::null()), nullptr);
+ }
+ 
++TEST_F(TestLLVMTypes, SignedIntegerConstants) {
++  auto value = [](llvm::Constant* constant) -> const llvm::APInt& {
++    return llvm::cast<llvm::ConstantInt>(constant)->getValue();
++  };
++  EXPECT_EQ(255U, value(types_->i8_constant(-1)).getZExtValue());
++  EXPECT_EQ(32768U, value(types_->i16_constant(-32768)).getZExtValue());
++  EXPECT_EQ(static_cast<uint32_t>(-447906508),
++            value(types_->i32_constant(-447906508)).getZExtValue());
++  EXPECT_EQ(int64_t{-447906508}, value(types_->i32_constant(-447906508)).getSExtValue());
++  EXPECT_TRUE(value(types_->i64_constant(-1)).isAllOnes());
++  EXPECT_TRUE(value(types_->i128_constant(-1)).isAllOnes());
++  EXPECT_EQ(int64_t{-447906508}, value(types_->i128_constant(-447906508)).getSExtValue());
++  EXPECT_EQ(0U, value(types_->i128_constant(1)).getHiBits(64).getZExtValue());
++  EXPECT_TRUE(value(types_->true_constant()).isOne());
++  EXPECT_TRUE(value(types_->false_constant()).isZero());
++}
 +
+ }  // namespace gandiva
+```
+
+**File**: `cpp/src/gandiva/tests/if_expr_test.cc` (modified, +46/-0)
+```diff
+@@ -375,4 +375,50 @@ TEST_F(TestIfExpr, TestBigNested) {
+   EXPECT_ARROW_ARRAY_EQUALS(exp, outputs.at(0));
+ }
+ 
++namespace {
 +
-+@pytest.mark.filterwarnings(
-+    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
- def test_dlpack_not_supported():
-     arr = pa.array([1, None, 3])
-     with pytest.raises(TypeError, match="Can only use DLPack "
-                        "on arrays with no nulls."):
--        np.from_dlpack(arr)
-+        from_dlpack_numpy_compat(arr)
- 
-     arr = pa.array(
-         [[0, 1], [3, 4]],
-         type=pa.list_(pa.int32())
-     )
-     with pytest.raises(TypeError, match="DataType is not compatible with DLPack spec"):
--        np.from_dlpack(arr)
-+        from_dlpack_numpy_compat(arr)
- 
-     arr = pa.array([])
-     with pytest.raises(TypeError, match="DataType is not compatible with DLPack spec"):
--        np.from_dlpack(arr)
-+        from_dlpack_numpy_compat(arr)
- 
-     # DLPack doesn't support bit-packed boolean values
-     arr = pa.array([True, False, True])
-     with pytest.raises(TypeError, match="Bit-packed boolean data type "
-                        "not supported by DLPack."):
--        np.from_dlpack(arr)
-+        from_dlpack_numpy_compat(arr)
- 
- 
-+@pytest.mark.filterwarnings(
-+    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
- def test_dlpack_cuda_not_supported():
-     cuda = pytest.importorskip("pyarrow.cuda", exc_type=ImportError)
- 
-@@ -369,7 +384,7 @@ def test_dlpack_cuda_not_supported():
-     # CudaBuffers not yet supported
-     with pytest.raises(NotImplementedError, match="DLPack support is implemented "
-                        "only for buffers on CPU device."):
--        np.from_dlpack(carr)
-+        from_dlpack_numpy_compat(carr)
- 
-     with pytest.raises(NotImplementedError, match="DLPack support is implemented "
-                        "only for buffers on CPU device."):
++template <typename ArrowType, typename CType>
++void CheckNegativeConstantResults(arrow::MemoryPool* pool, bool optimize) {
++  auto type = arrow::TypeTraits<ArrowType>::type_singleton();
++  SCOPED_TRACE(type->ToString());
++  auto key_field = field("k", type);
++  auto schema = arrow::schema({key_field});
++  auto key = TreeExprBuilder::MakeField(key_field);
++  auto is_zero = TreeExprBuilder::MakeFunction(
++      "equal", {key, TreeExprBuilder::MakeLiteral(CType{0})}, boolean());
++  auto ten = TreeExprBuilder::MakeLiteral(CType{10});
++  auto minus_five = TreeExprBuilder::MakeLiteral(CType{-5});
++
++  // if (k == 0) 10 else -5, and if (k == 0) -5 else 10
++  auto negative_else = TreeExprBuilder::MakeIf(is_zero, ten, minus_five, type);
++  auto negative_then = TreeExprBuilder::MakeIf(is_zero, minus_five, ten, type);
++
++  std::shared_ptr<Projector> projector;
++  ASSERT_OK(Projector::Make(
++      schema,
++      {TreeExprBuilder::MakeExpression(negative_else, field("negative_else", type)),
++       TreeExprBuilder::MakeExpression(negative_then, field("negative_then", type))},
++      ConfigurationBuilder().build(optimize), &projector));
++
++  auto input = MakeArrowArray<ArrowType, CType>({0, 1, 2});
++  auto batch = arrow::RecordBatch::Make(schema, 3, {input});
++  arrow::ArrayVector outputs;
++  ASSERT_OK(projector->Evaluate(*batch, pool, &outputs));
++  EXPECT_ARROW_ARRAY_EQUALS((MakeArrowArray<ArrowType, CType>({10, -5, -5})),
++                            outputs.at(0));
++  EXPECT_ARROW_ARRAY_EQUALS((MakeArrowArray<ArrowType, CType>({-5, 10, 10})),
++                            outputs.at(1));
++}
++
++}  // namespace
++
++TEST_F(TestIfExpr, TestNegativeConstants) {
++  for (bool optimize : {false, true}) {
++    SCOPED_TRACE(optimize);
++    CheckNegativeConstantResults<arrow::Int32Type, int32_t>(pool_, optimize);
++    CheckNegativeConstantResults<arrow::Int16Type, int16_t>(pool_, optimize);
++    CheckNegativeConstantResults<arrow::Int64Type, int64_t>(pool_, optimize);
++  }
++}
++
+ }  // namespace gandiva
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55765** (2026-11-25): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
-- **PR #55744** (2026-11-24): GH-12681: [C++] Work around FP rounding issues in quantile tests (@pitrou)
-- **PR #55740** (2026-11-24): MINOR: [Dev] Allow andishgar to have more than 3 PRs open (@pitrou)
-- **PR #55739** (2026-11-24): GH-55737: [CI] Use newer CMake for macOS wheels that meets minimum requirements (@raulcd)
-- **PR #55736** (2026-11-25): GH-52357: [CI] Disable automatic GitHub Copilot reviews (@jonkeane)
-- **PR #55725** (closed): GH-33745: [C++][Docs] Document field name support for struct_field kernel (@sameer727)
+- **PR #55823** (closed): GH-49836: [R] Reject unrepresentable Date values before converting to Arrow (@mrbuho-O)
+- **PR #55822** (closed): GH-55769: [C++][Python] Preserve leading NaNs in cumulative min and max (@karthiksenv)
+- **PR #55821** (closed): GH-38789: [Python][Docs] Correct ChunkedArray.to_numpy docstring (@sameer727)
+- **PR #55820** (closed): GH-41936: [Python] Combine chunked arrays in RecordBatch.from_pandas (@sameer727)
+- **PR #55814** (2026-11-27): GH-55813: [Python][Annotations] Add scipy-stubs ignore to the dependabot updates (@AlenkaF)
+- **PR #55810** (closed): GH-55676: [Python][CI] Run type annotation checks independently (@ibrahimmaq14)
 
 ---
 
@@ -1579,54 +1597,35 @@ Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-51481: [Python] Fix dlpack related deprecation warnings
+## X. GH-55613: [C++][Gandiva] Fix wrong results for negative integer constants
 
 **RULE**:
-When implementing operations in `python/pyarrow/tests/test_dlpack.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cpp/src/gandiva/llvm_types.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `88e51545`: GH-51481: [Python] Fix dlpack related deprecation warnings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5800ec2`: GH-55613: [C++][Gandiva] Fix wrong results for negative integer constants. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyarrow/tests/test_dlpack.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/gandiva/llvm_types.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# Filter deprecation warning, already asserted in test_dlpack_legacy_capsule
-@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
-@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
-def from_dlpack_numpy_compat(obj):
-    if Version(np.__version__) < Version("2.1.0"):
-        max_version_numpy = None
-    else:
-        max_version_numpy = (1, 0)
-    return np.from_dlpack(DLPackForwarder(obj, max_version=max_version_numpy))
-
-
-@pytest.mark.filterwarnings(
-    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
-        from_dlpack_numpy_compat(arr)
-        from_dlpack_numpy_compat(arr)
-        from_dlpack_numpy_compat(arr)
-        from_dlpack_numpy_compat(arr)
-@pytest.mark.filterwarnings(
-    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
-        from_dlpack_numpy_compat(carr)
+#include <type_traits>
+    // Preserve signedness so negative narrow values are canonical APInts and
+    // negative values widened to i128 are sign-extended.
+    return llvm::ConstantInt::get(context_,
+                                  llvm::APInt(N, val, std::is_signed<ctype>::value));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        np.from_dlpack(arr)
-        np.from_dlpack(arr)
-        np.from_dlpack(arr)
-        np.from_dlpack(arr)
-        np.from_dlpack(carr)
+    return llvm::ConstantInt::get(context_, llvm::APInt(N, val));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `88e51545` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5800ec2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

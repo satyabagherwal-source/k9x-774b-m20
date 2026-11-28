@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "42b3267e",
+    "sourceVersion": "6e57e554",
     "license": "Apache-2.0",
-    "contentHash": "85fd40064fcd7382490e039601169fa6f5914a28298d305dbe64f220550a2061",
-    "lastHarvestedAt": "2026-11-28T09:33:45.030Z",
+    "contentHash": "e082739e7aa4ff6876a254ab4204989fa4d5a1ce179ce142261e2f2f7d5e735f",
+    "lastHarvestedAt": "2026-11-28T12:35:57.116Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "83b4c539",
+    "sourceVersion": "5ef973da",
     "license": "Apache-2.0",
-    "contentHash": "7cfd284d2d79928942c16363d58e390954ed2b66bc3a9c2d60cb768182d3f4cf",
-    "lastHarvestedAt": "2026-11-27T11:03:06.711Z",
+    "contentHash": "17bd37fc782b0b95aa77f2b308d4c85c4a4b400e13ba28e3d910016e0cf6c838",
+    "lastHarvestedAt": "2026-11-28T12:35:42.913Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {
@@ -10153,10 +10153,10 @@
     "repository": "mswjs/msw",
     "platform": "github",
     "sourceUrl": "https://github.com/mswjs/msw",
-    "sourceVersion": "b3df8504",
+    "sourceVersion": "0f87d469",
     "license": "MIT",
-    "contentHash": "a3e1abc79d03cf5382cd961f832c7422083cdaceb687df0ea85eee8a04ded881",
-    "lastHarvestedAt": "2026-11-21T01:34:54.867Z",
+    "contentHash": "9d13aee3899d966511eb360304996cc3f8f8926fce9468ada745da469329afdb",
+    "lastHarvestedAt": "2026-11-28T12:35:45.646Z",
     "learningId": "learn-github-mswjs-msw"
   },
   "signerlabs-klee": {

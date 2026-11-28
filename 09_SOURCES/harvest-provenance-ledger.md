@@ -14084,3 +14084,6 @@ Every entry in this ledger must capture:
 | `learn-github-mikelikesdesign-swiftui-experiments` | `https://github.com/mikelikesdesign/SwiftUI-experiments` | `6effebb7` | Multi-dimensional audit evidence | 2026-11-28T11:47:38.339Z |
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `4ba28fb5` | Multi-dimensional audit evidence | 2026-11-28T12:09:26.023Z |
 | `learn-github-devexpress-testcafe` | `https://github.com/DevExpress/testcafe` | `3e933c68` | Multi-dimensional audit evidence | 2026-11-28T12:09:29.890Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `5ef973da` | Multi-dimensional audit evidence | 2026-11-28T12:35:42.913Z |
+| `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `0f87d469` | Multi-dimensional audit evidence | 2026-11-28T12:35:45.646Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6e57e554` | Multi-dimensional audit evidence | 2026-11-28T12:35:57.116Z |

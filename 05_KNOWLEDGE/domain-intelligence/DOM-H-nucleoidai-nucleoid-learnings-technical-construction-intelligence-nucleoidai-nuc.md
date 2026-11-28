@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-28T04:48:54.884Z",
+  "timestamp": "2026-11-28T12:36:03.907Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-28T04:48:54.884Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T12:36:03.907Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), B (Product Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `c9eb7758`  
+> **Source Version**: `6e57e554`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-28T04:48:16.487Z  
+> **Timestamp**: 2026-11-28T12:35:56.249Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-28T04:48:16.482Z  
+> **Harvest Timestamp**: 2026-11-28T12:35:56.243Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1505,6 +1505,320 @@ export async function start(puzzle_id: string = "27a28665") {
 
 ```
 
+### Core Architecture Module: `arc/src/dataset/catalog.ts`
+```
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { document } from "./dataset";
+import { palette } from "../lib/terminal";
+import * as pdf from "../lib/pdf";
+
+const output_path: string = join(__dirname, "..", "..", "dataset.pdf");
+const document_title: string = "Nucleoid ARC instruction datasets";
+const introduction = [
+  "Every JSON instruction dataset in arc/src/dataset, in the filename order in which document() reads them for the solver's few-shot examples. Generated from the dataset files by bun run dataset:pdf in arc/; regenerate it whenever a dataset changes instead of editing it.",
+  "Each dataset shows its class_declaration, its declarations and its output_canvas, then one box per pair in dataset order: the pair's input_matrix and output_matrix, followed by one row per instance with its input_instance_matrix, its output_instance_matrix and its implementation. Sizes read rows×columns, and cells show colors 0 to 9 in the solver's terminal palette.",
+];
+
+const page_width: number = 612;
+const page_height: number = 792;
+const margin: number = 40;
+const content_top: number = 52;
+const content_bottom: number = page_height - 48;
+const content_width: number = page_width - 2 * margin;
+const content_right: number = margin + content_width;
+const header_baseline: number = 30;
+const header_rule: number = 36;
+const footer_baseline: number = page_height - 26;
+
+const padding: number = 8;
+const title_height: number = 16;
+const title_baseline: number = 11;
+const box_gap: number = 10;
+const panel_gap: number = 8;
+const label_height: number = 10;
+const code_leading: number = 9;
+const code_padding: number = 5;
+const code_chunk: number = 60;
+const code_hanging: number = 8;
+const wrap_columns_minimum: number = 16;
+const gutter_width: number = 16;
+const value_height: number = 20;
+const implementation_leading: number = 8.6;
+const implementation_hanging: number = 4;
+const instance_padding: number = 6;
+const beside_share: number = 0.45;
+const beside_columns: number = 56;
+const beside_height_maximum: number = 400;
+const grid_arrow: number = 22;
+const grid_cell_minimum: number = 2;
+const grid_cell_maximum: number = 14;
+const digit_cell_minimum: number = 9;
+const grid_height_maximum: number = 220;
+const thumbnail_arrow: number = 14;
+const thumbnail_extent: number = 44;
+const thumbnail_cell_minimum: number = 1.5;
+const thumbnail_cell_maximum: number = 8;
+const swatch_size: number = 14;
+const swatch_gap: number = 6;
+const contents_row: number = 13;
+const contents_columns = {
+  dataset: margin + 6,
+  canvas: margin + 210,
+  pairs: margin + 330,
+  instances: margin + 410,
+  page: content_right - 6,
+};
+
+const ink = [33, 37, 41];
+const muted = [108, 117, 125];
+const rule = [206, 212, 218];
+const title_fill = [241, 243, 245];
+const code_fill = [250, 251, 252];
+const stripe_fill = [248, 249, 250];
+const grid_line = [85, 85, 85];
+const black = [0, 0, 0];
+const white = [255, 255, 255];
+
+const title_style = { font: "sans_bold", size: 20, color: ink };
+const heading_style = { font: "sans_bold", size: 16, color: ink };
+const body_style = { font: "sans", size: 8.5, color: ink };
+const total_style = { font: "sans_bold", size: 8.5, color: ink };
+const summary_style = { font: "sans", size: 8.5, color: muted };
+const box_style = { font: "sans_bold", size: 7.5, color: ink };
+const note_style = { font: "sans", size: 7, color: muted };
+const label_style = { font: "sans", size: 6.5, color: muted };
+const code_style = { font: "mono", size: 7, color: ink };
+const gutter_style = { font: "mono", size: 7, color: muted };
+const value_style = { font: "mono_bold", size: 8, color: ink };
+const implementation_style = { font: "mono", size: 6.8, color: ink };
+const name_style = { font: "mono_bold", size: 6.8, color: ink };
+const column_style = { font: "sans_bold", size: 7.5, color: ink };
+const file_style = { font: "mono", size: 7.5, color: ink };
+const count_style = { font: "sans", size: 7.5, color: ink };
+
+function plural(count: number, noun: string): string {
+  return `${count} ${noun}${count === 1 ? "" : "s"}`;
+}
+
+function clamp(value: number, low: number, high: number): number {
+  return Math.min(high, Math.max(low, value));
+}
+
+function sum(values): number {
+  return values.reduce((total: number, value: number) => total + value, 0);
+}
+
+function puzzle_id(file: string): string {
+  return /^dataset\.([0-9a-f]{8})\.json$/.exec(file.toLowerCase())?.[1];
+}
+
+function instance_count(dataset): number {
+  return sum(dataset.dataset.map((pair) => pair.instances.length));
+}
+
+function parse(file: string) {
+  const source: string = readFileSync(join(__dirname, file), "utf8");
+  try {
+    return JSON.parse(source);
+  } catch (error) {
+    throw new Error(`${file}: ${error.message}`);
+  }
+}
+
+function load() {
+  const files: string[] = readdirSync(__dirname, { withFileTypes: true })
+    .filter((file) => {
+      const name: string = file.name.toLowerCase();
+      return (
+        file.isFile() && name.endsWith(".json") && !name.startsWith(".env")
+      );
+    })
+    .map((file) => file.name)
+    .sort();
+  const datasets = files.map(parse);
+  if (JSON.stringify(datasets) !== JSON.stringify(JSON.parse(document()))) {
+    throw new Error(
+      "The dataset files differ from the instruction datasets document() reads"
+    );
+  }
+  return files.map((file: string, index: number) => ({
+    file,
+    dataset: datasets[index],
+  }));
+}
+
+function wrap_text(text: string, style, width: number) {
+  const lines = [];
+  let line: string = "";
+  for (const word of text.split(" ")) {
+    const candidate: string = line === "" ? word : `${line} ${word}`;
+    if (line !== "" && pdf.text_width(candidate, style) > width) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = candidate;
+    }
+  }
+  return line === "" ? lines : [...lines, line];
+}
+
+function wrap_code(line: string, available: number, hanging: number) {
+  const columns: number = Math.max(available, wrap_columns_minimum);
+  const leading: number = line.length - line.trimStart().length;
+  const indent: string = " ".repeat(
+    Math.min(Math.floor(columns / 2), leading + hanging)
+  );
+  const lines = [];
+  let rest: string = line;
+  let prefix: string = "";
+  while (prefix.length + rest.length > columns) {
+    const room: number = columns - prefix.length;
+    const start: number = rest.length - rest.trimStart().length;
+    const space: number = rest.lastIndexOf(" ", room);
+    const cut: number = space > start ? space : room;
+    lines.push(prefix + rest.slice(0, cut).trimEnd());
+    rest = rest.slice(cut).trimStart();
+    prefix = indent;
+  }
+  return rest === "" && lines.length > 0 ? lines : [...lines, prefix + rest];
+}
+
+function code_columns(width: number, style): number {
+  return Math.floor(width / pdf.text_width(" ", style));
+}
+
+function grid_size(matrix) {
+  return {
+    rows: matrix.length,
+    columns: Math.max(0, ...matrix.map((row) => row.length)),
+  };
+}
+
+function color_of(value: number) {
+  return palette[value] ?? white;
+}
+
+function digit_style(value: number, cell: number) {
+  const [red, green, blue] = color_of(value);
+  return {
+    font: "sans_bold",
+    size: cell * 0.5,
+    color: red * 0.299 + green * 0.587 + blue * 0.114 > 160 ? black : white,
+  };
+}
+
+function draw_digit(page, x: number, y: number, cell: number, value: number) {
+  const text: string = String(value);
+  const style = digit_style(value, cell);
+  pdf.text(
+    page,
+    x + (cell - pdf.text_width(text, style)) / 2,
+    y + cell / 2 + style.size * 0.36,
+    text,
+    style
+  );
+}
+
+function draw_grid(
+  page,
+  x: number,
+  y: number,
+  matrix,
+  cell: number,
+  digits: boolean
+) {
+  const { rows, columns } = grid_size(matrix);
+  if (rows === 0 || columns === 0) {
+    pdf.text(page, x, y + label_style.size, "(empty)", label_style);
+    return;
+  }
+  const width: number = columns * cell;
+  const height: number = rows * cell;
+  pdf.rects(page, [[x, y, width, height]], color_of(0));
+  const cells = new Map();
+  matrix.forEach((row, r: number) =>
+    row.forEach((value: number, c: number) => {
+      if (value !== 0) {
+        const areas = cells.get(value) ?? [];
+        areas.push([x + c * cell, y + r * cell, cell, cell]);
+        cells.set(value, areas);
+      }
+    })
+  );
+  for (const [value, areas] of cells) {
+    pdf.rects(page, areas, color_of(value));
+  }
+  pdf.lines(
+    page,
+    [
+      ...Array.from({ length: rows + 1 }, (_, r: number) => [
+        x,
+        y + r * cell,
+        x + width,
+        y + r * cell,
+      ]),
+      ...Array.from({ length: columns + 1 }, (_, c: number) => [
+        x + c * cell,
+        y,
+        x + c * cell,
+        y + height,
+      ]),
+    ],
+    grid_line,
+    cell >= 8 ? 0.4 : 0.25
+  );
+  if (digits && cell >= digit_cell_minimum) {
+    for (const [value, areas] of cells) {
+      for (const [left, top] of areas) {
+        draw_digit(page, left, top, cell, value);
+      }
+    }
+  }
+}
+
+function draw_arrow(page, x: number, y: number, width: number) {
+  pdf.lines(page, [[x, y, x + width - 4, y]], muted, 0.8);
+  pdf.polygon(
+    page,
+    [
+      [x + width, y],
+      [x + width - 5, y - 2.8],
+      [x + width - 5, y + 2.8],
+    ],
+    muted
+  );
+}
+
+function draw_right(
+  page,
+  right: number,
+  baseline: number,
+  text: string,
+  style
+) {
+  pdf.text(page, right - pdf.text_width(text, style), baseline, text, style);
+}
+
+function code_rows(source: string, gutter?: string) {
+  const offset: number = gutter === undefined ? 0 : gutter_width;
+  const columns: number = code_columns(
+    content_width - 2 * padding - offset,
+    code_style
+  );
+  const lines = source
+    .split("\n")
+    .flatMap((line: string) =>
+      wrap_code(line.replace(/\t/g, "    "), columns, code_hanging)
+    );
+  return Array.from(
+    { length: Math.ceil(lines.length / code_chunk) },
+    (_, chunk: number) => {
+      const part = lines.slice(chunk * code_chunk, (chunk + 1) * code_chunk);
+      const height: number = part.length * code_leading + 2 * code_padding;
+      re
+```
+
 ### Core Architecture Module: `arc/src/dataset/dataset.ts`
 ```
 import { readdirSync, readFileSync } from "node:fs";
@@ -1546,12 +1860,6 @@ export function document(
 
 ```
 
-### Core Architecture Module: `arc/src/dataset/index.ts`
-```
-export { document } from "./dataset";
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1579,135 +1887,242 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9eb7758` (2026-11-28)
-**Commit Message**: Draft NUC 157 Padding Method Aliases
+### Incident Patch 1: `6e57e554` (2026-11-28)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
-Category: Language compatibility, drawn uniformly at random (index 4 of
-the five eligible categories in NUC 1's registry, p = 1/5, no redraw, at
-23:24 on 27-Nov) for a continuous /nuc-proposal cycle. Continuous
-Language compatibility, so token comparison is skipped entirely.
-
-Requested change: string receivers gain Python's and Ruby's
-rjust(length, fill) and C#'s PadLeft(length, fill) as exact aliases of
-the accepted padStart(length, fill), and Python's and Ruby's
-ljust(length, fill) and C#'s PadRight(length, fill) as exact aliases of
-the accepted padEnd(length, fill) of NUC 111, sharing its fill default,
-fill repetition and cutting, length conversion, size limit and
-liveness. Only calls on a string receiver that raised
-TypeError("<receiver>.<name> is not a function") change, along with the
-programs that caught that error; property reads, other receivers,
-user-defined methods and object members of these names keep their
-meanings. Python's center and zfill, the one-character fill check, static
-calls and the names padLeft, padRight, pad and PadStart, which
-tests/string_padding.rs keeps as no functions, are not added.
-
-Co-Authored-By: Claude Opus 
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `dataset/nucleoid.synth.160.jsonl` (added, +4/-0)
 ```diff
-@@ -200,6 +200,7 @@ Created: 31-Jul-2026
- | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Accepted |
+@@ -0,0 +1,4 @@
++{"id":"synth-160-0001","description":"C#'s Trim removes Unicode boundary whitespace and preserves internal spaces and tabs","code":"edge = String.fromCharCode(160, 8195)\ntext = edge + \"Zoë  😀\\t x\" + edge\nassert(text.Trim(), \"Zoë  😀\\t x\")\nassert(text.Trim(), text.trim())\ntext.Trim()","return":"\"Zoë  😀\\t x\""}
++{"id":"synth-160-0002","description":"A trimmed display follows later changes to its raw label","code":"raw = \"  Ada  \"\ndisplay = raw.Trim()\nassert(display, \"Ada\")\nraw = \"\\t Bo \\n\"\nassert(display, \"Bo\")\ndisplay","return":"\"Bo\""}
++{"id":"synth-160-0003","description":"A class rule trims each label while keeping its raw text intact","code":"class Label(raw):\n    this.raw = raw\n$Label.display = $Label.raw.Trim()\nlabel = Label(\"  first  \")\nassert(label.display, \"first\")\nlabel.raw = \"  second\\t\"\nassert([label.raw, label.display], [\"  second\\t\", \"second\"])\nlabel.display","return":"\"second\""}
++{"id":"synth-160-0004","description":"Trim evaluates supplied arguments but does not interpret them as character trimming","code":"log = []\ndef supplied():\n    log.push(\"argument\")\n    return \"x\"\nassert(\"  xoxo  \".Trim(supplied()), \"xoxo\")\nassert(log, [\"argument\"])\nlog","return":"[\"argument\"]"}
+```
+
+**File**: `docs/README.md` (modified, +26/-1)
+```diff
+@@ -3222,7 +3222,7 @@ assert(copied, -3)
+ | `Boolean` | `Boolean(value)` |
+ | `Number` | `Number.MAX_INTEGER` |
+ | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)), `copySign(value, sign)` ([NUC 142](nuc-0142.md)) |
+-| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), their padding aliases `rjust` and `PadLeft` of `padStart` and `ljust` and `PadRight` of `padEnd` ([NUC 157](nuc-0157.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), Rust's `starts_with(prefix)` and `ends_with(suffix)` ([NUC 132](nuc-0132.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)), and the reversals `reverse()` and `reversed()`, exactly `text[::-1]` ([NUC 131](nuc-0131.md)) |
++| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `trim` and `strip`, their C# alias `Trim()` ([NUC 160](nuc-0160.md)), `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), their padding aliases `rjust` and `PadLeft` of `padStart` and `ljust` and `PadRight` of `padEnd` ([NUC 157](nuc-0157.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), Rust's `starts_with(prefix)` and `ends_with(suffix)` ([NUC 132](nuc-0132.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)), and the reversals `reverse()` and `reversed()`, exactly `text[::-1]` ([NUC 131](nuc-0131.md)) |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+ | `List` | `push`, `pop`, `filter`, `map`, their Ruby aliases `select` and `collect` ([NUC 134](nuc-0134.md)), `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `reverse` (a new list in reverse order), `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), `zip(other)` and `zip(other, combine)` ([NUC 129](nuc-0129.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)), and the reversal aliases `reversed()` and `toReversed()` of `reverse()` ([NUC 131](nuc-0131.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
+ | `Class` | the global list of declared types; `Class.length` |
+@@ -3655,6 +3655,31 @@ tag.length
+   [root section](../nucleoid.spec.md#padding-method-aliases) and its four
+   appended entries define the results, liveness and rollback.
+ 
++### C# string trimming method alias
++
++- [NUC 160](nuc-0160.md) adds `text.Trim()` on strings, exactly
++  `text.trim()` and `text.strip()`: remove Unicode whitespace at both
++  boundaries while preserving internal spaces, tabs and remaining text.
++  Empty or all-whitespace text returns `""`; zero-width space and the
++  byte-order-mark character are not whitespace for this operation.
++- `clean = raw.Trim()` stays live when `raw` changes, and
++  `$Label.display = $Label.raw.Trim()` follows each label's raw text.
++  The receiver and then every argument evaluate once in written order.
++  Arguments are ignored after evaluation, not .NET character se
+```
+
+**File**: `docs/nuc-0000.md` (modified, +4/-2)
+```diff
+@@ -155,6 +155,7 @@ Created: 31-Jul-2026
+ | [146](nuc-0146.md) | Reactive Cubing | Accepted |
+ | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Rejected: 74 existing corpus-count and historical-locator tests fail |
+ | [159](nuc-0159.md) | Reactive Hypotenuse | Draft |
++| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Draft |
+ 
+ ### Reasoning enhancement
+ 
+@@ -203,7 +204,7 @@ Created: 31-Jul-2026
  | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Accepted |
  | [150](nuc-0150.md) | C# Truncation Method Alias | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
-+| [157](nuc-0157.md) | Padding Method Aliases | Draft |
+ | [157](nuc-0157.md) | Padding Method Aliases | Accepted |
+-| [160](nuc-0160.md) | C# String Trimming Method Alias | Draft |
++| [160](nuc-0160.md) | C# String Trimming Method Alias | Accepted |
  
  ### Documentation
  
-@@ -367,6 +368,7 @@ Created: 31-Jul-2026
- | [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Standards Track | Syntax enhancement | Rejected: eight historical source/field-seal tests fail |
- | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Standards Track | Utility enhancement | Rejected: 74 existing corpus-count and historical-locator tests fail |
- | [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Draft |
+@@ -374,7 +375,8 @@ Created: 31-Jul-2026
+ | [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
+ | [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Draft |
+-| [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Draft |
++| [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Accepted |
++| [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0157.md` (added, +89/-0)
+**File**: `docs/nuc-0160.md` (modified, +263/-17)
 ```diff
-@@ -0,0 +1,89 @@
-+# NUC 157 -- Padding Method Aliases
+@@ -4,7 +4,7 @@
+ NUC: 160
+ Title: C# String Trimming Method Alias
+ Author: Copilot <223556219+Copilot@users.noreply.github.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Language compatibility
+ Created: 28-Nov-2026
+@@ -29,6 +29,10 @@ Requires: 110
+   compatibility, index 4 of five eligible categories. Continuous evaluation
+   skips token comparison categorically, while preserving immutable accepted
+   replay, independent behavior/integrity and every hard criterion.
++- Accepted under automatic acceptance: the fresh independent policy
++  decision is Accepted and all three hard criteria pass. The unchanged
++  frozen implementation adds one String method name; token comparison is
++  legitimately skipped, not a passing token gate.
+ 
+ ## Motivation
+ 
+@@ -41,41 +45,283 @@ Requires: 110
+   historical locators/seals/partitions. Exercise this bounded alias with
+   focused new non-ARC Rust behavior tests and synchronized authoritative
+   prose/fine-tuning examples without rewriting the protected corpus.
+-- Keep this alias separate from accepted NUC 157's padding names and rejected
+-  NUC 150's numeric truncation name; neither pending nor rejected code is a
++- Keep this alias separate from accepted NUC 157's padding names. Neither
++  rejected NUC 158 nor any other pending or rejected implementation is a
+   dependency.
+ 
+ ## Rationale
+ 
+-To be completed by the fresh proposer against the pushed allocation, with
+-the preserved Language compatibility category and continuous mode.
++- **Confirmed selection.** The caller drew index 4, Language compatibility,
++  once from NUC 1's five eligible categories with equal probability and no
++  redraw. This worker retains continuous mode; runtime applicability is N/A
++  and `NUC_PROPOSAL_RUNTIME` remains unset. Token comparison is skipped
++  entirely as `language_compatibility`, not measured, scored or passed.
++- **One accepted arm.** Add `Trim` to the existing `"trim" | "strip"`
++  string-transform arm in `src/builtins/text.rs`. Reusing `str::trim` keeps
++  Unicode boundary handling, result text and ignored arguments identical;
++  a second algorithm or parser rewrite could drift or alter rendering.
++- **Prior art is the name.** C#'s `System.String.Trim` supplies the familiar
++  instance spelling. This proposal adopts neither .NET overloads nor its
++  complete string API or static typing. Supplied arguments keep Nucleoid's
++  accepted evaluation-and-ignoring rule, not character-set trimming.
++- **Accepted dependency.** NUC 110 is Accepted and documents the existing
++  string aliases, including `strip` for `trim`. NUC 157's accepted padding
++  aliases remain intact; rejected NUC 158 and pending implementations are
++  excluded.
++- **Preserved corpus.** The immutable allocation baseline is
++  `42b3267e4735baf462cca6f5aa8427f2dc8fe631`. Its 1,340 executable programs
++  and 6,654 canonical assertions need no rewrite. Focused new non-ARC
++  native tests exercise the new spelling, and four new self-contained
++  synthesized records leave every original record and ID untouched.
++- **Optional inputs.** No hint or usefulness rubric was supplied.
++  Usefulness is unscored (`missing_rubric`), not numeric zero. Strategy
++  learning is `not_configured` and this revision is unattributed; no policy,
++  selection receipt, trial, chosen strategy or reward is invented.
+ 
+ ## Specification
+ 
+-To be completed with exact accepted trimming semantics, argument evaluation,
+-standing reactivity and unchanged routing for every other receiver.
++- The authoritative candidate contract is
++  [C# string trimming method alias](../nucleoid.spec.md#c-string-trimming-method-alias).
++- On any evaluated String receiver, `TEXT.Trim(...)` uses exactly the
++  operation of `TEXT.trim(...)` and `TEXT.strip(...)`: Rust's `str::trim`
++  removes leading and trailing Unicode whitespace and returns the remaining
++  text. Internal whitespace and non-whitespace characters are unchanged;
++  there is no normalization. Empty or all-whitespace strings return `""`.
++  Zero-width space and the byte-order-mark character are not trimmed.
++- The receiver evaluates first, followed by every argument once, left to
++  right. The trimming arm ignores the evaluated argument values.
++  `"  xoxo  ".Trim("x")` is `"xoxo"`, not character trimming.
++  Receiver or argument errors propagate at their existing boundary.
++- Standing declarations and class-level rules retain their receiver and
++  argument dependencies, null-read holds, propagation and transactions.
++  `clean = raw.Trim(ignored)` reads `raw` then `ignored`;
++  `$Label.display = $Label.raw.Trim()` follows each label's raw text.
++- Rendering preserves the source spelling in generated statements,
++  explanation rules and graph keys. `Trim`, `trim` and `strip` remain
++  distinct written names with the same String transformation.
++- A new value replacing a standing receiver is dispatched by its actual
++  type and the written name. A number still raises `number.Trim`'s
++  `Ty
+```
+
+**File**: `docs/nuc-0161.md` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++# NUC 161 -- Reactive Base Ten Exponentiation
 +
 +```
-+NUC: 157
-+Title: Padding Method Aliases
-+Author: Can Mingir <canmingir@gmail.com>
++NUC: 161
++Title: Reactive Base Ten Exponentiation
++Author: Copilot <223556219+Copilot@users.noreply.github.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Language compatibility
-+Created: 27-Nov-2026
-+Requires: 111
++Category: Utility enhancement
++Created: 28-Nov-2026
++Requires: 56
 +```
 +
 +## Abstract
 +
-+- String receivers gain four familiar names for the padding methods of
-+  [NUC 111](nuc-0111.md), each an exact alias of its accepted spelling:
-+  - Python's and Ruby's `TEXT.rjust(length, fill)` and C#'s
-+    `TEXT.PadLeft(length, fill)` are `TEXT.padStart(length, fill)`, so
-+    `"7".rjust(3, "0")` is `"007"`;
-+  - Python's and Ruby's `TEXT.ljust(length, fill)` and C#'s
-+    `TEXT.PadRight(length, fill)` are `TEXT.padEnd(length, fill)`, so
-+    `"ab".ljust(4, ".")` is `"ab.."`.
-+- The aliases share the accepted implementation: `fill` defaults to one
-+  space, a longer fill repeats and is cut to the missing count as Ruby's
-+  does, `length` converts as the count of `repeat` does, an oversized result
-+  raises `TypeError("Padded string is too large")`, and a declaration or
-+  class-level rule that calls an alias stays live, as `padStart` and
-+  `padEnd` do.
-+- Only calls on a string receiver that raised
-+  `TypeError("<receiver>.<name> is not a function")` change, along with
-+  the programs that caught that error. Property reads without a call, other
-+  receivers, user-defined methods, object members of these names and every
-+  accepted result keep their meanings.
-+- Not added: Python's `center` and `zfill`, Python's and C#'s
-+  one-character fill check, static calls, the names `padLeft`, `padRight`,
-+  `pad` and `PadStart`, which `tests/string_padding.rs` keeps as no
-+  functions, and any keyword, token, syntax or public item.
-+- These are familiar names for Nucleoid's accepted operation, not a claim
-+  of full Python, Ruby or C# compatibility. The continuous Language
-+  compatibility policy skips token comparison entirely; every hard
-+  criterion and independent check still applies.
++- Add only unshadowed static `Math.exp10(value)` as the exact accepted
++  `Math.pow(10, value)` numeric operation with one fixed base and one live
++  exponent. Reuse the same `10.0_f64.powf(first)` kernel and existing
++  Math evaluation, conversion, supplied-Undefined, omission and extra-argument
++  boundaries.
++- Preserve every accepted Math method, constant, ordinary/member route,
++  diagnostic, dependency, class rule and transaction. Do not substitute
++  native decimal exponentiation, exponential/logarithmic algebra, integer
++  shortcuts, rescaling or another floating-point evaluation order.
++- The caller's single unbiased live-registry draw selected Utility
++  enhancement, index 2 among five eligible categories, probability 20%.
++  Continuous evaluation requires per-case lexer-token comparison alongside
++  immutable accepted-source replay and every hard criterion.
++- This allocation contains no prototype, executable-document rewrite,
++  generated export or outcome. The pushed allocation will pin the fresh
++  accepted baseline and isolated candidate before preparation.
 +
 +## Motivation
 +
-+- Programmers and language models align text with the padding names of
-+  their own language: Python writes `str(n).rjust(3, "0")` and
-+  `name.ljust(12)`, Ruby writes `id.to_s.rjust(3, "0")` and
-+  `name.ljust(12)`, and C# writes `code.PadLeft(3, '0')` and
-+  `name.PadRight(12)`. Nucleoid accepts the same operation as `padStart`
-+  and `padEnd`, but at the accepted revision each of these names raises:
-+  - `"ab".ljust(5)` raises `TypeError("ab.ljust is not a function")`, at
-+    line 1, column 1 of its statement;
-+  - `"ab".rjust(5, "0")`, `"ab".PadLeft(5)` and `"ab".PadRight(5, ".")`
-+    raise the same error with their own names.
-+- Ruby's fill rule is the accepted one: `"ab".padStart(7, "xy")` is
-+  `"xyxyxab"` and `"ab".padEnd(7, "xy")` is `"abxyxyx"`, which Ruby's
-+  `rjust` and `ljust` give for the same arguments. Python and C# take a
-+  single fill character, on which every spelling agrees.
-+- The names are free on strings: a property read such as `s.ljust` reads
-+  `null`, object members and instance methods of these names keep their
-+  values, and numbers, lists and `null` keep their accepted results. No
-+  accepted document case, dataset record or test calls them on a string.
-+- One shared implementation keeps each alias equal to its accepted spelling
-+  by construction, without a second padding routine or a parse-time
-+  rewrite that would change how a call renders.
++Decimal scales occur in logarithmic measurements and magnitude relationships.
++A fixed-base helper names `Math.pow(10, exponent)` without repeating its
++constant base, just as accepted NUC 56 names the existing base-two operation.
++The requested benefit is a smaller numeric utility expression, not a new
++power algorithm or a claim of improved numerical accuracy.
 +
-+## Rationale
-+
-+- Pending: the proposer completes this section.
++The candidate must preserve the accepted operation bit for bit, including
++finite and special values, live exponent and ignored-argument dependencies,
++once-only effect order and deferred/rollback behavior. Comparison sources
++must execute the actual accepted `Math.pow(10, value)` operation before any
++candidate runtime or executable-document changes.
 +
 +## Specification
 +
-+- Pending: the proposer completes this section.
++To be completed by the fresh proposal agent in its isolated candidate.
 +
-+## Errors
++## Rationale
 +
-+- Pending: the proposer completes this section.
++To be completed by the fresh proposal agent.
++
++## Backwards Compatibility
++
++Every accepted source and behavior remains protected. Only the previously
++unsupported unshadowed static call acquires the documented helper.
 +
 +## Reference Implementation
 +
-+- Pending: the proposer completes this section.
++No implementation is part of this allocation. Preparation, the one required
++Rust improvement pass and fresh independent evaluation remain pending.
++
++## Evaluation
++
++Mode: `continuous`; Category: `Utility enhancement`; runtime applicability
++N/A with runtime flags unset. Token comparison is required, not skipped.
++No hint, advisory rubric or strategy-learning configuration was supplied.
++Usefulness is unscored (`missing_rubric`) and learning is `not_configured`.
++No test, token, compatibility, development or acceptance result is claimed.
 +
 +## Copyright
 +
@@ -1717,429 +2132,637 @@ Co-Authored-By: Claude Opus
 +[LICENSE](../LICENSE) for the full text.
 ```
 
+**File**: `nucleoid.spec.md` (modified, +41/-0)
+```diff
+@@ -925,6 +925,47 @@ operator-chain diagnostics and source positions are preserved.
+   specify the executable behavior. `tests/padding_aliases.rs` executes the
+   rest.
+ 
++## C# string trimming method alias
++
++- [NUC 160](docs/nuc-0160.md) adds only `TEXT.Trim()` on String receivers,
++  exactly the accepted `TEXT.trim()` and `TEXT.strip()` operation described
++  by [Python string method aliases](#python-string-method-aliases).
++  The three names share Rust's `str::trim`: remove leading and trailing
++  Unicode whitespace, return text, and preserve internal whitespace and
++  every remaining character without normalization. Empty or all-whitespace
++  text returns `""`; zero-width space and the byte-order-mark character
++  are not trimmed.
++- The receiver evaluates first, then every supplied argument once, left to
++  right. Arguments are evaluated and ignored, not character sets or
++  patterns: `"  xoxo  ".Trim("x")` returns `"xoxo"`. Argument errors
++  propagate before trimming, and null reads in standing declarations keep
++  their accepted hold-and-resume behavior.
++- Declarations and class-level rules depend on the receiver and arguments
++  as written: `clean = raw.Trim(ignored)` follows `raw` and `ignored`,
++  and `$Label.display = $Label.raw.Trim()` follows each label's `raw`.
++  Failed updates roll back through the existing transaction. Explanations,
++  statements and graph keys retain `Trim`, never rewrite it to `trim`.
++- Only a call on a String receiver changes from the existing
++  `TypeError("<text>.Trim is not a function")` to trimming. Every other
++  receiver keeps its route: callable object properties and instance
++  methods named `Trim` still run their own code, and ordinary fields,
++  variables, functions and member reads keep their meanings.
++  A null or undefined receiver skips arguments and returns undefined;
++  `text.Trim` without a call remains undefined.
++- Static `String.Trim(text)` keeps
++  `TypeError("String.Trim is not a function")`, `(5).Trim()` keeps
++  `TypeError("number.Trim is not a function")`, and `text.Trim = 1`
++  keeps `TypeError("Cannot assign 'Trim' on string")`. Replacing a standing
++  call's receiver re-evaluates its written method name on the new value;
++  a failed change to a number rolls back with the existing `number.Trim`
++  diagnostic. The old `trim` and `strip` names and NUC 157's padding
++  aliases remain unchanged.
++- This is one familiar C# spelling, not .NET overloads or complete C#
++  compatibility. No `TrimStart`, `TrimEnd`, case-insensitive dispatch,
++  character/pattern trimming, grammar, keyword, public item or dependency
++  is added. `tests/csharp_string_trimming_alias.rs` exercises the alias
++  without changing any existing executable specification program.
++
+ ## Bare single-parameter named arrows
+ 
+ A named arrow definition or method may spell `def double(amount) => amount * 2`
+```
+
+**File**: `src/builtins/text.rs` (modified, +1/-1)
+```diff
+@@ -91,7 +91,7 @@ fn string_transform(
+         "upper" | "toUpperCase" | "uppercase" | "to_uppercase" | "uppercased" => {
+             Value::String(receiver.to_uppercase())
+         }
+-        "trim" | "strip" => Value::String(receiver.trim().to_string()),
++        "trim" | "strip" | "Trim" => Value::String(receiver.trim().to_string()),
+         "reverse" | "reversed" => Value::String(receiver.chars().rev().collect()),
+         "split" => {
+             let separator = first.to_string();
+```
+
+**File**: `tests/csharp_string_trimming_alias.rs` (added, +194/-0)
+```diff
+@@ -0,0 +1,194 @@
++mod common;
++
++use nucleoid::graph::NodeKey;
++use nucleoid::lang::ast::generator::generate_all;
++use nucleoid::lang::ast::parse;
++use nucleoid::{ErrorKind, Position, Runtime, Value};
++
++fn checked(runtime: &mut Runtime, source: &str, expected: &str) -> Value {
++    let count = common::assertions::protected_assertions(&parse(source).unwrap()).len();
++    let before = runtime.assertions_run();
++    let value = common::check_with_count(
++        runtime,
++        &common::Case {
++            title: "C# string trimming alias".to_string(),
++            source: source.to_string(),
++            expected: Some(expected.to_string()),
++        },
++        count,
++    )
++    .unwrap_or_else(|reason| panic!("{source}\n{reason}"));
++    let executed = runtime.assertions_run() - before;
++    assert_eq!(executed, count, "{source}");
++    println!("Trim coverage: canonical={count}, executed={executed}, expected_return={expected}");
++    value
++}
++
++#[test]
++fn trim_preserves_unicode_boundaries_internal_text_and_legacy_spellings() {
++    checked(
++        &mut Runtime::new(),
++        r#"
++outer = String.fromCharCode(160, 8195, 9)
++middle = "Zoë  😀\t x"
++text = outer + middle + outer
++assert([text.Trim(), text.trim(), text.strip()], [middle, middle, middle])
++assert(["".Trim(), " \t\r\n".Trim(), outer.Trim()], ["", "", ""])
++edge = String.fromCharCode(8203, 65279)
++assert((edge + " x " + edge).Trim(), edge + " x " + edge)
++record = {name: "  input  "}
++items = ["  item\t"]
++def supplied() => "  call\r"
++assert([record.name.Trim(), items[0].Trim(), supplied().Trim().PadLeft(6, ".")], ["input", "item", "..call"])
++text.Trim()
++"#,
++        r#""Zoë  😀\t x""#,
++    );
++}
++
++#[test]
++fn trim_tracks_standing_receiver_arguments_class_rules_and_written_names() {
++    let mut runtime = Runtime::new();
++    checked(
++        &mut runtime,
++        r#"
++text = "  first  "
++ignored = 1
++clean = text.Trim(ignored)
++legacy = text.trim(ignored)
++assert([clean, legacy], ["first", "first"])
++assert((why clean)[0].rule, "clean = text.Trim(ignored)")
++assert((why legacy)[0].rule, "legacy = text.trim(ignored)")
++class Label(text):
++    this.text = text
++$Label.clean = $Label.text.Trim()
++label = Label("  own  ")
++assert(label.clean, "own")
++[clean, legacy, label.clean]
++"#,
++        r#"["first","first","own"]"#,
++    );
++    let dependencies: Vec<String> = runtime
++        .graph
++        .retrieve(&NodeKey::variable("clean"))
++        .unwrap()
++        .dependencies
++        .iter()
++        .map(ToString::to_string)
++        .collect();
++    assert_eq!(dependencies, ["text", "ignored"]);
++    for (source, rendered) in [
++        ("clean = text.Trim(ignored)", "clean=text.Trim(ignored)"),
++        (
++            "$Label.clean = $Label.text.Trim()",
++            "$Label.clean=$Label.text.Trim()",
++        ),
++    ] {
++        assert_eq!(generate_all(&parse(source).unwrap()), rendered);
++    }
++    checked(
++        &mut runtime,
++        r#"
++ignored = null
++assert([clean, legacy], [null, null])
++ignored = "x"
++text = " \tsecond \n"
++label.text = "  changed  "
++assert([clean, legacy, label.clean], ["second", "second", "changed"])
++[clean, legacy, label.clean]
++"#,
++        r#"["second","second","changed"]"#,
++    );
++    let error = runtime.run("text = 5").unwrap_err();
++    assert_eq!(error.kind(), ErrorKind::Type);
++    assert_eq!(error.message(), "number.Trim is not a function");
++    assert_eq!(error.position(), Some(Position::new(1, 1)));
++    checked(
++        &mut runtime,
++        r#"
++assert([text, clean, legacy, label.clean], [" \tsecond \n", "second", "second", "changed"])
++clean
++"#,
++        r#""second""#,
++    );
++}
++
++#[test]
++fn trim_evaluates_receiver_and_ignored_arguments_once_and_rolls_back_errors() {
++    checked(
++        &mut Runtime::new(),
++        r#"
++log = []
++def receiver():
++    log.push("receiver")
++    return "  trimmed  "
++def argument(value):
++    log.push(value)
++    return value
++assert(receiver().Trim(argument("first"), argument("second")), "trimmed")
++assert(log, ["receiver", "first", "second"])
++log = []
++assert(receiver().strip(argument("first"), argument("second")), "trimmed")
++assert(log, ["receiver", "first", "second"])
++log = []
++failure = ""
++try:
++    receiver().Trim(argument("before"), missing, argument("after"))
++catch error:
++    failure = error
++assert(failure, ReferenceError("missing is not defined"))
++assert(log, [])
++assert("  xoxo  ".Trim("x"), "xoxo")
++log
++"#,
++        "[]",
++    );
++}
++
++#[test]
++fn trim_keeps_nullish_member_user_method_static_and_nonstring_routes() {
++    checked(
++        &mut Runtime::new(),
++        r#"
++assert("  alias  ".Trim(), "alias")
++log = []
++nullish = null
++empty = {}
++assert([nullish.Trim(log.push(1), missing), empty.absent.Trim(log.push(2), missing), empty.Trim(missing)], [undefined, undefined, undefined])
++assert(log, [])
++def Trim(value) => value + 1
++record = {Trim: value -> value + 2}
++class Marker:
++    def Trim(value) => value + 
+```
+
 ---
 
-### Incident Patch 2: `ad96b4e8` (2026-11-28)
-**Commit Message**: NUC 148 Integer Range Literals
+### Incident Patch 2: `ab88bf26` (2026-11-28)
+**Commit Message**: Remove redundant unknown ARC examples
 
-Accepted under the automatic acceptance rule in a continuous
-/nuc-proposal cycle: every hard criterion passes and every policy
-check passes, the required token comparison among them. A cycle found
-no stale Draft, drew Syntax enhancement uniformly from the five
-eligible categories and allocated the NUC in 3bf9d8e5. Its first
-preparation stopped after two phases, and the Draft went stale,
-unclaimed, until the claim a0377489. A later continuous cycle resumed
-it at the user's choice under the claim 7efa636c, the accepted
-revision: a fresh proposer ported the candidate onto it with fresh
-baselines, the caller's Rust improvement pass made range read its own
-left bound, and a fresh independent evaluator decided Accepted.
+Remove unchanged unknown-kind examples from four datasets, refresh the dataset PDF, and document earlier removals in four puzzle records.
 
-Two range operators build a list of consecutive integers:
-START..<END excludes END and START..=END includes it. They are read
-from the adjacent tokens Dot Dot Less and Dot Dot Assign on one
-non-associative level between the comparisons and + and -, in a final
-run of the whole accepted parse sequence that starts only after that
-sequence fails. Subscripts, slices, for sources and repeat counts keep
-their accepted errors. Bounds must be integ
-
-**File**: `README.md` (modified, +24/-0)
+**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +22/-2)
 ```diff
-@@ -3116,6 +3116,30 @@ item.total
-   labels are unchanged. See the
-   [root contract](nucleoid.spec.md#unknown-constructor-arguments-as-properties).
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/017c7c7b.json`](../data/training/017c7c7b.json) |
+-| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c`; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind, and one synthesized use case of kind `unknown` follows the last pair; since 27-Nov-2026 no rule changes `kind`, so every output keeps its input kind |
++| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c`; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind; since 27-Nov-2026 no rule changes `kind`, so every output keeps its input kind; one synthesized use case of kind `unknown` followed the last pair from 27-Nov-2026 until the user removed it on 28-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested for any version, so no proposal strategy was selected; versions 2 and 3 use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md) |
+ | Solver changes | None; one suggested change awaits review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 2 local runs on 4-Nov-2026: version 1 exit 2, version 2 exit 0; version 3 not run; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 27-Nov-2026 |
++| Updated | 28-Nov-2026 |
  
-+## Integer range literals
-+
-+**Ranges keep a shift's hours in step with its bounds**
-+
-+```nuc
-+open = 9
-+close = 13
-+hours = open..<close
-+assert(hours, [9, 10, 11, 12])
-+close = 15
-+assert([hours.length, hours.sum()], [6, 69])
-+hours
-+# return: [9,10,11,12,13,14]
-+```
-+
-+- [NUC 148](docs/nuc-0148.md) adds two range operators: `START..<END` lists
-+  the integers from `START` up to, but not including, `END`, and
-+  `START..=END` lists them through `END`. A range is an ordinary list, so
-+  `hours.length` and `hours.sum()` read it as they read a list literal.
-+- `hours = open..<close` is a standing declaration, so the hours follow the
-+  shift's bounds when it is extended. Both bounds must be integers, a range
-+  holds at most 100,000 items, and `close..<open` is empty. See the
-+  [root contract](nucleoid.spec.md#integer-range-literals).
-+
- ## Symmetric difference reasoning selections
+ ## Puzzle
  
- **Xor tells two alarms apart**
+@@ -464,6 +464,23 @@ and no other value changed. No NUC was requested, so no proposal strategy was
+ selected, and no solver run has measured this version, so its difference is
+ unknown, not zero.
+ 
++### Unknown use case removed
++
++On 28-Nov-2026, at the user's request, the synthesized use case left the
++dataset, because not every dataset needs one. Its pair, which
++[Kind guards and unknown use case](#kind-guards-and-unknown-use-case)
++describes, held one object of kind `unknown`, `oc86db86eda32`; no rule names
++`unknown`, so its output only repeated its input. The dataset again holds the
++puzzle's original pairs alone, its 3 training pairs and its test pair, with 4
++instances. Every remaining pair, instance, snapshot, and rule is unchanged byte
++for byte, and [`dataset.pdf`](../dataset.pdf) was regenerated. The
++[dataset grammar](../arc.ebnf) is unchanged, because the remaining
++implementations use every form that the use case's did. Only
++`dataset.27a28665.json` keeps one, because a rule of its own,
++`if $Object.kind is unknown:`, gives that use case's point color 0. No NUC was
++requested, so no proposal strategy was selected, and no solver run has measured
++this version, so its difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -570,3 +587,6 @@ zero.
+ - **The kind-guard version is unmeasured.** No solver run has measured the
+   27-Nov-2026 version with kind guards and its unknown use case, so its effect
+   on this puzzle's result is unknown.
++- **The version without the use case is unmeasured.** No solver run has
++  measured the 28-Nov-2026 version, so whether dropping the use case changes
++  this puzzle's result is unknown.
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +21/-17)
+**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +22/-2)
 ```diff
-@@ -867,20 +867,24 @@
- {"id":"spec-0867","description":"Nucleoid builds instances with unknown constructor arguments on every route","code":"class Tag(name):\n    this.name = name\nholder = {}\nfirst = new Tag(name=\"a\", color=\"RED\")\nholder.tag = Tag(name=\"b\", color=\"GREEN\")\nitems = [Tag(name=\"c\", color=\"BLUE\")]\nrecord = {tag: Tag(name=\"d\", color=\"GREY\")}\nassert([first.color, holder.tag.color, items[0].color, record.tag.color], [\"RED\", \"GREEN\", \"BLUE\", \"GREY\"])\nassert(Tag(name=\"e\", color=\"TEAL\").color, \"TEAL\")\nassert(Tag.length, 5)","return":null}
- {"id":"spec-0868","description":"Nucleoid keeps unknown constructor arguments as snapshots under class level rules","code":"class Rect\n$Rect.area = $Rect.width * $Rect.height\nwidth = 10\nrect = Rect(width=2, height=3)\nassert(rect.area, 6)\nassert(width, 10)\nheight = 5\nrect.width = 4\nassert(rect.area, 12)\nassert(rect.height, 3)\nrect.area","return":"12"}
- {"id":"spec-0869","description":"Nucleoid validates repeated unknown constructor arguments before any value","code":"class Shape(type):\n    this.type = type\nevents = {count: 0}\ntry:\n    Shape(color=(events.count=1), color=\"BLUE\")\ncatch error:\n    assert(error, TypeError(\"Duplicate constructor argument 'color' for Shape\"))\ntry:\n    Shape(color=(events.count=2), \"SQUARE\")\ncatch error:\n    assert(error, TypeError(\"Positional constructor argument after named arguments for Shape\"))\ntry:\n    Shape(type=\"SQUARE\", color=missing)\ncatch error:\n    assert(error, ReferenceError(\"missing is not defined\"))\nassert(events.count, 0)\nassert(Shape.length, 0)","return":null}
--{"id":"spec-0870","description":"Nucleoid tells two explanations apart with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\napart = total |> why |> xor(freight |> why)\ncontrast = why freight |> xor(why total)\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"price\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"price\"])\nshipping = price + 1\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"quantity\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"quantity\"])\nquantity = 5\nassert(apart.map(s -> s.holds), [60, 50, 10, 5, 11.2, 11])","return":null}
--{"id":"spec-0871","description":"Nucleoid finds what a change of only one of two inputs reaches with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\nmoved = price |> affects |> xor(rate |> affects)\nspread = affects quantity |> xor(affects price)\nassert(moved.map(s -> s.node), [\"subtotal\", \"freight\"])\nassert(spread.map(s -> s.node), [\"shipping\", \"freight\"])\nfreight = shipping + rate * price\nassert(moved.map(s -> s.node), [\"subtotal\"])\nassert(spread.map(s -> s.node), [\"shipping\"])\nprice = 20\nassert(moved.map(s -> s.holds), [60])\nmoved.length","return":"1"}
--{"id":"spec-0872","description":"Nucleoid separates what two changes of each instance reach with xor","code":"class Part(cost, weight):\n    this.cost = cost\n    this.weight = weight\n$Part.price = $Part.cost * 2\n$Part.freight = $Part.weight * 3\n$Part.charge = $Part.price + $Part.freight\n$Part.split = $Part.cost |> affects |> xor($Part.weight |> affects)\nbolt = Part(4, 1)\nnut = Part(2, 5)\nassert(bolt.split.map(s -> s.node), [\"bolt.price\", \"bolt.freight\"])\nassert(nut.split.map(s -> s.node), [\"nut.price\", \"nut.freight\"])\n$Part.duty = $Part.weight * 0.1\nassert(nut.split.map(s -> s.node), [\"nut.price\", \"nut.freight\", \"nut.duty\"])\n$Part.price = $Part.cost * 2 + $Part.weight\nassert(bolt.split.map(s -> s.node), [\"bolt.freight\", \"bolt.duty\"])\nnut.weight = 10\nassert(nut.split.map(s -> s.holds), [30, 1])\nnut.split.length","return":"2"}
--{"id":"spec-0873","description":"Nucleoid restores symmetric differences after failed changes","code":"price = 10\nquantity = 3\nsubtotal = price * quantity\nshipping = quantity * 2\napart = why subtotal |> xor(why shipping)\nfailure = \"\"\ntry:\n    apart = why subtotal |> xor(1)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(apart.map(s -> s.node), [\"subtotal\", \"price\", \"shipping\"])\ntry:\n    shipping = price / 2\n    assert(apart.map(s -> s.node), [\"subtotal\", \"quantity\", \"shipping\"])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(apart.map(s -> s.node), [\"subtotal\", \"price\", \"shipping\"])\nquantity = 6\nassert(apart.map(s -> s.holds), [60, 10, 12])","return":null}
--{"id":"spec-0874","description":"Nucleoid tests negated membership with Kotlin's !in","code":"xs = [1, 2, 3]\n
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/0ca9ddb6.json`](../data/training/0ca9ddb6.json) |
+-| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind, and one synthesized use case of kind `unknown` follows the last pair; since 27-Nov-2026 no rule changes `kind`, so every output keeps its input kind |
++| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind; since 27-Nov-2026 no rule changes `kind`, so every output keeps its input kind; one synthesized use case of kind `unknown` followed the last pair from 27-Nov-2026 until the user removed it on 28-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), both Accepted; the conditions also use the accepted `is` of [NUC 86](../../docs/nuc-0086.md), which this puzzle did not request |
+ | Solver changes | None specific to this puzzle; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 27-Nov-2026 |
++| Updated | 28-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -567,6 +567,23 @@ and no other value changed. No NUC was requested, so no proposal strategy was
+ selected, and no solver run has measured this version, so its difference is
+ unknown, not zero.
+ 
++### Unknown use case removed
++
++On 28-Nov-2026, at the user's request, the synthesized use case left the
++dataset, because not every dataset needs one. Its pair, which
++[Kind guards and unknown use case](#kind-guards-and-unknown-use-case)
++describes, held one object of kind `unknown`, `o52f7ad44890b`; no rule names
++`unknown`, so its output only repeated its input. The dataset again holds the
++puzzle's original pairs alone, its 3 training pairs and its test pair, with 15
++instances. Every remaining pair, instance, snapshot, and rule is unchanged byte
++for byte, and [`dataset.pdf`](../dataset.pdf) was regenerated. The
++[dataset grammar](../arc.ebnf) is unchanged, because the remaining
++implementations use every form that the use case's did. Only
++`dataset.27a28665.json` keeps one, because a rule of its own,
++`if $Object.kind is unknown:`, gives that use case's point color 0. No NUC was
++requested, so no proposal strategy was selected, and no solver run has measured
++this version, so its difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Run | Commit | Exit status | Difference | Seconds |
+@@ -633,3 +650,6 @@ zero.
+ - **The kind-guard version is unmeasured.** No solver run has measured the
+   27-Nov-2026 version with kind guards and its unknown use case, so its effect
+   on this puzzle's result is unknown.
++- **The version without the use case is unmeasured.** No solver run has
++  measured the 28-Nov-2026 version, so whether dropping the use case changes
++  this puzzle's result is unknown.
 ```
 
-**File**: `dataset/nucleoid.synth.148.jsonl` (added, +12/-0)
+**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +22/-2)
 ```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-148-0001","description":"A half-open range of hours follows the closing hour of a shop","code":"open = 9\nclose = 13\nhours = open..<close\nassert(hours, [9, 10, 11, 12])\nclose = 15\nhours","return":"[9,10,11,12,13,14]"}
-+{"id":"synth-148-0002","description":"A closed range lists every floor from the basement to the top floor","code":"lowest = -1\nhighest = 3\nfloors = lowest..=highest\nassert(floors, [-1, 0, 1, 2, 3])\nhighest = 5\n[floors.length, floors.at(-1)]","return":"[7,5]"}
-+{"id":"synth-148-0003","description":"A membership test against a closed range accepts whole star ratings only","code":"stars = 4\nvalid = stars in 1..=5\nassert(valid, true)\nstars = 4.5\nassert(valid, false)\nstars = 6\nvalid","return":"false"}
-+{"id":"synth-148-0004","description":"Mapping a range of positions lists the coordinates of a grid that grows","code":"width = 2\nheight = 2\ncells = (0..<width * height).map(i -> [i % width, Math.floor(i / width)])\nassert(cells, [[0, 0], [1, 0], [0, 1], [1, 1]])\nwidth = 3\ncells.at(-1)","return":"[2,1]"}
-+{"id":"synth-148-0005","description":"A class-level range rule gives every shift its hours and follows each shift's end","code":"class Shift(start, end):\n    this.start = start\n    this.end = end\nmorning = Shift(8, 12)\n$Shift.hours = $Shift.start..<$Shift.end\nevening = Shift(18, 20)\nassert(evening.hours, [18, 19])\nmorning.end = 10\nmorning.hours","return":"[8,9]"}
-+{"id":"synth-148-0006","description":"A range empties when its bounds cross and fills again when they part","code":"first = 5\nlast = 3\nspan = first..=last\nassert(span, [])\nlast = 7\nspan.length","return":"3"}
-+{"id":"synth-148-0007","description":"A comprehension reads a range as its source","code":"top = 4\nsquares = [i * i for i in 1..=top]\nassert(squares, [1, 4, 9, 16])\ntop = 5\nsquares.sum()","return":"55"}
-+{"id":"synth-148-0008","description":"A fractional bound raises a TypeError and leaves the previous list in place","code":"count = 3\nitems = 0..<count\nfailure = \"\"\ntry:\n    count = 2.5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Range bounds must be integers\"))\n[count, items]","return":"[3,[0,1,2]]"}
-+{"id":"synth-148-0009","description":"A range of more than 100,000 items raises before any item is built","code":"size = 10\nslots = 0..<size\nfailure = \"\"\ntry:\n    size = 200000\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Range is too large\"))\n[size, slots.length]","return":"[10,10]"}
-+{"id":"synth-148-0010","description":"A range of positions pairs every name with its index even when names repeat","code":"names = [\"ann\", \"bob\", \"ann\"]\npairs = (0..<names.length).map(i -> [i, names[i]])\nassert(pairs, [[0, \"ann\"], [1, \"bob\"], [2, \"ann\"]])\nnames = [\"cy\"]\npairs","return":"[[0,\"cy\"]]"}
-+{"id":"synth-148-0011","description":"An undefined bound makes the range null until the bound is set","code":"settings = {}\nlevels = 1..=settings.top\nassert(levels, null)\nsettings.top = 3\nlevels","return":"[1,2,3]"}
-+{"id":"synth-148-0012","description":"An explanation quotes a range as it is written","code":"first = 1\nlast = 3\nspan = first..<last\nassert(span, [1, 2])\n(why span).map(step -> step.rule)","return":"[\"span = first..<last\",\"first = 1\",\"last = 3\"]"}
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/0d3d703e.json`](../data/training/0d3d703e.json) |
+-| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c`; partner test respelled with `is not` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind, and one synthesized use case of kind `unknown` follows the last pair |
++| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c`; partner test respelled with `is not` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind; one synthesized use case of kind `unknown` followed the last pair from 27-Nov-2026 until the user removed it on 28-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the list `includes` that [NUC 61](../../docs/nuc-0061.md) specifies, and the accepted `is not` of [NUC 86](../../docs/nuc-0086.md) |
+ | Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026, exit 0; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 27-Nov-2026 |
++| Updated | 28-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -405,6 +405,23 @@ first, as in
+ Every snapshot replays unchanged, because the runtime orders a state's keys by
+ name and every implementation names its arguments.
+ 
++### Unknown use case removed
++
++On 28-Nov-2026, at the user's request, the synthesized use case left the
++dataset, because not every dataset needs one. Its pair, which
++[Kind guards and unknown use case](#kind-guards-and-unknown-use-case)
++describes, held one object of kind `unknown`, `o35566b551391`; no rule names
++`unknown`, so its output only repeated its input. The dataset again holds the
++puzzle's original pairs alone, its 4 training pairs and its test pair, with 15
++instances. Every remaining pair, instance, snapshot, and rule is unchanged byte
++for byte, and [`dataset.pdf`](../dataset.pdf) was regenerated. The
++[dataset grammar](../arc.ebnf) is unchanged, because the remaining
++implementations use every form that the use case's did. Only
++`dataset.27a28665.json` keeps one, because a rule of its own,
++`if $Object.kind is unknown:`, gives that use case's point color 0. No NUC was
++requested, so no proposal strategy was selected, and no solver run has measured
++this version, so its difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -494,3 +511,6 @@ zero.
+ - **The kind-guard version is unmeasured.** No solver run has measured the
+   27-Nov-2026 version with kind guards and its unknown use case, so its effect
+   on this puzzle's result is unknown.
++- **The version without the use case is unmeasured.** No solver run has
++  measured the 28-Nov-2026 version, so whether dropping the use case changes
++  this puzzle's result is unknown.
 ```
 
-**File**: `docs/README.md` (modified, +76/-0)
+**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +22/-2)
 ```diff
-@@ -931,6 +931,9 @@ settings.size
-   written `item !in collection` as in Kotlin, for lists, classes and
-   strings, at the level of `<`; see [membership tests](#membership-tests)
-   and [negated membership with `!in`](#negated-membership-with-in).
-+- Ranges: `start..<end` and `start..=end` list consecutive integers, on one
-+  level between the comparisons and `+` and `-`; see
-+  [integer range literals](#integer-range-literals).
- - Logical: `and` / `&&`, `or` / `||`, `not` / `!`.
- - Conditional: `condition ? consequent : alternate` or
-   `consequent if condition else alternate`; see below.
-@@ -1233,6 +1236,66 @@ unlisted
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/25d8a9c8.json`](../data/training/25d8a9c8.json) |
+-| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record; condition respelled with `is` on 6-Nov-2026; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind, and one synthesized use case of kind `unknown` follows the last pair |
++| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record; condition respelled with `is` on 6-Nov-2026; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind; one synthesized use case of kind `unknown` followed the last pair from 27-Nov-2026 until the user removed it on 28-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the list query `distinct` of [NUC 71](../../docs/nuc-0071.md), the conditional expression of [NUC 59](../../docs/nuc-0059.md), and the accepted `is` of [NUC 86](../../docs/nuc-0086.md) |
+ | Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 27-Nov-2026 |
++| Updated | 28-Nov-2026 |
  
- Full detail: [NUC 135](nuc-0135.md).
+ ## Puzzle
  
-+### Integer range literals
-+
-+```
-+first = 2
-+last = 5
-+exclusive = first..<last
-+inclusive = first..=last
-+assert([exclusive, inclusive], [[2, 3, 4], [2, 3, 4, 5]])
-+last = 3
-+assert([exclusive, inclusive], [[2], [2, 3]])
-+first = 4
-+assert([exclusive, inclusive], [[], []])
-+first = -1
-+assert([exclusive.sum(), inclusive.length], [2, 5])
-+inclusive
-+```
-+
-+- This is the complete `Nucleoid writes consecutive integers as range literals`
-+  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `[-1, 0, 1, 2, 3]`.
-+- `start..<end` lists the integers from `start` up to, but not including,
-+  `end`, and `start..=end` lists them through `end`, in ascending order. A
-+  range with no integer between its bounds is empty, as `4..<3` and `4..=3`
-+  are. A declaration that holds a range stays live: it follows its bounds,
-+  and `$Shift.hours = $Shift.start..<$Shift.end` holds for every shift.
-+- A range is an ordinary list, so list methods, membership tests,
-+  equality, indexing and JSON treat it as they treat a list literal:
-+  `(1..=4).sum()` is `10` and `2 in 0..<3` is `true`. Like every list, a
-+  range is truthy even when it is empty, so `while a..<b:` runs until the
-+  loop limit raises `Loop did not terminate`.
-+- Both bounds must be integers within `Number.MAX_SAFE_INTEGER` of zero,
-+  or the range raises `TypeError("Range bounds must be integers")`, and a
-+  range of more than 100,000 items raises `TypeError("Range is too large")`.
-+  An undefined bound, such as a missing property, makes the range
-+  undefined, which a declaration stores as `null`.
-+- The two dots and the `<` or `=` are written together, with nothing
-+  between them; spaces around the operator are free. Ranges bind more
-+  loosely than `+` and `-` and more tightly than comparisons and membership
-+  tests: `0..<n + 1` is `0..<(n + 1)` and `x in 1..=5` is `x in (1..=5)`.
-+  They do not chain, so `a..<b..<c` is a syntax error.
-+- Ranges are read only in a run of the parse passes that starts after every
-+  accepted pass, the section run and the
-+  [newline-separated list](#newline-separated-list-elements) run included,
-+  has failed, so every input the accepted grammar reads keeps its reading.
-+  That run separates list elements by line breaks too when it needs to, so
-+  a list written one element per line can hold ranges.
-+- A range is not read at the top level of a subscript's index, slice bound
-+  or step, of a `for` statement's source or of a `repeat` statement's
-+  count: `xs[0..<2]`, `for i in 0..<3:` and `repeat 0..<3:` keep their
-+  syntax errors. Write `xs[0:2]` for positions, and map a range,
-+  `(0..<3).map(i -> i * i)`, use a comprehension, `[i * i for i in 0..<3]`,
-+  or use `repeat 3:` to run over integers.
-+- Bare `..` and `...`, open ranges such as `..<n`, steps and descending
-+  ranges are not added. A range renders as `first..<last`. Grammar, errors
-+  and edge cases are in the authoritative
-+  [integer range literals](../nucleoid.spec.md#integer-range-literals)
-+  section.
-+
-+Full detail: [NUC 148](nuc-0148.md).
-+
- ### Indexing, slicing, and length
+@@ -422,6 +422,23 @@ first, as in
+ Every snapshot replays unchanged, because the runtime orders a state's keys by
+ name and every implementation names its arguments.
  
- - Lists and instance lists index with brackets; the index may be a variable.
-@@ -1241,6 +1304,7 @@ Full detail: [NUC 135](nuc-0135.md).
- - A range on a class's instance list, such as `Task[-2:]` or `Task[:]`, returns its instances in population order with the same bound rules, and depends on the population ([NUC 61](nuc-0061.md)).
- - Both slice bounds are expressions whose references are checked when a class-level rule is declared.
- - A step after a second colon, `[start:stop:step]`, takes every step-th item, and a negative step walks backward, as in Python: `xs[::2]`, `xs[1::2]` and `s[::-1]` ([Stepped slices](#stepped-slices), [NUC 125](nuc-0125.md)).
-+- A range literal is not read at the top level of an index, a slice bound or a step, so `xs[0..<2]` stays a syntax error; `xs[(0..<2)]` indexes by a list, which converts to a number as any index does ([Integer range literals](#integer-range-literals), [NUC 148](nuc-0148.md)).
- - `.length` is a dependency on the collection.
++### Unknown use case removed
++
++On 28-Nov-2026, at the user's request, the synthesized use case left the
++dataset, because not every dataset needs one. Its pair, which
++[Kind guards and unknown use case](#kind-guards-and-unknown-use-case)
++describes, held one object of kind `unknown`, `o5cf3c6a27d12`; no rule names
++`unknown`, so its output only repeated its input. The dataset again holds the
++puzzle's original pairs alone, its 4 training pairs and its test pair, with 15
++instances. Every remaining pair, instance, snapshot, and rule is unchanged byte
++for byte, and [`dataset.pdf`](../dataset.pdf) was regenerated. The
++[dataset grammar](../arc.ebnf) is unchanged, because the remaining
++implementations use every form that the use case's did. Only
++`dataset.27a28665.json` keeps one, because a rule of its own,
++`if $Object.kind is unknown:`, gives that use case's point color 0. No NUC was
++requested, so no proposal strategy was selected, and no solver run has measured
++this version, so its difference is unknown, not zero.
++
+ ## Runs
  
- ```
-@@ -1973,6 +2037,11 @@ if $Device.profile:
-   literal objects in lists are skipped; order and duplicates are retained.
- - Loops may nest, producing the cross product.
- - Explicit sources keep arbitrary exp
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -510,3 +527,6 @@ zero.
+ - **The kind-guard version is unmeasured.** No solver run has measured the
+   27-Nov-2026 version with kind guards and its unknown use case, so its effect
+   on this puzzle's result is unknown.
++- **The version without the use case is unmeasured.** No solver run has
++  measured the 28-Nov-2026 version, so whether dropping the use case changes
++  this puzzle's result is unknown.
 ```
 
-**File**: `docs/examples.md` (modified, +31/-0)
+**File**: `arc/docs/ARC-NUC-25ff71a9.md` (modified, +22/-2)
 ```diff
-@@ -4607,6 +4607,37 @@ heavy
-   [root contract](../nucleoid.spec.md#unknown-constructor-arguments-as-properties)
-   define. A vehicle built without a `color` label has none.
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/25ff71a9.json`](../data/training/25ff71a9.json) |
+-| Instruction dataset | [`dataset.25ff71a9.json`](../src/dataset/dataset.25ff71a9.json): the puzzle's 4 original training pairs and its 2 test pairs, 6 figure instances, one per pair; committed with this record; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind, and one synthesized use case of kind `unknown` follows the last pair |
++| Instruction dataset | [`dataset.25ff71a9.json`](../src/dataset/dataset.25ff71a9.json): the puzzle's 4 original training pairs and its 2 test pairs, 6 figure instances, one per pair; committed with this record; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind; one synthesized use case of kind `unknown` followed the last pair from 27-Nov-2026 until the user removed it on 28-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the class-level `@first` anchor of [NUC 55](../../docs/nuc-0055.md), built on the state versions of [NUC 53](../../docs/nuc-0053.md) |
+ | Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 27-Nov-2026 |
++| Updated | 28-Nov-2026 |
  
-+## Integer range literals
-+
-+**Ranges keep every elevator's stops live**
-+
-+```nuc
-+class Elevator(name, lowest, highest):
-+    this.name = name
-+    this.lowest = lowest
-+    this.highest = highest
-+$Elevator.stops = $Elevator.lowest..=$Elevator.highest
-+low = Elevator("low", -1, 6)
-+high = Elevator("high", 5, 12)
-+call = 3
-+serving = Elevator.filter(e -> call in e.stops).map(e -> e.name)
-+assert(serving, ["low"])
-+call = 5
-+assert(serving, ["low", "high"])
-+low.highest = 4
-+assert([low.stops.length, serving], [6, ["high"]])
-+serving
-+# return: ["high"]
-+```
-+
-+- Each elevator stops at the floors from its lowest through its highest,
-+  `$Elevator.lowest..=$Elevator.highest`, a class-level rule that holds for
-+  every elevator and follows a change of either floor, basements included.
-+- The stops are an ordinary list, so `call in e.stops` tests them as it tests
-+  any list, and the elevators that serve a call follow the call, the
-+  elevators and their floors. See [NUC 148](nuc-0148.md) and the
-+  [root contract](../nucleoid.spec.md#integer-range-literals).
-+
- ## Symmetric difference reasoning selections
+ ## Puzzle
  
- **Xor lists what tells two diagnoses apart**
+@@ -352,6 +352,23 @@ first, as in
+ Every snapshot replays unchanged, because the runtime orders a state's keys by
+ name and every implementation names its arguments.
+ 
++### Unknown use case removed
++
++On 28-Nov-2026, at the user's request, the synthesized use case left the
++dataset, because not every dataset needs one. Its pair, which
++[Kind guards and unknown use case](#kind-guards-and-unknown-use-case)
++describes, held one object of kind `unknown`, `occ66431f8c5b`; no rule names
++`unknown`, so its output only repeated its input. The dataset again holds the
++puzzle's original pairs alone, its 4 training pairs and its 2 test pairs, with
++6 instances. Every remaining pair, instance, snapshot, and rule is unchanged
++byte for byte, and [`dataset.pdf`](../dataset.pdf) was regenerated. The
++[dataset grammar](../arc.ebnf) is unchanged, because the remaining
++implementations use every form that the use case's did. Only
++`dataset.27a28665.json` keeps one, because a rule of its own,
++`if $Object.kind is unknown:`, gives that use case's point color 0. No NUC was
++requested, so no proposal strategy was selected, and no solver run has measured
++this version, so its difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -427,3 +444,6 @@ zero.
+ - **The kind-guard version is unmeasured.** No solver run has measured the
+   27-Nov-2026 version with kind guards and its unknown use case, so its effect
+   on this puzzle's result is unknown.
++- **The version without the use case is unmeasured.** No solver run has
++  measured the 28-Nov-2026 version, so whether dropping the use case changes
++  this puzzle's result is unknown.
 ```
 
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
+**File**: `arc/docs/ARC-NUC-27a28665.md` (modified, +16/-4)
 ```diff
-@@ -70,7 +70,7 @@ Created: 31-Jul-2026
- | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
- | [125](nuc-0125.md) | Stepped Slices | Accepted |
- | [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Accepted |
--| [148](nuc-0148.md) | Integer Range Literals | Draft |
-+| [148](nuc-0148.md) | Integer Range Literals | Accepted |
- | [149](nuc-0149.md) | Newline-Separated List Elements | Accepted |
- | [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Rejected: eight historical source/field-seal tests fail |
+@@ -11,7 +11,7 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected for the dataset; version 6's rules use the `is` comparisons of [NUC 86](../../docs/nuc-0086.md), the item words of [NUC 95](../../docs/nuc-0095.md), and the conditional expression of [NUC 59](../../docs/nuc-0059.md); version 5's also used the nullish coalescing of [NUC 60](../../docs/nuc-0060.md) and the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), and version 4's the specification's class-level `throw`; version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md); the quote-free NUC for the `kind` default was not started, because no strategy policy was supplied |
+ | Solver changes | None applied; suggested, not applied: carry every class parameter, `kind` included, through the implementation step and show that step the rules that read it, and let synthesis reject an instance whose rules fail (see [Open items](#open-items)); two earlier suggestions also await review; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 4 local runs: 4-Nov-2026 for version 2, exit 0; 25-Nov-2026 for version 3, exit 1, difference 1; 26-Nov-2026 for version 4, exit 1, stopped by the kind error before scoring; 27-Nov-2026 UTC for version 5, exit 1, difference 1 |
+-| Updated | 27-Nov-2026 |
++| Updated | 28-Nov-2026 |
  
-@@ -358,7 +358,7 @@ Created: 31-Jul-2026
- | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [146](nuc-0146.md) | Reactive Cubing | Standards Track | Utility enhancement | Accepted |
- | [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Accepted |
--| [148](nuc-0148.md) | Integer Range Literals | Standards Track | Syntax enhancement | Draft |
-+| [148](nuc-0148.md) | Integer Range Literals | Standards Track | Syntax enhancement | Accepted |
- | [149](nuc-0149.md) | Newline-Separated List Elements | Standards Track | Syntax enhancement | Accepted |
- | [150](nuc-0150.md) | C# Truncation Method Alias | Standards Track | Language compatibility | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
- | [151](nuc-0151.md) | Truthy Value Assignment | Standards Track | Runtime features | Accepted |
+ ## Puzzle
+ 
+@@ -556,6 +556,16 @@ first, as in
+ Every snapshot replays unchanged, because the runtime orders a state's keys by
+ name and every implementation names its arguments.
+ 
++### Other use cases removed
++
++On 28-Nov-2026, at the user's request, every other dataset dropped the
++synthesized use case it had gained on 27-Nov-2026, because not every dataset
++needs one: no rule of theirs names `unknown`, so their use cases only repeated
++their inputs. This dataset keeps its own, the 11th pair, because its
++`if $Object.kind is unknown:` case gives the block of unknown shape color 0,
++so its point has no cell. This dataset is unchanged, and no solver run has
++measured it, so its difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -730,8 +740,10 @@ zero.
+   default, would give such a point color 0.
+ - **The use case is synthesized.** The 11th pair is a synthesized pair, which
+   the ARC instructions and the arc-dataset profile allow only in the genesis
+-  datasets; the user asked for it, and on 27-Nov-2026 every dataset gained one.
+-  Its output `[[0]]` is what the rules give, while the solver's `FIT` canvas
+-  would crop a composed output with no colored cell to an empty grid.
++  datasets; the user asked for it. Every dataset gained one on 27-Nov-2026,
++  and on 28-Nov-2026 every other dataset dropped its own, so no other puzzle
++  dataset has a synthesized pair. Its output `[[0]]` is what the rules give,
++  while the solver's `FIT` canvas would crop a composed output with no colored
++  cell to an empty grid.
+ - **Version 6 is unmeasured.** No solver run has measured the 27-Nov-2026
+   version, so its difference is unknown.
 ```
 
-**File**: `docs/nucleoid.ebnf` (modified, +52/-3)
+**File**: `arc/docs/ARC-NUC-28bf18c6.md` (modified, +22/-2)
 ```diff
-@@ -645,7 +645,7 @@ equalityOperator
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/28bf18c6.json`](../data/training/28bf18c6.json) |
+-| Instruction dataset | [`dataset.28bf18c6.json`](../src/dataset/dataset.28bf18c6.json): the puzzle's 3 original training pairs and its test pair, 4 instances; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind, and one synthesized use case of kind `unknown` follows the last pair; since 27-Nov-2026 no rule changes `kind`, so every output keeps its input kind |
++| Instruction dataset | [`dataset.28bf18c6.json`](../src/dataset/dataset.28bf18c6.json): the puzzle's 3 original training pairs and its test pair, 4 instances; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind; since 27-Nov-2026 no rule changes `kind`, so every output keeps its input kind; one synthesized use case of kind `unknown` followed the last pair from 27-Nov-2026 until the user removed it on 28-Nov-2026 |
+ | Output canvas | `FIT` |
+ | Nucleoid enhancements | None; the dataset uses accepted features only |
+ | Solver changes | `output_canvas`, applied by `Matrix.canvas`; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 27-Nov-2026 |
++| Updated | 28-Nov-2026 |
  
- /*
-  * Membership contract (NUC 97, NUC 135):
-- * - IN, and NOT directly followed by IN, after an additive operand build
-+ * - IN, and NOT directly followed by IN, after a range operand build
-  *   BinaryOp::In and BinaryOp::NotIn on the left-associative level of
-  *   LESS, LESS_EQUAL, GREATER and GREATER_EQUAL, sharing its MAX_CHAIN
-  *   operand limit. NOT before an operand stays a prefix, so
-@@ -668,7 +668,7 @@ equalityOperator
-  *   '}' but found '!'" for BANG IN, in an object value.
-  */
- relational
--    ::= additive (relationalOperator additive)*              /* Expr::Binary, left */
-+    ::= range (relationalOperator range)*                    /* Expr::Binary, left */
+ ## Puzzle
  
- relationalOperator
-     ::= LESS
-@@ -679,6 +679,34 @@ relationalOperator
-       | NOT IN                                              /* BinaryOp::NotIn */
-       | BANG IN                                             /* BinaryOp::NotIn */
+@@ -453,6 +453,23 @@ and no other value changed. No NUC was requested, so no proposal strategy was
+ selected, and no solver run has measured this version, so its difference is
+ unknown, not zero.
  
-+/*
-+ * Range contract (NUC 148):
-+ * - A rangeOperator is three adjacent tokens: each starts on the line of
-+ *   the token before it, in the column right after it, so no whitespace,
-+ *   comment or line break lies inside it. The lexer is unchanged.
-+ * - It applies only in the range run of the parse-pass contract. Elsewhere
-+ *   a postfix chain reads the first DOT as a member, so 'a..<b' keeps its
-+ *   accepted "Expected a property but found '.'". In the range run a
-+ *   postfix chain ends before an adjacent rangeOperator.
-+ * - The level does not chain: a rangeOperator directly after the right
-+ *   operand fails with "Unexpected '.'" at its first DOT.
-+ * - Not at the top level, outside any LPAREN, LBRACK, LBRACE, call or stage
-+ *   argument and statement, of a subscript's index, slice start, slice end
-+ *   or slice step, or of a forStmt's source: there the postfix chain reads
-+ *   DOT as a member and the accepted error stays. A repeatStmt whose count
-+ *   holds a rangeOperator at that top level fails with the same error at
-+ *   the operator's third token.
-+ * - Bare '..' and '...', a rangeOperator without its left operand, and the
-+ *   tokens of '..<=', '..==' and '..=>' are no ranges and keep their
-+ *   accepted errors.
-+ */
-+range
-+    ::= additive (rangeOperator additive)?                   /* Expr::Binary */
++### Unknown use case removed
 +
-+rangeOperator
-+    ::= DOT DOT LESS                                        /* BinaryOp::Range */
-+      | DOT DOT ASSIGN                                      /* BinaryOp::RangeInclusive */
++On 28-Nov-2026, at the user's request, the synthesized use case left the
++dataset, because not every dataset needs one. Its pair, which
++[Kind guards and unknown use case](#kind-guards-and-unknown-use-case)
++describes, held one object of kind `unknown`, `ocff6149c664f`; no rule names
++`unknown`, so its output only repeated its input. The dataset again holds the
++puzzle's original pairs alone, its 3 training pairs and its test pair, with 4
++instances. Every remaining pair, instance, snapshot, and rule is unchanged byte
++for byte, and [`dataset.pdf`](../dataset.pdf) was regenerated. The
++[dataset grammar](../arc.ebnf) is unchanged, because the remaining
++implementations use every form that the use case's did. Only
++`dataset.27a28665.json` keeps one, because a rule of its own,
++`if $Object.kind is unknown:`, gives that use case's point color 0. No NUC was
++requested, so no proposal strategy was selected, and no solver run has measured
++this version, so its difference is unknown, not zero.
 +
- additive
-     ::= term ((PLUS | MINUS) term)*                          /* Expr::Binary, left */
+ ## Runs
  
-@@ -1341,6 +1369,16 @@ REGEX_ESCAPE
-  * sequence also fails, replace the original error only when its position
-  * is further into the source. This adds one finite outer retry, not an
-  * unbounded sequence or a different nesting/chain limit.
-+ * Only when all of that fails, and the tokens hold an adjacent
-+ * rangeOperator or a template whose text holds '..<' or '..=', the whole
-+ * accepted sequence above, the section run and the listLineBreak run
-+ * included, runs once more from a fresh parser that keeps the source's
-+ * inter-token line breaks, starts again without listLineBreak and reads the
-+ * range of the range contract. Its listLineBreak run follows the same
-+ * condition as the accepted one. Every pass, probe, tentative statement and
-+ * interpolation of that run reads the range. When it fails too, its error
-+ * replaces the error above only when it lies further into the source, by
-+ * line and column.
-  *
-  * Limits:
-  * MAX_NESTING = 64, shared by statement/expression nesting:
-@@ -1463,7 +1501,8 @@ REGEX_ESCAPE
-  * Tokens/keywords: src\lang\ast\lexer\raw.rs and lexer\token.rs.
-  * Regex/comments/version indexes: src\lang\ast\lexer\scanner.rs.
-  * Layout: src\lang\ast\lexer\indentation.rs.
-- * Passes/limits: src\lang\ast\parser.rs.
-+ * Passes/limits: src\lang\ast\parser.rs and parser\source.rs, with the token
-+ * cursor in parser\cursor.rs.
-  * Programs/suites/statements: src\lang\ast\parser\statement.rs.
-  * Conditions/loops/exceptions: src\lang\ast\parser\control.rs.
-  * Header probes and colon statements: loop headers in parser\control.rs,
-@@ -1510,4 +1549,14 @@ REGEX_ESCAPE
-  * src\lang\ast\parser.rs, the argument and the pending left operand in
-  * parser\postfix.rs, the mode carried into interpolations in
-  * parser\template.rs and the function in src\lang\ast\function.rs.
-+ * Integer ranges: parser\range.rs, with the range run started after the
-+ * listLineBreak run in parser\source.rs, which saves the source's line breaks
-+ * for it and carries the mode through every restart, the level in
-+ * parser\precedence.rs, the postfix stop and the reserved subscript parts in
-+ * parser\postfix.rs, the reserved forStmt source in parser\control.rs, the
-+ * repeatStmt count check in parser\statement.rs, the top levels that
-+ * grouping, lists, objects, arguments and statements open in
-+ * parser\primary.rs, parser\postfix.rs, parser\expre
+ | Date | Run | Commit | Exit status | Difference | Seconds |
+@@ -502,3 +519,6 @@ zero.
+ - **The kind-guard version is unmeasured.** No solver run has measured the
+   27-Nov-2026 version with kind guards and its unknown use case, so its effect
+   on this puzzle's result is unknown.
++- **The version without the use case is unmeasured.** No solver run has
++  measured the 28-Nov-2026 version, so whether dropping the use case changes
++  this puzzle's result is unknown.
 ```
 
-**File**: `nucleoid.spec.md` (modified, +202/-1)
+**File**: `arc/docs/ARC-NUC-3c9b0459.md` (modified, +22/-2)
 ```diff
-@@ -6309,7 +6309,9 @@ t.promote(bob)
-   `>=`, whose chain holds at most 128 of these operators. They bind more
-   tightly than `==`, `!=`, `===`, `!==`, `is`, `is not`, `and`, `&&`, `or`,
-   `||`, `??`, `|>`, the conditional forms and assignment, and more loosely
--  than `+`, `-`, `*`, `/`, `%`, `**` and the prefix operators. So
-+  than the range operators `..<` and `..=` of
-+  [Integer range literals](#integer-range-literals), `+`, `-`, `*`, `/`,
-+  `%`, `**` and the prefix operators. So
-   `x + 1 in xs` is `(x + 1) in xs`, `x in xs == true` is
-   `(x in xs) == true`, `a < b in c` is `(a < b) in c`, `a is b in c` is
-   `a is (b in c)`, `x in why c` tests the selection `why c`, and
-@@ -7932,6 +7934,120 @@ t.promote(bob)
-   `Nucleoid rolls back failed updates through stepped slices` specify the
-   executable behavior. `tests/stepped_slices.rs` executes the rest.
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/3c9b0459.json`](../data/training/3c9b0459.json) |
+-| Instruction dataset | [`dataset.3c9b0459.json`](../src/dataset/dataset.3c9b0459.json): the puzzle's 4 original training pairs and its test pair, 5 mosaic instances, one per pair; committed with this record; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind, and one synthesized use case of kind `unknown` follows the last pair |
++| Instruction dataset | [`dataset.3c9b0459.json`](../src/dataset/dataset.3c9b0459.json): the puzzle's 4 original training pairs and its test pair, 5 mosaic instances, one per pair; committed with this record; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026; since 27-Nov-2026 every rule is guarded by kind; one synthesized use case of kind `unknown` followed the last pair from 27-Nov-2026 until the user removed it on 28-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the class-level `@first` anchor of [NUC 55](../../docs/nuc-0055.md), built on the state versions of [NUC 53](../../docs/nuc-0053.md) |
+ | Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 27-Nov-2026 |
++| Updated | 28-Nov-2026 |
  
-+## Integer range literals
+ ## Puzzle
+ 
+@@ -353,6 +353,23 @@ first, as in
+ Every snapshot replays unchanged, because the runtime orders a state's keys by
+ name and every implementation names its arguments.
+ 
++### Unknown use case removed
 +
-+- [NUC 148](docs/nuc-0148.md) adds two range operators that build a list of
-+  consecutive integers. `START..<END` holds the integers from `START` up to,
-+  but not including, `END`, and `START..=END` holds the integers from
-+  `START` through `END`. No keyword, token or error type is added; the
-+  messages `Range bounds must be integers` and `Range is too large` are new.
-+- **Spelling.** Each operator is three adjacent tokens: two dots and then
-+  `<` or `=`, each on the line of the token before it and in the column
-+  right after it, so no space, comment or line break stands inside the
-+  operator. Space around it is free: `a..<b`, `a ..< b` and `a..< b` are the
-+  same range, while `a. .<b`, `a.. <b`, `a..<=b`, `a..==b` and `a..=>b` keep
-+  their accepted readings and errors.
-+- **Precedence.** Both operators share one level between the comparisons
-+  and `+` and `-`, and both operands are additive expressions, so
-+  `0..<n + 1` is `0..<(n + 1)`, `-1..<2` is `(-1)..<2`, `a ** 2..=b` is
-+  `(a ** 2)..=b`, `x in 1..=5` is `x in (1..=5)`, `a < 0..<3` is
-+  `a < (0..<3)` and `0..<3 == xs` is `(0..<3) == xs`. The level does not
-+  chain: a second range operator directly after the right operand, as in
-+  `a..<b..<c`, raises a `SyntaxError`.
-+- **Bounds.** `START` is evaluated first and then `END`, each once. When
-+  either is undefined, such as a missing property, the range is undefined,
-+  which a declaration stores as `null`, as for arithmetic. Otherwise each
-+  bound must be a number whose value is an integer from
-+  `-9007199254740991` to `9007199254740991`, and `-0` counts as `0`. Any
-+  other bound raises `TypeError("Range bounds must be integers")`: `null`,
-+  strings, numeric strings included, booleans, lists, objects, instances,
-+  classes, functions, dates, regular expressions, NaN, `Infinity`,
-+  `-Infinity`, fractions and integers beyond that interval.
-+- **Items.** A range is a new list of the numbers `START`, `START + 1` and so
-+  on, in ascending order, up to `END - 1` for `..<` and through `END` for
-+  `..=`. It is empty when `START` is not below `END` for `..<`, or is above
-+  it for `..=`: `5..<5`, `5..<2` and `5..=4` are `[]`, and `5..=5` is `[5]`.
-+  A start of `-0` gives `0`. A range of more than 100,000 items raises
-+  `TypeError("Range is too large")` before any item is built, the limit of
-+  `while` loops and `repeat` counts: `1..=100000` holds 100,000 items and
-+  `0..=100000` raises.
-+- **A list like any other.** List methods and queries, membership tests,
-+  deep equality, indexing, slicing, `push`, printing and JSON treat a range
-+  exactly as they treat a list literal with the same items:
-+  `(0..<3) == [0, 1, 2]` and `2 in 0..<3` are `true`, and `(1..=4).sum()`
-+  is `10`. A range is truthy, as every list is, even when it is empty, so
-+  `if 0..<0:` runs its body and `while a..<b:` runs until it raises
-+  `TypeError("Loop did not terminate")`, as `while [0]:` does. Nothing else
-+  about lists changes.
-+- **Live.** A range is a binary expression. A declaration that holds one is
-+  a standing declaration that depends on what both bounds read and
-+  re-evaluates when they change, and `.value` freezes a bound. A class-level
-+  rule with `$Class` bounds, such as
-+  `$Shift.hours = $Shift.start..<$Shift.end`, holds for every instance,
-+  created before or after it, follows each instance's bounds, and checks the
-+  references in its bounds when it is declared. A bound error during a
-+  re-evaluation fails and rolls back the statement that triggered it, so the
-+  previous list stays, and `suppose` and transactions treat ranges as they
-+  treat every operator.
-+- **Where ranges are read.** An input first runs the whole accepted parse
-+  sequence, the section run of
-+  [Operator section arguments](#operator-section-arguments) and the
-+  line-break run of
-+  [Newline-separated list elements](#newline-separated-list-elements)
-+  included. Only when all of it fails, and the tokens hold an adjacent `..<`
-+  or `..=` or a template whose text holds `..<` or `..=`, does the same
-+  sequence run once more, fro
++On 28-Nov-2026, at the user's request, the synthesized use case left the
++dataset, because not every dataset needs one. Its pair, which
++[Kind guards and unknown use case](#kind-guards-and-unknown-use-case)
++describes, held one object of kind `unknown`, `o551a87cab7fc`; no rule names
++`unknown`, so its output only repeated its input. The dataset again holds the
++puzzle's original pairs alone, its 4 training pairs and its test pair, with 5
++instances. Every remaining pair, instance, snapshot, and rule is unchanged byte
++for byte, and [`dataset.pdf`](../dataset.pdf) was regenerated. The
++[dataset grammar](../arc.ebnf) is unchanged, because the remaining
++implementations use every form that the use case's did. Only
++`dataset.27a28665.json` keeps one, because a rule of its own,
++`if $Object.kind is unknown:`, gives that use case's point color 0. No NUC was
++requested, so no proposal strategy was selected, and no solver run has measured
++this version, so its difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -436,3 +453,6 @@ zero.
+ - **The kind-guard version is unmeasured.** No solver run has measured the
+   27-Nov-2026 version with kind guards and its unknown use case, so its effect
+   on this puzzle's result is unknown.
++- **The version without the use case is unmeasured.** No solver run has
++  measured the 28-Nov-2026 version, so whether dropping the use case changes
++  this puzzle's result is unknown.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2168,22 +2791,24 @@ their accepted errors. Bounds must be integ
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 157 Padding Method Aliases
+## X. Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dataset/nucleoid.synth.160.jsonl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9eb7758`: Draft NUC 157 Padding Method Aliases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e57e554`: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `dataset/nucleoid.synth.160.jsonl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [157](nuc-0157.md) | Padding Method Aliases | Draft |
-| [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Draft |
+{"id":"synth-160-0001","description":"C#'s Trim removes Unicode boundary whitespace and preserves internal spaces and tabs","code":"edge = String.fromCharCode(160, 8195)\ntext = edge + \"Zoë  😀\\t x\" + edge\nassert(text.Trim(), \"Zoë  😀\\t x\")\nassert(text.Trim(), text.trim())\ntext.Trim()","return":"\"Zoë  😀\\t x\""}
+{"id":"synth-160-0002","description":"A trimmed display follows later changes to its raw label","code":"raw = \"  Ada  \"\ndisplay = raw.Trim()\nassert(display, \"Ada\")\nraw = \"\\t Bo \\n\"\nassert(display, \"Bo\")\ndisplay","return":"\"Bo\""}
+{"id":"synth-160-0003","description":"A class rule trims each label while keeping its raw text intact","code":"class Label(raw):\n    this.raw = raw\n$Label.display = $Label.raw.Trim()\nlabel = Label(\"  first  \")\nassert(label.display, \"first\")\nlabel.raw = \"  second\\t\"\nassert([label.raw, label.display], [\"  second\\t\", \"second\"])\nlabel.display","return":"\"second\""}
+{"id":"synth-160-0004","description":"Trim evaluates supplied arguments but does not interpret them as character trimming","code":"log = []\ndef supplied():\n    log.push(\"argument\")\n    return \"x\"\nassert(\"  xoxo  \".Trim(supplied()), \"x
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2193,7 +2818,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9eb7758` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e57e554` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

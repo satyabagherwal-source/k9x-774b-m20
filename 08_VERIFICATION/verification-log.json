@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-FEV2",
-    "timestamp": "2026-11-26T18:41:35.486Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "d00a3334da73e18d8504e53fa0b502db7a68879e6d367a04e24e817d567abf6e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-FGSO",
-    "timestamp": "2026-11-26T18:41:37.992Z",
-    "repository": "ClementTsang/bottom",
-    "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "73e18843b3e54913695c7f55684405550ba3ba4e6c84a177c6e7eb7cb6b7093f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-FLL6",
-    "timestamp": "2026-11-26T18:41:44.202Z",
-    "repository": "callstack/react-native-paper",
-    "learningId": "learn-github-callstack-react-native-paper",
-    "contentHash": "f72190d41e4f4db6e51f20bd9b9bb73e93bdab04219853cd2e637d274af6caa0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-FOW2",
     "timestamp": "2026-11-26T18:41:48.482Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7445,51 @@
     "repository": "DevExpress/testcafe",
     "learningId": "learn-github-devexpress-testcafe",
     "contentHash": "a966b2ed658fbf2ff40ca3c0cf6cbc2951fad35564779fbc9fb2c2fc9ce1e4b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-8LH8",
+    "timestamp": "2026-11-28T12:35:42.908Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "17bd37fc782b0b95aa77f2b308d4c85c4a4b400e13ba28e3d910016e0cf6c838",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-8NL5",
+    "timestamp": "2026-11-28T12:35:45.641Z",
+    "repository": "mswjs/msw",
+    "learningId": "learn-github-mswjs-msw",
+    "contentHash": "9d13aee3899d966511eb360304996cc3f8f8926fce9468ada745da469329afdb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-8WFR",
+    "timestamp": "2026-11-28T12:35:57.111Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "e082739e7aa4ff6876a254ab4204989fa4d5a1ce179ce142261e2f2f7d5e735f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

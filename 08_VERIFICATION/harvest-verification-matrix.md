@@ -14051,3 +14051,6 @@
 | `CYCLE-20261128-IRQ6` | `2026-11-28T11:47:38.334Z` | `mikelikesdesign/SwiftUI-experiments` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11097` | Yes (`be6ddd5a...`) |
 | `CYCLE-20261128-ASQR` | `2026-11-28T12:09:26.019Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11098` | Yes (`f2d06e61...`) |
 | `CYCLE-20261128-AVQ6` | `2026-11-28T12:09:29.886Z` | `DevExpress/testcafe` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11099` | Yes (`a966b2ed...`) |
+| `CYCLE-20261128-8LH8` | `2026-11-28T12:35:42.908Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11100` | Yes (`17bd37fc...`) |
+| `CYCLE-20261128-8NL5` | `2026-11-28T12:35:45.641Z` | `mswjs/msw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11101` | Yes (`9d13aee3...`) |
+| `CYCLE-20261128-8WFR` | `2026-11-28T12:35:57.111Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3556` | Yes (`e082739e...`) |

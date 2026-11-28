@@ -840150,3 +840150,217 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `3e933c68` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11100. [C++][Gandiva] Fix wrong results for negative integer constants (Harvested from apache/arrow)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[C++][Gandiva] Fix wrong results for negative integer constants",
+  "source": "apache/arrow",
+  "source_url": "https://github.com/apache/arrow",
+  "source_version": "5ef973da",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-28T12:35:42.290Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-apache-arrow",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apache/arrow](https://github.com/apache/arrow) (Revision: `5ef973da`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `cpp/src/gandiva/llvm_types.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c5800ec2`: GH-55613: [C++][Gandiva] Fix wrong results for negative integer constants. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/gandiva/llvm_types.h`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+#include <type_traits>
+    // Preserve signedness so negative narrow values are canonical APInts and
+    // negative values widened to i128 are sign-extended.
+    return llvm::ConstantInt::get(context_,
+                                  llvm::APInt(N, val, std::is_signed<ctype>::value));
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+    return llvm::ConstantInt::get(context_, llvm::APInt(N, val));
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c5800ec2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11101. reset generators on `.resetHandlers()` (Harvested from mswjs/msw)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "reset generators on `.resetHandlers()`",
+  "source": "mswjs/msw",
+  "source_url": "https://github.com/mswjs/msw",
+  "source_version": "0f87d469",
+  "license": "MIT",
+  "extracted_at": "2026-11-28T12:35:44.997Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mswjs-msw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mswjs/msw](https://github.com/mswjs/msw) (Revision: `0f87d469`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/core/experimental/define-network.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mswjs/msw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a800c3bf`: reset generators on `.resetHandlers()`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/experimental/define-network.test.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { setTimeout } from 'node:timers/promises'
+test('throws when enabling an already enabled network', () => {
+  class SyncNetworkSource extends NetworkSource {
+    enable = () => {}
+  }
+  const network = defineNetwork({
+    sources: [new SyncNetworkSource()],
+  })
+
+  expect(network.enable()).toBeUndefined()
+  expect(() => network.enable()).toThrow(
+    'Failed to call "enable" on the network: already enabled',
+  )
+  network.disable()
+  expect(network.enable()).toBeUndefined()
+})
+test('returns a sync enable if all the sources are sync', () => {
+  class SyncNetworkSource extends NetworkSource {
+    enable = () => {}
+  }
+  const network = defineNetwork({
+    sources: [new SyncNetworkSource()],
+  expect(network.enable()).toBeUndefined()
+})
+test('returns an async enable if any of the sources are async', () => {
+  class SyncNetworkSource extends NetworkSource {
+    enable = () => {}
+  }
+  class AsyncNetworkSource extends NetworkSource {
+    enable = async () => {}
+  }
+
+  const network = defineNetwork({
+    sources: [new SyncNetworkSource(), new AsyncNetworkSource()],
+  expect(network.enable()).toBeInstanceOf(Promise)
+})
+
+test('returns an async enable if all the sources are async', ()
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+describe('enable()', () => {
+  test('throws if called on already enabled network', () => {
+    class SyncNetworkSource extends NetworkSource {
+      enable = () => {}
+    }
+    const network = defineNetwork({
+      sources: [new SyncNetworkSource()],
+    })
+    expect(network.enable()).toBeUndefined()
+    expect(() => network.enable()).toThrow(
+      'Failed to call "enable" on the network: already enabled',
+    )
+    network.disable()
+    expect(network.enable()).toBeUndefined()
+  test('returns a sync enable if all the sources are sync', () => {
+    class SyncNetworkSource extends NetworkSource {
+      enable = () => {}
+    }
+    const network = defineNetwork({
+      sources: [new SyncNetworkSource()],
+    })
+    expect(network.enable()).toBeUndefined()
+  test('returns an async enable if any of the sources are async', () => {
+    class SyncNetworkSource extends NetworkSource {
+      enable = () => {}
+    }
+    class AsyncNetworkSource extends NetworkSource {
+      enable = async () => {}
+    }
+    const network = defineNetwork({
+      sources: [new SyncNetworkSource(), new AsyncNetworkSource()],
+    })
+    expect(network.enable()).toBeInstanceOf(Promise)
+  test('returns an async e
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a800c3bf` are properly handled with clean fallback behavior.

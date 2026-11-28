@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T12:09:29.896Z",
-  "total_cycles_completed": 13325,
-  "total_learnings_persisted": 13325,
-  "total_rules_promoted": 12023,
+  "last_updated": "2026-11-28T12:35:57.122Z",
+  "total_cycles_completed": 13328,
+  "total_learnings_persisted": 13328,
+  "total_rules_promoted": 12026,
   "history": [
-    {
-      "timestamp": "2026-11-27T17:32:14.756Z",
-      "repository": "vanniktech/gradle-maven-publish-plugin",
-      "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T17:32:16.919Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T17:41:49.350Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T17:42:02.061Z",
       "repository": "neuron-core/neuron-ai",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T12:09:29.896Z",
       "repository": "DevExpress/testcafe",
       "learningId": "learn-github-devexpress-testcafe",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T12:35:42.919Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T12:35:45.652Z",
+      "repository": "mswjs/msw",
+      "learningId": "learn-github-mswjs-msw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T12:35:57.122Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

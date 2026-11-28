@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T12:09:36.960Z",
+  "updated_at": "2026-11-28T12:36:02.463Z",
   "stats": {
-    "total_discovered": 10921,
-    "approved_pending_harvest": 10373,
+    "total_discovered": 10924,
+    "approved_pending_harvest": 10374,
     "harvested_count": 0,
-    "rejected_count": 548,
+    "rejected_count": 550,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10380,
+      "COMMUNITY_AND_EXPERT": 10383,
       "OFFICIAL_DOCUMENTATION": 299,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
@@ -236453,6 +236453,58 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
         "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-5436EBEB6207": {
+      "id": "SRC-5436EBEB6207",
+      "url": "https://github.com/karthiksenv/arrow/actions/runs/46077170127",
+      "title": "https://github.com/karthiksenv/arrow/actions/runs/46077170127",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:36:00.860Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-62156B29E937": {
+      "id": "SRC-62156B29E937",
+      "url": "http://localhost/resource",
+      "title": "http://localhost/resource",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-28T12:36:02.381Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-597B2B8FEE52": {
+      "id": "SRC-597B2B8FEE52",
+      "url": "http://localhost/other",
+      "title": "http://localhost/other",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-28T12:36:02.463Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
       }
     }
   }
