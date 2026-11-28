@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T10:01:44.171Z",
+  "timestamp": "2026-11-28T10:11:02.222Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zed-industries-zed-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zed-industries-zed-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T10:01:44.171Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T10:11:02.222Z`  
 > **Learning ID**: `LEARN-EVO-zed-industries-zed-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 84%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zed-industries-zed-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `46375fbf`  
+> **Source Version**: `0f009536`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T10:01:39.204Z  
+> **Timestamp**: 2026-11-28T10:10:43.941Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T10:01:31.313Z  
+> **Harvest Timestamp**: 2026-11-28T10:10:43.734Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 95820 stars
+- **Stars / Engagement**: 95887 stars
 
 ---
 
@@ -2362,439 +2362,1258 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b47d9288` (2026-11-27)
-**Commit Message**: agent_ui: Fix subagent card staying failed after a successful retry (#67156)
+### Incident Patch 1: `ed8dc1b6` (2026-11-27)
+**Commit Message**: Fix TCP-based debugging in dev containers (#65778)
 
 ## Summary
 
-Closes #67134
+Fix TCP-based debug adapters timing out in dev containers. The adapter
+runs inside the container, but Zed connects to a host loopback port
+whose forwarding request Docker exec silently ignores.
 
-When a subagent fails (for example on a dropped connection) and you
-retry it from its own view, the retry can finish fine but the card in
-the parent thread stays red. The subagent's own view shows the right
-state, so the two disagree.
+Add a TCP-to-stdio helper to the existing remote server so the TCP
+connection is established inside the container and DAP traffic travels
+over Docker exec stdio. Keep adapter logs off the DAP stream, flush
+messages promptly, and terminate spawned adapters when the client
+disconnects. Child and descendant sessions open new proxy connections to
+the existing adapter instead of starting it again. Existing local, SSH,
+WSL, and native stdio paths remain in place.
 
-The card for a `spawn_agent` tool call was taking the first result the
-subagent reported after the call started, and only showing entries up to
-where the tool call ended. A retry doesn't send a new message to the
-subagent, it just keeps going in the same run, so the card never saw the
-retry's result or output.
-
-Now the card treats everything up to the next message sent to the
-subagent as the same run, and shows the latest result in it. While the
-retry is still going it shows as running, with the stop button. Cards
-for ACP subagent session messages work differently and aren't touched
-here.
-
-The retry's result is also saved on the subagent's thread now, the same
-way `NativeSubagentHandle::send` does it, so it's still there after
-reopening the thread instead of the old error coming back. This only
-runs for subagent threads.
+Closes #57021
 
 ## Testing
 
-Added `test_r
+- `ITERATIONS=20 cargo test --locked --offline -p remote -p dap --lib`:
+62 remote tests and 7 DAP tests passed, including child/descendant
+connection reuse and existing SSH/WSL/Docker tests.
+- Seven TCP helper tests passed on Linux using the exact repository
+module and the real `util` crate, covering bidirectional forwarding,
+flushing, adapter launch/log separation, timeout, early exit, and
+cleanup after client disconnect.
+- `./script/clippy -p re
 
-**File**: `crates/acp_thread/src/acp_thread.rs` (modified, +15/-0)
+**File**: `crates/collab/tests/integration/remote_editing_collaboration_tests.rs` (modified, +94/-4)
 ```diff
-@@ -4589,6 +4589,21 @@ impl AcpThread {
-             .map(|(_, state)| state)
-     }
- 
-+    /// The last idle state this subagent reported for the run covering entries `start..=end`:
-+    /// after the entry at `start` arrived and before any entry after `end`. A retry reports
-+    /// again within the same run, so its outcome replaces the one it retried.
-+    pub fn subagent_outcome_between(
-+        &self,
-+        start: usize,
-+        end: usize,
-+    ) -> Option<&acp_v2::StateUpdate> {
-+        self.subagent_outcomes
-+            .iter()
-+            .rev()
-+            .find(|(entry_count, _)| *entry_count > start && *entry_count <= end + 1)
-+            .map(|(_, state)| state)
-+    }
-+
-     pub fn foreground_activity(&self) -> ForegroundActivity {
-         self.activity.phase()
-     }
-```
-
-**File**: `crates/agent/src/agent.rs` (modified, +18/-0)
-```diff
-@@ -2750,6 +2750,24 @@ impl NativeAgentConnection {
-                     Err(error)
-                 }
-             };
-+            // Save a subagent's outcome on its thread too, so reopening it shows the latest
-+            // run, including a retry from the subagent's own view. When the parent's tool
-+            // call drives the run, `NativeSubagentHandle::send` replaces this with its verdict.
-+            if thread.read_with(cx, |thread, _| thread.is_subagent()) {
-+                let outcome = acp_thread
-+                    .read_with(cx, |acp_thread, _| match acp_thread.foreground_state() {
-+                        Some(acp_v2::StateUpdate::Idle(idle)) => Some(SubagentOutcome {
-+                            entry_count: acp_thread.entries().len(),
-+                            stop_reason: idle.stop_reason.clone()?,
-+                        }),
-+                        _ => None,
-+                    })
-+                    .ok()
-+                    .flatten();
-+                if let Some(outcome) = outcome {
-+                    thread.update(cx, |thread, cx| thread.record_subagent_outcome(outcome, cx));
-+                }
-+            }
-             if completion.send(result).is_err() {
-                 log::debug!("Native completion observer was dropped");
-             }
-```
-
-**File**: `crates/agent/src/tests/mod.rs` (modified, +88/-0)
-```diff
-@@ -7526,6 +7526,94 @@ async fn test_native_subagent_reports_and_restores_each_runs_outcome(cx: &mut Te
-     assert_reported(&reloaded, cx);
- }
- 
-+#[gpui::test]
-+async fn test_native_subagent_restores_the_outcome_of_a_retry_from_its_own_view(
-+    cx: &mut TestAppContext,
+@@ -1142,6 +1142,24 @@ async fn test_slow_adapter_startup_retries(
+     cx_a: &mut TestAppContext,
+     server_cx: &mut TestAppContext,
+     executor: BackgroundExecutor,
 +) {
-+    let test = SubagentCompactionTest::new(cx).await;
-+    test.configure_compaction(false, 1_000_000, None, cx);
-+    let session_id = test.handle.id();
-+    let subagent = test._agent.read_with(cx, |agent, _| {
-+        agent.sessions[&session_id].acp_thread.upgrade().unwrap()
-+    });
-+
-+    let send = test.send("task", cx);
-+    test.fake.send_last_error(
-+        &test.model,
-+        LanguageModelCompletionError::from_http_status(
-+            LanguageModelProviderName::new("test"),
-+            http_client::StatusCode::BAD_REQUEST,
-+            "request failed".to_string(),
-+            None,
-+        ),
-+    );
-+    test.fake.end_last(&test.model);
-+    let error = send.await.unwrap_err().to_string();
-+    let failed_run_end = subagent.read_with(cx, |subagent, _| subagent.entries().len());
-+
-+    // A retry from the subagent's own view doesn't go through the parent's tool call.
-+    let retry = subagent.update(cx, |subagent, cx| subagent.retry(cx));
-+    cx.run_until_parked();
-+    test.fake.send_last_text(&test.model, "done");
-+    test.fake.end_last(&test.model);
-+    cx.run_until_parked();
-+    retry.await.unwrap();
-+    let run_end = subagent.read_with(cx, |subagent, _| subagent.entries().len() - 1);
-+
-+    let mut failure = acp_v2::Error::internal_error();
-+    failure.message = error;
-+    test.thread.read_with(cx, |thread, _| {
-+        assert_eq!(
-+            thread.subagent_outcomes(),
-+            [
-+                SubagentOutcome {
-+                    entry_count: failed_run_end,
-+                    stop_reason: acp_v2::StopReason::Error(
-+                        acp_v2::ErrorStopReason::new().error(failure)
-+                    ),
-+                },
-+                SubagentOutcome {
-+                    entry_count: run_end + 1,
-+                    stop_reason: acp_v2::StopReason::EndTurn,
-+                },
-+            ]
-+        )
-+    });
-+
-+    let done = acp_v2::StateUpdate::Idle(
-+        acp_v2::IdleStateUpdate::new().stop_reason(acp_v2::StopReason::EndTurn),
-+    );
-+    let assert_done = |subagent: &Entity<AcpThread>, cx: &mut TestAppContext| {
-+        subagent.read_with(cx, |subagent, _| {
-+            assert_eq!(subagent.subagent_outcome_between(0, run_end), Some(&done));
-+        });
-+    };
-+    assert_done(&subagent, cx);
-+
-+    let project = test
-+        .thread
-+        .read_with(cx, |thread, _| thread.project.clone());
-+    let SubagentCompactionTest {
-+        _agent: agent,
-+        _acp_thread,
-+        parent,
-+        thread,
-+        environment,
-+        handle,
-+        ..
-+    } = test;
-+    drop((_acp_thread, parent, thread, environment, handle, subagent));
-+    cx.run_until_parked();
-+    release_dropped_entities(cx);
-+    agent.read_with(cx, |agent, _| assert!(agent.sessions.is_empty()));
-+
-+    let reloaded = agent
-+        .update(cx, |agent, cx| agent.open_thread(session_id, project, cx))
-+        .await
-+        .unwrap();
-+    assert_done(&reloaded, cx);
++    test_remote_debug_session(cx_a, server_cx, executor, false).await;
 +}
 +
- #[gpui::test]
- async fn test_subagent_context_limit_preserves_result_after_turn_completes(
-     cx: &mut TestAppContext,
++#[gpui::test]
++async fn test_remote_debug_session_uses_tcp_proxy(
++    cx_a: &mut TestAppContext,
++    server_cx: &mut TestAppContext,
++    executor: BackgroundExecutor,
++) {
++    test_remote_debug_session(cx_a, server_cx, executor, true).await;
++}
++
++async fn test_remote_debug_session(
++    cx_a: &mut TestAppContext,
++    server_cx: &mut TestAppContext,
++    executor: BackgroundExecutor,
++    tcp_proxy: bool,
+ ) {
+     cx_a.update(|cx| {
+         release_channel::init(semver::Version::new(0, 0, 0), cx);
+@@ -1154,6 +1172,16 @@ async fn test_slow_adapter_startup_retries(
+         dap_adapters::init(cx);
+     });
+     let (opts, server_ssh, _) = RemoteClient::fake_server(cx_a, server_cx);
++    if tcp_proxy {
++        let remote::RemoteConnectionOptions::Mock(options) = &opts else {
++            panic!("Expected a mock connection");
++        };
++        cx_a.update(|cx| {
++            remote::MockConnectionRegistry::update_global(cx, |registry, _| {
++                registry.enable_tcp_proxy(options).unwrap();
++            });
++        });
++    }
+     let remote_fs = FakeFs::new(server_cx.executor());
+     remote_fs
+         .insert_tree(
+@@ -1196,6 +1224,25 @@ async fn test_slow_adapter_startup_retries(
+         .build_ssh_project(path!("/code"), client_ssh.clone(), false, cx_a)
+         .await;
+ 
++    if tcp_proxy {
++        server_cx.update(|cx| {
++            SettingsStore::update_global(cx, |store, cx| {
++                store.update_user_settings(cx, |settings| {
++                    settings
++                        .project
++                        .dap
++                        .entry("fake-adapter".into())
++                        .or_default()
++                        .env = Some(HashMap::from_iter([(
++                        "ADAPTER_TEST".into(),
++                        "wrapped".into(),
++                    )]));
++                });
++            });
++        });
++    }
++
++    let mut async_cx = cx_a.to_async();
+     let (workspace, cx_a) = client_a.build_workspace(&project_a, cx_a);
+ 
+     let debugger_panel = workspace
+@@ -1227,18 +1274,19 @@ async fn test_slow_adapter_startup_retries(
+             adapter: "fake-adapter".into(),
+             label: "test".into(),
+             config: json!({
+-                "request": "launch"
++                "request": "launch",
++                "cwd": "/code/project with spaces"
+             }),
+             tcp_connection: Some(TcpArgumentsTemplate {
+-                port: None,
++                port: tcp_proxy.then_some(4567),
+                 host: None,
+-                timeout: None,
++                timeout: tcp_proxy.then_some(1234),
+             }),
+         },
+         move |client| {
+             let count = count.clone();
+             client.on_request_ext::<dap::requests::Initialize, _>(move |_seq, _request| {
+-                if count.fetch_add(1, std::sync::atomic::Ordering::SeqCst) < 5 {
++                if !tcp_proxy && count.fetch_add(1, std::sync::atomic::Ordering::SeqCst) < 5 {
+                     return RequestHandling::Exit;
+                 }
+                 RequestHandling::Respond(Ok(Capabilities::default()))
+@@ -1252,6 +1300,48 @@ async fn test_slow_adapter_startup_retries(
+         cx_a,
+         |session: &mut project::debugger::session::Session, _| session.adapter_client().unwrap(),
+     );
++    if tcp_proxy {
++        let expected = [
++            "-T",
++            "-w",
++            "/code/project with spaces",
++            "mock-remote-server",
++            "tcp",
++            "127.0.0.1:4567",
++            "1234",
++        ];
++        let binary = client.binary();
++        assert_eq!(binary.command.as_deref(), Some("mock"));
++        assert_eq!(
++            binary.arguments,
++            expected
++                .into_iter()
++                .chain(["--", "command"])
++                .collect::<Vec<_>>()
++        );
++        assert_eq!(
++            binary.envs.get("ADAPTER_TEST").map(String::as_str),
++            Some("wrapped")
++        );
++        assert_eq!(binary.cwd, None);
++        assert!(!client.should_reconnect_for_ssh());
++
++        let child = client
++            .create_child_connection(
++                dap::client::SessionId(u32::MAX),
++                binary.clone(),
++                Box::new(|_| {}),
++                &mut async_cx,
++            )
++            .await
++            .unwrap();
++        assert_eq!(child.binary().command.as_deref(), Some("mock"));
++        assert_eq!(child.binary().arguments, expected);
++        assert_eq!(child.binary().envs, binary.envs);
++        assert_eq!(child.binary().cwd, None);
++        assert!(!child.should_reconnect_for_ssh());
++    }
++
+     client
+         .fake_event(dap::messages::Events::Stopped(dap::StoppedEven
 ```
 
-**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +133/-0)
+**File**: `crates/dap/src/adapters.rs` (modified, +18/-3)
 ```diff
-@@ -7785,6 +7785,139 @@ pub(crate) mod tests {
-         }
+@@ -102,6 +102,15 @@ pub struct TcpArguments {
+     pub host: IpAddr,
+     pub port: u16,
+     pub timeout: Option<u64>,
++    // Child sessions need a fresh proxy connection without restarting the adapter.
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub stdio_proxy: Option<StdioProxy>,
++}
++
++#[derive(Debug, Clone, PartialEq, Serialize)]
++pub struct StdioProxy {
++    pub command: String,
++    pub arguments: Vec<String>,
+ }
+ 
+ impl TcpArguments {
+@@ -111,6 +120,7 @@ impl TcpArguments {
+             host: host.host.context("missing host")?,
+             port: host.port.context("missing port")?,
+             timeout: host.timeout,
++            stdio_proxy: None,
+         })
+     }
+ 
+@@ -445,7 +455,7 @@ impl DebugAdapter for FakeAdapter {
+         task_definition: &DebugTaskDefinition,
+         _: Option<PathBuf>,
+         _: Option<Vec<String>>,
+-        _: Option<HashMap<String, String>>,
++        env: Option<HashMap<String, String>>,
+         _: &mut AsyncApp,
+     ) -> Result<DebugAdapterBinary> {
+         let connection = task_definition
+@@ -455,13 +465,18 @@ impl DebugAdapter for FakeAdapter {
+                 host: connection.host(),
+                 port: connection.port.unwrap_or(17),
+                 timeout: connection.timeout,
++                stdio_proxy: None,
+             });
+         Ok(DebugAdapterBinary {
+             command: Some("command".into()),
+             arguments: vec![],
+             connection,
+-            envs: HashMap::default(),
+-            cwd: None,
++            envs: env.unwrap_or_default(),
++            cwd: task_definition
++                .config
++                .get("cwd")
++                .and_then(|cwd| cwd.as_str())
++                .map(PathBuf::from),
+             request_args: StartDebuggingRequestArguments {
+                 request: self.request_kind(&task_definition.config).await?,
+                 configuration: task_definition.config.clone(),
+```
+
+**File**: `crates/dap/src/client.rs` (modified, +84/-1)
+```diff
+@@ -79,7 +79,19 @@ impl DebugAdapterClient {
+         message_handler: DapMessageHandler,
+         cx: &mut AsyncApp,
+     ) -> Result<Self> {
+-        let binary = if let Some(connection) = self.transport_delegate.tcp_arguments() {
++        let binary = if let Some(proxy) = self
++            .binary
++            .connection
++            .as_ref()
++            .and_then(|connection| connection.stdio_proxy.as_ref())
++        {
++            DebugAdapterBinary {
++                command: Some(proxy.command.clone()),
++                arguments: proxy.arguments.clone(),
++                request_args: binary.request_args,
++                ..self.binary.clone()
++            }
++        } else if let Some(connection) = self.transport_delegate.tcp_arguments() {
+             DebugAdapterBinary {
+                 command: None,
+                 arguments: Default::default(),
+@@ -282,6 +294,77 @@ mod tests {
+         });
      }
  
 +    #[gpui::test]
-+    async fn test_retried_subagent_tool_call_shows_the_retry_state(cx: &mut TestAppContext) {
-+        use super::subagent_card::{SubagentCardState, SubagentEntries, SubagentStatus};
-+
++    async fn child_connection_reuses_tcp_server(cx: &mut TestAppContext) {
++        use crate::adapters::{StdioProxy, TcpArguments};
 +        init_test(cx);
-+        let project = Project::test(FakeFs::new(cx.executor()), [], cx).await;
-+        let connection: Rc<dyn AgentConnection> = Rc::new(StubAgentConnection::new());
-+        let parent = cx.update(|cx| {
-+            create_test_acp_thread(None, "parent", connection.clone(), project.clone(), cx)
-+        });
-+        let parent_session_id = parent.read_with(cx, |thread, _| thread.session_id().clone());
-+        let subagent = cx.update(|cx| {
-+            create_test_acp_subagent(parent_session_id, "child", connection, project, cx)
-+        });
-+        subagent.update(cx, |subagent, cx| {
-+            subagent
-+                .update_subagent_association(
-+                    &acp_v2::SubagentUpdate::new("child").capabilities(
-+                        acp_v2::SubagentSessionCapabilities::new()
-+                            .cancel(acp_v2::SessionCancelCapabilities::new()),
-+                    ),
-+                    cx,
++        for stdio_proxy in [
++            None,
++            Some(StdioProxy {
++                command: "docker".to_owned(),
++                arguments: vec!["exec".to_owned(), "container".to_owned(), "tcp".to_owned()],
++            }),
++        ] {
++            let binary = DebugAdapterBinary {
++                command: Some("adapter launcher".to_owned()),
++                arguments: vec!["--start-adapter".to_owned()],
++                envs: Default::default(),
++                cwd: None,
++                connection: Some(TcpArguments {
++                    host: std::net::Ipv4Addr::LOCALHOST.into(),
++                    port: 1234,
++                    timeout: Some(2000),
++                    stdio_proxy: stdio_proxy.clone(),
++                }),
++                request_args: StartDebuggingRequestArguments {
++                    configuration: json!({"parent": true}),
++                    request: dap_types::StartDebuggingRequestArgumentsRequest::Launch,
++                },
++            };
++            let parent = DebugAdapterClient::start(
++                SessionId(1),
++                binary.clone(),
++                Box::new(|_| {}),
++                &mut cx.to_async(),
++            )
++            .await
++            .expect("Parent connection starts");
++            let mut child_binary = binary.clone();
++            child_binary.request_args.configuration = json!({"child": true});
++            let child = parent
++                .create_child_connection(
++                    SessionId(2),
++                    child_binary.clone(),
++                    Box::new(|_| {}),
++                    &mut cx.to_async(),
 +                )
-+                .expect("ACP subagent")
-+        });
-+        let work = |id: &str, cx: &mut TestAppContext| {
-+            subagent
-+                .update(cx, |subagent, cx| {
-+                    subagent.upsert_assistant_message(
-+                        acp_v2::AgentMessage::new(id).content(vec!["Working".into()]),
-+                        cx,
-+                    )
-+                })
-+                .expect("subagent work");
-+        };
-+        let report = |state: acp_v2::StateUpdate, cx: &mut TestAppContext| {
-+            subagent
-+                .update(cx, |subagent, cx| subagent.update_session_state(state, cx))
-+                .expect("reported state");
-+        };
-+        let idle = |stop_reason: acp_v2::StopReason| {
-+            acp_v2::StateUpdate::Idle(acp_v2::IdleStateUpdate::new().stop_reason(stop_reason))
-+        };
-+        let mut failure = acp_v2::Error::internal_error();
-+        failure.message = "connection error".into();
-+        // The retry's work is a new entry in the same run, with no new message.
-+        let retry_work = |cx: &mut TestAppContext| {
-+            subagent
-+                .update(cx, |subagent, cx| {
-+                    subagent.upsert_wire_tool_call(
-+                        acp_v2::ToolCallUpdate::new("retry-read")
-+                            .title("Read file")
-+                            .status(acp_v2::ToolCallStatus::Completed),
-+                        cx,
-+                    )
-+                })
-+                .expect("retry work");
-+        };
-+
-+        work("first", cx);
-+        report(
-+            idle(acp_v2::StopReason::Error(
-+                acp_v2::ErrorStopReason::new().error(failure.clone()),
-+            )),
-+            cx,
-+        );
-+        let session_info = acp_v2::Meta::from_iter([(
-+            acp_thread::SUBAGENT_SESSION_INFO_META_KEY.into(),
-+            serde_json::to_value(acp_thread::SubagentSessionInfo {
-+                session_id: acp_v2::SessionId::new("child"),
-+                message_start_index: 0,
-+                message_end_index: Some(0),
-+            })
-+            .expect("subagent session info should serialize"),
-+        )]);
-+        parent
-+            .update(cx, |thread, cx| {
-+                thread.upsert_wire_tool_call(
-+                    acp_v2::ToolCallUpdate::new("spawn")
-+                        .title("Explore")
-+                        .status(acp_v2::ToolCallStatus::Failed)
-+                        .content(vec!["connection error".into()])
-+                        .meta(session_info),
-+                    cx,
++                .await
++                .expect("Child connection starts");
++            assert_eq!(child.binary.connection, binary.connection);
++            assert_eq!(child.binary.request_args, child_binary.request_args);
++            if let Some(proxy) = &stdio_proxy {
++                assert_eq!(
++                    child.binary.command.as_deref(),
++                    Some(proxy.command.as_str())
++                );
++                assert_eq!(child.binary.arguments, proxy.arguments);
++            } else {
++                assert_eq!(child.binary.command, None);
++                assert!(child.binary.arguments.is_empty());
++            }
++            let grandchild = child
++                .create_child_connection(
++                    SessionId(3),
++                    child_binary,
++                    Box::new(|_| {}),
++                    &mut cx.to_async(),
 +                )
-+            })
-+            .expect("spawn tool call should apply");
-+        let card = |cx: &mut TestAppContext| {
-+            cx.update(|cx| {
-+                let (_, tool_call) = parent
-+                    .read(cx)
-+                    .tool_call(&acp_v2::ToolCallId::new("spawn"))
-+                    .expect("spawn tool call should exist");
-+                SubagentCardState::for_subagent_tool_call(tool_call, Some(subagent.read(cx)), cx)
-+            })
-+        };
-+        let assert_card = |status, can_stop, end, cx: &mut TestAppContext| {
-+            let card = card(cx);
-+            assert_eq!(card.status, status);
-+            assert_eq!(card.error, None);
-+            assert_eq!(card.can_stop, can_stop);
-+            assert_eq!(card.entries, Some(SubagentEntries { start: 0, end }));
-+        };
-+        assert_eq!(card(cx).status, SubagentStatus::Failed);
++                .await
++                .expect("Grandchild connection starts");
++            assert_eq!(grandchild.binary, child.binary);
++        }
++    }
 +
-+        report(
-+            acp_v2::StateUpdate::Running(acp_v2::RunningStateUpdate::new()),
-+            cx,
-+        );
-+        assert_card(SubagentStatus::Running, true, Some(0), cx);
-+        retry_work(cx);
-+        report(idle(acp_v2::StopReaso
+     #[gpui::test]
+     pub async fn test_initialize_client(cx: &mut TestAppContext) {
+         #![expect(clippy::result_large_err)]
 ```
 
-**File**: `crates/agent_ui/src/conversation_view/subagent_card.rs` (modified, +33/-5)
+**File**: `crates/dap/src/transport.rs` (modified, +182/-22)
 ```diff
-@@ -227,6 +227,10 @@ impl SubagentCardState {
-     /// recorded an outcome for the call's run (as native subagents do) shows that outcome.
-     /// Calls saved before outcomes were recorded, and subagents of agents that don't report
-     /// state, show the tool call's status.
-+    ///
-+    /// Retrying the subagent from its own view continues the call's run past the end recorded
-+    /// when the call finished, up to the next message sent to the subagent, so the card covers
-+    /// the retry's entries and shows its state.
-     pub(crate) fn for_subagent_tool_call(
-         tool_call: &ToolCall,
-         subagent: Option<&AcpThread>,
-@@ -235,22 +239,46 @@ impl SubagentCardState {
-         let card = Self::from_tool_call(tool_call, cx);
-         let Some(SubagentEntries {
-             start,
--            end: Some(_),
-+            end: Some(end),
-         }) = card.entries
-         else {
-             return card;
-         };
--        let Some(outcome) = subagent
--            .filter(|subagent| subagent.subagent_association().is_some())
--            .and_then(|subagent| subagent.subagent_outcome_after(start))
-+        let Some(subagent) = subagent.filter(|subagent| subagent.subagent_association().is_some())
-+        else {
-+            return card;
-+        };
-+        let next_run_start = subagent
-+            .entries()
-+            .iter()
-+            .enumerate()
-+            .skip(end + 1)
-+            .find_map(|(ix, entry)| {
-+                matches!(entry, AgentThreadEntry::UserMessage(_)).then_some(ix)
-+            });
-+        let end = next_run_start
-+            .unwrap_or(subagent.entries().len())
-+            .saturating_sub(1)
-+            .max(end);
-+        let retry_state = subagent
-+            .foreground_state()
-+            .filter(|_| next_run_start.is_none() && subagent.foreground_activity().is_active());
-+        let Some(outcome) = retry_state.or_else(|| subagent.subagent_outcome_between(start, end))
-         else {
-             return card;
-         };
-         let (status, error) = SubagentStatus::from_reported_state(Some(outcome));
-+        let can_cancel = subagent
-+            .subagent_association()
-+            .is_some_and(|association| association.can_cancel);
-         Self {
-             status,
-             error,
--            can_stop: false,
-+            can_stop: status == SubagentStatus::Running && can_cancel,
-+            entries: Some(SubagentEntries {
-+                start,
-+                end: Some(end),
-+            }),
-             ..card
+@@ -17,7 +17,7 @@ use smol::{
+     net::{TcpListener, TcpStream},
+ };
+ use std::{
+-    collections::HashMap,
++    collections::{HashMap, VecDeque},
+     net::{IpAddr, SocketAddr},
+     process::Stdio,
+     sync::Arc,
+@@ -80,16 +80,23 @@ async fn start(
+     log_handlers: LogHandlers,
+     cx: &mut AsyncApp,
+ ) -> Result<Box<dyn Transport>> {
++    let tcp_connection = binary
++        .connection
++        .as_ref()
++        .filter(|connection| connection.stdio_proxy.is_none());
++
+     #[cfg(any(test, feature = "test-support"))]
+     if cfg!(any(test, feature = "test-support")) {
+-        if let Some(connection) = binary.connection.clone() {
+-            return Ok(Box::new(FakeTransport::start_tcp(connection, cx).await?));
++        if let Some(connection) = tcp_connection {
++            return Ok(Box::new(
++                FakeTransport::start_tcp(connection.clone(), cx).await?,
++            ));
+         } else {
+             return Ok(Box::new(FakeTransport::start_stdio(cx).await?));
          }
      }
+ 
+-    if binary.connection.is_some() {
++    if tcp_connection.is_some() {
+         Ok(Box::new(
+             TcpTransport::start(binary, log_handlers, cx).await?,
+         ))
+@@ -261,12 +268,15 @@ impl TransportDelegate {
+             // Clean up logs by trimming unnecessary whitespace/newlines before inserting into log.
+             let line = line.trim();
+ 
+-            log::debug!("stderr: {line}");
++            Self::log_adapter_line(&log_handlers, iokind, line);
++        }
++    }
+ 
+-            for (kind, handler) in log_handlers.lock().iter_mut() {
+-                if matches!(kind, LogKind::Adapter) {
+-                    handler(iokind, None, line);
+-                }
++    fn log_adapter_line(log_handlers: &LogHandlers, iokind: IoKind, line: &str) {
++        log::debug!("stderr: {line}");
++        for (kind, handler) in log_handlers.lock().iter_mut() {
++            if matches!(kind, LogKind::Adapter) {
++                handler(iokind, None, line);
+             }
+         }
+     }
+@@ -636,6 +646,7 @@ impl Transport for TcpTransport {
+             host: self.host,
+             port: self.port,
+             timeout: Some(self.timeout),
++            stdio_proxy: None,
+         })
+     }
+ 
+@@ -725,23 +736,91 @@ impl StdioTransport {
+ 
+         let mut process = Child::spawn(command, Stdio::piped(), Stdio::piped(), Stdio::piped())?;
+ 
+-        let _stderr_task = process.stderr.take().map(|stderr| {
+-            cx.background_spawn(TransportDelegate::handle_adapter_log(
+-                stderr,
+-                IoKind::StdErr,
+-                log_handlers,
+-            ))
+-        });
+-
+-        let process = Mutex::new(process);
++        let stderr = process
++            .stderr
++            .take()
++            .context("Missing debug adapter stderr")?;
++        let mut transport = Self {
++            process: Mutex::new(process),
++            _stderr_task: None,
++        };
+ 
+-        Ok(Self {
+-            process,
+-            _stderr_task,
+-        })
++        let mut stderr = BufReader::new(stderr);
++        if let Some(connection) = binary
++            .connection
++            .as_ref()
++            .filter(|args| args.stdio_proxy.is_some())
++        {
++            let timeout = connection
++                .timeout
++                .unwrap_or_else(|| cx.update(|cx| DebuggerSettings::get_global(cx).timeout));
++            let address = SocketAddr::new(connection.host, connection.port);
++            // Give Docker time to start the helper in addition to the in-container TCP deadline.
++            let deadline = Duration::from_millis(timeout).saturating_add(Duration::from_secs(5));
++            let timer = cx.background_executor().timer(deadline);
++            read_tcp_proxy_startup(&mut stderr, &log_handlers, async move {
++                timer.await;
++                anyhow!("Timed out waiting for the TCP debug adapter proxy for {address}")
++            })
++            .await?;
++        }
++        transport._stderr_task = Some(cx.background_spawn(TransportDelegate::handle_adapter_log(
++            stderr,
++            IoKind::StdErr,
++            log_handlers,
++        )));
++        Ok(transport)
+     }
+ }
+ 
++async fn read_tcp_proxy_startup(
++    stderr: &mut (impl smol::io::AsyncBufRead + Unpin),
++    log_handlers: &LogHandlers,
++    timeout: impl Future<Output = anyhow::Error>,
++) -> Result<()> {
++    const STDERR_TAIL_LINES: usize = 20;
++    // Adapter log handlers attach after startup, so failures need their own copy of recent stderr.
++    let mut stderr_tail = VecDeque::with_capacity(STDERR_TAIL_LINES);
++    let read = async {
++        let mut bytes = Vec::new();
++        loop {
++            bytes.clear();
++            if stderr.read_until(b'\n', &mut bytes).await? == 0 {
++                bail!("TCP debug adapter proxy exited before reporting startup");
++            }
++            let line = String::from_utf8_lossy(&bytes);
++            let line = line.trim_end_matches(['\r', '\n']);
++           
+```
+
+**File**: `crates/dap_adapters/src/go.rs` (modified, +1/-0)
+```diff
+@@ -528,6 +528,7 @@ impl DebugAdapter for GoDebugAdapter {
+                 host,
+                 port,
+                 timeout,
++                stdio_proxy: None,
+             });
+         } else {
+             let minidelve_path = self.install_shim(delegate).await?;
+```
+
+**File**: `crates/dap_adapters/src/javascript.rs` (modified, +1/-0)
+```diff
+@@ -205,6 +205,7 @@ impl JsDebugAdapter {
+                 host,
+                 port,
+                 timeout,
++                stdio_proxy: None,
+             }),
+             request_args: StartDebuggingRequestArguments {
+                 configuration,
+```
+
+**File**: `crates/dap_adapters/src/python.rs` (modified, +1/-0)
+```diff
+@@ -486,6 +486,7 @@ impl PythonDebugAdapter {
+                 host,
+                 port,
+                 timeout,
++                stdio_proxy: None,
+             }),
+             cwd: Some(delegate.worktree_root_path().to_path_buf()),
+             envs: user_env.unwrap_or_default(),
+```
+
+**File**: `crates/extension_host/src/wasm_host/wit/since_v0_8_0.rs` (modified, +1/-0)
+```diff
+@@ -142,6 +142,7 @@ impl From<dap::TcpArguments> for extension::TcpArguments {
+             host: value.host.into(),
+             port: value.port,
+             timeout: value.timeout,
++            stdio_proxy: None,
+         }
+     }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `46375fbf` (2026-11-27)
-**Commit Message**: gpui_linux: Fix X11 file drop position with display scaling (#66866)
+### Incident Patch 2: `da3a2740` (2026-11-27)
+**Commit Message**: gpui_macos: Replace CAMetalDisplayLink with CADisplayLink (#67486)
 
-## Summary
+PR #65472 replaced `CVDisplayLink` with `CAMetalDisplayLink` for macOS
+14+ users because `CVDisplayLink` is deprecated in macOS 15, and it
+solved a problem where `nextDrawable()` could take up to 1–2 frames of
+delay.
 
-Closes #66854
+The frame delay occurred because `CVDisplayLink` fires on a background
+thread and has to dispatch back to the main thread before GPUI starts
+rendering. When that hop caused us to miss the compositor's vsync
+deadline, the system held onto our drawables for an extra refresh until
+all three drawables in the layer were in use, making `nextDrawable()`
+wait 1–2 frames for one to free up.
 
-On X11 with a display scale factor other than 1, a file drop landed at
-the pointer position multiplied by the scale factor. With scale 2 it
-landed at twice the pointer's x and y, or outside the window near the
-right and bottom edges, so the drop was lost.
+While `CAMetalDisplayLink` fixed the `nextDrawable()` delay, it
+schedules drawables ~3–5 frames ahead, causing more latency than
+necessary. It also requires manually tracking when a window changes its
+display, and tearing down and rebuilding the link on synchronous draws
+and display changes. This causes a bug where Apple won't detect that a
+display has changed, typically seen while an external monitor is plugged
+in when macOS enters sleep and is then woken up without the external
+monitor. This would cause GPUI apps to be i
 
-The `XdndPosition` handler stored `query_pointer`'s `win_x` and `win_y`
-directly. Those are device pixels, but `FileDropEvent` positions are
-logical pixels. Every other pointer event in `x11/client.rs` divides by
-`state.scale_factor`, and so does `X11Window::mouse_position` for the
-same `query_pointer` reply. This change applies the same division to the
-drop position, which is then used for `Pending`, `Submit`, `Entered`,
-and `Exited`.
-
-## Testing
-
-I built and checked this in a Debian trixie (aarch64) container with
-Rust 1.98.1:
-
-- `./script/clippy -p gpui_linux` (release, all targets, all features,
-warnings denied): passes
-- `cargo test -p gpui_linux --lib`: 54 passed
-- `cargo fmt -p gpui_linux --check`: passes
-
-I could not test a live drag and drop, since that needs an X11 session
-with a scale factor of 2. The fix follows the conver
-
-**File**: `crates/gpui_linux/src/linux/x11/client.rs` (modified, +4/-2)
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -957,8 +957,10 @@ impl X11Client {
-                         || "Failed to query pointer position",
-                         state.xcb_connection.query_pointer(event.window),
-                     ) {
--                        state.xdnd_state.position =
--                            Point::new(px(pos.win_x as f32), px(pos.win_y as f32));
-+                        state.xdnd_state.position = Point::new(
-+                            px(pos.win_x as f32 / state.scale_factor),
-+                            px(pos.win_y as f32 / state.scale_factor),
-+                        );
-                     }
-                     if !state.xdnd_state.retrieved {
-                         check_reply(
+@@ -7683,7 +7683,6 @@ dependencies = [
+  "objc2-core-media",
+  "objc2-core-video",
+  "objc2-foundation 0.3.2",
+- "objc2-quartz-core 0.3.2",
+  "objc2-screen-capture-kit",
+  "objc2-uniform-type-identifiers",
+  "objc2-user-notifications",
+@@ -11883,6 +11882,7 @@ dependencies = [
+  "objc2 0.6.3",
+  "objc2-core-foundation",
+  "objc2-foundation 0.3.2",
++ "objc2-quartz-core 0.3.2",
+  "objc2-uniform-type-identifiers",
+ ]
+ 
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -814,7 +814,7 @@ objc2-foundation = { version = "=0.3.2", default-features = false, features = [
+     "std",
+ ] }
+ objc2-security = { version = "0.3.2", default-features = false, features = ["std", "SecBase", "SecItem"] }
+-objc2-quartz-core = { version = "=0.3.2", default-features = false, features = ["std", "CALayer", "CAMetalDisplayLink", "CAMetalLayer", "objc2-metal"] }
++objc2-quartz-core = { version = "=0.3.2", default-features = false, features = ["std", "CALayer", "CAMetalLayer", "objc2-metal"] }
+ objc2-screen-capture-kit = { version = "=0.3.2", default-features = false, features = [
+     "block2",
+     "dispatch2",
+```
+
+**File**: `crates/gpui_apple/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -69,7 +69,7 @@ objc2-metal = { version = "0.3.2", default-features = false, features = [
+     "MTLTypes",
+ ] }
+ objc2-foundation = { workspace = true, features = ["NSThread", "NSNotification", "NSOperation", "NSProcessInfo", "block2"] }
+-objc2-quartz-core = { workspace = true, features = ["objc2-core-foundation", "objc2-core-graphics", "objc2-metal"] }
++objc2-quartz-core = { workspace = true, features = ["CADisplayLink", "objc2-core-foundation", "objc2-core-graphics", "objc2-metal"] }
+ objc2-security.workspace = true
+ parking_lot.workspace = true
+ pathfinder_geometry = { workspace = true, optional = true }
+```
+
+**File**: `crates/gpui_apple/src/display_link.rs` (modified, +296/-55)
+```diff
+@@ -1,104 +1,345 @@
+ use objc2::{
+-    AnyThread, DefinedClass, MainThreadMarker, MainThreadOnly, Message, define_class, msg_send,
++    DefinedClass, MainThreadMarker, MainThreadOnly, Message, define_class, msg_send,
+     rc::Retained,
+-    runtime::{AnyClass, ProtocolObject},
++    runtime::{AnyObject, Sel},
++    sel,
+ };
+ use objc2_foundation::{NSObject, NSObjectProtocol, NSRunLoop, NSRunLoopCommonModes};
+-use objc2_quartz_core::{
+-    CAMetalDisplayLink, CAMetalDisplayLinkDelegate, CAMetalDisplayLinkUpdate, CAMetalLayer,
+-};
++pub use objc2_quartz_core::CADisplayLink;
++use std::cell::Cell;
+ 
+-struct MetalDisplayLinkDelegateIvars {
+-    callback: Box<dyn Fn(&CAMetalDisplayLinkUpdate)>,
++struct DisplayLinkTargetIvars {
++    callback: Box<dyn Fn()>,
+ }
+ 
+ define_class!(
+     // SAFETY: `NSObject` has no subclassing requirements.
+     #[unsafe(super(NSObject))]
+     #[thread_kind = MainThreadOnly]
+-    #[ivars = MetalDisplayLinkDelegateIvars]
+-    struct MetalDisplayLinkDelegate;
++    #[ivars = DisplayLinkTargetIvars]
++    struct DisplayLinkTarget;
+ 
+-    unsafe impl NSObjectProtocol for MetalDisplayLinkDelegate {}
++    unsafe impl NSObjectProtocol for DisplayLinkTarget {}
+ 
+-    unsafe impl CAMetalDisplayLinkDelegate for MetalDisplayLinkDelegate {
+-        #[unsafe(method(metalDisplayLink:needsUpdate:))]
+-        fn needs_update(&self, _link: &CAMetalDisplayLink, update: &CAMetalDisplayLinkUpdate) {
+-            // The callback may destroy its frame source, releasing our owner's retain.
+-            let delegate = self.retain();
+-            (delegate.ivars().callback)(update);
++    impl DisplayLinkTarget {
++        #[unsafe(method(displayLinkFired:))]
++        fn display_link_fired(&self, _link: &CADisplayLink) {
++            // The callback may drop its `DisplayLink`, which calls `invalidate`
++            // and releases the link's strong reference to `self`.
++            let target = self.retain();
++            (target.ivars().callback)();
+         }
+     }
+ );
+ 
+-impl MetalDisplayLinkDelegate {
+-    fn new(
+-        main_thread: MainThreadMarker,
+-        callback: impl Fn(&CAMetalDisplayLinkUpdate) + 'static,
+-    ) -> Retained<Self> {
+-        let this = Self::alloc(main_thread).set_ivars(MetalDisplayLinkDelegateIvars {
++impl DisplayLinkTarget {
++    fn new(main_thread: MainThreadMarker, callback: impl Fn() + 'static) -> Retained<Self> {
++        let this = Self::alloc(main_thread).set_ivars(DisplayLinkTargetIvars {
+             callback: Box::new(callback),
+         });
+         // SAFETY: `NSObject`'s `init` is its designated initializer.
+         unsafe { msg_send![super(this), init] }
+     }
+ }
+ 
+-/// A main-run-loop source of Metal drawables on macOS 14+ and iOS/iPadOS 17+.
++/// A main-run-loop `CADisplayLink` shared across Apple platforms (macOS 14+ and
++/// iOS/iPadOS).
+ ///
+-/// Callbacks run on the run loop the link is registered with:
+-/// <https://developer.apple.com/documentation/quartzcore/cametaldisplaylink>.
+-/// This wrapper uses the main run loop because GPUI renders on the foreground thread.
+-pub struct MetalFrameSource {
+-    link: Retained<CAMetalDisplayLink>,
+-    // The link holds its delegate weakly.
+-    _delegate: Retained<MetalDisplayLinkDelegate>,
++/// Unlike `CAMetalDisplayLink`, `CADisplayLink` only paces frames: the renderer
++/// acquires drawables from `CAMetalLayer` and presents them immediately instead
++/// of queuing them for a `targetPresentationTimestamp` several refreshes ahead.
++pub struct DisplayLink {
++    link: Retained<CADisplayLink>,
++    _target: Retained<DisplayLinkTarget>,
++    invalidated: Cell<bool>,
+     _main_thread: MainThreadMarker,
+ }
+ 
+-impl MetalFrameSource {
+-    /// Whether this system has `CAMetalDisplayLink` (macOS 14+, iOS/iPadOS 17+).
+-    pub fn is_available() -> bool {
+-        AnyClass::get(c"CAMetalDisplayLink").is_some()
++impl DisplayLink {
++    /// Starts delivering vsync ticks on the main run loop in common modes using
++    /// the `CADisplayLink` returned by `create(target, selector)`.
++    pub fn new(
++        main_thread: MainThreadMarker,
++        create: impl FnOnce(&AnyObject, Sel) -> Retained<CADisplayLink>,
++        callback: impl Fn() + 'static,
++    ) -> Self {
++        Self::build(main_thread, false, create, callback)
+     }
+ 
+-    /// Starts delivering updates for `layer`, or returns `None` where
+-    /// `CAMetalDisplayLink` is unavailable.
+-    pub fn new(
+-        layer: &CAMetalLayer,
++    /// Creates a `CADisplayLink` registered on the main run loop in common
++    /// modes, initially paused until [`Self::set_paused`] resumes it.
++    pub fn new_paused(
+         main_thread: MainThreadMarker,
+-        callback: impl Fn(&CAMetalDisplayLinkUpdate) + 'static,
+-    ) -> Option<Self> {
+-        if !Self::is_available() {
+-            return None;
+-        }
+-        let delegate = MetalDisplayLinkDelegate::new(main_thread, callback);
+-        let link = CAMetalDisplayLink::initWithMetalLayer(CAMetalDisplayLink::alloc(), laye
+```
+
+**File**: `crates/gpui_apple/src/metal_renderer.rs` (modified, +10/-120)
+```diff
+@@ -113,20 +113,12 @@ impl InstanceBufferPool {
+     }
+ }
+ 
+-enum DisplayLinkMode {
+-    Detached,
+-    Attached {
+-        drawable: Option<Retained<ProtocolObject<dyn CAMetalDrawable>>>,
+-    },
+-}
+-
+ pub struct MetalRenderer {
+     device: Retained<ProtocolObject<dyn MTLDevice>>,
+     layer: Option<Retained<CAMetalLayer>>,
+     is_apple_gpu: bool,
+     is_unified_memory: bool,
+     presents_with_transaction: bool,
+-    display_link_mode: DisplayLinkMode,
+     /// For headless rendering, tracks whether output should be opaque
+     opaque: bool,
+     /// Whether the last scene drawn to the layer let native views show through it.
+@@ -206,7 +198,6 @@ impl MetalRenderer {
+         // presentation cost, even when `test-support` is compiled in.
+         #[cfg(all(feature = "test-support", debug_assertions))]
+         layer.setFramebufferOnly(false);
+-        layer.setAllowsNextDrawableTimeout(false);
+         layer.setNeedsDisplayOnBoundsChange(true);
+         // UIKit sizes a view's backing layer itself; only AppKit-hosted
+         // layers need to track their superlayer's bounds.
+@@ -395,7 +386,6 @@ impl MetalRenderer {
+             device,
+             layer,
+             presents_with_transaction: false,
+-            display_link_mode: DisplayLinkMode::Detached,
+             is_apple_gpu,
+             is_unified_memory,
+             opaque,
+@@ -436,50 +426,6 @@ impl MetalRenderer {
+         &self.sprite_atlas
+     }
+ 
+-    /// Draw the next frame into `drawable` instead of asking the layer for one.
+-    ///
+-    /// A `CAMetalDisplayLink` hands out each frame's drawable early enough for
+-    /// the frame to reach the display on time; `nextDrawable` would instead
+-    /// wait for the compositor to release one. Pass `None` once the frame is
+-    /// done, so a drawable the frame did not use goes back to the layer.
+-    ///
+-    /// Returns the drawable this replaces: after a frame, `Some` means the
+-    /// frame neither drew nor presented.
+-    ///
+-    /// This is a setter rather than a guard scoped to one frame because the
+-    /// window releases its lock on the renderer while GPUI draws.
+-    pub fn set_frame_drawable(
+-        &mut self,
+-        drawable: Option<Retained<ProtocolObject<dyn CAMetalDrawable>>>,
+-    ) -> Option<Retained<ProtocolObject<dyn CAMetalDrawable>>> {
+-        match &mut self.display_link_mode {
+-            DisplayLinkMode::Attached { drawable: current } => mem::replace(current, drawable),
+-            DisplayLinkMode::Detached => {
+-                // Only a live link hands out drawables, and a link is detached
+-                // only after it has been invalidated.
+-                debug_assert!(
+-                    drawable.is_none(),
+-                    "received a display link drawable while detached"
+-                );
+-                None
+-            }
+-        }
+-    }
+-
+-    /// Record whether a `CAMetalDisplayLink` drives the layer. While one
+-    /// does, frames are drawn only into the drawables it hands out.
+-    pub fn set_display_link_attached(&mut self, attached: bool) {
+-        self.display_link_mode = if attached {
+-            DisplayLinkMode::Attached { drawable: None }
+-        } else {
+-            DisplayLinkMode::Detached
+-        };
+-    }
+-
+-    pub fn is_display_link_attached(&self) -> bool {
+-        matches!(self.display_link_mode, DisplayLinkMode::Attached { .. })
+-    }
+-
+     pub fn presents_with_transaction(&self) -> bool {
+         self.presents_with_transaction
+     }
+@@ -525,27 +471,15 @@ impl MetalRenderer {
+             self.shows_native_views = shows_native_views;
+             layer.setOpaque(self.opaque && !shows_native_views);
+         }
+-        let drawable = match &mut self.display_link_mode {
+-            DisplayLinkMode::Attached { drawable } => {
+-                let Some(drawable) = drawable.take() else {
+-                    log::error!("skipped a frame drawn outside its display link's update");
+-                    return;
+-                };
+-                drawable
+-            }
+-            DisplayLinkMode::Detached => {
+-                let Some(drawable) = layer.nextDrawable() else {
+-                    log::error!(
+-                        "failed to retrieve next drawable, drawable size: {:?}",
+-                        layer.drawableSize()
+-                    );
+-                    return;
+-                };
+-                drawable
+-            }
++        let Some(drawable) = layer.nextDrawable() else {
++            log::error!(
++                "failed to retrieve next drawable, drawable size: {:?}",
++                layer.drawableSize()
++            );
++            return;
+         };
+-        // A display link's drawable was sized when the link handed it out,
+-        // which can be before a resize the layer has since taken.
++        // The drawable was sized when the layer handed it out, which can be
++        // before a resize the layer has since taken.
+         let texture = drawable.texture();
+    
+```
+
+**File**: `crates/gpui_macos/Cargo.toml` (modified, +1/-2)
+```diff
+@@ -42,12 +42,11 @@ image.workspace = true
+ itertools.workspace = true
+ log.workspace = true
+ objc2.workspace = true
+-objc2-app-kit = { workspace = true, features = ["objc2-uniform-type-identifiers"] }
++objc2-app-kit = { workspace = true, features = ["objc2-quartz-core", "objc2-uniform-type-identifiers"] }
+ objc2-core-graphics = { workspace = true, features = ["CGColor", "objc2"] }
+ objc2-core-media = { workspace = true, optional = true }
+ objc2-core-video = { workspace = true, features = ["CVHostTime"] }
+ objc2-foundation.workspace = true
+-objc2-quartz-core.workspace = true
+ objc2-screen-capture-kit = { workspace = true, optional = true }
+ objc2-uniform-type-identifiers.workspace = true
+ objc2-user-notifications.workspace = true
+```
+
+**File**: `crates/gpui_macos/src/display_link.rs` (modified, +3/-117)
+```diff
+@@ -1,8 +1,8 @@
+ //! Frame pacing for macOS windows.
+ //!
+-//! On macOS 14 and later a window is paced by a `CAMetalDisplayLink` on its
+-//! layer ([`gpui_apple::display_link::MetalFrameSource`]). Earlier systems use
+-//! the shared `CVDisplayLink` registry described below ([`WindowFrameSource`]).
++//! On macOS 14 and later a window is paced by its view's `CADisplayLink`
++//! ([`gpui_apple::display_link::DisplayLink`]). Earlier systems use the shared
++//! `CVDisplayLink` registry described below ([`WindowFrameSource`]).
+ //!
+ //! CVDisplayLink has no safe teardown: `CVDisplayLinkStop` merely flags the
+ //! link's io thread to exit "soon" and returns immediately, and there is no
+@@ -61,11 +61,9 @@ use dispatch2::{
+     _dispatch_source_type_data_add, DispatchObject, DispatchQueue, DispatchRetained, DispatchSource,
+ };
+ use gpui::{FrameRequestSource, PlatformFrameSignal};
+-use gpui_apple::display_link::MetalFrameSource;
+ use gpui_util::ResultExt;
+ use scheduler::Instant;
+ use std::{
+-    cell::{Cell, RefCell},
+     collections::{BTreeMap, btree_map},
+     ffi::c_void,
+     sync::{Arc, Mutex, MutexGuard, PoisonError},
+@@ -294,68 +292,6 @@ fn unsubscribe(display_id: CGDirectDisplayID, subscriber_id: SubscriberId) {
+     }
+ }
+ 
+-/// A window's `CAMetalDisplayLink`, shared with GPUI's frame waker so that a
+-/// wake reaches the current link without taking the window's lock.
+-///
+-/// The link pauses after any update in which GPUI neither drew, presented,
+-/// nor asked for another frame, so an idle window acquires no drawables. GPUI
+-/// decides when frames are needed (including presenting after high-rate
+-/// input); this only stops the link between those decisions.
+-#[derive(Default)]
+-pub struct MetalFrames {
+-    source: RefCell<Option<MetalFrameSource>>,
+-    /// Whether GPUI asked for a frame since the current update began.
+-    woken: Cell<bool>,
+-}
+-
+-impl MetalFrames {
+-    pub fn replace(&self, source: Option<MetalFrameSource>) {
+-        *self.source.borrow_mut() = source;
+-    }
+-
+-    pub fn is_attached(&self) -> bool {
+-        self.source.borrow().is_some()
+-    }
+-
+-    pub fn wake(&self) {
+-        self.woken.set(true);
+-        // A source being replaced starts unpaused, so skipping it is safe.
+-        if let Ok(source) = self.source.try_borrow()
+-            && let Some(source) = source.as_ref()
+-        {
+-            source.set_paused(false);
+-        }
+-    }
+-
+-    pub fn begin_frame(&self) {
+-        self.woken.set(false);
+-    }
+-
+-    pub fn debug_state(&self) -> serde_json::Value {
+-        let paused = self
+-            .source
+-            .try_borrow()
+-            .ok()
+-            .and_then(|source| source.as_ref().map(MetalFrameSource::is_paused));
+-        serde_json::json!({
+-            "kind": "CAMetalDisplayLink",
+-            "attached": self.is_attached(),
+-            "paused": paused,
+-            "woken": self.woken.get(),
+-        })
+-    }
+-
+-    /// Ends an update, pausing the link if GPUI neither used its drawable nor
+-    /// asked for another frame while it ran. Returns whether it paused.
+-    pub fn end_frame(&self, used_drawable: bool) -> bool {
+-        let pause = !used_drawable && !self.woken.get();
+-        if pause && let Some(source) = self.source.borrow().as_ref() {
+-            source.set_paused(true);
+-        }
+-        pause
+-    }
+-}
+-
+ /// A per-window source of frame requests, paced by the display the window is
+ /// on. The wrapped dispatch source coalesces vsync ticks from the display's
+ /// io thread and invokes `callback(data)` on the main queue.
+@@ -610,56 +546,6 @@ mod sys {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+-    use objc2::AnyThread;
+-    use objc2_quartz_core::CAMetalDisplayLink;
+-
+-    #[test]
+-    fn metal_frames_pause_only_when_gpui_neither_draws_nor_asks_again() {
+-        let frames = MetalFrames::default();
+-
+-        frames.begin_frame();
+-        assert!(
+-            !frames.end_frame(true),
+-            "a frame that drew keeps the link running"
+-        );
+-
+-        frames.begin_frame();
+-        frames.wake();
+-        assert!(
+-            !frames.end_frame(false),
+-            "a wake during the update, like a throttled frame's retry, keeps it running"
+-        );
+-
+-        frames.wake();
+-        frames.begin_frame();
+-        assert!(
+-            frames.end_frame(false),
+-            "a wake before the update was served by it"
+-        );
+-
+-        frames.begin_frame();
+-        assert!(frames.end_frame(false), "an idle update pauses the link");
+-    }
+-
+-    #[test]
+-    fn a_renderer_draws_normally_after_its_display_link_is_invalidated() {
+-        if !MetalFrameSource::is_available() {
+-            return;
+-        }
+-        let mut renderer =
+-            crate::renderer::MetalRenderer::new(Default::default(), false, false).unwrap();
+-        renderer.update_drawable_size(gpui::size(gpui::DevicePixels(64), gpui::DevicePixels(64)));
+-        let layer = renderer.layer().expect("window renderer has a layer
+```
+
+**File**: `crates/gpui_macos/src/window.rs` (modified, +168/-123)
+```diff
+@@ -1,5 +1,5 @@
+ use crate::{
+-    BoolExt, MacDisplay, MetalFrames, NSRange, NSStringExt, TISCopyCurrentKeyboardInputSource,
++    BoolExt, MacDisplay, NSRange, NSStringExt, TISCopyCurrentKeyboardInputSource,
+     TISGetInputSourceProperty, WindowFrameSource, events::platform_input_from_native,
+     kTISPropertyInputSourceIsASCIICapable, kTISPropertyInputSourceType, kTISTypeKeyboardInputMode,
+     ns_string, renderer,
+@@ -25,7 +25,7 @@ use core_foundation_sys::number::{CFBooleanGetValue, CFBooleanRef};
+ use core_graphics::display::CGDirectDisplayID;
+ use ctor::ctor;
+ use futures::channel::oneshot;
+-use gpui_apple::display_link::MetalFrameSource;
++use gpui_apple::display_link::DisplayLinkFrames;
+ use gpui_util::ResultExt;
+ use objc2::{
+     AnyThread, MainThreadMarker, Message, class, msg_send,
+@@ -649,8 +649,8 @@ unsafe fn apply_simple_fullscreen_plan(
+ /// What paces a window's frames. The choice depends only on the OS version,
+ /// so it is made once per window.
+ enum FrameSource {
+-    /// macOS 14+: a `CAMetalDisplayLink` that hands out each frame's drawable.
+-    Metal(Rc<MetalFrames>),
++    /// macOS 14+: the view's `CADisplayLink`.
++    View(Rc<DisplayLinkFrames>),
+     /// Earlier systems: the shared `CVDisplayLink` registry, joined on first start.
+     DisplayLink(Option<WindowFrameSource>),
+ }
+@@ -878,36 +878,21 @@ impl MacWindowState {
+         }
+     }
+ 
+-    /// `window_state` is the handle this state lives in; a Metal link holds it
+-    /// weakly to deliver frames.
+-    fn start_display_link(&mut self, window_state: &Rc<Mutex<MacWindowState>>) {
+-        self.stop_display_link();
++    fn start_display_link(&mut self) {
+         if !self
+             .native_window()
+             .occlusionState()
+             .contains(NSWindowOcclusionState::Visible)
+         {
++            self.stop_display_link();
+             return;
+         }
+         match &mut self.frame_source {
+-            FrameSource::Metal(metal_frames) => {
+-                let Some(layer) = self.renderer.layer() else {
+-                    return;
+-                };
+-                let main_thread =
+-                    crate::main_thread_marker().expect("macOS windows require the main thread");
+-                let window_state = Rc::downgrade(window_state);
+-                let source = MetalFrameSource::new(layer, main_thread, move |update| {
+-                    if let Some(window_state) = window_state.upgrade() {
+-                        metal_frame(&window_state, update);
+-                    }
+-                });
+-                if let Some(source) = source {
+-                    metal_frames.replace(Some(source));
+-                    self.renderer.set_display_link_attached(true);
+-                }
+-            }
++            FrameSource::View(frames) => frames.resume(),
+             FrameSource::DisplayLink(frame_source) => {
++                if let Some(existing) = frame_source.as_mut() {
++                    existing.stop();
++                }
+                 let screen: *mut AnyObject = unsafe { msg_send![self.native_window, screen] };
+                 let Some(display_id) = display_id_for_screen(screen) else {
+                     // AppKit can temporarily report no screen while displays are being reconfigured.
+@@ -924,14 +909,7 @@ impl MacWindowState {
+ 
+     fn stop_display_link(&mut self) {
+         match &mut self.frame_source {
+-            FrameSource::Metal(metal_frames) => {
+-                if metal_frames.is_attached() {
+-                    // Detach the link rather than pause it, so that a synchronous
+-                    // draw can use the layer's `nextDrawable`.
+-                    metal_frames.replace(None);
+-                    self.renderer.set_display_link_attached(false);
+-                }
+-            }
++            FrameSource::View(link) => link.stop(),
+             FrameSource::DisplayLink(Some(frame_source)) => frame_source.stop(),
+             FrameSource::DisplayLink(None) => {}
+         }
+@@ -1030,9 +1008,9 @@ impl MacWindowState {
+ pub(crate) struct MacWindow(
+     Rc<Mutex<MacWindowState>>,
+     MainThreadMarker,
+-    /// The Metal link's frame waker, kept outside the lock so waking never
++    /// The view link's frame waker, kept outside the lock so waking never
+     /// waits on it. `None` when a `CVDisplayLink` paces frames.
+-    Option<Rc<MetalFrames>>,
++    Option<Rc<DisplayLinkFrames>>,
+ );
+ 
+ impl MacWindow {
+@@ -1162,67 +1140,96 @@ impl MacWindow {
+             let native_view: *mut AnyObject = msg_send![native_view, initWithFrame: content_bounds];
+             assert!(!native_view.is_null());
+ 
+-            let metal_frames = MetalFrameSource::is_available().then(Rc::<MetalFrames>::default);
+-            let state = Rc::new(Mutex::new(MacWindowState {
+-                handle,
+-                foreground_executor,
+-                background_executor,
+-                native_window,
+-                native_view: NonNull::new_unchecked(native_view),
+-                blur
+```
+
+---
+
+### Incident Patch 3: `ae318721` (2026-11-27)
+**Commit Message**: remote: Fix switching git worktrees inside a dev container (#63613)
+
+Closes #63568 (and its duplicate #63099).
+
+Switching to an existing git worktree fails when the project is open in
+a dev container. All workspaces in one container share a
+`DockerExecConnection`, which tracked a single proxy pid and killed it
+in two places. Opening the worktree's workspace killed the first
+workspace's proxy in `start_proxy`. The first workspace then
+reconnected, and its `kill()` call stopped the new workspace's proxy, so
+the new connection failed with `Remote server exited with status 15`.
+
+The dev container transport now works like WSL: `kill()` does nothing
+and `has_been_killed()` returns `false`. Each `docker exec` proxy is
+spawned with `kill_on_drop(true)` and owned by its IO task, so
+`reconnect` already stops the old proxy when it drops `multiplex_task`.
+As a result, `remote debug: simulate disconnect` does nothing for dev
+containers, the same as for WSL.
+
+Verified with a release build: building a dev container, opening an
+existing one, and switching worktrees inside it all work. The `remote`
+tests pass.
+
+Release Notes:
+
+- Fixed switching git worktrees failing with `Remote server exited with
+
+
+**File**: `crates/remote/src/transport/docker.rs` (modified, +2/-31)
+```diff
+@@ -3,7 +3,6 @@ use anyhow::Result;
+ use anyhow::anyhow;
+ use async_trait::async_trait;
+ use collections::HashMap;
+-use parking_lot::Mutex;
+ use release_channel::{AppCommitSha, AppVersion, ReleaseChannel};
+ use semver::Version as SemanticVersion;
+ use std::collections::BTreeMap;
+@@ -56,7 +55,6 @@ pub struct DockerConnectionOptions {
+ }
+ 
+ pub(crate) struct DockerExecConnection {
+-    proxy_process: Mutex<Option<u32>>,
+     remote_dir_for_server: String,
+     remote_binary_relpath: Option<Arc<RelPath>>,
+     connection_options: DockerConnectionOptions,
+@@ -73,7 +71,6 @@ impl DockerExecConnection {
+         cx: &mut AsyncApp,
+     ) -> Result<Self> {
+         let mut this = Self {
+-            proxy_process: Mutex::new(None),
+             remote_dir_for_server: "/".to_string(),
+             remote_binary_relpath: None,
+             connection_options,
+@@ -645,21 +642,6 @@ impl DockerExecConnection {
+         }
+         Ok(())
+     }
+-
+-    fn kill_inner(&self) -> Result<()> {
+-        if let Some(pid) = self.proxy_process.lock().take() {
+-            if let Ok(_) = util::command::new_command("kill")
+-                .arg(pid.to_string())
+-                .spawn()
+-            {
+-                Ok(())
+-            } else {
+-                Err(anyhow::anyhow!("Failed to kill process"))
+-            }
+-        } else {
+-            Ok(())
+-        }
+-    }
+ }
+ 
+ #[async_trait(?Send)]
+@@ -677,13 +659,6 @@ impl RemoteConnection for DockerExecConnection {
+         delegate: Arc<dyn RemoteClientDelegate>,
+         cx: &mut AsyncApp,
+     ) -> Task<Result<i32>> {
+-        // We'll try connecting anew every time we open a devcontainer, so proactively try to kill any old connections.
+-        if !self.has_been_killed() {
+-            if let Err(e) = self.kill_inner() {
+-                return Task::ready(Err(e));
+-            };
+-        }
+-
+         delegate.set_status(Some("Starting proxy"), cx);
+ 
+         let Some(remote_binary_relpath) = self.remote_binary_relpath.clone() else {
+@@ -733,9 +708,6 @@ impl RemoteConnection for DockerExecConnection {
+             )));
+         };
+ 
+-        let mut proxy_process = self.proxy_process.lock();
+-        *proxy_process = Some(child.id());
+-
+         cx.spawn(async move |cx| {
+             super::handle_rpc_messages_over_child_process_stdio(
+                 child,
+@@ -774,11 +746,11 @@ impl RemoteConnection for DockerExecConnection {
+     }
+ 
+     async fn kill(&self) -> Result<()> {
+-        self.kill_inner()
++        Ok(())
+     }
+ 
+     fn has_been_killed(&self) -> bool {
+-        self.proxy_process.lock().is_none()
++        false
+     }
+ 
+     fn build_command(
+@@ -1184,7 +1156,6 @@ mod tests {
+ 
+     fn connection(remote_env: &[(&str, &str)]) -> DockerExecConnection {
+         DockerExecConnection {
+-            proxy_process: Mutex::new(None),
+             remote_dir_for_server: "/tmp/zed".to_string(),
+             remote_binary_relpath: None,
+             connection_options: DockerConnectionOptions {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #67534** (closed): Add a language extension tutorial (@savealamb)
-- **PR #67526** (closed): Edit, run, and save Jupyter notebooks in Zed (@ArnoGevorkyan)
-- **PR #67524** (closed): Add a language extension tutorial (@savealamb)
-- **PR #67516** (2026-11-27): outline_panel: Apply default expansion depth to outlines loaded later (@Chukwuebuka-2003)
-- **PR #67509** (closed): Apply settings profiles only on confirmation by default (@karleone)
-- **PR #67508** (2026-11-27): editor: Improve performance with many cursors (@smitbarmase)
+- **PR #67575** (2026-11-28): Update `Pyrefly` documentation (@lingyaochu)
+- **PR #67574** (2026-11-28): editor: Sync git blame once per buffer in blame_for_rows (@ptweezy)
+- **PR #67573** (2026-11-28): language_core: Break reference cycle in the text highlight cache (@ptweezy)
+- **PR #67572** (2026-11-28): worktree: Remove unused PathEntry::is_ignored (@ptweezy)
+- **PR #67570** (2026-11-28): editor: Compute sort-lines keys once per line (@ptweezy)
+- **PR #67568** (2026-11-28): livekit_client: Reuse the pixel buffer pool for remote video frames (@ptweezy)
 
 ---
 
@@ -2814,45 +3633,71 @@ with a scale factor of 2. The fix follows the conver
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent_ui: Fix subagent card staying failed after a successful retry
+## X. TCP-based debugging in dev containers
 
 **RULE**:
-When implementing operations in `crates/acp_thread/src/acp_thread.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/collab/tests/integration/remote_editing_collaboration_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b47d9288`: agent_ui: Fix subagent card staying failed after a successful retry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed8dc1b6`: TCP-based debugging in dev containers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/acp_thread/src/acp_thread.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/collab/tests/integration/remote_editing_collaboration_tests.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// The last idle state this subagent reported for the run covering entries `start..=end`:
-    /// after the entry at `start` arrived and before any entry after `end`. A retry reports
-    /// again within the same run, so its outcome replaces the one it retried.
-    pub fn subagent_outcome_between(
-        &self,
-        start: usize,
-        end: usize,
-    ) -> Option<&acp_v2::StateUpdate> {
-        self.subagent_outcomes
-            .iter()
-            .rev()
-            .find(|(entry_count, _)| *entry_count > start && *entry_count <= end + 1)
-            .map(|(_, state)| state)
-    }
+) {
+    test_remote_debug_session(cx_a, server_cx, executor, false).await;
+}
 
+#[gpui::test]
+async fn test_remote_debug_session_uses_tcp_proxy(
+    cx_a: &mut TestAppContext,
+    server_cx: &mut TestAppContext,
+    executor: BackgroundExecutor,
+) {
+    test_remote_debug_session(cx_a, server_cx, executor, true).await;
+}
+
+async fn test_remote_debug_session(
+    cx_a: &mut TestAppContext,
+    server_cx: &mut TestAppContext,
+    executor: BackgroundExecutor,
+    tcp_proxy: bool,
+    if tcp_proxy {
+        let remote::RemoteConnectionOptions::Mock(options) = &opts else {
+            panic!("Expected a mock connection");
+        };
+        cx_a.update(|cx| {
+            remote::MockConnectionRegistry::update_global(cx, |registry, _| {
+                registry.enable_tcp_proxy(options).unwrap();
+            });
+        });
+    }
+    if tcp_proxy {
+        server_cx.update(|cx| {
+            SettingsStore::update_global(cx, |store, cx| {
+                store.update_user_settings(cx, |settings| {
+                    settings
+                        .project
+                        .dap
+                        .entry("fake-adapter".into())
+                        .or_default()
+              
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                "request": "launch"
+                port: None,
+                timeout: None,
+                if count.fetch_add(1, std::sync::atomic::Ordering::SeqCst) < 5 {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b47d9288` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed8dc1b6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

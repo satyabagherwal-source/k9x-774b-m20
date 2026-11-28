@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T09:54:41.870Z",
+  "last_updated": "2026-11-28T10:11:06.154Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27086,
+  "total_items": 27094,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218675,8 +218675,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "da0ea446",
-      "content_hash": "fdd75c3ef54ce4a5db2b74701f91164822a3ebf58c77396218a05e46a0834ed0",
+      "source_version": "965b3e76",
+      "content_hash": "b9df1da4baa9e880918788e3f84232b533f106d0ec2c83a46b61c4cc7fe87ac5",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -218734,6 +218734,11 @@
           "number": 10579,
           "title": "write full-precision rows once during index builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11090,
+          "title": "improve the synonyms docs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218741,7 +218746,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T01:18:04.408Z",
+      "verified_at": "2026-11-28T10:10:57.439Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218795,10 +218800,10 @@
       "relative_path": "08_VERIFICATION/paradedb-paradedb-verification-protocol-empirical-defect-shield-for-paradedb-par.md",
       "title": "Verification Protocol: Empirical Defect Shield for paradedb/paradedb",
       "repository": "paradedb/paradedb",
-      "source_version": "da0ea446",
-      "content_hash": "419599719ae9405b72f6972295d684427796882ca1c5a0ac106aeff35cb884a0",
+      "source_version": "965b3e76",
+      "content_hash": "a83124f951b50515515a722062e313ee2fe9e76c4f48b332a42184b5a342eb41",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T01:18:05.127Z"
+      "persisted_at": "2026-11-28T10:10:58.697Z"
     },
     "learn-huggingface-amazon-chronos-2": {
       "learning_id": "learn-huggingface-amazon-chronos-2",
@@ -235833,8 +235838,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "46375fbf",
-      "content_hash": "cebc4fe40367411f283d60ef0d5391c37afc7c83d40ae5bb4400b165a0907fe6",
+      "source_version": "0f009536",
+      "content_hash": "6f877decad4fccb20c46732502daeb8a5e43313bdfaad8b81f40e6a7d5d5464e",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -235892,6 +235897,11 @@
           "number": 10874,
           "title": "Fix subagent card staying failed after a successful retry",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11087,
+          "title": "TCP-based debugging in dev containers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235899,7 +235909,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T10:01:40.083Z",
+      "verified_at": "2026-11-28T10:10:45.311Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235941,10 +235951,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "repository": "zed-industries/zed",
-      "source_version": "46375fbf",
-      "content_hash": "56881b6141c9b9e12cc4963b72f7d97d1a914881afadb791a71df6d8906dfdc5",
+      "source_version": "0f009536",
+      "content_hash": "6c292d7085f7a6d84397693a1dc4f705817f44359fce55850be843e3de59cc8e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T10:01:40.854Z"
+      "persisted_at": "2026-11-28T10:10:46.507Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed",
@@ -235978,9 +235988,9 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "61d3226f2df909746c36d18f3ff9697a043a65b84250151b56d5296c8a2e3795",
+      "content_hash": "62646f5bcd0733ec9571bf63bac3f4f30fbe63080f8a65d10861d146998690e8",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T10:01:44.531Z"
+      "persisted_at": "2026-11-28T10:11:02.718Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings",
@@ -235990,9 +236000,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries-zed-learnings",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "37e612918ea4008f143452688097d531e6c2c6bcd995a45afc45146ac8cb8db9",
+      "content_hash": "2afd812fd76c57f968270ddd50f73895399d3a1d7b9716233baf7dd34856c31b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:01:44.720Z"
+      "persisted_at": "2026-11-28T10:11:02.999Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor",
@@ -250985,10 +250995,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "repository": "paradedb/paradedb",
-      "source_version": "da0ea446",
-      "content_hash": "aba2e2597b4288e70000f27a2cfbc1634a318988aa7d4532eec0e93199d8675b",
+      "source_version": "965b3e76",
+      "content_hash": "85ec77cd58b2458f5f16f841be5f4e4c0a279c633ccda6c49afcadc04d0aaac6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T01:18:04.972Z"
+      "persisted_at": "2026-11-28T10:10:58.416Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i",
@@ -267795,8 +267805,8 @@
       "slug": "sozercan-kaset",
       "platform": "github",
       "source_url": "https://github.com/sozercan/kaset",
-      "source_version": "49c8bb52",
-      "content_hash": "1b8b66250a14e83bebfc1d95da42c7ef9008fcdc190322fcfc46004dae2ff00f",
+      "source_version": "59e95c8a",
+      "content_hash": "3d761cdcaee4c8f626b35ba1ac21ebd2890dba404f7eadcb5707317ad3a3c98b",
       "dossier_path": "07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sozercan-kaset-learnings.md",
       "promoted_rules": [
@@ -267814,6 +267824,11 @@
           "number": 10618,
           "title": "finish removing source comments",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11088,
+          "title": "route bare Space to play/pause and stop hidden WebView swallowing ⌘←/",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -267821,7 +267836,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T06:44:04.758Z",
+      "verified_at": "2026-11-28T10:10:47.192Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267974,9 +267989,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sozercan-kaset-learnings",
       "repository": "sozercan-kaset-learnings",
       "source_version": "HEAD",
-      "content_hash": "233f6d9c5b9e36fd5357291d2624566809c643caaa3ec89fe4c1a39a3ac444a3",
+      "content_hash": "bce179a6e02210ff26129127c6cb4f9fc9efde1f6c6d5959b2500f15f7936a67",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T06:44:14.182Z"
+      "persisted_at": "2026-11-28T10:11:06.154Z"
     },
     "learn-github-urllib3-urllib3": {
       "learning_id": "learn-github-urllib3-urllib3",
@@ -273680,10 +273695,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-preactjs-preact-architecture-intelligence-preactjs-preact-core-invariants.md",
       "title": "Architecture Intelligence: preactjs/preact Core Invariants",
       "repository": "preactjs/preact",
-      "source_version": "1fbc07f6",
-      "content_hash": "13c53b6601b961ef37a8aa59ddd9995be588084158df7370dfd0b99ec0c4e737",
+      "source_version": "94fbd390",
+      "content_hash": "e4d800fa0da384baac066f329073b20e6480423a016d86c648a2f26c34d20379",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T00:16:46.841Z"
+      "persisted_at": "2026-11-28T10:10:49.166Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact",
@@ -273692,10 +273707,10 @@
       "relative_path": "08_VERIFICATION/preactjs-preact-verification-protocol-empirical-defect-shield-for-preactjs-preac.md",
       "title": "Verification Protocol: Empirical Defect Shield for preactjs/preact",
       "repository": "preactjs/preact",
-      "source_version": "39d353a8",
-      "content_hash": "f4e55be130911e3cbb00ed418c4c5a627289326ebbcd1d9142aab39933a4fdc8",
+      "source_version": "94fbd390",
+      "content_hash": "57ae54e6dc445184352d2bfb7f9bb311e5bfce02e74a895a5cff68d1aa896179",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:43:46.846Z"
+      "persisted_at": "2026-11-28T10:10:49.443Z"
     },
     "learn-github-krakend-krakend-ce": {
       "learning_id": "learn-github-krakend-krakend-ce",
@@ -273819,9 +273834,9 @@
       "title": "Architecture Intelligence: preactjs-preact-learnings Core Invariants",
       "repository": "preactjs-preact-learnings",
       "source_version": "HEAD",
-      "content_hash": "b482af930a0ce617154bac19a60cbe0f8c28b2a7cfdb01776992f972dfa56a2e",
+      "content_hash": "d1d900638a62f254d511d0904cd00676da3540a3260cb50593867b88401d732d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T00:17:26.585Z"
+      "persisted_at": "2026-11-28T10:11:04.602Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-preactjs-preact-learnings",
@@ -273831,9 +273846,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for preactjs-preact-learnings",
       "repository": "preactjs-preact-learnings",
       "source_version": "HEAD",
-      "content_hash": "39aebecfb3a9c90ea9fa3e724808542ff58bf5aeecd4f4765e5cf5bb3a1400ca",
+      "content_hash": "099817e65d3efb1f91a65b4027ac9a73a727c8b87728f10f49c3cc31268e835b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:44:01.138Z"
+      "persisted_at": "2026-11-28T10:11:04.882Z"
     },
     "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants",
@@ -354472,10 +354487,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sozercan-kaset-technical-construction-intelligence-sozercan-kaset-core-invariant.md",
       "title": "Technical Construction Intelligence: sozercan/kaset Core Invariants",
       "repository": "sozercan/kaset",
-      "source_version": "49c8bb52",
-      "content_hash": "0723e324ce0d04548308f9c4ac88ba7c7e28c82495be1dc002b6436824c8a469",
+      "source_version": "59e95c8a",
+      "content_hash": "18a71ab80663775b5ecb79478e720e618ced2f8fa8337ebf5435ed74709a6f5f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T06:44:05.561Z"
+      "persisted_at": "2026-11-28T10:10:48.342Z"
     },
     "rule-10619": {
       "learning_id": "rule-10619",
@@ -354511,9 +354526,9 @@
       "title": "Technical Construction Intelligence: sozercan-kaset-learnings Core Invariants",
       "repository": "sozercan-kaset-learnings",
       "source_version": "HEAD",
-      "content_hash": "44a57532d08b9cffe4b92201f19561751a8117b5e7f9605063e30e5ed87e2301",
+      "content_hash": "33ee0248d11c1a5aa85584fe815aec7820839760eb18eb37d21fdb157d2ee3a4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T06:44:13.753Z"
+      "persisted_at": "2026-11-28T10:11:05.876Z"
     },
     "candidate_directive-suggested-sessions-dashboard-settings-and-guide": {
       "item_id": "candidate_directive-suggested-sessions-dashboard-settings-and-guide",
@@ -372341,6 +372356,108 @@
       "content_hash": "15ddb2a3227310f754223d39bed9f8eccfaaeef1ba1c08d57cf7b4e7c2c98bfe",
       "domain_letter": "G",
       "persisted_at": "2026-11-28T09:54:41.291Z"
+    },
+    "rule-11087": {
+      "learning_id": "rule-11087",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11087,
+      "title": "TCP-based debugging in dev containers",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "0f009536",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T10:10:45.311Z"
+    },
+    "candidate_directive-tcp-based-debugging-in-dev-containers": {
+      "item_id": "candidate_directive-tcp-based-debugging-in-dev-containers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2JKK-tcp-based-debugging-in-dev-containers.md",
+      "title": "TCP-based debugging in dev containers",
+      "repository": "zed-industries-zed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ebf4060223e279256315667fdc02ae5c0cc6ed05fd704d507326db95acd0d3c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-28T10:11:02.426Z"
+    },
+    "rule-11088": {
+      "learning_id": "rule-11088",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11088,
+      "title": "route bare Space to play/pause and stop hidden WebView swallowing ⌘←/",
+      "source_url": "https://github.com/sozercan/kaset",
+      "source_version": "59e95c8a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T10:10:47.192Z"
+    },
+    "candidate_directive-route-bare-space-to-play-pause-and-stop-hidden-webview-swallowing": {
+      "item_id": "candidate_directive-route-bare-space-to-play-pause-and-stop-hidden-webview-swallowing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-28HD-route-bare-space-to-play-pause-and-stop-hidden-webview-swallowing.md",
+      "title": "route bare Space to play/pause and stop hidden WebView swallowing ⌘←/",
+      "repository": "sozercan/kaset",
+      "source_version": "59e95c8a",
+      "content_hash": "7fe91094618f0bbd31f960531c49b8d7af2fa4c78f940cabb92aa6d42a754bdc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T10:10:48.054Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-index-js": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-index-js",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2L0M-empirical-invariant-guard-in-index-js.md",
+      "title": "Empirical Invariant Guard in index.js",
+      "repository": "preactjs-preact-learnings",
+      "source_version": "HEAD",
+      "content_hash": "97086a1bafbcd9ffb872780f4e48fa58c6b876672bacd34b5dd3ffe0a5af8ed2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T10:11:04.297Z"
+    },
+    "rule-11090": {
+      "learning_id": "rule-11090",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11090,
+      "title": "improve the synonyms docs",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "965b3e76",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T10:10:57.440Z"
+    },
+    "candidate_directive-improve-the-synonyms-docs": {
+      "item_id": "candidate_directive-improve-the-synonyms-docs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2G9H-improve-the-synonyms-docs.md",
+      "title": "improve the synonyms docs",
+      "repository": "paradedb/paradedb",
+      "source_version": "965b3e76",
+      "content_hash": "6618921191a4b10c52513c95b2896e3d601784d11be03b0cd617916e02978e63",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T10:10:58.138Z"
+    },
+    "candidate_directive-playback-route-bare-space-to-play-pause-and-stop-hidden-webview-swallowing": {
+      "item_id": "candidate_directive-playback-route-bare-space-to-play-pause-and-stop-hidden-webview-swallowing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2M0D-playback-route-bare-space-to-play-pause-and-stop-hidden-webview-swallowing.md",
+      "title": "playback): route bare Space to play/pause and stop hidden WebView swallowing ⌘←/",
+      "repository": "sozercan-kaset-learnings",
+      "source_version": "HEAD",
+      "content_hash": "20a32646bdaa0a96e628e25dc96a970b45e4247fa351f7734620b94cd3b3d753",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T10:11:05.585Z"
     }
   },
   "ai-builder-brain": {

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T09:54:33.762Z",
-  "total_cycles_completed": 13310,
-  "total_learnings_persisted": 13310,
-  "total_rules_promoted": 12009,
+  "last_updated": "2026-11-28T10:10:57.789Z",
+  "total_cycles_completed": 13314,
+  "total_learnings_persisted": 13314,
+  "total_rules_promoted": 12013,
   "history": [
-    {
-      "timestamp": "2026-11-27T16:03:02.406Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T16:03:07.706Z",
-      "repository": "TableProApp/TablePro",
-      "learningId": "learn-github-tableproapp-tablepro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T16:21:30.681Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T16:21:39.315Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T16:30:24.132Z",
       "repository": "juicedata/juicefs",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-28T09:54:33.762Z",
       "repository": "databendlabs/databend",
       "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T10:10:45.697Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T10:10:47.665Z",
+      "repository": "sozercan/kaset",
+      "learningId": "learn-github-sozercan-kaset",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T10:10:48.500Z",
+      "repository": "preactjs/preact",
+      "learningId": "learn-github-preactjs-preact",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T10:10:57.789Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

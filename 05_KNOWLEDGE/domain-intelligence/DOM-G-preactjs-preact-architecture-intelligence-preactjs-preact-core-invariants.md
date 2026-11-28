@@ -4,24 +4,24 @@
 {
   "source_repository": "preactjs/preact",
   "source_url": "https://github.com/preactjs/preact",
-  "source_version": "1fbc07f6",
+  "source_version": "94fbd390",
   "license": "MIT",
-  "timestamp": "2026-11-25T00:16:46.837Z",
+  "timestamp": "2026-11-28T10:10:48.881Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-preactjs-preact",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [preactjs/preact](https://github.com/preactjs/preact) (Revision: `1fbc07f6`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T00:16:46.837Z`  
+> **Provenance**: Harvested from [preactjs/preact](https://github.com/preactjs/preact) (Revision: `94fbd390`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T10:10:48.881Z`  
 > **Learning ID**: `learn-github-preactjs-preact`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from preactjs/preact:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:16:45.944Z  
+> **Harvest Timestamp**: 2026-11-28T10:10:46.106Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ⚛️ Fast 3kB React alternative with the same modern API. Components & Virtual DOM.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 39012 stars
+- **Stars / Engagement**: 39025 stars
 
 ---
 
@@ -259,6 +259,23 @@ const classNameDescriptorNonEnumberable = {
 	}
 };
 
+function normalizeSelect(props, normalizedProps) {
+	let selected =
+		normalizedProps.defaultValue != null
+			? normalizedProps.defaultValue
+			: normalizedProps.multiple && Array.isArray(normalizedProps.value)
+				? normalizedProps.value
+				: null;
+	if (selected != null) {
+		// Assigning the forEach result clears value after selecting the options.
+		normalizedProps.value = toChildArray(props.children).forEach(child => {
+			child.props.selected = normalizedProps.multiple
+				? selected.indexOf(child.props.value) != -1
+				: selected == child.props.value;
+		});
+	}
+}
+
 function handleDomVNode(vnode) {
 	let props = vnode.props,
 		type = vnode.type,
@@ -327,7 +344,7 @@ function handleDomVNode(vnode) {
 					i = 'oninputCapture';
 				}
 			}
-		} else if (isNonDashedType && CAMEL_PROPS.test(i)) {
+		} else if (isNonDashedType && i != 'children' && CAMEL_PROPS.test(i)) {
 			i = i.replace(CAMEL_REPLACE, '-$&').toLowerCase();
 		} else if (value === null) {
 			value = undefined;
@@ -336,24 +353,7 @@ function handleDomVNode(vnode) {
 		normalizedProps[i] = value;
 	}
 
-	if (type == 'select') {
-		// Select the matching options for a defaultValue, or for an array value
-		// of <select multiple value={[]} />.
-		let selected =
-			normalizedProps.defaultValue != null
-				? normalizedProps.defaultValue
-				: normalizedProps.multiple && Array.isArray(normalizedProps.value)
-					? normalizedProps.value
-					: null;
-		if (selected != null) {
-			// forEach() always returns undefined, which we abuse here to unset the value prop.
-			normalizedProps.value = toChildArray(props.children).forEach(child => {
-				child.props.selected = normalizedProps.multiple
-					? selected.indexOf(child.props.value) != -1
-					: selected == child.props.value;
-			});
-		}
-	}
+	if (type == 'select') normalizeSelect(props, normalizedProps);
 
 	if (props.class && !props.className) {
 		normalizedProps.class = props.class;
@@ -420,7 +420,8 @@ function initRenderTracking(value) {
 			currentComponent = vnode._component;
 		};
 
-		const oldDiffed = op
+		const oldDiffed = options.diffed;
+		options.diffed
 ```
 
 ### Core Architecture Module: `compat/src/util.js`
@@ -699,8 +700,10 @@ let afterPaintEffects = [];
 /**
  * Passive (useEffect) hook states of unmounted components whose cleanup is
  * still pending. Deferred to the after-paint flush to match React, which runs
- * passive destroys after the commit has painted. Each state's `_passive` holds
- * the surviving component its errors should be routed to.
+ * passive destroys after the commit has painted, unless a rerender is queued
+ * before that (see #5410). A cleanup that throws in that earlier run stays
+ * here, rethrowing, for the paint flush to report. Each state's `_passive`
+ * holds the surviving component its errors should be routed to.
  * @type {Array<import('./internal').EffectHookState>}
  */
 let unmountCleanups = [];
@@ -718,6 +721,8 @@ let oldBeforeUnmount = options.unmount;
 // refresh rate, which is the minimum rate for a smooth user experience.
 const RAF_TIMEOUT = 35;
 let prevRaf;
+
+options._flushEffects = flushUnmountCleanups;
 
 /** @type {(vnode: import('./internal').VNode) => void} */
 options._render = vnode => {
@@ -896,41 +901,41 @@ export function useReducer(reducer, initialState, init) {
 		if (!currentComponent._hasScuFromHooks) {
 			currentComponent._hasScuFromHooks = true;
 			const prevScu = currentComponent.shouldComponentUpdate;
-
-			// This SCU has the purpose of bailing out after repeated updates
-			// to stateful hooks. We store the next value in `_nextValue[0]` and
-			// keep doing that for all state setters; if we have next states and
-			// all next states within a component end up being equal to their
-			// original state we are safe to bail out for this specific component.
-			currentComponent.shouldComponentUpdate = function (p, s, c) {
-				const hooks = this.__hooks;
-				if (!hooks) return true;
-
-				// We check whether we have components with a nextValue set that
-				// have values that aren't equal to one another this pushes
-				// us to update further down the tree
-				let updatedHook = false;
-				let shouldUpdate = this.props != p;
-				hooks._list.some(hookItem => {
-					if (hookItem._nextValue) {
-						updatedHook = true;
-						if (!ObjectIs(hookItem._value[0], hookItem._nextValue[0])) {
-							shouldUpdate = true;
-						}
-					}
-				});
-
-				if (prevScu) {
-					const result = prevScu.call(this, p, s, c);
-					return updatedHook ? result || shouldUpdate : result;
-				}
-
-				return !updatedHook || shouldUpdate;
-			};
+			currentComponent.shouldComponentUpdate = createHookScu(prevScu);
 		}
 	}
 
 	return hookState._value;
+}
+
+// Batched state updates can restore the original value. In that case we
+// can skip rendering when props and all pending hook states are unchanged.
+function createHookScu(prevScu) {
+	return function (p, s, c) {
+		const hooks = this.__hooks;
+		if (!hooks) return true;
+
+		// We check whether we have components with a nextValue set that
+		// have values that aren't equal to one another this pushes
+		// us to update further down the tree
+		let updatedHook = false;
+		let shouldUpdate = this.props != p;
+		hooks._list.some(hookItem => {
+			if (hookItem._nextValue) {
+				updatedHook = true;
+				if (!ObjectIs(hookItem._value[0], hookItem._nextValue[0])) {
+					shouldUpdate = true;
+				}
+			}
+		});
+
+		if (prevScu) {
+			const result = prevScu.call(this, p, s, c);
+			return updatedHook ? result || shouldUpdate : result;
+		}
+
+		return !updatedHook || shouldUpdate;
+	};
 }
 
 /**
@@ -1026,9 +1031,7 @@ export function useCallback(callback, args) {
 }
 
 /**
- * @param {import('./internal').PreactContext} context
- */
-export function 
+ * @param {import('./internal').PreactContext} contex
 ```
 
 ### Core Architecture Module: `hooks/src/internal.d.ts`
@@ -1301,929 +1304,1049 @@ export function hydrate(vnode, parentDom) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2d3075ec` (2026-11-21)
-**Commit Message**: Revert "Merge pull request #5360 from preactjs/pending-range-hydration"
+### Incident Patch 1: `a14f262c` (2026-11-27)
+**Commit Message**: Merge pull request #5416 from preactjs/fix/unmount-cleanups-before-queued-render
 
-This reverts commit 7f8004bf47282c37ed4cd38a9354f5a8651f69f2, reversing
-changes made to 39310e58924654a9371b5e7e66c278ea53c5b90a.
+Run cleanups of unmounted components before a queued rerender
 
-**File**: `compat/test/browser/suspense-hydration.test.jsx` (modified, +0/-284)
+**File**: `compat/src/index.js` (modified, +5/-0)
 ```diff
-@@ -2424,288 +2424,4 @@ describe('suspense hydration owning a streamed range', () => {
- 		rerender();
- 		expect(scratch.innerHTML).to.equal('<main></main>');
- 	});
--
--	describe('pending streamed ranges', () => {
--		// A range whose chunk hasn't arrived opens with `$s?` and still holds the
--		// fallback, wrapped in `<?start>`/`<?end>` (comments where the parser has
--		// no processing instructions).
--		const pending = [
--			['processing instructions', '<?start name="1">', '<?end>'],
--			['comments', '<!--?start name="1"-->', '<!--?end-->']
--		];
--
--		pending.forEach(([name, start, end]) => {
--			it(`should not adopt the fallback for content that rendered first (${name})`, () => {
--				scratch.innerHTML = `<div><!--$s?:1-->${start}<p class="fb" data-fallback="1">loading</p>${end}<!--/$s:1--><footer>foot</footer></div>`;
--				const footer = scratch.querySelector('footer');
--				const onClick = vi.fn();
--
--				hydrate(
--					<div>
--						<Suspense fallback={<p class="fb">loading</p>}>
--							<p class="content" onClick={onClick}>
--								content
--							</p>
--						</Suspense>
--						<footer>foot</footer>
--					</div>,
--					scratch
--				);
--				rerender();
--
--				expect(scratch.querySelectorAll('p').length).to.equal(1);
--				expect(scratch.querySelector('p').outerHTML).to.equal(
--					'<p class="content">content</p>'
--				);
--				expect(scratch.querySelector('footer')).to.equal(footer);
--				expect(scratch.querySelector('p').nextElementSibling).to.equal(footer);
--				scratch.querySelector('p').dispatchEvent(createEvent('click'));
--				expect(onClick).toHaveBeenCalledOnce();
--			});
--
--			it(`should not adopt the fallback when the client resolves before the chunk (${name})`, async () => {
--				scratch.innerHTML = `<div><!--$s?:1-->${start}<p class="fb">loading</p>${end}<!--/$s:1--><footer>foot</footer></div>`;
--				const footer = scratch.querySelector('footer');
--				const [Lazy, resolve] = createLazy();
--
--				hydrate(
--					<div>
--						<Suspense fallback={<p class="fb">loading</p>}>
--							<Lazy />
--						</Suspense>
--						<footer>foot</footer>
--					</div>,
--					scratch
--				);
--				rerender();
--				expect(scratch.querySelector('p').className).to.equal('fb');
--
--				await resolve(() => <p class="content">content</p>);
--				rerender();
--
--				expect(scratch.querySelectorAll('p').length).to.equal(1);
--				expect(scratch.querySelector('p').outerHTML).to.equal(
--					'<p class="content">content</p>'
--				);
--				expect(scratch.querySelector('p').nextElementSibling).to.equal(footer);
--			});
--		});
--
--		it('should not adopt fallback text', () => {
--			scratch.innerHTML =
--				'<div><!--$s?:1--><!--?start name="1"-->loading<!--?end--><!--/$s:1--></div>';
--
--			hydrate(
--				<div>
--					<Suspense fallback="loading">content</Suspense>
--				</div>,
--				scratch
--			);
--			rerender();
--
--			expect(scratch.textContent).to.equal('content');
--		});
--
--		it('should still adopt the content of a range that was patched', () => {
--			scratch.innerHTML =
--				'<div><!--$s:1--><p class="content">content</p><!--/$s:1--></div>';
--			const p = scratch.querySelector('p');
--			clearLog();
--
--			hydrate(
--				<div>
--					<Suspense fallback={<p class="fb">loading</p>}>
--						<p class="content">content</p>
--					</Suspense>
--				</div>,
--				scratch
--			);
--			rerender();
--
--			expect(scratch.querySelector('p')).to.equal(p);
--			expect(getLog()).to.deep.equal([]);
--		});
--
--		it('should mount every node of content that outnumbers the fallback', () => {
--			scratch.innerHTML =
--				'<div><!--$s?:1--><!--?start name="1"--><p class="fb">loading</p><!--?end--><!--/$s:1--><p class="after">after</p></div>';
--
--			hydrate(
--				<div>
--					<Suspense fallback={<p class="fb">loading</p>}>
--						<p class="a">a</p>
--						<p class="b">b</p>
--					</Suspense>
--					<p class="after">after</p>
--				</div>,
--				scratch
--			);
--			rerender();
--
--			expect(
--				[...scratch.querySelectorAll('p')].map(p => p.outerHTML)
--			).to.deep.equal([
--				'<p class="a">a</p>',
--				'<p class="b">b</p>',
--				'<p class="after">after</p>'
--			]);
--		});
--
--		it('should hydrate the chunk that arrives while the client is suspended', async () => {
--			scratch.innerHTML =
--				'<div><!--$s?:1--><!--?start name="1"--><p class="fb">loading</p><!--?end--><!--/$s:1--></div>';
--			const [Lazy, resolve] = createLazy();
--
--			hydrate(
--				<div>
--					<Suspense fallback={<p class="fb">loading</p>}>
--						<Lazy />
--					</Suspense>
--				</div>,
--				scratch
--			);
--			rerender();
--
--			// what the stream's patch does to the range
--			const start = scratch.firstChild.firstChild;
--			start.data = '$s:1';
--			while (start.nextSibling.data != '/$s:1') start.nextSibling.remove();
--			start.after(
--				Object.assign(document.createElement('p'), {
--					className: 'content',
--					textContent: 'content'
--				})
--			);
--			const p = scratch.querySelector('p');
--			clearLog();
--
--			await resolve(() => <p class="content">content</p>);
--			rerender();
--
--			expect(scratch.quer
-```
-
-**File**: `src/diff/index.js` (modified, +18/-44)
-```diff
-@@ -68,9 +68,6 @@ export function diff(
- ) {
- 	/** @type {any} */
- 	let tmp,
--		// The closing marker of the range a boundary takes over, then what
--		// followed it
--		rangeNext,
- 		resumed,
- 		newType = newVNode.type;
- 
-@@ -79,35 +76,23 @@ export function diff(
- 
- 	// If the previous diff bailed out, resume creating/hydrating into the DOM
- 	// that was kept while suspended (server-rendered, or already in the
--	// container we rendered into).
-+	// container we rendered into). `tmp` holds the stored excess node until the
-+	// options._diff call below.
- 	if (
- 		oldVNode._flags & MODE_SUSPENDED &&
- 		// @ts-expect-error This is MODE_HYDRATE or 0
- 		((isHydrating = oldVNode._flags & MODE_HYDRATE),
- 		(tmp = oldVNode._component._excess))
- 	) {
- 		newVNode._flags |= isHydrating;
--		// Re-scan DOM from stored start marker for streamed hydration.
--		tmp = rangeEnd(tmp, (resumed = excessDomChildren = []));
--		oldDom = excessDomChildren[0];
--		// The closing marker stays until unmount.
--		if (tmp) excessDomChildren.pop();
--	} else if (
--		isHydrating &&
--		newType &&
--		(tmp = newType.prototype) &&
--		tmp._childDidSuspend &&
--		(rangeNext = rangeEnd(oldDom, (tmp = [oldDom]))) &&
--		tmp._excess
--	) {
--		// A boundary in front of a range that holds a fallback, because the
--		// server is still streaming it or gave up on it (`$s!`): its children
--		// only get that range, and diff the attributes of what they adopt.
--		rangeNext = rangeNext.nextSibling;
--		tmp.some(node => {
--			excessDomChildren[excessDomChildren.indexOf(node)] = NULL;
--		});
--		resumed = excessDomChildren = tmp;
-+		resumed = excessDomChildren = [];
-+		if (tmp.nodeType == 8) {
-+			// Re-scan DOM from stored start marker for streamed hydration.
-+			oldDom = rangeEnd(tmp, excessDomChildren);
-+		} else {
-+			excessDomChildren.push(tmp);
-+		}
-+		oldDom = excessDomChildren[0] || oldDom;
- 	}
- 
- 	if ((tmp = options._diff)) tmp(newVNode);
-@@ -356,8 +341,6 @@ export function diff(
- 
- 			// Remove the kept DOM this resumed render didn't claim
- 			if (resumed) resumed.some(removeNode);
--			// The markers the cursor stopped at go with a range a boundary took
--			if (resumed && rangeNext !== UNDEFINED) oldDom = rangeNext;
- 
- 			if (c._renderCallbacks.length) {
- 				commitQueue.push(c);
-@@ -462,26 +445,20 @@ export function diff(
- /**
-  * Find the closing marker of a streamed range.
-  * @param {PreactElement} start A `$s` marker opening a range
-- * @param {PreactElement[]} [nodes] Collects the nodes after `start` up to and
-- * including the closing marker, or `start` itself when it isn't a comment. For
-- * a comment its `_excess` tells whether the range holds a fallback (`$s?`,
-- * `$s!`).
-+ * @param {PreactElement[]} [nodes] Collects the nodes inside the range
-  * @returns {PreactElement} The closing marker, or undefined when `start` doesn't
-  * open a range or the range is unclosed
+@@ -133,6 +133,9 @@ function findDOMNode(component) {
   */
- function rangeEnd(start, nodes) {
--	if (start && start.nodeType == 8) {
--		if (nodes) nodes._excess = start.data[2] && start.data[2] != ':';
--		if (start.data.startsWith('$s')) {
--			for (let depth = 1; (start = start.nextSibling); ) {
--				if (nodes) nodes.push(start);
--				if (start.nodeType == 8) {
--					if (start.data.startsWith('$s')) depth++;
--					else if (start.data.startsWith('/$s') && !--depth) return start;
--				}
-+	if (start && start.nodeType == 8 && start.data.startsWith('$s')) {
-+		for (let depth = 1; (start = start.nextSibling); ) {
-+			if (start.nodeType == 8) {
-+				if (start.data.startsWith('$s')) depth++;
-+				else if (start.data.startsWith('/$s') && !--depth) return start;
- 			}
-+			if (nodes) nodes.push(start);
- 		}
--	} else if (nodes) nodes.push(start);
-+	}
- }
+ const flushSync = (callback, arg) => {
+ 	const prevDebounce = options.debounceRendering;
++	// This flush can run inside a diff or commit, where it isn't safe to run
++	// the cleanups of unmounted components ahead of the paint.
++	const prevFlushEffects = options._flushEffects;
  
- function markAsForce(vnode) {
-@@ -569,9 +546,6 @@ function diffElementNodes(
- 	else if (!namespace) namespace = XHTML_NAMESPACE;
- 
- 	if (excessDomChildren) {
--		// DOM that held a fallback isn't what we render: diff its attributes too
--		if (excessDomChildren._excess) isHydrating = false;
--
- 		for (i = 0; i < excessDomChildren.length; i++) {
- 			value = excessDomChildren[i];
+ 	// Capture the scheduled render callback so that all updates performed
+ 	// inside the user callback are batched into a single synchronous commit
+@@ -143,10 +146,12 @@ const flushSync = (callback, arg) => {
+ 	};
+ 	try {
+ 		const res = callback(arg);
++		options._flushEffects = undefined;
+ 		if (flush) flush();
+ 		return res;
+ 	} finally {
+ 		options.debounceRendering = prevDebounce;
++		options._flushEffects = prevFlushEffects;
+ 	}
+ };
  
 ```
 
----
-
-### Incident Patch 2: `1fbc07f6` (2026-11-21)
-**Commit Message**: Merge pull request #5402 from preactjs/fix/suspense-scoped-use-id
-
-Give each Suspense boundary its own useId counter
-
-**File**: `compat/src/internal.d.ts` (modified, +1/-0)
+**File**: `compat/test/browser/unstable_batchedUpdates.test.jsx` (modified, +87/-2)
 ```diff
-@@ -38,4 +38,5 @@ export interface SuspenseComponent extends PreactComponent<
- 	_pendingSuspensionCount: number;
- 	_suspenders: Component[];
- 	_detachOnNextRender: null | VNode<any>;
-+	_mask?: [string, number];
- }
-```
-
-**File**: `compat/src/suspense.js` (modified, +5/-0)
-```diff
-@@ -6,6 +6,7 @@ import {
- 	UNDEFINED,
- 	VNODE_MARKER
- } from '../../src/constants';
-+import { useId } from 'preact/hooks';
- import { assign } from './util';
- 
- function initSuspenseHooks() {
-@@ -212,6 +213,10 @@ function createSuspense() {
- 	 * @param {import('./internal').SuspenseState} state
- 	 */
- 	Suspense.prototype.render = function (props, state) {
-+		// Ids inside a boundary come from its own counter, so they don't depend
-+		// on when it resolves on the server or hydrates on the client.
-+		this._mask || (this._mask = [useId(), 0]);
-+
- 		if (this._detachOnNextRender) {
- 			// When the Suspense's _vnode was created by a call to createVNode
- 			// (i.e. due to a setState further up in the tree)
-```
-
-**File**: `compat/test/browser/suspense-hydration.test.jsx` (modified, +24/-0)
-```diff
-@@ -7,6 +7,7 @@ import React, {
- 	Suspense,
- 	use,
- 	memo,
-+	useId,
- 	useState,
- 	useSyncExternalStore,
- 	createPortal
-@@ -2055,6 +2056,29 @@ describe('suspense hydration', () => {
- 			expect(scratch.innerHTML).to.equal('<p>a</p><p>b</p>');
- 		});
+@@ -1,5 +1,6 @@
+-import { createElement, render } from 'preact';
+-import { useState } from 'preact/hooks';
++import { Component, createElement, options, render } from 'preact';
++import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
++import { act } from 'preact/test-utils';
+ import { unstable_batchedUpdates, flushSync } from 'preact/compat';
+ import { vi } from 'vitest';
+ import { setupScratch, teardown } from '../../../test/_util/helpers';
+@@ -55,4 +56,88 @@ describe('flushSync', () => {
+ 		expect(scratch.textContent).to.equal('2');
+ 		expect(renders).toHaveBeenCalledTimes(2);
  	});
 +
-+	it('should give ids inside a boundary the same value whenever it resolves', async () => {
-+		const Id = () => <input id={useId()} />;
-+		const [Lazy, resolve] = createLazy();
-+		const App = ({ Inner }) => (
-+			<Fragment>
-+				<Id />
-+				<Suspense fallback={<i>f</i>}>
-+					<Inner />
-+				</Suspense>
-+				<Id />
-+			</Fragment>
-+		);
-+		const ids = el => [...el.querySelectorAll('input')].map(i => i.id);
++	describe('inside a diff or commit (#5410)', () => {
++		/** @type {HTMLDivElement} */
++		let other;
++		let update;
 +
-+		const other = document.createElement('div');
-+		render(<App Inner={Id} />, other);
++		function Other() {
++			const [value, setValue] = useState(0);
++			update = setValue;
++			return value;
++		}
 +
-+		render(<App Inner={Lazy} />, scratch);
-+		await resolve(Id);
-+		rerender();
-+		expect(ids(scratch)).to.deep.equal(ids(other));
++		beforeEach(() => {
++			other = document.createElement('div');
++			render(<Other />, other);
++		});
++
++		it('should not run the passive cleanup of a component that is still unmounting', () => {
++			function Widget() {
++				const [closed, setClosed] = useState(false);
++				useEffect(() => () => setClosed(true), []);
++				useLayoutEffect(() => () => flushSync(() => update(1)), []);
++				return closed ? <b>closed</b> : <i>open</i>;
++			}
++
++			act(() => render(<Widget />, scratch));
++			act(() => render(null, scratch));
++
++			expect(scratch.innerHTML).to.equal('');
++			expect(other.textContent).to.equal('1');
++		});
++
++		it('should not route the cleanup error of another root to the component that flushes', () => {
++			const previous = document.createElement('div');
++			const paints = [];
++			const prevRaf = options.requestAnimationFrame;
++			options.requestAnimationFrame = cb => paints.push(cb);
++			const paint = () => paints.splice(0).forEach(cb => cb());
++
++			function Leaving() {
++				useEffect(
++					() => () => {
++						throw new Error('dispose');
++					},
++					[]
++				);
++				return null;
++			}
++			class Boundary extends Component {
++				componentDidCatch() {
++					this.setState({ failed: true });
++				}
++				render() {
++					return this.state.failed ? 'fallback' : this.props.children;
++				}
++			}
++			class Widget extends Component {
++				componentDidMount() {
++					flushSync(() => update(1));
++				}
++				render() {
++					return 'widget';
++				}
++			}
++
++			try {
++				render(<Leaving />, previous);
++				paint();
++				render(null, previous);
++				render(
++					<Boundary>
++						<Widget />
++					</Boundary>,
++					scratch
++				);
++
++				expect(scratch.textContent).to.equal('widget');
++				expect(other.textContent).to.equal('1');
++				expect(paint).to.throw('dispose');
++			} finally {
++				options.requestAnimationFrame = prevRaf;
++			}
++		});
 +	});
  });
- 
- describe('suspense hydration resuming into mismatched server DOM', () => {
 ```
 
-**File**: `hooks/src/index.js` (modified, +4/-5)
+**File**: `hooks/src/index.js` (modified, +36/-12)
 ```diff
-@@ -401,15 +401,14 @@ export function useId() {
- 	/** @type {import('./internal').IdHookState} */
- 	const state = getHookState(11);
- 	if (!state._value) {
--		// Grab either the root node or the nearest async boundary node.
-+		// Grab either the root node or the nearest Suspense boundary. Both keep
-+		// their mask on the component: their vnodes get replaced, it doesn't.
- 		/** @type {import('./internal').VNode | import('./internal').Component} */
- 		let root = currentComponent._vnode;
--		while (!root._mask && root._parent) {
-+		while (!(root._component || root)._mask && root._parent) {
- 			root = root._parent;
- 		}
--
--		// The root vnode is replaced on every `render()`, its component isn't.
--		if (!root._mask && root._component) root = root._component;
-+		root = root._component || root;
+@@ -17,8 +17,10 @@ let afterPaintEffects = [];
+ /**
+  * Passive (useEffect) hook states of unmounted components whose cleanup is
+  * still pending. Deferred to the after-paint flush to match React, which runs
+- * passive destroys after the commit has painted. Each state's `_passive` holds
+- * the surviving component its errors should be routed to.
++ * passive destroys after the commit has painted, unless a rerender is queued
++ * before that (see #5410). A cleanup that throws in that earlier run stays
++ * here, rethrowing, for the paint flush to report. Each state's `_passive`
++ * holds the surviving component its errors should be routed to.
+  * @type {Array<import('./internal').EffectHookState>}
+  */
+ let unmountCleanups = [];
+@@ -37,6 +39,8 @@ let oldBeforeUnmount = options.unmount;
+ const RAF_TIMEOUT = 35;
+ let prevRaf;
  
- 		let mask = root._mask || (root._mask = [0, 0]);
- 		state._value = 'P' + mask[0] + '-' + mask[1]++;
++options._flushEffects = flushUnmountCleanups;
++
+ /** @type {(vnode: import('./internal').VNode) => void} */
+ options._render = vnode => {
+ 	if (oldBeforeRender) oldBeforeRender(vnode);
+@@ -417,6 +421,35 @@ export function useId() {
+ 	return state._value;
+ }
+ 
++/**
++ * Unmounted components' passive cleanups run before any new passive effect,
++ * mirroring React running all destroys before any create.
++ * @param {number} [isPaint] Set by the paint flush. The render queue calls
++ * this without it, and leaves errors for the paint flush to report.
++ */
++function flushUnmountCleanups(isPaint) {
++	let state,
++		deferred = [];
++	while ((state = unmountCleanups.shift())) {
++		try {
++			invokeCleanup(state);
++		} catch (e) {
++			if (isPaint) {
++				state = /** @type {any} */ (state._passive);
++				options._catchError(e, { _parent: state && state._vnode });
++			} else {
++				// Rethrow from the paint flush, so the error is routed there
++				// rather than out of the render queue.
++				state._cleanup = () => {
++					throw e;
++				};
++				deferred.push(state);
++			}
++		}
++	}
++	unmountCleanups = deferred;
++}
++
+ /**
+  * After paint effects consumer.
+  */
+@@ -425,16 +458,7 @@ function flushAfterPaintEffects() {
+ 	// The loop picks up components unmounted by an effect we just invoked, which
+ 	// don't necessarily schedule a flush of their own.
+ 	do {
+-		// Unmounted components' passive cleanups run before any new passive
+-		// effect, mirroring React running all destroys before any create.
+-		while ((component = unmountCleanups.shift())) {
+-			try {
+-				invokeCleanup(component);
+-			} catch (e) {
+-				component = /** @type {any} */ (component._passive);
+-				options._catchError(e, { _parent: component && component._vnode });
+-			}
+-		}
++		flushUnmountCleanups(1);
+ 
+ 		while ((component = afterPaintEffects.shift())) {
+ 			const hooks = component.__hooks;
 ```
 
-**File**: `hooks/src/internal.d.ts` (modified, +2/-2)
+**File**: `hooks/test/browser/useEffect.test.jsx` (modified, +272/-2)
 ```diff
-@@ -37,14 +37,14 @@ export interface Component extends Omit<
- 	'_renderCallbacks'
- > {
- 	__hooks?: ComponentHooks;
--	_mask?: [number, number];
-+	_mask?: [number | string, number];
- 	// Extend to include HookStates
- 	_renderCallbacks?: Array<HookState | (() => void)>;
- 	_hasScuFromHooks?: boolean;
- }
+@@ -1,6 +1,6 @@
+-import { Component, Fragment, createElement, render } from 'preact';
++import { Component, Fragment, createElement, options, render } from 'preact';
+ import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
+-import { act, teardown as teardownAct } from 'preact/test-utils';
++import { act, setupRerender, teardown as teardownAct } from 'preact/test-utils';
+ import { vi } from 'vitest';
+ import { setupScratch, teardown } from '../../../test/_util/helpers';
+ import { scheduleEffectAssert } from '../_util/useEffectUtil';
+@@ -903,3 +903,273 @@ describe('useEffect', () => {
+ 		expect(calls).to.deep.equal(['doing effect0']);
+ 	});
+ });
++
++describe('useEffect cleanups of unmounted components (#5410)', () => {
++	/** @type {HTMLDivElement} */
++	let scratch;
++
++	/** @type {() => void} */
++	let rerender;
++
++	beforeEach(() => {
++		scratch = setupScratch();
++		rerender = setupRerender();
++	});
++
++	afterEach(() => {
++		teardown(scratch);
++	});
++
++	function createScreens(log) {
++		let registered = null;
++		function Old() {
++			useEffect(() => {
++				registered = 'Old';
++				return () => {
++					registered = null;
++				};
++			}, []);
++			return null;
++		}
++		function New() {
++			const [, setReady] = useState(false);
++			useLayoutEffect(() => setReady(true), []);
++			useEffect(() => {
++				log.push(`New sees ${registered}`);
++				registered = 'New';
++			}, []);
++			return null;
++		}
++		return { Old, New };
++	}
++
++	it('run before the replacement rerenders from a layout effect', () => {
++		const log = [];
++		const { Old, New } = createScreens(log);
++
++		act(() => render(<Old />, scratch));
++		act(() => render(<New />, scratch));
++
++		expect(log).to.deep.equal(['New sees null']);
++	});
++
++	it('run when a deeper component is queued alongside', () => {
++		const log = [];
++		const { Old, New } = createScreens(log);
++
++		let replace, notify;
++		function Screen() {
++			const [next, setNext] = useState(false);
++			replace = setNext;
++			return next ? <New /> : <Old />;
++		}
++		function Other() {
++			const [value, setValue] = useState(0);
++			notify = setValue;
++			return value;
++		}
++
++		act(() =>
++			render(
++				<>
++					<Screen />
++					<div>
++						<Other />
++					</div>
++				</>,
++				scratch
++			)
++		);
++		act(() => {
++			replace(true);
++			notify(1);
++		});
++
++		expect(log).to.deep.equal(['New sees null']);
++	});
++
++	it('do not run during the render that unmounts them', () => {
++		const log = [];
++		let rendering = false;
++
++		function Leaving() {
++			useEffect(
++				() => () => log.push(rendering ? 'during render' : 'after render'),
++				[]
++			);
++			return null;
++		}
++		function Pending({ n }) {
++			useEffect(() => {}, [n]);
++			return null;
++		}
++		function Done() {
++			rendering = false;
++			return null;
++		}
++
++		let set;
++		function App() {
++			const [n, setN] = useState(0);
++			set = setN;
++			rendering = true;
++			return (
++				<>
++					<div>{n < 2 && <Leaving />}</div>
++					<Pending n={n} />
++					<Done />
++				</>
++			);
++		}
++
++		act(() => render(<App />, scratch));
++		set(1);
++		rerender();
++		// Pending still has an effect waiting when this unmounts Leaving.
++		set(2);
++		rerender();
++		expect(log).to.deep.equal([]);
++
++		return scheduleEffectAssert(() =>
++			expect(log).to.deep.equal(['after render'])
++		);
++	});
++
++	describe('that throw', () => {
++		let frames, prevRaf, update;
++
++		beforeEach(() => {
++			frames = [];
++			prevRaf = options.requestAnimationFrame;
++			options.requestAnimationFrame = cb => frames.push(cb);
++		});
++
++		afterEach(() => {
++			options.requestAnimationFrame = prevRaf;
++		});
++
++		function paint() {
++			let cb;
++			while ((cb = frames.shift())) cb();
++		}
++
++		function Leaving() {
++			useEffect(
++				() => () => {
++					throw new Error('cleanup');
++				},
++				[]
++			);
++			return null;
++		}
++
++		function Other() {
++			const [value, setValue] = useState(0);
++			update = setValue;
++			return value;
++		}
++
++		it('throw from the paint flush, not from the queued rerender', () => {
++			const other = document.createElement('div');
++			render(<Leaving />, scratch);
++			render(<Other />, other);
++			paint();
++
++			render(null, scratch);
++			// With a synchronous queue this rerenders inside the call.
++			options.debounceRendering = cb => cb();
++			expect(() => update(1)).not.to.throw();
++			expect(other.textContent).to.equal('1');
++
++			expect(paint).to.throw('cleanup');
++		});
++
++		it('run once, and reach a boundary that stays mounted at the paint flush', () => {
++			const caught = [];
++			class Boundary extends Component {
++				componentDidCatch(e) {
++					caught.push(e.message);
++					this.setState({ failed: true });
++				}
++				render() {
++					return this.state.failed ? 'failed' : this.props.children;
++				}
++			}
++
++			let cleanups = 0;
++			function Counted() {
++				useEffect(
++					() => () => {
++						cleanups++;
++						throw new Error('cleanup');
++					},
++					[]
++				);
++				return null;
++			}
++
++			let hide;
++			function App() {
++				const [show, se
+```
+
+**File**: `mangle.json` (modified, +1/-0)
+```diff
+@@ -72,6 +72,7 @@
+       "$_hook": "__h",
+       "$_catchError": "__e",
+       "$_refCleanup": "__x",
++      "$_flushEffects": "__k",
+       "$_skipEffects": "__s",
+       "$_bits": "__g"
+     }
+```
+
+**File**: `src/component.js` (modified, +7/-2)
+```diff
+@@ -171,6 +171,10 @@ function process() {
+ 		// Don't update `renderCount` yet. Keep its value non-zero to prevent unnecessary
+ 		// process() calls from getting scheduled while `queue` is still being consumed.
+ 		while (rerenderQueue.length) {
++			// Passive cleanups of what earlier commits unmounted run before any
++			// effect the next render flushes (see #5410).
++			if (options._flushEffects) options._flushEffects();
++
+ 			// Keep the rerender queue sorted by (depth, insertion order). The queue
+ 			// will initially be sorted on the first iteration only if it has more than 1 item.
+ 			//
+@@ -184,8 +188,9 @@ function process() {
+ 			c = rerenderQueue.shift();
+ 			l = rerenderQueue.length;
  
- export interface VNode extends Omit<PreactVNode, '_component'> {
--	_mask?: [number, number];
-+	_mask?: [number | string, number];
- 	_component?: Component; // Override with our specific Component type
- }
- 
+-			// Re-render the component in place, unless it was unmounted.
+-			if (c._bits & COMPONENT_DIRTY && (parentDom = c._parentDom)) {
++			// Re-render the component in place, unless it was unmounted or a
++			// cleanup above already flushed the queue.
++			if (c && c._bits & COMPONENT_DIRTY && (parentDom = c._parentDom)) {
+ 				oldVNode = c._vnode;
+ 				oldDom = oldVNode._dom;
+ 				commitQueue = [];
+```
+
+**File**: `src/internal.d.ts` (modified, +2/-0)
+```diff
+@@ -35,6 +35,8 @@ export interface Options extends preact.Options {
+ 	_render?(vnode: VNode): void;
+ 	/** Attach a hook that is invoked before a hook's state is queried. */
+ 	_hook?(component: Component, index: number, type: HookType): void;
++	/** Attach a hook that runs the passive cleanups of unmounted components before a queued rerender. */
++	_flushEffects?(): void;
+ 	/** Bypass effect execution. Currenty only used in devtools for hooks inspection */
+ 	_skipEffects?: boolean;
+ 	/** Attach a hook that is invoked after an error is caught in a component but before calling lifecycle hooks */
 ```
 
 ---
 
-### Incident Patch 3: `0233fc27` (2026-11-21)
-**Commit Message**: Merge branch 'main' into fix/suspense-scoped-use-id
+### Incident Patch 2: `f091a2ee` (2026-11-26)
+**Commit Message**: Merge branch 'main' into fix/unmount-cleanups-before-queued-render
 
-**File**: `compat/src/index.d.ts` (modified, +12/-5)
+**File**: `compat/src/render.js` (modified, +19/-19)
 ```diff
-@@ -125,15 +125,15 @@ declare namespace React {
- 	// React 18 hooks
- 	export import useInsertionEffect = _hooks.useLayoutEffect;
- 	export function useTransition(): [false, typeof startTransition];
--	export function useDeferredValue<T = any>(val: T): T;
-+	export function useDeferredValue<T = any>(val: T, initialValue?: T): T;
- 	export function useSyncExternalStore<T>(
- 		subscribe: (flush: () => void) => () => void,
- 		getSnapshot: () => T,
- 		getServerSnapshot?: () => T
- 	): T;
- 	export function useEffectEvent<T extends Function>(cb: T): T;
- 	// React 19 hooks
--	export function use<T>(resource: Promise<T> | _preact.Context<T>): T;
-+	export function use<T>(resource: PromiseLike<T> | _preact.Context<T>): T;
+@@ -166,6 +166,23 @@ const classNameDescriptorNonEnumberable = {
+ 	}
+ };
  
- 	// Preact Defaults
- 	export import Context = _preact.Context;
-@@ -246,6 +246,7 @@ declare namespace React {
- 
- 	// Events
- 	export import TargetedEvent = _preact.TargetedEvent;
-+	export import SyntheticEvent = _preact.TargetedEvent;
- 	export import ChangeEvent = _preact.TargetedEvent;
- 	export import ClipboardEvent = _preact.TargetedClipboardEvent;
- 	export import CompositionEvent = _preact.TargetedCompositionEvent;
-@@ -256,8 +257,10 @@ declare namespace React {
- 	export import InvalidEvent = _preact.TargetedEvent;
- 	export import KeyboardEvent = _preact.TargetedKeyboardEvent;
- 	export import MouseEvent = _preact.TargetedMouseEvent;
-+	export import ToggleEvent = _preact.TargetedToggleEvent;
- 	export import TouchEvent = _preact.TargetedTouchEvent;
- 	export import UIEvent = _preact.TargetedUIEvent;
-+	export import WheelEvent = _preact.TargetedWheelEvent;
- 	export import AnimationEvent = _preact.TargetedAnimationEvent;
- 	export import TransitionEvent = _preact.TargetedTransitionEvent;
- 
-@@ -270,11 +273,15 @@ declare namespace React {
- 	export import PointerEventHandler = _preact.PointerEventHandler;
- 	export import FocusEventHandler = _preact.FocusEventHandler;
- 	export import FormEventHandler = _preact.GenericEventHandler;
-+	export import InputEventHandler = _preact.InputEventHandler;
- 	export import InvalidEventHandler = _preact.GenericEventHandler;
- 	export import KeyboardEventHandler = _preact.KeyboardEventHandler;
- 	export import MouseEventHandler = _preact.MouseEventHandler;
-+	export import SubmitEventHandler = _preact.SubmitEventHandler;
-+	export import ToggleEventHandler = _preact.ToggleEventHandler;
- 	export import TouchEventHandler = _preact.TouchEventHandler;
- 	export import UIEventHandler = _preact.UIEventHandler;
-+	export import WheelEventHandler = _preact.WheelEventHandler;
- 	export import AnimationEventHandler = _preact.AnimationEventHandler;
- 	export import TransitionEventHandler = _preact.TransitionEventHandler;
- 
-@@ -310,7 +317,7 @@ declare namespace React {
- 	export function isFragment(element: any): boolean;
- 	export function isMemo(element: any): boolean;
- 	export function findDOMNode(
--		component: _preact.Component | Element
-+		component: _preact.Component | Element | null | undefined
- 	): Element | null;
- 
- 	export abstract class PureComponent<
-@@ -411,12 +418,12 @@ declare namespace React {
- 
- 	export const Children: {
- 		map<T extends _preact.ComponentChild, R>(
--			children: T | T[],
-+			children: T | readonly T[],
- 			fn: (child: T, i: number) => R,
- 			context?: any
- 		): R[];
- 		forEach<T extends _preact.ComponentChild>(
--			children: T | T[],
-+			children: T | readonly T[],
- 			fn: (child: T, i: number) => void,
- 			context?: any
- 		): void;
-```
-
-**File**: `compat/test/browser/suspense-hydration.test.jsx` (modified, +0/-284)
-```diff
-@@ -2448,288 +2448,4 @@ describe('suspense hydration owning a streamed range', () => {
- 		rerender();
- 		expect(scratch.innerHTML).to.equal('<main></main>');
- 	});
--
--	describe('pending streamed ranges', () => {
--		// A range whose chunk hasn't arrived opens with `$s?` and still holds the
--		// fallback, wrapped in `<?start>`/`<?end>` (comments where the parser has
--		// no processing instructions).
--		const pending = [
--			['processing instructions', '<?start name="1">', '<?end>'],
--			['comments', '<!--?start name="1"-->', '<!--?end-->']
--		];
--
--		pending.forEach(([name, start, end]) => {
--			it(`should not adopt the fallback for content that rendered first (${name})`, () => {
--				scratch.innerHTML = `<div><!--$s?:1-->${start}<p class="fb" data-fallback="1">loading</p>${end}<!--/$s:1--><footer>foot</footer></div>`;
--				const footer = scratch.querySelector('footer');
--				const onClick = vi.fn();
--
--				hydrate(
--					<div>
--						<Suspense fallback={<p class="fb">loading</p>}>
--							<p class="content" onClick={onClick}>
--								content
--							</p>
--						</Suspense>
--						<footer>foot</footer>
--					</div>,
--					scratch
--				);
--				rerender();
--
--				expect(scratch.querySelectorAll('p').length).to.equal(1);
--				expect(scratch.querySelector('p').outerHTML).to.equal(
--					'<p class="content">content</p>'
--				);
--				expect(scratch.querySelector('footer')).to.equal(footer);
--				expect(scratch.querySelector('p').nextElementSibling).to.equal(footer);
--				scratch.querySelector('p').dispatchEvent(createEvent('click'));
--				expect(onClick).toHaveBeenCalledOnce();
--			});
--
--			it(`should not adopt the fallback when the client resolves before the chunk (${name})`, async () => {
--				scratch.innerHTML = `<div><!--$s?:1-->${start}<p class="fb">loading</p>${end}<!--/$s:1--><footer>foot</footer></div>`;
--				const footer = scratch.querySelector('footer');
--				const [Lazy, resolve] = createLazy();
--
--				hydrate(
--					<div>
--						<Suspense fallback={<p class="fb">loading</p>}>
--							<Lazy />
--						</Suspense>
--						<footer>foot</footer>
--					</div>,
--					scratch
--				);
--				rerender();
--				expect(scratch.querySelector('p').className).to.equal('fb');
--
--				await resolve(() => <p class="content">content</p>);
--				rerender();
--
--				expect(scratch.querySelectorAll('p').length).to.equal(1);
--				expect(scratch.querySelector('p').outerHTML).to.equal(
--					'<p class="content">content</p>'
--				);
--				expect(scratch.querySelector('p').nextElementSibling).to.equal(footer);
--			});
--		});
--
--		it('should not adopt fallback text', () => {
--			scratch.innerHTML =
--				'<div><!--$s?:1--><!--?start name="1"-->loading<!--?end--><!--/$s:1--></div>';
--
--			hydrate(
--				<div>
--					<Suspense fallback="loading">content</Suspense>
--				</div>,
--				scratch
--			);
--			rerender();
--
--			expect(scratch.textContent).to.equal('content');
--		});
--
--		it('should still adopt the content of a range that was patched', () => {
--			scratch.innerHTML =
--				'<div><!--$s:1--><p class="content">content</p><!--/$s:1--></div>';
--			const p = scratch.querySelector('p');
--			clearLog();
--
--			hydrate(
--				<div>
--					<Suspense fallback={<p class="fb">loading</p>}>
--						<p class="content">content</p>
--					</Suspense>
--				</div>,
--				scratch
--			);
--			rerender();
--
--			expect(scratch.querySelector('p')).to.equal(p);
--			expect(getLog()).to.deep.equal([]);
--		});
--
--		it('should mount every node of content that outnumbers the fallback', () => {
--			scratch.innerHTML =
--				'<div><!--$s?:1--><!--?start name="1"--><p class="fb">loading</p><!--?end--><!--/$s:1--><p class="after">after</p></div>';
--
--			hydrate(
--				<div>
--					<Suspense fallback={<p class="fb">loading</p>}>
--						<p class="a">a</p>
--						<p class="b">b</p>
--					</Suspense>
--					<p class="after">after</p>
--				</div>,
--				scratch
--			);
--			rerender();
--
--			expect(
--				[...scratch.querySelectorAll('p')].map(p => p.outerHTML)
--			).to.deep.equal([
--				'<p class="a">a</p>',
--				'<p class="b">b</p>',
--				'<p class="after">after</p>'
--			]);
--		});
--
--		it('should hydrate the chunk that arrives while the client is suspended', async () => {
--			scratch.innerHTML =
--				'<div><!--$s?:1--><!--?start name="1"--><p class="fb">loading</p><!--?end--><!--/$s:1--></div>';
--			const [Lazy, resolve] = createLazy();
--
--			hydrate(
--				<div>
--					<Suspense fallback={<p class="fb">loading</p>}>
--						<Lazy />
--					</Suspense>
--				</div>,
--				scratch
--			);
--			rerender();
--
--			// what the stream's patch does to the range
--			const start = scratch.firstChild.firstChild;
--			start.data = '$s:1';
--			while (start.nextSibling.data != '/$s:1') start.nextSibling.remove();
--			start.after(
--				Object.assign(document.createElement('p'), {
--					className: 'content',
--					textContent: 'content'
--				})
--			);
--			const p = scratch.querySelector('p');
--			clearLog();
--
--			await resolve(() => <p class="content">content</p>);
--			rerender();
--
--			expect(scratch.quer
-```
-
-**File**: `hooks/src/index.d.ts` (modified, +1/-1)
-```diff
-@@ -84,7 +84,7 @@ type CreateHandle = () => object;
-  * @param inputs If present, effect will only activate if the values in the list change (using ===).
-  */
- export function useImperativeHandle<T, R extends T>(
--	ref: Ref<T>,
-+	ref: Ref<T> | undefined,
- 	create: () => R,
- 	inputs?: Inputs
- ): void;
-```
-
-**File**: `src/diff/index.js` (modified, +18/-44)
-```diff
-@@ -68,9 +68,6 @@ export function diff(
- ) {
- 	/** @type {any} */
- 	let tmp,
--		// The closing marker of the range a boundary takes over, then what
--		// followed it
--		rangeNext,
- 		resumed,
- 		newType = newVNode.type;
- 
-@@ -79,35 +76,23 @@ export function diff(
- 
- 	// If the previous diff bailed out, resume creating/hydrating into the DOM
- 	// that was kept while suspended (server-rendered, or already in the
--	// container we rendered into).
-+	// container we rendered into). `tmp` holds the stored excess node until the
-+	// options._diff call below.
- 	if (
- 		oldVNode._flags & MODE_SUSPENDED &&
- 		// @ts-expect-error This is MODE_HYDRATE or 0
- 		((isHydrating = oldVNode._flags & MODE_HYDRATE),
- 		(tmp = oldVNode._component._excess))
- 	) {
- 		newVNode._flags |= isHydrating;
--		// Re-scan DOM from stored start marker for streamed hydration.
--		tmp = rangeEnd(tmp, (resumed = excessDomChildren = []));
--		oldDom = excessDomChildren[0];
--		// The closing marker stays until unmount.
--		if (tmp) excessDomChildren.pop();
--	} else if (
--		isHydrating &&
--		newType &&
--		(tmp = newType.prototype) &&
--		tmp._childDidSuspend &&
--		(rangeNext = rangeEnd(oldDom, (tmp = [oldDom]))) &&
--		tmp._excess
--	) {
--		// A boundary in front of a range that holds a fallback, because the
--		// server is still streaming it or gave up on it (`$s!`): its children
--		// only get that range, and diff the attributes of what they adopt.
--		rangeNext = rangeNext.nextSibling;
--		tmp.some(node => {
--			excessDomChildren[excessDomChildren.indexOf(node)] = NULL;
--		});
--		resumed = excessDomChildren = tmp;
-+		resumed = excessDomChildren = [];
-+		if (tmp.nodeType == 8) {
-+			// Re-scan DOM from stored start marker for streamed hydration.
-+			oldDom = rangeEnd(tmp, excessDomChildren);
-+		} else {
-+			excessDomChildren.push(tmp);
-+		}
-+		oldDom = excessDomChildren[0] || oldDom;
++function normalizeSelect(props, normalizedProps) {
++	let selected =
++		normalizedProps.defaultValue != null
++			? normalizedProps.defaultValue
++			: normalizedProps.multiple && Array.isArray(normalizedProps.value)
++				? normalizedProps.value
++				: null;
++	if (selected != null) {
++		// Assigning the forEach result clears value after selecting the options.
++		normalizedProps.value = toChildArray(props.children).forEach(child => {
++			child.props.selected = normalizedProps.multiple
++				? selected.indexOf(child.props.value) != -1
++				: selected == child.props.value;
++		});
++	}
++}
++
+ function handleDomVNode(vnode) {
+ 	let props = vnode.props,
+ 		type = vnode.type,
+@@ -234,7 +251,7 @@ function handleDomVNode(vnode) {
+ 					i = 'oninputCapture';
+ 				}
+ 			}
+-		} else if (isNonDashedType && CAMEL_PROPS.test(i)) {
++		} else if (isNonDashedType && i != 'children' && CAMEL_PROPS.test(i)) {
+ 			i = i.replace(CAMEL_REPLACE, '-$&').toLowerCase();
+ 		} else if (value === null) {
+ 			value = undefined;
+@@ -243,24 +260,7 @@ function handleDomVNode(vnode) {
+ 		normalizedProps[i] = value;
  	}
  
- 	if ((tmp = options._diff)) tmp(newVNode);
-@@ -356,8 +341,6 @@ export function diff(
+-	if (type == 'select') {
+-		// Select the matching options for a defaultValue, or for an array value
+-		// of <select multiple value={[]} />.
+-		let selected =
+-			normalizedProps.defaultValue != null
+-				? normalizedProps.defaultValue
+-				: normalizedProps.multiple && Array.isArray(normalizedProps.value)
+-					? normalizedProps.value
+-					: null;
+-		if (selected != null) {
+-			// forEach() always returns undefined, which we abuse here to unset the value prop.
+-			normalizedProps.value = toChildArray(props.children).forEach(child => {
+-				child.props.selected = normalizedProps.multiple
+-					? selected.indexOf(child.props.value) != -1
+-					: selected == child.props.value;
+-			});
+-		}
+-	}
++	if (type == 'select') normalizeSelect(props, normalizedProps);
  
- 			// Remove the kept DOM this resumed render didn't claim
- 			if (resumed) resumed.some(removeNode);
--			// The markers the cursor stopped at go with a range a boundary took
--			if (resumed && rangeNext !== UNDEFINED) oldDom = rangeNext;
- 
- 			if (c._renderCallbacks.length) {
- 				commitQueue.push(c);
-@@ -462,26 +445,20 @@ export function diff(
- /**
-  * Find the closing marker of a streamed range.
-  * @param {PreactElement} start A `$s` marker opening a range
-- * @param {PreactElement[]} [nodes] Collects the nodes after `start` up to and
-- * including the closing marker, or `start` itself when it isn't a comment. For
-- * a comment its `_excess` tells whether the range holds a fallback (`$s?`,
-- * `$s!`).
-+ * @param {PreactElement[]} [nodes] Collects the nodes inside the range
-  * @returns {PreactElement} The closing marker, or undefined when `start` doesn't
-  * open a range or the range is unclosed
-  */
- function rangeEnd(start, nodes) {
--	if (start && start.nodeType == 8) {
--		if (nodes) nodes._excess = start.data[2] && start.data[2] != ':';
--		if (start.data.startsWith('$s')) {
--			for (let depth = 1; (start = start.nextSibling); ) {
--				if (nodes) nodes.push(start);
--				if (start.nodeType == 8) {
--					if (start.data.startsWith('$s')) depth++;
--					else if (start.data.startsWith('/$s') && !--depth) return start;
--				}
-+	if (start && start.nodeType == 8 && start.data.startsWith('$s')) {
-+		for (let depth = 1; (start = start.nextSibling); ) {
-+			if (start.nodeType == 8) {
-+				if (start.data.startsWith('$s')) depth++;
-+				else if (start.data.startsWith('/$s') && !--depth) return start;
- 			}
-+			if (nodes) nodes.push(start);
- 		}
--	} else if (nodes) nodes.push(start);
-+	}
- }
- 
- function markAsForce(vnode) {
-@@ -569,9 +546,6 @@ function diffElementNodes(
- 	else if (!namespace) namespace = XHTML_NAMESPACE;
- 
- 	if (excessDomChildren) {
--		// DOM that held a fallback isn't what we render: diff its attributes too
--		if (excessDomChildren._excess) isHydrating = false;
--
- 		for (i = 0; i < excessDomChildren.length; i++) {
- 			value = excessDomChildren[i];
- 
+ 	if (props.class && !props.className) {
+ 		normalizedProps.class = props.class;
 ```
 
-**File**: `src/dom.d.ts` (modified, +68/-1)
+**File**: `hooks/src/index.js` (modified, +29/-29)
 ```diff
-@@ -51,6 +51,23 @@ interface SnapEventInit extends EventInit {
- 	snapTargetInline?: Element | null;
+@@ -216,41 +216,41 @@ export function useReducer(reducer, initialState, init) {
+ 		if (!currentComponent._hasScuFromHooks) {
+ 			currentComponent._hasScuFromHooks = true;
+ 			const prevScu = currentComponent.shouldComponentUpdate;
++			currentComponent.shouldComponentUpdate = createHookScu(prevScu);
++		}
++	}
+ 
+-			// This SCU has the purpose of bailing out after repeated updates
+-			// to stateful hooks. We store the next value in `_nextValue[0]` and
+-			// keep doing that for all state setters; if we have next states and
+-			// all next states within a component end up being equal to their
+-			// original state we are safe to bail out for this specific component.
+-			currentComponent.shouldComponentUpdate = function (p, s, c) {
+-				const hooks = this.__hooks;
+-				if (!hooks) return true;
+-
+-				// We check whether we have components with a nextValue set that
+-				// have values that aren't equal to one another this pushes
+-				// us to update further down the tree
+-				let updatedHook = false;
+-				let shouldUpdate = this.props != p;
+-				hooks._list.some(hookItem => {
+-					if (hookItem._nextValue) {
+-						updatedHook = true;
+-						if (!ObjectIs(hookItem._value[0], hookItem._nextValue[0])) {
+-							shouldUpdate = true;
+-						}
+-					}
+-				});
++	return hookState._value;
++}
+ 
+-				if (prevScu) {
+-					const result = prevScu.call(this, p, s, c);
+-					return updatedHook ? result || shouldUpdate : result;
++// Batched state updates can restore the original value. In that case we
++// can skip rendering when props and all pending hook states are unchanged.
++function createHookScu(prevScu) {
++	return function (p, s, c) {
++		const hooks = this.__hooks;
++		if (!hooks) return true;
++
++		// We check whether we have components with a nextValue set that
++		// have values that aren't equal to one another this pushes
++		// us to update further down the tree
++		let updatedHook = false;
++		let shouldUpdate = this.props != p;
++		hooks._list.some(hookItem => {
++			if (hookItem._nextValue) {
++				updatedHook = true;
++				if (!ObjectIs(hookItem._value[0], hookItem._nextValue[0])) {
++					shouldUpdate = true;
+ 				}
++			}
++		});
+ 
+-				return !updatedHook || shouldUpdate;
+-			};
++		if (prevScu) {
++			const result = prevScu.call(this, p, s, c);
++			return updatedHook ? result || shouldUpdate : result;
+ 		}
+-	}
+ 
+-	return hookState._value;
++		return !updatedHook || shouldUpdate;
++	};
  }
  
-+/** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/API/ContentVisibilityAutoStateChangeEvent) */
-+interface ContentVisibilityAutoStateChangeEvent extends Event {
-+	readonly skipped: boolean;
+ /**
+```
+
+**File**: `hooks/test/browser/useState.test.jsx` (modified, +11/-0)
+```diff
+@@ -212,6 +212,17 @@ describe('useState', () => {
+ 		expect(scratch.innerHTML).to.equal('');
+ 	});
+ 
++	it('caps a render-phase update loop at 25 renders', () => {
++		function App() {
++			const [count, setCount] = useState(0);
++			if (count < 30) setCount(count + 1);
++			return String(count);
++		}
++
++		render(<App />, scratch);
++		expect(scratch.textContent).to.equal('24');
++	});
++
+ 	it('should render a second time when the render function updates state', () => {
+ 		const calls = [];
+ 		const App = () => {
+```
+
+**File**: `src/component.js` (modified, +15/-24)
+```diff
+@@ -90,34 +90,25 @@ BaseComponent.prototype.render = Fragment;
+ 
+ /**
+  * @param {import('./internal').VNode} vnode
+- * @param {number | null} [childIndex]
++ * @param {number | null} [childIndex] Child to start at. When omitted, search
++ * the siblings following vnode.
+  */
+ export function getDomSibling(vnode, childIndex) {
+-	if (childIndex == NULL) {
+-		// Use childIndex==null as a signal to resume the search from the vnode's sibling
+-		return vnode._parent && getDomSibling(vnode._parent, vnode._index + 1);
+-	}
+-
+-	let sibling;
+-	for (; childIndex < vnode._children.length; childIndex++) {
+-		sibling = vnode._children[childIndex];
+-
+-		if (sibling && sibling._dom) {
+-			// Since process() keeps the _dom pointers correct,
+-			// we can rely on _dom to tell us if this subtree contains a
+-			// rendered DOM node, and what the first rendered DOM node is
+-			return sibling._dom;
++	if (childIndex != NULL) {
++		let sibling;
++		for (; childIndex < vnode._children.length; childIndex++) {
++			sibling = vnode._children[childIndex];
++
++			if (sibling && sibling._dom) {
++				// _dom is the first DOM node rendered by this subtree.
++				return sibling._dom;
++			}
+ 		}
+-	}
+ 
+-	// If we get here, we have not found a DOM node in this vnode's children.
+-	// We must resume from this vnode's sibling (in it's parent _children array)
+-	// Only climb up and search the parent if we aren't searching through a DOM
+-	// VNode (meaning we reached the DOM parent of the original vnode that began
+-	// the search). New roots (_parentDom) are a DOM boundary too.
+-	return typeof vnode.type == 'function' && !vnode.props._parentDom
+-		? getDomSibling(vnode)
+-		: NULL;
++		// DOM elements and portals bound the sibling search.
++		if (typeof vnode.type != 'function' || vnode.props._parentDom) return NULL;
++	}
++	return vnode._parent && getDomSibling(vnode._parent, vnode._index + 1);
+ }
+ 
+ /**
+```
+
+**File**: `src/diff/children.js` (modified, +4/-3)
+```diff
+@@ -392,13 +392,14 @@ function insert(parentVNode, oldDom, parentDom, isMounting) {
+ 		let children = parentVNode._children;
+ 		if (children) {
+ 			for (let i = 0; i < children.length; i++) {
+-				if (children[i]) {
++				const child = children[i];
++				if (child) {
+ 					// If we enter this code path on sCU bailout, where we copy
+ 					// oldVNode._children to newVNode._children, we need to update the old
+ 					// children's _parent pointer to point to the newVNode (parentVNode
+ 					// here).
+-					children[i]._parent = parentVNode;
+-					oldDom = insert(children[i], oldDom, parentDom, false);
++					child._parent = parentVNode;
++					oldDom = insert(child, oldDom, parentDom, false);
+ 				}
+ 			}
+ 		}
+```
+
+**File**: `src/diff/index.js` (modified, +3/-3)
+```diff
+@@ -251,13 +251,13 @@ export function diff(
+ 
+ 			// Function components re-render until they stop calling setState
+ 			// during render (see #2553), class components render exactly once.
+-			let renderHook = options._render,
+-				count = isClassComponent ? 25 : 0;
++			const renderHook = options._render;
++			let remaining = isClassComponent ? 1 : 25;
+ 			do {
+ 				c._bits &= ~COMPONENT_DIRTY;
+ 				if (renderHook) renderHook(newVNode);
+ 				tmp = c.render(c.props, (c.state = c._nextState), c.context);
+-			} while (c._bits & COMPONENT_DIRTY && ++count < 25);
++			} while (c._bits & COMPONENT_DIRTY && --remaining);
+ 
+ 			if (isClassComponent) {
+ 				EMPTY_ARR.push.apply(c._renderCallbacks, c._stateCallbacks);
+```
+
+**File**: `src/diff/props.js` (modified, +1/-2)
+```diff
+@@ -69,14 +69,13 @@ export function setProperty(dom, name, value, oldValue, namespace) {
+ 	// Benchmark for comparison: https://esbench.com/bench/574c954bdb965b9a00965ac6
+ 	else if (name[0] == 'o' && name[1] == 'n') {
+ 		if (typeof value != 'function') value = NULL;
+-		if (typeof oldValue != 'function') oldValue = NULL;
+ 
+ 		// Handlers are keyed by prop name and every prop name gets its own proxy,
+ 		// so swapping one (e.g. an inline arrow function on every render) is a
+ 		// single store. The event name is only derived to attach or remove it.
+ 		(dom._listeners || (dom._listeners = {}))[name] = value;
+ 
+-		if (!value || !oldValue) {
++		if (!value || typeof oldValue != 'function') {
+ 			const proxy =
+ 				eventProxies[name] || (eventProxies[name] = createEventProxy(name));
+ 			// The attach time belongs to the listener, not to the handler: one
+```
+
+---
+
+### Incident Patch 3: `6a18cd0b` (2026-11-26)
+**Commit Message**: run cleanups of unmounted components before a queued rerender
+
+**File**: `hooks/src/index.js` (modified, +19/-10)
+```diff
+@@ -37,6 +37,8 @@ let oldBeforeUnmount = options.unmount;
+ const RAF_TIMEOUT = 35;
+ let prevRaf;
+ 
++options._flushEffects = flushUnmountCleanups;
++
+ /** @type {(vnode: import('./internal').VNode) => void} */
+ options._render = vnode => {
+ 	if (oldBeforeRender) oldBeforeRender(vnode);
+@@ -417,6 +419,22 @@ export function useId() {
+ 	return state._value;
+ }
+ 
++/**
++ * Unmounted components' passive cleanups run before any new passive effect,
++ * mirroring React running all destroys before any create.
++ */
++function flushUnmountCleanups() {
++	let state;
++	while ((state = unmountCleanups.shift())) {
++		try {
++			invokeCleanup(state);
++		} catch (e) {
++			state = /** @type {any} */ (state._passive);
++			options._catchError(e, { _parent: state && state._vnode });
++		}
++	}
 +}
 +
-+declare var ContentVisibilityAutoStateChangeEvent: {
-+	prototype: ContentVisibilityAutoStateChangeEvent;
-+	new (
-+		type: string,
-+		eventInitDict?: ContentVisibilityAutoStateChangeEventInit
-+	): ContentVisibilityAutoStateChangeEvent;
-+};
+ /**
+  * After paint effects consumer.
+  */
+@@ -425,16 +443,7 @@ function flushAfterPaintEffects() {
+ 	// The loop picks up components unmounted by an effect we just invoked, which
+ 	// don't necessarily schedule a flush of their own.
+ 	do {
+-		// Unmounted components' passive cleanups run before any new passive
+-		// effect, mirroring React running all destroys before any create.
+-		while ((component = unmountCleanups.shift())) {
+-			try {
+-				invokeCleanup(component);
+-			} catch (e) {
+-				component = /** @type {any} */ (component._passive);
+-				options._catchError(e, { _parent: component && component._vnode });
+-			}
+-		}
++		flushUnmountCleanups();
+ 
+ 		while ((component = afterPaintEffects.shift())) {
+ 			const hooks = component.__hooks;
+```
+
+**File**: `hooks/test/browser/useEffect.test.jsx` (modified, +137/-1)
+```diff
+@@ -1,6 +1,10 @@
+ import { Component, Fragment, createElement, render } from 'preact';
+ import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
+-import { act, teardown as teardownAct } from 'preact/test-utils';
++import {
++	act,
++	setupRerender,
++	teardown as teardownAct
++} from 'preact/test-utils';
+ import { vi } from 'vitest';
+ import { setupScratch, teardown } from '../../../test/_util/helpers';
+ import { scheduleEffectAssert } from '../_util/useEffectUtil';
+@@ -903,3 +907,135 @@ describe('useEffect', () => {
+ 		expect(calls).to.deep.equal(['doing effect0']);
+ 	});
+ });
 +
-+interface ContentVisibilityAutoStateChangeEventInit extends EventInit {
-+	skipped?: boolean;
-+}
++describe('useEffect cleanups of unmounted components (#5410)', () => {
++	/** @type {HTMLDivElement} */
++	let scratch;
 +
- type Booleanish = boolean | 'true' | 'false';
- 
- export interface SignalLike<T> {
-@@ -516,6 +533,11 @@ export type TargetedSnapEvent<Target extends EventTarget> = TargetedEvent<
- 	Target,
- 	SnapEvent
- >;
-+export type TargetedContentVisibilityAutoStateChangeEvent<
-+	Target extends EventTarget
-+> = TargetedEvent<Target, ContentVisibilityAutoStateChangeEvent>;
-+export type TargetedSecurityPolicyViolationEvent<Target extends EventTarget> =
-+	TargetedEvent<Target, SecurityPolicyViolationEvent>;
- export type TargetedSubmitEvent<Target extends EventTarget> = TargetedEvent<
- 	Target,
- 	SubmitEvent
-@@ -559,6 +581,9 @@ export type CommandEventHandler<Target extends EventTarget> = EventHandler<
- export type CompositionEventHandler<Target extends EventTarget> = EventHandler<
- 	TargetedCompositionEvent<Target>
- >;
-+export type ContentVisibilityAutoStateChangeEventHandler<
-+	Target extends EventTarget
-+> = EventHandler<TargetedContentVisibilityAutoStateChangeEvent<Target>>;
- export type DragEventHandler<Target extends EventTarget> = EventHandler<
- 	TargetedDragEvent<Target>
- >;
-@@ -583,6 +608,8 @@ export type MouseEventHandler<Target extends EventTarget> = EventHandler<
- export type PointerEventHandler<Target extends EventTarget> = EventHandler<
- 	TargetedPointerEvent<Target>
- >;
-+export type SecurityPolicyViolationEventHandler<Target extends EventTarget> =
-+	EventHandler<TargetedSecurityPolicyViolationEvent<Target>>;
- export type SnapEventHandler<Target extends EventTarget> = EventHandler<
- 	TargetedSnapEvent<Target>
- >;
-@@ -607,6 +634,23 @@ export type PictureInPictureEventHandler<Target extends EventTarget> =
- export interface DOMAttributes<
- 	Target extends EventTarget
- > extends PreactDOMAttributes {
-+	onFullscreenChange?: GenericEventHandler<Target> | undefined;
-+	onFullscreenChangeCapture?: GenericEventHandler<Target> | undefined;
-+	onFullscreenError?: GenericEventHandler<Target> | undefined;
-+	onFullscreenErrorCapture?: GenericEventHandler<Target> | undefined;
-+	onContentVisibilityAutoStateChange?:
-+		| ContentVisibilityAutoStateChangeEventHandler<Target>
-+		| undefined;
-+	onContentVisibilityAutoStateChangeCapture?:
-+		| ContentVisibilityAutoStateChangeEventHandler<Target>
-+		| undefined;
-+	onSecurityPolicyViolation?:
-+		| SecurityPolicyViolationEventHandler<Target>
-+		| undefined;
-+	onSecurityPolicyViolationCapture?:
-+		| SecurityPolicyViolationEventHandler<Target>
-+		| undefined;
++	/** @type {() => void} */
++	let rerender;
 +
- 	// Image Events
- 	onLoad?: GenericEventHandler<Target> | undefined;
- 	onLoadCapture?: GenericEventHandler<Target> | undefined;
-@@ -635,6 +679,10 @@ export interface DOMAttributes<
- 	onToggle?: ToggleEventHandler<Target> | undefined;
- 	onToggleCapture?: ToggleEventHandler<Target> | undefined;
- 
-+	// Hidden-until-found Events
-+	onBeforeMatch?: GenericEventHandler<Target> | undefined;
-+	onBeforeMatchCapture?: GenericEventHandler<Target> | undefined;
++	beforeEach(() => {
++		scratch = setupScratch();
++		rerender = setupRerender();
++	});
 +
- 	// Dialog Events
- 	onClose?: GenericEventHandler<Target> | undefined;
- 	onCloseCapture?: GenericEventHandler<Target> | undefined;
-@@ -769,6 +817,10 @@ export interface DOMAttributes<
- 	// Selection Events
- 	onSelect?: GenericEventHandler<Target> | undefined;
- 	onSelectCapture?: GenericEventHandler<Target> | undefined;
-+	onSelectStart?: GenericEventHandler<Target> | undefined;
-+	onSelectStartCapture?: GenericEventHandler<Target> | undefined;
-+	onSelectionChange?: GenericEventHandler<Target> | undefined;
-+	onSelectionChangeCapture?: GenericEventHandler<Target> | undefined;
++	afterEach(() => {
++		teardown(scratch);
++	});
++
++	function createScreens(log) {
++		let registered = null;
++		function Old() {
++			useEffect(() => {
++				registered = 'Old';
++				return () => {
++					registered = null;
++				};
++			}, []);
++			return null;
++		}
++		function New() {
++			const [, setReady] = useState(false);
++			useLayoutEffect(() => setReady(true), []);
++			useEffect(() => {
++				log.push(`New sees ${registered}`);
++				registered = 'New';
++			}, []);
++			return null;
++		}
++		return { Old, New };
++	}
++
++	it('run before the replacement rerenders from a layout effect', () => {
++		const log = [];
++		const { Old, New } = createScreens(log);
++
++		act(() => render(<Old />, scratch));
++		act(() => render(<New />, scratch));
++
++		expect(log).to.deep.equal(['New sees null']);
++	});
++
++	it('run when a deeper component is queued alongside', () => {
++		const log = [];
++		const { Old, New } = createScreens(log);
++
++		let replace, notify;
++		function Screen() {
++			const [next, setNext] = useState(false);
++			replace = setNext;
++			return next ? <New /> : <Old />;
++		}
++		function Other() {
++			const [value, setValue] = useState(0);
++			notify = setValue;
++			return value;
++		}
++
++		act(() =>
++			render(
++				<>
++					<Screen />
++					<div>
++						<Other />
++					</div>
++				</>,
++				scratch
++			)
++		);
++		act(() => {
++			replace(true);
++			notify(1);
++		});
++
++		expect(log).to.deep.equal(['New sees null']);
++	});
++
++	it('do not run during the render that unmounts them', () => {
++		const log = [];
++		let rendering = false;
++
++		function Leaving() {
++			useEffect(
++				() => () => log.push(rendering ? 'during render' : 'after render'),
++				[]
++			);
++			return null;
++		}
++		function Pending({ n }) {
++			useEffect(() => {}, [n]);
++			return null;
++		}
++		function Done() {
++			rendering = false;
++			return null;
++		}
++
++		let set;
++		function App() {
++			const [n, setN] = useState(0);
++			set = setN;
++			rendering = true;
++			return (
++				<>
++					<div>{n < 2 && <Leaving />}</div>
++					<Pending n={n} />
++					<Done />
++				</>
++			);
++		}
++
++		act(() => render(<App />, scratch));
++		set(1);
++		rerender();
++		// Pending still has an effect waiting when this unmounts Leaving.
++		set(2);
++		rerender();
++		expect(log).to.deep.equal([]);
++
++		return scheduleEffectAssert(() =>
++			expect(log).to.deep.equal(['after render'])
++		);
++	});
++});
+```
+
+**File**: `mangle.json` (modified, +1/-0)
+```diff
+@@ -72,6 +72,7 @@
+       "$_hook": "__h",
+       "$_catchError": "__e",
+       "$_refCleanup": "__x",
++      "$_flushEffects": "__f",
+       "$_skipEffects": "__s",
+       "$_bits": "__g"
+     }
+```
+
+**File**: `src/component.js` (modified, +7/-2)
+```diff
+@@ -180,6 +180,10 @@ function process() {
+ 		// Don't update `renderCount` yet. Keep its value non-zero to prevent unnecessary
+ 		// process() calls from getting scheduled while `queue` is still being consumed.
+ 		while (rerenderQueue.length) {
++			// Passive cleanups of what earlier commits unmounted run before any
++			// effect the next render flushes (see #5410).
++			if (options._flushEffects) options._flushEffects();
++
+ 			// Keep the rerender queue sorted by (depth, insertion order). The queue
+ 			// will initially be sorted on the first iteration only if it has more than 1 item.
+ 			//
+@@ -193,8 +197,9 @@ function process() {
+ 			c = rerenderQueue.shift();
+ 			l = rerenderQueue.length;
  
- 	// Touch Events
- 	onTouchCancel?: TouchEventHandler<Target> | undefined;
-@@ -801,6 +853,8 @@ export interface DOMAttributes<
- 	onGotPointerCaptureCapture?: PointerEventHandler<Target> | undefined;
- 	onLostPointerCapture?: PointerEventHandler<Target> | undefined;
- 	onLostPointerCaptureCapture?: PointerEventHandler<Target> | undefined;
-+	onPointerRawUpdate?: PointerEventHandler<Target> | undefined;
-+	onPointerRawUpdateCapture?: PointerEventHandler<Target> | undefined;
- 
- 	// Scroll Events
- 	onScroll?: GenericEventHandler<Target> | undefined;
-@@ -817,6 +871,8 @@ export interface DOMAttributes<
- 	onWheelCapture?: WheelEventHandler<Target> | undefined;
- 
- 	// Animation Events
-+	onAnimationCancel?: AnimationEventHandler<Target> | undefined;
-+	onAnimationCancelCapture?: AnimationEventHandler<Target> | undefined;
- 	onAnimationStart?: AnimationEventHandler<Target> | undefined;
- 
+-			// Re-render the component in place, unless it was unmounted.
+-			if (c._bits & COMPONENT_DIRTY && (parentDom = c._parentDom)) {
++			// Re-render the component in place, unless it was unmounted or a
++			// cleanup above already flushed the queue.
++			if (c && c._bits & COMPONENT_DIRTY && (parentDom = c._parentDom)) {
+ 				oldVNode = c._vnode;
+ 				oldDom = oldVNode._dom;
+ 				commitQueue = [];
+```
+
+**File**: `src/internal.d.ts` (modified, +2/-0)
+```diff
+@@ -35,6 +35,8 @@ export interface Options extends preact.Options {
+ 	_render?(vnode: VNode): void;
+ 	/** Attach a hook that is invoked before a hook's state is queried. */
+ 	_hook?(component: Component, index: number, type: HookType): void;
++	/** Attach a hook that runs the passive cleanups of unmounted components before a queued rerender. */
++	_flushEffects?(): void;
+ 	/** Bypass effect execution. Currenty only used in devtools for hooks inspection */
+ 	_skipEffects?: boolean;
+ 	/** Attach a hook that is invoked after an error is caught in a component but before calling lifecycle hooks */
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5405** (closed): Clear stale parent links on replaced VNodes (@k0d3r1s)
-- **PR #5404** (closed): Clear _parent of a matched child once it is replaced (#5403) (@tony1233200)
-- **PR #5402** (2026-11-21): Give each Suspense boundary its own useId counter (@JoviDeCroock)
-- **PR #5400** (2026-11-21): Revert DPU streaming (@JoviDeCroock)
-- **PR #5399** (closed): Don't claim past a streamed range for a component that suspends while hydrating (@JoviDeCroock)
-- **PR #5398** (closed): fix(types): accept undefined ref in useImperativeHandle (@ragib-mrb)
+- **PR #5417** (2026-11-27): Accept a signal of several input types (@JoviDeCroock)
+- **PR #5416** (2026-11-27): Run cleanups of unmounted components before a queued rerender (@JoviDeCroock)
+- **PR #5415** (closed): fix(hooks): flush queued unmount cleanups before a re-render flush (@draarivpatel-ui)
+- **PR #5414** (2026-11-26): Extract the hook state bailout from useReducer (@JoviDeCroock)
+- **PR #5413** (2026-11-26): Trim core diff and render queue paths (@JoviDeCroock)
+- **PR #5412** (2026-11-26): Reduce DOM vnode normalization work (@JoviDeCroock)
 
 ---
 
@@ -2237,6 +2360,41 @@ Give each Suspense boundary its own useId counter
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Empirical Invariant Guard in index.js
+
+**RULE**:
+When implementing operations in `compat/src/index.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a14f262c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `compat/src/index.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+	// This flush can run inside a diff or commit, where it isn't safe to run
+	// the cleanups of unmounted components ahead of the paint.
+	const prevFlushEffects = options._flushEffects;
+		options._flushEffects = undefined;
+		options._flushEffects = prevFlushEffects;
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a14f262c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

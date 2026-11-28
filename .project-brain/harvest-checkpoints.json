@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T09:54:33.768Z",
+  "last_updated": "2026-11-28T10:10:57.794Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "fdd75c3ef54ce4a5db2b74701f91164822a3ebf58c77396218a05e46a0834ed0",
-      "verified_at": "2026-11-26T01:18:04.613Z",
+      "content_hash": "b9df1da4baa9e880918788e3f84232b533f106d0ec2c83a46b61c4cc7fe87ac5",
+      "verified_at": "2026-11-28T10:10:57.793Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T01:18:04.613Z"
+      "last_updated": "2026-11-28T10:10:57.793Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "cebc4fe40367411f283d60ef0d5391c37afc7c83d40ae5bb4400b165a0907fe6",
-      "verified_at": "2026-11-27T10:01:40.358Z",
+      "content_hash": "6f877decad4fccb20c46732502daeb8a5e43313bdfaad8b81f40e6a7d5d5464e",
+      "verified_at": "2026-11-28T10:10:45.701Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T10:01:40.358Z"
+      "last_updated": "2026-11-28T10:10:45.701Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",
@@ -14721,14 +14721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sozercan-kaset",
-      "content_hash": "1b8b66250a14e83bebfc1d95da42c7ef9008fcdc190322fcfc46004dae2ff00f",
-      "verified_at": "2026-11-26T06:44:05.054Z",
+      "content_hash": "3d761cdcaee4c8f626b35ba1ac21ebd2890dba404f7eadcb5707317ad3a3c98b",
+      "verified_at": "2026-11-28T10:10:47.668Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T06:44:05.054Z"
+      "last_updated": "2026-11-28T10:10:47.668Z"
     },
     "digitalbazaar/pyld": {
       "repository": "digitalbazaar/pyld",
@@ -15156,14 +15156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-preactjs-preact",
-      "content_hash": "c93fa054cbb0d577794f5b675a4d348fa77c76dad344d5e492a35d442a528eaa",
-      "verified_at": "2026-11-25T00:16:46.611Z",
+      "content_hash": "e0e81bc746a84a25bf1311cd4407564934771199e048078aaa3086fb264fad61",
+      "verified_at": "2026-11-28T10:10:48.503Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:16:46.611Z"
+      "last_updated": "2026-11-28T10:10:48.503Z"
     },
     "alyssaxuu/later": {
       "repository": "alyssaxuu/later",

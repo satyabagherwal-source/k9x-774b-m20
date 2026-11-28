@@ -14069,3 +14069,7 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `e18e0b30` | Multi-dimensional audit evidence | 2026-11-28T09:54:22.292Z |
 | `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `e7916a9e` | Multi-dimensional audit evidence | 2026-11-28T09:54:23.747Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `ec96ff49` | Multi-dimensional audit evidence | 2026-11-28T09:54:33.755Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `0f009536` | Multi-dimensional audit evidence | 2026-11-28T10:10:45.690Z |
+| `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `59e95c8a` | Multi-dimensional audit evidence | 2026-11-28T10:10:47.658Z |
+| `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `94fbd390` | Multi-dimensional audit evidence | 2026-11-28T10:10:48.493Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `965b3e76` | Multi-dimensional audit evidence | 2026-11-28T10:10:57.781Z |

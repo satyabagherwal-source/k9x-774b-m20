@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sozercan-kaset-learnings.md`  
 > **Source**: github ([https://github.com/sozercan/kaset](https://github.com/sozercan/kaset))  
-> **Source Version**: `49c8bb52`  
+> **Source Version**: `59e95c8a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T06:44:03.772Z  
+> **Timestamp**: 2026-11-28T10:10:45.640Z  
 > **Learning ID**: `learn-github-sozercan-kaset`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sozercan-kaset-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sozercan/kaset](https://github.com/sozercan/kaset))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T06:44:03.767Z  
+> **Harvest Timestamp**: 2026-11-28T10:10:45.631Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📼 The missing YouTube and YouTube Music macOS app
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2651 stars
+- **Stars / Engagement**: 2662 stars
 
 ---
 
@@ -912,6 +912,60 @@ extension PlayerService {
         return loadGeneration
     }
 
+    func beginRadioPlaybackIntent(for song: Song, queueEntryID: UUID? = nil) -> MusicPlaybackIntent {
+        self.startRadioRefreshGeneration &+= 1
+        return self.beginMusicPlaybackIntent(
+            allowsPriorTerminalEvent: self.startRadioKeepsCurrentPlayback(for: song, queueEntryID: queueEntryID)
+        )
+    }
+
+    func startRadio(song: Song, queueEntryID: UUID? = nil) async {
+        let intent = self.beginRadioPlaybackIntent(for: song, queueEntryID: queueEntryID)
+        await self.startRadio(song: song, queueEntryID: queueEntryID, intent: intent)
+    }
+
+    private func startRadioKeepsCurrentPlayback(for song: Song, queueEntryID: UUID?) -> Bool {
+        guard self.currentTrack?.videoId == song.videoId,
+              let owningEntryID = self.queueEntryIDOwningCurrentPlayback
+        else { return false }
+        return queueEntryID == nil || queueEntryID == owningEntryID
+    }
+
+    func startRadio(song: Song, queueEntryID: UUID? = nil, intent: MusicPlaybackIntent) async {
+        guard self.startRadioKeepsCurrentPlayback(for: song, queueEntryID: queueEntryID) else {
+            await self.playWithRadio(song: song, intent: intent)
+            return
+        }
+        guard self.acceptsMusicPlaybackIntent(intent) else { return }
+        self.invalidatePendingPlaybackSelectionRequests()
+        let refreshGeneration = self.startRadioRefreshGeneration
+        let navigationContext = self.playbackNavigationContext
+        let pauseGeneration = self.explicitPauseGeneration
+        if self.state == .paused || self.state == .ended {
+            await self.resume(intent: intent)
+            guard self.acceptsMusicPlaybackIntent(intent) else { return }
+        }
+        let seedEntryID = self.queueEntryIDOwningCurrentPlayback
+        let outcome = await self.fetchAndApplyRadioQueue(
+            for: song.videoId,
+            seedEntryID: seedEntryID,
+            queueGeneration: self.queueLoadGeneration,
+            replacesUpcoming: true,
+            isCurrentRequest: { refreshGeneration == self.startRadioRefreshGeneration }
+        )
+        guard outcome == .applied else { return }
+        self.currentEpisode = nil
+        if self.state == .ended {
+            guard self.explicitPauseGeneration == pauseGeneration else { return }
+            let seedIndex = self.queueEntries.firstIndex { $0.id == seedEntryID } ?? self.currentIndex
+            guard let firstRecommendation = self.queueEntries[safe: max(seedIndex, self.currentIndex) + 1] else { return }
+            await self.playFromQueue(entryID: firstRecommendation.id)
+            return
+        }
+        guard self.playbackNavigationContext.requestGeneration == navigationContext.requestGeneration else { return }
+        await self.fillSmartShuffleWindow()
+    }
+
     func playWithRadio(song: Song) async {
         let intent = self.beginMusicPlaybackIntent()
         await self.playWithRadio(song: song, intent: intent)
@@ -983,70 +1037,7 @@ extension PlayerService {
                 return
             }
 
-            guard self.acceptsMusicPlaybackIntent(intent),
-                  self.isCurrentPendingPlaybackSelectionRequest(requestGeneration)
-            else {
-                self.logger.info("Discarding stale mix playback request after playback boundary")
-                return
-            }
-
-            let priorQueueState = self.makeQueueStateSnapshot()
-            let playbackContextGeneration = self.beginPlaybackRequest()
-
-            self.mixContinuationToken = result.continuationToken
-            self.mixContinuationRequiresAuth = continuationRequiresAuth
-
-            let shuffledSongs = result.songs.shuffled()
-            let shuffledEntries = shuffledSongs.map { QueueEntry(id: UUID(), song: $0) }
-            self.recordQueueStateForUndo(priorQueueState)
-
-            self.prepareForNewPlaybackContext()
-            let queueGeneration = self.queueLoadGeneration
-
-            self.setQueue(entries: shuffledEntries)
-            self.queueOrderBeforeShuffle = nil
-            self.currentIndex = 0
-
-            if let firstEntry = self.queueEntries.first {
-                await self.play(
-                    song: firstEntry.song,
-                    webLoadStrategy: .standard,
-                    queueEntryID: firstEntry.id,
-                    intent: intent
-                )
-            }
-            guard self.isCurrentPlaybackRequest(playbackContextGeneration),
-                  self.isCurrentQueueLoad(queueGeneration)
-            else { return }
-            self.logger.info(
-                "Mix queue loaded with \(shuffledEntries.count) songs, hasContinuation: \(result.continuationToken != nil)"
-            )
-            self.saveQueueForPersistence()
-        } catch {
-            guard self.acceptsMusicPlaybackIntent(intent),
-                  self.isCurrentPendingPlaybackSelectionRequest(requestGeneration)
-            else { return }
-            self.logger.warning("Failed to fetch mix queue: \(error.localizedDescription)")
-        }
-    }
-
-    func fetchMoreMixSongsIfNeeded(
-        queueGeneration suppliedQueueGeneration: Int? = nil,
-        shouldApplyResult: @MainActor () -> Bool = { true }
-    ) async {
-        let queueGeneration = suppliedQueueGeneration ?? self.queueLoadGeneration
-
-        if self.isFetchingMoreMixSongs {
-            let queueCountBeforeWait = self.queue.count
-            let continuationBeforeWait = self.mixContinuationToken
-            let queueMutationGenerationBeforeWait = self.queueMutationGeneration
-            let completionGenerationBeforeWait = self.mixContinuationCompletionGeneration
-            await withCheckedContinuation { continuation in
-                self.mixContinuationFetchWaiters.append(continuation)
-            }
-            guard !Task.isCancelled,
-                  shouldApplyResult(),
- 
+            guard self.acc
 ```
 
 ### Core Architecture Module: `Sources/Kaset/Services/Player/PlayerService+QueueEnrichment.swift`
@@ -1323,184 +1314,1043 @@ extension PlayerService {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `49c8bb52` (2026-11-25)
-**Commit Message**: chore: finish removing source comments (#627)
+### Incident Patch 1: `b987362e` (2026-11-27)
+**Commit Message**: fix(playback): route bare Space to play/pause and stop hidden WebView swallowing ⌘←/⌘→ (#444)
 
 Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
+Co-authored-by: Sertac Ozercan <[REDACTED_EMAIL]>
 
-**File**: `.agents/skills/delete-comment/SKILL.md` (modified, +2/-2)
+**File**: `Sources/Kaset/KasetApp.swift` (modified, +19/-9)
 ```diff
-@@ -16,6 +16,6 @@ Read each comment with its code and relevant tests, docs, or Git history. Treat
- | Stale | Describes behavior, a constraint, or a next step that no longer applies. | Verify against current code or history, then delete it. |
- | Decision Record | Explains a non-obvious invariant, tradeoff, or external constraint that's still relevant. | Update a relevant ADR or create one in `docs/adr/`, then remove the inline version. |
+@@ -62,6 +62,8 @@ struct KasetApp: App {
  
--Preserve syntax-required headers. Leave unverified or tooling-sensitive comments for a later ratchet pass rather than stripping them mechanically. For a large audit, work in reviewable batches and distinguish the locations inventoried from those actually classified. If issue filing isn't authorized or cannot be completed, report the candidate and leave the comment until the follow-up is recorded.
-+Preserve required headers, generated metadata, vendored code, active lint or formatter directives, and exact `# vX.Y.Z` release annotations on SHA-pinned GitHub Actions `uses:` entries. Verify the annotation against the tag without changing the pin. Remove a directive only after verifying its target no longer needs it. The ratchet still rejects new directives, so the inventory can be nonzero even when no prose remains. For an exhaustive audit, check embedded JavaScript, CSS, shell, and heredoc source separately; preserve comment-like string content such as help text and parser fixtures. For a large audit, work in reviewable batches and distinguish the locations inventoried from those actually classified. If issue filing isn't authorized or cannot be completed, report the candidate and leave the comment until the follow-up is recorded.
+     @State private var textInputFocusState = TextInputFocusState()
  
--Run `python3 Scripts/comment_lint.py --base <merge-base>` and relevant checks. For a `main`-bound branch, find the merge base with `git merge-base HEAD origin/main`. Report before/after comment-only lines, documents and issues created or reused, and deferred areas. Mixed code/comment lines and new ADR text are not source-line savings.
-+Run `python3 Scripts/comment_lint.py --base <merge-base>` and relevant checks. For a `main`-bound branch, find the merge base with `git merge-base HEAD origin/main`. Use `--list` to confirm what remains. Report before/after comment-only lines, any manually counted embedded removals, documents and issues created or reused, and retained exceptions. Mixed code/comment lines and new ADR text are not source-line savings.
++    @State private var playbackSpaceKeyMonitor = PlaybackSpaceKeyMonitor()
++
+     @State private var sidebarNavigationReselectGenerations: [NavigationItem: Int] = [:]
+ 
+     @State private var navigationSelection: NavigationItem? = SettingsManager.shared.launchNavigationItem
+@@ -194,7 +196,7 @@ struct KasetApp: App {
+     }
+ 
+     var body: some Scene {
+-        Window("Kaset", id: "main") {
++        Window("Kaset", id: MainWindowLayout.sceneIdentifier) {
+             if UITestConfig.isRunningUnitTests, !UITestConfig.isUITestMode {
+                 Color.clear
+                     .frame(width: 1, height: 1)
+@@ -242,6 +244,10 @@ struct KasetApp: App {
+                 .onAppear {
+                     DiagnosticsLogger.app.info("KasetApp: App content appeared")
+                     self.textInputFocusState.startMonitoring()
++                    self.playbackSpaceKeyMonitor.start(
++                        isPlaybackCommandEnabled: { !self.shouldDisablePlaybackCommand },
++                        onPlayPause: { self.performPlayPause() }
++                    )
+                     self.appDelegate.playerService = self.playerService
+                     self.appDelegate.beginOpenURLDelivery()
+                     AppIntentsBridge.shared.setShowMainWindowHandler { self.showMainWindow() }
+@@ -347,13 +353,7 @@ struct KasetApp: App {
+ 
+             CommandMenu("Playback") {
+                 Button(self.activePlayerIsPlaying ? "Pause" : "Play") {
+-                    if self.playbackArbiter.routesMediaKeysToVideo {
+-                        self.youtubePlayerService.playPause()
+-                    } else {
+-                        Task {
+-                            await self.playerService.playPause()
+-                        }
+-                    }
++                    self.performPlayPause()
+                 }
+                 .keyboardShortcut(self.playbackShortcut(.space, modifiers: []))
+                 .disabled(self.shouldDisablePlaybackCommand)
+@@ -591,7 +591,7 @@ struct KasetApp: App {
+     private func showMainWindow() {
+         guard !self.focusExistingMainWindow() else { return }
+ 
+-        self.openWindow(id: "main")
++        self.openWindow(id: MainWindowLayout.sceneIdentifier)
+         NSApplication.shared.activate(ignoringOtherApps: true)
+ 
+         Task { @MainActor in
+@@ -647,6 +647,16 @@ struct KasetApp: App {
+         }
+     }
+ 
++    private func performPlayPause() {
++        if self.playbackArbiter.routesMediaKeysToVideo {
++            self.youtubePlayerService.playPause()
++        } else {
++            Task {
++                await self.playerService.playPause()
++            }
++        }
++    }
++
+     private var activePlayerIsPlaying: Bool {
+         if self.playbackArbiter.routesMediaKeysToVideo {
+             self.youtubePlayerService.isPlaying
 ```
 
-**File**: `.github/FUNDING.yml` (modified, +0/-1)
+**File**: `Sources/Kaset/Utilities/MainWindowLayout.swift` (modified, +15/-3)
 ```diff
-@@ -1,2 +1 @@
--# These are supported funding model platforms
- ko_fi: sozercan
+@@ -1,6 +1,7 @@
+ import AppKit
+ 
+ enum MainWindowLayout {
++    static let sceneIdentifier = "main"
+     static let autosaveName = "KasetMainWindow"
+     static let windowTitle = "Kaset"
+     static let minimumWidth: CGFloat = 980
+@@ -13,13 +14,24 @@ enum MainWindowLayout {
+         NSSize(width: minimumWidth, height: minimumHeight)
+     }
+ 
+-    static func isPrimaryWindowIdentity(title: String, frameAutosaveName: String) -> Bool {
+-        frameAutosaveName == self.autosaveName || title == self.windowTitle
++    static func isPrimaryWindowIdentity(
++        title: String,
++        frameAutosaveName: String,
++        identifier: String? = nil
++    ) -> Bool {
++        identifier == self.sceneIdentifier
++            || frameAutosaveName == self.sceneIdentifier
++            || frameAutosaveName == self.autosaveName
++            || title == self.windowTitle
+     }
+ 
+     @MainActor
+     static func isPrimaryWindow(_ window: NSWindow) -> Bool {
+-        self.isPrimaryWindowIdentity(title: window.title, frameAutosaveName: window.frameAutosaveName)
++        self.isPrimaryWindowIdentity(
++            title: window.title,
++            frameAutosaveName: window.frameAutosaveName,
++            identifier: window.identifier?.rawValue
++        )
+     }
+ 
+     @MainActor
 ```
 
-**File**: `.github/dependabot.yml` (modified, +0/-1)
+**File**: `Sources/Kaset/Utilities/PlaybackSpaceKeyMonitor.swift` (added, +98/-0)
 ```diff
-@@ -1,6 +1,5 @@
- version: 2
- updates:
--  # GitHub Actions
-   - package-ecosystem: "github-actions"
-     directory: "/"
-     schedule:
+@@ -0,0 +1,98 @@
++import AppKit
++import WebKit
++
++struct PlaybackSpaceKeyContext {
++    let keyCode: UInt16
++    let modifiers: NSEvent.ModifierFlags
++    let isRepeat: Bool
++    let isPrimaryWindow: Bool
++    let isTextInputFocused: Bool
++    let isWebContentFocused: Bool
++    let isNativeBrowsingContentFocused: Bool
++    let isPlaybackCommandEnabled: Bool
++}
++
++@MainActor
++final class PlaybackSpaceKeyMonitor {
++    nonisolated static let spaceKeyCode: UInt16 = 49
++
++    private var monitor: Any?
++
++    nonisolated static func handlesSpaceKey(_ context: PlaybackSpaceKeyContext) -> Bool {
++        guard context.keyCode == self.spaceKeyCode,
++              !context.isRepeat,
++              context.isPrimaryWindow
++        else { return false }
++
++        let significantModifiers = context.modifiers
++            .intersection(.deviceIndependentFlagsMask)
++            .subtracting([.capsLock, .numericPad])
++        guard significantModifiers.isEmpty else { return false }
++        return context.isPlaybackCommandEnabled
++            && !context.isTextInputFocused
++            && !context.isWebContentFocused
++            && context.isNativeBrowsingContentFocused
++    }
++
++    static func isWebContent(_ responder: NSResponder?) -> Bool {
++        var currentResponder = responder
++        while let current = currentResponder {
++            if current is WKWebView {
++                return true
++            }
++            currentResponder = current.nextResponder
++        }
++        return false
++    }
++
++    static func isTextInput(_ responder: NSResponder?) -> Bool {
++        responder is NSTextView || responder is NSTextField
++    }
++
++    static func isNativeBrowsingContent(_ responder: NSResponder?) -> Bool {
++        responder is NSTableView
++    }
++
++    func start(
++        isPlaybackCommandEnabled: @escaping @MainActor () -> Bool,
++        onPlayPause: @escaping @MainActor () -> Void
++    ) {
++        guard self.monitor == nil else { return }
++
++        self.monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
++            let keyCode = event.keyCode
++            let modifiers = event.modifierFlags
++            let window = event.window ?? NSApp.keyWindow
++            let responder = window?.firstResponder
++
++            let context = PlaybackSpaceKeyContext(
++                keyCode: keyCode,
++                modifiers: modifiers,
++                isRepeat: event.isARepeat,
++                isPrimaryWindow: MainActor.assumeIsolated {
++                    window.map(MainWindowLayout.isPrimaryWindow) ?? false
++                },
++                isTextInputFocused: MainActor.assumeIsolated { Self.isTextInput(responder) },
++                isWebContentFocused: MainActor.assumeIsolated { Self.isWebContent(responder) },
++                isNativeBrowsingContentFocused: MainActor.assumeIsolated {
++                    Self.isNativeBrowsingContent(responder)
++                },
++                isPlaybackCommandEnabled: MainActor.assumeIsolated { isPlaybackCommandEnabled() }
++            )
++            guard Self.handlesSpaceKey(context) else { return event }
++
++            MainActor.assumeIsolated { onPlayPause() }
++            return nil
++        }
++    }
++
++    func stop() {
++        guard let monitor else { return }
++        NSEvent.removeMonitor(monitor)
++        self.monitor = nil
++    }
++
++    isolated deinit {
++        self.stop()
++    }
++}
 ```
 
-**File**: `.github/workflows/api-explorer.yml` (modified, +1/-5)
+**File**: `Tests/KasetTests/MainWindowLayoutTests.swift` (modified, +14/-0)
 ```diff
-@@ -29,7 +29,7 @@ jobs:
+@@ -30,6 +30,20 @@ struct MainWindowLayoutTests {
+         #expect(MainWindowLayout.minimumContentSize.height == MainWindowLayout.minimumHeight)
+     }
  
-     steps:
-       - name: Checkout code
--        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
-       - name: Select Xcode version
-         run: sudo xcode-select -s /Applications/Xcode_26.2.app/Contents/Developer
-@@ -55,28 +55,24 @@ jobs:
-           set -euo pipefail
-           OUT=$(swift run -c release -q api-explorer list)
-           echo "$OUT"
--          # Sanity: list output should mention at least one well-known browseId.
-           echo "$OUT" | grep -q "FEmusic_home" \
-             || { echo "ERROR: 'list' output missing FEmusic_home"; exit 1; }
- 
-       - name: Smoke-test - auth status (offline, expect 'not authenticated')
-         run: |
-           set -euo pipefail
--          # CI has no Kaset cookie backup, so this should report no auth and exit 0.
-           OUT=$(swift run -c release -q api-explorer auth)
-           echo "$OUT"
- 
-       - name: Smoke-test - browse FEmusic_home (unauthenticated)
-         run: |
-           set -euo pipefail
--          # Hits real YouTube Music API. Network flakiness is possible; retry once.
-           run_browse() {
-             swift run -c release -q api-explorer browse FEmusic_home
-           }
-           OUT=$(run_browse) || { sleep 5; OUT=$(run_browse); }
-           echo "$OUT"
- 
--          # Validate basic response shape so we catch silent API drift.
-           echo "$OUT" | grep -q "HTTP 200" \
-             || { echo "ERROR: expected 'HTTP 200' from FEmusic_home"; exit 1; }
-           echo "$OUT" | grep -q "singleColumnBrowseResultsRenderer" \
++    @Test("Primary window identity follows the SwiftUI scene identifier after navigation changes the title")
++    func primaryWindowIdentityUsesSceneIdentifier() {
++        #expect(MainWindowLayout.isPrimaryWindowIdentity(
++            title: "Home",
++            frameAutosaveName: "main",
++            identifier: MainWindowLayout.sceneIdentifier
++        ))
++        #expect(!MainWindowLayout.isPrimaryWindowIdentity(
++            title: "Settings",
++            frameAutosaveName: "",
++            identifier: "settings"
++        ))
++    }
++
+     @Test("Primary window identity excludes other regular scene windows")
+     func primaryWindowIdentityExcludesOtherRegularSceneWindows() {
+         #expect(MainWindowLayout.isPrimaryWindowIdentity(title: MainWindowLayout.windowTitle, frameAutosaveName: ""))
 ```
 
-**File**: `.github/workflows/automerge.yml` (modified, +1/-1)
+**File**: `Tests/KasetTests/PlaybackSpaceKeyMonitorTests.swift` (added, +109/-0)
 ```diff
-@@ -18,7 +18,7 @@ jobs:
-     steps:
-       - name: Dependabot metadata
-         id: metadata
--        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v2
-+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
-         with:
-           github-token: "${{ secrets.GITHUB_TOKEN }}"
+@@ -0,0 +1,109 @@
++import AppKit
++import Testing
++import WebKit
++@testable import Kaset
++
++@Suite(.tags(.service))
++struct PlaybackSpaceKeyMonitorTests {
++    private static func handles(
++        keyCode: UInt16 = PlaybackSpaceKeyMonitor.spaceKeyCode,
++        modifiers: NSEvent.ModifierFlags = [],
++        isRepeat: Bool = false,
++        isPrimaryWindow: Bool = true,
++        isTextInputFocused: Bool = false,
++        isWebContentFocused: Bool = false,
++        isNativeBrowsingContentFocused: Bool = true,
++        isPlaybackCommandEnabled: Bool = true
++    ) -> Bool {
++        PlaybackSpaceKeyMonitor.handlesSpaceKey(PlaybackSpaceKeyContext(
++            keyCode: keyCode,
++            modifiers: modifiers,
++            isRepeat: isRepeat,
++            isPrimaryWindow: isPrimaryWindow,
++            isTextInputFocused: isTextInputFocused,
++            isWebContentFocused: isWebContentFocused,
++            isNativeBrowsingContentFocused: isNativeBrowsingContentFocused,
++            isPlaybackCommandEnabled: isPlaybackCommandEnabled
++        ))
++    }
++
++    @Test("Bare Space over native UI is claimed for play/pause")
++    func bareSpaceOverNativeUIIsClaimed() {
++        #expect(Self.handles())
++    }
++
++    @Test("Keys other than Space are never claimed")
++    func otherKeysAreNotClaimed() {
++        #expect(!Self.handles(keyCode: 123))
++        #expect(!Self.handles(keyCode: 124))
++        #expect(!Self.handles(keyCode: 36))
++    }
++
++    @Test("Space with a modifier is left alone so it stays available as a shortcut")
++    func modifiedSpaceIsNotClaimed() {
++        #expect(!Self.handles(modifiers: .command))
++        #expect(!Self.handles(modifiers: .option))
++        #expect(!Self.handles(modifiers: .shift))
++        #expect(!Self.handles(modifiers: .function))
++        #expect(!Self.handles(modifiers: [.command, .shift]))
++    }
++
++    @Test("Caps lock and numeric-pad flags do not stop Space from being claimed")
++    func incidentalModifiersAreIgnored() {
++        #expect(Self.handles(modifiers: .capsLock))
++        #expect(Self.handles(modifiers: [.capsLock, .numericPad]))
++    }
++
++    @Test("Space outside the primary playback window is left to that window")
++    func spaceOutsidePrimaryWindowIsNotClaimed() {
++        #expect(!Self.handles(isPrimaryWindow: false))
++    }
++
++    @Test("Repeated Space key-down events are ignored")
++    func repeatedSpaceIsNotClaimed() {
++        #expect(!Self.handles(isRepeat: true))
++    }
++
++    @Test("Space is left to a focused control that uses it for activation")
++    func focusedControlKeepsSpace() {
++        #expect(!Self.handles(isNativeBrowsingContentFocused: false))
++    }
++
++    @Test("Space types normally while a text field is being edited")
++    func textInputKeepsSpace() {
++        #expect(!Self.handles(isTextInputFocused: true))
++    }
++
++    @Test("Space is left to the page while the player WebView holds focus")
++    func webContentKeepsSpace() {
++        #expect(!Self.handles(isWebContentFocused: true))
++    }
++
++    @Test("Space is not claimed when the playback command is disabled")
++    func disabledPlaybackCommandKeepsSpace() {
++        #expect(!Self.handles(isPlaybackCommandEnabled: false))
++    }
++
++    @Test("Only native table browsing focus is eligible for playback interception")
++    @MainActor
++    func recognisesNativeBrowsingContent() {
++        #expect(PlaybackSpaceKeyMonitor.isNativeBrowsingContent(NSOutlineView(frame: .zero)))
++        #expect(PlaybackSpaceKeyMonitor.isNativeBrowsingContent(NSTableView(frame: .zero)))
++        #expect(!PlaybackSpaceKeyMonitor.isNativeBrowsingContent(NSButton(frame: .zero)))
++        #expect(!PlaybackSpaceKeyMonitor.isNativeBrowsingContent(NSSlider(frame: .zero)))
++        #expect(!PlaybackSpaceKeyMonitor.isNativeBrowsingContent(NSView(frame: .zero)))
++    }
++
++    @Test("Responders inside a WKWebView are recognised as web content")
++    @MainActor
++    func recognisesWebContentResponders() {
++        let webView = WKWebView(frame: .zero, configuration: WKWebViewConfiguration())
++        let contentView = NSView(frame: .zero)
++        webView.addSubview(contentView)
++
++        #expect(PlaybackSpaceKeyMonitor.isWebContent(webView))
++        #expect(PlaybackSpaceKeyMonitor.isWebContent(contentView))
++        #expect(!PlaybackSpaceKeyMonitor.isWebContent(NSView(frame: .zero)))
++        #expect(!PlaybackSpaceKeyMonitor.isWebContent(NSButton(frame: .zero)))
++    }
++}
+```
+
+**File**: `docs/keyboard-shortcuts.md` (modified, +2/-0)
+```diff
+@@ -18,6 +18,8 @@ Kaset provides keyboard control for playback and navigation while preserving sta
+ 
+ Mute is still available from the Playback menu and AppleScript, but Kaset intentionally does not assign a default mute shortcut so the native macOS minimize shortcut (`⌘M`) continues to work.
+ 
++`Space` also toggles playback while the sidebar or the queue panel has focus in the main window. It still types a space in text fields, and a focused button or card keeps `Space` for activation.
++
+ Playback shortcuts are source-aware where both sources implement an equivalent action: play/pause, skip, seek, and volume route to regular YouTube when a YouTube video was the last active playback source. Shuffle, repeat, queue, and lyrics remain YouTube Music concepts.
+ 
+ ## Navigation
+```
+
+---
+
+### Incident Patch 2: `82e57b72` (2026-11-27)
+**Commit Message**: fix(youtube): route F and double-click full screen through Kaset's player (#598)
+
+Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
+Co-authored-by: Sertac Ozercan <[REDACTED_EMAIL]>
+
+**File**: `Sources/Kaset/Views/YouTube/YouTubePlayerBar.swift` (modified, +1/-9)
+```diff
+@@ -669,15 +669,7 @@ struct YouTubePlayerBar: View {
+ 
+     private func openYouTubeFullView() {
+         HapticService.toggle()
+-        if self.youtubePlayer.surfaceLocation == .inline {
+-            self.youtubePlayer.popOutToWindow()
+-            Task { @MainActor in
+-                try? await Task.sleep(for: .milliseconds(250))
+-                YouTubeVideoWindowController.shared.toggleFullscreen(returnInlineOnExit: true)
+-            }
+-        } else {
+-            YouTubeVideoWindowController.shared.toggleFullscreen()
+-        }
++        YouTubeVideoWindowController.shared.toggleFullView(for: self.youtubePlayer)
+     }
+ 
+     private func toggleYouTubePictureInPicture() {
+```
+
+**File**: `Sources/Kaset/Views/YouTube/YouTubeVideoWindowController.swift` (modified, +44/-1)
+```diff
+@@ -60,6 +60,14 @@ enum YouTubeVideoWindowFullscreenPhase: Equatable {
+     var blocksWindowedControls: Bool {
+         self != .windowed
+     }
++
++    var isTransitioning: Bool {
++        self == .entering || self == .exiting
++    }
++
++    static func settled(isFullScreen: Bool) -> Self {
++        isFullScreen ? .fullscreen : .windowed
++    }
+ }
+ 
+ @MainActor
+@@ -70,6 +78,7 @@ final class YouTubeVideoWindowController {
+     private var hostingView: NSHostingView<AnyView>?
+     private weak var youtubePlayerService: YouTubePlayerService?
+     private var isClosing = false
++    private var isPoppingOutToFullView = false
+     private let frameAutosaveKey = "KasetYouTubeVideoWindow"
+ 
+     private static let minContentSize = NSSize(width: 512, height: 288)
+@@ -118,6 +127,9 @@ final class YouTubeVideoWindowController {
+             minContentSize: Self.minContentSize,
+             onDidFailToEnterFullScreen: { [weak self] window in
+                 self?.handleFailedFullscreenEntry(window)
++            },
++            onDidFailToExitFullScreen: { [weak self] window in
++                self?.handleFailedFullscreenExit(window)
+             }
+         )
+         self.resizeGuard = resizeGuard
+@@ -227,6 +239,12 @@ final class YouTubeVideoWindowController {
+         self.youtubePlayerService?.windowFullscreenPhase = .windowed
+     }
+ 
++    private func handleFailedFullscreenExit(_ window: NSWindow) {
++        self.youtubePlayerService?.windowFullscreenPhase = .settled(
++            isFullScreen: window.styleMask.contains(.fullScreen)
++        )
++    }
++
+     private func applyFrameAutosaveTransition(
+         _ transition: YouTubeVideoWindowFrameAutosaveState.Transition,
+         to window: NSWindow
+@@ -252,6 +270,23 @@ final class YouTubeVideoWindowController {
+         window.toggleFullScreen(nil)
+     }
+ 
++    func toggleFullView(for player: YouTubePlayerService) {
++        guard !self.isPoppingOutToFullView,
++              !player.windowFullscreenPhase.isTransitioning
++        else { return }
++        if player.surfaceLocation == .inline {
++            player.popOutToWindow()
++            self.isPoppingOutToFullView = true
++            Task { @MainActor in
++                try? await Task.sleep(for: .milliseconds(250))
++                self.isPoppingOutToFullView = false
++                self.toggleFullscreen(returnInlineOnExit: true)
++            }
++        } else {
++            self.toggleFullscreen()
++        }
++    }
++
+     func setWindowChromeVisible(_ visible: Bool) {
+         guard let window = self.window else { return }
+         for buttonType in [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton] {
+@@ -385,24 +420,32 @@ struct YouTubeVideoWindowFrameAutosaveState: Equatable {
+ final class YouTubeVideoWindowResizeGuard: NSObject, NSWindowDelegate {
+     private let minContentSize: NSSize
+     private var onDidFailToEnterFullScreen: ((NSWindow) -> Void)?
++    private var onDidFailToExitFullScreen: ((NSWindow) -> Void)?
+ 
+     init(
+         minContentSize: NSSize,
+-        onDidFailToEnterFullScreen: ((NSWindow) -> Void)? = nil
++        onDidFailToEnterFullScreen: ((NSWindow) -> Void)? = nil,
++        onDidFailToExitFullScreen: ((NSWindow) -> Void)? = nil
+     ) {
+         self.minContentSize = minContentSize
+         self.onDidFailToEnterFullScreen = onDidFailToEnterFullScreen
++        self.onDidFailToExitFullScreen = onDidFailToExitFullScreen
+         super.init()
+     }
+ 
+     func invalidate() {
+         self.onDidFailToEnterFullScreen = nil
++        self.onDidFailToExitFullScreen = nil
+     }
+ 
+     func windowDidFailToEnterFullScreen(_ window: NSWindow) {
+         self.onDidFailToEnterFullScreen?(window)
+     }
+ 
++    func windowDidFailToExitFullScreen(_ window: NSWindow) {
++        self.onDidFailToExitFullScreen?(window)
++    }
++
+     static func normalizedContentSize(
+         for proposed: NSSize,
+         minContentSize: NSSize,
+```
+
+**File**: `Sources/Kaset/Views/YouTube/YouTubeWatchWebView+Coordinator.swift` (modified, +2/-0)
+```diff
+@@ -33,6 +33,8 @@ extension YouTubeWatchWebView {
+                 self.handleStateUpdate(body, documentGeneration: messageDocumentGeneration)
+             case "VIDEO_ENDED":
+                 self.handleVideoEnded(body, documentGeneration: messageDocumentGeneration)
++            case "TOGGLE_FULLSCREEN":
++                YouTubeVideoWindowController.shared.toggleFullView(for: self.playerService)
+             default:
+                 return
+             }
+```
+
+**File**: `Sources/Kaset/Views/YouTube/YouTubeWatchWebView+Scripts.swift` (modified, +25/-0)
+```diff
+@@ -476,6 +476,31 @@ extension YouTubeWatchWebView {
+         """
+     }
+ 
++    static var fullscreenRedirectScript: String {
++        """
++        (function() {
++            'use strict';
++            const bridge = window.webkit.messageHandlers.youtubePlayer;
++            function redirect() {
++                const activation = window.navigator && window.navigator.userActivation;
++                if (activation && !activation.isActive) {
++                    return Promise.reject(new TypeError('Full screen requires a user gesture'));
++                }
++                bridge.postMessage({
++                    type: 'TOGGLE_FULLSCREEN',
++                    documentGeneration: window.__kasetDocumentGeneration
++                });
++                return Promise.resolve();
++            }
++            ['requestFullscreen', 'webkitRequestFullscreen', 'webkitRequestFullScreen'].forEach(function(name) {
++                if (typeof Element.prototype[name] === 'function') {
++                    Element.prototype[name] = redirect;
++                }
++            });
++        })();
++        """
++    }
++
+     static var blackoutScript: String {
+         """
+         (function() {
+```
+
+**File**: `Sources/Kaset/Views/YouTube/YouTubeWatchWebView.swift` (modified, +7/-0)
+```diff
+@@ -803,6 +803,13 @@ extension YouTubeWatchWebView {
+         )
+         contentController.addUserScript(blackout)
+ 
++        let fullscreenRedirect = WKUserScript(
++            source: Self.fullscreenRedirectScript,
++            injectionTime: .atDocumentStart,
++            forMainFrameOnly: true
++        )
++        contentController.addUserScript(fullscreenRedirect)
++
+         let observer = WKUserScript(
+             source: Self.observerScript,
+             injectionTime: .atDocumentEnd,
+```
+
+**File**: `Tests/KasetTests/VideoSupportTests.swift` (modified, +22/-0)
+```diff
+@@ -1,3 +1,4 @@
++import AppKit
+ import Foundation
+ import Testing
+ @testable import Kaset
+@@ -209,4 +210,25 @@ struct YouTubeVideoWindowResizeGuardTests {
+         #expect(result.width == 1000)
+         #expect(result.height == 563)
+     }
++
++    @Test("Failed full screen exit reaches the controller until invalidated")
++    func failedExitForwardsUntilInvalidated() {
++        let window = NSWindow(
++            contentRect: NSRect(x: 0, y: 0, width: 640, height: 360),
++            styleMask: [.titled],
++            backing: .buffered,
++            defer: true
++        )
++        var failedExits = 0
++        let resizeGuard = YouTubeVideoWindowResizeGuard(
++            minContentSize: self.floor,
++            onDidFailToExitFullScreen: { _ in failedExits += 1 }
++        )
++
++        resizeGuard.windowDidFailToExitFullScreen(window)
++        resizeGuard.invalidate()
++        resizeGuard.windowDidFailToExitFullScreen(window)
++
++        #expect(failedExits == 1)
++    }
+ }
+```
+
+**File**: `Tests/KasetTests/YouTubeFullscreenRedirectScriptTests.swift` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++import Foundation
++import JavaScriptCore
++import Testing
++@testable import Kaset
++
++@Suite("YouTube full screen redirect script", .tags(.service))
++@MainActor
++struct YouTubeFullscreenRedirectScriptTests {
++    @Test("Element full screen requests become a Kaset full screen toggle")
++    func fullscreenRequestsPostToggle() throws {
++        let context = try #require(JSContext())
++        try self.evaluate(
++            """
++            var messages = [];
++            var nativeCalls = 0;
++            function Element() {}
++            Element.prototype.requestFullscreen = function() { nativeCalls += 1; };
++            Element.prototype.webkitRequestFullscreen = function() { nativeCalls += 1; };
++            var window = {
++                navigator: { userActivation: { isActive: true } },
++                __kasetDocumentGeneration: 7,
++                webkit: { messageHandlers: { youtubePlayer: {
++                    postMessage: function(message) { messages.push(message); }
++                } } }
++            };
++            """,
++            in: context
++        )
++        try self.evaluate(YouTubeWatchWebView.fullscreenRedirectScript, in: context)
++        try self.evaluate(
++            """
++            var player = new Element();
++            var result = player.requestFullscreen();
++            window.__kasetDocumentGeneration = 8;
++            player.webkitRequestFullscreen();
++            """,
++            in: context
++        )
++
++        #expect(context.evaluateScript("nativeCalls").toInt32() == 0)
++        #expect(context.evaluateScript("typeof result.then").toString() == "function")
++        #expect(context.evaluateScript(
++            "messages.map(function(m) { return m.type + ':' + m.documentGeneration; }).join(',')"
++        ).toString() == "TOGGLE_FULLSCREEN:7,TOGGLE_FULLSCREEN:8")
++    }
++
++    @Test("Full screen requests without a user gesture are rejected without a toggle")
++    func fullscreenRequestsRequireUserActivation() throws {
++        let context = try #require(JSContext())
++        try self.evaluate(
++            """
++            var messages = [];
++            var rejection = null;
++            function Element() {}
++            Element.prototype.requestFullscreen = function() {};
++            var window = {
++                navigator: { userActivation: { isActive: false } },
++                __kasetDocumentGeneration: 7,
++                webkit: { messageHandlers: { youtubePlayer: {
++                    postMessage: function(message) { messages.push(message); }
++                } } }
++            };
++            """,
++            in: context
++        )
++        try self.evaluate(YouTubeWatchWebView.fullscreenRedirectScript, in: context)
++        try self.evaluate(
++            """
++            new Element().requestFullscreen().catch(function(error) { rejection = error.name; });
++            """,
++            in: context
++        )
++
++        #expect(context.evaluateScript("messages.length").toInt32() == 0)
++        #expect(context.evaluateScript("rejection").toString() == "TypeError")
++    }
++
++    private func evaluate(_ script: String, in context: JSContext) throws {
++        context.exception = nil
++        _ = context.evaluateScript(script)
++        if let exception = context.exception?.toString() {
++            Issue.record("JavaScript exception: \(exception)")
++            throw FullscreenRedirectScriptError.javaScriptException(exception)
++        }
++    }
++}
++
++private enum FullscreenRedirectScriptError: Error {
++    case javaScriptException(String)
++}
+```
+
+**File**: `Tests/KasetTests/YouTubeVideoWindowLevelPolicyTests.swift` (modified, +15/-0)
+```diff
+@@ -29,6 +29,21 @@ struct YouTubeVideoWindowLevelPolicyTests {
+         #expect(YouTubeVideoWindowFullscreenPhase.exiting.blocksWindowedControls)
+     }
+ 
++    @Test("Only the entering and exiting phases count as transitions")
++    func fullscreenPhaseTransitions() {
++        #expect(!YouTubeVideoWindowFullscreenPhase.windowed.isTransitioning)
++        #expect(YouTubeVideoWindowFullscreenPhase.entering.isTransitioning)
++        #expect(!YouTubeVideoWindowFullscreenPhase.fullscreen.isTransitioning)
++        #expect(YouTubeVideoWindowFullscreenPhase.exiting.isTransitioning)
++    }
++
++    @Test("A failed transition settles on the window's actual full screen state")
++    func settledPhaseEndsTransition() {
++        #expect(YouTubeVideoWindowFullscreenPhase.settled(isFullScreen: true) == .fullscreen)
++        #expect(YouTubeVideoWindowFullscreenPhase.settled(isFullScreen: false) == .windowed)
++        #expect(!YouTubeVideoWindowFullscreenPhase.settled(isFullScreen: true).isTransitioning)
++    }
++
+     @Test("Float on Top controls require a windowed floating surface")
+     func controlAvailability() {
+         #expect(YouTubeVideoWindowLevelPolicy.canToggleFloatOnTop(
+```
+
+---
+
+### Incident Patch 3: `3a653676` (2026-11-27)
+**Commit Message**: fix(player): Refresh radio without restarting the current song (#604)
+
+Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
+Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
+Co-authored-by: Sertac Ozercan <[REDACTED_EMAIL]>
+
+**File**: `Sources/Kaset/Services/Player/PlayerService+PlaybackControls.swift` (modified, +9/-2)
+```diff
+@@ -459,13 +459,20 @@ extension PlayerService {
+     }
+ 
+     func pause() async {
++        await self.pause(isAutomaticStop: false)
++    }
++
++    func pause(isAutomaticStop: Bool) async {
+         let intent = self.beginMusicPlaybackIntent()
+-        await self.pause(intent: intent)
++        await self.pause(intent: intent, isAutomaticStop: isAutomaticStop)
+     }
+ 
+-    func pause(intent: MusicPlaybackIntent) async {
++    func pause(intent: MusicPlaybackIntent, isAutomaticStop: Bool = false) async {
+         guard self.acceptsMusicPlaybackIntent(intent) else { return }
+         self.logger.debug("Pausing playback")
++        if !isAutomaticStop {
++            self.explicitPauseGeneration &+= 1
++        }
+         self.clearQueueNavigationRecovery()
+         self.shouldResumeAfterInterruption = false
+         self.isAwaitingPlaybackConfirmation = false
+```
+
+**File**: `Sources/Kaset/Services/Player/PlayerService+Queue.swift` (modified, +118/-29)
+```diff
+@@ -114,6 +114,60 @@ extension PlayerService {
+         return loadGeneration
+     }
+ 
++    func beginRadioPlaybackIntent(for song: Song, queueEntryID: UUID? = nil) -> MusicPlaybackIntent {
++        self.startRadioRefreshGeneration &+= 1
++        return self.beginMusicPlaybackIntent(
++            allowsPriorTerminalEvent: self.startRadioKeepsCurrentPlayback(for: song, queueEntryID: queueEntryID)
++        )
++    }
++
++    func startRadio(song: Song, queueEntryID: UUID? = nil) async {
++        let intent = self.beginRadioPlaybackIntent(for: song, queueEntryID: queueEntryID)
++        await self.startRadio(song: song, queueEntryID: queueEntryID, intent: intent)
++    }
++
++    private func startRadioKeepsCurrentPlayback(for song: Song, queueEntryID: UUID?) -> Bool {
++        guard self.currentTrack?.videoId == song.videoId,
++              let owningEntryID = self.queueEntryIDOwningCurrentPlayback
++        else { return false }
++        return queueEntryID == nil || queueEntryID == owningEntryID
++    }
++
++    func startRadio(song: Song, queueEntryID: UUID? = nil, intent: MusicPlaybackIntent) async {
++        guard self.startRadioKeepsCurrentPlayback(for: song, queueEntryID: queueEntryID) else {
++            await self.playWithRadio(song: song, intent: intent)
++            return
++        }
++        guard self.acceptsMusicPlaybackIntent(intent) else { return }
++        self.invalidatePendingPlaybackSelectionRequests()
++        let refreshGeneration = self.startRadioRefreshGeneration
++        let navigationContext = self.playbackNavigationContext
++        let pauseGeneration = self.explicitPauseGeneration
++        if self.state == .paused || self.state == .ended {
++            await self.resume(intent: intent)
++            guard self.acceptsMusicPlaybackIntent(intent) else { return }
++        }
++        let seedEntryID = self.queueEntryIDOwningCurrentPlayback
++        let outcome = await self.fetchAndApplyRadioQueue(
++            for: song.videoId,
++            seedEntryID: seedEntryID,
++            queueGeneration: self.queueLoadGeneration,
++            replacesUpcoming: true,
++            isCurrentRequest: { refreshGeneration == self.startRadioRefreshGeneration }
++        )
++        guard outcome == .applied else { return }
++        self.currentEpisode = nil
++        if self.state == .ended {
++            guard self.explicitPauseGeneration == pauseGeneration else { return }
++            let seedIndex = self.queueEntries.firstIndex { $0.id == seedEntryID } ?? self.currentIndex
++            guard let firstRecommendation = self.queueEntries[safe: max(seedIndex, self.currentIndex) + 1] else { return }
++            await self.playFromQueue(entryID: firstRecommendation.id)
++            return
++        }
++        guard self.playbackNavigationContext.requestGeneration == navigationContext.requestGeneration else { return }
++        await self.fillSmartShuffleWindow()
++    }
++
+     func playWithRadio(song: Song) async {
+         let intent = self.beginMusicPlaybackIntent()
+         await self.playWithRadio(song: song, intent: intent)
+@@ -309,7 +363,7 @@ extension PlayerService {
+             let newSongs = result.songs.filter { !existingIDs.contains($0.videoId) }
+             if !newSongs.isEmpty {
+                 let updatedEntries = self.queueEntries + newSongs.map { QueueEntry(id: UUID(), song: $0) }
+-                self.setQueue(entries: updatedEntries)
++                self.applyAutomaticQueueChange { self.setQueue(entries: updatedEntries) }
+                 self.logger.info("Added \(newSongs.count) new songs to queue, total: \(self.queue.count)")
+             }
+ 
+@@ -336,6 +390,18 @@ extension PlayerService {
+         self.resumeMixContinuationFetchWaiters()
+     }
+ 
++    private func originalShuffleOrder(retaining entries: [QueueEntry]) -> [QueueEntry] {
++        let liveEntryIDs = Set(entries.map(\.id))
++        var originalEntries = (self.queueOrderBeforeShuffle ?? []).filter {
++            liveEntryIDs.contains($0.id)
++        }
++        let originalIDs = Set(originalEntries.map(\.id))
++        originalEntries.append(contentsOf: entries.filter {
++            !originalIDs.contains($0.id)
++        })
++        return originalEntries
++    }
++
+     @discardableResult
+     func fetchAndApplyRadioQueue(for videoId: String) async -> RadioQueueFetchOutcome {
+         await self.fetchAndApplyRadioQueue(
+@@ -350,7 +416,9 @@ extension PlayerService {
+     func fetchAndApplyRadioQueue(
+         for videoId: String,
+         seedEntryID: UUID?,
+-        queueGeneration: Int
++        queueGeneration: Int,
++        replacesUpcoming: Bool = false,
++        isCurrentRequest: @MainActor () -> Bool = { true }
+     ) async -> RadioQueueFetchOutcome {
+         guard self.isCurrentQueueLoad(queueGeneration) else { return .superseded }
+         guard let client = self.ytMusicClient else {
+@@ -360,11 +428,16 @@ extension PlayerService {
+ 
+         let sourceNavigationContext = self.playbackNavigationContext
+         let sourceQueueMutati
+```
+
+**File**: `Sources/Kaset/Services/Player/PlayerService+QueueNavigationRecovery.swift` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ extension PlayerService {
+         self.logger.info(
+             "Ending playback after failed queue advance: \(reason), retryable continuation: \(hasRetryableMixContinuation)"
+         )
+-        await self.pause()
++        await self.pause(isAutomaticStop: true)
+     }
+ 
+     func clearQueueNavigationRecovery() {
+```
+
+**File**: `Sources/Kaset/Services/Player/PlayerService+SmartShuffle.swift` (modified, +16/-4)
+```diff
+@@ -166,7 +166,7 @@ extension PlayerService {
+                 at: insertAt
+             )
+             self.smartShuffleSeenSuggestionIds.formUnion(chosen.map(\.videoId))
+-            self.setQueue(entries: updated)
++            self.applyAutomaticQueueChange { self.setQueue(entries: updated) }
+             didInsert = true
+         }
+ 
+@@ -238,6 +238,16 @@ extension PlayerService {
+         generation == self.queueLoadGeneration
+     }
+ 
++    var userQueueMutationGeneration: Int {
++        self.queueMutationGeneration &- self.automaticQueueMutationCount
++    }
++
++    func applyAutomaticQueueChange(_ change: () -> Void) {
++        let before = self.queueMutationGeneration
++        change()
++        self.automaticQueueMutationCount &+= self.queueMutationGeneration &- before
++    }
++
+     func reserveQueueMutation() -> Int {
+         self.queueLoadGeneration
+     }
+@@ -254,7 +264,7 @@ extension PlayerService {
+     func appendOriginalTracks(_ songs: [Song]) {
+         guard !songs.isEmpty else { return }
+         let newEntries = songs.map { QueueEntry(id: UUID(), song: $0) }
+-        self.setQueue(entries: self.queueEntries + newEntries)
++        self.applyAutomaticQueueChange { self.setQueue(entries: self.queueEntries + newEntries) }
+         if self.queueOrderBeforeShuffle != nil {
+             self.queueOrderBeforeShuffle?.append(contentsOf: newEntries)
+         }
+@@ -266,10 +276,12 @@ extension PlayerService {
+     func endQueueLoading(_ generation: Int) async {
+         guard self.isCurrentQueueLoad(generation), self.isQueueLoading else { return }
+         self.isQueueLoading = false
+-        self.stripSuggestedEntries()
++        self.applyAutomaticQueueChange { self.stripSuggestedEntries() }
+         self.resetSmartShuffleState()
+         if self.shuffleMode != .off {
+-            self.materializeShuffleQueueForCurrentTrack(recordUndo: false, storesOriginalOrder: false)
++            self.applyAutomaticQueueChange {
++                self.materializeShuffleQueueForCurrentTrack(recordUndo: false, storesOriginalOrder: false)
++            }
+         } else {
+             self.saveQueueForPersistence()
+         }
+```
+
+**File**: `Sources/Kaset/Services/Player/PlayerService+WebPlaybackIdentity.swift` (modified, +1/-1)
+```diff
+@@ -398,7 +398,7 @@ extension PlayerService {
+             self.logger.warning("Native queue advance fallback has no remaining target: \(reason)")
+             self.shouldSuppressAutoplayAfterQueueEnd = true
+             self.markPlaybackEnded()
+-            await self.pause()
++            await self.pause(isAutomaticStop: true)
+             return
+         }
  
 ```
 
-**File**: `.github/workflows/dev-build.yml` (modified, +2/-6)
+**File**: `Sources/Kaset/Services/Player/PlayerService+WebQueueSync.swift` (modified, +9/-4)
 ```diff
-@@ -35,7 +35,7 @@ jobs:
- 
-     steps:
-       - name: Checkout code
--        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
-       - name: Select Xcode version
-         run: sudo xcode-select -s /Applications/Xcode_26.2.app/Contents/Developer
-@@ -61,11 +61,9 @@ jobs:
- 
-       - name: Build app
-         env:
--          # Ad-hoc builds list App Intents in Shortcuts but macOS will not run them.
-           KASET_SIGNING: adhoc
-           ARCHES: "arm64 x86_64"
-         run: |
--          # Override version for dev builds
-           echo "MARKETING_VERSION=0.0.0-dev.${{ steps.slug.outputs.sha_short }}" > version.env
-           echo "BUILD_NUMBER=${{ github.run_number }}" >> version.env
-           Scripts/build-app.sh release
-@@ -84,18 +82,16 @@ jobs:
- 
-           echo "Found app at: $APP_PATH"
- 
--          # Create a temporary directory for DMG contents
-           mkdir -p dmg_contents
-           cp -R "$APP_PATH" dmg_contents/
- 
--          # Create DMG
-           hdiutil create -volname "Kaset-dev" \
-             -srcfolder dmg_contents \
-             -ov -format UDZO \
-             kaset-dev.dmg
- 
-       - name: Upload DMG
--        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v4
-+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         if: github.event_name != 'pull_request'
-         with:
-           name: kaset-dev-${{ steps.slug.outputs.sha_short }}
+@@ -379,7 +379,7 @@ extension PlayerService {
+         self.logger.info("Suppressing unexpected autoplay after native queue ended")
+         self.keepQueueSongVisible(currentQueueSong, thumbnailUrl: thumbnailUrl)
+         self.scheduleMusicPlaybackIntentTask(expectedQueueEntryID: self.currentQueueEntryID) { service, intent in
+-            await service.pause(intent: intent)
++            await service.pause(intent: intent, isAutomaticStop: true)
+         }
+         return true
+     }
+@@ -590,7 +590,7 @@ extension PlayerService {
+         self.markPlaybackEnded()
+         self.logger.info("Unexpected autoplay detected at end of native queue; pausing playback")
+         self.scheduleMusicPlaybackIntentTask(expectedQueueEntryID: self.currentQueueEntryID) { service, intent in
+-            await service.pause(intent: intent)
++            await service.pause(intent: intent, isAutomaticStop: true)
+         }
+         return true
+     }
+@@ -866,7 +866,12 @@ extension PlayerService {
+         shouldContinue: @MainActor () -> Bool = { true }
+     ) async {
+         let intent = suppliedIntent ?? self.currentMusicPlaybackIntent
+-        guard shouldContinue(), self.acceptsMusicPlaybackIntent(intent) else { return }
++        guard shouldContinue(),
++              self.acceptedTrackEndContinuationIntent(
++                  originalIntent: intent,
++                  occurrence: playbackOccurrence ?? self.currentMusicPlaybackOccurrence
++              ) != nil
++        else { return }
+         if identityResolutionTimedOut {
+             guard observedVideoId == nil,
+                   playbackOccurrence?.documentGeneration != nil,
+@@ -1048,7 +1053,7 @@ extension PlayerService {
+             self.shouldSuppressAutoplayAfterQueueEnd = true
+             self.markPlaybackEnded()
+             self.logger.info("Reached end of native queue; not yielding to YouTube autoplay")
+-            await self.pause(intent: continuationIntent)
++            await self.pause(intent: continuationIntent, isAutomaticStop: true)
+             return
+         }
+         self.shouldSuppressAutoplayAfterQueueEnd = false
 ```
 
-**File**: `.github/workflows/lint.yml` (modified, +2/-2)
+**File**: `Sources/Kaset/Services/Player/PlayerService.swift` (modified, +3/-0)
 ```diff
-@@ -18,7 +18,7 @@ jobs:
- 
-     steps:
-       - name: Checkout code
--        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
-       - name: Cache Homebrew
-         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-@@ -42,7 +42,7 @@ jobs:
- 
-     steps:
-       - name: Checkout code
--        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           fetch-depth: 0
- 
+@@ -390,6 +390,9 @@ final class PlayerService: NSObject, PlayerServiceProtocol {
+     var pendingPlaybackSelectionGeneration = 0
+     var playbackNavigationGeneration = 0
+     var queueMutationGeneration = 0
++    var automaticQueueMutationCount = 0
++    var startRadioRefreshGeneration = 0
++    var explicitPauseGeneration = 0
+     var musicPlaybackIntentGeneration: UInt64 = 0
+     var musicPlaybackReservationGeneration: UInt64 = 0
+     var musicPlaybackIntentIssuedAtMilliseconds: Double = 0
 ```
 
-**File**: `.github/workflows/pages.yml` (modified, +1/-1)
+**File**: `Sources/Kaset/Views/NowPlayingQueueView.swift` (modified, +1/-0)
 ```diff
-@@ -25,7 +25,7 @@ jobs:
-       url: ${{ steps.deployment.outputs.page_url }}
-     steps:
-       - name: Checkout
--        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
-       - name: Configure Pages
-         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+@@ -187,6 +187,7 @@ struct NowPlayingQueueRow: View {
+         .contextMenu {
+             SongContextMenu(
+                 song: self.entry.song,
++                queueEntryID: self.entry.id,
+                 client: self.playerService.ytMusicClient,
+                 play: self.position == .current ? nil : self.onPlay,
+                 showsGoToArtist: false,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #628** (2026-11-28): feat: add App Mode setting for Music Only, YouTube Only, or both (@sozercan)
 - **PR #627** (2026-11-25): chore: finish removing source comments (@sozercan)
+- **PR #604** (2026-11-27): fix(player): Refresh radio without restarting the current song (@mvanhorn)
 - **PR #603** (2026-11-22): chore: ratchet down source comments (@sozercan)
-- **PR #589** (2026-11-15): fix(extensions): require permission consent (@sozercan)
-- **PR #588** (2026-11-14): chore: add t3.json with project scripts (@sozercan)
-- **PR #587** (2026-11-14): fix(youtube): size the YouTube watch chapters shelf to its cards (@mvanhorn)
-- **PR #583** (2026-11-14): test: keep queue persistence and App Intents tests off shared singletons (@czubaker)
+- **PR #599** (2026-11-26): fix(ui): close lyrics and queue panels when switching to YouTube (@winzamark123)
+- **PR #598** (2026-11-27): fix(youtube): route F and double-click full screen through Kaset's player (@peeratop02)
 
 ---
 
@@ -1520,30 +2370,54 @@ Signed-off-by: Sertac Ozercan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. finish removing source comments
+## X. playback): route bare Space to play/pause and stop hidden WebView swallowing ⌘←/
 
 **RULE**:
-When implementing operations in `.agents/skills/delete-comment/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sozercan/kaset. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/Kaset/KasetApp.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sozercan/kaset. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `49c8bb52`: finish removing source comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b987362e`: playback): route bare Space to play/pause and stop hidden WebView swallowing ⌘←/⌘→. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/delete-comment/SKILL.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/Kaset/KasetApp.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-Preserve required headers, generated metadata, vendored code, active lint or formatter directives, and exact `# vX.Y.Z` release annotations on SHA-pinned GitHub Actions `uses:` entries. Verify the annotation against the tag without changing the pin. Remove a directive only after verifying its target no longer needs it. The ratchet still rejects new directives, so the inventory can be nonzero even when no prose remains. For an exhaustive audit, check embedded JavaScript, CSS, shell, and heredoc source separately; preserve comment-like string content such as help text and parser fixtures. For a large audit, work in reviewable batches and distinguish the locations inventoried from those actually classified. If issue filing isn't authorized or cannot be completed, report the candidate and leave the comment until the follow-up is recorded.
-Run `python3 Scripts/comment_lint.py --base <merge-base>` and relevant checks. For a `main`-bound branch, find the merge base with `git merge-base HEAD origin/main`. Use `--list` to confirm what remains. Report before/after comment-only lines, any manually counted embedded removals, documents and issues created or reused, and retained exceptions. Mixe
+    @State private var playbackSpaceKeyMonitor = PlaybackSpaceKeyMonitor()
+
+        Window("Kaset", id: MainWindowLayout.sceneIdentifier) {
+                    self.playbackSpaceKeyMonitor.start(
+                        isPlaybackCommandEnabled: { !self.shouldDisablePlaybackCommand },
+                        onPlayPause: { self.performPlayPause() }
+                    )
+                    self.performPlayPause()
+        self.openWindow(id: MainWindowLayout.sceneIdentifier)
+    private func performPlayPause() {
+        if self.playbackArbiter.routesMediaKeysToVideo {
+            self.youtubePlayerService.playPause()
+        } else {
+            Task {
+                await self.playerService.playPause()
+            }
+        }
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-Preserve syntax-required headers. Leave unverified or tooling-sensitive comments for a later ratchet pass rather than stripping them mechanically. For a large audit, work in reviewable batches and distinguish the locations inventoried from those actually classified. If issue filing isn't authorized or cannot be completed, report the candidate and leave the comment until the follow-up is recorded.
-Run `python3 Scripts/comment_lint.py --base <merge-base>` and relevant checks. For a `main`-bound branch, find the merge base with `git merge-base HEAD origin/main`. Report before/after comment-only lines, documents and issues created or reused, and deferred areas. Mixed code/comment lines and new ADR text are not source-line savings.
+        Window("Kaset", id: "main") {
+                    if self.playbackArbiter.routesMediaKeysToVideo {
+                        self.youtubePlayerService.playPause()
+                    } else {
+                        Task {
+                            await self.playerService.playPause()
+                        }
+                    }
+        self.openWindow(id: "main")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `49c8bb52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b987362e` are properly handled with clean fallback behavior.

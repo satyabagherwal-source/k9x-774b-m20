@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "da0ea446",
+    "sourceVersion": "965b3e76",
     "license": "AGPL-3.0",
-    "contentHash": "fdd75c3ef54ce4a5db2b74701f91164822a3ebf58c77396218a05e46a0834ed0",
-    "lastHarvestedAt": "2026-11-26T01:18:04.598Z",
+    "contentHash": "b9df1da4baa9e880918788e3f84232b533f106d0ec2c83a46b61c4cc7fe87ac5",
+    "lastHarvestedAt": "2026-11-28T10:10:57.781Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "46375fbf",
+    "sourceVersion": "0f009536",
     "license": "NOASSERTION",
-    "contentHash": "cebc4fe40367411f283d60ef0d5391c37afc7c83d40ae5bb4400b165a0907fe6",
-    "lastHarvestedAt": "2026-11-27T10:01:40.344Z",
+    "contentHash": "6f877decad4fccb20c46732502daeb8a5e43313bdfaad8b81f40e6a7d5d5464e",
+    "lastHarvestedAt": "2026-11-28T10:10:45.690Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -9783,10 +9783,10 @@
     "repository": "sozercan/kaset",
     "platform": "github",
     "sourceUrl": "https://github.com/sozercan/kaset",
-    "sourceVersion": "49c8bb52",
+    "sourceVersion": "59e95c8a",
     "license": "MIT",
-    "contentHash": "1b8b66250a14e83bebfc1d95da42c7ef9008fcdc190322fcfc46004dae2ff00f",
-    "lastHarvestedAt": "2026-11-26T06:44:05.032Z",
+    "contentHash": "3d761cdcaee4c8f626b35ba1ac21ebd2890dba404f7eadcb5707317ad3a3c98b",
+    "lastHarvestedAt": "2026-11-28T10:10:47.658Z",
     "learningId": "learn-github-sozercan-kaset"
   },
   "digitalbazaar-pyld": {
@@ -10073,10 +10073,10 @@
     "repository": "preactjs/preact",
     "platform": "github",
     "sourceUrl": "https://github.com/preactjs/preact",
-    "sourceVersion": "1fbc07f6",
+    "sourceVersion": "94fbd390",
     "license": "MIT",
-    "contentHash": "c93fa054cbb0d577794f5b675a4d348fa77c76dad344d5e492a35d442a528eaa",
-    "lastHarvestedAt": "2026-11-25T00:16:46.595Z",
+    "contentHash": "e0e81bc746a84a25bf1311cd4407564934771199e048078aaa3086fb264fad61",
+    "lastHarvestedAt": "2026-11-28T10:10:48.493Z",
     "learningId": "learn-github-preactjs-preact"
   },
   "alyssaxuu-later": {

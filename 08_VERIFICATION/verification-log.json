@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-TY6B",
-    "timestamp": "2026-11-26T17:56:54.467Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-    "contentHash": "5cfe03d385f201a1bda33c7ac26bdb679fc1105160f82c80eda63296d23ca29e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-TZ55",
-    "timestamp": "2026-11-26T17:56:55.721Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "013dd4a484de9e7da32ad1ae7a63bb9ad88ff3403968a54a46535daa7e9c18ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-U7UE",
-    "timestamp": "2026-11-26T17:57:06.998Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "7232e67d2efeff29398925fd29af80f2c09249a43421eff07bd31f36bb7550c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-56FX",
-    "timestamp": "2026-11-26T18:05:38.397Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "6780c9dc725f185b0246967f0a698fefb7f0d01fc75c7788efbe6665d4bfb7a6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-5C1G",
     "timestamp": "2026-11-26T18:05:45.652Z",
     "repository": "pubkey/rxdb",
@@ -7490,6 +7430,66 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "2a74a2223322b416a172c9df84ac5f3d3d3660c5a0c5f07c11ca943500b9cbf9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-26NO",
+    "timestamp": "2026-11-28T10:10:45.684Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "6f877decad4fccb20c46732502daeb8a5e43313bdfaad8b81f40e6a7d5d5464e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-286C",
+    "timestamp": "2026-11-28T10:10:47.652Z",
+    "repository": "sozercan/kaset",
+    "learningId": "learn-github-sozercan-kaset",
+    "contentHash": "3d761cdcaee4c8f626b35ba1ac21ebd2890dba404f7eadcb5707317ad3a3c98b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-28TJ",
+    "timestamp": "2026-11-28T10:10:48.487Z",
+    "repository": "preactjs/preact",
+    "learningId": "learn-github-preactjs-preact",
+    "contentHash": "e0e81bc746a84a25bf1311cd4407564934771199e048078aaa3086fb264fad61",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-2FZK",
+    "timestamp": "2026-11-28T10:10:57.776Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "b9df1da4baa9e880918788e3f84232b533f106d0ec2c83a46b61c4cc7fe87ac5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

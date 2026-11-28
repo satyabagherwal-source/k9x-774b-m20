@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T09:54:41.593Z",
+  "last_updated": "2026-11-28T10:11:05.876Z",
   "total_records": 2896,
   "domains": {
     "A": {
@@ -17241,8 +17241,8 @@
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "repository": "zed-industries/zed",
-      "content_hash": "56881b6141c9b9e12cc4963b72f7d97d1a914881afadb791a71df6d8906dfdc5",
-      "created_at": "2026-11-27T10:01:40.854Z"
+      "content_hash": "6c292d7085f7a6d84397693a1dc4f705817f44359fce55850be843e3de59cc8e",
+      "created_at": "2026-11-28T10:10:46.507Z"
     },
     "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants",
@@ -17250,8 +17250,8 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-learnings-content-information-intelligence-zed-industries-zed.md",
       "repository": "zed-industries-zed-learnings",
-      "content_hash": "61d3226f2df909746c36d18f3ff9697a043a65b84250151b56d5296c8a2e3795",
-      "created_at": "2026-11-27T10:01:44.531Z"
+      "content_hash": "62646f5bcd0733ec9571bf63bac3f4f30fbe63080f8a65d10861d146998690e8",
+      "created_at": "2026-11-28T10:11:02.718Z"
     },
     "DOM-D-C9202D2F": {
       "record_id": "DOM-D-C9202D2F",
@@ -21712,8 +21712,8 @@
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "repository": "paradedb/paradedb",
-      "content_hash": "aba2e2597b4288e70000f27a2cfbc1634a318988aa7d4532eec0e93199d8675b",
-      "created_at": "2026-11-26T01:18:04.972Z"
+      "content_hash": "85ec77cd58b2458f5f16f841be5f4e4c0a279c633ccda6c49afcadc04d0aaac6",
+      "created_at": "2026-11-28T10:10:58.416Z"
     },
     "DOM-D-53AB726C": {
       "record_id": "DOM-D-53AB726C",
@@ -26752,8 +26752,8 @@
       "title": "Architecture Intelligence: preactjs/preact Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-preactjs-preact-architecture-intelligence-preactjs-preact-core-invariants.md",
       "repository": "preactjs/preact",
-      "content_hash": "13c53b6601b961ef37a8aa59ddd9995be588084158df7370dfd0b99ec0c4e737",
-      "created_at": "2026-11-25T00:16:46.841Z"
+      "content_hash": "e4d800fa0da384baac066f329073b20e6480423a016d86c648a2f26c34d20379",
+      "created_at": "2026-11-28T10:10:49.166Z"
     },
     "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants",
@@ -26770,8 +26770,8 @@
       "title": "Architecture Intelligence: preactjs-preact-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-preactjs-preact-learnings-architecture-intelligence-preactjs-preact-learnings-co.md",
       "repository": "preactjs-preact-learnings",
-      "content_hash": "b482af930a0ce617154bac19a60cbe0f8c28b2a7cfdb01776992f972dfa56a2e",
-      "created_at": "2026-11-25T00:17:26.585Z"
+      "content_hash": "d1d900638a62f254d511d0904cd00676da3540a3260cb50593867b88401d732d",
+      "created_at": "2026-11-28T10:11:04.602Z"
     },
     "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants",
@@ -46120,8 +46120,8 @@
       "title": "Technical Construction Intelligence: sozercan/kaset Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sozercan-kaset-technical-construction-intelligence-sozercan-kaset-core-invariant.md",
       "repository": "sozercan/kaset",
-      "content_hash": "0723e324ce0d04548308f9c4ac88ba7c7e28c82495be1dc002b6436824c8a469",
-      "created_at": "2026-11-26T06:44:05.561Z"
+      "content_hash": "18a71ab80663775b5ecb79478e720e618ced2f8fa8337ebf5435ed74709a6f5f",
+      "created_at": "2026-11-28T10:10:48.342Z"
     },
     "domain_intelligence-technical-construction-intelligence-sozercan-kaset-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-sozercan-kaset-learnings-core-invariants",
@@ -46129,8 +46129,8 @@
       "title": "Technical Construction Intelligence: sozercan-kaset-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sozercan-kaset-learnings-technical-construction-intelligence-sozercan-kaset-lear.md",
       "repository": "sozercan-kaset-learnings",
-      "content_hash": "44a57532d08b9cffe4b92201f19561751a8117b5e7f9605063e30e5ed87e2301",
-      "created_at": "2026-11-26T06:44:13.753Z"
+      "content_hash": "33ee0248d11c1a5aa85584fe815aec7820839760eb18eb37d21fdb157d2ee3a4",
+      "created_at": "2026-11-28T10:11:05.876Z"
     },
     "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-core-invariants",

@@ -4,22 +4,22 @@
 {
   "source_repository": "paradedb/paradedb",
   "source_url": "https://github.com/paradedb/paradedb",
-  "source_version": "da0ea446",
+  "source_version": "965b3e76",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-26T01:18:04.824Z",
+  "timestamp": "2026-11-28T10:10:58.137Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-paradedb-paradedb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `da0ea446`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-26T01:18:04.824Z`  
+> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `965b3e76`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-28T10:10:58.137Z`  
 > **Learning ID**: `learn-github-paradedb-paradedb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `paradedb/paradedb` (Commit: `da0ea446`)
+- **Target Repository**: `paradedb/paradedb` (Commit: `965b3e76`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T01:18:03.639Z  
+> **Harvest Timestamp**: 2026-11-28T10:10:56.071Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9568 stars
+- **Stars / Engagement**: 9573 stars
 
 ---
 
@@ -2329,1674 +2329,176 @@ impl SolvePostgresExpressions for DataFusionAggState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f84516c5` (2026-11-25)
-**Commit Message**: perf(vector): write full-precision rows once during index builds (#7632)
+### Incident Patch 1: `965b3e76` (2026-11-28)
+**Commit Message**: docs: improve the synonyms docs (#7676)
 
-## Summary
-Pins: https://github.com/paradedb/tantivy/pull/447
+## Ticket(s) Closed
 
-A partitioned build wrote every full-precision vector to temporary files
-and then again into the index. This writes it once, into the partition's
-final segment.
-
-- Applies when the index has one quantized vector field, the default
-sort, and the partition reaches `vector_clustering_threshold`. Every
-other build is unchanged.
-- The index relation's file writer can make its written part readable
-before it is terminated, which the IVF build uses to train and assign
-from the rows it already wrote.
-- Temp files per build process drop by `4 x dim` bytes per row of the
-partition.
-- No read of the unfinished file overlaps a write to it; the storage
-writer refuses one.
-- Those reads use a bulk-read buffer strategy.
-
-## Performance
-Cohere 10M, 1024-d cosine, 8 segments, replication 2, in a container
-capped at 8 CPUs and 6 GB. Base is one build; this PR is one build.
-
-| | base | this PR |
-|---|---:|---:|
-| CREATE INDEX wall | 636 s | 553 s |
-| peak temp files, total | 38.33 GiB | 1.98 GiB |
-| peak temp files, one backend | 9.48 GiB | 1.16 GiB |
-| temp bytes w
-
-**File**: `Cargo.lock` (modified, +10/-10)
-```diff
-@@ -5184,7 +5184,7 @@ dependencies = [
- [[package]]
- name = "ownedbytes"
- version = "0.9.0"
--source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
- dependencies = [
-  "stable_deref_trait",
- ]
-@@ -7407,7 +7407,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
- [[package]]
- name = "tantivy"
- version = "0.27.0"
--source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
- dependencies = [
-  "aho-corasick",
-  "arc-swap",
-@@ -7466,15 +7466,15 @@ dependencies = [
- [[package]]
- name = "tantivy-bitpacker"
- version = "0.10.0"
--source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
- dependencies = [
-  "bitpacking",
- ]
- 
- [[package]]
- name = "tantivy-columnar"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
- dependencies = [
-  "downcast-rs",
-  "fastdivide",
-@@ -7489,7 +7489,7 @@ dependencies = [
- [[package]]
- name = "tantivy-common"
- version = "0.11.0"
--source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
- dependencies = [
-  "async-trait",
-  "byteorder",
-@@ -7522,7 +7522,7 @@ dependencies = [
- [[package]]
- name = "tantivy-quant"
- version = "0.1.0"
--source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
- dependencies = [
-  "rand_chacha 0.3.1",
-  "rand_core 0.6.4",
-@@ -7531,7 +7531,7 @@ dependencies = [
- [[package]]
- name = "tantivy-query-grammar"
- version = "0.26.0"
--source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
- dependencies = [
-  "fnv",
-  "nom 7.1.3",
-@@ -7543,7 +7543,7 @@ dependencies = [
- [[package]]
- name = "tantivy-sstable"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
- dependencies = [
-  "futures-util",
-  "itertools 0.14.0",
-@@ -7556,7 +7556,7 @@ dependencies = [
- [[package]]
- name = "tantivy-stacker"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
- dependencies = [
-  "fixedbitset",
-  "murmurhash32",
-@@ -7593,7 +7593,7 @@ dependencies = [
- [[package]]
- name = "tantivy-tokenizer-api"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-+source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
- dependencies = [
-  "serde",
- ]
-```
-
-**File**: `index_read/src/index/directory/mvcc.rs` (modified, +177/-13)
-```diff
-@@ -20,7 +20,7 @@ use super::utils::{load_metas, save_new_metas, save_schema, save_settings};
- use crate::api::{HashMap, HashSet};
- use crate::index::reader::io_stats::Trace;
- use crate::index::reader::segment_component::SegmentComponentReader;
--use crate::index::writer::segment_component::SegmentComponentWriter;
-+use crate::index::writer::segment_component::{SegmentComponentWriter, SharedCheckpoint};
- use crate::postgres::buffile::{self, TempFileOwner};
- use crate::postgres::customscan::mpp::run_on_main_thread;
- use crate::postgres::heap::{ExpressionState, HeapFetchState};
-@@ -54,7 +54,7 @@ use tantivy::directory::error::{
-     DeleteError, LockError, OpenDirectoryError, OpenReadError, OpenWriteError,
- };
- use tantivy::directory::{
--    DirectoryLock, DirectoryPanicHandler, FileHandle, InnerWritePtr, Lock, RamDirectory,
-+    DirectoryLock, DirectoryPanicHandler, FileHandle, FileSlice, InnerWritePtr, Lock, RamDirectory,
-     TempFilePtr, WatchCallback, WatchHandle,
- };
- use tantivy::index::{SegmentId, SegmentMetaInventory};
-@@ -369,7 +369,14 @@ fn retired_snapshot_conflict_horizon(
-     latest
- }
- 
--type AtomicFileEntry = (FileEntry, Arc<AtomicUsize>);
-+/// A component this directory opened for writing: where it starts, its length as it grows, and
-+/// its checkpoint once the writer made one.
-+#[derive(Debug)]
-+struct NewFile {
-+    entry: FileEntry,
-+    total_bytes: Arc<AtomicUsize>,
-+    checkpoint: SharedCheckpoint,
-+}
- /// Tantivy Directory trait implementation over block storage
- /// This Directory implementation respects Postgres MVCC visibility rules
- /// and should back all Tantivy Indexes used in insert and scan operations
-@@ -387,7 +394,7 @@ pub struct MVCCDirectory {
-     // cloned, we don't lose all the work we did originally creating the FileHandler impls.  And
-     // it's cloned a lot!
-     readers: Arc<Mutex<HashMap<PathBuf, Arc<dyn FileHandle>>>>,
--    new_files: Arc<Mutex<HashMap<PathBuf, AtomicFileEntry>>>,
-+    new_files: Arc<Mutex<HashMap<PathBuf, NewFile>>>,
- 
-     // a lazily loaded [`IndexMeta`], which is only created once per MVCCDirectory instance
-     // we cannot tolerate tantivy calling `load_metas()` multiple times and giving it a different
-@@ -685,12 +692,10 @@ impl Directory for MVCCDirectory {
-                 Entry::Vacant(vacant) => match self.file_entry(path) {
-                     Ok(file_handle) => Ok(vacant.insert(file_handle).clone()),
-                     Err(err) => {
--                        let file_entry = if let Some((file_entry, total_bytes)) =
--                            self.new_files.lock().get(path)
--                        {
-+                        let file_entry = if let Some(file) = self.new_files.lock().get(path) {
-                             FileEntry {
--                                starting_block: file_entry.starting_block,
--                                total_bytes: total_bytes.load(Ordering::Relaxed),
-+                                starting_block: file.entry.starting_block,
-+                                total_bytes: file.total_bytes.load(Ordering::Relaxed),
-                             }
-                         } else if let TantivyError::OpenDirectoryError(
-                             OpenDirectoryError::DoesNotExist(missing),
-@@ -724,6 +729,56 @@ impl Directory for MVCCDirectory {
-             };
-         reader
-     }
-+    /// The reader resolves blocks through the checkpoint the writer shared, and is not cached: a
-+    /// read of `path` after its writer terminates opens the finished component.
-+    ///
-+    /// No read overlaps a write. The writer refuses a write while the reader is open, and no
-+    /// reader opens once bytes follow the checkpoint: the writer buffers, so those bytes could
-+    /// reach the prefix's last page under it.
-+    fn open_unfinished(&self, path: &Path, len: usize) -> Result<FileSlice, OpenReadError> {
-+        let refused = |reason: String| {
-+            OpenReadError::wrap_io_error(
-+                io::Error::new(io::ErrorKind::InvalidInput, reason),
-+                path.to_path_buf(),
-+            )
-+        };
-+        let (starting_block, blocks) = {
-+            let new_files = self.new_files.lock();
-+            let file = new_files
-+                .get(path)
-+                .ok_or_else(|| refused("file is not open for writing".to_string()))?;
-+            let checkpoint = file
-+                .checkpoint
-+                .get()
-+                .ok_or_else(|| refused("file is not checkpointed".to_string()))?;
-+            if len > checkpoint.len {
-+                return Err(refused(format!(
-+                    "{len} bytes requested of a file checkpointed at {} bytes",
-+                    checkpoint.len
-+                )));
-+            }
-+            if file.total_bytes.load(Ordering::Relaxed) != checkpoint.len {
-+                return Err(refused("file was written after its checkpoint".to_string()));
-+            }
-+            (file.entry.starting_block, checkpoint.blocks.clone()
-```
-
-**File**: `index_read/src/index/reader/segment_component.rs` (modified, +16/-0)
-```diff
-@@ -22,6 +22,7 @@ use crate::postgres::storage::block::{FileEntry, LinkedList, bm25_max_free_space
- 
- use crate::postgres::storage::LinkedBytesList;
- use anyhow::Result;
-+use pgrx::pg_sys;
- use std::io::Error;
- use std::ops::Range;
- use tantivy::HasLen;
-@@ -67,6 +68,21 @@ impl SegmentComponentReader {
-         Self { block_list, entry }
-     }
- 
-+    /// Opens the first `entry.total_bytes` bytes of a component that is still being written and
-+    /// whose writer was checkpointed at that length or more; `blocks` are the checkpoint's.
-+    pub unsafe fn new_unfinished(
-+        indexrel: &PgSearchRelation,
-+        entry: FileEntry,
-+        blocks: std::sync::Arc<Vec<pg_sys::BlockNumber>>,
-+        io_stats: Option<io_stats::ComponentStats>,
-+    ) -> Self {
-+        let mut block_list =
-+            LinkedBytesList::open_unfinished(indexrel, entry.starting_block, blocks);
-+        block_list.bman_mut().set_io_stats(io_stats);
-+
-+        Self { block_list, entry }
-+    }
-+
-     fn read_bytes_raw(&self, range: Range<usize>) -> Result<OwnedBytes, Error> {
-         unsafe {
-             let end = range.end.min(self.len());
-```
-
-**File**: `index_read/src/index/writer/index.rs` (modified, +244/-9)
-```diff
-@@ -24,12 +24,15 @@ use std::sync::Arc;
- use tantivy::index::SegmentId;
- use tantivy::indexer::merger::IndexMerger;
- use tantivy::indexer::{AddOperation, IndexWriterOptions, SegmentWriter};
--use tantivy::schema::Field;
-+use tantivy::schema::{Field, Value};
-+use tantivy::vector::VectorRowsWriter;
- use tantivy::{
--    Directory, Index, IndexMeta, IndexWriter, Opstamp, Segment, SegmentMeta, TantivyDocument,
-+    Directory, DocId, Index, IndexMeta, IndexSortByField, IndexWriter, Opstamp, Order, Segment,
-+    SegmentMeta, TantivyDocument,
-     directory::{ManagedDirectory, RamDirectory, TerminatingWrite},
- };
- 
-+use crate::api::CTID_FIELD_NAME;
- use crate::index::ctid_map;
- use crate::index::directory::build::BuildDirectory;
- use crate::index::mvcc::{MVCCDirectory, MvccSatisfies};
-@@ -38,6 +41,7 @@ use crate::index::setup_tokenizers;
- use crate::index::stats::{self, LogicalBoundsByField, StatsWriter, VectorPartition};
- use crate::postgres::rel::PgSearchRelation;
- use crate::postgres::storage::block::{STATS_EXT, SegmentMetaEntry};
-+use crate::postgres::utils::format_u64_ctid;
- use crate::schema::SearchIndexSchema;
- use pgrx::pg_sys::panic::ErrorReport;
- use pgrx::{IntoDatum, PgLogLevel, PgSqlErrorCode, direct_function_call, function_name};
-@@ -169,18 +173,39 @@ impl DiskSpaceGuard {
-     /// Error out if the remaining segments are projected not to fit within the tablespace's
-     /// available space.
-     fn check(&self) -> Result<()> {
--        self.check_available(self.indexrel.available_disk_bytes(), "index's tablespace")
-+        self.check_written(0)
-+    }
-+
-+    /// [`Self::check`] when `written_bytes` of the output being written are on the tablespace
-+    /// already and so are not required of its available space.
-+    fn check_written(&self, written_bytes: u64) -> Result<()> {
-+        self.check_required(
-+            self.indexrel.available_disk_bytes(),
-+            "index's tablespace",
-+            written_bytes,
-+        )
-     }
- 
-     fn check_available(&self, available_bytes: Option<u64>, location: &str) -> Result<()> {
-+        self.check_required(available_bytes, location, 0)
-+    }
-+
-+    fn check_required(
-+        &self,
-+        available_bytes: Option<u64>,
-+        location: &str,
-+        written_bytes: u64,
-+    ) -> Result<()> {
-         let Some(segment_bytes) = self.segment_bytes else {
-             // no sample yet: we can't estimate segment size until one has been written
-             return Ok(());
-         };
- 
-         // Leave headroom for the output currently being written.
-         let projected_segments = (self.remaining_segments as u64).saturating_add(1);
--        let required = segment_bytes.saturating_mul(projected_segments);
-+        let required = segment_bytes
-+            .saturating_mul(projected_segments)
-+            .saturating_sub(written_bytes);
- 
-         let Some(available_bytes) = available_bytes else {
-             return Ok(());
-@@ -239,6 +264,77 @@ struct BuildSegments {
-     index: Index,
-     disk_guard: Option<DiskSpaceGuard>,
-     sampled_docs: Option<u32>,
-+    /// Bytes streamed into the index relation for the documents of the sampled staged segment.
-+    sampled_streamed_bytes: u64,
-+    /// Set while the partition being written streams its vector rows.
-+    streamed: Option<StreamedPartition>,
-+}
-+
-+/// A partition whose full-precision vector rows go straight into its final segment: the staged
-+/// segments hold every other field, and the partition's merge finishes the segment the rows
-+/// opened.
-+struct StreamedPartition {
-+    field: Field,
-+    /// The partition's final segment and its rows, created at the first document.
-+    target: Option<(Segment, VectorRowsWriter)>,
-+    /// The next document's id in the final segment: documents are numbered as they are inserted.
-+    next_doc: DocId,
-+    /// The ctid of the last document inserted.
-+    last_ctid: Option<u64>,
-+}
-+
-+impl StreamedPartition {
-+    /// Moves the vector of `document`, the row at `ctid`, into the final segment as the row of
-+    /// the next document, and returns the document for the staged segment, without the vector.
-+    ///
-+    /// Ctids ascend: the final segment orders its documents by ctid, and the rows are numbered
-+    /// in insertion order.
-+    fn take_row(
-+        &mut self,
-+        index: &Index,
-+        document: TantivyDocument,
-+        ctid: u64,
-+    ) -> Result<TantivyDocument> {
-+        if let Some(last) = self.last_ctid.filter(|&last| ctid <= last) {
-+            anyhow::bail!(
-+                "internal error: a partition that streams its vector rows received ctid {} \
-+                 after ctid {}",
-+                format_u64_ctid(ctid),
-+                format_u64_ctid(last)
-+            );
-+        }
-+        self.last_ctid = Some(ctid);
-+        let doc = self.next_doc;
-+        self.next_doc += 1;
-+        if self.target.is_none() {
-+            let target = index.new_segment();
-+            let rows = VectorRowsWriter::create(&target, self
-```
-
-**File**: `index_read/src/index/writer/segment_component.rs` (modified, +74/-1)
-```diff
-@@ -22,11 +22,23 @@ use crate::postgres::storage::{LinkedBytesList, LinkedBytesListWriter};
- use pgrx::pg_sys;
- use std::io::{BufWriter, Result, Write};
- use std::path::{Path, PathBuf};
--use std::sync::Arc;
- use std::sync::atomic::{AtomicUsize, Ordering};
-+use std::sync::{Arc, OnceLock};
- use tantivy::directory::{AntiCallToken, TerminatingWrite};
- use tantivy::index::SegmentComponent;
- 
-+/// The part of a component that its writer's checkpoint made readable: its length, and the data
-+/// blocks that hold it, in file order.
-+#[derive(Debug)]
-+pub struct CheckpointedPrefix {
-+    pub len: usize,
-+    /// Cloned into every reader of the prefix, and nowhere else: the writer counts the clones.
-+    pub blocks: Arc<Vec<pg_sys::BlockNumber>>,
-+}
-+
-+/// A component's checkpoint, set at most once and shared between its writer and its directory.
-+pub type SharedCheckpoint = Arc<OnceLock<CheckpointedPrefix>>;
-+
- pub struct SegmentComponentWriter {
-     inner: Option<InnerSegmentComponentWriter>,
-     path: PathBuf,
-@@ -72,6 +84,16 @@ impl SegmentComponentWriter {
-             Arc::new(AtomicUsize::new(0))
-         }
-     }
-+
-+    /// The slot [`TerminatingWrite::checkpoint`] fills. It stays empty for a component that is
-+    /// never checkpointed, and for one whose bytes are not stored.
-+    pub fn checkpointed(&self) -> SharedCheckpoint {
-+        if let Some(inner) = self.inner.as_ref() {
-+            inner.checkpoint.clone()
-+        } else {
-+            Default::default()
-+        }
-+    }
- }
- 
- impl Write for SegmentComponentWriter {
-@@ -112,12 +134,23 @@ impl TerminatingWrite for SegmentComponentWriter {
-             Ok(())
-         }
-     }
-+
-+    fn checkpoint(&mut self) -> Result<()> {
-+        match self.inner.as_mut() {
-+            Some(inner) => inner.checkpoint(),
-+            None => Err(std::io::Error::new(
-+                std::io::ErrorKind::Unsupported,
-+                format!("{:?} stores no bytes to checkpoint", self.path),
-+            )),
-+        }
-+    }
- }
- 
- struct InnerSegmentComponentWriter {
-     header_blockno: pg_sys::BlockNumber,
-     total_bytes: Arc<AtomicUsize>,
-     buffer: Option<PanicSafeBufWriter<LinkedBytesListWriter>>,
-+    checkpoint: SharedCheckpoint,
- }
- 
- /// Wrapper around [`BufWriter`] that skips flush-on-drop while unwinding.
-@@ -139,6 +172,10 @@ impl<W: Write> PanicSafeBufWriter<W> {
-     fn into_inner(mut self) -> Result<W> {
-         Ok(self.inner.take().unwrap().into_inner()?)
-     }
-+
-+    fn get_ref(&self) -> &W {
-+        self.inner.as_ref().unwrap().get_ref()
-+    }
- }
- 
- impl<W: Write> Write for PanicSafeBufWriter<W> {
-@@ -171,6 +208,40 @@ impl InnerSegmentComponentWriter {
-             header_blockno: segment_component.header_blockno,
-             total_bytes: Default::default(),
-             buffer: Some(PanicSafeBufWriter::new(segment_component.writer())),
-+            checkpoint: Default::default(),
-+        }
-+    }
-+
-+    /// Flushes the buffered bytes to their pages and publishes the blocks written so far. The
-+    /// block list is shared from this writer, 4 bytes per data page: no page is written for it,
-+    /// and the block map of the finished component is the one `terminate` writes.
-+    fn checkpoint(&mut self) -> Result<()> {
-+        let buffer = self.buffer.as_mut().unwrap();
-+        buffer.flush()?;
-+        let prefix = CheckpointedPrefix {
-+            len: self.total_bytes.load(Ordering::Relaxed),
-+            blocks: Arc::new(buffer.get_ref().blocks()),
-+        };
-+        self.checkpoint.set(prefix).map_err(|_| {
-+            std::io::Error::new(
-+                std::io::ErrorKind::InvalidInput,
-+                "segment component is already checkpointed",
-+            )
-+        })
-+    }
-+
-+    /// Errors while a reader of the checkpointed prefix is open. Such a reader holds pages
-+    /// pinned on the promise that they do not change, and a write appends to the last of them.
-+    ///
-+    /// Every reader holds a clone of the checkpoint's block list, so a count above the
-+    /// checkpoint's own means one is open.
-+    fn refuse_under_reader(&self) -> Result<()> {
-+        match self.checkpoint.get() {
-+            Some(prefix) if Arc::strong_count(&prefix.blocks) > 1 => Err(std::io::Error::new(
-+                std::io::ErrorKind::ResourceBusy,
-+                "segment component is written while a reader of its checkpointed prefix is open",
-+            )),
-+            _ => Ok(()),
-         }
-     }
- 
-@@ -187,7 +258,9 @@ impl InnerSegmentComponentWriter {
- }
- 
- impl Write for InnerSegmentComponentWriter {
-+    /// A write refused under a reader buffers no byte and touches no page.
-     fn write(&mut self, data: &[u8]) -> Result<usize> {
-+        self.refuse_under_reader()?;
-         let many = self.buffer.as_mut().unwrap().write(data)?;
-         self.total_bytes.fetch_add(data.len(), Ordering::Relaxed);
-         Ok(many)
-```
-
-**File**: `index_write/src/postgres/build_parallel.rs` (modified, +153/-5)
-```diff
-@@ -629,13 +629,13 @@ impl PartitionSpillFiles {
-     }
- 
-     /// Collect `partition`'s ctids from every participant into an `int8` tuplesort on `budget`
--    /// bytes, or `None` when no participant saw a row of the partition. A packed ctid is 48
--    /// bits, so it orders the same as an `int8`.
-+    /// bytes, with their count, or `None` when no participant saw a row of the partition. A
-+    /// packed ctid is 48 bits, so it orders the same as an `int8`.
-     unsafe fn gather(
-         &mut self,
-         partition: usize,
-         budget: usize,
--    ) -> anyhow::Result<Option<Int8Sorter>> {
-+    ) -> anyhow::Result<Option<(Int8Sorter, usize)>> {
-         let readers = self.readers(partition);
-         if readers.is_empty() {
-             return Ok(None);
-@@ -652,7 +652,7 @@ impl PartitionSpillFiles {
-             pg_sys::BufFileClose(file);
-         }
-         sorter.performsort();
--        Ok(Some(sorter))
-+        Ok(Some((sorter, total_bytes / CTID_RECORD_LEN)))
-     }
- }
- 
-@@ -1147,12 +1147,18 @@ impl<'a> WorkerBuildState<'a> {
-         );
-         for partition in first_partition..first_partition + owned_partitions {
-             check_for_interrupts();
--            let Some(mut sorter) = (unsafe { files.gather(partition, self.gather_budget)? }) else {
-+            let Some((mut sorter, ctids)) =
-+                (unsafe { files.gather(partition, self.gather_budget)? })
-+            else {
-                 continue;
-             };
-             if self.writer.is_none() {
-                 self.open_partition_writer()?;
-             }
-+            self.writer
-+                .as_mut()
-+                .expect("drain_partitioned: writer should be set")
-+                .begin_partition(ctids);
-             // Every segment of the partition carries its box, so a reader can prune on it without
-             // opening the segment.
-             self.writer
-@@ -2115,6 +2121,148 @@ mod tests {
-         );
-     }
- 
-+    /// A partition that reaches the clustering threshold writes its full-precision rows into the
-+    /// index relation, not into temporary files: the build fits a `temp_file_limit` below the
-+    /// table's vector bytes, which a build that stages its rows exceeds, clusters every segment,
-+    /// and returns the rows the staged build returns.
-+    #[pg_test]
-+    fn test_vector_build_streams_rows_past_temp_file_limit() {
-+        // 30,000 rows of 64 f32 are 7.68MB of vector bytes, 3.84MB in each of the two
-+        // partitions a build process holds one at a time.
-+        Spi::run(
-+            r#"
-+            CREATE EXTENSION IF NOT EXISTS vector;
-+            SET maintenance_work_mem = '64MB';
-+            SET max_parallel_maintenance_workers = 0;
-+            SET max_parallel_workers_per_gather = 0;
-+            SET paradedb.vector_clustering_threshold = 1;
-+            SET paradedb.vector_adaptive_probing = off;
-+            SET paradedb.vector_cluster_max_probe = 100000;
-+            CREATE TABLE streamed_build (id BIGINT, emb vector(64));
-+            INSERT INTO streamed_build
-+            SELECT i, CASE WHEN i % 97 = 0 THEN NULL ELSE (
-+                SELECT array_agg(
-+                    sin(i * (d + 1) * 0.37)::real + CASE WHEN d = i % 64 THEN 3 ELSE 0 END
-+                    ORDER BY d)
-+                FROM generate_series(0, 63) d)::vector END
-+            FROM generate_series(1, 30000) i;
-+            "#,
-+        )
-+        .unwrap();
-+        let create = |options: &str| {
-+            format!(
-+                "CREATE INDEX streamed_build_idx ON streamed_build USING paradedb \
-+                 (id, emb vector_cosine_ops) WITH (target_segment_count = 2{options})"
-+            )
-+        };
-+        let query_vector =
-+            Spi::get_one::<String>("SELECT emb::text FROM streamed_build WHERE id = 12345")
-+                .unwrap()
-+                .unwrap();
-+        let nearest = || {
-+            Spi::get_one::<Vec<i64>>(&format!(
-+                "SELECT array_agg(id) FROM (SELECT id FROM streamed_build \
-+                 WHERE id @@@ paradedb.all() ORDER BY emb <=> '{query_vector}' LIMIT 10) q"
-+            ))
-+            .unwrap()
-+            .unwrap()
-+        };
-+
-+        Spi::run("SET temp_file_limit = '2MB'").unwrap();
-+        Spi::run(&create("")).unwrap();
-+        assert_eq!(
-+            Spi::get_one::<bool>(
-+                "SELECT count(*) = 2 AND bool_and(vector_format = 'ivf') AND bool_and(quantized)
-+                 AND sum(vector_num_vectors) = 30000 - 309
-+                 FROM paradedb.vector_info('streamed_build_idx', 'emb')"
-+            )
-+            .unwrap(),
-+            Some(true)
-+        );
-+        let streamed = nearest();
-+        assert_eq!(streamed.len(), 10);
-+        assert_eq!(streamed[0], 12345);
-+
-+        // Without a sort the build stages its rows and exceeds the limit.
-+        Spi::run("DROP INDEX streamed_build_idx").unwrap();
-+        Spi::run(&format!(
-+            "DO $$
-+             BEGIN
-+               
-```
-
-**File**: `storage/src/postgres/storage/blocklist.rs` (modified, +20/-6)
-```diff
-@@ -160,7 +160,7 @@ pub mod builder {
-             }
-         }
- 
--        pub fn into_bytes(self) -> Vec<u8> {
-+        pub fn to_bytes(&self) -> Vec<u8> {
-             let tag = self.tag();
-             match self {
-                 ChunkStyle::Sorted1x {
-@@ -193,13 +193,13 @@ pub mod builder {
-                     initial,
-                     bytes,
-                 } => std::iter::once(tag as u8)
--                    .chain(std::iter::once(num_bits))
-+                    .chain(std::iter::once(*num_bits))
-                     .chain(initial.to_le_bytes())
--                    .chain(bytes)
-+                    .chain(bytes.iter().copied())
-                     .collect(),
-                 ChunkStyle::Uncompressed(values) => std::iter::once(tag as u8)
-                     .chain((values.len() as u8).to_le_bytes())
--                    .chain(values.into_iter().flat_map(|bn| bn.to_le_bytes()))
-+                    .chain(values.iter().flat_map(|bn| bn.to_le_bytes()))
-                     .collect(),
-             }
-         }
-@@ -255,6 +255,20 @@ pub mod builder {
-             self.queue.push(block_number);
-         }
- 
-+        /// Every block number pushed so far, in push order, in a vector of exactly that length.
-+        pub fn blocks(&self) -> Vec<pg_sys::BlockNumber> {
-+            let encoded: Vec<Vec<u8>> = self.chunks.iter().map(ChunkStyle::to_bytes).collect();
-+            let chunked: usize = encoded.iter().map(|bytes| chunk_size(bytes).0).sum();
-+            let mut blocks = Vec::with_capacity(chunked + self.queue.len());
-+            for bytes in &encoded {
-+                let start = blocks.len();
-+                blocks.resize(start + chunk_size(bytes).0, 0);
-+                super::reader::decode_chunk(bytes, &mut blocks[start..]);
-+            }
-+            blocks.extend_from_slice(&self.queue);
-+            blocks
-+        }
-+
-         /// Finalizes bitpacked chunks and writes mapping pages, returning `(first_map_block, directory, overflow_block)`.
-         pub fn finish(
-             &mut self,
-@@ -305,7 +319,7 @@ pub mod builder {
-                 if page.can_fit(chunk.byte_len()) {
-                     // this chunk fits on this page, so write it there
-                     // TODO:  can probably write directly to the slice rather than going through a Vec<u8>
--                    let bytes = chunk.into_bytes();
-+                    let bytes = chunk.to_bytes();
-                     page.append_bytes(&bytes);
-                     ordinal = ordinal
-                         .checked_add(chunk_size(&bytes).0 as u32)
-@@ -604,7 +618,7 @@ pub mod reader {
-         }
-     }
- 
--    fn decode_chunk(slice: &[u8], blocks: &mut [pg_sys::BlockNumber]) -> usize {
-+    pub(super) fn decode_chunk(slice: &[u8], blocks: &mut [pg_sys::BlockNumber]) -> usize {
-         let (expected_count, expected_len) = chunk_size(slice);
-         assert_eq!(blocks.len(), expected_count);
-         let mut offset = 0;
-```
-
-**File**: `storage/src/postgres/storage/buffer.rs` (modified, +5/-0)
-```diff
-@@ -988,6 +988,11 @@ impl BufferManager {
-         self.rbufacc.io_stats = stats;
-     }
- 
-+    /// Makes this manager's reads of existing blocks go through the backend's bulk-read strategy.
-+    pub fn set_bulk_read(&mut self) {
-+        self.rbufacc.bulk_read = true;
-+    }
-+
-     pub fn new(rel: &PgSearchRelation) -> Self {
-         Self {
-             rbufacc: RelationBufferAccess::open(rel),
-```
-
----
-
-### Incident Patch 2: `0d044826` (2026-11-25)
-**Commit Message**: build: vendor Nix dependencies from Cargo.lock (#7661)
+- N/A
 
 ## What
 
-Vendor the extension's Rust dependencies from `Cargo.lock`. Nix uses
-registry checksums and fetches Git sources at the locked commits. This
-removes the aggregate `cargoHash`, release-time regeneration, and per-PR
-fixup pushes.
+This PR rewrites the synonyms docs to make them shorter and easier to
+read.
 
-Pin OpenCC/Jieba to `7ef74d151bec0` from the fork's main branch so the
-standard Git fetch can find it. Give the DST Proptest fork its own Cargo
-vendor source so it can coexist with the registry crate at the same
-version. Populate the versioned Lindera dictionary cache used by 6.2.
+## Why
 
-The read-only workflow runs a full PostgreSQL 18 Nix build for Nix
-packaging changes and manual dispatches.
+Docs improvement.
+
+## How
+
+- Review and improve.
 
 ## Tests
 
-- 107 tokenizer tests passed using the updated lockfile.
-- 30 release-script tests passed.
-- Workflow YAML parsing and whitespace checks passed.
-- [PG18 Linux Nix
-build](https://github.com/paradedb/paradedb/actions/runs/45478786909)
+Docs only.
 
-**File**: `.github/actions/test-pg_search-upgrade/action.yml` (modified, +1/-1)
+**File**: `docs/reference/configuration.mdx` (modified, +4/-4)
 ```diff
-@@ -155,7 +155,7 @@ runs:
-       shell: bash
-       run: |
-         SYNTHETIC_VERSION="999.0.0"
--        ./scripts/release.sh set-version "$SYNTHETIC_VERSION" --skip-nix
-+        ./scripts/release.sh set-version "$SYNTHETIC_VERSION"
-         # Extend the actual chain tip, including a release commit whose tag is missing.
-         PREV_VERSION=$(./scripts/release.sh latest-sql-version)
-         cargo pgrx migrate assemble "$SYNTHETIC_VERSION" --package pg_search \
-```
-
-**File**: `.github/scripts/apply_release_patch.py` (modified, +0/-1)
-```diff
-@@ -8,7 +8,6 @@
- RELEASE_FILES = {
-     "Cargo.toml",
-     "Cargo.lock",
--    "nix/pg_search.nix",
-     "docs/docs.json",
-     "docs/operate/deploy/upgrading.mdx",
-     "docs/operate/deploy/self-hosted/extension.mdx",
-```
-
-**File**: `.github/scripts/release.py` (modified, +3/-15)
-```diff
-@@ -677,8 +677,8 @@ def assemble_changelog_files(
- # ==============================================================================
+@@ -51,10 +51,10 @@ These settings control whether ParadeDB proposes custom plans for eligible queri
  
+ These settings affect the queries that expand with `pdb.expand`. See [Synonyms](/reference/tokenizers/synonyms).
  
--def set_cargo_version(repo_root, version, skip_nix=False, if_newer=False):
--    """Update workspace package version in Cargo.toml, sync Cargo.lock, and update Nix hash."""
-+def set_cargo_version(repo_root, version, if_newer=False):
-+    """Update the workspace package version and sync Cargo.lock."""
-     cargo_toml = repo_root / "Cargo.toml"
-     if not cargo_toml.exists():
-         print(f"❌ Error: {cargo_toml} not found", file=sys.stderr)
-@@ -724,12 +724,6 @@ def set_cargo_version(repo_root, version, skip_nix=False, if_newer=False):
-     print("Syncing Cargo.lock via cargo update --workspace...")
-     subprocess.run(["cargo", "update", "--workspace"], cwd=repo_root, check=True)
+-| Setting                               | Default | Context | Description                                                                                                                                                                                                                                      |
+-| ------------------------------------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+-| `paradedb.synonyms_max_alternatives`  | `32`    | user    | Most alternatives one run of query words expands to in a match query, and most phrases a phrase query searches. The query parser has the first limit for a word and the second for a quoted phrase. The typed words stay when a rule lists them. |
+-| `paradedb.synonyms_max_rules_per_key` | `1024`  | user    | Most rules one synonym word reads in a segment. A word in more rules reads only the first ones.                                                                                                                                                  |
++| Setting                               | Default | Context | Description                                                                                               |
++| ------------------------------------- | ------- | ------- | --------------------------------------------------------------------------------------------------------- |
++| `paradedb.synonyms_max_alternatives`  | `32`    | user    | Maximum number of alternatives one run of query words expands to, and of phrases a phrase query searches. |
++| `paradedb.synonyms_max_rules_per_key` | `1024`  | user    | Maximum number of rules one word reads in each segment of a synonym index.                                |
  
--    if not skip_nix:
--        nix_script = repo_root / "scripts" / "update-nix-cargo-hash.sh"
--        if nix_script.exists():
--            print("Updating Nix cargo hash...")
--            subprocess.run(["bash", str(nix_script), "18"], cwd=repo_root, check=True)
--
-     return True
- 
- 
-@@ -912,7 +906,6 @@ def handle_set_version_command(args, repo_root):
-     set_cargo_version(
-         repo_root,
-         target_version,
--        skip_nix=args.skip_nix,
-         if_newer=args.if_newer,
-     )
- 
-@@ -1244,14 +1237,9 @@ def build_parser():
- 
-     set_ver_parser = subparsers.add_parser(
-         "set-version",
--        help="Update version in Cargo.toml, Cargo.lock, and nix/pg_search.nix",
-+        help="Update version in Cargo.toml and Cargo.lock",
-     )
-     add_common_args(set_ver_parser)
--    set_ver_parser.add_argument(
--        "--skip-nix",
--        action="store_true",
--        help="Skip updating Nix cargo hash",
--    )
-     set_ver_parser.add_argument(
-         "--if-newer",
-         action="store_true",
-```
-
-**File**: `.github/scripts/test_apply_release_patch.py` (modified, +1/-3)
-```diff
-@@ -106,7 +106,6 @@ def test_beta_migration_retains_rc_suffix_and_unreleased_fragments(self):
-     def test_main_sync_patch_with_version_bump_and_changelog_round_trip(self):
-         """Main sync patches with version bumps, docs, and fragment cleanup apply cleanly."""
-         self.write("Cargo.lock", 'name = "pg_search"\nversion = "0.26.0"\n')
--        self.write("nix/pg_search.nix", 'cargoHash = "sha256-old";\n')
-         self.write("docs/docs.json", '{"version": "v0.26.8"}\n')
-         self.write("docs/project/changelog/0.26.8.mdx", '---\ntitle: "0.26.8"\n---\n')
-         self.write("docs/project/changelog/unreleased/123.bugfix.mdx", "Fix\n")
-@@ -115,7 +114,6 @@ def test_main_sync_patch_with_version_bump_and_changelog_round_trip(self):
- 
-         self.write("Cargo.toml", 'version = "0.27.0"\n')
-         self.write("Cargo.lock", 'name = "pg_search"\nversion = "0.27.0"\n')
--        self.write("nix/pg_search.nix", 'cargoHash = "sha256-new";\n')
-         self.write("docs/docs.json", '{"version": "v0.27.0"}\n')
-         self.write(
-             "docs/project/changelog/0.26.8.mdx",
-@@ -130,7 +128,7 @@ def test_main_sync_patch_with_version_bump_and_changelog_round_trip(self):
-         apply_patch(self.repo, self.patch, "0.27.0")
-         self.assertEqual((self.repo / "Cargo.toml").read_text(), 'version = "0.27.0"\n')
-         self.assertEqual(
--            (self.repo / "nix/pg_search.nix").read_text(), 'cargoHash = "sha256-new";\n'
-+            (self.repo / "Cargo.lock").read_text(), 'name = "pg_search"\nversion = "0.27.0"\n'
-         )
-         self.assertTrue(
-             (self.repo / "pg_search/sql/pg_search--0.26.8--0.27.0.sql").is_file()
-```
-
-**File**: `.github/workflows/publish-github-release.yml` (modified, +5/-13)
-```diff
-@@ -120,10 +120,6 @@ jobs:
-           cache: false
-           rustflags: ""
- 
--      - name: Install Determinate Nix
--        if: github.repository == 'paradedb/paradedb'
--        uses: DeterminateSystems/determinate-nix-action@92957199488000b908fdad19f63711000965d8f3 # v3.24.1
--
-       - name: Determine if Release Should be Marked as Latest
-         id: release_latest
-         env:
-@@ -160,7 +156,7 @@ jobs:
-           fi
-           ./scripts/release.sh all "$RELEASE_VERSION" "${FLAGS[@]}"
- 
--      - name: Update Cargo Version, Lockfile, and Nix Hash
-+      - name: Update Cargo Version and Lockfile
-         if: github.repository == 'paradedb/paradedb'
-         env:
-           INPUTS_VERSION: ${{ github.event.inputs.version }}
-@@ -470,7 +466,7 @@ jobs:
-       - name: Record Cargo Tree Fingerprint
-         id: cargo_fingerprint
-         run: |
--          FINGERPRINT=$(git rev-parse HEAD:Cargo.toml HEAD:Cargo.lock HEAD:nix/pg_search.nix | tr '\n' ' ')
-+          FINGERPRINT=$(git rev-parse HEAD:Cargo.toml HEAD:Cargo.lock | tr '\n' ' ')
-           echo "fingerprint=${FINGERPRINT% }" >> "$GITHUB_OUTPUT"
- 
-       - name: Install Rust
-@@ -480,10 +476,6 @@ jobs:
-           cache: false
-           rustflags: ""
- 
--      - name: Install Determinate Nix
--        if: needs.prepare-release.outputs.is_latest == 'true'
--        uses: DeterminateSystems/determinate-nix-action@92957199488000b908fdad19f63711000965d8f3 # v3.24.1
--
-       - name: Stage Release Artifacts on Main
-         env:
-           RELEASE_VERSION: ${{ github.event.inputs.version }}
-@@ -549,7 +541,7 @@ jobs:
-             ./scripts/release.sh changelog "${CLEAN_VERSION}" --register-only --no-is-latest
-           fi
- 
--      - name: Update Cargo Version, Lockfile, and Nix Hash on Main
-+      - name: Update Cargo Version and Lockfile on Main
-         if: needs.prepare-release.outputs.is_latest == 'true'
-         env:
-           RELEASE_VERSION: ${{ github.event.inputs.version }}
-@@ -596,10 +588,10 @@ jobs:
-         env:
-           EXPECTED_FINGERPRINT: ${{ needs.prepare-main-sync.outputs.cargo_tree_fingerprint }}
-         run: |
--          CURRENT_FINGERPRINT=$(git rev-parse HEAD:Cargo.toml HEAD:Cargo.lock HEAD:nix/pg_search.nix | tr '\n' ' ')
-+          CURRENT_FINGERPRINT=$(git rev-parse HEAD:Cargo.toml HEAD:Cargo.lock | tr '\n' ' ')
-           CURRENT_FINGERPRINT="${CURRENT_FINGERPRINT% }"
-           if [[ "$CURRENT_FINGERPRINT" != "$EXPECTED_FINGERPRINT" ]]; then
--            echo "::error::Cargo.toml, Cargo.lock, or nix/pg_search.nix changed on main while preparing the sync patch. Re-sync main with the updated Nix cargoHash."
-+            echo "::error::Cargo.toml or Cargo.lock changed on main while preparing the sync patch. Prepare a new sync patch."
-             exit 1
-           fi
+ ## Top K
  
 ```
 
-**File**: `.github/workflows/test-pg_search-nix.yml` (modified, +8/-81)
+**File**: `docs/reference/full-text/match.mdx` (modified, +1/-2)
 ```diff
-@@ -1,7 +1,4 @@
--# workflows/test-pg_search-nix.yml
--#
--# Test pg_search (Nix)
--# Check the Nix Cargo dependency hash.
-+# Build the Nix package for packaging changes. Its Rust dependencies come from Cargo.lock.
+@@ -358,5 +358,4 @@ await dbContext
  
- name: Test pg_search (Nix)
+ </CodeGroup>
  
-@@ -11,103 +8,33 @@ on:
-     paths:
-       - ".github/workflows/test-pg_search-nix.yml"
-       - "nix/**"
--      - "tokenizers/Cargo.toml"
--      - "Cargo.lock"
--      - "Cargo.toml"
-       - "flake.lock"
-       - "flake.nix"
-       - "rust-toolchain.toml"
-   workflow_dispatch:
- 
- concurrency:
--  group: test-pg_search-nix-${{ github.head_ref || github.ref }}
-+  group: test-pg_search-nix-${{ github.ref }}
-   cancel-in-progress: true
- 
- permissions:
--  contents: write
-+  contents: read
- 
- jobs:
--  nix-cargo-hash-check:
--    name: Verify Nix Cargo Hash
-+  nix-build:
-+    name: Build pg_search with Nix
-     runs-on: ubuntu-latest
-     env:
-       PG_MAJOR_VERSION: "18"
- 
-     steps:
--      - name: Generate GitHub App Token
--        id: app-token
--        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
--        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.2.0; Keep the exact pin because actionlint 1.7.12 has stale @v3 metadata that rejects client-id
--        with:
--          client-id: ${{ vars.PARADEDB_GITHUB_APP_CLIENT_ID }}
--          private-key: ${{ secrets.PARADEDB_GITHUB_APP_PRIVATE_KEY }}
--
-       - name: Checkout Git Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-         with:
--          # Check out the PR head's repo and ref so this works for fork PRs too;
--          # the branch only exists on the fork, not on the base repo. For
--          # same-repo PRs and workflow_dispatch this resolves to the base repo,
--          # which keeps the auto-push-a-fix path (below) targeting origin.
--          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
--          ref: ${{ github.event.pull_request.head.ref || github.ref }}
--          token: ${{ steps.app-token.outputs.token || github.token }}
-+          persist-credentials: false
- 
-       - name: Install Determinate Nix
-         uses: DeterminateSystems/determinate-nix-action@92957199488000b908fdad19f63711000965d8f3 # v3.24.1
- 
--      # Build only cargo deps to surface cargoHash mismatches quickly, without
--      # compiling pg_search for every Postgres variant. If the hash is stale,
--      # compute the correct one and push a fix commit to the PR branch.
--      # The commit uses a GitHub App token so GitHub signs it and fires a
--      # synchronize event, which re-triggers all CI workflows on the new HEAD.
--      # Pushes made with the default GITHUB_TOKEN do not fire events.
--      - name: Verify Nix Cargo Hash
--        id: cargo-hash
--        run: |
--          if ! nix build --no-link ".#pg_search-pg${{ env.PG_MAJOR_VERSION }}.cargoDeps" 2>/dev/null; then
--            echo "cargoHash mismatch detected, computing correct hash..."
--            chmod +x scripts/update-nix-cargo-hash.sh
--            scripts/update-nix-cargo-hash.sh "${{ env.PG_MAJOR_VERSION }}"
--
--            if [ "${{ github.event.pull_request.head.repo.fork }}" = "true" ]; then
--              echo "::error::cargoHash is outdated and this PR is from a fork, so CI cannot push a fix. Please run the following locally and push the result:"
--              echo ""
--              echo "  scripts/update-nix-cargo-hash.sh ${{ env.PG_MAJOR_VERSION }}"
--              echo "  git add nix/pg_search.nix"
--              echo "  git commit -m \"fix: update nix cargoHash for changed Cargo.lock\""
--              echo "  git push"
--              echo ""
--              echo "Computed nix/pg_search.nix diff:"
--              git --no-pager diff nix/pg_search.nix
--              exit 1
--            fi
--
--            if git diff --quiet -- nix/pg_search.nix; then
--              echo "::error::cargoHash build failed, but the update script did not change nix/pg_search.nix."
--              exit 1
--            fi
--
--            git add nix/pg_search.nix
--            echo "needs_fix=true" >> "$GITHUB_OUTPUT"
--          else
--            echo "cargoHash is correct"
--          fi
--
--      - name: Commit Nix Cargo Hash
--        if: steps.cargo-hash.outputs.needs_fix == 'true'
--        uses: ./.github/actions/commit-with-paradedb-github-app
--        with:
--          github-token: ${{ steps.app-token.outputs.token }}
--          message: "fix: update nix cargoHash for changed Cargo.lock"
--
--      - name: Push Nix Cargo Hash
--        if: steps.cargo-hash.outputs.needs_fix == 'true'
--        env:
--          GH_TOKEN: ${{ steps.app-token.outputs.token }}
--          TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
--        run: |
--          gh api --method PATCH "repos/${GITHUB_REPOSITORY}/git/refs/heads/${TARGET_BRANCH}" \
--            -f sha="$(git rev-parse HEAD)" -F force=false
--          echo "::error::cargoHash was outdat
+-To also find the synonyms of the words, give the query its rules with a [`pdb.expand`](/reference/tokenizers/synonyms)
+-subquery.
++To also match the synonyms of the query words, add a [`pdb.expand`](/reference/tokenizers/synonyms) subquery.
 ```
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `docs/reference/full-text/phrase.mdx` (modified, +2/-2)
 ```diff
-@@ -5108,8 +5108,8 @@ checksum = "269bca4c2591a28585d6bf10d9ed0332b7d76900a1b02bec41bdc3a2cdcda107"
+@@ -88,8 +88,8 @@ This query returns:
+ Note that `running sleek shoes` and `shoes running` did not match the phrase `running shoes` despite having the tokens `running` and
+ `shoes` because they appear in the wrong order or with other words in between.
  
- [[package]]
- name = "opencc-jieba-rs"
--version = "0.9.0"
--source = "git+https://github.com/paradedb/opencc-jieba-rs?branch=main#edfe347cfba463385337893feb4f5e2ff7309c83"
-+version = "0.9.1"
-+source = "git+https://github.com/paradedb/opencc-jieba-rs?rev=7ef74d151bec02e12ac29fe5076ffa925216ba6e#7ef74d151bec02e12ac29fe5076ffa925216ba6e"
- dependencies = [
-  "bytecount",
-  "rayon",
+-To also find the phrase with a synonym in place of a word, give the query its rules with a
+-[`pdb.expand`](/reference/tokenizers/synonyms#phrases) subquery.
++To also match the phrase with synonyms of its words, add a [`pdb.expand`](/reference/tokenizers/synonyms#phrases)
++subquery.
+ 
+ ## How It Works
+ 
 ```
 
-**File**: `flake.nix` (modified, +12/-12)
+**File**: `docs/reference/full-text/query-parser.mdx` (modified, +2/-2)
 ```diff
-@@ -158,18 +158,18 @@
-           rustPlatform = final.pgrxRustPlatform;
-         };
-         rustToolchain =
--          with inputs.fenix.packages.${prev.stdenv.hostPlatform.system};
--          combine (
--            # Use stable Rust plus pinned versions of the rest of the toolchain
--            with stable;
--            [
--              clippy
--              rustc
--              cargo
--              rustfmt
--              rust-src
--              rust-analyzer
--            ]
-+          let
-+            toolchain = (lib.importTOML ./rust-toolchain.toml).toolchain;
-+            fenix = inputs.fenix.packages.${prev.stdenv.hostPlatform.system};
-+            rust = fenix.fromToolchainName {
-+              name = toolchain.channel;
-+              # Fenix needs the Rust distribution manifest hash for pure evaluation.
-+              # Update it when the channel in rust-toolchain.toml changes.
-+              sha256 = "sha256-MFHoWVcPZKjFrLnQnodCXbUsfZcofGfo9tV9fTTvklg=";
-+            };
-+          in
-+          fenix.combine (
-+            map (component: rust.${component}) ([ "rustc" "cargo" "rust-src" ] ++ toolchain.components)
-           );
-       };
-     };
+@@ -71,8 +71,8 @@ await dbContext
+ Please refer to the [Tantivy docs](https://docs.rs/tantivy/latest/tantivy/query/struct.QueryParser.html) for an overview of
+ the query string language.
+ 
+-To also match the synonyms of the words in a query string, put a text or JSON field on the left-hand side and give the
+-query its rules with a [`pdb.expand`](/reference/tokenizers/synonyms#query-parser) subquery.
++To also match the synonyms of the words in a query string, add a
++[`pdb.expand`](/reference/tokenizers/synonyms#query-parser) subquery. The left-hand side has to be a text or JSON field.
+ 
+ ## Lenient Parsing
+ 
 ```
 
----
-
-### Incident Patch 3: `6b65319e` (2026-11-25)
-**Commit Message**: test: migrate SQL regressions to V2 syntax (#7631)
-
-## What
-
-- Migrate V1 SQL regression queries and index definitions to V2.
-- Use bare `pdb.all()` when the test does not read scores, and preserve
-existing V2 builder coverage.
-- Keep compatibility fixtures and internal executor and upgrade-safety
-checks while their paths remain supported.
-
-## Remaining V1 usage
-
-- The `deprecated_*`, `datetime_fields_deprecated`,
-`keyword_defaults_fast`, `minimum_should_match`, and `stopwords`
-fixtures cover legacy API behavior.
-- `score_anti_join` keeps DisMax scoring and its tie-breaker.
-`recursive_estimates` keeps optional scoring alongside V2 conjunction,
-disjunction, negation, and TermSet estimates.
-- `issue_7166` keeps the typed legacy JSON range regression while #7662
-tracks the equivalent typed V2 query.
-- `citext`, `parse`, `sequential_scan`, `sequential_scan_subquery`, and
-`sequential_scan_unplanned` retain the legacy SQL needed to exercise
-their original paths.
-
-## Result changes
-
-- `ascii_folding_filter` now returns token arrays such as `{cafe}`. The
-previous output included a separate token-position column.
-- A `citext` exact-token query now succeeds and returns zero rows. The
-previou
-
-**File**: `pg_search/tests/pg_regress/expected/agg-score.out` (modified, +37/-37)
+**File**: `docs/reference/tokenizers/synonyms.mdx` (modified, +83/-103)
 ```diff
-@@ -1,4 +1,4 @@
---- Test aggregating paradedb.score with parallel custom scan
-+-- Test aggregating pdb.score with parallel custom scan
- -- This tests the fix for: "Aggregating paradedb.score when there's a parallel custom scan can produce empty scores"
- -- The fix uses PlaceHolderVar to ensure scores are passed through Gather nodes in parallel plans.
- CREATE EXTENSION IF NOT EXISTS pg_search;
-@@ -20,19 +20,19 @@ SET parallel_setup_cost = 0;
- SET min_parallel_table_scan_size = 0;
- -- Test case 1: Basic max(score) - should work with parallel execution
- EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
--SELECT max(paradedb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
-+SELECT max(pdb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
- WARNING:  Aggregate Scan not used: argument to aggregate function is neither a direct column reference nor a COALESCE expression. To disable this warning: SET paradedb.planner_warnings = 'off' (table: mock_items)
-                                                                                                        QUERY PLAN                                                                                                       
- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Finalize Aggregate
--   Output: max((paradedb.score(id)))
-+   Output: max((pdb.score(id)))
-    ->  Gather
--         Output: (PARTIAL max((paradedb.score(id))))
-+         Output: (PARTIAL max((pdb.score(id))))
-          Workers Planned: 1
-          ->  Partial Aggregate
--               Output: PARTIAL max((paradedb.score(id)))
-+               Output: PARTIAL max((pdb.score(id)))
-                ->  Parallel Custom Scan (ParadeDB Base Scan) on public.mock_items
--                     Output: paradedb.score(id), paradedb.score(id)
-+                     Output: pdb.score(id), pdb.score(id)
-                      Table: mock_items
-                      Index: search_idx
-                      Worker Selection: Row-capped
-@@ -41,7 +41,7 @@ WARNING:  Aggregate Scan not used: argument to aggregate function is neither a d
-                      Tantivy Query: {"with_index":{"query":{"match":{"field":"description","value":"keyboard","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
- (15 rows)
+@@ -1,17 +1,15 @@
+ ---
+ title: Synonyms
+-description: Expand search terms with synonym rules you keep in a table, with nothing to reindex when they change
++description: Expand search terms with synonym rules
+ canonical: https://www.paradedb.com/docs/reference/tokenizers/synonyms
+ ---
  
--SELECT max(paradedb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
-+SELECT max(pdb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
- WARNING:  Aggregate Scan not used: argument to aggregate function is neither a direct column reference nor a COALESCE expression. To disable this warning: SET paradedb.planner_warnings = 'off' (table: mock_items)
-      max     
- -------------
-@@ -50,19 +50,19 @@ WARNING:  Aggregate Scan not used: argument to aggregate function is neither a d
+-Say your catalog calls them couches, but shoppers type `sofa`. With synonyms, a search for `sofa` also finds the rows that
+-say `couch`. You keep the rules in a regular table with an index on it, and a query reads that table when it wants the
+-rules. The next query uses whatever you changed. The index you search stays as it is, so there is nothing to rebuild.
++With synonyms, a search for `sofa` also finds rows that say `couch`. You keep the rules in a regular table, and a query
++reads them with a subquery. Changes to the rules don't require a reindex.
  
- -- Test case 2: min(score) - should work with parallel execution
- EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
--SELECT min(paradedb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
-+SELECT min(pdb.score(id)) FROM mock_items WHERE description ||| 'keyboard';
- WARNING:  Aggregate Scan not used: argument to aggregate function is neither a direct column reference nor a COALESCE expression. To disable this warning: SET paradedb.planner_warnings = 'off' (table: mock_items)
-                                                                                                        QUERY PLAN                                                                                                       
- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Finalize Aggregate
--   Output: min((paradedb.score(id)))
-+   Output: min((pdb.score(id)))
-    ->  Gather
--         Output: (PARTIAL min((paradedb.score(id))))
-+         Output: (PARTIAL min((pdb.score(id))))
-          Workers Planned: 1
-          ->  Partial Aggregate
--               Output: PARTIAL min((paradedb.score(id)))
-+               Output: PARTIAL min((pdb.score(id)))
-                ->  Parallel Custom Scan (ParadeDB Base Scan) on public.mock_items
--                     Output: paradedb.score(id), paradedb.score(id)
-+                     Output: pdb.score(id), pdb.score(id)
-                      Table: mock_items
-                      Index: search_idx
-                      Worker Selection: Row-capped
-@@ -71,7 +71,7 @@ WARNING:  Aggregate Scan not used: argument to aggregate function is neither a d
-                      Tantivy Query: {"with_index":{"query":{"match":{"field":"description","value":"keyboard","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
- (15 rows)
+ ## Creating a Synonym Index
  
--SELECT min(paradedb.score(id)) FROM mock_items WHERE descriptio
-```
-
-**File**: `pg_search/tests/pg_regress/expected/aggregate.out` (modified, +10/-12)
-```diff
-@@ -535,20 +535,20 @@ INSERT INTO products (description, rating, category, price, in_stock) VALUES
- EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
- SELECT COUNT(*), AVG(price), MIN(rating), MAX(rating)
- FROM products
--WHERE id @@@ paradedb.all();
-+WHERE id @@@ pdb.all();
-                                                                                        QUERY PLAN                                                                                        
- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Custom Scan (ParadeDB Aggregate Scan) on public.products
-    Output: pdb.agg_fn('COUNT(*)'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text)
-    Index: products_idx
--   Tantivy Query: {"with_index":{"query":"all"}}
-+   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
-      Applies to Aggregates: COUNT(*), AVG(price), MIN(rating), MAX(rating)
-      Aggregate Definition: {"0":{"filter":"*"},"1":{"avg":{"field":"price","missing":null}},"2":{"min":{"field":"rating","missing":null}},"3":{"max":{"field":"rating","missing":null}}}
- (6 rows)
+-Put one rule per row in a column of type `pdb.synonym_rule`, then create a ParadeDB index on that one column. The column
+-type is what makes it a synonym index.
++Store one rule per row in a `pdb.synonym_rule` column, and create a ParadeDB index on that column:
  
- SELECT COUNT(*), AVG(price), MIN(rating), MAX(rating)
- FROM products
--WHERE id @@@ paradedb.all();
-+WHERE id @@@ pdb.all();
-  count |  avg   | min | max 
- -------+--------+-----+-----
-      9 | 413.74 |   3 |   5
-@@ -557,20 +557,20 @@ WHERE id @@@ paradedb.all();
- EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
- SELECT COUNT(*), AVG(COALESCE(price, 0)), MIN(COALESCE(rating, 0)), MAX(COALESCE(rating, 0))
- FROM products
--WHERE id @@@ paradedb.all();
-+WHERE id @@@ pdb.all();
-                                                                                       QUERY PLAN                                                                                      
- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Custom Scan (ParadeDB Aggregate Scan) on public.products
-    Output: pdb.agg_fn('COUNT(*)'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text)
-    Index: products_idx
--   Tantivy Query: {"with_index":{"query":"all"}}
-+   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
-      Applies to Aggregates: COUNT(*), AVG(price), MIN(rating), MAX(rating)
-      Aggregate Definition: {"0":{"filter":"*"},"1":{"avg":{"field":"price","missing":0.0}},"2":{"min":{"field":"rating","missing":0.0}},"3":{"max":{"field":"rating","missing":0.0}}}
- (6 rows)
+ ```sql
+ CREATE TABLE shop_synonyms (rule pdb.synonym_rule NOT NULL);
+@@ -21,72 +19,67 @@ INSERT INTO shop_synonyms VALUES
+ CREATE INDEX shop_synonyms_idx ON shop_synonyms USING paradedb (rule);
+ ```
  
- SELECT COUNT(*), AVG(COALESCE(price, 0)), MIN(COALESCE(rating, 0)), MAX(COALESCE(rating, 0))
- FROM products
--WHERE id @@@ paradedb.all();
-+WHERE id @@@ pdb.all();
-  count |        avg        | min | max 
- -------+-------------------+-----+-----
-      9 | 367.7688888888889 |   0 |   5
-@@ -586,20 +586,20 @@ FROM products;
- EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
- SELECT COUNT(*), AVG(COALESCE(price, 1)), MIN(COALESCE(rating, 1)), MAX(COALESCE(rating, 1))
- FROM products
--WHERE id @@@ paradedb.all();
-+WHERE id @@@ pdb.all();
-                                                                                       QUERY PLAN                                                                                      
- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Custom Scan (ParadeDB Aggregate Scan) on public.products
-    Output: pdb.agg_fn('COUNT(*)'::text), pdb.agg_fn('AVG'::text), pdb.agg_fn('MIN'::text), pdb.agg_fn('MAX'::text)
-    Index: products_idx
--   Tantivy Query: {"with_index":{"query":"all"}}
-+   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
-      Applies to Aggregates: COUNT(*), AVG(price), MIN(rating), MAX(rating)
-      Aggregate Definition: {"0":{"filter":"*"},"1":{"avg":{"field":"price","missing":1.0}},"2":{"min":{"field":"rating","missing":1.0}},"3":{"max":{"field":"rating","missing":1.0}}}
- (6 rows)
+-Rules use the Solr syntax, which is also what Elasticsearch and OpenSearch synonym files use, so you can bring your file
+-along. There are two kinds of rules:
++Rules use the Solr format, which is used by Elasticsearch and OpenSearch synonym files, too. There are two kinds:
  
- SELECT COUNT(*), AVG(COALESCE(price, 1)), MIN(COALESCE(rating, 1)), MAX(COALESCE(rating, 1))
- FROM products
--WHERE id @@@ paradedb.all();
-+WHERE id @@@ pdb.all();
-  count |  avg   | min | max 
- -------+--------+-----+-----
-      9 | 367.88 |   1 |   5
-@@ -626,9 +626,7 @@ INSERT INTO count_array_test VALUES
-     (5, '{NULL,3}', '{NULL,red}'),
-     (6, '{{1,2},{3,4}}', '{{red,blue},{green,red}}');
- CREATE INDEX count_array_test_idx ON count_array_test
--USING paradedb (id, ints, words) WITH (
--    text_fields = '{"words": {"fast": true, "tokenizer": {"type": "raw"}}}'
--);
-+USING paradedb (id, ints, (words::pdb.literal_normalized('columnar=true')));
- ANALYZE count_array_test;
- SET max_parallel_workers_per_gather = 0;
- RESET paradedb.max_term_agg_buckets;
-```
-
-**File**: `pg_search/tests/pg_regress/expected/aggregate_dependent_column.out` (modified, +102/-102)
-```diff
-@@ -42,23 +42,23 @@ Test 1: two keys, and no key decides the other: each pair of values is a group
- EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
- SELECT price, kind, COUNT(*)
- FROM dependent_col_items
--WHERE id @@@ paradedb.all()
-+WHERE id @@@ pdb.all()
- GROUP BY price, kind
- ORDER BY price, kind;
-                                                                                                             QUERY PLAN                                                                                                             
- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Custom Scan (ParadeDB Aggregate Scan) on public.dependent_col_items
-    Output: price, kind, pdb.agg_fn('COUNT(*)'::text)
-    Index: dependent_col_items_idx
--   Tantivy Query: {"with_index":{"query":"all"}}
-+   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
-      Applies to Aggregates: COUNT(*)
-      Group By: price, kind
-      Aggregate Definition: {"grouped":{"aggs":{"grouped":{"terms":{"field":"kind","order":{"_key":"asc"},"segment_size":65000,"size":65000}}},"terms":{"field":"price","order":{"_key":"asc"},"segment_size":65000,"size":65000}}}
- (7 rows)
+-- `couch, sofa, divan` is an equivalence rule. A search for any of them finds all of them.
+-- `sneakers => running shoes` is a directed rule. A search for `sneakers` looks for `running shoes` instead, and a search
+-  for `running shoes` stays as it is.
++- `couch, sofa, divan` is an equivalence rule. A search for any of these words finds all of them.
++- `sneakers => running shoes` is a directed rule. A search for `sneakers` looks for `running shoes` instead, and a
++  search for `running shoes` doesn't change.
  
- SELECT price, kind, COUNT(*)
- FROM dependent_col_items
--WHERE id @@@ paradedb.all()
-+WHERE id @@@ pdb.all()
- GROUP BY price, kind
- ORDER BY price, kind;
-  price | kind | count 
-@@ -89,11 +89,11 @@ ORDER BY price, kind;
- EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
- SELECT region, kind, COUNT(*)
- FROM dependent_col_items
--WHERE region = 2 AND id @@@ paradedb.all()
-+WHERE region = 2 AND id @@@ pdb.all()
- GROUP BY region, kind
- ORDER BY kind;
--                                                                                                QUERY PLAN                                                                                                
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+                                                                                                        QUERY PLAN                                                                                                         
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Sort
-    Output: region, kind, (count(*))
-    Sort Key: dependent_col_items.kind
-@@ -107,12 +107,12 @@ ORDER BY kind;
-            : AggregateExec: mode=Single, gby=[kind@1 as kind], aggr=[count(1) as agg_0, first_value(dependent_col_items_0.region) ORDER BY [dependent_col_items_0.ctid_0 ASC NULLS LAST] as row_1]
-            :   ProjectionExec: expr=[ctid@0 as ctid_0, kind@1 as kind, region@2 as region]
-            :     CooperativeExec
--           :       PgSearchScan: table=dependent_col_items, segments=1, eager=[kind], visibility=eager, query={"boolean":{"must":[{"with_index":{"query":"all"}},{"term":{"field":"region","value":2}}]}}
-+           :       PgSearchScan: table=dependent_col_items, segments=1, eager=[kind], visibility=eager, query={"boolean":{"must":[{"with_index":{"query":{"all":{"field":"id"}}}},{"term":{"field":"region","value":2}}]}}
- (14 rows)
+-A word can be in more than one rule, and a search for it then uses the alternatives of all of them. Rules don't chain, so
+-an alternative is searched as it is, even when another rule lists it. With `sneakers, shoes, trainers` and `shoes, kicks`,
+-a search for `shoes` also finds `sneakers`, `trainers` and `kicks`, but a search for `kicks` finds only `kicks` and
+-`shoes`. A directed rule keeps the word you typed when another rule lists that word.
++If a word is in several rules, a search for it uses the alternatives of all of them. However, rules don't chain. With
++`sneakers, shoes, trainers` and `shoes, kicks`, a search for `shoes` finds all four words, but a search for `kicks`
++finds only `kicks` and `shoes`.
  
- SELECT region, kind, COUNT(*)
- FROM dependent_col_items
--WHERE region = 2 AND id @@@ paradedb.all()
-+WHERE region = 2 AND id @@@ pdb.all()
- GROUP BY region, kind
- ORDER BY kind;
-  region | kind | count 
-@@ -128,12 +128,12 @@ Test 2: the column is in the GROUP BY, and PostgreSQL drops it from the keys
- EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
- SELECT id, kind, COUNT(*)
- FROM dependent_col_items
--WHERE id @@@ paradedb.all()
-+WHERE id @@@ pdb.all()
- GROUP BY id, kind
- ORDER BY id, kind
- LIMIT 6;
--                                                                            QUERY PLAN                                                                            
--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+                                                                                    QUERY PLAN                                                                                     
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Limit
-    Output: id, kind, (count(*))
-    ->  Custom Scan (ParadeDB Aggregate Scan)
-@@ -147,12 +147,12 @@ LIMIT 6;
-            :   SortExec: TopK(fetch=6), expr=[id@0 ASC NULLS LAST], preserve_partitioning=[false]
-            :     AggregateExec: mode=Single, gby=[id@0 as id], aggr=[count(1) as agg_0, p
-```
-
-**File**: `pg_search/tests/pg_regress/expected/aggregate_edgecases.out` (modified, +24/-24)
-```diff
-@@ -30,7 +30,7 @@ SET parallel_tuple_cost = 0;
- EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
- SELECT pdb.agg('{"terms": {"field": "data", "size": 50000}}'::jsonb) OVER ()
- FROM large_agg_test
--WHERE id @@@ paradedb.all()
-+WHERE id @@@ pdb.all()
- ORDER BY id
- LIMIT 1;
-                                                                                                                                QUERY PLAN                                                                                                                               
-@@ -50,12 +50,12 @@ LIMIT 1;
-                   TopK Order By: id asc
-                   TopK Limit: 1
-                Full Index Scan: true
--               Tantivy Query: {"with_index":{"query":"all"}}
-+               Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
- (16 rows)
+-A term can be more than one word, on either side. A multi-word term is matched as a phrase, so the field you search has to
+-keep positions. Every tokenizer keeps them except [ngrams](/reference/tokenizers/available-tokenizers/ngrams), which needs
+-`positions=true`. [Edge ngrams](/reference/tokenizers/available-tokenizers/edge-ngrams) give the grams of one word the same
+-position, so search such a field with a [search tokenizer](/reference/tokenizers/search-tokenizer) that keeps words
+-whole. If a term needs a comma, escape it with a backslash. Comments and blank lines are fine, so a synonym file
+-can go in line by line. A rule that does not parse is rejected at `INSERT`, and the error tells you which rule and why.
++Either side of a rule can have several words. A multi-word term matches as a phrase, so the field you search needs token
++positions. All tokenizers keep them except [ngrams](/reference/tokenizers/available-tokenizers/ngrams), which needs
++equal gram sizes and `positions=true`. An [edge ngrams](/reference/tokenizers/available-tokenizers/edge-ngrams) field
++puts all the grams of a word at one position, so search it with a
++[search tokenizer](/reference/tokenizers/search-tokenizer) that keeps words whole.
  
- SELECT pdb.agg('{"terms": {"field": "data", "size": 50000}}'::jsonb) OVER ()
- FROM large_agg_test
--WHERE id @@@ paradedb.all()
-+WHERE id @@@ pdb.all()
- ORDER BY id
- LIMIT 1;
- ERROR:  Aggregate result is too large: 1800010 vs 1048576. Consider increasing the 'paradedb.max_window_aggregate_response_bytes' GUC.
-@@ -80,56 +80,56 @@ DELETE FROM delete_agg_test WHERE id > 1;
- -- Test as aggregate function
- -- Should return 1
- EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
--SELECT COUNT(*) FROM delete_agg_test WHERE id @@@ paradedb.all();
--                           QUERY PLAN                            
-------------------------------------------------------------------
-+SELECT COUNT(*) FROM delete_agg_test WHERE id @@@ pdb.all();
-+                            QUERY PLAN                            
-+------------------------------------------------------------------
-  Custom Scan (ParadeDB Aggregate Scan) on public.delete_agg_test
-    Output: pdb.agg_fn('COUNT(*)'::text)
-    Index: delete_agg_test_idx
--   Tantivy Query: {"with_index":{"query":"all"}}
-+   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
-      Applies to Aggregates: COUNT(*)
-      Aggregate Definition: {"0":{"filter":"*"}}
- (6 rows)
+-If you have a synonym file, load it with a delimiter and a quote character that never appear in the file, so each line
+-becomes one rule, backslashes included:
++Escape a comma in a term with a backslash. Comments and blank lines are allowed. `INSERT` rejects a rule that doesn't
++parse.
++
++To load a synonym file, use a delimiter and a quote character that don't exist in it. Each line then becomes one rule,
++backslashes included:
  
--SELECT COUNT(*) FROM delete_agg_test WHERE id @@@ paradedb.all();
-+SELECT COUNT(*) FROM delete_agg_test WHERE id @@@ pdb.all();
-  count 
- -------
-      1
- (1 row)
+ ```sql
+ \copy shop_synonyms FROM 'synonyms.txt' WITH (FORMAT csv, DELIMITER E'\x01', QUOTE E'\x02')
+ ```
  
- -- Should return {"value": 1.0}
- EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
--SELECT pdb.agg('{"value_count": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ paradedb.all();
-+SELECT pdb.agg('{"value_count": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ pdb.all();
-                                   QUERY PLAN                                   
- -------------------------------------------------------------------------------
-  Custom Scan (ParadeDB Aggregate Scan) on public.delete_agg_test
-    Output: pdb.agg_fn('pdb.agg'::text)
-    Index: delete_agg_test_idx
--   Tantivy Query: {"with_index":{"query":"all"}}
-+   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
-      Applies to Aggregates: CUSTOM_AGG({"value_count":{"field":"id"}})
-      Aggregate Definition: {"0":{"value_count":{"field":"id","missing":null}}}
- (6 rows)
+ ### Tokenizers
  
--SELECT pdb.agg('{"value_count": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ paradedb.all();
-+SELECT pdb.agg('{"value_count": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ pdb.all();
-       agg       
- ----------------
-  {"value": 1.0}
- (1 row)
- 
- -- Should return count: 1
- EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
--SELECT pdb.agg('{"stats": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ paradedb.all();
-+SELECT pdb.agg('{"stats": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ pdb.all();
-                                QUERY PLAN                                
- -------------------------------------------------------------------------
-  Custom Scan (ParadeDB Aggregate Scan) on public.delete_agg_test
-    Output: pdb.agg_fn('pdb.agg'::text)
-    Index: delete_agg_test_idx
--   Tantivy Query: {"with_index":{"query":"all"}}
-+   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
-      Applies to Aggregates: CUSTOM_AGG({"stats":{"field":"id"}})
-      Aggregate Definition: {"0":{"stats":{"field":"id","missing":null}}}
- (6 rows)
- 
--SELECT pdb.agg('{"stats": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ paradedb.all();
-+SELECT pdb.agg('{"stats": {"field": "id"}}'::jsonb) FROM delete_agg_test WHERE id @@@ pdb.all();
-                              agg                              
- --------------------------------------------------------------
-  {"avg": 1.0, "max": 1.0, "min": 1.0, "sum": 1.0, "count": 1}
-@@ -142,7 +142,7 @@ SELECT
-     COUNT(*) OVER (),
-     pdb.agg('{"value_count": {"field": "id"}}'::jsonb) OVER ()
- FROM delete_agg_test
--WHERE id @@@ paradedb.all()
-+WHERE id @@@ pdb.all()
- ORDER BY id
- LIMIT 1;
-                                                                                                                                                                   
-```
-
-**File**: `pg_search/tests/pg_regress/expected/aggregate_having_moved_to_where.out` (modified, +54/-54)
-```diff
-@@ -23,7 +23,7 @@ Test 1: HAVING on a GROUP BY key
- EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
- SELECT account_id, kind, COUNT(*)
- FROM having_items
--WHERE id @@@ paradedb.all()
-+WHERE id @@@ pdb.all()
- GROUP BY account_id, kind
- HAVING account_id > 1
- ORDER BY account_id, kind;
-@@ -32,15 +32,15 @@ ORDER BY account_id, kind;
-  Custom Scan (ParadeDB Aggregate Scan) on public.having_items
-    Output: account_id, kind, pdb.agg_fn('COUNT(*)'::text)
-    Index: having_items_idx
--   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":"all"}},{"range":{"field":"account_id","lower_bound":{"excluded":1},"upper_bound":null}}]}}
-+   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":{"all":{"field":"id"}}}},{"range":{"field":"account_id","lower_bound":{"excluded":1},"upper_bound":null}}]}}
-      Applies to Aggregates: COUNT(*)
-      Group By: account_id, kind
-      Aggregate Definition: {"grouped":{"aggs":{"grouped":{"terms":{"field":"kind","order":{"_key":"asc"},"segment_size":65000,"size":65000}}},"terms":{"field":"account_id","order":{"_key":"asc"},"segment_size":65000,"size":65000}}}
- (7 rows)
- 
- SELECT account_id, kind, COUNT(*)
- FROM having_items
--WHERE id @@@ paradedb.all()
-+WHERE id @@@ pdb.all()
- GROUP BY account_id, kind
- HAVING account_id > 1
- ORDER BY account_id, kind;
-@@ -63,7 +63,7 @@ SELECT *
- FROM (
-     SELECT account_id, kind, COUNT(*) AS n
-     FROM having_items
--    WHERE id @@@ paradedb.all()
-+    WHERE id @@@ pdb.all()
-     GROUP BY account_id, kind
- ) AS grouped
- WHERE account_id > 1
-@@ -73,7 +73,7 @@ ORDER BY account_id, kind;
-  Custom Scan (ParadeDB Aggregate Scan) on public.having_items
-    Output: having_items.account_id, having_items.kind, pdb.agg_fn('COUNT(*)'::text)
-    Index: having_items_idx
--   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":"all"}},{"range":{"field":"account_id","lower_bound":{"excluded":1},"upper_bound":null}}]}}
-+   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":{"all":{"field":"id"}}}},{"range":{"field":"account_id","lower_bound":{"excluded":1},"upper_bound":null}}]}}
-      Applies to Aggregates: COUNT(*)
-      Group By: account_id, kind
-      Aggregate Definition: {"grouped":{"aggs":{"grouped":{"terms":{"field":"kind","segment_size":65000,"size":65000}}},"terms":{"field":"account_id","segment_size":65000,"size":65000}}}
-@@ -83,7 +83,7 @@ SELECT *
- FROM (
-     SELECT account_id, kind, COUNT(*) AS n
-     FROM having_items
--    WHERE id @@@ paradedb.all()
-+    WHERE id @@@ pdb.all()
-     GROUP BY account_id, kind
- ) AS grouped
- WHERE account_id > 1
-@@ -106,7 +106,7 @@ EXPLAIN (COSTS OFF, VERBOSE, TIMING OFF)
- WITH grouped AS (
-     SELECT account_id, kind, COUNT(*) AS n
-     FROM having_items
--    WHERE id @@@ paradedb.all()
-+    WHERE id @@@ pdb.all()
-     GROUP BY account_id, kind
- )
- SELECT * FROM grouped WHERE kind >= 'c' ORDER BY account_id, kind;
-@@ -115,7 +115,7 @@ SELECT * FROM grouped WHERE kind >= 'c' ORDER BY account_id, kind;
-  Custom Scan (ParadeDB Aggregate Scan) on public.having_items
-    Output: having_items.account_id, having_items.kind, pdb.agg_fn('COUNT(*)'::text)
-    Index: having_items_idx
--   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":"all"}},{"range":{"field":"kind","lower_bound":{"included":"c"},"upper_bound":null}}]}}
-+   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":{"all":{"field":"id"}}}},{"range":{"field":"kind","lower_bound":{"included":"c"},"upper_bound":null}}]}}
-      Applies to Aggregates: COUNT(*)
-      Group By: account_id, kind
-      Aggregate Definition: {"grouped":{"aggs":{"grouped":{"terms":{"field":"kind","segment_size":65000,"size":65000}}},"terms":{"field":"account_id","segment_size":65000,"size":65000}}}
-@@ -124,7 +124,7 @@ SELECT * FROM grouped WHERE kind >= 'c' ORDER BY account_id, kind;
- WITH grouped AS (
-     SELECT account_id, kind, COUNT(*) AS n
-     FROM having_items
--    WHERE id @@@ paradedb.all()
-+    WHERE id @@@ pdb.all()
-     GROUP BY account_id, kind
- )
- SELECT * FROM grouped WHERE kind >= 'c' ORDER BY account_id, kind;
-@@ -143,13 +143,13 @@ Test 4: a HAVING condition on an aggregate stays in HAVING -> declined
- EXPLAIN (COSTS OFF, TIMING OFF)
- SELECT account_id, COUNT(*)
- FROM having_items
--WHERE id @@@ paradedb.all()
-+WHERE id @@@ pdb.all()
- GROUP BY account_id
- HAVING COUNT(*) > 10
- ORDER BY account_id;
- WARNING:  Aggregate Scan not used: HAVING clause is not supported (see https://github.com/paradedb/paradedb/issues/4206). To disable this warning: SET paradedb.planner_warnings = 'off' (table: having_items)
--                          QUERY PLAN                          
----------------------------------------------------------------
-+                                  QUERY PLAN                                  
-+------------------------------------------------------------------------------
-  Sort
-    Sort Key: account_id
-    ->  HashAggregate
-@@ -162,12 +162,12 @@ WARNING:  Aggregate Scan not used: HAVING clause is not supported (see https://g
-      
-```
-
-**File**: `pg_search/tests/pg_regress/expected/aggregate_join.out` (modified, +6/-6)
-```diff
-@@ -1705,10 +1705,10 @@ EXPLAIN (FORMAT TEXT, COSTS OFF, TIMING OFF, VERBOSE)
- SELECT i.metadata->>'category' AS category, COUNT(*), SUM(o.qty)
- FROM agg_json_items i
- JOIN agg_json_orders o ON i.id = o.item_id
--WHERE i.id @@@ paradedb.all()
-+WHERE i.id @@@ pdb.all()
- GROUP BY i.metadata->>'category';
--                                                            QUERY PLAN                                                             
-------------------------------------------------------------------------------------------------------------------------------------
-+                                                                    QUERY PLAN                                                                     
-+---------------------------------------------------------------------------------------------------------------------------------------------------
-  Custom Scan (ParadeDB Aggregate Scan)
-    Output: ((i.metadata ->> 'category'::text)), (count(*)), (sum(o.qty))
-    Backend: DataFusion
-@@ -1719,7 +1719,7 @@ GROUP BY i.metadata->>'category';
-      : AggregateExec: mode=Single, gby=[metadata.category@0 as metadata.category], aggr=[count(1) as agg_0, sum(o_1.qty) as agg_1]
-      :   HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, item_id@1)], projection=[metadata.category@0, qty@2]
-      :     CooperativeExec
--     :       PgSearchScan: table=i, segments=1, eager=[metadata.category], visibility=eager, query={"with_index":{"query":"all"}}
-+     :       PgSearchScan: table=i, segments=1, eager=[metadata.category], visibility=eager, query={"with_index":{"query":{"all":{"field":"id"}}}}
-      :     CooperativeExec
-      :       PgSearchScan: table=o, segments=1, dynamic_filters=1, visibility=eager, query="all"
- (13 rows)
-@@ -1728,7 +1728,7 @@ GROUP BY i.metadata->>'category';
- SELECT i.metadata->>'category' AS category, COUNT(*), SUM(o.qty)
- FROM agg_json_items i
- JOIN agg_json_orders o ON i.id = o.item_id
--WHERE i.id @@@ paradedb.all()
-+WHERE i.id @@@ pdb.all()
- GROUP BY i.metadata->>'category'
- ORDER BY category;
-   category   | count | sum 
-@@ -1742,7 +1742,7 @@ SET paradedb.enable_aggregate_custom_scan TO off;
- SELECT i.metadata->>'category' AS category, COUNT(*), SUM(o.qty)
- FROM agg_json_items i
- JOIN agg_json_orders o ON i.id = o.item_id
--WHERE i.id @@@ paradedb.all()
-+WHERE i.id @@@ pdb.all()
- GROUP BY i.metadata->>'category'
- ORDER BY category;
-   category   | count | sum 
-```
-
-**File**: `pg_search/tests/pg_regress/expected/aggregate_join_multicolumn_topk.out` (modified, +2/-2)
-```diff
-@@ -14,9 +14,9 @@ CREATE TABLE multicolumn_topk_work_items (
-     abstract_text TEXT NOT NULL
- );
- CREATE INDEX multicolumn_topk_researchers_idx ON multicolumn_topk_researchers
--USING bm25 (researcher_id, bio);
-+USING paradedb (researcher_id, bio);
- CREATE INDEX multicolumn_topk_work_items_idx ON multicolumn_topk_work_items
--USING bm25 (
-+USING paradedb (
-     work_id,
-     researcher_id,
-     (category::pdb.literal),
-```
-
-**File**: `pg_search/tests/pg_regress/expected/aggregate_limit_under_distinct.out` (modified, +3/-3)
-```diff
-@@ -13,9 +13,9 @@ CREATE TABLE limit_under_distinct_work_items (
-     abstract_text TEXT NOT NULL
- );
- CREATE INDEX limit_under_distinct_researchers_idx ON limit_under_distinct_researchers
--USING bm25 (researcher_id, bio);
-+USING paradedb (researcher_id, bio);
- CREATE INDEX limit_under_distinct_work_items_idx ON limit_under_distinct_work_items
--USING bm25 (work_id, researcher_id, item_date, abstract_text);
-+USING paradedb (work_id, researcher_id, item_date, abstract_text);
- -- Researchers 1 and 2 share the same MAX(item_date).
- INSERT INTO limit_under_distinct_researchers (researcher_id, bio) VALUES
-     (1, 'cancer immunology'),
-@@ -38,7 +38,7 @@ INSERT INTO limit_under_distinct_items
- SELECT row_number() OVER (), 'cat_' || lpad(k::text, 2, '0')
- FROM generate_series(0, 49) k, generate_series(1, 10 * (k / 10 + 1)) n;
- CREATE INDEX limit_under_distinct_items_idx ON limit_under_distinct_items
--USING bm25 (id, (cat::pdb.literal));
-+USING paradedb (id, (cat::pdb.literal));
- ANALYZE limit_under_distinct_researchers;
- ANALYZE limit_under_distinct_work_items;
- ANALYZE limit_under_distinct_items;
+-The synonym index runs each rule through its tokenizer and keeps the result, so a rule only matches a query that the same
+-tokenizer produced. Set the tokenizer with a cast, the same way you set it on a text field. With a stemmer, `couches` and
+-`couch` are the same rule:
++A synonym index tokenizes its rules, and a query uses it only if the
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #7680** (2026-11-25): perf(vector): write full-precision rows once during index builds (@paradedb-github-bot[bot])
 - **PR #7679** (closed): docs: Guide Neon users through logical replication (@philippemnoel)
 - **PR #7678** (2026-11-25): chore: Upgrade Antithesis CloudNativePG to 1.31.0-rc1 (@philippemnoel)
+- **PR #7676** (2026-11-28): docs: improve the synonyms docs (@mdashti)
 - **PR #7672** (2026-11-25): feat: remove the deprecated pdb.term_set aggregate (@philippemnoel)
 - **PR #7671** (2026-11-25): chore: remove obsolete Stressgres wrappers and fast-field setting (@philippemnoel)
-- **PR #7670** (2026-11-25): chore: Generate Dockerfiles for v0.27.1 (@paradedb-github-bot[bot])
 
 ---
 
@@ -4016,49 +2518,37 @@ previou
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vector): write full-precision rows once during index builds
+## X. docs: improve the synonyms docs
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/reference/configuration.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f84516c5`: vector): write full-precision rows once during index builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `965b3e76`: docs: improve the synonyms docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/reference/configuration.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#4abccd43b7d19e14c9ef1f35487175b3ab99d75d"
+| Setting                               | Default | Context | Description                                                                                               |
+| ------------------------------------- | ------- | ------- | --------------------------------------------------------------------------------------------------------- |
+| `paradedb.synonyms_max_alternatives`  | `32`    | user    | Maximum number of alternatives one run of query words expands to, and of phrases a phrase query searches. |
+| `paradedb.synonyms_max_rules_per_key` | `1024`  | user    | Maximum number of rules one word reads in each segment of a synonym index.                                |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
-source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bddc68e6ab9eb5cc641f8c27f446c"
+| Setting                               | Default | Context | Description                                                                                                                                                                                                                                      |
+| ------------------------------------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `paradedb.synonyms_max_alternatives`  | `32`    | user    | Most alternatives one run of query words expands to in a match query, and most phrases a phrase query searches. The query parser has the first limit for a word and the second for a quoted phrase. The typed words stay when a rule lists them. |
+| `paradedb.synonyms_max_rules_per_key` | `1024`  | user    | Most rules one synonym word reads in a segment. A word in more rules reads only the first ones.                                                                                                                                
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f84516c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `965b3e76` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

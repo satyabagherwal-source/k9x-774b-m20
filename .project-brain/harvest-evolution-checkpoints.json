@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T09:54:42.118Z",
+  "last_updated": "2026-11-28T10:11:06.397Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T08:40:15.184Z",
@@ -63,7 +63,7 @@
       "staged_for_review": 1
     },
     "zed-industries-zed-learnings.md": {
-      "processed_at": "2026-11-27T10:01:43.910Z",
+      "processed_at": "2026-11-28T10:11:01.704Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1163,9 +1163,9 @@
       "staged_for_review": 1
     },
     "preactjs-preact-learnings.md": {
-      "processed_at": "2026-11-25T00:17:25.888Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-28T10:11:03.348Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "rainbow-me-rainbow-learnings.md": {
       "processed_at": "2026-11-23T05:51:52.257Z",
@@ -3218,7 +3218,7 @@
       "staged_for_review": 1
     },
     "sozercan-kaset-learnings.md": {
-      "processed_at": "2026-11-26T06:44:13.107Z",
+      "processed_at": "2026-11-28T10:11:05.164Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4068,7 +4068,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5325,
+  "total_dossiers_evaluated": 5328,
   "total_canonical_promoted": 604,
-  "total_staged_for_review": 4047
+  "total_staged_for_review": 4050
 }

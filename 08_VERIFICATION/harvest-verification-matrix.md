@@ -14036,3 +14036,7 @@
 | `CYCLE-20261128-H3V2` | `2026-11-28T09:54:22.286Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11084` | Yes (`e0de9530...`) |
 | `CYCLE-20261128-H4ZI` | `2026-11-28T09:54:23.742Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11085` | Yes (`998088d6...`) |
 | `CYCLE-20261128-HCPI` | `2026-11-28T09:54:33.750Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11086` | Yes (`2a74a222...`) |
+| `CYCLE-20261128-26NO` | `2026-11-28T10:10:45.684Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11087` | Yes (`6f877dec...`) |
+| `CYCLE-20261128-286C` | `2026-11-28T10:10:47.652Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11088` | Yes (`3d761cdc...`) |
+| `CYCLE-20261128-28TJ` | `2026-11-28T10:10:48.487Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11089` | Yes (`e0e81bc7...`) |
+| `CYCLE-20261128-2FZK` | `2026-11-28T10:10:57.776Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11090` | Yes (`b9df1da4...`) |
