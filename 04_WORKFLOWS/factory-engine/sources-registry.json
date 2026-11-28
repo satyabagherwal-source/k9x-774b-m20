@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T00:19:35.740Z",
-    "lastVerified": "2026-11-28T00:19:35.740Z",
+    "lastChecked": "2026-11-28T00:28:36.489Z",
+    "lastVerified": "2026-11-28T00:28:36.489Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -399,12 +399,12 @@
     "revisionIdentifier": "40d4f79e"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T23:48:52.090Z",
-    "lastVerified": "2026-11-27T23:48:52.090Z",
+    "lastChecked": "2026-11-28T00:28:29.722Z",
+    "lastVerified": "2026-11-28T00:28:29.722Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -413,7 +413,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ba332c5e"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1458,8 +1459,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T20:09:56.064Z",
-    "lastVerified": "2026-11-27T20:09:56.064Z",
+    "lastChecked": "2026-11-28T00:28:24.695Z",
+    "lastVerified": "2026-11-28T00:28:24.695Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -3193,12 +3194,12 @@
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T06:29:16.274Z",
-    "lastVerified": "2026-11-27T06:29:16.274Z",
+    "lastChecked": "2026-11-28T00:28:26.618Z",
+    "lastVerified": "2026-11-28T00:28:26.618Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
-    "contentHash": "8e2e61f510c65664434c67e732dc0a1e908d371b008de8032fb2c14c6211fdae",
+    "contentHash": "d04880113a18146ce8571fddd753f0d9e3f78f40aa54f9023d2df20763a6a5da",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 1,
@@ -5587,12 +5588,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "salvo-rs-salvo": {
-    "name": "salvo-rs/salvo",
+    "name": "salvo",
     "officialUrl": "https://github.com/salvo-rs/salvo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T00:24:29.848Z",
-    "lastVerified": "2026-11-27T00:24:29.848Z",
+    "lastChecked": "2026-11-28T00:28:14.588Z",
+    "lastVerified": "2026-11-28T00:28:14.588Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-salvo-rs-salvo",
@@ -5601,7 +5602,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "45e831e5"
   },
   "hf-aleph-alpha-kolibri-1": {
     "name": "Aleph-Alpha/Kolibri-1",
@@ -6377,14 +6379,14 @@
     "officialUrl": "https://github.com/yugabyte/yugabyte-db",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-27T05:21:38.184Z",
-    "lastVerified": "2026-11-27T05:21:38.184Z",
+    "lastChecked": "2026-11-28T00:28:31.533Z",
+    "lastVerified": "2026-11-28T00:28:31.533Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "a747eeacd997623d4cafbb48bdde1130e956062c0d0d2148a0f7ee6d332e7e90",
+    "contentHash": "376672c2d136fb64563cc45207dd3bfecbc8166583dcd6ef145a404598f0ed5a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10569,9 +10571,9 @@
   "seabdulbasit-musicapp-kmp": {
     "name": "MusicApp-KMP",
     "officialUrl": "https://github.com/SEAbdulbasit/MusicApp-KMP",
-    "lastChecked": "2026-11-25T15:47:30.909Z",
+    "lastChecked": "2026-11-28T00:28:19.566Z",
     "revisionIdentifier": "3048f024",
-    "lastVerified": "2026-11-25T15:47:30.909Z"
+    "lastVerified": "2026-11-28T00:28:19.566Z"
   },
   "m0ntydad0n-pseo-engine-oss": {
     "name": "pseo-engine-oss",
@@ -11075,11 +11077,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "webrecorder-browsertrix-crawler": {
-    "name": "browsertrix-crawler",
+    "name": "webrecorder/browsertrix-crawler",
     "officialUrl": "https://github.com/webrecorder/browsertrix-crawler",
-    "lastChecked": "2026-11-24T16:10:30.688Z",
-    "revisionIdentifier": "7ac9f642",
-    "lastVerified": "2026-11-24T16:10:30.688Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-28T00:28:20.702Z",
+    "lastVerified": "2026-11-28T00:28:20.702Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-webrecorder-browsertrix-crawler",
+    "contentHash": "e85aa2c4ca8a2fca3c17798869ca087693203544b622567c5f5b9bbdb46b7ccd",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "signerlabs-shipswift": {
     "name": "ShipSwift",

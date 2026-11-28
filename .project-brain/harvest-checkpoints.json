@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T00:19:32.034Z",
+  "last_updated": "2026-11-28T00:28:32.907Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "8e2e61f510c65664434c67e732dc0a1e908d371b008de8032fb2c14c6211fdae",
-      "verified_at": "2026-11-27T06:29:17.831Z",
+      "content_hash": "d04880113a18146ce8571fddd753f0d9e3f78f40aa54f9023d2df20763a6a5da",
+      "verified_at": "2026-11-28T00:28:27.981Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T06:29:17.831Z"
+      "last_updated": "2026-11-28T00:28:27.981Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "a747eeacd997623d4cafbb48bdde1130e956062c0d0d2148a0f7ee6d332e7e90",
-      "verified_at": "2026-11-27T05:21:39.399Z",
+      "content_hash": "376672c2d136fb64563cc45207dd3bfecbc8166583dcd6ef145a404598f0ed5a",
+      "verified_at": "2026-11-28T00:28:32.906Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T05:21:39.399Z"
+      "last_updated": "2026-11-28T00:28:32.906Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -13926,14 +13926,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrecorder-browsertrix-crawler",
-      "content_hash": "fbf94cfbc53023a9ac8141196bba8f895eab1db0a59a28abeb1709464e5cffb8",
-      "verified_at": "2026-11-12T01:12:03.337Z",
+      "content_hash": "e85aa2c4ca8a2fca3c17798869ca087693203544b622567c5f5b9bbdb46b7ccd",
+      "verified_at": "2026-11-28T00:28:22.264Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T01:12:03.337Z"
+      "last_updated": "2026-11-28T00:28:22.264Z"
     },
     "pointfreeco/isowords": {
       "repository": "pointfreeco/isowords",

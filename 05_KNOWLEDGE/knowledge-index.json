@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T00:19:40.426Z",
-  "total_verified_learnings": 9147,
+  "last_updated": "2026-11-28T00:28:41.386Z",
+  "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26842,
+  "total_items": 26854,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -229500,8 +229500,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "640a0d4b",
-      "content_hash": "8e2e61f510c65664434c67e732dc0a1e908d371b008de8032fb2c14c6211fdae",
+      "source_version": "969702da",
+      "content_hash": "d04880113a18146ce8571fddd753f0d9e3f78f40aa54f9023d2df20763a6a5da",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -229559,6 +229559,11 @@
           "number": 10843,
           "title": "bump oac version v0.0.4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10998,
+          "title": "update fake client initialization and improve terminal environment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229566,7 +229571,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T06:29:17.460Z",
+      "verified_at": "2026-11-28T00:28:27.676Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229594,10 +229599,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "repository": "beclab/Olares",
-      "source_version": "640a0d4b",
-      "content_hash": "084d944c630f18a9eb3ff7dac90fb84d999e77ef7604f11dc086d663a0bfb2c3",
+      "source_version": "969702da",
+      "content_hash": "a345296e3b2e463ff644eb4f9ff9d76eb71ce46c4d3e80c77563722bca1ac8c6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T06:29:18.440Z"
+      "persisted_at": "2026-11-28T00:28:28.495Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares",
@@ -229606,10 +229611,10 @@
       "relative_path": "08_VERIFICATION/beclab-olares-verification-protocol-empirical-defect-shield-for-beclab-olares.md",
       "title": "Verification Protocol: Empirical Defect Shield for beclab/Olares",
       "repository": "beclab/Olares",
-      "source_version": "640a0d4b",
-      "content_hash": "88bf42b254906ae970e6d392a02734a612170dc87cffbef5a59ccb5338a3e257",
+      "source_version": "969702da",
+      "content_hash": "4162d5001b9960371ea061051cc7d1f10396497acff2acef32703e1cca4a36ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T06:29:18.717Z"
+      "persisted_at": "2026-11-28T00:28:28.732Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
@@ -229643,9 +229648,9 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "896f814397d03e5ddf86af3974b576f1eb2835c3e8beeeadd9e54e1872b292d1",
+      "content_hash": "079dad689aac749b84e74cd75e892244f8431a1d7b732cadce246a7e0cc0bc26",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T06:29:23.093Z"
+      "persisted_at": "2026-11-28T00:28:39.700Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings",
@@ -229655,9 +229660,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f85be8f6b18fdcf6c1c58c3a43cd1dc2dca65f338f2c6ffd1de5014e664222e",
+      "content_hash": "6a049be975ff3da2f02e63765b56ed857d57c556a60eb0aa76848087c4ea5d06",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T06:29:23.366Z"
+      "persisted_at": "2026-11-28T00:28:39.993Z"
     },
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
@@ -237380,8 +237385,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "846c1e61",
-      "content_hash": "a747eeacd997623d4cafbb48bdde1130e956062c0d0d2148a0f7ee6d332e7e90",
+      "source_version": "9af8d525",
+      "content_hash": "376672c2d136fb64563cc45207dd3bfecbc8166583dcd6ef145a404598f0ed5a",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -237444,6 +237449,11 @@
           "number": 10834,
           "title": "[#33147] YSQL: Disable Read Committed isolation by default in release builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10999,
+          "title": "[PLAT-22752] YBA: Earlyoom can't lock its memory on YBA-provisioned nodes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237451,7 +237461,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T05:21:39.122Z",
+      "verified_at": "2026-11-28T00:28:32.552Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237517,10 +237527,10 @@
       "relative_path": "08_VERIFICATION/yugabyte-yugabyte-db-verification-protocol-empirical-defect-shield-for-yugabyte-.md",
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte/yugabyte-db",
       "repository": "yugabyte/yugabyte-db",
-      "source_version": "846c1e61",
-      "content_hash": "9b017e5e0f37f7b827dafccfdbdfca64ff5257a846ab493de0664ec276a76fa9",
+      "source_version": "9af8d525",
+      "content_hash": "7734196abee1e8dc7235076e99c7d4856b81f2aaf89c726ec2e7cf017dd174b8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T05:21:40.031Z"
+      "persisted_at": "2026-11-28T00:28:33.659Z"
     },
     "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants",
@@ -237590,9 +237600,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte-yugabyte-db-learnings",
       "repository": "yugabyte-yugabyte-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "71a5bbf7a28303ea9d270e53fb0b7e7643e3d6b893976d0d309139a5a521684c",
+      "content_hash": "311724c3e7bff9d324ab1d8816bf66e2f27bca5447004213e94fb396e627a829",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T05:21:45.859Z"
+      "persisted_at": "2026-11-28T00:28:41.386Z"
     },
     "learn-huggingface-unsloth-embeddinggemma-2-gguf": {
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
@@ -277949,10 +277959,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-quality-verification-intelligence-yugabyte-yugabyte-db-core.md",
       "title": "Quality & Verification Intelligence: yugabyte/yugabyte-db Core Invariants",
       "repository": "yugabyte/yugabyte-db",
-      "source_version": "846c1e61",
-      "content_hash": "911c759cd5c282a807d7c49055271ef6d58bc4c894252f1b7c5bcc18386adfba",
+      "source_version": "9af8d525",
+      "content_hash": "5878677100c167f385951bb2f8fd11ea1a4ef81cb45c175c5a19676bbe663680",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T05:21:39.837Z"
+      "persisted_at": "2026-11-28T00:28:33.432Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants",
@@ -292804,9 +292814,9 @@
       "title": "Quality & Verification Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
       "repository": "yugabyte-yugabyte-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "aed4f062f768da0c07359563a41fa86302393e343d9e1c1bd53e28c8efb3be20",
+      "content_hash": "88912c5b6ff5ad18d3edeb99ddf0aea58ff2dded314834459eb13e7903aeca90",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T05:21:45.654Z"
+      "persisted_at": "2026-11-28T00:28:41.143Z"
     },
     "rule-9183": {
       "learning_id": "rule-9183",
@@ -368724,6 +368734,177 @@
       "content_hash": "95e06ab3b2e251343eb3e323d886407228cf9068529ff27506d6ce7454bba120",
       "domain_letter": "A",
       "persisted_at": "2026-11-28T00:19:38.319Z"
+    },
+    "learn-github-webrecorder-browsertrix-crawler": {
+      "learning_id": "learn-github-webrecorder-browsertrix-crawler",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "webrecorder/browsertrix-crawler",
+      "repository": "webrecorder/browsertrix-crawler",
+      "slug": "webrecorder-browsertrix-crawler",
+      "platform": "github",
+      "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+      "source_version": "3c51cd79",
+      "content_hash": "e85aa2c4ca8a2fca3c17798869ca087693203544b622567c5f5b9bbdb46b7ccd",
+      "dossier_path": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10997,
+          "title": "bump to 1.16.0-beta.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-28T00:28:21.910Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10997": {
+      "learning_id": "rule-10997",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10997,
+      "title": "bump to 1.16.0-beta.0",
+      "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+      "source_version": "3c51cd79",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T00:28:21.910Z"
+    },
+    "candidate_directive-bump-to-1-16-0-beta-0": {
+      "item_id": "candidate_directive-bump-to-1-16-0-beta-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-98DF-bump-to-1-16-0-beta-0.md",
+      "title": "bump to 1.16.0-beta.0",
+      "repository": "webrecorder/browsertrix-crawler",
+      "source_version": "3c51cd79",
+      "content_hash": "abb91f19611e1718036c279d58d9a7285a01800aa76dd4dd5658a3b19d83077d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T00:28:22.569Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-browsertrix-crawler-technical-construction-intelligence-webrecorder-.md",
+      "title": "Technical Construction Intelligence: webrecorder/browsertrix-crawler Core Invariants",
+      "repository": "webrecorder/browsertrix-crawler",
+      "source_version": "3c51cd79",
+      "content_hash": "997a3d157be5ef6ee881ea4bc7f0663df9520c92c6bfff139b0fd658c9cf7060",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T00:28:22.801Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-browsertrix-crawle": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-browsertrix-crawle",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/webrecorder-browsertrix-crawler-learnings-verification-protocol-empirical-defect.md",
+      "title": "Verification Protocol: Empirical Defect Shield for webrecorder-browsertrix-crawler-learnings",
+      "repository": "webrecorder-browsertrix-crawler-learnings",
+      "source_version": "HEAD",
+      "content_hash": "50838a849fafad13e2373ac1ad14bdbb7edd6e7560d1537fccb242fad6205be9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T00:28:38.766Z"
+    },
+    "rule-10998": {
+      "learning_id": "rule-10998",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10998,
+      "title": "update fake client initialization and improve terminal environment",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "969702da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T00:28:27.676Z"
+    },
+    "candidate_directive-update-fake-client-initialization-and-improve-terminal-environment": {
+      "item_id": "candidate_directive-update-fake-client-initialization-and-improve-terminal-environment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9CRS-update-fake-client-initialization-and-improve-terminal-environment.md",
+      "title": "update fake client initialization and improve terminal environment",
+      "repository": "beclab/Olares",
+      "source_version": "969702da",
+      "content_hash": "9343102c2c3bdce6bc516537694c2c6a6620f72cde7c164b57588ef5a09694e9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T00:28:28.265Z"
+    },
+    "rule-10999": {
+      "learning_id": "rule-10999",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10999,
+      "title": "[PLAT-22752] YBA: Earlyoom can't lock its memory on YBA-provisioned nodes",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "9af8d525",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T00:28:32.552Z"
+    },
+    "candidate_directive-plat-22752-yba-earlyoom-can-t-lock-its-memory-on-yba-provisioned-nodes": {
+      "item_id": "candidate_directive-plat-22752-yba-earlyoom-can-t-lock-its-memory-on-yba-provisioned-nodes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9MJ0-plat-22752-yba-earlyoom-can-t-lock-its-memory-on-yba-provisioned-nodes.md",
+      "title": "[PLAT-22752] YBA: Earlyoom can't lock its memory on YBA-provisioned nodes",
+      "repository": "yugabyte-yugabyte-db-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2c8816c60b4c84030b4772dba6dac5916e6387db05495c8014c50c7059d369e8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T00:28:40.913Z"
+    },
+    "candidate_directive-version-bump-to-1-16-0-beta-0": {
+      "item_id": "candidate_directive-version-bump-to-1-16-0-beta-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9KHR-version-bump-to-1-16-0-beta-0.md",
+      "title": "version: bump to 1.16.0-beta.0",
+      "repository": "webrecorder-browsertrix-crawler-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6609fff94a20030abd6b9aa4f88201924f1333289b7fd9e3d57e600c7dc4ae60",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T00:28:38.278Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-learnings-co": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-learnings-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-browsertrix-crawler-learnings-technical-construction-intelligence-we.md",
+      "title": "Technical Construction Intelligence: webrecorder-browsertrix-crawler-learnings Core Invariants",
+      "repository": "webrecorder-browsertrix-crawler-learnings",
+      "source_version": "HEAD",
+      "content_hash": "409557c484536ad08445d7e8ad419382d4f90fd0a4cad8adf1fc67b432487148",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T00:28:38.516Z"
+    },
+    "candidate_directive-kubesphere-update-fake-client-initialization-and-improve-terminal-environment": {
+      "item_id": "candidate_directive-kubesphere-update-fake-client-initialization-and-improve-terminal-environment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9LE9-kubesphere-update-fake-client-initialization-and-improve-terminal-environment.md",
+      "title": "kubesphere): update fake client initialization and improve terminal environment",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8d5a565ee9fe4fc4f858e357c9567ad3d19bcffa5314fe899929d07374bbd85d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T00:28:39.441Z"
     }
   },
   "ai-builder-brain": {

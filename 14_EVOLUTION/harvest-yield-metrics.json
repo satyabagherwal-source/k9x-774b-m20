@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T00:19:32.029Z",
-  "total_cycles_completed": 13202,
-  "total_learnings_persisted": 13202,
-  "total_rules_promoted": 11911,
+  "last_updated": "2026-11-28T00:28:32.903Z",
+  "total_cycles_completed": 13205,
+  "total_learnings_persisted": 13205,
+  "total_rules_promoted": 11914,
   "history": [
-    {
-      "timestamp": "2026-11-27T06:14:51.257Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T06:29:06.792Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-speridlabs-iris-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T06:29:17.828Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T06:37:41.428Z",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T00:19:32.029Z",
       "repository": "kividbio/kividb",
       "learningId": "learn-github-kividbio-kividb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T00:28:22.261Z",
+      "repository": "webrecorder/browsertrix-crawler",
+      "learningId": "learn-github-webrecorder-browsertrix-crawler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T00:28:27.978Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T00:28:32.903Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

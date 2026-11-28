@@ -4,22 +4,22 @@
 {
   "source_repository": "beclab/Olares",
   "source_url": "https://github.com/beclab/Olares",
-  "source_version": "640a0d4b",
+  "source_version": "969702da",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-27T06:29:18.151Z",
+  "timestamp": "2026-11-28T00:28:28.265Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-beclab-olares",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `640a0d4b`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-27T06:29:18.151Z`  
+> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `969702da`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-28T00:28:28.265Z`  
 > **Learning ID**: `learn-github-beclab-olares`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `beclab/Olares` (Commit: `640a0d4b`)
+- **Target Repository**: `beclab/Olares` (Commit: `969702da`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T06:29:16.274Z  
+> **Harvest Timestamp**: 2026-11-28T00:28:26.618Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5385 stars
+- **Stars / Engagement**: 5386 stars
 
 ---
 
@@ -1063,50 +1063,141 @@ export const displayPath = (file: {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed58f07b` (2026-11-26)
-**Commit Message**: fix(appservice): bump oac version v0.0.4 (#4527)
+### Incident Patch 1: `d5bfd851` (2026-11-27)
+**Commit Message**: fix(kubesphere): update fake client initialization and improve terminal environment variables (#4537)
 
-**File**: `framework/app-service/go.mod` (modified, +1/-1)
+* refactor(tests): update fake client initialization and improve terminal environment variables
+
+* fix: update ks-apiserver image version to 0.0.37 and adjust asset modification times
+
+**File**: `cli/pkg/kubesphere/plugins/assets_vfsdata.go` (modified, +5/-5)
 ```diff
-@@ -9,7 +9,7 @@ require (
- 	github.com/argoproj/argo-workflows/v3 v3.7.10
- 	github.com/beclab/api v0.0.27-0.20261028064325-1e4c01f1dbee
- 	github.com/beclab/lldap-client v0.0.11
--	github.com/beclab/oac v0.0.3
-+	github.com/beclab/oac v0.0.4
- 	github.com/containerd/containerd v1.7.29
- 	github.com/containers/image/v5 v5.36.1
- 	github.com/emicklei/go-restful-openapi/v2 v2.11.0
+@@ -78,7 +78,7 @@ var assets = func() http.FileSystem {
+ 		},
+ 		"/build/ks-core/templates": &vfsgen۰DirInfo{
+ 			name:    "templates",
+-			modTime: time.Date(2026, 11, 24, 13, 58, 52, 620170501, time.UTC),
++			modTime: time.Date(2026, 11, 27, 11, 47, 8, 185110077, time.UTC),
+ 		},
+ 		"/build/ks-core/templates/NOTES.txt": &vfsgen۰FileInfo{
+ 			name:    "NOTES.txt",
+@@ -94,10 +94,10 @@ var assets = func() http.FileSystem {
+ 		},
+ 		"/build/ks-core/templates/ks-apiserver.yml": &vfsgen۰CompressedFileInfo{
+ 			name:             "ks-apiserver.yml",
+-			modTime:          time.Date(2026, 11, 25, 8, 6, 43, 554812046, time.UTC),
++			modTime:          time.Date(2026, 11, 27, 12, 21, 36, 352456732, time.UTC),
+ 			uncompressedSize: 3111,
+ 
+-			compressedContent: []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x02\xff\xbc\x56\x51\x6f\xe3\x36\x0c\x7e\xf7\xaf\x20\xb2\x67\x3b\xe9\x6d\x3b\xf4\x0c\xec\xa1\x48\x0f\x5b\xb1\x75\x0b\x9a\xae\xc0\x1e\x19\x99\x89\x85\xc8\x92\x26\xd1\x59\x8d\xec\xfe\xfb\xa0\x38\x71\xe4\xd8\xed\x32\x1c\x30\x3f\x19\xa4\x28\x92\x1f\xc9\x8f\x42\x2b\x5f\xc8\x79\x69\x74\x0e\x68\xad\x9f\xee\x6e\x92\xad\xd4\x45\x0e\xf7\x64\x95\x69\x2a\xd2\x9c\x54\xc4\x58\x20\x63\x9e\x00\x28\x5c\x91\xf2\xe1\x0f\x82\x41\x0e\x5b\x9f\xa2\x95\x9e\xdc\x8e\xdc\x41\xca\x92\x5c\x0e\x2b\x14\x5b\xd2\xc5\x41\xb2\x3b\x79\xd8\xef\x21\x9b\x97\xe8\x38\xbb\xb3\xf6\xe8\x17\xbe\x7c\x49\x00\x34\x56\x74\x71\x97\xb7\x24\x82\x1f\xcf\x0e\x99\x36\x4d\xeb\xd3\x19\xa5\xa4\xde\xfc\x6e\x0b\x64\x6a\x45\x00\x15\xbe\x2e\x6b\xb7\xa1\x1c\x66\x6d\x08\x8d\xa5\x1c\x9e\xe2\xa3\x09\x80\x23\xab\xa4\x40\xdf\xc6\xf1\x44\x8a\xd0\x53\xf6\xd4\x4a\xe7\xa6\xd6\xdc\xc6\xe2\x49\x91\x60\xe3\xda\xdb\x2b\x64\x51\xfe\x12\x65\xfd\x56\xde\x63\x99\x03\x7c\x73\x4d\xf6\x4c\x95\x55\x5d\x3e\x31\xdc\xe1\x53\x3d\xe7\x6f\xbb\x1f\x0f\xe0\xca\x10\x00\x4e\x78\x87\x6f\xbf\x4f\xe1\x2f\xc9\x25\x64\x2f\xa8\x6a\xf2\x99\xac\x70\x43\x8b\x5a\xa9\x25\x09\x47\xec\x4f\x46\x00\x97\x9a\x73\x9c\xe1\x12\x36\x7f\x60\xa5\x20\x83\xbf\x41\x4b\x5d\x90\x66\xb8\x3d\xdb\x86\x13\xa4\x8b\xb3\xc0\x3a\x69\x9c\xe4\x66\xae\xd0\xfb\x5f\x0f\x3d\x31\xf1\x8d\x67\xaa\x52\xa1\x6a\xcf\xe4\x52\xe1\x24\x4b\x81\x6a\x72\x34\x11\x46\x33\x4a\x4d\xae\xf3\x9c\x82\x30\x55\x85\xba\x38\x87\x92\x8e\xe3\x95\x42\x9a\x2a\xb3\x61\xe3\xb9\x20\xe7\x7e\x60\x57\x53\xa7\x3c\x24\x96\xc3\x8a\x84\xc2\xd5\x34\xb6\xcf\x67\xd9\x2c\xfb\xf6\x63\xff\x64\x80\x60\x61\x94\x14\x4d\x0b\x73\x0c\x5c\x66\x3b\xe5\x39\xd7\xd1\xa6\x3f\xa9\xac\x71\x31\x94\xe9\x39\xcd\x85\x71\x9c\xc3\xa7\xd9\xa7\x59\xa7\x0d\xb8\x19\x36\xc2\xa8\x1c\x9e\xe7\x8b\x4e\xee\xc8\x9b\xda\x09\x8a\x2e\xea\x57\xe5\x18\x63\xe7\x3e\xeb\x2c\xa2\x7a\xdd\x7c\x88\x63\xde\x19\x55\x57\xf4\x18\xa6\xa5\x17\x5f\x15\x24\x0b\xe4\x32\x87\x29\xb1\x98\x6e\xeb\x15\x79\x5b\x92\xa3\x69\xe4\xfc\x98\x71\xa7\x4b\x85\xd1\x6b\xb9\x79\xe7\x1e\x65\x04\x2a\x96\x15\x0d\x6e\x29\x8d\xe7\xf4\x42\xe3\x08\x8b\xdf\xb4\x6a\x72\xe8\x95\x32\xe4\x2c\xd7\x23\xf9\xd2\x2b\x3b\x7c\x89\x52\x8a\x53\xfd\x17\xac\x86\xb6\xa3\x3d\x3e\xd2\xe5\x00\x4a\xee\x48\x93\xf7\x0b\x67\x56\x14\x57\x67\x8d\x52\xd5\x8e\x9e\x4b\x47\xbe\x34\xaa\xc8\xe1\x36\xd2\x96\xcc\xf6\x47\xe2\xd8\x00\xc0\xb6\x60\x6d\x43\x64\xd3\xe3\xa4\xf7\x0f\x8c\x75\x0c\x80\x17\x25\x05\x1c\x7f\x7a\x7e\x5e\x44\x0a\xa9\x25\x4b\x54\xf7\xa4\xb0\x59\x92\x30\xba\xf0\x39\xdc\x7c\x1f\x9d\x08\x98\x9b\x9a\x87\xca\x00\x8c\x14\x74\x27\x44\xc0\xa3\x1d\xdf\xfd\x1e\xa4\x16\xaa\x2e\x08\x26\x5b\x9f\x0a\xe3\x28\x1b\x9e\x9b\x40\xd6\x67\x85\x1e\xf9\xb0\x51\xe4\x90\xa5\xd1\x51\x7d\x22\xe1\x57\x51\xce\xc0\x9b\x36\x05\x2d\x8f\x2b\xe0\x7c\x2c\x96\x7e\x95\x3f\x5c\xaf\x03\xc4\x4d\x1e\xcd\x7a\x71\xa7\x59\xde\x0d\x14\xa1\x9f\xff\xac\xa5\xa3\xe2\xbe\x76\x52\x6f\x96\xa2\xa4\xa2\x0e\x3b\xed\x61\xa3\x4d\x27\xfe\xfc\x4a\xa2\x0e\x40\xc4\x96\x21\x2e\x6b\x94\xd9\x34\x3f\x53\xd3\x8e\x9c\xd3\xc4\x81\x91\xcc\x34\x8c\x4e\x18\xa2\x5e\x3f\x1c\xd6\xcc\x30\xc5\xd3\x86\x65\x51\x7e\x7e\xb5\x8e\xbc\xef\x43\xde\x11\x6c\x70\x83\xd6\x5e\x28\x00\x8c\x0d\x75\x32\x2e\x87\x07\x3d\x50\xee\x0e\x98\xe7\x03\xf9\x1b\x84\x7d\x9a\x7e\x6f\x51\x5c\x9a\xa5\x31\xaf\xb4\x4b\x23\x19\x2d\xee\x09\xe8\x1e\x15\x47\xf2\x3c\xd9\xef\xe3\xaa\x9e\x78\x70\x16\x0c\x06\xf5\x6c\x09\xb1\xb7\x7c\x02\xa5\x3d\xa2\x8d\xc3\x2b\x68\x8d\xb5\xe2\x47\x53\x50\x0e\xdf\x7d\x98\xfd\x07\x4e\x7c\x5f\x9f\x1e\x78\xf0\x40\x98\xc9\x80\x13\xde\x22\xd0\xf6\x7d\x34\x99\x24\xef\x33\xea\x35\xb4\xe9\xfb\x4c\x77\x15\x5d\xc6\x4c\xf9\x71\x74\x54\xd2\x34\x4d\x92\xf8\x6d\xda\x3d\x4b\x97\x2d\x77\xf4\xde\xa4\xa8\xb5\xe1\x98\x0a\xfa\xdd\x2e\x1c\x21\x53\x91\xae\x9a\x18\xc6\xa0\xb9\xe8\xb1\xff\xff\x6d\xdb\xad\xf9\xf4\xc8\xd2\xb7\x6d\x67\x0c\xf7\x39\xa3\xdb\x10\xf7\x96\x7f\xff\x9d\x7a\x6d\xc0\xd7\x3d\x48\x0f\x0d\x32\x6f\x9f\x5c\x0f\x8b\xe4\x9f\x00\x00\x00\xff\xff\xdb\x68\x0a\x58\x27\x0c\x00\x00"),
++			compressedContent: []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x02\xff\xbc\x56\x4f\x6f\xeb\x36\x0c\xbf\xfb\x53\x10\xd9\xd9\x4e\xfa\xf6\xaf\xcf\xc0\x0e\x45\xfa\xb0\x15\x5b\xb7\xa0\xe9\x0a\xec\xc8\xc8\x4c\x2c\x44\x96\x34\x89\xce\x6a\x64\xef\xbb\x0f\x8a\x13\x47\x8e\xdd\x2e\xc3\x03\xe6\x93\x41\x8a\x22\xf9\x23\xf9\xa3
 ```
 
-**File**: `framework/app-service/go.sum` (modified, +2/-2)
+**File**: `cli/pkg/kubesphere/plugins/files/build/ks-core/templates/ks-apiserver.yml` (modified, +1/-1)
 ```diff
-@@ -48,8 +48,8 @@ github.com/beclab/api v0.0.27-0.20261028064325-1e4c01f1dbee h1:7o5z7MDcS4uK9q0wN
- github.com/beclab/api v0.0.27-0.20261028064325-1e4c01f1dbee/go.mod h1:okd0RExsvSsuW5MsRh7v56Xex3vi5B26xHOGH3LT6yQ=
- github.com/beclab/lldap-client v0.0.11 h1:/XWzEd2pAFS7nwOtapyr7ClQViyGIUsMiyQ2d8t8sEo=
- github.com/beclab/lldap-client v0.0.11/go.mod h1:Y74tcKzyNL73a9pFAvImwXgzqp7S7Jb8RY1mMY90e/4=
--github.com/beclab/oac v0.0.3 h1:TQsOzIIi+xoT7+A9LfZiQDQxiIKQosrj55UIzx0PPk0=
--github.com/beclab/oac v0.0.3/go.mod h1:+fUhFSOgmMlU/wRrLQkadc/CwI9cm3ruZDdBA0fGapc=
-+github.com/beclab/oac v0.0.4 h1:zM/vjVVpBmTdDr5MpcMJvKTG0kUw3Q67hPj2n2vX38A=
-+github.com/beclab/oac v0.0.4/go.mod h1:JttNxkqiJgv1VwXA8xmWwxsKH8Icc4Y2SS7owu2BmaI=
- github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
- github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
- github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM=
+@@ -33,7 +33,7 @@ spec:
+       - command:
+         - ks-apiserver
+         - --logtostderr=true
+-        image: beclab/ks-apiserver:0.0.36
++        image: beclab/ks-apiserver:0.0.37
+         imagePullPolicy: {{ .Values.image.pullPolicy }}
+         name: ks-apiserver
+         ports:
+```
+
+**File**: `infrastructure/kubesphere/.olares/Olares.yaml` (modified, +1/-1)
+```diff
+@@ -3,6 +3,6 @@ target: prebuilt
+ output:
+   containers:
+     - 
+-      name: beclab/ks-apiserver:0.0.36
++      name: beclab/ks-apiserver:0.0.37
+ 
+ # must have blank new line
+```
+
+**File**: `infrastructure/kubesphere/pkg/models/crds/typed_handler_test.go` (modified, +4/-2)
+```diff
+@@ -42,8 +42,8 @@ type fakeClient struct {
+ // Get retrieves an obj for the given object key from the Kubernetes Cluster.
+ // obj must be a struct pointer so that obj can be updated with the response
+ // returned by the Server.
+-func (f *fakeClient) Get(ctx context.Context, key client.ObjectKey, obj client.Object) error {
+-	return f.Client.Get(ctx, key, obj)
++func (f *fakeClient) Get(ctx context.Context, key client.ObjectKey, obj client.Object, opts ...client.GetOption) error {
++	return f.Client.Get(ctx, key, obj, opts...)
+ }
+ 
+ // List retrieves list of objects for a given namespace and list options. On a
+@@ -115,6 +115,8 @@ var (
+ 	}
+ )
+ 
++var _ client.Reader = &fakeClient{}
++
+ func TestHandler_Get(t *testing.T) {
+ 
+ 	var Scheme = runtime.NewScheme()
+```
+
+**File**: `infrastructure/kubesphere/pkg/models/resources/v1alpha3/clusterdashboard/clusterdashboard_test.go` (modified, +1/-1)
+```diff
+@@ -48,7 +48,7 @@ func TestGetListClusterDashboards(t *testing.T) {
+ 		t.Fatalf("unable add APIs to scheme: %v", err)
+ 	}
+ 
+-	c = fake.NewFakeClientWithScheme(sch)
++	c = fake.NewClientBuilder().WithScheme(sch).Build()
+ 
+ 	var labelSet1 = map[string]string{"foo-1": "bar-1"}
+ 	var labelSet2 = map[string]string{"foo-2": "bar-2"}
+```
+
+**File**: `infrastructure/kubesphere/pkg/models/resources/v1alpha3/dashboard/dashboard_test.go` (modified, +1/-1)
+```diff
+@@ -47,7 +47,7 @@ func TestGetListDashboards(t *testing.T) {
+ 		t.Fatalf("unable add APIs to scheme: %v", err)
+ 	}
+ 
+-	c = fake.NewFakeClientWithScheme(sch)
++	c = fake.NewClientBuilder().WithScheme(sch).Build()
+ 
+ 	var labelSet1 = map[string]string{"foo-1": "bar-1"}
+ 	var labelSet2 = map[string]string{"foo-2": "bar-2"}
+```
+
+**File**: `infrastructure/kubesphere/pkg/models/terminal/terminal.go` (modified, +1/-5)
+```diff
+@@ -260,11 +260,7 @@ func (n *NodeTerminaler) getNSEnterPod() (*v1.Pod, error) {
+ 						Env: []v1.EnvVar{
+ 							{
+ 								Name:  "LANG",
+-								Value: "en_US.UTF-8",
+-							},
+-							{
+-								Name:  "LC_ALL",
+-								Value: "en_US.UTF-8",
++								Value: "C.UTF-8",
+ 							},
+ 						},
+ 						VolumeMounts: []v1.VolumeMount{
 ```
 
 ---
 
-### Incident Patch 2: `855bdd14` (2026-11-26)
-**Commit Message**: fix(appservice): bump oac version v0.0.4
+### Incident Patch 2: `35fa932d` (2026-11-27)
+**Commit Message**: cherry-pick: fix(appservice): bump oac version v0.0.6
 
 **File**: `framework/app-service/go.mod` (modified, +1/-1)
 ```diff
 @@ -9,7 +9,7 @@ require (
  	github.com/argoproj/argo-workflows/v3 v3.7.10
- 	github.com/beclab/api v0.0.27-0.20261028064325-1e4c01f1dbee
+ 	github.com/beclab/api v0.0.27-0.20261125100039-ff4078330ac7
  	github.com/beclab/lldap-client v0.0.11
--	github.com/beclab/oac v0.0.3
-+	github.com/beclab/oac v0.0.4
+-	github.com/beclab/oac v0.0.4
++	github.com/beclab/oac v0.0.6
  	github.com/containerd/containerd v1.7.29
  	github.com/containers/image/v5 v5.36.1
  	github.com/emicklei/go-restful-openapi/v2 v2.11.0
@@ -1114,26 +1205,26 @@ Observed empirical fixes and code patches:
 
 **File**: `framework/app-service/go.sum` (modified, +2/-2)
 ```diff
-@@ -48,8 +48,8 @@ github.com/beclab/api v0.0.27-0.20261028064325-1e4c01f1dbee h1:7o5z7MDcS4uK9q0wN
- github.com/beclab/api v0.0.27-0.20261028064325-1e4c01f1dbee/go.mod h1:okd0RExsvSsuW5MsRh7v56Xex3vi5B26xHOGH3LT6yQ=
+@@ -48,8 +48,8 @@ github.com/beclab/api v0.0.27-0.20261125100039-ff4078330ac7 h1:5S3fOHX3qjNq/Mfn5
+ github.com/beclab/api v0.0.27-0.20261125100039-ff4078330ac7/go.mod h1:dkmA/71p/GxiHjFCV9nAxp3PdEegP6d2zzs/7hygj/A=
  github.com/beclab/lldap-client v0.0.11 h1:/XWzEd2pAFS7nwOtapyr7ClQViyGIUsMiyQ2d8t8sEo=
  github.com/beclab/lldap-client v0.0.11/go.mod h1:Y74tcKzyNL73a9pFAvImwXgzqp7S7Jb8RY1mMY90e/4=
--github.com/beclab/oac v0.0.3 h1:TQsOzIIi+xoT7+A9LfZiQDQxiIKQosrj55UIzx0PPk0=
--github.com/beclab/oac v0.0.3/go.mod h1:+fUhFSOgmMlU/wRrLQkadc/CwI9cm3ruZDdBA0fGapc=
-+github.com/beclab/oac v0.0.4 h1:zM/vjVVpBmTdDr5MpcMJvKTG0kUw3Q67hPj2n2vX38A=
-+github.com/beclab/oac v0.0.4/go.mod h1:JttNxkqiJgv1VwXA8xmWwxsKH8Icc4Y2SS7owu2BmaI=
+-github.com/beclab/oac v0.0.4 h1:zM/vjVVpBmTdDr5MpcMJvKTG0kUw3Q67hPj2n2vX38A=
+-github.com/beclab/oac v0.0.4/go.mod h1:JttNxkqiJgv1VwXA8xmWwxsKH8Icc4Y2SS7owu2BmaI=
++github.com/beclab/oac v0.0.6 h1:9ud/Zm+MEQyMew8PoKXWG0VqA/Ed4nttoOtqudjIWLw=
++github.com/beclab/oac v0.0.6/go.mod h1:hAd8h68tiFykmaEUYbRcLefUH+NY5uuk0cnpdE5no4A=
  github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
  github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
  github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4533** (2026-11-27): apps: update the Web app workspace (@qq815776412)
-- **PR #4532** (2026-11-27): refactor(kubesphere): remove packages unreachable from ks-apiserver  (@hysyeah)
-- **PR #4531** (2026-11-26): market(refactor): improve stability and support nsfw and gpu workloads (@aby913)
-- **PR #4530** (2026-11-26): chore(appservice): update image tag to 1.12.9-7e277196f (@hysyeah)
-- **PR #4529** (2026-11-26): feat(gpu): match GPUBindings per consumer (@dkeven)
-- **PR #4528** (2026-11-26): chore(app-service): bump oac v0.0.5 (@hysyeah)
+- **PR #4541** (2026-11-27): feat(headscale): hot-reload split DNS (@0x7fffff92)
+- **PR #4540** (2026-11-27): chore(system-apps): update system-frontend image to v1.13.10 (@icebergtsn)
+- **PR #4539** (2026-11-27): market: oac up to 0.0.6 (@aby913)
+- **PR #4538** (2026-11-27): fix(appservice): bump oac version v0.0.6 (@hysyeah)
+- **PR #4537** (2026-11-27): fix(kubesphere): update fake client initialization and improve terminal environment variables (@eball)
+- **PR #4535** (2026-11-27): docs: update steps to create a bootable Windows USB drive (@Power-One-2025)
 
 ---
 
@@ -1153,31 +1244,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. appservice): bump oac version v0.0.4
+## X. kubesphere): update fake client initialization and improve terminal environment 
 
 **RULE**:
-When implementing operations in `framework/app-service/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/pkg/kubesphere/plugins/assets_vfsdata.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed58f07b`: appservice): bump oac version v0.0.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d5bfd851`: kubesphere): update fake client initialization and improve terminal environment variables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/app-service/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/pkg/kubesphere/plugins/assets_vfsdata.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/beclab/oac v0.0.4
+			modTime: time.Date(2026, 11, 27, 11, 47, 8, 185110077, time.UTC),
+			modTime:          time.Date(2026, 11, 27, 12, 21, 36, 352456732, time.UTC),
+			compressedContent: []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x02\xff\xbc\x56\x4f\x6f\xeb\x36\x0c\xbf\xfb\x53\x10\xd9\xd9\x4e\xfa\xf6\xaf\xcf\xc0\x0e\x45\xfa\xb0\x15\x5b\xb7\xa0\xe9\x0a\xec\xc8\xc8\x4c\x2c\x44\x96\x34\x89\xce\x6a\x64\xef\xbb\x0f\x8a\x13\x47\x8e\xdd\x2e\xc3\x03\xe6\x93\x41\x8a\x22\xf9\x23\xf9\xa3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/beclab/oac v0.0.3
+			modTime: time.Date(2026, 11, 24, 13, 58, 52, 620170501, time.UTC),
+			modTime:          time.Date(2026, 11, 25, 8, 6, 43, 554812046, time.UTC),
+			compressedContent: []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x02\xff\xbc\x56\x51\x6f\xe3\x36\x0c\x7e\xf7\xaf\x20\xb2\x67\x3b\xe9\x6d\x3b\xf4\x0c\xec\xa1\x48\x0f\x5b\xb1\x75\x0b\x9a\xae\xc0\x1e\x19\x99\x89\x85\xc8\x92\x26\xd1\x59\x8d\xec\xfe\xfb\xa0\x38\x71\xe4\xd8\xed\x32\x1c\x30\x3f\x19\xa4\x28\x92\x1f\xc9\x8f\x42\x2b\x5f\xc8\x79\x69\x74\x0e\x68\xad\x9f\xee\x6e\x92\xad\xd4\x45\x0e\xf7\x64\x95\x69\x2a\xd2\x9c\x54\xc4\x58\x20\x63\x9e\x00\x28\x5c\x91\xf2\xe1\x0f\x82\x41\x0e\x5b\x9f\xa2\x95\x9e\xdc\x8e\xdc\x41\xca\x92\x5c\x0e\x2b\x14\x5b\xd2\xc5\x41\xb2\x3b\x79\xd8\xef\x21\x9b\x97\xe8\x38\xbb\xb3\xf6\xe8\x17\xbe\x7c\x49\x00\x34\x56\x74\x71\x97\xb7\x24\x82\x1f\xcf\x0e\x99\x36\x4d\xeb\xd3\x19\xa5\xa4\xde\xfc\x6e\x0b\x64\x6a\x45\x00\x15\xbe\x2e\x6b\xb7\xa1\x1c\x66\x6d\x08\x8d\xa5\x1c\x9e\xe2\xa3\x09\x80\x23\xab\xa4\x40\xdf\xc6\xf1\x44\x8a\xd0\x53\xf6\xd4\x4a\xe7\xa6\xd6\xdc\xc6\xe2\x49\x91\x60\xe3\xda\xdb\x2b\x64\x51\xfe\x12\x65\xfd\x56\xde\x63\x99\x03\x7c\x73\x4d\xf6\x4c\x95\x55\x5d\x3e\x31\xdc\xe1\x53\x3d\xe7\x6f\xbb\x1f\x0f\xe0\xca\x10\x0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed58f07b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d5bfd851` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

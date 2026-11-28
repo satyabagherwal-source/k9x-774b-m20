@@ -13944,3 +13944,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `0c0198d2` | Multi-dimensional audit evidence | 2026-11-28T00:09:43.205Z |
 | `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `aff76541` | Multi-dimensional audit evidence | 2026-11-28T00:19:20.756Z |
 | `learn-github-kividbio-kividb` | `https://github.com/kividbio/kividb` | `59b4cf65` | Multi-dimensional audit evidence | 2026-11-28T00:19:32.022Z |
+| `learn-github-webrecorder-browsertrix-crawler` | `https://github.com/webrecorder/browsertrix-crawler` | `3c51cd79` | Multi-dimensional audit evidence | 2026-11-28T00:28:22.255Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `969702da` | Multi-dimensional audit evidence | 2026-11-28T00:28:27.972Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `9af8d525` | Multi-dimensional audit evidence | 2026-11-28T00:28:32.897Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T00:19:40.704Z",
+  "last_updated": "2026-11-28T00:28:41.589Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T00:19:39.168Z",
@@ -618,7 +618,7 @@
       "staged_for_review": 0
     },
     "webrecorder-browsertrix-crawler-learnings.md": {
-      "processed_at": "2026-11-12T01:12:31.461Z",
+      "processed_at": "2026-11-28T00:28:36.665Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -658,7 +658,7 @@
       "staged_for_review": 1
     },
     "beclab-olares-learnings.md": {
-      "processed_at": "2026-11-27T06:29:22.383Z",
+      "processed_at": "2026-11-28T00:28:39.058Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -823,7 +823,7 @@
       "staged_for_review": 1
     },
     "yugabyte-yugabyte-db-learnings.md": {
-      "processed_at": "2026-11-27T05:21:44.830Z",
+      "processed_at": "2026-11-28T00:28:40.227Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5163,
+  "total_dossiers_evaluated": 5166,
   "total_canonical_promoted": 587,
-  "total_staged_for_review": 3906
+  "total_staged_for_review": 3909
 }

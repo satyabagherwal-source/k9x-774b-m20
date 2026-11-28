@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T00:19:40.152Z",
-  "total_records": 2864,
+  "last_updated": "2026-11-28T00:28:41.143Z",
+  "total_records": 2866,
   "domains": {
     "A": {
       "total": 27,
@@ -1765,7 +1765,7 @@
       ]
     },
     "H": {
-      "total": 691,
+      "total": 693,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2457,7 +2457,9 @@
         "DOM-H-FD509F0F",
         "domain_intelligence-technical-construction-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learn",
         "domain_intelligence-technical-construction-intelligence-chroma-core-chroma-core-invariants",
-        "DOM-H-C23687A0"
+        "DOM-H-C23687A0",
+        "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-learnings-co"
       ]
     },
     "I": {
@@ -15248,8 +15250,8 @@
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "repository": "beclab/Olares",
-      "content_hash": "084d944c630f18a9eb3ff7dac90fb84d999e77ef7604f11dc086d663a0bfb2c3",
-      "created_at": "2026-11-27T06:29:18.440Z"
+      "content_hash": "a345296e3b2e463ff644eb4f9ff9d76eb71ce46c4d3e80c77563722bca1ac8c6",
+      "created_at": "2026-11-28T00:28:28.495Z"
     },
     "DOM-D-01385688": {
       "record_id": "DOM-D-01385688",
@@ -15308,8 +15310,8 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-learnings-technical-construction-intelligence-beclab-olares-learni.md",
       "repository": "beclab-olares-learnings",
-      "content_hash": "896f814397d03e5ddf86af3974b576f1eb2835c3e8beeeadd9e54e1872b292d1",
-      "created_at": "2026-11-27T06:29:23.093Z"
+      "content_hash": "079dad689aac749b84e74cd75e892244f8431a1d7b732cadce246a7e0cc0bc26",
+      "created_at": "2026-11-28T00:28:39.700Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv",
@@ -27815,8 +27817,8 @@
       "title": "Quality & Verification Intelligence: yugabyte/yugabyte-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-quality-verification-intelligence-yugabyte-yugabyte-db-core.md",
       "repository": "yugabyte/yugabyte-db",
-      "content_hash": "911c759cd5c282a807d7c49055271ef6d58bc4c894252f1b7c5bcc18386adfba",
-      "created_at": "2026-11-27T05:21:39.837Z"
+      "content_hash": "5878677100c167f385951bb2f8fd11ea1a4ef81cb45c175c5a19676bbe663680",
+      "created_at": "2026-11-28T00:28:33.432Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants",
@@ -31520,8 +31522,8 @@
       "title": "Quality & Verification Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-learnings-quality-verification-intelligence-yugabyte-yugaby.md",
       "repository": "yugabyte-yugabyte-db-learnings",
-      "content_hash": "aed4f062f768da0c07359563a41fa86302393e343d9e1c1bd53e28c8efb3be20",
-      "created_at": "2026-11-27T05:21:45.654Z"
+      "content_hash": "88912c5b6ff5ad18d3edeb99ddf0aea58ff2dded314834459eb13e7903aeca90",
+      "created_at": "2026-11-28T00:28:41.143Z"
     },
     "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -48402,6 +48404,24 @@
       "repository": "shifthackz-stable-diffusion-kmp-learnings",
       "content_hash": "2d6b78feec1df3a22d672a2a528847b2270c396c0fbfe8c4c9981e1505c50ea0",
       "created_at": "2026-11-27T23:30:45.127Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: webrecorder/browsertrix-crawler Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-browsertrix-crawler-technical-construction-intelligence-webrecorder-.md",
+      "repository": "webrecorder/browsertrix-crawler",
+      "content_hash": "997a3d157be5ef6ee881ea4bc7f0663df9520c92c6bfff139b0fd658c9cf7060",
+      "created_at": "2026-11-28T00:28:22.801Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-learnings-co": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-learnings-co",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: webrecorder-browsertrix-crawler-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-browsertrix-crawler-learnings-technical-construction-intelligence-we.md",
+      "repository": "webrecorder-browsertrix-crawler-learnings",
+      "content_hash": "409557c484536ad08445d7e8ad419382d4f90fd0a4cad8adf1fc67b432487148",
+      "created_at": "2026-11-28T00:28:38.516Z"
     }
   }
 }

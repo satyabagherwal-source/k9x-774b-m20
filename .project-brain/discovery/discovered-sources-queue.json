@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T00:19:36.719Z",
+  "updated_at": "2026-11-28T00:28:37.953Z",
   "stats": {
-    "total_discovered": 10637,
-    "approved_pending_harvest": 10096,
+    "total_discovered": 10650,
+    "approved_pending_harvest": 10109,
     "harvested_count": 0,
     "rejected_count": 541,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10105,
+      "COMMUNITY_AND_EXPERT": 10118,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -230254,6 +230254,292 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
         "fileName": "webrecorder-pywb-learnings.md"
+      }
+    },
+    "SRC-8081BC55A223": {
+      "id": "SRC-8081BC55A223",
+      "url": "https://registry.yarnpkg.com/@nodable/entities/-/entities-2.1.1.tgz",
+      "title": "https://registry.yarnpkg.com/@nodable/entities/-/entities-2.1.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:36.881Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-FCEDC29F5D26": {
+      "id": "SRC-FCEDC29F5D26",
+      "url": "https://registry.yarnpkg.com/@nodable/entities/-/entities-3.1.0.tgz",
+      "title": "https://registry.yarnpkg.com/@nodable/entities/-/entities-3.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:36.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-D44DA106E0FE": {
+      "id": "SRC-D44DA106E0FE",
+      "url": "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz",
+      "title": "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:37.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-FFE04A9E52F8": {
+      "id": "SRC-FFE04A9E52F8",
+      "url": "https://registry.yarnpkg.com/@webrecorder/wabac/-/wabac-2.27.4.tgz",
+      "title": "https://registry.yarnpkg.com/@webrecorder/wabac/-/wabac-2.27.4.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:37.143Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-0E7848665493": {
+      "id": "SRC-0E7848665493",
+      "url": "https://registry.yarnpkg.com/@webrecorder/wabac/-/wabac-2.28.0.tgz",
+      "title": "https://registry.yarnpkg.com/@webrecorder/wabac/-/wabac-2.28.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:37.226Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-CC3F403717B3": {
+      "id": "SRC-CC3F403717B3",
+      "url": "https://registry.yarnpkg.com/@webrecorder/wombat/-/wombat-3.11.0.tgz",
+      "title": "https://registry.yarnpkg.com/@webrecorder/wombat/-/wombat-3.11.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:37.319Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-52511262BD9A": {
+      "id": "SRC-52511262BD9A",
+      "url": "https://registry.yarnpkg.com/@webrecorder/wombat/-/wombat-3.11.2.tgz",
+      "title": "https://registry.yarnpkg.com/@webrecorder/wombat/-/wombat-3.11.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:37.411Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-AEF94235F415": {
+      "id": "SRC-AEF94235F415",
+      "url": "https://registry.yarnpkg.com/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
+      "title": "https://registry.yarnpkg.com/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:37.493Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-B05D4121E1F7": {
+      "id": "SRC-B05D4121E1F7",
+      "url": "https://registry.yarnpkg.com/fast-xml-builder/-/fast-xml-builder-1.3.2.tgz",
+      "title": "https://registry.yarnpkg.com/fast-xml-builder/-/fast-xml-builder-1.3.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:37.579Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-99F4037BC62F": {
+      "id": "SRC-99F4037BC62F",
+      "url": "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-5.11.2.tgz",
+      "title": "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-5.11.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:37.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-FDF4618E8FF7": {
+      "id": "SRC-FDF4618E8FF7",
+      "url": "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-5.12.1.tgz",
+      "title": "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-5.12.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:37.757Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-6C34FCB56F97": {
+      "id": "SRC-6C34FCB56F97",
+      "url": "https://registry.yarnpkg.com/is-unsafe/-/is-unsafe-2.0.2.tgz",
+      "title": "https://registry.yarnpkg.com/is-unsafe/-/is-unsafe-2.0.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:37.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
+      }
+    },
+    "SRC-27E8ED0F24E8": {
+      "id": "SRC-27E8ED0F24E8",
+      "url": "https://registry.yarnpkg.com/is-unsafe/-/is-unsafe-2.0.3.tgz",
+      "title": "https://registry.yarnpkg.com/is-unsafe/-/is-unsafe-2.0.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T00:28:37.953Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
+        "fileName": "webrecorder-browsertrix-crawler-learnings.md"
       }
     }
   }

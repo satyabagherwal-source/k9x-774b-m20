@@ -4,22 +4,22 @@
 {
   "source_repository": "yugabyte/yugabyte-db",
   "source_url": "https://github.com/yugabyte/yugabyte-db",
-  "source_version": "846c1e61",
+  "source_version": "9af8d525",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-27T05:21:39.636Z",
+  "timestamp": "2026-11-28T00:28:33.189Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-yugabyte-yugabyte-db",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db) (Revision: `846c1e61`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-27T05:21:39.636Z`  
+> **Provenance**: Harvested from [yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db) (Revision: `9af8d525`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-28T00:28:33.189Z`  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `yugabyte/yugabyte-db` (Commit: `846c1e61`)
+- **Target Repository**: `yugabyte/yugabyte-db` (Commit: `9af8d525`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T05:21:38.184Z  
+> **Harvest Timestamp**: 2026-11-28T00:28:31.533Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10678 stars
+- **Stars / Engagement**: 10680 stars
 
 ---
 
@@ -2256,14 +2256,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #39470** (2026-11-27): **[PLAT-24179] YBA: Fix Show Slow Queries in the node Actions menu**
-  *Symptoms*: ## Summary  - Show Slow Queries in a node's Actions menu did nothing: since PLAT-23458, `handleSlowQueryClick` reads `this.props`, but it was never bound, so clicking threw `TypeError: Cannot read properties of undefined (reading 'props')`. - Bind it in the `NodeAction` constructor, as `handleLiveQueryClick` already is.  ## Test plan  - [x] `NodeAction.test.jsx` (new): calls `handleLiveQueryClick` and `handleSlowQueryClick` unbound, as the Actions menu does.   - Show Slow Queries navigates to `/universes/<uuid>/monitoring/queries?tab=slow-queries`; Show Live Queries navigates there with `tab=live-queries` and the node filter.   - With the bind removed, the Show Slow Queries test fails with the reported `TypeError`. - [x] eslint and prettier pass on `NodeAction.jsx` and `NodeAction.test.jsx`. 
-  **Post-Mortem & Fix Analysis**:
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/39470) <!-- Reviewable:end --> 
-  > AgentK has started reviewing this pull request — findings will be posted here shortly.  Pushes are not reviewed automatically. Comment `/agentk review` to ask for another pass — but please only after substantial changes, not on every small push, and not for a push that just addresses the review comments.
+- **Issue #39557** (2026-11-27): **[BACKPORT 2025.2][#39267] DocDB: Give each pg_vector_index test binary its own fixtures**
+  *Symptoms*: ## Summary  After the split of `pg_vector_index-test.cc` (#38340), `PgVectorIndexTest` and `PgVectorIndexColocationOnlyTest` stayed in `pg_vector_index_test_base.h` and were instantiated in several binaries, each defining only some of the fixture's scenario methods. Each binary now defines its own fixtures with only the scenarios it runs: - `pg_vector_index-test`: `PgVectorIndexTest`. - `pg_vector_index_bootstrap-test`: `PgVectorIndexBootstrapTest`. - `pg_vector_index_snapshot-test`: `PgVectorIndexSnapshotTest` and `PgVectorIndexColocationOnlyTest`. - `pg_vector_index_clone-test`: `PgVectorIndexCloneTest`, which takes over the clone helpers from the test base library.  Tests of the new fixtures are renamed accordingly. _automated · Claude Code (claude-opus-5-5)_  Original commit: c064bc802d95656b9b004c43856f58e4ba64cb90 / #39275  ## Test plan  - [x] All 8 binaries build (debug, clang21) and list 758 instances; no fixture is in more than one binary. - [x] One test per changed fixture, e.g. `./yb_build.sh debug --cxx-test pg_vector_index_clone-test --gtest_filter 'PgVectorIndexCloneTest.CloneKeepsUnflushedVectorIndexRows/Colocated'` - [ ] Jenkins runs the full suites. 
 
-- **Issue #39452** (2026-11-27): **[BACKPORT 2025.2][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424)**
-  *Symptoms*: ## Summary  `TestRollbackToSavepointAfterStaleVerificationTaskFails`, added in 813b110c31/#37959, times out in about 25-40% of release runs. It times out waiting for the stale verification task of the rolled-back ALTER to end.  That task fails only if it polls while conn2's ALTER is the transaction modifying the table. Its first poll is delayed by `ysql_transaction_bg_task_wait_ms` (200ms), and an autocommit ALTER on conn2 can set and clear the table's verifier state within that delay. In a failing CI log, conn2's state lived 66ms, entirely inside the stale task's initial delay. The task then sees no other transaction on the table and keeps polling the outer transaction, which the test keeps open on purpose, until the 30s wait times out.  The test now keeps conn2's ALTER in an open transaction until the outer transaction reaches `kDdlPostProcessingFailed`, then commits it. It waits on that state instead of on the table having no verification tasks, because conn2's own task now stays on the table until conn2 commits. Test-only change.  Original commit: bfe7a66c0cc9fbf87b6d624d6ab90dd669b00de3 / #39424  ## Test plan  - [x] `bool/PgDdlSavepointMiniClusterTest.TestRollbackToSavepointAfterStaleVerificationTaskFails/1` passes 10/10 and `/0` passes 5/5 (debug) - [x] With the `YsqlRollbackDocdbSchemaToSubTxn` fix from 813b110c31 reverted, `/1` fails 3/3 (FATAL at `ROLLBACK TO SAVEPOINT b`: the rollback was not applied to `test2`), so the test still covers #37683  Jenkins: test regex:
+- **Issue #39550** (2026-11-27): **[BACKPORT 2026.2][#39414] CDC: Flush the pg_class catalog cache on a table DDL record in the walsender (#39519)**
+  *Symptoms*: ## Summary  With `ysql_yb_enable_replication_slot_transactional_ddl` on, a `test_decoding` slot printed the old schema name after `ALTER TABLE ... SET SCHEMA` in a transaction that wrote the table before the move. The wrong name appeared for the rows after the move and for every later transaction on the table. PostgreSQL, `pgoutput` and `wal2json` print the new name.  `test_decoding` takes the schema from `get_rel_namespace()`, a pg_class catalog cache lookup. On a DDL record, `ReorderBufferProcessTXN` only invalidated the relcache (`YBCInvalidateCachesForHistoricalReadContext`), so the pg_class row cached for the change before the DDL kept the old `relnamespace`. `pgoutput` and `wal2json` read the namespace from the relcache, so they were not affected.  Fix: on a DDL record that has a table, flush the pg_class catalog cache (`CatalogCacheFlushCatalog(RelationRelationId)`). The fix for #38981 already does this for `pg_namespace` on a DDL record without a table.  Original commit: 957732998e023826c39144d48e5cb604c9031137 / #39519  ## Test plan  New test, mirroring the issue's reproducer (adds a `RENAME TO` after the `SET SCHEMA`, plus a later transaction):  - [x] `./yb_build.sh fastdebug --java-test 'org.yb.pgsql.TestPgReplicationSlotWithTxnDdl#setSchemaAfterInsertInsideTransactionWithTestDecoding'`: passes. Without the C change it fails with `public.t2` for rows 2 and 3, as reported in the issue.  Regression:  - [x] `./yb_build.sh fastdebug --java-test 'org.yb.pgsql.TestPgRepl
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2280,430 +2277,595 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b53522d` (2026-11-26)
-**Commit Message**: [#33147] YSQL: Disable Read Committed isolation by default in release builds (#39340)
+### Incident Patch 1: `14a19dae` (2026-11-27)
+**Commit Message**: [PLAT-22752] YBA: Earlyoom can't lock its memory on YBA-provisioned nodes (#38651)
 
-## Summary
+**Summary**
+Previously we raised DefaultLimitMEMLOCK to 50M in systemd's system.conf
+and user.conf.
+But YNP also sets * - memlock 64 in /etc/security/limits.conf.
+earlyoom runs under the yugabyte user's systemd, which goes through PAM,
+so pam_limits caps it at 64 KiB and the 50M never applies.
 
-Release builds have defaulted `yb_enable_read_committed_isolation` to
-true since 1e1e6d58262. A cluster that upgrades from a release where the
-default was false, and never set the flag, would silently move from the
-REPEATABLE READ mapping to true READ COMMITTED.
+Current diff changes the limit for memlock to be 50M as well. That is a
+best effort, it may be not completed (if limits already has different
+value), but earlyoom can still work without memlock (although not as
+effective)
 
-This swaps the build-type default: false in release builds, true in
-debug builds. The 2025.2 and 2026.1 branches already ship this way
-(#31686). New clusters still get Read Committed, because YBA and
-yugabyted set the flag explicitly.
-
-The default lives in two places that must agree, and both are changed:
-`kEnableReadCommitted` in `pggate_flags.cc`, and the fallback in
-`YBIsReadCommittedSupported()` in `pg_yb_utils.c`, which postgres uses
-when the tserver does not pass the flag.
-
-Tests inherit the default, so release tests now run with Read Committed
-off and debug/asan/tsan tests with it on. The first CI run with only the
-default change showed three tests that depend on the old defaults:
-
-- `yb.orig.lock_status` (`TestPgRegressProc`): the `.out` expected file
-is the release variant and `_1`/`_2` are the debug variants. The "r
-
-**File**: `src/postgres/src/backend/utils/misc/pg_yb_utils.c` (modified, +2/-2)
+**File**: `managed/node-agent/resources/ynp/configs/config.j2` (modified, +3/-1)
 ```diff
-@@ -847,9 +847,9 @@ YBIsReadCommittedSupported()
- 	{
- 
- #ifdef NDEBUG
--		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
--#else
- 		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", false);
-+#else
-+		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
- #endif
- 	}
- 	return cached_value;
+@@ -129,7 +129,9 @@ core = unlimited
+ data = unlimited
+ fsize = unlimited
+ sigpending = 119934
+-memlock = 64
++# KiB. 51200 = 50 MiB, the same size as DefaultLimitMEMLOCK=50M. pam_limits
++# applies this hard cap to user@.service; 64 KiB left earlyoom unable to mlock.
++memlock = 51200
+ rss = unlimited
+ nofile = 1048576
+ msgqueue = 819200
 ```
 
-**File**: `src/postgres/src/test/regress/expected/yb.orig.lock_status.out` (modified, +14/-0)
+**File**: `managed/node-agent/resources/ynp/modules/provision/configure_os/templates/precheck.j2` (modified, +18/-0)
 ```diff
-@@ -144,6 +144,8 @@ SELECT true::bool FROM yb_lock_status('yb_lock_tests'::regclass, '10000000-2000-
- -- READ COMMITTED
- -- Basic insert
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
-+WARNING:  read committed isolation is disabled
-+DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- INSERT INTO yb_lock_tests VALUES (1, 1, 1, 'one', 1, 1);
- INSERT INTO yb_lock_tests VALUES (2, 2, 2, 'two', 2, 2);
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-@@ -175,6 +177,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- COMMIT;
- -- Basic Column Update
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
-+WARNING:  read committed isolation is disabled
-+DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- UPDATE yb_lock_tests SET v1 = 2 WHERE k1 = 1 AND k2 = 1;
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
-@@ -195,6 +199,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- ABORT;
- -- Basic primary key update
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
-+WARNING:  read committed isolation is disabled
-+DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- UPDATE yb_lock_tests SET r1 = 2 WHERE k1 = 1 AND k2 = 1;
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
-@@ -220,6 +226,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+@@ -1,8 +1,12 @@
+ is_cloud={{ is_cloud | default(false) }}
  
- ABORT;
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
-+WARNING:  read committed isolation is disabled
-+DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- UPDATE yb_lock_tests SET k2 = 2 WHERE k1 = 1 AND k2 = 1;
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
-@@ -247,6 +255,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- ABORT;
- -- SELECT FOR SHARE
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
-+WARNING:  read committed isolation is disabled
-+DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- SELECT * FROM yb_lock_tests FOR SHARE;
-  k1 | k2 | r1 | r2  | v1 | v2 
- ----+----+----+-----+----+----
-@@ -275,6 +285,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- COMMIT;
- -- SELECT FOR KEY SHARE
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
-+WARNING:  read committed isolation is disabled
-+DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- SELECT * FROM yb_lock_tests FOR KEY SHARE;
-  k1 | k2 | r1 | r2  | v1 | v2 
- ----+----+----+-----+----+----
-@@ -303,6 +315,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- COMMIT;
- -- SELECT FOR UPDATE
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
-+WARNING:  read committed isolation is disabled
-+DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- SELECT * FROM yb_lock_tests FOR UPDATE;
-  k1 | k2 | r1 | r2  | v1 | v2 
- ----+----+----+-----+----+----
++# check_ulimit RESOURCE EXPECTED [FAIL_BELOW]
++# With FAIL_BELOW, a value below EXPECTED but at least FAIL_BELOW is reported as WARN rather
++# than FAIL.
+ check_ulimit() {
+     local resource=$1
+     local expected_value=$2
++    local fail_below=$3
+     local current_value
+     local flag
+ 
+@@ -44,6 +48,11 @@ check_ulimit() {
+     if [ "$current_value" -ge "$expected_value" ]; then
+         echo "[PASS] $resource is set to $current_value (expected: $expected_value or higher)"
+         add_result "$resource" "PASS" "$resource is set to $current_value (expected: $expected_value or higher)"
++    elif [ -n "$fail_below" ] && [ "$current_value" -ge "$fail_below" ]; then
++        local msg="$resource is set to $current_value (expected: $expected_value or higher)."
++        msg+=" Re-run node-agent-provision.sh to raise it."
++        echo "[WARN] $msg"
++        add_result "$resource" "WARN" "$msg"
+     else
+         echo "[FAIL] $resource is set to $current_value (expected: $expected_value or higher)"
+         add_result "$resource" "FAIL" "$resource is set to $current_value (expected: $expected_value or higher)"
+@@ -83,7 +92,16 @@ verify_sysctl() {
+ # Verify ulimit settings
+ {% if is_preflight_check %}
+ {% for key in limits %}
++{% if key == 'memlock' %}
++# The standalone preflight runs inside the node agent and sees the agent's memlock. Nodes
++# provisioned when limits.conf had "* - memlock 64" keep that limit until they are re-provisioned,
++# and the node agent cannot raise it as it is not root. Only earlyoom needs the higher value, so a
++# value at the previous requirement (64) only warns and does not fail universe creation or adding
++# a node.
++check_ulimit "{{ key }}" "{{ limits[key] }}" 64
++{% else %}
+ check_ulimit "{{ key }}" "{{ limits[key] }}"
++{% endif %}
+ {% endfor %}
+ {% else %}
+ # Right after provisioning, this shell predates the limits.conf changes, which only apply to new
 ```
 
-**File**: `src/postgres/src/test/regress/expected/yb.orig.lock_status_1.out` (modified, +0/-14)
+**File**: `managed/node-agent/resources/ynp/modules/provision/configure_os/templates/run.j2` (modified, +91/-4)
 ```diff
-@@ -144,8 +144,6 @@ SELECT true::bool FROM yb_lock_status('yb_lock_tests'::regclass, '10000000-2000-
- -- READ COMMITTED
- -- Basic insert
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- INSERT INTO yb_lock_tests VALUES (1, 1, 1, 'one', 1, 1);
- INSERT INTO yb_lock_tests VALUES (2, 2, 2, 'two', 2, 2);
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-@@ -187,8 +185,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- COMMIT;
- -- Basic Column Update
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- UPDATE yb_lock_tests SET v1 = 2 WHERE k1 = 1 AND k2 = 1;
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
-@@ -209,8 +205,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- ABORT;
- -- Basic primary key update
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- UPDATE yb_lock_tests SET r1 = 2 WHERE k1 = 1 AND k2 = 1;
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
-@@ -239,8 +233,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+@@ -260,14 +260,96 @@ systemctl restart systemd-journald
+ echo "systemd-journald restarted successfully."
  
- ABORT;
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- UPDATE yb_lock_tests SET k2 = 2 WHERE k1 = 1 AND k2 = 1;
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
-@@ -273,8 +265,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- ABORT;
- -- SELECT FOR SHARE
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- SELECT * FROM yb_lock_tests FOR SHARE;
-  k1 | k2 | r1 | r2  | v1 | v2 
- ----+----+----+-----+----+----
-@@ -303,8 +293,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- COMMIT;
- -- SELECT FOR KEY SHARE
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- SELECT * FROM yb_lock_tests FOR KEY SHARE;
-  k1 | k2 | r1 | r2  | v1 | v2 
- ----+----+----+-----+----+----
-@@ -333,8 +321,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- COMMIT;
- -- SELECT FOR UPDATE
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- SELECT * FROM yb_lock_tests FOR UPDATE;
-  k1 | k2 | r1 | r2  | v1 | v2 
- ----+----+----+-----+----+----
-```
-
-**File**: `src/postgres/src/test/regress/expected/yb.orig.lock_status_2.out` (modified, +0/-14)
-```diff
-@@ -144,8 +144,6 @@ SELECT true::bool FROM yb_lock_status('yb_lock_tests'::regclass, '10000000-2000-
- -- READ COMMITTED
- -- Basic insert
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- INSERT INTO yb_lock_tests VALUES (1, 1, 1, 'one', 1, 1);
- INSERT INTO yb_lock_tests VALUES (2, 2, 2, 'two', 2, 2);
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-@@ -187,8 +185,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- COMMIT;
- -- Basic Column Update
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- UPDATE yb_lock_tests SET v1 = 2 WHERE k1 = 1 AND k2 = 1;
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
-@@ -209,8 +205,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- ABORT;
- -- Basic primary key update
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- UPDATE yb_lock_tests SET r1 = 2 WHERE k1 = 1 AND k2 = 1;
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
-@@ -239,8 +233,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ # For earlyoom MEMLOCK requirement
++# The hard cap comes from pam_limits.
++# this default is what the user manager sets on the service once it is allowed to.
++memlock_default="50M"
++memlock_bytes=$((50 * 1024 * 1024))
+ if ! grep -q "^DefaultLimitMEMLOCK=" /etc/systemd/system.conf; then
+-    echo 'DefaultLimitMEMLOCK=50M' | tee -a /etc/systemd/system.conf
++    echo "DefaultLimitMEMLOCK=${memlock_default}" | tee -a /etc/systemd/system.conf
+ fi
+ if ! grep -q "^DefaultLimitMEMLOCK=" /etc/systemd/user.conf; then
+-    echo 'DefaultLimitMEMLOCK=50M' | tee -a /etc/systemd/user.conf
++    echo "DefaultLimitMEMLOCK=${memlock_default}" | tee -a /etc/systemd/user.conf
+ fi
+ chmod 644 /etc/systemd/system.conf /etc/systemd/user.conf
  
- ABORT;
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- UPDATE yb_lock_tests SET k2 = 2 WHERE k1 = 1 AND k2 = 1;
- SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
-  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
-@@ -273,8 +265,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- ABORT;
- -- SELECT FOR SHARE
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- SELECT * FROM yb_lock_tests FOR SHARE;
-  k1 | k2 | r1 | r2  | v1 | v2 
- ----+----+----+-----+----+----
-@@ -303,8 +293,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- COMMIT;
- -- SELECT FOR KEY SHARE
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- SELECT * FROM yb_lock_tests FOR KEY SHARE;
-  k1 | k2 | r1 | r2  | v1 | v2 
- ----+----+----+-----+----+----
-@@ -333,8 +321,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
- COMMIT;
- -- SELECT FOR UPDATE
- BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
--WARNING:  read committed isolation is disabled
--DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
- SELECT * FROM yb_lock_tests FOR UPDATE;
-  k1 | k2 | r1 | r2  | v1 | v2 
- ----+----+----+-----+----+----
-```
-
-**File**: `src/yb/yql/pggate/pggate_flags.cc` (modified, +2/-2)
-```diff
-@@ -163,9 +163,9 @@ DEFINE_NON_RUNTIME_uint32(yb_max_recursion_depth, 2000,
-     "for regex functions. ");
- 
- #ifdef NDEBUG
--constexpr bool kEnableReadCommitted = true;
--#else
- constexpr bool kEnableReadCommitted = false;
-+#else
-+constexpr bool kEnableReadCommitted = true;
- #endif
- DEFINE_NON_RUNTIME_bool(yb_enable_read_committed_isolation, kEnableReadCommitted,
-     "Defines how READ COMMITTED (which is our default SQL-layer isolation) and READ UNCOMMITTED "
-```
-
-**File**: `src/yb/yql/pgwrapper/pg_concurrent_ddls-test.cc` (modified, +4/-0)
-```diff
-@@ -570,6 +570,10 @@ class PgConcurrentCreateOrReplaceCrashTest : public LibPqTestBase {
-     // stale-syscache race window, so it must be disabled to reproduce.
-     ToggleDDLMode(opts->extra_tserver_flags, /* use_legacy = */ true);
-     ToggleDDLMode(opts->extra_master_flags, /* use_legacy = */ true);
-+    // TODO(#39366): With Read Committed on, debug builds hit an unrelated assertion in
-+    // AtEOXact_RelationCache. Remove this once that is fixed.
-+    opts->extra_tserver_flags.push_back("--yb_enable_read_committed_isolation=false");
-+    opts->extra_master_flags.push_back("--yb_enable_read_committed_isolation=false");
-   }
- 
-   static bool IsBackendCrash(const Status& status) {
-```
-
-**File**: `src/yb/yql/pgwrapper/pg_hint_table-test.cc` (modified, +12/-1)
-```diff
-@@ -166,7 +166,18 @@ TEST_F(PgHintTableTest, ForceBatchedNestedLoop) {
-   ASSERT_STR_EQ("Hash Join", ASSERT_RESULT(ExecuteExplainAndGetJoinType(&conn1, explain_query)));
- }
- 
--TEST_F(PgHintTableTest, SimpleConcurrencyTest) {
-+class PgHintTableTestReadCommitted : public PgHintTableTest {
-+ public:
-+  void UpdateMiniClusterOptions(ExternalMiniClusterOptions* options) override {
-+    PgHintTableTest::UpdateMiniClusterOptions(options);
-+    // TODO(#39367): Without Read Committed isolation, concurrent updates of a hint fail with
-+    // "could not serialize access due to concurrent update" when transactional DDL is on.
-+    options->extra_tserver_flags.push_back("--yb_enable_read_committed_isolation=true");
-+    options->extra_master_flags.push_back("--yb_enable_read_committed_isolation=true");
-+  }
-+};
++# Print the hard RLIMIT_MEMLOCK of the running user manager in bytes, or -1 for
++# unlimited. Fails if the manager has no main process.
++yb_user_manager_memlock() {
++  local pid
++  pid=$(systemctl show -p MainPID --value "user@$1.service")
++  [[ -n "$pid" && "$pid" != 0 && -r "/proc/${pid}/limits" ]] || return 1
++  awk '/^Max locked memory/ { print ($5 == "unlimited") ? -1 : $5 }' "/proc/${pid}/limits"
++}
 +
-+TEST_F_EX(PgHintTableTest, SimpleConcurrencyTest, PgHintTableTestReadCommitted) {
-   auto conn_explain = ASSERT_RESULT(ConnectWithHintTable());
-   // The planner refreshes the hint cache by scanning hint_plan.hints within the statement's read
-   // snapshot, so the concurrent hint updates below can force a read restart. EXPLAIN is not query
++# Best effort: make the yugabyte user manager apply the memlock default.
++# earlyoom works without the higher memlock (it only cannot lock its memory), so
++# if the limit cannot be applied, a warning is logged and the run goes on. The one
++# failure is a manager that was stopped and cannot be started again.
++# The manager cannot give its units more than the hard memlock pam gave it at
++# start, so it is restarted when that is too low. Restarting stops every
++# user-level unit (yb-node-agent, node_exporter, earlyoom), so it is done only
++# then; otherwise the manager is re-executed to re-read user.conf, which keeps
++# its units running. The manager is never restarted when this run is one of its
++# processes.
++restart_yb_user_manager_for_memlock() {
++  local yb_uid unit hard
++  local user_ctl
++  yb_uid=$(id -u {{ yb_user }})
++  unit="user@${yb_uid}.service"
++  user_ctl="XDG_RUNTIME_DIR=/run/user/${yb_uid} systemctl --user"
++  # Not running: the next start (linger or login) gets the new limits.
++  systemctl is-active --quiet "$unit" || return 0
++  if ! hard=$(yb_user_manager_memlock "$yb_uid"); then
++    echo "WARNING: cannot read the memlock limit of ${unit}; not restarting it."
++    return 0
++  fi
++  if [[ "$hard" == -1 || "$hard" -ge "$memlock_bytes" ]]; then
++    # Re-execute to re-read user.conf. Unlike a restart, this keeps units running.
++    if ! su - {{ yb_user }} -c "$user_ctl daemon-reexec"; then
++      echo "WARNING: daemon-reexec of ${unit} failed; user-level services may not" \
++        "get memlock ${memlock_default} until ${unit} restarts or the node reboots."
++      return 0
++    fi
++    echo "${unit} memlock is ${hard}; no restart needed."
++    return 0
++  fi
++  # Never stop the process tree this run belongs to.
++  if grep -q "/user@${yb_uid}\.service/" /proc/self/cgroup; then
++    echo "WARNING: provisioning runs under ${unit}; not restarting it. User-level" \
++      "services keep memlock ${hard} until ${unit} restarts or the node reboots."
++    return 0
++  fi
++  echo "${unit} memlock ${hard} is below ${memlock_bytes}; restarting it."
++  # Not systemctl restart: stop returns once the unit is inactive, which can be before its
++  # cgroup is removed, and a start then fails with "Failed to attach to cgroup ...: Device or
++  # resource busy". Same sequence as ConfigureRootCgroups.
++  systemctl stop "$unit" || true
++  for _ in $(seq 1 30); do
++    [[ -d "/sys/fs/cgroup/user.slice/user-${yb_uid}.slice/${unit}" ||
++      -d "/sys/fs/cgroup/systemd/user.slice/user-${yb_uid}.slice/${unit}" ]] || break
++    sleep 1
++  done
++  for attempt in $(seq 1 10); do
++    systemctl reset-failed "$unit" 2>/dev/null || true
++    systemctl start "$unit" || true
++    systemctl is-active --quiet "$unit" && break
++    echo "Waiting for ${unit} to start (attempt ${attempt})"
++    sleep 2
++  done
++  # Not best effort: every user-level service, including the node agent, is down without it.
++  if ! systemctl is-active --quiet "$unit"; then
++    echo "Failed to start ${unit} after stopping it to apply memlock"
++    exit 1
++  fi
++  hard=$(yb_user_manager_memlock "$yb_uid") || hard=0
++  if [[ "$hard" != -1 && "$hard" -lt "$memlock_bytes" ]]; then
++    echo "WARNING: ${unit} memlock is still ${hard} after restart (need" \
++      "${memlock_bytes}). Check the memlock entries in /etc/security/limits.conf" \
++      "and limits.d."
++  fi
++  return 0
++}
++
+ # Enable linger for user-level systemd services
+ {% if use_system_level_systemd == 'False' %}
+ yb_user_id=$(id -u {{ yb_user }})
+@@ -282,10 +364,10 @@ fi
+ if [[ "$platform_el_version" -ge 8 ]]; then
+     # Stop user systemd service
+     su - {{ yb_user }} -c "XDG_RUNTIME_DIR=$runtime_dir systemctl --user exit >/dev/null 2>&1" || true
+-    
++
+     stat
+```
+
+**File**: `managed/node-agent/ynp/module/provision/configureos/module_test.go` (added, +416/-0)
+```diff
+@@ -0,0 +1,416 @@
++// Copyright (c) YugabyteDB, Inc.
++
++package configureos
++
++import (
++	"context"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"regexp"
++	"strings"
++	"testing"
++)
++
++// Must match memlock_bytes in run.j2, the DefaultLimitMEMLOCK it writes (50M).
++const requiredMemlockBytes = "52428800"
++
++func modulesPath(t *testing.T) string {
++	t.Helper()
++	if projectDir := os.Getenv("PROJECT_DIR"); projectDir != "" {
++		return filepath.Join(projectDir, "resources", "ynp", "modules", "provision")
++	}
++	path, err := filepath.Abs(
++		filepath.Join("..", "..", "..", "..", "resources", "ynp", "modules", "provision"))
++	if err != nil {
++		t.Fatalf("resolve modules path: %v", err)
++	}
++	return path
++}
++
++// render renders the module's templates with the values config.j2 gives ConfigureOs, and checks
++// that both scripts are valid shell.
++func render(t *testing.T, systemLevel, isPreflightCheck bool) (run, precheck string) {
++	t.Helper()
++	useSystemLevel := "False"
++	if systemLevel {
++		useSystemLevel = "True"
++	}
++	values := map[string]any{
++		"use_system_level_systemd": useSystemLevel,
++		"is_preflight_check":       isPreflightCheck,
++		"is_cloud":                 "False",
++		"is_yb_prebuilt_image":     "False",
++		"os_family":                "RedHat",
++		"os_distribution":          "almalinux",
++		"fd_limit":                 "1048576",
++		"nproc_limit":              "64000",
++		"vm_swappiness":            "0",
++		"vm_max_map_count":         "262144",
++		"kernel_core_pattern":      "/home/yugabyte/cores/core_%p_%t_%E",
++		"yb_home_dir":              "/home/yugabyte",
++		"yb_user_home":             "/home/yugabyte",
++		"yb_user":                  "yugabyte",
++		"limits": map[string]any{
++			"memlock": "51200",
++			"nofile":  "1048576",
++		},
++	}
++	rendered, err := NewConfigureOs(modulesPath(t)).RenderTemplates(context.Background(), values)
++	if err != nil {
++		t.Fatalf("render templates: %v", err)
++	}
++	run = rendered.RenderedContent("run")
++	precheck = rendered.RenderedContent("precheck")
++	for name, script := range map[string]string{"run": run, "precheck": precheck} {
++		path := filepath.Join(t.TempDir(), name+".sh")
++		if err := os.WriteFile(path, []byte(script), 0o700); err != nil {
++			t.Fatalf("write %s: %v", path, err)
++		}
++		if out, err := exec.Command("bash", "-n", path).CombinedOutput(); err != nil {
++			t.Fatalf("rendered %s script has invalid shell syntax: %v\n%s", name, err, out)
++		}
++	}
++	return run, precheck
++}
++
++// shellFunc returns the definition of a top-level shell function in a rendered script, from its
++// "name() {" line to the closing "}" at the start of a line. The run script changes /etc, so the
++// tests only run the functions they cover.
++func shellFunc(t *testing.T, script, name string) string {
++	t.Helper()
++	start := strings.Index(script, "\n"+name+"() {\n")
++	if start < 0 {
++		t.Fatalf("function %s not found in rendered script", name)
++	}
++	start++
++	end := strings.Index(script[start:], "\n}\n")
++	if end < 0 {
++		t.Fatalf("end of function %s not found in rendered script", name)
++	}
++	return script[start : start+end+3]
++}
++
++func shellLine(t *testing.T, script, pattern string) string {
++	t.Helper()
++	line := regexp.MustCompile(pattern).FindString(script)
++	if line == "" {
++		t.Fatalf("no line matching %q in rendered script", pattern)
++	}
++	return line + "\n"
++}
++
++func writeFile(t *testing.T, path, content string, mode os.FileMode) {
++	t.Helper()
++	if err := os.WriteFile(path, []byte(content), mode); err != nil {
++		t.Fatalf("write %s: %v", path, err)
++	}
++}
++
++func readFile(t *testing.T, path string) string {
++	t.Helper()
++	data, err := os.ReadFile(path)
++	if err != nil && !os.IsNotExist(err) {
++		t.Fatalf("read %s: %v", path, err)
++	}
++	return string(data)
++}
++
++// The stand-in yugabyte user. It is not 1000 so that a developer's own user@1000.service, which
++// go test may run under, never matches.
++const ybUID = "4242"
++
++// userManagerEnv sets up stubs for the commands restart_yb_user_manager_for_memlock runs, in a
++// state directory:
++//   - active: present when user@<uid>.service is active.
++//   - memlock, memlock_after: the manager's hard memlock before and after a restart, in bytes or
++//     -1; a missing memlock file means it cannot be read.
++//   - start_fails: present to make every start fail.
++//   - reexec_fails: present to make the daemon-reexec fail.
++//   - cgroup: stands in for /proc/self/cgroup.
++//   - calls: the systemctl and su commands run, one per line.
++func userManagerEnv(t *testing.T) (stateDir string, env []string) {
++	t.Helper()
++	dir := t.TempDir()
++	stateDir = filepath.Join(dir, "state")
++	stubDir := filepath.Join(dir, "bin")
++	for _, d := range []string{stateDir, stubDir} {
++		if err := os.MkdirAll(d, 0o755); err != nil {
++			t.Fatalf("create %s: %v", d, err)
++		}
++	}
++	writeFile(t, filepath.Join(stubDir, "id"), "#!/bin/bash\necho "+ybUID+"\n", 0o755)
++	writeFile(t, filepath.Join(stubDir, "su"),
++		"#!/bin/bash\necho \"su $*\" >> \"$STATE_DIR/calls\"
 ```
 
 ---
 
-### Incident Patch 2: `815cf271` (2026-11-26)
-**Commit Message**: [#39325] DocDB: Fix TabletSplitITest.SplitOpApplyAfterLeaderChange early split parent deletion (#39326)
+### Incident Patch 2: `280fd390` (2026-11-27)
+**Commit Message**: [#32941] DocDB: Fix use-after-free in YCQL index updates on partition delete (#39498)
+
+Fixes #32941
+Supersedes #32944.
 
 ## Summary
 
-While a node is a follower, its `PeerMessageQueue` tracks only the local peer, so `all_applied_op_id` holds the node's own applied op id. After the node becomes leader, that stale value stays in place until every remote peer has responded. `TabletPeer::CanBeDeleted()` trusts that value, so it deleted the split parent before the paused replica had applied the split, and the test's `StartElection` loop then kept getting `TABLET_NOT_FOUND`. The fix resets `all_applied_op_id` to `OpId::Min()` in `SetLeaderMode()` and `SetupNewTrackedPeerUnlocked()`, and makes `GetAllAppliedOpId()` return `OpId::Min()` unless the queue is in `Mode::LEADER`.
+A YCQL `DELETE` that gives the hash key but no range key removes a whole
+partition in one write
+operation. On a table with a secondary index this read freed memory on
+the tablet server.
 
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
+```sql
+CREATE KEYSPACE IF NOT EXISTS test;
+USE test;
 
-## Test plan
+CREATE TABLE t (h INT, r INT, value INT, PRIMARY KEY ((h), r))
+  WITH transactions = { 'enabled' : true };
+CREATE INDEX idx ON t (value);
 
-./yb_build.sh fastdebug --gcc15 --cxx-test tablet-split-itest --gtest-filter TabletSplitITest.SplitOpApplyAfterLeaderChange -n 180 YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the fix, this 
+INSERT INTO t (h, r, value) VALUES (1, 1, 1);
+INSERT INTO t (h, r, value) VALUES (1, 2, 2);
 
-**File**: `src/yb/consensus/consensus_queue.cc` (modified, +5/-1)
+DELETE FROM t WHERE h = 1;   -- hash key given, range key omitted
+```
+
+**Cause**
+
+- `ApplyDelete()` calls `UpdateIndexes()` once for every row in the
+deleted partition.
+- Each call replaced `index_arena_`, which freed the previous arena.
+- `index_requests_` still held raw pointers to the index requests in the
+freed arenas.
+- `WriteQuery::UpdateQLIndexes()` reads those requests only after
+`Apply()` returns, so for a
+  partition of N rows it read N-1 freed requests.
+- Result: either the client got
+`Wrong Metadata Version. Other request entry schema version mismatch`,
+or the tablet server
+  
+
+**File**: `src/yb/docdb/cql_operation.cc` (modified, +9/-4)
 ```diff
-@@ -271,6 +271,9 @@ void PeerMessageQueue::SetLeaderMode(const OpId& committed_op_id,
-       << queue_state_.active_config->ShortDebugString();
-   queue_state_.majority_size_ = MajoritySize(CountVoters(*queue_state_.active_config));
-   queue_state_.mode = Mode::LEADER;
-+  // As a follower only the local peer is tracked, so all_applied_op_id holds the local applied op
-+  // id. Reset it until every remote peer has reported its applied op id.
-+  queue_state_.all_applied_op_id = OpId::Min();
- 
-   LOG_WITH_PREFIX_UNLOCKED(INFO) << "Queue going to LEADER mode. State: "
-       << queue_state_.ToString();
-@@ -326,6 +329,7 @@ PeerMessageQueue::TrackedPeer* PeerMessageQueue::SetupNewTrackedPeerUnlocked(
-   // We don't know how far back this peer is, so set the all replicated watermark to
-   // MinimumOpId. We'll advance it when we know how far along the peer is.
-   queue_state_.all_replicated_op_id = OpId::Min();
-+  queue_state_.all_applied_op_id = OpId::Min();
-   return tracked_peer_raw_ptr;
+@@ -982,6 +982,14 @@ Status QLWriteOperation::ApplyForRegularColumns(const QLColumnValueMsg& column_v
  }
  
-@@ -1806,7 +1810,7 @@ OpId PeerMessageQueue::GetAllReplicatedOpId() const {
+ Status QLWriteOperation::Apply(const DocOperationApplyData& data) {
++  // Index requests are allocated from index_arena_ and sent only after Apply() returns, so one
++  // arena has to serve every UpdateIndexes() call of this attempt.
++  index_requests_.clear();
++  if (update_indexes_) {
++    index_arena_ = SharedThreadSafeArena();
++    index_requests_.reserve(request_.update_index_ids().size() * 2);
++  }
++
+   data.doc_write_batch->SetDocReadContext(doc_read_context_);
  
- OpId PeerMessageQueue::GetAllAppliedOpId() const {
-   LockGuard lock(queue_lock_);
--  return queue_state_.all_applied_op_id;
-+  return queue_state_.mode == Mode::LEADER ? queue_state_.all_applied_op_id : OpId::Min();
+   QLTableRow existing_row;
+@@ -1470,10 +1478,7 @@ Status QLWriteOperation::UpdateIndexes(const QLTableRow& existing_row, const QLT
+   // index (one insert and one delete).
+   VLOG(2) << "Updating indexes, existing: " << existing_row.ToString() << ", new: "
+           << new_row.ToString();
+-  const auto& index_ids = request_.update_index_ids();
+-  index_arena_ = SharedThreadSafeArena();
+-  index_requests_.reserve(index_ids.size() * 2);
+-  for (const auto& index_id : index_ids) {
++  for (const auto& index_id : request_.update_index_ids()) {
+     const auto* index = VERIFY_RESULT(index_map_.FindIndex(index_id));
+     bool index_key_changed = false;
+     bool index_pred_new_row = true;
+```
+
+**File**: `src/yb/integration-tests/cql-index-test.cc` (modified, +57/-0)
+```diff
+@@ -678,6 +678,63 @@ TEST_F(CqlIndexTest, ConcurrentUpdate2Columns) {
+   TestConcurrentModify2Columns("UPDATE t SET $0 = ? WHERE key = ?");
  }
  
- OpId PeerMessageQueue::TEST_GetCommittedIndex() const {
++// A delete that gives the hash key but no range key removes every row of the partition in one
++// write operation, which has to produce one index delete per row for each index. Primary-key-only
++// indexes are maintained by the tablet server too in this case, so one of them is checked as well.
++TEST_F(CqlIndexTest, RangeDeleteWithIndex) {
++  constexpr auto kNumRows = 16;
++  constexpr auto kNamespace = "test";
++
++  ANNOTATE_UNPROTECTED_WRITE(FLAGS_allow_index_table_read_write) = true;
++
++  auto session = ASSERT_RESULT(EstablishSession(driver_.get()));
++  ASSERT_OK(session.ExecuteQuery(
++      "CREATE TABLE t (h INT, r INT, value INT, PRIMARY KEY ((h), r)) WITH "
++      "transactions = { 'enabled' : true }"));
++  const std::vector<std::string> indexes = {"value_idx", "pk_only_idx"};
++  ASSERT_OK(session.ExecuteQuery("CREATE INDEX value_idx ON t (value)"));
++  ASSERT_OK(session.ExecuteQuery("CREATE INDEX pk_only_idx ON t (r)"));
++  for (const auto& index : indexes) {
++    ASSERT_OK(client_->WaitUntilIndexPermissionsAtLeast(
++        client::YBTableName(YQL_DATABASE_CQL, kNamespace, "t"),
++        client::YBTableName(YQL_DATABASE_CQL, kNamespace, index),
++        IndexPermissions::INDEX_PERM_READ_WRITE_AND_DELETE));
++  }
++
++  // A second partition that must be left alone.
++  for (int h = 1; h <= 2; ++h) {
++    for (int r = 1; r <= kNumRows; ++r) {
++      ASSERT_OK(session.ExecuteQuery(
++          Format("INSERT INTO t (h, r, value) VALUES ($0, $1, $2)", h, r, h * 100 + r)));
++    }
++  }
++  for (const auto& index : indexes) {
++    ASSERT_EQ(
++        ASSERT_RESULT(session.FetchValue<int64_t>(Format("SELECT COUNT(*) FROM $0", index))),
++        2 * kNumRows);
++  }
++
++  ASSERT_OK(session.ExecuteQuery("DELETE FROM t WHERE h = 1"));
++
++  // Exactly the rows of the other partition must remain, in the table and in both indexes.
++  auto fetch_rows = [&session](const std::string& query) -> Result<std::vector<std::string>> {
++    auto rows = StringSplit(VERIFY_RESULT(session.ExecuteAndRenderToString(query)), ';');
++    std::sort(rows.begin(), rows.end());
++    return rows;
++  };
++  // An index table lists the columns it stores in the order of the indexed table.
++  std::vector<std::string> table_rows, pk_only_idx_rows;
++  for (int r = 1; r <= kNumRows; ++r) {
++    table_rows.push_back(Format("2,$0,$1", r, 200 + r));
++    pk_only_idx_rows.push_back(Format("2,$0", r));
++  }
++  std::sort(table_rows.begin(), table_rows.end());
++  std::sort(pk_only_idx_rows.begin(), pk_only_idx_rows.end());
++  ASSERT_EQ(ASSERT_RESULT(fetch_rows("SELECT h, r, value FROM t")), table_rows);
++  ASSERT_EQ(ASSERT_RESULT(fetch_rows("SELECT * FROM value_idx")), table_rows);
++  ASSERT_EQ(ASSERT_RESULT(fetch_rows("SELECT * FROM pk_only_idx")), pk_only_idx_rows);
++}
++
+ TEST_F(CqlIndexTest, SlowIndexResponse) {
+   constexpr auto kNumKeys = NonTsanVsTsan(3000, 1500);
+   constexpr auto kWriteBatchSize = NonTsanVsTsan(100, 30);
 ```
 
 ---
 
-### Incident Patch 3: `bfe7a66c` (2026-11-26)
-**Commit Message**: [#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424)
+### Incident Patch 3: `16b7a56f` (2026-11-27)
+**Commit Message**: [#39480] DocDB: Fix BackupTxnTest.CommittedTransactionNotLoadedAfterRestart (#39481)
 
 ## Summary
 
-`TestRollbackToSavepointAfterStaleVerificationTaskFails`, added in
-813b110c31/#37959, times out in about 25-40% of release runs. It times
-out waiting for the stale verification task of the rolled-back ALTER to
-end.
+The test had each restarted tserver's transaction loader sleep a fixed `kLoadDelay` through `TEST_inject_load_transaction_delay_ms`, and assumed tablet leaders would be elected before that sleep ended; when elections were slow (multi-second consensus-metadata fsyncs and vote timeouts), every loader had already finished, so CSI's failure was `loading_leaders == 0` ("Transactions loaded before the snapshot").
+`TransactionLoader` now waits in 10ms steps, re-reading the flag and checking `CheckForShutdown()`, so the test sets the delay to `std::numeric_limits<int32_t>::max()` before the restart and, once it has seen a leader still loading, lowers it so the loaders finish `kLoadDelay` after that check.
+Separately, `SnapshotTestUtil::WaitSnapshotInState` and `SnapshotTestUtil::GetRestorationState` now keep polling, with a 100ms sleep in the restoration poll, while the master leader is temporarily `ServiceUnavailable`, `LeaderHasNoLease` or `LeaderNotReadyToServe`; these failures showed up only in local TSAN runs, not in CSI.
 
-That task fails only if it polls while conn2's ALTER is the transaction
-modifying the table. Its first poll is delayed by
-`ysql_transaction_bg_task_wait_ms` (200ms), and an autocommit ALTER on
-conn2 can set and clear the table's verifier state within that delay. In
-a failing CI log, conn2's state lived 66ms, entirely inside the stale
-task's initial delay. The task then sees no other transaction on the
-table and keeps polling the outer transaction, which the test keeps open
-on purpose, until the 30s wait times out.
+Introduced by d4792fc3f32 ([#38933] DocDB: Wait for the transactio
 
-The test now keeps conn2's ALTER in an open transaction until the outer
-transaction reaches `kDdlPostProcessingFailed`, then commits it. It
-waits on that state instead of on the table having no verification
-tasks, because conn2's own task now stays on the table until conn2
-commits. Test-only change.
-
-## Test plan
-
-- [x]
-`bool/PgDdlSavepointMiniClusterTest.Te
-
-**File**: `src/yb/yql/pgwrapper/pg_ddl_transaction-test.cc` (modified, +10/-7)
+**File**: `src/yb/client/backup-txn-test.cc` (modified, +6/-1)
 ```diff
-@@ -1105,8 +1105,6 @@ TEST_P(PgDdlSavepointMiniClusterTest, TestRollbackToSavepointAfterStaleVerificat
-   ASSERT_OK(conn.ExecuteFormat("CREATE TABLE $0 (k INT PRIMARY KEY)", kTableName));
-   ASSERT_OK(conn.ExecuteFormat("CREATE TABLE $0 (k INT PRIMARY KEY)", kTableName2));
-   ASSERT_OK(conn.ExecuteFormat("INSERT INTO $0 VALUES (1), (2), (3)", kTableName2));
--  auto table_info = catalog_manager.GetTableInfo(
--      ASSERT_RESULT(GetTableIdByTableName(client.get(), kDatabase, kTableName)));
-   auto table2_info = catalog_manager.GetTableInfo(
-       ASSERT_RESULT(GetTableIdByTableName(client.get(), kDatabase, kTableName2)));
+@@ -654,8 +654,10 @@ void BackupTxnTest::TestCommittedTransactionNotLoadedAfterRestart(UsePitr use_pi
+   // So that participants get the transaction from the loader, not from WAL replay.
+   ASSERT_OK(cluster_->FlushTablets());
  
-@@ -1119,13 +1117,18 @@ TEST_P(PgDdlSavepointMiniClusterTest, TestRollbackToSavepointAfterStaleVerificat
-   const auto txn_id =
-       ASSERT_RESULT(FullyDecodeTransactionId(table2_info->LockForRead()->pb_transaction_id()));
++  // Hold the loaders until the leaders are checked, since elections can outlast kLoadDelay.
+   ANNOTATE_UNPROTECTED_WRITE(FLAGS_TEST_inject_load_transaction_delay_ms) =
+-      narrow_cast<int32_t>(ToMilliseconds(kLoadDelay));
++      std::numeric_limits<int32_t>::max();
++  const auto restart_start = CoarseMonoClock::Now();
+   ShutdownAllTServers(cluster_.get());
+   for (size_t i = 0; i != cluster_->num_tablet_servers(); ++i) {
+     ASSERT_OK(cluster_->mini_tablet_server(i)->Start(tserver::WaitTabletsBootstrapped::kFalse));
+@@ -670,6 +672,9 @@ void BackupTxnTest::TestCommittedTransactionNotLoadedAfterRestart(UsePitr use_pi
+     }
+   }
+   ASSERT_GT(loading_leaders, 0) << "Transactions loaded before the snapshot";
++  // The loaders finish kLoadDelay from now.
++  ANNOTATE_UNPROTECTED_WRITE(FLAGS_TEST_inject_load_transaction_delay_ms) = narrow_cast<int32_t>(
++      ToMilliseconds(CoarseMonoClock::Now() - restart_start + kLoadDelay));
  
-+  // The stale task of the first ALTER fails only if it polls while conn2's ALTER owns the table's
-+  // verifier state. Keep conn2's transaction open until then: an autocommit ALTER can begin and
-+  // finish within the task's initial ysql_transaction_bg_task_wait_ms delay.
-+  ASSERT_OK(conn2.Execute("BEGIN"));
-   ASSERT_OK(conn2.ExecuteFormat("ALTER TABLE $0 ADD COLUMN y INT", kTableName));
-   ASSERT_OK(WaitFor(
--      [&] { return !table_info->HasTasks(server::MonitoredTaskType::TableSchemaVerification); },
--      MonoDelta::FromSeconds(30), "Wait for the verification task of the first ALTER to end"));
--  ASSERT_EQ(
--      catalog_manager.TEST_GetYsqlDdlVerificationState(txn_id),
--      master::YsqlDdlVerificationState::kDdlPostProcessingFailed);
-+      [&] {
-+        return catalog_manager.TEST_GetYsqlDdlVerificationState(txn_id) ==
-+               master::YsqlDdlVerificationState::kDdlPostProcessingFailed;
-+      },
-+      MonoDelta::FromSeconds(30), "Wait for the verification task of the first ALTER to fail"));
-+  ASSERT_OK(conn2.Execute("COMMIT"));
+   // The coordinator resends APPLY within a second after the leader gets the snapshot request, so
+   // without the fix the leader submits the snapshot operation first.
+```
+
+**File**: `src/yb/client/snapshot_test_util.cc` (modified, +17/-2)
+```diff
+@@ -31,6 +31,16 @@ using namespace std::literals;
+ namespace yb {
+ namespace client {
  
-   ASSERT_OK(conn.Execute("ROLLBACK TO SAVEPOINT b"));
-   ASSERT_OK(conn.Execute(GetParam() ? "COMMIT" : "ROLLBACK"));
++namespace {
++
++// The master leader can briefly lose its lease or be re-elected on a slow host.
++bool IsMasterLeaderNotReady(const Status& status) {
++  return status.IsServiceUnavailable() || status.IsLeaderHasNoLease() ||
++         status.IsLeaderNotReadyToServe();
++}
++
++} // namespace
++
+ Result<master::SysSnapshotEntryPB::State> SnapshotTestUtil::SnapshotState(
+     const TxnSnapshotId& snapshot_id) {
+   auto snapshots = VERIFY_RESULT(ListSnapshots(snapshot_id));
+@@ -124,7 +134,11 @@ Status SnapshotTestUtil::WaitSnapshotInState(
+   master::SysSnapshotEntryPB::State last_state = master::SysSnapshotEntryPB::UNKNOWN;
+   auto status = WaitFor(
+       [this, &snapshot_id, state, &last_state]() -> Result<bool> {
+-        last_state = VERIFY_RESULT(SnapshotState(snapshot_id));
++        auto result = SnapshotState(snapshot_id);
++        if (!result.ok() && IsMasterLeaderNotReady(result.status())) {
++          return false;
++        }
++        last_state = VERIFY_RESULT(std::move(result));
+         return last_state == state;
+       },
+       duration* kTimeMultiplier, "Snapshot never reached state " + state_name);
+@@ -175,9 +189,10 @@ Result<master::SysSnapshotEntryPB_State> SnapshotTestUtil::GetRestorationState(
+       break;
+     }
+     auto status = StatusFromPB(resp.status());
+-    if (!status.IsServiceUnavailable()) {
++    if (!IsMasterLeaderNotReady(status)) {
+       return status;
+     }
++    SleepFor(100ms);
+   }
+   if (resp.restorations().size() != 1) {
+     return STATUS_FORMAT(RuntimeError, "Wrong number of restorations, one expected but $0 found",
+```
+
+**File**: `src/yb/tablet/transaction_loader.cc` (modified, +6/-2)
+```diff
+@@ -165,8 +165,12 @@ class TransactionLoader::Executor {
+       current_key_.Clear();
+       docdb::AppendTransactionKeyPrefix(id, &current_key_);
+       if (key.empty()) { // The key only contains a transaction id - it is metadata record.
+-        if (FLAGS_TEST_inject_load_transaction_delay_ms > 0) {
+-          std::this_thread::sleep_for(FLAGS_TEST_inject_load_transaction_delay_ms * 1ms);
++        // Re-reads the flag, so a test can change the delay while the loader waits.
++        for (auto start = std::chrono::steady_clock::now();
++             std::chrono::steady_clock::now() <
++                 start + FLAGS_TEST_inject_load_transaction_delay_ms * 1ms;) {
++          RETURN_NOT_OK(CheckForShutdown());
++          std::this_thread::sleep_for(10ms);
+         }
+         RETURN_NOT_OK(LoadTransaction(id));
+         ++loaded_transactions;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39470** (2026-11-27): [PLAT-24179] YBA: Fix Show Slow Queries in the node Actions menu (@100sarthak100)
-- **PR #39452** (2026-11-27): [BACKPORT 2025.2][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424) (@dr0pdb)
-- **PR #39451** (2026-11-27): [BACKPORT 2026.2][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424) (@dr0pdb)
-- **PR #39450** (2026-11-27): [BACKPORT 2026.1][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424) (@dr0pdb)
-- **PR #39440** (2026-11-26): [BACKPORT 2024.2][PLAT-20422] YBA: Install openapi-format once before formatting in parallel (@proff4eg)
-- **PR #39433** (2026-11-26): [BACKPORT 2026.2][#39047] YSQL: Flush pending writes before registering a catalog change (#39062) (@myang2021)
+- **PR #39557** (2026-11-27): [BACKPORT 2025.2][#39267] DocDB: Give each pg_vector_index test binary its own fixtures (@spolitov)
+- **PR #39550** (2026-11-27): [BACKPORT 2026.2][#39414] CDC: Flush the pg_class catalog cache on a table DDL record in the walsender (#39519) (@dr0pdb)
+- **PR #39549** (2026-11-27): [#39548] DocDB: Raise ht lease duration in QLTabletTest.LeaderHtLeaseRevocation to outlive slow re-elections (@csi-fix)
+- **PR #39534** (2026-11-27): [BACKPORT 2026.1.3][#32941] DocDB: Fix use-after-free in YCQL index updates on partition delete (#39498) (@GauravSingh-yb)
+- **PR #39533** (2026-11-27): [BACKPORT 2026.1][#32941] DocDB: Fix use-after-free in YCQL index updates on partition delete (#39498) (@GauravSingh-yb)
+- **PR #39532** (2026-11-27): [BACKPORT 2026.2][#32941] DocDB: Fix use-after-free in YCQL index updates on partition delete (#39498) (@GauravSingh-yb)
 
 ---
 
@@ -2723,33 +2885,33 @@ commits. Test-only change.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#33147] YSQL: Disable Read Committed isolation by default in release builds
+## X. [PLAT-22752] YBA: Earlyoom can't lock its memory on YBA-provisioned nodes
 
 **RULE**:
-When implementing operations in `src/postgres/src/backend/utils/misc/pg_yb_utils.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `managed/node-agent/resources/ynp/configs/config.j2`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b53522d`: [#33147] YSQL: Disable Read Committed isolation by default in release builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `14a19dae`: [PLAT-22752] YBA: Earlyoom can't lock its memory on YBA-provisioned nodes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/backend/utils/misc/pg_yb_utils.c`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/node-agent/resources/ynp/configs/config.j2`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-#else
-		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
+# KiB. 51200 = 50 MiB, the same size as DefaultLimitMEMLOCK=50M. pam_limits
+# applies this hard cap to user@.service; 64 KiB left earlyoom unable to mlock.
+memlock = 51200
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
-#else
+memlock = 64
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b53522d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `14a19dae` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

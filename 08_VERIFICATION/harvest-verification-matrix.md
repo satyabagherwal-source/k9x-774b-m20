@@ -13911,3 +13911,6 @@
 | `CYCLE-20261128-L8NR` | `2026-11-28T00:09:43.191Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10994` | Yes (`e7725e55...`) |
 | `CYCLE-20261128-XMAS` | `2026-11-28T00:19:20.740Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10995` | Yes (`e3846bca...`) |
 | `CYCLE-20261128-XUZT` | `2026-11-28T00:19:32.009Z` | `kividbio/kividb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10996` | Yes (`1bae154e...`) |
+| `CYCLE-20261128-984K` | `2026-11-28T00:28:22.244Z` | `webrecorder/browsertrix-crawler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10997` | Yes (`e85aa2c4...`) |
+| `CYCLE-20261128-9CJC` | `2026-11-28T00:28:27.960Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10998` | Yes (`d0488011...`) |
+| `CYCLE-20261128-9GC6` | `2026-11-28T00:28:32.886Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10999` | Yes (`376672c2...`) |

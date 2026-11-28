@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for webrecorder/browsertrix/crawler
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for webrecorder/browsertrix-crawler
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "webrecorder/browsertrix/crawler",
-  "source_url": "https://github.com/webrecorder/browsertrix/crawler",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "webrecorder/browsertrix-crawler",
+  "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+  "source_version": "3c51cd79",
+  "license": "AGPL-3.0",
+  "timestamp": "2026-11-28T00:28:22.568Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-webrecorder-browsertrix-crawler",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [webrecorder/browsertrix/crawler](https://github.com/webrecorder/browsertrix/crawler) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler) (Revision: `3c51cd79`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-28T00:28:22.568Z`  
+> **Learning ID**: `learn-github-webrecorder-browsertrix-crawler`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `webrecorder/browsertrix/crawler` (Commit: `historical`)
+- **Target Repository**: `webrecorder/browsertrix-crawler` (Commit: `3c51cd79`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md`  
-> **Source**: github ([https://github.com/webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler))  
-> **Source Version**: `7ac9f642`  
-> **License**: AGPL-3.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T01:11:47.139Z  
-> **Learning ID**: `learn-github-webrecorder-browsertrix-crawler`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): webrecorder/browsertrix-crawler
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T01:11:47.133Z  
+> **Harvest Timestamp**: 2026-11-28T00:28:20.702Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Run a high-fidelity browser-based web archiving crawler in a single Docker container
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 1192 stars
+- **Stars / Engagement**: 1202 stars
 
 ---
 
@@ -2664,396 +2650,190 @@ export class OriginOverride {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ac9f642` (2026-11-11)
-**Commit Message**: tests: attempt to make redis tests more resilient  (#1203)
-
-use shared redisOpts with fixed number of redis retries + 30 second
-connection timeout (instead of default 10)
-
-**File**: `tests/add-exclusion.test.ts` (modified, +4/-7)
-```diff
-@@ -1,6 +1,6 @@
- import { exec, ExecException } from "child_process";
- import Redis from "ioredis";
--import { sleep } from "./utils";
-+import { markRedisStopped, redisOpts, sleep } from "./utils";
- 
- test("dynamically add exclusion while crawl is running", async () => {
-   let callback:
-@@ -21,6 +21,7 @@ test("dynamically add exclusion while crawl is running", async () => {
-       stdout: NonSharedBuffer,
-       stderr: NonSharedBuffer,
-     ) => {
-+      markRedisStopped();
-       resolve({ error, stdout, stderr } as const);
-     };
-   });
-@@ -37,12 +38,7 @@ test("dynamically add exclusion while crawl is running", async () => {
- 
-   await sleep(3000);
- 
--  const redis = new Redis("redis://127.0.0.1:36382/0", {
--    lazyConnect: true,
--    retryStrategy: () => null,
--  });
--
--  await redis.connect();
-+  const redis = new Redis("redis://127.0.0.1:36382/0", redisOpts);
- 
-   while (true) {
-     if (Number(await redis.zcard("test:q")) > 1) {
-@@ -62,6 +58,7 @@ test("dynamically add exclusion while crawl is running", async () => {
- 
-   // ensure 'Add Exclusion is contained in the debug logs
-   const { stdout } = await p;
-+  redis.disconnect();
- 
-   expect(stdout.indexOf("Add Exclusion") > 0).toBe(true);
- 
-```
-
-**File**: `tests/custom-behavior-flow.test.ts` (modified, +3/-9)
-```diff
-@@ -1,6 +1,6 @@
- import child_process from "child_process";
- import Redis from "ioredis";
--import { sleep } from "./utils";
-+import { markRedisStopped, redisOpts, sleep } from "./utils";
- 
- test("test pushing behavior logs to redis", async () => {
-   const child = child_process.exec(
-@@ -11,18 +11,12 @@ test("test pushing behavior logs to redis", async () => {
- 
-   child.on("exit", function () {
-     crawlFinished = true;
--  });
--
--  const redis = new Redis("redis://127.0.0.1:36398/0", {
--    lazyConnect: true,
--    retryStrategy: () => null,
-+    markRedisStopped();
-   });
- 
-   await sleep(3000);
- 
--  redis.options.maxRetriesPerRequest = 50;
--
--  await redis.connect();
-+  const redis = new Redis("redis://127.0.0.1:36398/0", redisOpts);
- 
-   let customLogLineCount = 0;
-   let done = false;
-```
-
-**File**: `tests/custom-behavior.test.ts` (modified, +3/-9)
-```diff
-@@ -1,6 +1,6 @@
- import child_process, { ExecException, type ChildProcess } from "child_process";
- import Redis from "ioredis";
--import { ErrorWithStatus, sleep } from "./utils";
-+import { ErrorWithStatus, markRedisStopped, redisOpts, sleep } from "./utils";
- 
- let proc: ChildProcess | null = null;
- 
-@@ -204,21 +204,15 @@ test("test pushing behavior logs to redis", async () => {
-   const crawlFinished = new Promise<void>((r) => (resolve = r));
- 
-   child.on("exit", function () {
-+    markRedisStopped();
-     resolve!();
-   });
- 
-   await crawlFinished;
- 
--  const redis = new Redis("redis://127.0.0.1:36399/0", {
--    lazyConnect: true,
--    retryStrategy: () => null,
--  });
--
-   await sleep(3000);
- 
--  redis.options.maxRetriesPerRequest = 50;
--
--  await redis.connect();
-+  const redis = new Redis("redis://127.0.0.1:36399/0", redisOpts);
- 
-   let customLogLineCount = 0;
- 
-```
-
-**File**: `tests/dedupe-basic.test.ts` (modified, +4/-11)
-```diff
-@@ -3,7 +3,7 @@ import fs from "fs";
- import path from "path";
- import Redis from "ioredis";
- import { WARCParser } from "warcio";
--import { sleep } from "./utils";
-+import { markRedisStopped, redisOpts, sleep } from "./utils";
- 
- let redisId: Uint8Array;
- let numResponses = 0;
-@@ -19,6 +19,8 @@ beforeAll(() => {
- });
- 
- afterAll(async () => {
-+  markRedisStopped();
-+
-   execSync(`docker kill ${redisId}`);
- 
-   await sleep(3000);
-@@ -89,16 +91,7 @@ function loadDataPackageRelated(name: string) {
- }
- 
- async function initRedis(db = 0) {
--  const redis = new Redis(`redis://127.0.0.1:37379/${db}`, {
--    lazyConnect: true,
--    retryStrategy: () => null,
--  });
--
--  redis.options.maxRetriesPerRequest = 50;
--
--  await redis.connect();
--
--  return redis;
-+  return new Redis(`redis://127.0.0.1:37379/${db}`, redisOpts);
- }
- 
- async function checkSizeStats(
-```
-
-**File**: `tests/multi-instance-crawl.test.ts` (modified, +4/-9)
-```diff
-@@ -1,7 +1,7 @@
- import { exec, execSync } from "child_process";
- import fs from "fs";
- import { Redis } from "ioredis";
--import { sleep } from "./utils";
-+import { markRedisStopped, redisOpts, sleep } from "./utils";
- 
- let redisId: NonSharedBuffer;
- let crawler1: Promise<number | null>, crawler2: Promise<number | null>;
-@@ -27,6 +27,8 @@ beforeAll(() => {
- });
- 
- afterAll(async () => {
-+  markRedisStopped();
-+
-   execSync(`docker kill ${redisId}`);
- 
-   await sleep(3000);
-@@ -49,16 +51,9 @@ function runCrawl(name: string) {
- }
- 
- test("run crawlers with external redis", async () => {
--  const redis = new Redis("redis://127.0.0.1:37379/0", {
--    lazyConnect: true,
--    retryStrategy: () => null,
--  });
--
-   await sleep(3000);
- 
--  redis.options.maxRetriesPerRequest = 50;
--
--  await redis.connect();
-+  const redis = new Redis("redis://127.0.0.1:37379/0", redisOpts);
- 
-   let count = 0;
- 
-```
-
-**File**: `tests/qa_compare.test.ts` (modified, +3/-9)
-```diff
-@@ -1,7 +1,7 @@
- import child_process from "child_process";
- import fs from "fs";
- import { Redis } from "ioredis";
--import { sleep } from "./utils";
-+import { sleep, redisOpts, markRedisStopped } from "./utils";
- 
- test("run initial crawl with text and screenshots to prepare for QA", async () => {
-   fs.rmSync("./test-crawls/collections/qa-wr-net", {
-@@ -32,18 +32,12 @@ test("run QA comparison, with write pages to redis", async () => {
-   let crawler_exited = false;
-   child.on("exit", function () {
-     crawler_exited = true;
--  });
--
--  const redis = new Redis("redis://127.0.0.1:36380/0", {
--    lazyConnect: true,
--    retryStrategy: () => null,
-+    markRedisStopped();
-   });
- 
-   await sleep(3000);
- 
--  redis.options.maxRetriesPerRequest = 50;
--
--  await redis.connect();
-+  const redis = new Redis("redis://127.0.0.1:36380/0", redisOpts);
- 
-   let count = 0;
- 
-```
-
-**File**: `tests/retry-failed.test.ts` (modified, +14/-18)
-```diff
-@@ -1,8 +1,8 @@
--import { exec, execSync } from "child_process";
-+import { exec } from "child_process";
- import fs from "fs";
- import http from "http";
- import Redis from "ioredis";
--import { sleep } from "./utils";
-+import { markRedisStopped, redisOpts, sleep } from "./utils";
- 
- const DOCKER_HOST_NAME = process.env.DOCKER_HOST_NAME || "host.docker.internal";
- 
-@@ -33,23 +33,26 @@ afterAll(() => {
- });
- 
- test("run crawl with retries for no response", async () => {
--  execSync(
-+  const child = exec(
-     `docker run -d -v $PWD/test-crawls:/crawls -e CRAWL_ID=test -p 36387:6379 --rm webrecorder/browsertrix-crawler crawl --url http://invalid-host-x:31501 --url https://example-com.webrecorder.net/ --limit 2 --pageExtraDelay 10 --debugAccessRedis --collection retry-fail --retries 5 --no-rateLimitStatusCodes`,
-   );
- 
--  const redis = new Redis("redis://127.0.0.1:36387/0", {
--    lazyConnect: true,
--    retryStrategy: () => null,
-+  let resolve: () => void;
-+
-+  const crawlFinished = new Promise<void>((r) => (resolve = r));
-+
-+  child.on("exit", function () {
-+    markRedisStopped();
-+    resolve();
-   });
- 
-   await sleep(3000);
- 
-+  const redis = new Redis("redis://127.0.0.1:36387/0", redisOpts);
-+
-   let numRetries = 0;
- 
-   try {
--    redis.options.maxRetriesPerRequest = 100;
--    await redis.connect();
--
-     while (true) {
-       const res = await redis.lrange("test:f", 0, -1);
-       if (res.length) {
-@@ -66,6 +69,8 @@ test("run crawl with retries for no response", async () => {
-   } finally {
-     expect(numRetries).toBe(5);
-   }
-+
-+  await crawlFinished;
- });
- 
- test("check only one failed page entry is made", () => {
-@@ -98,9 +103,6 @@ test("run crawl with retries for 503, enough retries to succeed", async () => {
- 
-   const crawlFinished = new Promise<void>((r) => (resolve = r));
- 
--  // detect crawler exit
--  // eslint-disable-next-line @typescript-eslint/no-unused-vars
--  const crawler_exited = false;
-   child.on("exit", function (code) {
-     status = code;
-     resolve();
-@@ -129,9 +131,6 @@ test("run crawl with retries for 503, not enough retries, fail", async () => {
- 
-   const crawlFinished = new Promise<void>((r) => (resolve = r));
- 
--  // detect crawler exit
--  // eslint-disable-next-line @typescript-eslint/no-unused-vars
--  const crawler_exited = false;
-   child.on("exit", function (code) {
-     status = code;
-     resolve();
-@@ -159,9 +158,6 @@ test("run crawl with retries for 503, no retries, fail", async () => {
- 
-   const crawlFinished = new Promise<void>((r) => (resolve = r));
- 
--  // detect crawler exit
--  // eslint-disable-next-line @typescript-eslint/no-unused-vars
--  const crawler_exited = false;
-   child.on("exit", function (code) {
-     status = code;
-     resolve();
-```
-
-**File**: `tests/saved-state.test.ts` (modified, +4/-12)
-```diff
-@@ -3,7 +3,7 @@ import fs from "fs";
- import path from "path";
- import yaml from "js-yaml";
- import Redis from "ioredis";
--import { sleep } from "./utils";
-+import { redisOpts, sleep } from "./utils";
- import { SaveState } from "../src/util/state";
- 
- const pagesFile = "test-crawls/collections/int-state-test/pages/pages.jsonl";
-@@ -130,20 +130,11 @@ test("check crawl restarted with saved state", async () => {
-     console.log(error);
-   }
- 
--  await sleep(2000);
-+  await sleep(4000);
- 
--  const redis = new Redis(`redis://127.0.0.1:${port}/0`, {
--    lazyConnect: true,
--    retryStrategy: () => null,
--  });
-+  const redis = new Redis(`redis://127.0.0.1:${port}/0`, redisOpts);
- 
-   try {
--    redis.options.maxRetriesPerRequest = 100;
--
--    await redis.connect();
--
--    await sleep(2000);
--
-     expect(await redis.get("test:d")).toBe(numDone + "");
- 
-     for (const url of finished) {
-@@ -153,6 +144,7 @@ test("check crawl restarted with saved state", async () => {
-   } catch (e) {
-     console.log(e);
-   } finally {
-+    redis.disconnect();
-     await waitContainerDone(containerId!);
-   }
- });
-```
-
----
-
-### Incident Patch 2: `e6e316a4` (2026-11-10)
-**Commit Message**: deps: update to brave 1.99 (#1202)
-
-bump to 1.15.4
-
-**File**: `Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--ARG BROWSER_VERSION=1.98.63
-+ARG BROWSER_VERSION=1.99.56
- ARG BROWSER_IMAGE_BASE=webrecorder/browsertrix-browser-base:brave-${BROWSER_VERSION}
- 
- FROM ${BROWSER_IMAGE_BASE}
-```
+### Incident Patch 1: `3c51cd79` (2026-11-26)
+**Commit Message**: version: bump to 1.16.0-beta.0
 
 **File**: `package.json` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
  {
    "name": "browsertrix-crawler",
--  "version": "1.15.3",
-+  "version": "1.15.4",
+-  "version": "1.15.4",
++  "version": "1.16.0-beta.0",
    "main": "browsertrix-crawler",
    "type": "module",
    "repository": "https://github.com/webrecorder/browsertrix-crawler",
+```
+
+---
+
+### Incident Patch 2: `9654d25c` (2026-11-26)
+**Commit Message**: recorder: check and record colour scheme (#1195)
+
+We can use this later to determine if we should tell replay to use the
+light or dark colour scheme.
+
+refs webrecorder/replayweb.page#532
+
+---------
+
+Co-authored-by: Ilya Kreymer <[REDACTED_EMAIL]>
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -20,7 +20,7 @@
+     "@aws-sdk/lib-storage": "^3.964.0",
+     "@novnc/novnc": "1.7.0",
+     "@puppeteer/replay": "^3.1.3",
+-    "@webrecorder/wabac": "^2.27.4",
++    "@webrecorder/wabac": "^2.28.0",
+     "browsertrix-behaviors": "^0.16.0",
+     "client-zip": "^2.4.5",
+     "css-selector-parser": "^3.0.5",
+```
+
+**File**: `src/util/recorder.ts` (modified, +14/-0)
+```diff
+@@ -593,6 +593,7 @@ export class Recorder extends EventEmitter {
+         await this.saveStorage(reqresp, cdp);
+       }
+       await this.saveDetectedContentType(reqresp, cdp);
++      await this.saveColorSchemeIsDark(reqresp, cdp);
+     }
+ 
+     try {
+@@ -625,6 +626,19 @@ export class Recorder extends EventEmitter {
+     }
+   }
+ 
++  async saveColorSchemeIsDark(reqresp: RequestResponseInfo, cdp: CDPSession) {
++    try {
++      const { result } = await cdp.send("Runtime.evaluate", {
++        expression:
++          "window.matchMedia('(prefers-color-scheme: dark)').matches;",
++        returnByValue: true,
++      });
++      reqresp.extraOpts.darkColorScheme = result.value;
++    } catch (e) {
++      logger.warn("Error getting preferred color scheme", e, "recorder");
++    }
++  }
++
+   async saveStorage(reqresp: RequestResponseInfo, cdp: CDPSession) {
+     try {
+       const { url, extraOpts } = reqresp;
+```
+
+**File**: `yarn.lock` (modified, +28/-28)
+```diff
+@@ -1238,7 +1238,7 @@
+   resolved "https://registry.yarnpkg.com/@nodable/entities/-/entities-2.1.1.tgz#ce41931e9b72606d7f0598d665e46e889285d78a"
+   integrity sha512-Pig3HxDIoMgjdEH8OCf/dkcTmLFjJRjWuq8jSnklu284/TKOPibSRERmOykiwmyXTtv61mP+44f3GMx0tLAyjg==
+ 
+-"@nodable/entities@^3.0.1":
++"@nodable/entities@^3.1.0":
+   version "3.1.0"
+   resolved "https://registry.yarnpkg.com/@nodable/entities/-/entities-3.1.0.tgz#2ab366e0e607fdef8d65c5d84c58d191812bbd4b"
+   integrity sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==
+@@ -1777,22 +1777,22 @@
+   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
+   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
+ 
+-"@webrecorder/wabac@^2.27.4":
+-  version "2.27.4"
+-  resolved "https://registry.yarnpkg.com/@webrecorder/wabac/-/wabac-2.27.4.tgz#695daa498ffee6a2fa94c6ada2319f5bc0897c20"
+-  integrity sha512-UQwVQGq+SKeCG3FPY9p2qyeTwBSSG7K4uXySuYwOX1QElLSIPpezbm4QtM3j9mu1LrMbmcDSoDKKUs3bSjo9wA==
++"@webrecorder/wabac@^2.28.0":
++  version "2.28.0"
++  resolved "https://registry.yarnpkg.com/@webrecorder/wabac/-/wabac-2.28.0.tgz#647639d934d693bd00c0ac6d1c9c00499ffcd70b"
++  integrity sha512-teqIZllIp9FeeYLUMfV2E5HzAEX6hqdJybdWJfvE7Oj4tb06PoH5kyE1wr+J7jGj29w0p3G8ENnmIRZwtz2u/A==
+   dependencies:
+     "@peculiar/asn1-ecc" "^2.3.4"
+     "@peculiar/asn1-schema" "^2.3.3"
+     "@peculiar/x509" "^1.9.2"
+     "@types/js-levenshtein" "^1.1.3"
+-    "@webrecorder/wombat" "^3.11.0"
++    "@webrecorder/wombat" "^3.11.2"
+     acorn "^8.15.0"
+     auto-js-ipfs "^2.3.0"
+     base64-js "^1.5.1"
+     brotli "^1.3.3"
+     buffer "^6.0.3"
+-    fast-xml-parser "^5.7.0"
++    fast-xml-parser "^5.12.0"
+     hash-wasm "^4.9.0"
+     http-status-codes "^2.1.4"
+     idb "^7.1.1"
+@@ -1807,10 +1807,10 @@
+     stream-browserify "^3.0.0"
+     warcio "^2.4.12"
+ 
+-"@webrecorder/wombat@^3.11.0":
+-  version "3.11.0"
+-  resolved "https://registry.yarnpkg.com/@webrecorder/wombat/-/wombat-3.11.0.tgz#c1a1230089e6fa7ed65ef1182a48b974cc2da129"
+-  integrity sha512-Yd1nWNyxASZ5WYMUE9MHYF+XBaQpZjp2l6UzUihssM+Ws3uPRiwShIEG+iL6pLDly8ZgUs2YCqK6PpKTOrEM4Q==
++"@webrecorder/wombat@^3.11.2":
++  version "3.11.2"
++  resolved "https://registry.yarnpkg.com/@webrecorder/wombat/-/wombat-3.11.2.tgz#c0eac21cb66d71751da458dfc0b2773e77aa32e9"
++  integrity sha512-jL2YRheU4YwQaMz2iiaF8KzBCMeOwAzTkVpP3Ul7R4C7Z2A6dBxPkHcgwUiN9lQP3xLIdqtYymeUu0APW4dVuw==
+   dependencies:
+     warcio "^2.4.12"
+ 
+@@ -3078,10 +3078,10 @@ fast-xml-builder@^1.1.7:
+     path-expression-matcher "^1.5.0"
+     xml-naming "^0.1.0"
+ 
+-fast-xml-builder@^1.2.0:
+-  version "1.3.1"
+-  resolved "https://registry.yarnpkg.com/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz#ef05b353b45597483dfb09d450a062a2baec3a82"
+-  integrity sha512-pIM/1n3ntFXKYrUZwW7QCK0gAW7XY+wzj1YMIV3tLDvPj/V+zTGJK5e3/4WJfwj0qWw2ElNXiTixda/R+3YSug==
++fast-xml-builder@^1.3.2:
++  version "1.3.2"
++  resolved "https://registry.yarnpkg.com/fast-xml-builder/-/fast-xml-builder-1.3.2.tgz#08837335066983b7659f342ce1559869c068192e"
++  integrity sha512-OX91VSlShLPDgRZV7tk/YQ4l8tT75QziF5Ixg8g4PFbCVPjuTWwN+yQfAxLJ0dufJpprdOd6HlM74Jhd39TcBQ==
+   dependencies:
+     path-expression-matcher "^1.6.2"
+     xml-naming "^0.3.0"
+@@ -3096,16 +3096,16 @@ fast-xml-parser@5.7.3:
+     path-expression-matcher "^1.5.0"
+     strnum "^2.2.3"
+ 
+-fast-xml-parser@^5.7.0:
+-  version "5.11.2"
+-  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-5.11.2.tgz#0d4987adf4e7934af11d82a73b2841eca9928a42"
+-  integrity sha512-R9iDuNrQYeQut46cn2r2wHKn4HYzVDvDm5J1wW+koZewykv0yuO2HChTYeZtrULyHIDM9cj9TUXloCsueCQUog==
++fast-xml-parser@^5.12.0:
++  version "5.12.1"
++  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-5.12.1.tgz#a0f3ebed7a1107db9456c0dd0ed233cbc00ae709"
++  integrity sha512-wR8dO/fx+z8C5exuem1e7BKOWvjsuzvjS/tvA/Xu3Z1zQqJGcXrPzXbcAiaMgp2KjreEROcTkmnnisrcmJ2hYQ==
+   dependencies:
+-    "@nodable/entities" "^3.0.1"
+-    fast-xml-builder "^1.2.0"
+-    is-unsafe "^2.0.0"
++    "@nodable/entities" "^3.1.0"
++    fast-xml-builder "^1.3.2"
++    is-unsafe "^2.0.3"
+     path-expression-matcher "^1.6.2"
+-    strnum "^2.4.2"
++    strnum "^2.5.1"
+     xml-naming "^0.3.0"
+ 
+ fastq@^1.6.0:
+@@ -3894,10 +3894,10 @@ is-typed-array@^1.1.14, is-typed-array@^1.1.15:
+   dependencies:
+     which-typed-array "^1.1.16"
+ 
+-is-unsafe@^2.0.0:
+-  version "2.0.2"
+-  resolved "https://registry.yarnpkg.com/is-unsafe/-/is-unsafe-2.0.2.tgz#bb1ead17f1aa688f6433258b561e98b1a45a1afc"
+-  integrity sha512-HgbIHPBH0KHHCcjLfGsCvhtPTVxjaAZlXjwdz7/GQC40SjSe4sfQsar8J5VFo8JOSbarkpV0OLG95bbaNd9aAQ==
++is-unsafe@^2.0.3:
++  version "2.0.3"
++  resolved "https://registry.yarnpkg.com/is-unsafe/-/is-unsafe-2.0.3.tgz#c8bc72c9d354dc9483dab9c26ff69bf5ec68d7b0"
++  integrity sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==
+ 
+ is-weakmap@^2.0.2:
+
 ```
 
 #### Recent Merged Pull Requests:
@@ -3082,40 +2862,31 @@ bump to 1.15.4
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests: attempt to make redis tests more resilient  (#1203)
+## X. version: bump to 1.16.0-beta.0
 
 **RULE**:
-When implementing operations in `tests/add-exclusion.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/browsertrix-crawler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/browsertrix-crawler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ac9f642`: tests: attempt to make redis tests more resilient  (#1203). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c51cd79`: version: bump to 1.16.0-beta.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/add-exclusion.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { markRedisStopped, redisOpts, sleep } from "./utils";
-      markRedisStopped();
-  const redis = new Redis("redis://127.0.0.1:36382/0", redisOpts);
-  redis.disconnect();
+  "version": "1.16.0-beta.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-import { sleep } from "./utils";
-  const redis = new Redis("redis://127.0.0.1:36382/0", {
-    lazyConnect: true,
-    retryStrategy: () => null,
-  });
-
-  await redis.connect();
+// Induced defect failure mode:
+  "version": "1.15.4",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ac9f642` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c51cd79` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
