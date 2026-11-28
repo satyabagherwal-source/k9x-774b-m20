@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T10:11:05.876Z",
+  "last_updated": "2026-11-28T10:36:20.368Z",
   "total_records": 2896,
   "domains": {
     "A": {
@@ -9629,8 +9629,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b6ad14df10106a932566c1fbb4f50b6943da1882852931f271542c6d32efab37",
-      "created_at": "2026-11-28T08:40:14.631Z"
+      "content_hash": "4d8f9861c445456b90756632fba056cc2f12595bfe1c02a90050ff8f455aef96",
+      "created_at": "2026-11-28T10:36:20.368Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -24595,8 +24595,8 @@
       "title": "Technical Construction Intelligence: astral-sh/ruff Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-technical-construction-intelligence-astral-sh-ruff-core-invariant.md",
       "repository": "astral-sh/ruff",
-      "content_hash": "cd0a8d5a1ca8c10a9eed8ca1190ac59393273a473ebe286fb69532cf8b6eccca",
-      "created_at": "2026-11-27T10:16:43.927Z"
+      "content_hash": "0dc1892a83245ce13152c1b07ab9090aee11fa0b4abebc36a9f446185f36655f",
+      "created_at": "2026-11-28T10:36:08.736Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -24604,8 +24604,8 @@
       "title": "Technical Construction Intelligence: astral-sh-ruff-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-learnings-technical-construction-intelligence-astral-sh-ruff-lear.md",
       "repository": "astral-sh-ruff-learnings",
-      "content_hash": "3434a2ad4312c34983bcc827aeb425ccabe8cd4822be88e8d86705e6ca478a9c",
-      "created_at": "2026-11-27T10:16:54.760Z"
+      "content_hash": "a8408a1546bf6169536b3341e892ec136d841f865e629911a1224aada6055d57",
+      "created_at": "2026-11-28T10:36:18.468Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar",
@@ -26788,8 +26788,8 @@
       "title": "Technical Construction Intelligence: QwikDev/qwik Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-qwikdev-qwik-technical-construction-intelligence-qwikdev-qwik-core-invariants.md",
       "repository": "QwikDev/qwik",
-      "content_hash": "4efdfd3bdddddc790d7731173fdb18bec8f566a63a6b5c0a24fc2f4114f216db",
-      "created_at": "2026-11-21T00:51:58.503Z"
+      "content_hash": "ba26e461a14b9fa12ceab612a8e1698310ff1ed41a25f818d5650d3dad0cdc72",
+      "created_at": "2026-11-28T10:36:11.231Z"
     },
     "DOM-B-6AFC12DD": {
       "record_id": "DOM-B-6AFC12DD",
@@ -26831,8 +26831,8 @@
       "title": "Technical Construction Intelligence: qwikdev-qwik-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-qwikdev-qwik-learnings-technical-construction-intelligence-qwikdev-qwik-learning.md",
       "repository": "qwikdev-qwik-learnings",
-      "content_hash": "6104c18d9814c9668c588158345e82a055fd71dd335bacc22d46c1322e08a31d",
-      "created_at": "2026-11-21T00:52:13.566Z"
+      "content_hash": "3f2820fbcaa421c8e2a0803d747bae4376171c5a18201d9260b8d8d441cc363b",
+      "created_at": "2026-11-28T10:36:19.388Z"
     },
     "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-core-invariants",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T10:10:57.794Z",
+  "last_updated": "2026-11-28T10:36:10.785Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "d06cbac20d6f79706856fbd3c1c6253c77f8cdc506c3c437375d72b53ef996de",
-      "verified_at": "2026-11-27T10:16:43.489Z",
+      "content_hash": "2cd47d059cc530c1784dc9d884b65c745f66ecfa6ef65139330d46d01cb2cb7a",
+      "verified_at": "2026-11-28T10:36:08.281Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T10:16:43.489Z"
+      "last_updated": "2026-11-28T10:36:08.281Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",
@@ -15186,14 +15186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-qwikdev-qwik",
-      "content_hash": "b85f6b5415af7f67c57064528481a92825daf3b7b693954c92de50b9798d9470",
-      "verified_at": "2026-11-25T00:26:43.134Z",
+      "content_hash": "42ccd6ab806ba907b3a27074e777bebf76d605e4ae9583d48cd89905c4cd758c",
+      "verified_at": "2026-11-28T10:36:10.784Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:26:43.134Z"
+      "last_updated": "2026-11-28T10:36:10.784Z"
     },
     "TypeWhisper/typewhisper-mac": {
       "repository": "TypeWhisper/typewhisper-mac",

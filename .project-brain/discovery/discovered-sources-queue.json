@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T10:11:03.934Z",
+  "updated_at": "2026-11-28T10:36:17.969Z",
   "stats": {
-    "total_discovered": 10888,
-    "approved_pending_harvest": 10340,
+    "total_discovered": 10889,
+    "approved_pending_harvest": 10341,
     "harvested_count": 0,
     "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10347,
+      "COMMUNITY_AND_EXPERT": 10348,
       "OFFICIAL_DOCUMENTATION": 299,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
@@ -235727,6 +235727,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/preactjs-preact-learnings.md",
         "fileName": "preactjs-preact-learnings.md"
+      }
+    },
+    "SRC-7345D85D21A2": {
+      "id": "SRC-7345D85D21A2",
+      "url": "https://github.com/astral-sh/ruff/commit/8f0189e0e975334474efb938eafc48f22855aadb",
+      "title": "https://github.com/astral-sh/ruff/commit/8f0189e0e975334474efb938eafc48f22855aadb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T10:36:17.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
       }
     }
   }

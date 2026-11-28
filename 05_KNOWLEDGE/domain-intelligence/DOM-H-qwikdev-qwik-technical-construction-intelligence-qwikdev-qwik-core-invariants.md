@@ -4,24 +4,24 @@
 {
   "source_repository": "QwikDev/qwik",
   "source_url": "https://github.com/QwikDev/qwik",
-  "source_version": "fa8e12f1",
+  "source_version": "5b80fdec",
   "license": "MIT",
-  "timestamp": "2026-11-21T00:51:58.332Z",
+  "timestamp": "2026-11-28T10:36:11.025Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-qwikdev-qwik",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [QwikDev/qwik](https://github.com/QwikDev/qwik) (Revision: `fa8e12f1`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T00:51:58.332Z`  
+> **Provenance**: Harvested from [QwikDev/qwik](https://github.com/QwikDev/qwik) (Revision: `5b80fdec`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T10:36:11.025Z`  
 > **Learning ID**: `learn-github-qwikdev-qwik`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from QwikDev/qwik:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/qwikdev-qwik-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/QwikDev/qwik](https://github.com/QwikDev/qwik))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:51:57.074Z  
+> **Harvest Timestamp**: 2026-11-28T10:36:09.914Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Instant-loading web apps, without effort
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 22077 stars
+- **Stars / Engagement**: 22075 stars
 
 ---
 
@@ -109,17 +109,27 @@ export const PORT = 4318;
 export const ORIGIN = `https://localhost:${PORT}`;
 
 type Manifest = {
-  core?: string;
   preloader?: string;
   bundleGraphAsset?: string;
   bundles: Record<string, { origins?: string[]; symbols?: string[]; imports?: string[] }>;
-  symbols: Record<string, { ctxName?: string }>;
+  symbols: Record<string, { ctxName?: string; ctxKind?: string }>;
 };
 
 let manifest: Manifest | undefined;
 
 export const getManifest = (): Manifest =>
   (manifest ||= JSON.parse(readFileSync(join(APP_DIR, 'dist/q-manifest.json'), 'utf8')));
+
+export const getCoreBundle = () => {
+  const { bundles } = getManifest();
+  const coreBundle = Object.keys(bundles).find((file) =>
+    bundles[file].origins?.some((origin) => /\/core(\.prod|\.min)?\.qwik\.mjs$/.test(origin))
+  );
+  if (!coreBundle) {
+    throw new Error('No bundle in q-manifest.json holds core');
+  }
+  return coreBundle;
+};
 
 const SYMBOL_HASH = /_[A-Za-z0-9]{11}\.js$/;
 
@@ -170,6 +180,26 @@ export const chunkHasScopedStyles = (url: string) => chunkHasSymbolOf(url, 'useS
 export const chunkHasComponent = (url: string) => chunkHasSymbolOf(url, 'component$');
 
 export const chunkHasVisibleTask = (url: string) => chunkHasSymbolOf(url, 'useVisibleTask$');
+
+export const chunkHasClickHandler = (url: string) => chunkHasSymbolOf(url, 'onClick$');
+
+export type ChunkKind = 'handler' | 'other-qrl' | 'component';
+
+export const chunkKind = (url: string): ChunkKind | undefined => {
+  const manifest = getManifest();
+  const symbols = (manifest.bundles[bundleFile(url)]?.symbols ?? [])
+    .map((symbol) => manifest.symbols[symbol])
+    .filter((symbol) => !!symbol);
+  if (!symbols.length) {
+    return undefined;
+  }
+  if (symbols.some((symbol) => symbol.ctxKind !== 'function')) {
+    return 'handler';
+  }
+  return symbols.every((symbol) => /^(component|useStyles)/.test(symbol.ctxName ?? ''))
+    ? 'component'
+    : 'other-qrl';
+};
 
 export const chunkHoldsTaskFrom = (url: string, file: string) =>
   (getManifest().bundles[bundleFile(url)]?.origins ?? []).some(
@@ -347,8 +377,6 @@ export const CLICKABLE_ON_ALL_AT_ONCE: Fixture[] = [...MATRIX, USER_IMPORT, MODA
 
 const NEVER_UPDATES =
   'never shows its result on main: a sync computed reading an async computed prop stays at 0';
-export const OFF_SCREEN_VISIBLE_TASKS =
-  'needs a round trip on main: off-screen visible task chunks are never preloaded, so the scroll to the fixture fetches them';
 const JSX_ONLY =
   'one round trip on main: the signal is only read in JSX, so the click only needs its handler';
 const COMPUTEDS_WITH_HANDLER =
@@ -368,12 +396,6 @@ export const NEVER_SHOWS_RESULT: Record<string, string> = {
 };
 
 export type RoundTripsOnMain = { roundTrips: number; reason: string };
-
-export const NOT_READY_WHEN_WARM: Record<string, RoundTripsOnMain> = {
-  'single/visible-task-chain': { roundTrips: 1, reason: OFF_SCREEN_VISIBLE_TASKS },
-  'tree/visible-task-chain': { roundTrips: 1, reason: OFF_SCREEN_VISIBLE_TASKS },
-  'tree-context/visible-task-chain': { roundTrips: 1, reason: OFF_SCREEN_VISIBLE_TASKS },
-};
 
 export const ROUND_TRIPS_ON_MAIN: Record<string, RoundTripsOnMain> = {
   'single/jsx-binding': { roundTrips: 1, reason: JSX_ONLY },
@@ -434,29 +456,35 @@ type PreloaderWindow = Window & {
   __maxSpeculativeInFlight?: number;
   __preloadHints?: PreloadHint[];
   /** Qwik's own hint queue (preloader/bridge.ts), not a test hook. */
-  qPreloadQueue?: [item: string | string[], probability?: number][];
+  qPreloadQueue?: [item: string | string[], priority?: number, isPageToRender?: boolean][];
 };
 
-export type PreloadHint = { item: string | string[]; probability?: number };
+export type PreloadHint = {
+  item: string | string[];
+  priority?: number;
+  isPageToRender?: boolean;
+};
 
 export const recordPreloadHints = (page: Page) =>
   page.addInitScript(() => {
     const win = window as PreloaderWindow;
     const hints: PreloadHint[] = (win.__preloadHints = []);
-    let preload: ((item: string | string[], probability?: number) => void) | undefined;
+    let preload:
+      | ((item: string | string[], priority?: number, isPageToRender?: boolean) => void)
+      | undefined;
     Object.defineProperty(win, 'qPreload', {
       configurable: true,
       get: () =>
         preload &&
-        ((item: string | string[], probability?: number) => {
-          hints.push({ item, probability });
-          preload!(item, probability);
+        ((item: string | string[], priority?: number, isPageToRender?: boolean) => {
+          hints.push({ item, priority, isPageToRender });
+          preload!(item, priority, isPageToRender);
         }),
       set: (value) => {
         // The preloader drains the hints queued before it loaded without calling the getter
         if (win.qPreloadQueue) {
-          for (const [item, probability] of win.qPreloadQueue) {
-            hints.push({ item, probability });
+          for (const [item, priority, isPageToRender] of win.qPreloadQueue) {
+            hints.push({ item, priority, isPageToRender });
           }
         }
         preload = value;
@@ -473,9 +501,9 @@ export const chunksHintedAtHighestPriority = (page: Page) =>
     const win = window as PreloaderWindow;
     const hints = [
       ...(win.__preloadHints ?? []),
-      ...(win.qPreloadQueue ?? []).map(([item, probability]) => ({ item, probability })),
+      ...(win.qPreloadQueue ?? []).map(([item, priority]) => ({ item, priority })),
     ];
-    return hints.filter((hint) => hint.probability === 1).flatMap((hint) => hint.item);
+    return hints.filter((hint) => hint.priority === 1).flatMap((hint) => hint.item);
   });
 
 export const recordSpeculativePreloads = (page: Page) =>
@@ -707,13 +735,7 @@ export const collectUntilQuiet = async (page: Page, gate: Gate, action: () => Pr
     if (!routes.length) {
       return urls;
     }
-    urls.push(...routes.map((route) => route.request().url()));
-    await release(routes);
-  }
-};
-
-export const speculativeOrder = async (page: Page) => {
-  cons
+    u
 ```
 
 ### Core Architecture Module: `e2e/preloader-e2e/utils/long-tasks.ts`
@@ -1392,421 +1414,508 @@ export const EventsLifecycle = component$(() => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fa8e12f1` (2026-11-20)
-**Commit Message**: Merge pull request #9538 from mmporong/fix/dev-ssr-error-no-crash
+### Incident Patch 1: `72487b50` (2026-11-25)
+**Commit Message**: Merge pull request #9593 from QwikDev/fix-docs-playground-bundler-worker
 
-fix(core): don't crash the dev server when SSR can't serialize a function
+fix(docs): restore the playground's bundler after the lockfile dedupe
 
-**File**: `.changeset/calm-dev-server-ssr-error.md` (added, +5/-0)
+**File**: `packages/docs/package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'@qwik.dev/core': patch
-+---
-+
-+fix: keep the dev server running when SSR can't serialize a function
+@@ -20,7 +20,7 @@
+     "@qwik.dev/partytown": "0.13.2",
+     "@qwik.dev/react": "workspace:*",
+     "@qwik.dev/router": "workspace:*",
+-    "@rolldown/browser": "1.2.2",
++    "@rolldown/browser": "1.2.19",
+     "@shikijs/colorized-brackets": "3.21.0",
+     "@shikijs/langs": "3.21.0",
+     "@shikijs/rehype": "3.21.0",
 ```
 
-**File**: `packages/qwik/src/core/shared/error/error.ts` (modified, +7/-1)
+**File**: `packages/docs/src/repl/bundler/repl-bundler-worker.ts` (modified, +18/-2)
 ```diff
-@@ -1,5 +1,5 @@
- import { isDev } from '@qwik.dev/core/build';
--import { logErrorAndStop } from '../utils/log';
-+import { logError, logErrorAndStop } from '../utils/log';
- import { isObject } from '../utils/types';
+@@ -2,7 +2,7 @@ import { rolldown, type OutputAsset, type OutputChunk } from '@rolldown/browser'
+ // Browser builds of the TS optimizer's runtime deps, bundled into this worker by vite.
+ // Rolldown embeds the same oxc version, so reusing its parser saves 4.5MB of extra wasm.
+ // `/experimental` re-exports these as deprecated aliases; move to `/utils` once that
+-// subpath ships a `browser` condition (absent as of @rolldown/browser 1.2.2).
++// subpath ships a `browser` condition (absent as of @rolldown/browser 1.2.19).
+ import * as rolldownOxc from '@rolldown/browser/experimental';
+ import * as oxcWalker from 'oxc-walker';
+ import * as magicRegexp from 'magic-regexp';
+@@ -134,9 +134,25 @@ function getDepShimUrl(specifier: string, mod: Record<string, unknown>): string
+   return url;
+ }
  
- const baseUrl = 'https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/errors/#q';
-@@ -116,3 +116,9 @@ export const qError = (code: number, errorMessageArgs: any[] = []): Error => {
-   const text = codeToText(code, ...errorMessageArgs);
-   return logErrorAndStop(text, ...errorMessageArgs);
- };
++type OxcTransform = (
++  filename: string,
++  sourceText: string,
++  options?: { cwd?: string },
++  ...rest: any[]
++) => unknown;
 +
-+/** Like `qError`, but skips the debugger pause and the async rethrow. */
-+export const qErrorWithoutStop = (code: number, errorMessageArgs: any[] = []): Error => {
-+  const text = codeToText(code, ...errorMessageArgs);
-+  return logError(text, ...errorMessageArgs);
-+};
++// Workaround for rolldown/rolldown#11956: transform falls back to process.cwd(), missing here.
++const withRootCwd = <Transform extends OxcTransform>(transform: Transform) =>
++  ((filename, sourceText, options, ...rest) =>
++    transform(filename, sourceText, { cwd: '/', ...options }, ...rest)) as Transform;
++
+ const TS_OPTIMIZER_DEPS: Record<string, Record<string, unknown>> = {
+   'oxc-parser': rolldownOxc,
+-  'oxc-transform': rolldownOxc,
++  'oxc-transform': {
++    ...rolldownOxc,
++    transform: withRootCwd(rolldownOxc.transform),
++    transformSync: withRootCwd(rolldownOxc.transformSync),
++  },
+   'oxc-walker': oxcWalker,
+   'magic-regexp': magicRegexp,
+   'magic-string': magicString,
 ```
 
-**File**: `packages/qwik/src/serializer/qwik-copy.ts` (modified, +1/-1)
+**File**: `pnpm-lock.yaml` (modified, +8/-40)
 ```diff
-@@ -12,7 +12,7 @@ export {
-   EffectProperty,
-   SerializationSignalFlags,
- } from '../core/reactive-primitives/types';
--export { qError, QError } from '../core/shared/error/error';
-+export { qError, qErrorWithoutStop, QError } from '../core/shared/error/error';
- export { isQrl } from '../core/shared/qrl/qrl-utils';
- export { Constants, TypeIds } from '../core/shared/serdes/constants';
- export {
-```
-
-**File**: `packages/qwik/src/serializer/serialize.ts` (modified, +7/-2)
-```diff
-@@ -1,4 +1,4 @@
--import { isDev } from '@qwik.dev/core/build';
-+import { isDev, isServer } from '@qwik.dev/core/build';
- import {
-   _BIGINT_PAYLOAD_REGEXP as BIGINT_PAYLOAD_REGEXP,
-   _canSerialize as canSerialize,
-@@ -53,6 +53,7 @@ import {
-   _PROPS_HANDLER,
-   QBackRefs,
-   qError,
-+  qErrorWithoutStop,
-   QError,
-   QUOTE,
-   SerializationSignalFlags,
-@@ -543,7 +544,11 @@ export class Serializer {
-             this.output(TypeIds.Component, [qrl]);
-             this.$parent$ = oldParent;
-           } else {
--            throw qError(QError.serializeErrorCannotSerializeFunction, [value.toString()]);
-+            const args = [value.toString()];
-+            // on the server, the async rethrow would crash the dev server
-+            throw isServer
-+              ? qErrorWithoutStop(QError.serializeErrorCannotSerializeFunction, args)
-+              : qError(QError.serializeErrorCannotSerializeFunction, args);
-           }
-           break;
-         case 'object':
-```
-
-**File**: `packages/qwik/src/serializer/serialize.unit.ts` (modified, +36/-1)
-```diff
-@@ -1,6 +1,6 @@
- import { createDocument } from '@qwik.dev/core/testing';
- import { _deserialize } from '@qwik.dev/core/internal';
--import { describe, expect, it } from 'vitest';
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
- import { _serialize } from './index';
+@@ -553,8 +553,8 @@ importers:
+         specifier: workspace:*
+         version: link:../qwik-router
+       '@rolldown/browser':
+-        specifier: 1.2.2
+-        version: 1.2.2
++        specifier: 1.2.19
++        version: 1.2.19
+       '@shikijs/colorized-brackets':
+         specifier: 3.21.0
+         version: 3.21.0
+@@ -1444,27 +1444,18 @@ packages:
+   '@emnapi/core@1.11.3':
+     resolution: {integrity: sha512-zLpS5asjEb7lq8jYLq37N6XKaE41DIexlY1rF/z4/tIl3wo13Sqm28fRyfIsKZD+NZ8mM5RoKkpW/rBcuoSZSg==}
  
- describe('serialized state script', () => {
-@@ -18,3 +18,38 @@ describe('serialized state script', () => {
-     }
-   );
- });
-+
-+/** Loads the serializer with `qTest` off, as an app would. */
-+const loadSerializer = async () => {
-+  vi.resetModules();
-+  (globalThis as any).qTest = false;
-+  try {
-+    return await import('./index');
-+  } finally {
-+    (globalThis as any).qTest = true;
-+  }
-+};
-+
-+describe('serialization errors on the server in dev mode', () => {
-+  beforeEach(() => {
-+    vi.useFakeTimers();
-+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
-+  });
-+
-+  afterEach(() => {
-+    vi.useRealTimers();
-+    vi.restoreAllMocks();
-+    vi.resetModules();
-+  });
-+
-+  it('logs a function it cannot serialize without rethrowing the error later', async () => {
-+    const serializer = await loadSerializer();
-+
-+    await expect(serializer._serialize({ describe: () => 'a plain function' })).rejects.toThrow(
-+      'Cannot serialize function'
-+    );
-+
-+    expect(console.error).toHaveBeenCalledOnce();
-+    expect(() => vi.runAllTimers()).not.toThrow();
-+  });
-+});
+-  '@emnapi/core@2.0.0-alpha.3':
+-    resolution: {integrity: sha512-AZypUeJ/yByuxyS7BlSNRDOMLMlROYtjYdIAuBmJssVz1UJDSeYxLrdizhXCFYhedC5bqd/ASy8EuNXbVVXp9g==}
+-
+   '@emnapi/core@2.0.0-beta.2':
+     resolution: {integrity: sha512-MzCVoWtcg4Pm2B3je5mMvYMvj3MmBKw+fU7vbsJc9/iT8ip6/eYIHo/Dsm/mr+wsHB6SEyJDuxB09Yy6r/8+4A==}
+ 
+   '@emnapi/runtime@1.11.3':
+     resolution: {integrity: sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==}
+ 
+-  '@emnapi/runtime@2.0.0-alpha.3':
+-    resolution: {integrity: sha512-hFPAhMUjJD9BSyCANEISPOogeXC9Zo9ZQl7L6vKnaVsMkCtzznaW/naYypeyl0Gv5rYfWYsZbpixTMpjDJzQeA==}
+-
+   '@emnapi/runtime@2.0.0-beta.2':
+     resolution: {integrity: sha512-JcrSPzPvZuNZvJqPTF9Fw25LbOJ8avzFVlaf2grmH4Cku0oGP47tRgqPZadcfj3YoZMHkFVnCYFbQM8I+i5QEw==}
+ 
+   '@emnapi/wasi-threads@1.2.3':
+     resolution: {integrity: sha512-ELEBe8PsLvvJ6QMr0zLt8ffvOHW/dc1m3CEzNMg7aJUv3bMaoDtw2TXyDAwkYBuroxxuHEwhRTLJSe5sya547g==}
+ 
+-  '@emnapi/wasi-threads@2.0.1':
+-    resolution: {integrity: sha512-9DsSk+o5NBX0CCJT8s0EROGSGxjR/tKu6aBTaVyq+SjAEQH4XcdcRxPBRzsBLizTTJ49MJjF+jgu3qnO9GLQcQ==}
+-
+   '@emnapi/wasi-threads@2.2.0':
+     resolution: {integrity: sha512-JP7OYH38Q7+pyTAe14raZHLQIK7BDKbdwji+Xi3pcd/6QkJYQH3SX4wu6EplGrGJWRepoNzedfm0G3B9Z4e9Rw==}
+ 
+@@ -3538,8 +3529,8 @@ packages:
+     cpu: [x64]
+     os: [win32]
+ 
+-  '@rolldown/browser@1.2.2':
+-    resolution: {integrity: sha512-TKVAciHZYpn/LRl0cDvywum9AwBhqUWUJDSWFjACmKzu1ZpR7fWXyqCk7Qc61QBhMym7ukWgnPH+QsKhCYpgeA==}
++  '@rolldown/browser@1.2.19':
++    resolution: {integrity: sha512-boe+5DV221aE0NUZpt6I2SuKTKkEGxPVopSaqcRwU8l9jB0sMucZfnmm+/kqwtfh9ZGeim1dmkuChngG+W4ZGg==}
+     hasBin: true
+ 
+   '@rolldown/pluginutils@1.0.1':
+@@ -10006,42 +9997,26 @@ snapshots:
+       '@emnapi/wasi-threads': 1.2.3
+       tslib: 2.8.1
+ 
+-  '@emnapi/core@2.0.0-alpha.3':
+-    dependencies:
+-      '@emnapi/wasi-threads': 2.0.1
+-      tslib: 2.8.1
+-
+   '@emnapi/core@2.0.0-beta.2':
+     dependencies:
+       '@emnapi/wasi-threads': 2.2.0
+       tslib: 2.8.1
+-    optional: true
+ 
+   '@emnapi/runtime@1.11.3':
+     dependencies:
+       tslib: 2.8.1
+ 
+-  '@emnapi/runtime@2.0.0-alpha.3':
+-    dependencies:
+-      tslib: 2.8.1
+-
+   '@emnapi/runtime@2.0.0-beta.2':
+     dependencies:
+       tslib: 2.8.1
+-    optional: true
+ 
+   '@emnapi/wasi-threads@1.2.3':
+     dependencies:
+       tslib: 2.8.1
+ 
+-  '@emnapi/wasi-threads@2.0.1':
+-    dependencies:
+-      tslib: 2.8.1
+-
+   '@emnapi/wasi-threads@2.2.0':
+     dependencies:
+       tslib: 2.8.1
+-    optional: true
+ 
+   '@emotion/babel-plugin@11.13.5(supports-color@10.2.2)':
+     dependencies:
+@@ -10999,18 +10974,11 @@ snapshots:
+       '@tybys/wasm-util': 0.10.3
+     optional: true
+ 
+-  '@napi-rs/wasm-runtime@1.2.6(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)':
+-    dependencies:
+-      '@emnapi/core': 2.0.0-alpha.3
+-      '@emnapi/runtime': 2.0.0-alpha.3
+-      '@tybys/wasm-util': 0.10.3
+-
+   '@napi-rs/wasm-runtime@1.2.6(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)':
+     dependencies:
+       '@emnapi/core': 2.0.0-beta.2
+       '@emnapi/runtime': 2.0.0-beta.2
+       '@tybys/wasm-util': 0.10.3
+-    optional: true
+ 
+   '@neon-rs/load@0.0.4': {}
+ 
+@@ -11622,11 +11590,11 @@ snapshots:
+   '@rolldown/binding-win32-x64-msvc@1.3.2':
+     optional: true
+ 
+-  '@rolldown/browser@1.2.2':
++  '@rolldown/browser@1.2.19':
+     dependencies:
+-      '@emnapi/core': 2.0.0-alpha.3
+-      '@emnapi/runtime': 2.0.0-alpha.3
+-      '@napi-rs/wasm-runtime': 1.2.6(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)
++      '@emnapi/core': 2.0.0-beta.2
++      '@emnapi/runtime': 2.0.0-beta.2
++      '@napi-rs/wasm-runtime': 1.2.6(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)
+ 
+   '@rolldown/pluginutils@1.0.1': {}
+ 
 ```
 
 ---
 
-### Incident Patch 2: `062ca130` (2026-11-20)
-**Commit Message**: fix(core): don't crash the dev server when SSR can't serialize a function
+### Incident Patch 2: `3a0077a3` (2026-11-24)
+**Commit Message**: fix(docs): bump the playground's Rolldown instead of pinning its wasm runtime
 
-Keep logErrorAndStop as it was. On the server, its async rethrow is
-uncaught and kills the dev server, so the serializer reports this error
-there with a variant of qError that only logs it. The browser, where the
-serializer runs for server$ and worker$ arguments, keeps qError.
+@rolldown/browser 1.2.19 uses the emnapi and wasm runtime versions the
+lockfile already holds, so the override goes. Its transform reads
+process.cwd() when given no cwd, which the worker doesn't have.
 
-**File**: `.changeset/calm-dev-server-ssr-error.md` (modified, +1/-1)
+**File**: `packages/docs/package.json` (modified, +1/-1)
 ```diff
-@@ -2,4 +2,4 @@
- '@qwik.dev/core': patch
- ---
+@@ -20,7 +20,7 @@
+     "@qwik.dev/partytown": "0.13.2",
+     "@qwik.dev/react": "workspace:*",
+     "@qwik.dev/router": "workspace:*",
+-    "@rolldown/browser": "1.2.2",
++    "@rolldown/browser": "1.2.19",
+     "@shikijs/colorized-brackets": "3.21.0",
+     "@shikijs/langs": "3.21.0",
+     "@shikijs/rehype": "3.21.0",
+```
+
+**File**: `packages/docs/src/repl/bundler/repl-bundler-worker.ts` (modified, +18/-2)
+```diff
+@@ -2,7 +2,7 @@ import { rolldown, type OutputAsset, type OutputChunk } from '@rolldown/browser'
+ // Browser builds of the TS optimizer's runtime deps, bundled into this worker by vite.
+ // Rolldown embeds the same oxc version, so reusing its parser saves 4.5MB of extra wasm.
+ // `/experimental` re-exports these as deprecated aliases; move to `/utils` once that
+-// subpath ships a `browser` condition (absent as of @rolldown/browser 1.2.2).
++// subpath ships a `browser` condition (absent as of @rolldown/browser 1.2.19).
+ import * as rolldownOxc from '@rolldown/browser/experimental';
+ import * as oxcWalker from 'oxc-walker';
+ import * as magicRegexp from 'magic-regexp';
+@@ -134,9 +134,25 @@ function getDepShimUrl(specifier: string, mod: Record<string, unknown>): string
+   return url;
+ }
  
--fix: keep the dev server running after an SSR error
-+fix: keep the dev server running when SSR can't serialize a function
++type OxcTransform = (
++  filename: string,
++  sourceText: string,
++  options?: { cwd?: string },
++  ...rest: any[]
++) => unknown;
++
++// Workaround for rolldown/rolldown#11956: transform falls back to process.cwd(), missing here.
++const withRootCwd = <Transform extends OxcTransform>(transform: Transform) =>
++  ((filename, sourceText, options, ...rest) =>
++    transform(filename, sourceText, { cwd: '/', ...options }, ...rest)) as Transform;
++
+ const TS_OPTIMIZER_DEPS: Record<string, Record<string, unknown>> = {
+   'oxc-parser': rolldownOxc,
+-  'oxc-transform': rolldownOxc,
++  'oxc-transform': {
++    ...rolldownOxc,
++    transform: withRootCwd(rolldownOxc.transform),
++    transformSync: withRootCwd(rolldownOxc.transformSync),
++  },
+   'oxc-walker': oxcWalker,
+   'magic-regexp': magicRegexp,
+   'magic-string': magicString,
 ```
 
-**File**: `packages/qwik/src/core/shared/error/error.ts` (modified, +7/-1)
+**File**: `pnpm-lock.yaml` (modified, +8/-48)
 ```diff
-@@ -1,5 +1,5 @@
- import { isDev } from '@qwik.dev/core/build';
--import { logErrorAndStop } from '../utils/log';
-+import { logError, logErrorAndStop } from '../utils/log';
- import { isObject } from '../utils/types';
+@@ -8,7 +8,6 @@ overrides:
+   '@builder.io/qwik': link:./packages/qwik
+   '@builder.io/qwik-city': link:./packages/qwik-router
+   '@fastify/static': 10.1.2
+-  '@rolldown/browser>@napi-rs/wasm-runtime': 1.2.3
+   adm-zip: 0.6.1
+   body-parser@1: 1.20.9
+   body-parser@2: 2.4.0
+@@ -554,8 +553,8 @@ importers:
+         specifier: workspace:*
+         version: link:../qwik-router
+       '@rolldown/browser':
+-        specifier: 1.2.2
+-        version: 1.2.2
++        specifier: 1.2.19
++        version: 1.2.19
+       '@shikijs/colorized-brackets':
+         specifier: 3.21.0
+         version: 3.21.0
+@@ -1445,27 +1444,18 @@ packages:
+   '@emnapi/core@1.11.3':
+     resolution: {integrity: sha512-zLpS5asjEb7lq8jYLq37N6XKaE41DIexlY1rF/z4/tIl3wo13Sqm28fRyfIsKZD+NZ8mM5RoKkpW/rBcuoSZSg==}
  
- const baseUrl = 'https://qwikdev-build-v2.qwik-8nx.pages.dev/docs/errors/#q';
-@@ -116,3 +116,9 @@ export const qError = (code: number, errorMessageArgs: any[] = []): Error => {
-   const text = codeToText(code, ...errorMessageArgs);
-   return logErrorAndStop(text, ...errorMessageArgs);
- };
-+
-+/** Like `qError`, but skips the debugger pause and the async rethrow. */
-+export const qErrorWithoutStop = (code: number, errorMessageArgs: any[] = []): Error => {
-+  const text = codeToText(code, ...errorMessageArgs);
-+  return logError(text, ...errorMessageArgs);
-+};
-```
-
-**File**: `packages/qwik/src/core/shared/utils/log.ts` (modified, +1/-3)
-```diff
-@@ -1,4 +1,3 @@
--import { isServer } from '@qwik.dev/core/build';
- import { qDev, qTest } from './qdev';
+-  '@emnapi/core@2.0.0-alpha.3':
+-    resolution: {integrity: sha512-AZypUeJ/yByuxyS7BlSNRDOMLMlROYtjYdIAuBmJssVz1UJDSeYxLrdizhXCFYhedC5bqd/ASy8EuNXbVVXp9g==}
+-
+   '@emnapi/core@2.0.0-beta.2':
+     resolution: {integrity: sha512-MzCVoWtcg4Pm2B3je5mMvYMvj3MmBKw+fU7vbsJc9/iT8ip6/eYIHo/Dsm/mr+wsHB6SEyJDuxB09Yy6r/8+4A==}
  
- const STYLE = qDev
-@@ -21,8 +20,7 @@ export const throwErrorAndStop = (message?: any, ...optionalParams: any[]): neve
- };
+   '@emnapi/runtime@1.11.3':
+     resolution: {integrity: sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==}
  
- export const logErrorAndStop = (message?: any, ...optionalParams: any[]) => {
--  // On the server, an uncaught async rethrow kills the dev server.
--  const err = createAndLogError(qDev && !isServer, message, ...optionalParams);
-+  const err = createAndLogError(qDev, message, ...optionalParams);
-   // eslint-disable-next-line no-debugger
-   debugger;
-   return err;
-```
-
-**File**: `packages/qwik/src/core/shared/utils/log.unit.ts` (removed, +0/-35)
-```diff
-@@ -1,35 +0,0 @@
--import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+-  '@emnapi/runtime@2.0.0-alpha.3':
+-    resolution: {integrity: sha512-hFPAhMUjJD9BSyCANEISPOogeXC9Zo9ZQl7L6vKnaVsMkCtzznaW/naYypeyl0Gv5rYfWYsZbpixTMpjDJzQeA==}
 -
--/** Loads `log.ts` with `qTest` off, as an app would. */
--const loadLog = async () => {
--  vi.resetModules();
--  (globalThis as any).qTest = false;
--  try {
--    return await import('./log');
--  } finally {
--    (globalThis as any).qTest = true;
--  }
--};
--
--describe('logErrorAndStop in dev mode', () => {
--  beforeEach(() => {
--    vi.useFakeTimers();
--    vi.spyOn(console, 'error').mockImplementation(() => undefined);
--  });
--
--  afterEach(() => {
--    vi.useRealTimers();
--    vi.restoreAllMocks();
--    vi.resetModules();
--  });
--
--  it('logs the error on the server without rethrowing it', async () => {
--    const { logErrorAndStop } = await loadLog();
--
--    const error = logErrorAndStop('Cannot serialize function');
--
--    expect(console.error).toHaveBeenCalledOnce();
--    expect(error.message).toBe('Cannot serialize function');
--    expect(() => vi.runAllTimers()).not.toThrow();
--  });
--});
-```
-
-**File**: `packages/qwik/src/serializer/qwik-copy.ts` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ export {
-   EffectProperty,
-   SerializationSignalFlags,
- } from '../core/reactive-primitives/types';
--export { qError, QError } from '../core/shared/error/error';
-+export { qError, qErrorWithoutStop, QError } from '../core/shared/error/error';
- export { isQrl } from '../core/shared/qrl/qrl-utils';
- export { Constants, TypeIds } from '../core/shared/serdes/constants';
- export {
-```
-
-**File**: `packages/qwik/src/serializer/serialize.ts` (modified, +7/-2)
-```diff
-@@ -1,4 +1,4 @@
--import { isDev } from '@qwik.dev/core/build';
-+import { isDev, isServer } from '@qwik.dev/core/build';
- import {
-   _BIGINT_PAYLOAD_REGEXP as BIGINT_PAYLOAD_REGEXP,
-   _canSerialize as canSerialize,
-@@ -53,6 +53,7 @@ import {
-   _PROPS_HANDLER,
-   QBackRefs,
-   qError,
-+  qErrorWithoutStop,
-   QError,
-   QUOTE,
-   SerializationSignalFlags,
-@@ -538,7 +539,11 @@ export class Serializer {
-             this.output(TypeIds.Component, [qrl]);
-             this.$parent$ = oldParent;
-           } else {
--            throw qError(QError.serializeErrorCannotSerializeFunction, [value.toString()]);
-+            const args = [value.toString()];
-+            // on the server, the async rethrow would crash the dev server
-+            throw isServer
-+              ? qErrorWithoutStop(QError.serializeErrorCannotSerializeFunction, args)
-+              : qError(QError.serializeErrorCannotSerializeFunction, args);
-           }
-           break;
-         case 'object':
-```
-
-**File**: `packages/qwik/src/serializer/serialize.unit.ts` (modified, +36/-1)
-```diff
-@@ -1,6 +1,6 @@
- import { createDocument } from '@qwik.dev/core/testing';
- import { _deserialize } from '@qwik.dev/core/internal';
--import { describe, expect, it } from 'vitest';
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
- import { _serialize } from './index';
+   '@emnapi/runtime@2.0.0-beta.2':
+     resolution: {integrity: sha512-JcrSPzPvZuNZvJqPTF9Fw25LbOJ8avzFVlaf2grmH4Cku0oGP47tRgqPZadcfj3YoZMHkFVnCYFbQM8I+i5QEw==}
  
- describe('serialized state script', () => {
-@@ -18,3 +18,38 @@ describe('serialized state script', () => {
-     }
-   );
- });
-+
-+/** Loads the serializer with `qTest` off, as an app would. */
-+const loadSerializer = async () => {
-+  vi.resetModules();
-+  (globalThis as any).qTest = false;
-+  try {
-+    return await import('./index');
-+  } finally {
-+    (globalThis as any).qTest = true;
-+  }
-+};
-+
-+describe('serialization errors on the server in dev mode', () => {
-+  beforeEach(() => {
-+    vi.useFakeTimers();
-+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
-+  });
-+
-+  afterEach(() => {
-+    vi.useRealTimers();
-+    vi.restoreAllMocks();
-+    vi.resetModules();
-+  });
-+
-+  it('logs a function it cannot serialize without rethrowing the error later', async () => {
-+    const serializer = await loadSerializer();
-+
-+    await expect(serializer._serialize({ describe: () => 'a plain function' })).rejects.toThrow(
-+      'Cannot serialize function'
-+    );
-+
-+    expect(console.error).toHaveBeenCalledOnce();
-+    expect(() => vi.runAllTimers()).not.toThrow();
-+  });
-+});
+   '@emnapi/wasi-threads@1.2.3':
+     resolution: {integrity: sha512-ELEBe8PsLvvJ6QMr0zLt8ffvOHW/dc1m3CEzNMg7aJUv3bMaoDtw2TXyDAwkYBuroxxuHEwhRTLJSe5sya547g==}
+ 
+-  '@emnapi/wasi-threads@2.0.1':
+-    resolution: {integrity: sha512-9DsSk+o5NBX0CCJT8s0EROGSGxjR/tKu6aBTaVyq+SjAEQH4XcdcRxPBRzsBLizTTJ49MJjF+jgu3qnO9GLQcQ==}
+-
+   '@emnapi/wasi-threads@2.2.0':
+     resolution: {integrity: sha512-JP7OYH38Q7+pyTAe14raZHLQIK7BDKbdwji+Xi3pcd/6QkJYQH3SX4wu6EplGrGJWRepoNzedfm0G3B9Z4e9Rw==}
+ 
+@@ -2521,13 +2511,6 @@ packages:
+   '@napi-rs/triples@1.2.0':
+     resolution: {integrity: sha512-HAPjR3bnCsdXBsATpDIP5WCrw0JcACwhhrwIAQhiR46n+jm+a2F8kBsfseAuWtSyQ+H3Yebt2k43B5dy+04yMA==}
+ 
+-  '@napi-rs/wasm-runtime@1.2.3':
+-    resolution: {integrity: sha512-UMduMbqO5s5zF2NkNacMT/yK5Y5QiKvWr2+50bzIIxFDwVJ2h49b+oyjaCGPhJxd2/gC2x39EHv/gHVuu36x2Q==}
+-    engines: {node: ^20.19.0 || ^22.13.0 || >=23.5.0}
+-    peerDependencies:
+-      '@emnapi/core': ^1.7.1 || ^2.0.0-alpha.4
+-      '@emnapi/runtime': ^1.7.1 || ^2.0.0-alpha.4
+-
+   '@napi-rs/wasm-runtime@1.2.6':
+     resolution: {integrity: sha512-mRyDmEw9/fCDXCGfL1sbgIw/GUK0PVxRW4YwgPN61F3LQ+fSyoBFarJVzgGyhF6kRzEQZ0FejDqm4WLXSeqQmw==}
+     engines: {node: ^20.19.0 || ^22.13.0 || >=23.5.0}
+@@ -3546,8 +3529,8 @@ packages:
+     cpu: [x64]
+     os: [win32]
+ 
+-  '@rolldown/browser@1.2.2':
+-    resolution: {integrity: sha512-TKVAciHZYpn/LRl0cDvywum9AwBhqUWUJDSWFjACmKzu1ZpR7fWXyqCk7Qc61QBhMym7ukWgnPH+QsKhCYpgeA==}
++  '@rolldown/browser@1.2.19':
++    resolution: {integrity: sha512-boe+5DV221aE0NUZpt6I2SuKTKkEGxPVopSaqcRwU8l9jB0sMucZfnmm+/kqwtfh9ZGeim1dmkuChngG+W4ZGg==}
+     hasBin: true
+ 
+   '@rolldown/pluginutils@1.0.1':
+@@ -10014,42 +9997,26 @@ snapshots:
+       '@emnapi/wasi-threads': 1.2.3
+       tslib: 2.8.1
+ 
+-  '@emnapi/core@2.0.0-alpha.3':
+-    dependencies:
+-      '@emnapi/wasi-threads': 2.0.1
+-      tslib: 2.8.1
+-
+   '@emnapi/core@2.0.0-beta.2':
+     dependencies:
+       '@emnapi/wasi-threads': 2.2.0
+       tslib: 2.8.1
+-    optional: true
+ 
+   '@emnapi/runtime@1.11.3':
+     dependencies:
+       tslib: 2.8.1
+ 
+-  '@emnapi/runtime@2.0.0-alpha.3':
+-    dependencies:
+-      tslib: 2.8.1
+-
+   '@emnapi/runtime@2.0.0-beta.2':
+     dependencies:
+       tslib: 2.8.1
+-    optional: true
+ 
+   '@emnapi/wasi-threads@1.2.3':
+     dependencies:
+       tslib: 2.8.1
+ 
+-  '@emnapi/wasi-threads@2.0.1':
+-    dependencies:
+-      tslib: 2.8.1
+-
+   '@emnapi/wasi-threads@2.2.0':
+     dependencies:
+       tslib: 2.8.1
+-    optional: true
+ 
+   '@emotion/babel-plugin@11.13.5(supports-color@10.2.2)':
+     dependencies:
+@@ -11000,12 +10967,6 @@ snapshots:
+ 
+   '@napi-rs/triples@1.2.0': {}
+ 
+-  '@napi-rs/wasm-runtime@1.2.3(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)':
+-    dependencies:
+-      '@emnapi/core': 2.0.0-alpha.3
+-      '@emnapi/runtime': 2.0.0-alpha.3
+-      '@tybys/wasm-util': 0.10.3
+-
+   '@napi-rs/wasm-runtime@1.2.6(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)':
+     dependencies:
+       '@emnapi/core': 1.11.3
+@@ -11018,7 +10979,6 @@ snapshots:
+       '@emnapi/core': 2.0.0-beta.2
+       '@emnapi/runtime': 2.0.0-beta.2
+       '@tybys/wasm-util': 0.10.3
+-    optional: true
+ 
+   '@neon-rs/load@0.0.4': {}
+ 
+@@ -11630,11 +11590,11 @@ snapshots:
+   '@rolldown/binding-win32-x64-msvc@1.3.2':
+     optional: true
+ 
+-  '@rolldown/browser@1.2.2':
++  '@rolldown/browser@1.2.19':
+     dependencies:
+-      '@emnapi/core': 2.0.0-alpha.3
+-      '
+```
+
+**File**: `pnpm-workspace.yaml` (modified, +0/-1)
+```diff
+@@ -45,7 +45,6 @@ overrides:
+   '@builder.io/qwik': link:./packages/qwik
+   '@builder.io/qwik-city': link:./packages/qwik-router
+   '@fastify/static': 10.1.2
+-  '@rolldown/browser>@napi-rs/wasm-runtime': 1.2.3
+   adm-zip: 0.6.1
+   body-parser@1: 1.20.9
+   body-parser@2: 2.4.0
 ```
 
 ---
 
-### Incident Patch 3: `05702ff6` (2026-11-17)
-**Commit Message**: fix(core): keep the dev server running after an SSR error
+### Incident Patch 3: `0f580c0a` (2026-11-24)
+**Commit Message**: fix(docs): restore the playground's bundler after the lockfile dedupe
 
-In dev, logErrorAndStop (used by qError) rethrows the error on a new
-macrotask so it reaches the global error handler. On the server that
-rethrow is an uncaught exception and exits the Vite process, even
-though the render already rejected to its caller. Skip it on the
-server.
+@rolldown/browser@1.2.2 pins emnapi 2.0.0-alpha.3 but accepts any
+@napi-rs/wasm-runtime 1.x. Deduping the lockfile moved it to 1.2.6, which
+needs emnapi 2.0.0-beta.2, so the bundler worker died at startup.
 
-Fixes #9329
-
-**File**: `.changeset/calm-dev-server-ssr-error.md` (added, +5/-0)
+**File**: `pnpm-lock.yaml` (modified, +15/-7)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'@qwik.dev/core': patch
-+---
+@@ -8,6 +8,7 @@ overrides:
+   '@builder.io/qwik': link:./packages/qwik
+   '@builder.io/qwik-city': link:./packages/qwik-router
+   '@fastify/static': 10.1.2
++  '@rolldown/browser>@napi-rs/wasm-runtime': 1.2.3
+   adm-zip: 0.6.1
+   body-parser@1: 1.20.9
+   body-parser@2: 2.4.0
+@@ -2520,6 +2521,13 @@ packages:
+   '@napi-rs/triples@1.2.0':
+     resolution: {integrity: sha512-HAPjR3bnCsdXBsATpDIP5WCrw0JcACwhhrwIAQhiR46n+jm+a2F8kBsfseAuWtSyQ+H3Yebt2k43B5dy+04yMA==}
+ 
++  '@napi-rs/wasm-runtime@1.2.3':
++    resolution: {integrity: sha512-UMduMbqO5s5zF2NkNacMT/yK5Y5QiKvWr2+50bzIIxFDwVJ2h49b+oyjaCGPhJxd2/gC2x39EHv/gHVuu36x2Q==}
++    engines: {node: ^20.19.0 || ^22.13.0 || >=23.5.0}
++    peerDependencies:
++      '@emnapi/core': ^1.7.1 || ^2.0.0-alpha.4
++      '@emnapi/runtime': ^1.7.1 || ^2.0.0-alpha.4
 +
-+fix: keep the dev server running after an SSR error
+   '@napi-rs/wasm-runtime@1.2.6':
+     resolution: {integrity: sha512-mRyDmEw9/fCDXCGfL1sbgIw/GUK0PVxRW4YwgPN61F3LQ+fSyoBFarJVzgGyhF6kRzEQZ0FejDqm4WLXSeqQmw==}
+     engines: {node: ^20.19.0 || ^22.13.0 || >=23.5.0}
+@@ -10992,19 +11000,19 @@ snapshots:
+ 
+   '@napi-rs/triples@1.2.0': {}
+ 
++  '@napi-rs/wasm-runtime@1.2.3(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)':
++    dependencies:
++      '@emnapi/core': 2.0.0-alpha.3
++      '@emnapi/runtime': 2.0.0-alpha.3
++      '@tybys/wasm-util': 0.10.3
++
+   '@napi-rs/wasm-runtime@1.2.6(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)':
+     dependencies:
+       '@emnapi/core': 1.11.3
+       '@emnapi/runtime': 1.11.3
+       '@tybys/wasm-util': 0.10.3
+     optional: true
+ 
+-  '@napi-rs/wasm-runtime@1.2.6(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)':
+-    dependencies:
+-      '@emnapi/core': 2.0.0-alpha.3
+-      '@emnapi/runtime': 2.0.0-alpha.3
+-      '@tybys/wasm-util': 0.10.3
+-
+   '@napi-rs/wasm-runtime@1.2.6(@emnapi/core@2.0.0-beta.2)(@emnapi/runtime@2.0.0-beta.2)':
+     dependencies:
+       '@emnapi/core': 2.0.0-beta.2
+@@ -11626,7 +11634,7 @@ snapshots:
+     dependencies:
+       '@emnapi/core': 2.0.0-alpha.3
+       '@emnapi/runtime': 2.0.0-alpha.3
+-      '@napi-rs/wasm-runtime': 1.2.6(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)
++      '@napi-rs/wasm-runtime': 1.2.3(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)
+ 
+   '@rolldown/pluginutils@1.0.1': {}
+ 
 ```
 
-**File**: `packages/qwik/src/core/shared/utils/log.ts` (modified, +3/-1)
+**File**: `pnpm-workspace.yaml` (modified, +1/-0)
 ```diff
-@@ -1,3 +1,4 @@
-+import { isServer } from '@qwik.dev/core/build';
- import { qDev, qTest } from './qdev';
- 
- const STYLE = qDev
-@@ -20,7 +21,8 @@ export const throwErrorAndStop = (message?: any, ...optionalParams: any[]): neve
- };
- 
- export const logErrorAndStop = (message?: any, ...optionalParams: any[]) => {
--  const err = createAndLogError(qDev, message, ...optionalParams);
-+  // On the server, an uncaught async rethrow kills the dev server.
-+  const err = createAndLogError(qDev && !isServer, message, ...optionalParams);
-   // eslint-disable-next-line no-debugger
-   debugger;
-   return err;
-```
-
-**File**: `packages/qwik/src/core/shared/utils/log.unit.ts` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-+
-+/** Loads `log.ts` with `qTest` off, as an app would. */
-+const loadLog = async () => {
-+  vi.resetModules();
-+  (globalThis as any).qTest = false;
-+  try {
-+    return await import('./log');
-+  } finally {
-+    (globalThis as any).qTest = true;
-+  }
-+};
-+
-+describe('logErrorAndStop in dev mode', () => {
-+  beforeEach(() => {
-+    vi.useFakeTimers();
-+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
-+  });
-+
-+  afterEach(() => {
-+    vi.useRealTimers();
-+    vi.restoreAllMocks();
-+    vi.resetModules();
-+  });
-+
-+  it('logs the error on the server without rethrowing it', async () => {
-+    const { logErrorAndStop } = await loadLog();
-+
-+    const error = logErrorAndStop('Cannot serialize function');
-+
-+    expect(console.error).toHaveBeenCalledOnce();
-+    expect(error.message).toBe('Cannot serialize function');
-+    expect(() => vi.runAllTimers()).not.toThrow();
-+  });
-+});
+@@ -45,6 +45,7 @@ overrides:
+   '@builder.io/qwik': link:./packages/qwik
+   '@builder.io/qwik-city': link:./packages/qwik-router
+   '@fastify/static': 10.1.2
++  '@rolldown/browser>@napi-rs/wasm-runtime': 1.2.3
+   adm-zip: 0.6.1
+   body-parser@1: 1.20.9
+   body-parser@2: 2.4.0
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9567** (2026-11-20): fix(core): replace resource results without mutating previous values (@Varixo)
-- **PR #9564** (closed): fix(preloader): preload early interactions while the page is still loading (@zhengdaodeguL)
-- **PR #9560** (closed): Preload url-subscribed layout chunks on link navigation (@zhengdaodeguL)
-- **PR #9550** (2026-11-19): docs: richer playground examples, production preloader and nicer options (@wmertens)
-- **PR #9549** (2026-11-19): fix(optimizer): declare each QRL right before its first use (@wmertens)
-- **PR #9547** (2026-11-18): test(preloader): stop calling a helper that main removed (@maiieul)
+- **PR #9622** (2026-11-26): docs(skills): name planned tests by their rule, then a concrete case (@maiieul)
+- **PR #9621** (2026-11-26): docs(skills): keep each planned test name standing on its own (@maiieul)
+- **PR #9617** (closed): perf(preloader): load a visible task's chunk with core (@maiieul)
+- **PR #9616** (2026-11-26): fix(preloader): list visible task chunks for the preloader (@maiieul)
+- **PR #9615** (closed): fix(core): keep provider computed signals active after context consumers unmount (@zhengdaodeguL)
+- **PR #9607** (2026-11-25): docs(skills): let a change regroup a file's old tests into describe blocks (@maiieul)
 
 ---
 
@@ -1826,35 +1935,31 @@ Fixes #9329
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in calm-dev-server-ssr-error.md
+## X. Empirical Invariant Guard in package.json
 
 **RULE**:
-When implementing operations in `.changeset/calm-dev-server-ssr-error.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in QwikDev/qwik. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/docs/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in QwikDev/qwik. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fa8e12f1`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72487b50`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/calm-dev-server-ssr-error.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/docs/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-'@qwik.dev/core': patch
----
-
-fix: keep the dev server running when SSR can't serialize a function
+    "@rolldown/browser": "1.2.19",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    "@rolldown/browser": "1.2.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fa8e12f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72487b50` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

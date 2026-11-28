@@ -14073,3 +14073,5 @@ Every entry in this ledger must capture:
 | `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `59e95c8a` | Multi-dimensional audit evidence | 2026-11-28T10:10:47.658Z |
 | `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `94fbd390` | Multi-dimensional audit evidence | 2026-11-28T10:10:48.493Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `965b3e76` | Multi-dimensional audit evidence | 2026-11-28T10:10:57.781Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `9398fb1d` | Multi-dimensional audit evidence | 2026-11-28T10:36:08.232Z |
+| `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `5b80fdec` | Multi-dimensional audit evidence | 2026-11-28T10:36:10.777Z |

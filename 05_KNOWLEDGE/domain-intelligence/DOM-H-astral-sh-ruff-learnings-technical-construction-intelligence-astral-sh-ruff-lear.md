@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T10:16:54.423Z",
+  "timestamp": "2026-11-28T10:36:18.112Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-astral-sh-ruff-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [astral-sh-ruff-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T10:16:54.423Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T10:36:18.112Z`  
 > **Learning ID**: `LEARN-EVO-astral-sh-ruff-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from astral-sh-ruff-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `8f0189e0`  
+> **Source Version**: `9398fb1d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T10:16:42.256Z  
+> **Timestamp**: 2026-11-28T10:36:07.601Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T10:16:42.249Z  
+> **Harvest Timestamp**: 2026-11-28T10:36:07.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 51585 stars
+- **Stars / Engagement**: 51484 stars
 
 ---
 
@@ -2236,58 +2236,600 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cee3b19a` (2026-11-26)
-**Commit Message**: [ty] Avoid a panic when interrupting watch mode after a save (#29976)
+### Incident Patch 1: `7b3746e5` (2026-11-27)
+**Commit Message**: [ty] Build bound method overloads directly in the callable binding (#30972)
 
 ## Summary
 
-If a file changes just before Ctrl+C, `ty check --watch` can exit with a
-Rust panic and status 101 instead of the usual interrupt status 130. The
-file watcher can finish debouncing a save after the main loop has
-already dropped its receiver. We now discard that final notification.
+A single-threaded check of discord.py used 0.17% fewer instructions on
+Linux. Black, Django, and FastAPI used 0.05% to 0.12% fewer
+instructions. We didn't see a clear change in elapsed time.
 
-## Test Plan
+Specializing a method for its receiver can turn one overload into
+several. We account for that by collecting a list of signatures for each
+overload and flattening the lists into the callable binding. In the
+common case, the intermediate list contains just one signature.
 
-In an empty directory, this Bash repro waits for the first check,
-replaces the file as an editor would, and interrupts the watcher.
+We now reserve space for the declared overloads and append signatures
+directly to the binding as we specialize them. If a signature has a
+source index, we keep it so diagnostics still point to the original
+declaration.
 
-```bash
-printf 'count = 1\n' > app.py
-coproc CHECK { exec ty check --watch app.py; }
-pid=$CHECK_PID
-read -r line <&"${CHECK[0]}"
-printf 'count = 2\n' > app.py.tmp
-mv app.py.tmp app.py
-kill -INT "$pid"
-wait "$pid"
+<!-- ty-pinned-project-instructions:start -->
+
+Across 28 projects, the mean change in instructions was −0.05% and the
+median was −0.03%. Weighting each project by its median instruction
+count on main gives a change of −0.05%.
+
+<details>
+<summary>Instruction counts by project</summary>
+
+| Project | [Base
+instructions](https://github.com/astral-sh/ruff/commit/8f0189e0e975334474efb938eafc48f22855aadb)
+| [PR
+instructions](https
+
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/paramspec.md` (modified, +31/-0)
+```diff
+@@ -2442,6 +2442,37 @@ callback.call()  # error: [missing-argument] "No argument provided for required
+ callback.call(1, 2)  # error: [too-many-positional-arguments]
+ ```
+ 
++### An overloaded callable receiver expands one method overload
++
++The forwarded overload accepts either signature of `__call__`. The trailing overload still accepts
++its own arguments.
++
++```py
++from typing import Callable, overload
++
++class Callback:
++    @overload
++    def __call__(self, value: int, /) -> float: ...
++    @overload
++    def __call__(self, *, text: str) -> float: ...
++    def __call__(self, *args, **kwargs) -> float:
++        return 0.0
++
++    @overload
++    def call[**P, R](self: Callable[P, R], *args: P.args, **kwargs: P.kwargs) -> R: ...
++    @overload
++    def call(self, reverse: bool, data: bytes) -> bytes: ...
++    def call(self, *args, **kwargs):
++        raise NotImplementedError
++
++callback = Callback()
++reveal_type(callback.call(1))  # revealed: float
++reveal_type(callback.call(text="a"))  # revealed: float
++reveal_type(callback.call(reverse=False, data=b""))  # revealed: bytes
++callback.call(text=1)  # error: [invalid-argument-type] "Expected `str`"
++callback.call(reverse=False, data=1)  # error: [invalid-argument-type] "Expected `bytes`"
++```
++
+ ### Preserving method variables on callable receivers
+ 
+ Binding a callable receiver preserves the method's other type variables for argument inference.
 ```
 
-On ty 0.0.96, the watcher panics with `SendError`. With this fix, `wait`
-returns 130.
-
-**File**: `crates/ty/src/lib.rs` (modified, +4/-1)
+**File**: `crates/ty_python_semantic/src/types.rs` (modified, +13/-11)
 ```diff
-@@ -360,7 +360,10 @@ impl MainLoop {
-         tracing::debug!("Starting watch mode");
-         let sender = self.sender.clone();
-         let watcher = watch::directory_watcher(move |event| {
--            sender.send(MainLoopMessage::ApplyChanges(event)).unwrap();
-+            // A final batch of file changes can arrive after Ctrl+C has closed the receiver.
-+            if sender.send(MainLoopMessage::ApplyChanges(event)).is_err() {
-+                tracing::debug!("Ignoring file changes after the main loop exited");
-+            }
-         })?;
+@@ -7420,7 +7420,9 @@ impl<'db> Type<'db> {
+                 } else {
+                     // Solve exact receiver constraints before checking the other arguments, but
+                     // retain the receiver itself for call inference and receiver diagnostics.
+-                    let overloads = signature.overloads.iter().flat_map(|overload| {
++                    let mut binding =
++                        CallableBinding::with_capacity(self, signature.overloads.len());
++                    for overload in &signature.overloads {
+                         if overload.has_receiver_determined_method_typevar(db, env)
+                             && let Some(specialized) = overload.specialize_for_bound_receiver(
+                                 db,
+@@ -7429,19 +7431,19 @@ impl<'db> Type<'db> {
+                                 bound_method.typing_self_type(db),
+                             )
+                         {
+-                            specialized.overloads
+-                        } else if let Some(specialized) =
+-                            overload.with_unused_self_upper_bound(db, env)
+-                        {
+-                            smallvec_inline![specialized]
++                            for specialized in specialized.overloads {
++                                binding.push_overload(specialized);
++                            }
+                         } else {
+-                            smallvec_inline![overload.clone()]
++                            binding.push_overload(
++                                overload
++                                    .with_unused_self_upper_bound(db, env)
++                                    .unwrap_or_else(|| overload.clone()),
++                            );
+                         }
+-                    });
++                    }
  
-         self.watcher = Some(ProjectWatcher::new(watcher, db));
+-                    CallableBinding::from_overloads(self, overloads)
+-                        .with_bound_type(self_instance)
+-                        .into()
++                    binding.with_bound_type(self_instance).into()
+                 }
+             }
+ 
+```
+
+**File**: `crates/ty_python_semantic/src/types/call/bind.rs` (modified, +19/-36)
+```diff
+@@ -3771,46 +3771,29 @@ impl<'db> CallableBinding<'db> {
+         signature_type: Type<'db>,
+         overloads: impl IntoIterator<Item = Signature<'db>>,
+     ) -> Self {
+-        Self::from_indexed_overloads(
+-            signature_type,
+-            overloads.into_iter().enumerate().map(|(index, signature)| {
+-                (
+-                    signature.source_overload_index().unwrap_or(index),
+-                    signature,
+-                )
+-            }),
+-        )
++        let overloads = overloads.into_iter();
++        let mut binding = Self::with_capacity(signature_type, overloads.size_hint().0);
++        for signature in overloads {
++            binding.push_overload(signature);
++        }
++        binding
+     }
+ 
+-    /// Constructs a callable binding from overloads while preserving each overload's position in
+-    /// the defining function's overload list.
+-    ///
+-    /// The preserved indexes are used for diagnostics so filtered or reordered bindings can still
+-    /// point back to the correct overload declaration.
+-    fn from_indexed_overloads(
+-        signature_type: Type<'db>,
+-        overloads: impl IntoIterator<Item = (usize, Signature<'db>)>,
+-    ) -> Self {
+-        let overloads = overloads
+-            .into_iter()
+-            .map(|(source_overload_index, signature)| {
+-                Binding::single(signature_type, signature)
+-                    .with_source_overload_index(source_overload_index)
+-            })
+-            .collect();
+-        Self {
+-            callable_type: signature_type,
+-            signature_type,
+-            is_implicitly_invoked: false,
+-            dunder_call_is_possibly_unbound: false,
+-            bound_type: None,
+-            overload_call_result: None,
+-            matching_overload_before_type_checking: None,
+-            overloads,
+-        }
++    /// Preserve the original declaration index when signatures were filtered or reordered.
++    pub(crate) fn push_overload(&mut self, signature: Signature<'db>) {
++        let index = signature
++            .source_overload_index()
++            .unwrap_or(self.overloads.len());
++        self.overloads.push(
++            Binding::single(self.signature_type, signature).with_source_overload_index(index),
++        );
+     }
+ 
+     pub(crate) fn not_callable(signature_type: Type<'db>) -> Self {
++        Self::with_capacity(signature_type, 0)
++    }
++
++    pub(crate) fn with_capacity(signature_type: Type<'db>, capacity: usize) -> Self {
+         Self {
+             callable_type: signature_type,
+             signature_type,
+@@ -3819,7 +3802,7 @@ impl<'db> CallableBinding<'db> {
+             bound_type: None,
+             overload_call_result: None,
+             matching_overload_before_type_checking: None,
+-            overloads: smallvec![],
++            overloads: SmallVec::with_capacity(capacity),
+         }
+     }
+ 
+```
+
+---
+
+### Incident Patch 2: `6dc3af53` (2026-11-27)
+**Commit Message**: [ty] Store single definitions directly when building the semantic index (#30989)
+
+## Summary
+
+A single-threaded check of Django used 0.23% fewer instructions in
+Cachegrind. Instruction counts fell on all 14 projects we checked on
+Linux. We didn’t see a consistent change in wall time.
+
+We store a small vector of definitions for each node while building the
+semantic index, even though only a star import can bind more than one
+name. We then split these entries into separate tables when we finish
+the index.
+
+We now build the tables separately from the start. Ordinary nodes store
+a single definition. Star imports keep a list, including an empty one if
+they bind no names. This also removes the public `Definitions` wrapper
+from the internal `ty_python_core` crate.
+
+**File**: `crates/ty_python_core/src/builder.rs` (modified, +46/-97)
+```diff
+@@ -33,12 +33,12 @@ use crate::ast_node_ref::AstNodeRef;
+ use crate::definition::{
+     AnnotatedAssignmentDefinitionNodeRef, AssignmentDefinitionNodeRef, BindingsOwner,
+     ComprehensionDefinitionNodeRef, Definition, DefinitionCategory, DefinitionKind,
+-    DefinitionNodeKey, DefinitionNodeRef, Definitions, DictKeyAssignmentNodeRef,
+-    ExceptHandlerDefinitionNodeRef, ForStmtDefinitionNodeRef, ImportDefinitionNodeRef,
+-    ImportFromDefinitionNodeRef, ImportFromSubmoduleDefinitionNodeRef,
+-    LambdaParameterDefinitionNodeRef, LoopHeaderDefinitionNodeRef, LoopStmtRef,
+-    MatchPatternDefinitionNodeRef, NestedBindingExecution, NestedBindingsDefinitionKind,
+-    ParameterDefinitionNodeRef, StarImportDefinitionNodeRef, WithItemDefinitionNodeRef,
++    DefinitionNodeKey, DefinitionNodeRef, DictKeyAssignmentNodeRef, ExceptHandlerDefinitionNodeRef,
++    ForStmtDefinitionNodeRef, ImportDefinitionNodeRef, ImportFromDefinitionNodeRef,
++    ImportFromSubmoduleDefinitionNodeRef, LambdaParameterDefinitionNodeRef,
++    LoopHeaderDefinitionNodeRef, LoopStmtRef, MatchPatternDefinitionNodeRef,
++    NestedBindingExecution, NestedBindingsDefinitionKind, ParameterDefinitionNodeRef,
++    StarImportDefinitionNodeRef, WithItemDefinitionNodeRef,
+ };
+ use crate::expression::{Expression, ExpressionContext, ExpressionKind};
+ use crate::frozen::{FrozenMap, FrozenSet};
+@@ -291,7 +291,8 @@ pub(super) struct SemanticIndexBuilder<'db, 'ast> {
+     // Box to avoid copying large builders when this index grows.
+     use_def_maps: IndexVec<FileScopeId, Box<UseDefMapBuilder<'db>>>,
+     scopes_by_node: FxHashMap<NodeWithScopeKey, FileScopeId>,
+-    definitions_by_node: FxHashMap<DefinitionNodeKey, Definitions<'db>>,
++    definitions_by_node: FxHashMap<DefinitionNodeKey, Definition<'db>>,
++    star_import_definitions: FxHashMap<DefinitionNodeKey, Vec<Definition<'db>>>,
+     expressions_by_node: FxHashMap<ExpressionNodeKey, Expression<'db>>,
+     unpacks_by_target: FxHashMap<ExpressionNodeKey, Unpack<'db>>,
+     condition_flow_snapshots_by_node: FxHashMap<ExpressionNodeKey, ConditionFlowSnapshots>,
+@@ -357,6 +358,7 @@ impl<'db, 'ast> SemanticIndexBuilder<'db, 'ast> {
+ 
+             scopes_by_node: FxHashMap::default(),
+             definitions_by_node: FxHashMap::default(),
++            star_import_definitions: FxHashMap::default(),
+             expressions_by_node: FxHashMap::default(),
+             unpacks_by_target: FxHashMap::default(),
+             condition_flow_snapshots_by_node: FxHashMap::default(),
+@@ -415,18 +417,8 @@ impl<'db, 'ast> SemanticIndexBuilder<'db, 'ast> {
+         }
+     }
+ 
+-    fn expect_single_definition(
+-        &self,
+-        definition_key: impl Into<DefinitionNodeKey> + std::fmt::Debug + Copy,
+-    ) -> Definition<'db> {
+-        let definitions = &self.definitions_by_node[&definition_key.into()];
+-        debug_assert_eq!(
+-            definitions.len(),
+-            1,
+-            "Expected exactly one definition to be associated with AST node {definition_key:?} but found {}",
+-            definitions.len()
+-        );
+-        definitions[0]
++    fn expect_single_definition(&self, key: impl Into<DefinitionNodeKey>) -> Definition<'db> {
++        self.definitions_by_node[&key.into()]
+     }
+ 
+     /// See [`SemanticIndex::visible_ancestor_scopes`].
+@@ -1509,10 +1501,6 @@ impl<'db, 'ast> SemanticIndexBuilder<'db, 'ast> {
+         }
+     }
+ 
+-    fn add_entry_for_definition_key(&mut self, key: DefinitionNodeKey) -> &mut Definitions<'db> {
+-        self.definitions_by_node.entry(key).or_default()
+-    }
+-
+     /// Add a [`Definition`] associated with the `definition_node` AST node.
+     ///
+     /// ## Panics
+@@ -1536,12 +1524,29 @@ impl<'db, 'ast> SemanticIndexBuilder<'db, 'ast> {
+         place: ScopedPlaceId,
+         definition_node: impl Into<DefinitionNodeRef<'ast, 'db>> + std::fmt::Debug + Copy,
+     ) -> Definition<'db> {
+-        let (definition, num_definitions) =
+-            self.create_additional_definition(place, definition_node);
+-        debug_assert_eq!(
+-            num_definitions, 1,
+-            "Attempted to create multiple `Definition`s associated with AST node {definition_node:?}"
+-        );
++        let node = definition_node.into();
++        let kind = node.into_owned(self.module);
++        let is_reexported = kind.is_reexported();
++        let definition =
++            Definition::new(self.db, self.current_scope_id(), place, kind, is_reexported);
++
++        match node {
++            // Loop headers are retrieved through the loop token.
++            DefinitionNodeRef::LoopHeader(_) => {}
++            DefinitionNodeRef::ImportStar(_) => {
++                self.star_import_definitions
++                    .entry(node.key())
++                    .or_default()
++                    .push(definition);
++            }
++            _ => {
++                let previous = self.definitions_by_node.insert(node.key(), definition);
++                debug_assert!(
++                    previous.is_non
+```
+
+**File**: `crates/ty_python_core/src/definition.rs` (modified, +0/-35)
+```diff
+@@ -1,5 +1,3 @@
+-use std::ops::Deref;
+-
+ use ruff_db::PythonFile;
+ use ruff_db::files::{File, FileRange};
+ use ruff_db::parsed::{ParsedModuleRef, parsed_module};
+@@ -307,39 +305,6 @@ fn attribute_docstring<'a>(
+     value.as_string_literal_expr()
+ }
+ 
+-/// One or more [`Definition`]s.
+-#[derive(Debug, Default, PartialEq, Eq, get_size2::GetSize)]
+-pub struct Definitions<'db> {
+-    definitions: smallvec::SmallVec<[Definition<'db>; 1]>,
+-}
+-
+-impl<'db> Definitions<'db> {
+-    pub(crate) fn push(&mut self, definition: Definition<'db>) {
+-        self.definitions.push(definition);
+-    }
+-
+-    pub(crate) fn into_boxed_slice(self) -> Box<[Definition<'db>]> {
+-        self.definitions.into_vec().into_boxed_slice()
+-    }
+-}
+-
+-impl<'db> Deref for Definitions<'db> {
+-    type Target = [Definition<'db>];
+-
+-    fn deref(&self) -> &Self::Target {
+-        &self.definitions
+-    }
+-}
+-
+-impl<'a, 'db> IntoIterator for &'a Definitions<'db> {
+-    type Item = &'a Definition<'db>;
+-    type IntoIter = std::slice::Iter<'a, Definition<'db>>;
+-
+-    fn into_iter(self) -> Self::IntoIter {
+-        self.definitions.iter()
+-    }
+-}
+-
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, get_size2::GetSize)]
+ pub enum DefinitionState<'db> {
+     Defined(Definition<'db>),
+```
+
+**File**: `crates/ty_python_core/src/lib.rs` (modified, +33/-14)
+```diff
+@@ -24,7 +24,7 @@ pub use crate::statement::{Statement, StatementNodeKey};
+ use ast_ids::AstIds;
+ pub use ast_ids::ExpressionNodeKey;
+ use builder::SemanticIndexBuilder;
+-use definition::{Definition, DefinitionNodeKey, Definitions};
++use definition::{Definition, DefinitionNodeKey};
+ use expression::Expression;
+ use member::ScopedMemberId;
+ use narrowing_constraints::ScopedNarrowingConstraint;
+@@ -286,28 +286,25 @@ struct DefinitionsByNode<'db> {
+ }
+ 
+ impl<'db> DefinitionsByNode<'db> {
+-    fn from_map(definitions_by_node: FxHashMap<DefinitionNodeKey, Definitions<'db>>) -> Self {
+-        let single_count = definitions_by_node
+-            .values()
+-            .filter(|definitions| definitions.len() == 1)
+-            .count();
+-        let mut single = Vec::with_capacity(single_count);
+-        let mut non_single = Vec::with_capacity(definitions_by_node.len() - single_count);
+-
++    fn new(
++        mut single: FxHashMap<DefinitionNodeKey, Definition<'db>>,
++        star_imports: FxHashMap<DefinitionNodeKey, Vec<Definition<'db>>>,
++    ) -> Self {
++        let mut non_single = Vec::with_capacity(star_imports.len());
+         #[expect(
+             clippy::iter_over_hash_type,
+-            reason = "each node is independently partitioned by definition count"
++            reason = "each wildcard import is independently partitioned by definition count"
+         )]
+-        for (key, definitions) in definitions_by_node {
+-            if definitions.len() == 1 {
+-                single.push((key, definitions[0]));
++        for (key, definitions) in star_imports {
++            if let [definition] = definitions.as_slice() {
++                single.insert(key, *definition);
+             } else {
+                 non_single.push((key, definitions.into_boxed_slice()));
+             }
+         }
+ 
+         Self {
+-            single: FrozenMap::from_entries(single),
++            single: single.into(),
+             non_single: FrozenMap::from_entries(non_single),
+         }
+     }
+@@ -1211,6 +1208,7 @@ mod tests {
+     use ruff_db::{
+         files::{File, system_path_to_file},
+         parsed::ParsedModuleRef,
++        system::DbWithWritableSystem as _,
+     };
+     use ruff_python_ast as ast;
+     use ruff_text_size::{Ranged, TextRange};
+@@ -1745,6 +1743,27 @@ def f(a: str, /, b: str, c: int = 1, *args, d: int = 2, **kwargs):
+         );
+     }
+ 
++    #[test]
++    fn wildcard_import_definitions_track_export_count() {
++        let mut db = TestDbBuilder::new()
++            .with_file("/src/test.py", "from library import *")
++            .with_file("/src/library.py", "")
++            .build()
++            .unwrap();
++        let importer = system_path_to_file(&db, "/src/test.py").unwrap();
++
++        for (source, count) in [("", 0), ("a = 1", 1), ("a = 1\nb = 2", 2), ("b = 2", 1)] {
++            db.write_file("/src/library.py", source).unwrap();
++            let file = program_file(&db, importer);
++            let module = parsed_module(&db, file.python_file(&db)).load(&db);
++            let index = semantic_index(&db, file);
++            let alias = &module.suite()[0].as_import_from_stmt().unwrap().names[0];
++
++            assert_eq!(index.definitions(alias).len(), count);
++            assert_eq!(index.try_definition(alias).is_some(), count == 1);
++        }
++    }
++
+     /// Test case to validate that the comprehension scope is correctly identified and that the target
+     /// variable is defined only in the comprehension scope and not in the global scope.
+     #[test]
+```
+
+---
+
+### Incident Patch 3: `2ce372c7` (2026-11-28)
+**Commit Message**: [ty] Reduce retained expression memory (#28952)
+
+## Summary
+
+For every independently inferred expression, we track two AST references
+in Salsa. One points to the expression itself and the other to the
+assignment, if the expression is its right-hand side. Both fields use
+`#[no_eq]`, so reindexing a file marks both as changed.
+
+We now store the two references in a single tracked field. This saves
+one revision counter per expression and lets callers keep reading either
+reference through the existing accessors.
+
+**File**: `crates/ty_python_core/src/expression.rs` (modified, +47/-15)
+```diff
+@@ -128,7 +128,7 @@ pub enum ExpressionKind {
+ /// * a return type of a cross-module query
+ /// * a field of a type that is a return type of a cross-module query
+ /// * an argument of a cross-module query
+-#[salsa::tracked(debug, heap_size=ruff_memory_usage::heap_size)]
++#[salsa::tracked(debug, constructor=new_internal, heap_size=ruff_memory_usage::heap_size)]
+ pub struct Expression<'db> {
+     /// The scope in which the expression occurs.
+     ///
+@@ -137,33 +137,65 @@ pub struct Expression<'db> {
+     #[returns(copy)]
+     pub scope_id: ScopeId<'db>,
+ 
+-    /// The expression node.
++    /// AST references, which are refreshed together whenever the file is re-indexed.
+     #[no_eq]
+     #[tracked]
+     #[returns(ref)]
+-    pub node_ref: AstNodeRef<ast::Expr>,
+-
+-    /// An assignment statement, if this expression is immediately used as the rhs of that
+-    /// assignment.
+-    ///
+-    /// (Note that this is the _immediately_ containing assignment — if a complex expression is
+-    /// assigned to some target, only the outermost expression node has this set. The inner
+-    /// expressions are used to build up the assignment result, and are not "immediately assigned"
+-    /// to the target, and so have `None` for this field.)
+-    #[no_eq]
+-    #[tracked]
+-    #[returns(clone)]
+-    pub assigned_to: Option<AstNodeRef<ast::StmtAssign>>,
++    nodes: ExpressionAstNodes,
+ 
+     /// The inference context for this expression.
+     #[returns(copy)]
+     pub kind: ExpressionKind,
+ }
+ 
++#[derive(Clone, Debug, get_size2::GetSize)]
++#[doc(hidden)]
++pub struct ExpressionAstNodes {
++    node_ref: AstNodeRef<ast::Expr>,
++    assigned_to: Option<AstNodeRef<ast::StmtAssign>>,
++}
++
+ // The Salsa heap is tracked separately.
+ impl get_size2::GetSize for Expression<'_> {}
+ 
+ impl<'db> Expression<'db> {
++    pub fn new<D: salsa::Database + ?Sized>(
++        db: &'db D,
++        scope_id: ScopeId<'db>,
++        node_ref: AstNodeRef<ast::Expr>,
++        assigned_to: Option<AstNodeRef<ast::StmtAssign>>,
++        kind: ExpressionKind,
++    ) -> Self {
++        Self::new_internal(
++            db,
++            scope_id,
++            ExpressionAstNodes {
++                node_ref,
++                assigned_to,
++            },
++            kind,
++        )
++    }
++
++    /// The expression node.
++    pub fn node_ref<D: salsa::Database + ?Sized>(self, db: &'db D) -> &'db AstNodeRef<ast::Expr> {
++        &self.nodes(db).node_ref
++    }
++
++    /// An assignment statement, if this expression is immediately used as the rhs of that
++    /// assignment.
++    ///
++    /// (Note that this is the _immediately_ containing assignment — if a complex expression is
++    /// assigned to some target, only the outermost expression node has this set. The inner
++    /// expressions are used to build up the assignment result, and are not "immediately assigned"
++    /// to the target, and so have `None` for this field.)
++    pub fn assigned_to<D: salsa::Database + ?Sized>(
++        self,
++        db: &'db D,
++    ) -> Option<AstNodeRef<ast::StmtAssign>> {
++        self.nodes(db).assigned_to.clone()
++    }
++
+     pub fn scope(self, db: &'db dyn Db) -> ScopeId<'db> {
+         self.scope_id(db)
+     }
+```
+
+**File**: `hawk.toml` (modified, +8/-0)
+```diff
+@@ -878,6 +878,14 @@ kind = "inherent_method"
+ level = "expect"
+ reason = "command environment methods mirror the standard library Command API"
+ 
++[[override]]
++lint = "hawk::unnecessary_public"
++crate = "ty_python_core"
++item = "expression::Expression::<'db>::new"
++kind = "inherent_method"
++level = "expect"
++reason = "preserve the public constructor that Salsa generated for Expression"
++
+ [[override]]
+ lint = "hawk::dead_public"
+ crate = "ty_python_core"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30978** (closed): [ty] Reuse interned sequent constraints within each builder (@MichaReiser)
-- **PR #30975** (2026-11-26): [ty] Remove the redundant value scope from unpacking assignments (@MichaReiser)
-- **PR #30974** (closed): [ty] Trim the last candidate in the overload filter cache key (@MichaReiser)
-- **PR #30973** (closed): [ty] Share a revision between the AST references on each expression (@MichaReiser)
-- **PR #30969** (closed): [ty] Share scope inference across workers for large files (@charliermarsh)
-- **PR #30968** (2026-11-26): [ty] Avoid a second interner lookup in type relation queries (@MichaReiser)
+- **PR #31028** (2026-11-28): [ty] Split CodSpeed simulation benchmarks into smaller shards (@MichaReiser)
+- **PR #31020** (closed): Report syntax errors in Markdown code blocks in preview (@saberoueslati)
+- **PR #31018** (2026-11-28): [ty] Resolve assignments once when interpreting a name as a type (@charliermarsh)
+- **PR #31017** (2026-11-28): [ty] Bind method signatures without interning an unbound callable (@charliermarsh)
+- **PR #31016** (closed): [ty] Recognize string and bytes literals assignable to a union of two instance types (@charliermarsh)
+- **PR #31015** (closed): [ty] Skip variance inference when reversing the type mapping has no effect (@charliermarsh)
 
 ---
 
@@ -2307,34 +2849,61 @@ returns 130.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Avoid a panic when interrupting watch mode after a save
+## X. [ty] Build bound method overloads directly in the callable binding
 
 **RULE**:
-When implementing operations in `crates/ty/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty_python_semantic/resources/mdtest/generics/pep695/paramspec.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cee3b19a`: [ty] Avoid a panic when interrupting watch mode after a save. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b3746e5`: [ty] Build bound method overloads directly in the callable binding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/generics/pep695/paramspec.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // A final batch of file changes can arrive after Ctrl+C has closed the receiver.
-            if sender.send(MainLoopMessage::ApplyChanges(event)).is_err() {
-                tracing::debug!("Ignoring file changes after the main loop exited");
-            }
+### An overloaded callable receiver expands one method overload
+
+The forwarded overload accepts either signature of `__call__`. The trailing overload still accepts
+its own arguments.
+
+```py
+from typing import Callable, overload
+
+class Callback:
+    @overload
+    def __call__(self, value: int, /) -> float: ...
+    @overload
+    def __call__(self, *, text: str) -> float: ...
+    def __call__(self, *args, **kwargs) -> float:
+        return 0.0
+
+    @overload
+    def call[**P, R](self: Callable[P, R], *args: P.args, **kwargs: P.kwargs) -> R: ...
+    @overload
+    def call(self, reverse: bool, data: bytes) -> bytes: ...
+    def call(self, *args, **kwargs):
+        raise NotImplementedError
+
+callback = Callback()
+reveal_type(callback.call(1))  # revealed: float
+reveal_type(callback.call(text="a"))  # revealed: float
+reveal_type(callback.call(reverse=False, data=b""))  # revealed: bytes
+callback.call(text=1)  # error: [invalid-argument-type] "Expected `str`"
+callback.call(reverse=False, data=1)  # error: [invalid-argument-type] "Expected `bytes`"
+```
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            sender.send(MainLoopMessage::ApplyChanges(event)).unwrap();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cee3b19a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b3746e5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

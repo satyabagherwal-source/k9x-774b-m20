@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T10:11:01.493Z",
-    "lastVerified": "2026-11-28T10:11:01.493Z",
+    "lastChecked": "2026-11-28T10:36:17.461Z",
+    "lastVerified": "2026-11-28T10:36:17.461Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-28T09:05:03.624Z",
+    "lastChecked": "2026-11-28T10:36:17.452Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-28T09:05:03.624Z"
+    "lastVerified": "2026-11-28T10:36:17.452Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1558,9 +1558,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-28T04:48:07.874Z",
+    "lastChecked": "2026-11-28T10:36:12.673Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-28T04:48:07.874Z"
+    "lastVerified": "2026-11-28T10:36:12.673Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2518,9 +2518,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-11-27T15:09:18.238Z",
+    "lastChecked": "2026-11-28T10:36:14.962Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-11-27T15:09:18.238Z"
+    "lastVerified": "2026-11-28T10:36:14.962Z"
   },
   "flox-flox": {
     "name": "flox/flox",
@@ -6738,12 +6738,12 @@
     "lastVerified": "2026-11-27T05:48:15.764Z"
   },
   "argoproj-argo-workflows": {
-    "name": "argoproj/argo-workflows",
+    "name": "argo-workflows",
     "officialUrl": "https://github.com/argoproj/argo-workflows",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T16:21:38.024Z",
-    "lastVerified": "2026-11-27T16:21:38.024Z",
+    "lastChecked": "2026-11-28T10:36:10.201Z",
+    "lastVerified": "2026-11-28T10:36:10.201Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-workflows",
@@ -6752,7 +6752,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "df109532"
   },
   "ytsaurus-ytsaurus": {
     "name": "ytsaurus/ytsaurus",
@@ -8874,14 +8875,14 @@
     "officialUrl": "https://github.com/astral-sh/ruff",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T10:16:42.249Z",
-    "lastVerified": "2026-11-27T10:16:42.249Z",
+    "lastChecked": "2026-11-28T10:36:07.457Z",
+    "lastVerified": "2026-11-28T10:36:07.457Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "d06cbac20d6f79706856fbd3c1c6253c77f8cdc506c3c437375d72b53ef996de",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "2cd47d059cc530c1784dc9d884b65c745f66ecfa6ef65139330d46d01cb2cb7a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11834,9 +11835,9 @@
   "aheze-popovers": {
     "name": "Popovers",
     "officialUrl": "https://github.com/aheze/Popovers",
-    "lastChecked": "2026-11-26T06:52:23.393Z",
+    "lastChecked": "2026-11-28T10:36:07.460Z",
     "revisionIdentifier": "576b4d3e",
-    "lastVerified": "2026-11-26T06:52:23.393Z"
+    "lastVerified": "2026-11-28T10:36:07.460Z"
   },
   "goose3-goose3": {
     "name": "goose3",
@@ -12215,14 +12216,14 @@
     "officialUrl": "https://github.com/QwikDev/qwik",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T00:26:41.598Z",
-    "lastVerified": "2026-11-25T00:26:41.598Z",
+    "lastChecked": "2026-11-28T10:36:09.914Z",
+    "lastVerified": "2026-11-28T10:36:09.914Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-qwikdev-qwik",
-    "contentHash": "b85f6b5415af7f67c57064528481a92825daf3b7b693954c92de50b9798d9470",
+    "contentHash": "42ccd6ab806ba907b3a27074e777bebf76d605e4ae9583d48cd89905c4cd758c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

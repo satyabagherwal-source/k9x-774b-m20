@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T10:11:06.154Z",
+  "last_updated": "2026-11-28T10:36:20.581Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27094,
+  "total_items": 27095,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b6ad14df10106a932566c1fbb4f50b6943da1882852931f271542c6d32efab37",
+      "content_hash": "4d8f9861c445456b90756632fba056cc2f12595bfe1c02a90050ff8f455aef96",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T08:40:14.631Z"
+      "persisted_at": "2026-11-28T10:36:20.368Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c55f46c81dfd5530e561358f0b7db4dff3e37540f33168c2988b26f9818abe3a",
+      "content_hash": "4214f125ffe54cc07de5c96a90d0ac7b52662fda7e618e0abdc16cc17de7df22",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T08:40:14.905Z"
+      "persisted_at": "2026-11-28T10:36:20.581Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -236063,8 +236063,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "8f0189e0",
-      "content_hash": "d06cbac20d6f79706856fbd3c1c6253c77f8cdc506c3c437375d72b53ef996de",
+      "source_version": "9398fb1d",
+      "content_hash": "2cd47d059cc530c1784dc9d884b65c745f66ecfa6ef65139330d46d01cb2cb7a",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -236114,7 +236114,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T10:16:43.209Z",
+      "verified_at": "2026-11-28T10:36:07.962Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236168,10 +236168,10 @@
       "relative_path": "08_VERIFICATION/astral-sh-ruff-verification-protocol-empirical-defect-shield-for-astral-sh-ruff.md",
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh/ruff",
       "repository": "astral-sh/ruff",
-      "source_version": "8f0189e0",
-      "content_hash": "70cbad19d22cbfe25c786ac174b7ec949e3b006afa0b7ea894c5b7feac1d2994",
+      "source_version": "9398fb1d",
+      "content_hash": "680d4b37929d1f434173163091ecf195f5601579dd429c5091c633e46cdf5067",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:16:44.124Z"
+      "persisted_at": "2026-11-28T10:36:08.963Z"
     },
     "learn-github-react-native-webrtc-react-native-webrtc": {
       "learning_id": "learn-github-react-native-webrtc-react-native-webrtc",
@@ -236281,9 +236281,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh-ruff-learnings",
       "repository": "astral-sh-ruff-learnings",
       "source_version": "HEAD",
-      "content_hash": "0fdccf070e1fb3dbec5837e5444393c182d979b2e69fcb0cd5029c5665e9ec8f",
+      "content_hash": "d9ea3c9b0f11506ce1269003cf257b89265958578f9676b5fe5dfb3e8b95ee76",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:16:54.969Z"
+      "persisted_at": "2026-11-28T10:36:18.676Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant",
@@ -261656,10 +261656,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-technical-construction-intelligence-astral-sh-ruff-core-invariant.md",
       "title": "Technical Construction Intelligence: astral-sh/ruff Core Invariants",
       "repository": "astral-sh/ruff",
-      "source_version": "8f0189e0",
-      "content_hash": "cd0a8d5a1ca8c10a9eed8ca1190ac59393273a473ebe286fb69532cf8b6eccca",
+      "source_version": "9398fb1d",
+      "content_hash": "0dc1892a83245ce13152c1b07ab9090aee11fa0b4abebc36a9f446185f36655f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:16:43.927Z"
+      "persisted_at": "2026-11-28T10:36:08.736Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -261669,9 +261669,9 @@
       "title": "Technical Construction Intelligence: astral-sh-ruff-learnings Core Invariants",
       "repository": "astral-sh-ruff-learnings",
       "source_version": "HEAD",
-      "content_hash": "3434a2ad4312c34983bcc827aeb425ccabe8cd4822be88e8d86705e6ca478a9c",
+      "content_hash": "a8408a1546bf6169536b3341e892ec136d841f865e629911a1224aada6055d57",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:16:54.760Z"
+      "persisted_at": "2026-11-28T10:36:18.468Z"
     },
     "rule-8730": {
       "learning_id": "rule-8730",
@@ -273968,11 +273968,16 @@
       "slug": "qwikdev-qwik",
       "platform": "github",
       "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "04c312f5",
-      "content_hash": "b85f6b5415af7f67c57064528481a92825daf3b7b693954c92de50b9798d9470",
+      "source_version": "5b80fdec",
+      "content_hash": "42ccd6ab806ba907b3a27074e777bebf76d605e4ae9583d48cd89905c4cd758c",
       "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "promoted_rules": [
+        {
+          "number": 7973,
+          "title": "Empirical Invariant Guard in package.json",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8882,
           "title": "Ephemeral Asynchronous Initialization with Self-Resetting Fault Erasure",
@@ -274004,7 +274009,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:26:42.764Z",
+      "verified_at": "2026-11-28T10:36:10.523Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274098,10 +274103,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-qwikdev-qwik-technical-construction-intelligence-qwikdev-qwik-core-invariants.md",
       "title": "Technical Construction Intelligence: QwikDev/qwik Core Invariants",
       "repository": "QwikDev/qwik",
-      "source_version": "fa8e12f1",
-      "content_hash": "4efdfd3bdddddc790d7731173fdb18bec8f566a63a6b5c0a24fc2f4114f216db",
+      "source_version": "5b80fdec",
+      "content_hash": "ba26e461a14b9fa12ceab612a8e1698310ff1ed41a25f818d5650d3dad0cdc72",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T00:51:58.503Z"
+      "persisted_at": "2026-11-28T10:36:11.231Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik",
@@ -274110,10 +274115,10 @@
       "relative_path": "08_VERIFICATION/qwikdev-qwik-verification-protocol-empirical-defect-shield-for-qwikdev-qwik.md",
       "title": "Verification Protocol: Empirical Defect Shield for QwikDev/qwik",
       "repository": "QwikDev/qwik",
-      "source_version": "04c312f5",
-      "content_hash": "8b8d3a81347b9e0cb693a35134539407aeec30b10b2f1b77003b3cfbe1500adb",
+      "source_version": "5b80fdec",
+      "content_hash": "f08b9c5069f9a865d6eabb1410ae85f22c5acd6e2ade165badc9b4e9f5adf45e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:26:43.998Z"
+      "persisted_at": "2026-11-28T10:36:11.437Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants",
@@ -274123,9 +274128,9 @@
       "title": "Technical Construction Intelligence: qwikdev-qwik-learnings Core Invariants",
       "repository": "qwikdev-qwik-learnings",
       "source_version": "HEAD",
-      "content_hash": "6104c18d9814c9668c588158345e82a055fd71dd335bacc22d46c1322e08a31d",
+      "content_hash": "3f2820fbcaa421c8e2a0803d747bae4376171c5a18201d9260b8d8d441cc363b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T00:52:13.566Z"
+      "persisted_at": "2026-11-28T10:36:19.388Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik-learnings",
@@ -274135,9 +274140,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for qwikdev-qwik-learnings",
       "repository": "qwikdev-qwik-learnings",
       "source_version": "HEAD",
-      "content_hash": "e7b67f99103d30d6cf52f2550b0c9e6e09db5f452ea653991031b69704dbe0d9",
+      "content_hash": "9805abf031601db14ddca308e8ca5d8dddc2313003df32672a6b55c5663672d5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:26:58.828Z"
+      "persisted_at": "2026-11-28T10:36:19.595Z"
     },
     "candidate_directive-github-notify-only-when-reconciled-pr-associations-change": {
       "item_id": "candidate_directive-github-notify-only-when-reconciled-pr-associations-change",
@@ -362121,13 +362126,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TRTL-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z2NR-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8955e6942f6ceb10830c548cff7059e1ff6f2deb3cae681e3e61634b6e7910ae",
+      "content_hash": "df5d9dd15915557ad1cff779d43d6df5a5cbe1c7e8799764c23f46e47dfeaaa1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T08:40:14.377Z"
+      "persisted_at": "2026-11-28T10:36:20.154Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -365963,26 +365968,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 7973,
       "title": "Empirical Invariant Guard in package.json",
-      "source_url": "https://github.com/meshery/meshery",
-      "source_version": "b5047de7",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "5b80fdec",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-27T13:23:10.574Z"
+      "verified_at": "2026-11-28T10:36:10.523Z"
     },
     "candidate_directive-empirical-invariant-guard-in-package-json": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-package-json",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HVEF-empirical-invariant-guard-in-package-json.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z1WT-empirical-invariant-guard-in-package-json.md",
       "title": "Empirical Invariant Guard in package.json",
-      "repository": "meshery-meshery-learnings",
+      "repository": "qwikdev-qwik-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d6caa588827ba6370723d8999980f24fbd1a9ab2e37a11253cda1ab67cfbfb0",
+      "content_hash": "f0ad8c1f9ecec4b0a51f8a52f86654001a4797e69e59c0d13d276b44d0d7edca",
       "domain_letter": "D",
-      "persisted_at": "2026-11-27T13:23:14.872Z"
+      "persisted_at": "2026-11-28T10:36:19.184Z"
     },
     "domain_intelligence-quality-verification-intelligence-meshery-meshery-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-meshery-meshery-core-invariants",
@@ -372458,6 +372463,18 @@
       "content_hash": "20a32646bdaa0a96e628e25dc96a970b45e4247fa351f7734620b94cd3b3d753",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T10:11:05.585Z"
+    },
+    "candidate_directive-ty-build-bound-method-overloads-directly-in-the-callable-binding": {
+      "item_id": "candidate_directive-ty-build-bound-method-overloads-directly-in-the-callable-binding",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z172-ty-build-bound-method-overloads-directly-in-the-callable-binding.md",
+      "title": "[ty] Build bound method overloads directly in the callable binding",
+      "repository": "astral-sh-ruff-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8f076fb33a41d51fc37dcf8f6c5da00371199784d9776a4a0833f3ba9985336c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T10:36:18.258Z"
     }
   },
   "ai-builder-brain": {

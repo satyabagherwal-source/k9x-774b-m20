@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T10:11:05.585Z",
+  "last_updated": "2026-11-28T10:36:20.154Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2512,14 +2512,14 @@
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps"
     },
     {
-      "id": "CD-HVEF",
+      "id": "CD-Z1WT",
       "directive_title": "Empirical Invariant Guard in package.json",
-      "source_repo": "meshery-meshery-learnings",
+      "source_repo": "qwikdev-qwik-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-HVEF-empirical-invariant-guard-in-package-json.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-Z1WT-empirical-invariant-guard-in-package-json.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-27",
+      "date_staged": "2026-11-28",
       "domain_letter": "D"
     },
     {
@@ -68059,11 +68059,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-TRTL",
+      "id": "CD-Z2NR",
       "directive_title": "renderer): refuse last-error reads off the engine owner thread",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-TRTL-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-Z2NR-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -75893,6 +75893,44 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-Z172",
+      "directive_title": "[ty] Build bound method overloads directly in the callable binding",
+      "source_repo": "astral-sh-ruff-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Z172-ty-build-bound-method-overloads-directly-in-the-callable-binding.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-D6E103",
+      "directive_title": "[ty] Build bound method overloads directly in the callable binding",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "astral-sh-ruff",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D6E103--ty-build-bound-method-overloads-directl.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-0B1537",
+      "directive_title": "Empirical Invariant Guard in package.json",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "qwikdev-qwik",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0B1537-empirical-invariant-guard-in-package-jso.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-1759D2",
+      "directive_title": "renderer): refuse last-error reads off the engine owner thread",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1759D2-renderer-refuse-last-error-reads-off-the.md",
+      "staged_date": "2026-11-28"
     }
   ]
 }

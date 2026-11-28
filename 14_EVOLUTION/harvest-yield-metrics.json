@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T10:10:57.789Z",
-  "total_cycles_completed": 13314,
-  "total_learnings_persisted": 13314,
-  "total_rules_promoted": 12013,
+  "last_updated": "2026-11-28T10:36:10.782Z",
+  "total_cycles_completed": 13316,
+  "total_learnings_persisted": 13316,
+  "total_rules_promoted": 12014,
   "history": [
-    {
-      "timestamp": "2026-11-27T16:30:24.132Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T16:30:27.344Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T16:41:33.341Z",
       "repository": "fallow-rs/fallow",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T10:10:57.789Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T10:36:08.279Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T10:36:10.782Z",
+      "repository": "QwikDev/qwik",
+      "learningId": "learn-github-qwikdev-qwik",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

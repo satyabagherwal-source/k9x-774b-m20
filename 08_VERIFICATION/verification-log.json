@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-5C1G",
-    "timestamp": "2026-11-26T18:05:45.652Z",
-    "repository": "pubkey/rxdb",
-    "learningId": "learn-github-pubkey-rxdb",
-    "contentHash": "be42e996f7d243edecaef16bc240d4357653186b2d50350fa84d7b83e809846b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-5HQM",
-    "timestamp": "2026-11-26T18:05:53.038Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "0e56fd040eadf3d5add95ec2faadb2e43eea790da9e8ae61301031d4e38a8d83",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-GFR4",
     "timestamp": "2026-11-26T18:14:23.680Z",
     "repository": "amazon/chronos-2",
@@ -7490,6 +7460,36 @@
     "repository": "paradedb/paradedb",
     "learningId": "learn-github-paradedb-paradedb",
     "contentHash": "b9df1da4baa9e880918788e3f84232b533f106d0ec2c83a46b61c4cc7fe87ac5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-YTGJ",
+    "timestamp": "2026-11-28T10:36:08.227Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "2cd47d059cc530c1784dc9d884b65c745f66ecfa6ef65139330d46d01cb2cb7a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-YVF8",
+    "timestamp": "2026-11-28T10:36:10.772Z",
+    "repository": "QwikDev/qwik",
+    "learningId": "learn-github-qwikdev-qwik",
+    "contentHash": "42ccd6ab806ba907b3a27074e777bebf76d605e4ae9583d48cd89905c4cd758c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

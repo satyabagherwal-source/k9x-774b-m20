@@ -14040,3 +14040,5 @@
 | `CYCLE-20261128-286C` | `2026-11-28T10:10:47.652Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11088` | Yes (`3d761cdc...`) |
 | `CYCLE-20261128-28TJ` | `2026-11-28T10:10:48.487Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11089` | Yes (`e0e81bc7...`) |
 | `CYCLE-20261128-2FZK` | `2026-11-28T10:10:57.776Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11090` | Yes (`b9df1da4...`) |
+| `CYCLE-20261128-YTGJ` | `2026-11-28T10:36:08.227Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md` | Yes (`2cd47d05...`) |
+| `CYCLE-20261128-YVF8` | `2026-11-28T10:36:10.772Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7973` | Yes (`42ccd6ab...`) |
