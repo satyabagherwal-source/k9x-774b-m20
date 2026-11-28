@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-28T11:17:55.693Z",
-    "lastVerified": "2026-11-28T11:17:55.693Z",
+    "lastChecked": "2026-11-28T12:58:51.714Z",
+    "lastVerified": "2026-11-28T12:58:51.714Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T12:36:00.529Z",
-    "lastVerified": "2026-11-28T12:36:00.529Z",
+    "lastChecked": "2026-11-28T12:58:51.723Z",
+    "lastVerified": "2026-11-28T12:58:51.723Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -2093,8 +2093,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-28T05:46:43.421Z",
-    "lastVerified": "2026-11-28T05:46:43.421Z",
+    "lastChecked": "2026-11-28T12:58:46.706Z",
+    "lastVerified": "2026-11-28T12:58:46.706Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2946,9 +2946,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-27T16:03:08.957Z",
+    "lastChecked": "2026-11-28T12:58:49.181Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-27T16:03:08.957Z"
+    "lastVerified": "2026-11-28T12:58:49.181Z"
   },
   "1jehuang-jcode": {
     "name": "1jehuang/jcode",
@@ -7160,12 +7160,12 @@
     "lastVerified": "2026-11-27T06:46:20.240Z"
   },
   "linkerd-linkerd2": {
-    "name": "linkerd/linkerd2",
+    "name": "linkerd2",
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T17:19:30.836Z",
-    "lastVerified": "2026-11-27T17:19:30.836Z",
+    "lastChecked": "2026-11-28T12:58:44.270Z",
+    "lastVerified": "2026-11-28T12:58:44.270Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
@@ -7174,7 +7174,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ea2cdc13"
   },
   "postgresml-postgresml": {
     "name": "postgresml",
@@ -9145,12 +9146,12 @@
     "lastVerified": "2026-11-27T14:04:57.586Z"
   },
   "facebook-folly": {
-    "name": "meta/folly",
+    "name": "folly",
     "officialUrl": "https://github.com/facebook/folly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-27T11:14:29.121Z",
-    "lastVerified": "2026-11-27T11:14:29.121Z",
+    "lastChecked": "2026-11-28T12:58:36.708Z",
+    "lastVerified": "2026-11-28T12:58:36.708Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meta-folly",
@@ -9159,7 +9160,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "af9c9650"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf": {
     "name": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
@@ -11986,9 +11988,9 @@
   "heckj-swiftui-notes": {
     "name": "swiftui-notes",
     "officialUrl": "https://github.com/heckj/swiftui-notes",
-    "lastChecked": "2026-11-26T07:48:32.052Z",
+    "lastChecked": "2026-11-28T12:58:41.760Z",
     "revisionIdentifier": "e7884cce",
-    "lastVerified": "2026-11-26T07:48:32.052Z"
+    "lastVerified": "2026-11-28T12:58:41.760Z"
   },
   "solidjs-solid": {
     "name": "solidjs/solid",
@@ -12431,9 +12433,9 @@
   "testing-library-react-testing-library": {
     "name": "react-testing-library",
     "officialUrl": "https://github.com/testing-library/react-testing-library",
-    "lastChecked": "2026-11-25T01:18:16.464Z",
+    "lastChecked": "2026-11-28T12:58:39.244Z",
     "revisionIdentifier": "20ce75f2",
-    "lastVerified": "2026-11-25T01:18:16.464Z"
+    "lastVerified": "2026-11-28T12:58:39.244Z"
   },
   "callstack-react-native-builder-bob": {
     "name": "react-native-builder-bob",

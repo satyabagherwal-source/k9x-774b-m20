@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T12:36:04.494Z",
+  "last_updated": "2026-11-28T12:58:55.484Z",
   "total_verified_learnings": 9151,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e08d8d6fed3cd59ede304749ed0028454d1884f2b572856df32700947e45431",
+      "content_hash": "18b9ea2ee511ddd249eb33a1f5047471f496c84301ca08b277fbde79ce1df546",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T07:22:06.010Z"
+      "persisted_at": "2026-11-28T12:58:53.981Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c9861a154165b9e111ad0816cba5fa8e6a0124cb3216ff2c3519dcd699cfab2",
+      "content_hash": "ed9a7310129b460d49c5350cb9ebf73020a7d0cdd8b7166b8e522a552085ae89",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T07:22:06.228Z"
+      "persisted_at": "2026-11-28T12:58:54.158Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "69da5be4673701bceca8b35a1d322df61a3e3db6dcb7afd4a123eda1dd74594b",
+      "content_hash": "5cb5faafe851478b0513eb0cf9e99fe006522f757dace164c6a5d63916762a0a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T12:09:39.185Z"
+      "persisted_at": "2026-11-28T12:58:52.819Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -240281,9 +240281,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "418732fac60d644997338f05b213eebd7c3f21b59750f3a9ee5ea2d7be2daa69",
+      "content_hash": "62100bb75fbd71161b4e516d8571e38785f6b914975a688504c7adf0b85ea04f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T11:00:10.660Z"
+      "persisted_at": "2026-11-28T12:58:55.484Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -301922,9 +301922,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9ab3608aab7be6497081af5fed1353dbddfaf00f052f9f72e7f47eea110992ed",
+      "content_hash": "eabc867f869de6414fb1de2ae03ae750a2c737872b6f6fa044fce3c97e37b8c7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T07:22:05.769Z"
+      "persisted_at": "2026-11-28T12:58:53.765Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -359264,13 +359264,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-B2HF-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2DMD-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "cda1b1c458738c4012b025dbb8ef46c78cd67be758d741b587eaac02fa2bb085",
+      "content_hash": "6211913f5785cc42de263ab8b7118ebef60012a2ecc58dc0ed1a12f6e7267722",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T12:09:38.648Z"
+      "persisted_at": "2026-11-28T12:58:52.409Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -359280,9 +359280,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "729b8f02abb6673b4e5d31673d1827fa3df7609453d6ffeddb7988185e9e854a",
+      "content_hash": "8d6ac0eddbc3e61ea6f2dbdd77445df42d7d07c1087a0eb656843e22351aed0e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T12:09:38.953Z"
+      "persisted_at": "2026-11-28T12:58:52.608Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -363750,13 +363750,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-19V2-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2EIH-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6017c9bfab885c12dd30e4e3271c9deb016a4edbf3220aadb4d234d69bed7016",
+      "content_hash": "d3ab08d05a80506ef2fe2d806f32a00b14be45b29e9ebabdef8cfc56f76008d6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T07:22:05.487Z"
+      "persisted_at": "2026-11-28T12:58:53.561Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
