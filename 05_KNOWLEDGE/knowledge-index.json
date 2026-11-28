@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T05:33:54.374Z",
+  "last_updated": "2026-11-28T05:46:56.936Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26977,
+  "total_items": 26980,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc3d58fe7754e92c2a86cb5836ec0134debc45b4cea17d6f319c457eb9c4a344",
+      "content_hash": "23c3d39d8964117f4c7b323fbdb98161dfd26623ffbe72db980711a53eeee275",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T05:16:13.570Z"
+      "persisted_at": "2026-11-28T05:46:56.674Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f806413a0fe5ffd1b7cfad28c2e053d50b8a92684d9394f82a5c4d52f70fbcdf",
+      "content_hash": "144c56fdc2ad940d6af6a94ab61bfdd95a05238b7acaaa337a1ce94d21235ba3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T05:16:13.756Z"
+      "persisted_at": "2026-11-28T05:46:56.936Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "71a7b000dc1b807c3bfb953223529047aef42120e66ed5e7be7880de1139a140",
+      "content_hash": "584f39273e0a4655d8799c0c310ffba484d85bb81831dfeec102b469c86d97e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T05:16:12.362Z"
+      "persisted_at": "2026-11-28T05:46:54.913Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -239880,8 +239880,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "ff323598",
-      "content_hash": "0426bd1bff7b6a10e96a69748a2bd7764c117dd2b3de48ca926599c2973e4253",
+      "source_version": "f6d320a1",
+      "content_hash": "e76645c8a57353f789c4d23c2f8b3079714822e5c3f362a49aad7a23bb2a23c2",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -239934,6 +239934,11 @@
           "number": 10760,
           "title": "align compatibility rules with their guides and prune the review skills",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11046,
+          "title": "make the world access rules evaluate their policies",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239941,7 +239946,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T18:58:56.732Z",
+      "verified_at": "2026-11-28T05:46:46.961Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239983,10 +239988,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "repository": "aws/aws-cdk",
-      "source_version": "ff323598",
-      "content_hash": "83fb2168402da05f5eb55c72693d97f5f4369413b35df42bd65c28c3521b26c0",
+      "source_version": "f6d320a1",
+      "content_hash": "8cc8ca772bc547af5f14ff96b8a8ad4a684f9923e04bae2844dbbdcb9e99f126",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T18:58:57.412Z"
+      "persisted_at": "2026-11-28T05:46:47.958Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk",
@@ -239995,10 +240000,10 @@
       "relative_path": "08_VERIFICATION/aws-aws-cdk-verification-protocol-empirical-defect-shield-for-aws-aws-cdk.md",
       "title": "Verification Protocol: Empirical Defect Shield for aws/aws-cdk",
       "repository": "aws/aws-cdk",
-      "source_version": "ff323598",
-      "content_hash": "cd792c432a72192ee28e45928755694c7633926d48db25c40b02625eba0d0fb0",
+      "source_version": "f6d320a1",
+      "content_hash": "deb721edaa98a988298b2a26a429d7499f9befd70c1d1e13e5d7a05442d58155",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:58:57.644Z"
+      "persisted_at": "2026-11-28T05:46:48.567Z"
     },
     "learn-huggingface-qwen-qwen3-4b": {
       "learning_id": "learn-huggingface-qwen-qwen3-4b",
@@ -240071,9 +240076,9 @@
       "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
       "repository": "aws-aws-cdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "49288752836c957eb50adea25e949d2af9b888c492d7d54e1be6bc67fd706b2a",
+      "content_hash": "97281a99e9d482bf4bedb873442d97faf1f7a106deab74a83ff8e4c1a6958fbc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T18:59:08.464Z"
+      "persisted_at": "2026-11-28T05:46:52.801Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings",
@@ -240083,9 +240088,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aws-aws-cdk-learnings",
       "repository": "aws-aws-cdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b57f47a3d8def26814f3ce83cccf5b34518ec65853de164bb6578ba74ab81cf",
+      "content_hash": "d6674860b5772c5bda80b4e6c49c090eab25eaa472feb745db7c91622beb4677",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:59:08.648Z"
+      "persisted_at": "2026-11-28T05:46:53.333Z"
     },
     "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0": {
       "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
@@ -301672,9 +301677,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "dac86d01427943045d4f82fee505052460946336bc1f99565b05761ca423a4ee",
+      "content_hash": "1583734c74aeb940e0de17660aa69fd74b1e464c9d939740c2f86eff4d12b2ba",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T05:16:13.367Z"
+      "persisted_at": "2026-11-28T05:46:56.364Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -346008,10 +346013,10 @@
       "relative_path": "03_SKILLS/aws-aws-cdk-skill-operational-integration-playbook-for-aws-aws-cdk.md",
       "title": "Skill: Operational & Integration Playbook for aws/aws-cdk",
       "repository": "aws/aws-cdk",
-      "source_version": "7a66ccad",
-      "content_hash": "63282aeb5bae1b3b6688ef3b08e1d1355bb9f8e4cf0dc8cc9efd4724ddcf69af",
+      "source_version": "f6d320a1",
+      "content_hash": "6aff781752db9cd291dd21d1949885660ab9f3e38200d3353c490a8e82b56745",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:01:01.888Z"
+      "persisted_at": "2026-11-28T05:46:48.300Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-aws-aws-cdk-learnings": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-aws-aws-cdk-learnings",
@@ -346021,9 +346026,9 @@
       "title": "Skill: Operational & Integration Playbook for aws-aws-cdk-learnings",
       "repository": "aws-aws-cdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "b4a3563840b0101d5e505d306bfa3e6fc0f8bc68042d6b406b5422eedd662e01",
+      "content_hash": "630b85c68caef9a137aea945030fb0d14e27c7cb88c67eef04ba1a83b7242e6f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:01:06.489Z"
+      "persisted_at": "2026-11-28T05:46:53.083Z"
     },
     "rule-10412": {
       "learning_id": "rule-10412",
@@ -358982,13 +358987,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JDHQ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MV45-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9235405fd1e51c295510e7ec40328984d6b38dbf49dc928c6c1fc8bc3275361d",
+      "content_hash": "d87e07713e44bbea32aca6d34ad320bbf793ab7eb5beedaec04b84eef6015af9",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T05:16:11.921Z"
+      "persisted_at": "2026-11-28T05:46:54.347Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358998,9 +359003,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9199a2fda0982da84970ff62fa0f96d5b76af0fb08120cad8d39c79edc161754",
+      "content_hash": "2911676b6c39e5407854884c55cceffdac22a14b3f30ce302fed2d3056ee0b5f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T05:16:12.153Z"
+      "persisted_at": "2026-11-28T05:46:54.631Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -363468,13 +363473,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JEEU-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MWEG-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8e44fa96c8b86567070316d59dfa72ff2befa1c08ce574f73230590a0cb386aa",
+      "content_hash": "2c48a137c90a30d0db43243541d23fd36998686c54d3b98d6374b53d370b291e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T05:16:13.111Z"
+      "persisted_at": "2026-11-28T05:46:56.009Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -370729,6 +370734,44 @@
       "content_hash": "27e947069b627f12f6f3556eba9bc4526f768d338c9ecd491c2d05968f0b6676",
       "domain_letter": "G",
       "persisted_at": "2026-11-28T05:33:51.786Z"
+    },
+    "rule-11046": {
+      "learning_id": "rule-11046",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11046,
+      "title": "make the world access rules evaluate their policies",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "f6d320a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T05:46:46.961Z"
+    },
+    "candidate_directive-make-the-world-access-rules-evaluate-their-policies": {
+      "item_id": "candidate_directive-make-the-world-access-rules-evaluate-their-policies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MPYW-make-the-world-access-rules-evaluate-their-policies.md",
+      "title": "make the world access rules evaluate their policies",
+      "repository": "aws/aws-cdk",
+      "source_version": "f6d320a1",
+      "content_hash": "7824cc523a91f7a239c511cdcc62a6e6ecf53f21000187012ae38f2999a28328",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T05:46:47.679Z"
+    },
+    "candidate_directive-security-guardian-make-the-world-access-rules-evaluate-their-policies": {
+      "item_id": "candidate_directive-security-guardian-make-the-world-access-rules-evaluate-their-policies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MTP0-security-guardian-make-the-world-access-rules-evaluate-their-policies.md",
+      "title": "security-guardian): make the world access rules evaluate their policies",
+      "repository": "aws-aws-cdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6f6af39e733a1699173f36d027c40116ebd40c640ac5d07499db09e0bfbe1562",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T05:46:52.508Z"
     }
   },
   "ai-builder-brain": {

@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T05:33:51.118Z",
-    "lastVerified": "2026-11-28T05:33:51.118Z",
+    "lastChecked": "2026-11-28T05:46:51.367Z",
+    "lastVerified": "2026-11-28T05:46:51.367Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T05:07:08.322Z",
-    "lastVerified": "2026-11-28T05:07:08.322Z",
+    "lastChecked": "2026-11-28T05:46:48.905Z",
+    "lastVerified": "2026-11-28T05:46:48.905Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -673,9 +673,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-11-27T11:14:34.465Z",
+    "lastChecked": "2026-11-28T05:46:45.948Z",
     "revisionIdentifier": "23065a0b",
-    "lastVerified": "2026-11-27T11:14:34.465Z"
+    "lastVerified": "2026-11-28T05:46:45.948Z"
   },
   "iii-hq-iii": {
     "name": "iii",
@@ -2094,8 +2094,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-28T01:35:28.147Z",
-    "lastVerified": "2026-11-28T01:35:28.147Z",
+    "lastChecked": "2026-11-28T05:46:43.421Z",
+    "lastVerified": "2026-11-28T05:46:43.421Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -5366,22 +5366,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aws-aws-cdk": {
-    "name": "aws-cdk",
+    "name": "aws/aws-cdk",
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T12:32:35.671Z",
-    "lastVerified": "2026-11-27T12:32:35.671Z",
+    "lastChecked": "2026-11-28T05:46:45.598Z",
+    "lastVerified": "2026-11-28T05:46:45.598Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "0426bd1bff7b6a10e96a69748a2bd7764c117dd2b3de48ca926599c2973e4253",
+    "contentHash": "e76645c8a57353f789c4d23c2f8b3079714822e5c3f362a49aad7a23bb2a23c2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ff323598"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
@@ -7874,8 +7873,8 @@
     "officialUrl": "https://github.com/jhspetersson/fselect",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T05:57:30.091Z",
-    "lastVerified": "2026-11-27T05:57:30.091Z",
+    "lastChecked": "2026-11-28T05:46:33.317Z",
+    "lastVerified": "2026-11-28T05:46:33.317Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jhspetersson-fselect",
@@ -11368,9 +11367,9 @@
   "kitlangton-hex": {
     "name": "Hex",
     "officialUrl": "https://github.com/kitlangton/Hex",
-    "lastChecked": "2026-11-26T03:46:42.894Z",
+    "lastChecked": "2026-11-28T05:46:38.341Z",
     "revisionIdentifier": "3e300721",
-    "lastVerified": "2026-11-26T03:46:42.894Z"
+    "lastVerified": "2026-11-28T05:46:38.341Z"
   },
   "rehypejs-rehype": {
     "name": "rehype",
@@ -11730,9 +11729,9 @@
   "jsonld-java-jsonld-java": {
     "name": "jsonld-java",
     "officialUrl": "https://github.com/jsonld-java/jsonld-java",
-    "lastChecked": "2026-11-24T20:52:57.482Z",
+    "lastChecked": "2026-11-28T05:46:35.875Z",
     "revisionIdentifier": "4a7305f2",
-    "lastVerified": "2026-11-24T20:52:57.482Z"
+    "lastVerified": "2026-11-28T05:46:35.875Z"
   },
   "iziz-libphonenumber-ios": {
     "name": "libPhoneNumber-iOS",

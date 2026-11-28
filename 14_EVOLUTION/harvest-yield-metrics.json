@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T05:33:42.411Z",
-  "total_cycles_completed": 13271,
-  "total_learnings_persisted": 13271,
-  "total_rules_promoted": 11965,
+  "last_updated": "2026-11-28T05:46:47.328Z",
+  "total_cycles_completed": 13272,
+  "total_learnings_persisted": 13272,
+  "total_rules_promoted": 11966,
   "history": [
-    {
-      "timestamp": "2026-11-27T11:44:31.310Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T11:44:32.748Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T05:33:42.411Z",
       "repository": "restatedev/restate",
       "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T05:46:47.328Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T05:25:06.902Z",
+  "updated_at": "2026-11-28T05:46:52.103Z",
   "stats": {
-    "total_discovered": 10787,
-    "approved_pending_harvest": 10240,
+    "total_discovered": 10791,
+    "approved_pending_harvest": 10244,
     "harvested_count": 0,
     "rejected_count": 547,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10253,
-      "OFFICIAL_DOCUMENTATION": 293,
+      "COMMUNITY_AND_EXPERT": 10255,
+      "OFFICIAL_DOCUMENTATION": 295,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 58,
@@ -233512,6 +233512,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
         "fileName": "vectifyai-pageindex-learnings.md"
+      }
+    },
+    "SRC-CBAE21DD6100": {
+      "id": "SRC-CBAE21DD6100",
+      "url": "https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/tools/@aws-cdk/security-guardian/rules/s3/s3-no-world-readable.guard",
+      "title": "https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/tools/@aws-cdk/security-guardian/rules/s3/s3-no-world-readable.guard",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T05:46:51.783Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-FF311769B5A0": {
+      "id": "SRC-FF311769B5A0",
+      "url": "https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/tools/@aws-cdk/security-guardian/rules/iam/iam-no-world-accessible-trust-policy.guard",
+      "title": "https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/tools/@aws-cdk/security-guardian/rules/iam/iam-no-world-accessible-trust-policy.guard",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T05:46:51.888Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-6DF1857DD04A": {
+      "id": "SRC-6DF1857DD04A",
+      "url": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-sns-topicinlinepolicy.html",
+      "title": "https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-sns-topicinlinepolicy.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T05:46:51.999Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-39C8B82A51BF": {
+      "id": "SRC-39C8B82A51BF",
+      "url": "https://docs.aws.amazon.com/sns/latest/dg/sns-access-policy-use-cases.html",
+      "title": "https://docs.aws.amazon.com/sns/latest/dg/sns-access-policy-use-cases.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T05:46:52.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
       }
     }
   }

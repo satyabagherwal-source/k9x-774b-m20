@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-1PN7",
-    "timestamp": "2026-11-26T16:10:58.195Z",
-    "repository": "run-llama/llama_index",
-    "learningId": "learn-github-run-llama-llama_index",
-    "contentHash": "47ca01ea511b9e196133e03640f8776e166fdb9379551e635e3f6ae7a7db8de4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-ETM3",
     "timestamp": "2026-11-26T16:21:09.867Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "restatedev/restate",
     "learningId": "learn-github-restatedev-restate",
     "contentHash": "1dedc67ed333f66876787e9aa49f699499130574dd68fa5705b84e556e2e1a3c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-MPOR",
+    "timestamp": "2026-11-28T05:46:47.307Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "e76645c8a57353f789c4d23c2f8b3079714822e5c3f362a49aad7a23bb2a23c2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

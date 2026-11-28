@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T05:33:42.415Z",
+  "last_updated": "2026-11-28T05:46:47.332Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "0426bd1bff7b6a10e96a69748a2bd7764c117dd2b3de48ca926599c2973e4253",
-      "verified_at": "2026-11-26T18:58:56.999Z",
+      "content_hash": "e76645c8a57353f789c4d23c2f8b3079714822e5c3f362a49aad7a23bb2a23c2",
+      "verified_at": "2026-11-28T05:46:47.331Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T18:58:56.999Z"
+      "last_updated": "2026-11-28T05:46:47.331Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",

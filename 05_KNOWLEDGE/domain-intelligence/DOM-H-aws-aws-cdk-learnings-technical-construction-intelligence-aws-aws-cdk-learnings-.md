@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T18:59:08.149Z",
+  "timestamp": "2026-11-28T05:46:52.333Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-aws-aws-cdk-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [aws-aws-cdk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T18:59:08.149Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T05:46:52.333Z`  
 > **Learning ID**: `LEARN-EVO-aws-aws-cdk-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: B (Product Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), F (Design Intelligence), E (Creative Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: B (Product Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from aws-aws-cdk-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `ff323598`  
+> **Source Version**: `f6d320a1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T18:58:55.815Z  
+> **Timestamp**: 2026-11-28T05:46:45.754Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:58:55.809Z  
+> **Harvest Timestamp**: 2026-11-28T05:46:45.598Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12994 stars
+- **Stars / Engagement**: 12995 stars
 
 ---
 
@@ -1228,8 +1228,445 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6efedd4d` (2026-11-26)
-**Commit Message**: chore(skills): align compatibility rules with their guides and prune the review skills (#39881)
+### Incident Patch 1: `f1267366` (2026-11-27)
+**Commit Message**: chore(security-guardian): make the world access rules evaluate their policies (#39506)
+
+### Issue # (if applicable)
+
+None.
+
+### Reason for this change
+
+Six rules skip every statement: `S3_NO_WORLD_READABLE`, `S3_NO_WORLD_WRITABLE`, `SNS_NO_WORLD_ACCESSIBLE`, `SNS_NO_WORLD_ACCESSIBLE_INLINE`, `SQS_NO_WORLD_ACCESSIBLE` and `SQS_NO_WORLD_ACCESSIBLE_INLINE`. cfn-guard can't compare an object `Principal` with `"*"` in their [`when Principal != "*"`](https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/tools/@aws-cdk/security-guardian/rules/s3/s3-no-world-readable.guard#L24) condition.
+
+### Description of changes
+
+- Use type checks instead, as [`IAM_NO_WORLD_ACCESSIBLE_TRUST_POLICY`](https://github.com/aws/aws-cdk/blob/e7429db970d0c181a9eef32a58496535d697432b/tools/@aws-cdk/security-guardian/rules/iam/iam-no-world-accessible-trust-policy.guard#L17-L28) does.
+- `SNS_NO_WORLD_ACCESSIBLE_INLINE` now reads [`AWS::SNS::TopicInlinePolicy`](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-sns-topicinlinepolicy.html). `AWS::SNS::Topic` has no `TopicPolicy` property.
+- The S3 rules now check every action whose name starts with `Get` or `L
+
+**File**: `tools/@aws-cdk/security-guardian/rules/resource-policies/resource-policy-root-principal-needs-conditions.guard` (modified, +16/-0)
+```diff
+@@ -4,6 +4,7 @@
+ #####################################
+ # Rule: RESOURCE_POLICY_ROOT_PRINCIPAL_NEEDS_CONDITIONS
+ # Coverage: All resource-based policies with :root principals
++# Also fails an Allow statement that uses NotPrincipal, whatever it lists: IAM supports NotPrincipal only with Deny.
+ #
+ # This rule ensures that ANY resource policy using :root principals (account-level delegation)
+ # has STRICT conditions to scope down who can actually access the resource.
+@@ -59,6 +60,11 @@ rule RESOURCE_POLICY_ROOT_PRINCIPAL_NEEDS_CONDITIONS when %resources_with_polici
+         when Properties.PolicyDocument exists {
+             Properties.PolicyDocument.Statement[*] {
+                 when Effect == "Allow" {
++                    # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
++                    when NotPrincipal exists {
++                        NotPrincipal not exists
++                        <<##ERROR:Resource policy must not use NotPrincipal in an Allow statement. Replace NotPrincipal with a Principal that names specific accounts or roles.##>>
++                    }
+                     when Principal.AWS exists {
+                         when Principal.AWS is_string {
+                             when Principal.AWS == /(?i):root$/ {
+@@ -97,6 +103,11 @@ rule RESOURCE_POLICY_ROOT_PRINCIPAL_NEEDS_CONDITIONS when %resources_with_polici
+         when Properties.Policy exists {
+             Properties.Policy.Statement[*] {
+                 when Effect == "Allow" {
++                    # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
++                    when NotPrincipal exists {
++                        NotPrincipal not exists
++                        <<##ERROR:Resource policy must not use NotPrincipal in an Allow statement. Replace NotPrincipal with a Principal that names specific accounts or roles.##>>
++                    }
+                     when Principal.AWS exists {
+                         when Principal.AWS is_string {
+                             when Principal.AWS == /(?i):root$/ {
+@@ -135,6 +146,11 @@ rule RESOURCE_POLICY_ROOT_PRINCIPAL_NEEDS_CONDITIONS when %resources_with_polici
+         when Properties.ResourcePolicy exists {
+             Properties.ResourcePolicy.Statement[*] {
+                 when Effect == "Allow" {
++                    # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
++                    when NotPrincipal exists {
++                        NotPrincipal not exists
++                        <<##ERROR:Resource policy must not use NotPrincipal in an Allow statement. Replace NotPrincipal with a Principal that names specific accounts or roles.##>>
++                    }
+                     when Principal.AWS exists {
+                         when Principal.AWS is_string {
+                             when Principal.AWS == /(?i):root$/ {
+```
+
+**File**: `tools/@aws-cdk/security-guardian/rules/s3/s3-no-confused-deputy.guard` (modified, +6/-0)
+```diff
+@@ -5,6 +5,7 @@
+ # Rule: S3_NO_CONFUSED_DEPUTY
+ # Service: Amazon Simple Storage Service (S3)
+ # Coverage: Confused Deputy
++# Also fails an Allow statement that uses NotPrincipal, whatever it lists: IAM supports NotPrincipal only with Deny.
+ 
+ let s3_bucket_policies = Resources.*[
+   Type == 'AWS::S3::BucketPolicy'
+@@ -17,6 +18,11 @@ rule S3_NO_CONFUSED_DEPUTY when %s3_bucket_policies !empty {
+     %s3_bucket_policies {
+         Properties.PolicyDocument.Statement[*] {
+             when Effect == "Allow" {
++                # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
++                when NotPrincipal exists {
++                    NotPrincipal not exists
++                        <<##ERROR:S3 bucket policy must not use NotPrincipal in an Allow statement. Replace NotPrincipal with a Principal that names specific services, accounts or roles.##>>
++                }
+                 when Principal.Service exists {
+                     when Condition exists {
+                         Condition.StringEquals exists or
+```
+
+**File**: `tools/@aws-cdk/security-guardian/rules/s3/s3-no-world-readable.guard` (modified, +42/-24)
+```diff
+@@ -12,45 +12,63 @@ let s3_bucket_policies = Resources.*[
+   Metadata.guard.SuppressedRules.* != "S3_NO_WORLD_READABLE"
+ ]
+ 
++# The actions this rule checks: S3 actions whose names start with Get or List, and patterns
++# that can expand to such a name, where ? stands for one character and * for any characters,
++# such as "*", "s3:*", "s3:G*" or "s3:?etObject". A name that starts with * can expand to any
++# name, so it also matches S3_NO_WORLD_WRITABLE. IAM compares action names case-insensitively.
++let s3_read_actions = /(?i)^(\*|s3:(\*|[G?](\*|[e?](\*|[t?]))|[L?](\*|[i?](\*|[s?](\*|[t?])))).*)$/
++
+ # EA015: No world readable bucket policies
+ rule S3_NO_WORLD_READABLE when %s3_bucket_policies !empty {
+     %s3_bucket_policies {
+         Properties.PolicyDocument.Statement[*] {
+             when Effect == "Allow" {
+                 when Action exists {
+                     when Action is_string {
+-                        when Action in ["s3:GetObject", "s3:GetObjectVersion", "s3:ListBucket", "*"] {
++                        when Action == %s3_read_actions {
+                             when Principal exists {
+-                                when Principal != "*" {
+-                                    when Principal.AWS exists {
+-                                        when Principal.AWS is_string {
+-                                            Principal.AWS != "*"
+-                                                <<##ERROR:S3 bucket policy must not grant world-readable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                                        }
+-                                        when Principal.AWS is_list {
+-                                            Principal.AWS[*] != "*"
+-                                                <<##ERROR:S3 bucket policy must not grant world-readable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                                        }
+-                                    }
++                                when Principal is_string {
++                                    Principal != "*"
++                                        <<##ERROR:S3 bucket policy must not grant world-readable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                                }
++                                when Principal.AWS is_string {
++                                    Principal.AWS != "*"
++                                        <<##ERROR:S3 bucket policy must not grant world-readable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
+                                 }
++                                # Only string elements are checked - intrinsic functions (maps like Fn::GetAtt) are skipped
++                                when Principal.AWS is_list {
++                                    Principal.AWS[*][ this is_string ] != "*"
++                                        <<##ERROR:S3 bucket policy must not grant world-readable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                                }
++                            }
++                            # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
++                            when NotPrincipal exists {
++                                NotPrincipal not exists
++                                    <<##ERROR:S3 bucket policy must not grant world-readable access. Replace NotPrincipal with a Principal that names specific accounts or roles.##>>
+                             }
+                         }
+                     }
+                     when Action is_list {
+-                        when Action[*] in ["s3:GetObject", "s3:GetObjectVersion", "s3:ListBucket", "*"] {
++                        when some Action[*] == %s3_read_actions {
+                             when Principal exists {
+-                                when Principal != "*" {
+-                                    when Principal.AWS exists {
+-                                        when Principal.AWS is_string {
+-                                            Principal.AWS != "*"
+-                                                <<##ERROR:S3 bucket policy must not grant world-readable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                                        }
+-                                        when Principal.AWS is_list {
+-                                            Principal.AWS[*] != "*"
+-                                                <<##ERROR:S3 bucket policy must not grant world-readable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                                        }
+-                                    }
++                                when Principal is_string {
++                                    Principal != "*"
++                   
+```
+
+**File**: `tools/@aws-cdk/security-guardian/rules/s3/s3-no-world-writable.guard` (modified, +42/-24)
+```diff
+@@ -12,45 +12,63 @@ let s3_bucket_policies = Resources.*[
+   Metadata.guard.SuppressedRules.* != "S3_NO_WORLD_WRITABLE"
+ ]
+ 
++# The actions this rule checks: S3 actions whose names start with Put or Delete, and patterns
++# that can expand to such a name, where ? stands for one character and * for any characters,
++# such as "*", "s3:*", "s3:P*" or "s3:?utObject". A name that starts with * can expand to any
++# name, so it also matches S3_NO_WORLD_READABLE. IAM compares action names case-insensitively.
++let s3_write_actions = /(?i)^(\*|s3:(\*|[P?](\*|[u?](\*|[t?]))|[D?](\*|[e?](\*|[l?](\*|[e?](\*|[t?](\*|[e?])))))).*)$/
++
+ # S3 world writable bucket policies
+ rule S3_NO_WORLD_WRITABLE when %s3_bucket_policies !empty {
+     %s3_bucket_policies {
+         Properties.PolicyDocument.Statement[*] {
+             when Effect == "Allow" {
+                 when Action exists {
+                     when Action is_string {
+-                        when Action in ["s3:PutObject", "s3:PutObjectAcl", "s3:DeleteObject", "*"] {
++                        when Action == %s3_write_actions {
+                             when Principal exists {
+-                                when Principal != "*" {
+-                                    when Principal.AWS exists {
+-                                        when Principal.AWS is_string {
+-                                            Principal.AWS != "*"
+-                                                <<##ERROR:S3 bucket policy must not grant world-writable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                                        }
+-                                        when Principal.AWS is_list {
+-                                            Principal.AWS[*] != "*"
+-                                                <<##ERROR:S3 bucket policy must not grant world-writable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                                        }
+-                                    }
++                                when Principal is_string {
++                                    Principal != "*"
++                                        <<##ERROR:S3 bucket policy must not grant world-writable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                                }
++                                when Principal.AWS is_string {
++                                    Principal.AWS != "*"
++                                        <<##ERROR:S3 bucket policy must not grant world-writable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
+                                 }
++                                # Only string elements are checked - intrinsic functions (maps like Fn::GetAtt) are skipped
++                                when Principal.AWS is_list {
++                                    Principal.AWS[*][ this is_string ] != "*"
++                                        <<##ERROR:S3 bucket policy must not grant world-writable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                                }
++                            }
++                            # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
++                            when NotPrincipal exists {
++                                NotPrincipal not exists
++                                    <<##ERROR:S3 bucket policy must not grant world-writable access. Replace NotPrincipal with a Principal that names specific accounts or roles.##>>
+                             }
+                         }
+                     }
+                     when Action is_list {
+-                        when Action[*] in ["s3:PutObject", "s3:PutObjectAcl", "s3:DeleteObject", "*"] {
++                        when some Action[*] == %s3_write_actions {
+                             when Principal exists {
+-                                when Principal != "*" {
+-                                    when Principal.AWS exists {
+-                                        when Principal.AWS is_string {
+-                                            Principal.AWS != "*"
+-                                                <<##ERROR:S3 bucket policy must not grant world-writable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                                        }
+-                                        when Principal.AWS is_list {
+-                                            Principal.AWS[*] != "*"
+-                                                <<##ERROR:S3 bucket policy must not grant world-writable access. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                                        }
+-                                    }
++                                when Principal is_string {
++                                    Principal != "*"
++       
+```
+
+**File**: `tools/@aws-cdk/security-guardian/rules/sns/sns-no-world-accessible-inline.guard` (modified, +29/-26)
+```diff
+@@ -4,44 +4,47 @@
+ #####################################
+ # Rule: SNS_NO_WORLD_ACCESSIBLE_INLINE
+ # Service: Amazon Simple Notification Service (SNS)
+-# Coverage: Inline Topic Policies
++# Coverage: Inline Topic Policies (AWS::SNS::TopicInlinePolicy resources)
+ #
+-# Note: SNS topics without a TopicPolicy are secure by default - they are private
+-# and only accessible to the account that created them. By default, Amazon SNS topics
++# Note: SNS topics without a topic policy (AWS::SNS::TopicPolicy or AWS::SNS::TopicInlinePolicy)
++# are private and only accessible to the account that created them. By default, Amazon SNS topics
+ # are created with no permissions. To enable access for other AWS services, accounts,
+ # or principals, you must explicitly define and attach an access policy to the topic.
+-# This rule only checks topics that have an inline policy defined to ensure they don't
++# This rule checks AWS::SNS::TopicInlinePolicy resources to ensure they don't
+ # grant world-accessible permissions.
+ # See: https://docs.aws.amazon.com/sns/latest/dg/sns-access-policy-use-cases.html
+ # (Section: "Default policies in Amazon SNS")
+ 
+-let sns_topics = Resources.*[
+-  Type == 'AWS::SNS::Topic'
++let sns_topic_inline_policies = Resources.*[
++  Type == 'AWS::SNS::TopicInlinePolicy'
+   Metadata.guard.SuppressedRules not exists or
+   Metadata.guard.SuppressedRules.* != "SNS_NO_WORLD_ACCESSIBLE_INLINE"
+ ]
+ 
+-# Check inline topic policies only when they exist
+-rule SNS_NO_WORLD_ACCESSIBLE_INLINE when %sns_topics !empty {
+-    %sns_topics {
+-        # Only check if TopicPolicy is explicitly defined
+-        when Properties.TopicPolicy exists {
+-            Properties.TopicPolicy.Statement[*] {
+-                when Effect == "Allow" {
+-                    when Principal exists {
+-                        when Principal != "*" {
+-                            when Principal.AWS exists {
+-                                when Principal.AWS is_string {
+-                                    Principal.AWS != "*"
+-                                        <<##ERROR:SNS topic inline policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                                }
+-                                when Principal.AWS is_list {
+-                                    Principal.AWS[*] != "*"
+-                                        <<##ERROR:SNS topic inline policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                                }
+-                            }
+-                        }
++# Check inline topic policies
++rule SNS_NO_WORLD_ACCESSIBLE_INLINE when %sns_topic_inline_policies !empty {
++    %sns_topic_inline_policies {
++        Properties.PolicyDocument.Statement[*] {
++            when Effect == "Allow" {
++                when Principal exists {
++                    when Principal is_string {
++                        Principal != "*"
++                            <<##ERROR:SNS topic inline policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+                     }
++                    when Principal.AWS is_string {
++                        Principal.AWS != "*"
++                            <<##ERROR:SNS topic inline policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                    }
++                    # Only string elements are checked - intrinsic functions (maps like Fn::GetAtt) are skipped
++                    when Principal.AWS is_list {
++                        Principal.AWS[*][ this is_string ] != "*"
++                            <<##ERROR:SNS topic inline policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                    }
++                }
++                # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
++                when NotPrincipal exists {
++                    NotPrincipal not exists
++                        <<##ERROR:SNS topic inline policy must not be world-accessible. Replace NotPrincipal with a Principal that names specific accounts or roles.##>>
+                 }
+             }
+         }
+```
+
+**File**: `tools/@aws-cdk/security-guardian/rules/sns/sns-no-world-accessible.guard` (modified, +17/-11)
+```diff
+@@ -18,18 +18,24 @@ rule SNS_NO_WORLD_ACCESSIBLE when %sns_topic_policies !empty {
+         Properties.PolicyDocument.Statement[*] {
+             when Effect == "Allow" {
+                 when Principal exists {
+-                    when Principal != "*" {
+-                        when Principal.AWS exists {
+-                            when Principal.AWS is_string {
+-                                Principal.AWS != "*"
+-                                    <<##ERROR:SNS topic policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                            }
+-                            when Principal.AWS is_list {
+-                                Principal.AWS[*] != "*"
+-                                    <<##ERROR:SNS topic policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                            }
+-                        }
++                    when Principal is_string {
++                        Principal != "*"
++                            <<##ERROR:SNS topic policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+                     }
++                    when Principal.AWS is_string {
++                        Principal.AWS != "*"
++                            <<##ERROR:SNS topic policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                    }
++                    # Only string elements are checked - intrinsic functions (maps like Fn::GetAtt) are skipped
++                    when Principal.AWS is_list {
++                        Principal.AWS[*][ this is_string ] != "*"
++                            <<##ERROR:SNS topic policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                    }
++                }
++                # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
++                when NotPrincipal exists {
++                    NotPrincipal not exists
++                        <<##ERROR:SNS topic policy must not be world-accessible. Replace NotPrincipal with a Principal that names specific accounts or roles.##>>
+                 }
+             }
+         }
+```
+
+**File**: `tools/@aws-cdk/security-guardian/rules/sqs/sqs-no-world-accessible-inline.guard` (modified, +17/-11)
+```diff
+@@ -26,18 +26,24 @@ rule SQS_NO_WORLD_ACCESSIBLE_INLINE when %sqs_queue_inline_policies !empty {
+         Properties.PolicyDocument.Statement[*] {
+             when Effect == "Allow" {
+                 when Principal exists {
+-                    when Principal != "*" {
+-                        when Principal.AWS exists {
+-                            when Principal.AWS is_string {
+-                                Principal.AWS != "*"
+-                                    <<##ERROR:SQS queue inline policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                            }
+-                            when Principal.AWS is_list {
+-                                Principal.AWS[*] != "*"
+-                                    <<##ERROR:SQS queue inline policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                            }
+-                        }
++                    when Principal is_string {
++                        Principal != "*"
++                            <<##ERROR:SQS queue inline policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+                     }
++                    when Principal.AWS is_string {
++                        Principal.AWS != "*"
++                            <<##ERROR:SQS queue inline policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                    }
++                    # Only string elements are checked - intrinsic functions (maps like Fn::GetAtt) are skipped
++                    when Principal.AWS is_list {
++                        Principal.AWS[*][ this is_string ] != "*"
++                            <<##ERROR:SQS queue inline policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                    }
++                }
++                # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
++                when NotPrincipal exists {
++                    NotPrincipal not exists
++                        <<##ERROR:SQS queue inline policy must not be world-accessible. Replace NotPrincipal with a Principal that names specific accounts or roles.##>>
+                 }
+             }
+         }
+```
+
+**File**: `tools/@aws-cdk/security-guardian/rules/sqs/sqs-no-world-accessible.guard` (modified, +17/-11)
+```diff
+@@ -18,18 +18,24 @@ rule SQS_NO_WORLD_ACCESSIBLE when %sqs_queue_policies !empty {
+         Properties.PolicyDocument.Statement[*] {
+             when Effect == "Allow" {
+                 when Principal exists {
+-                    when Principal != "*" {
+-                        when Principal.AWS exists {
+-                            when Principal.AWS is_string {
+-                                Principal.AWS != "*"
+-                                    <<##ERROR:SQS queue policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                            }
+-                            when Principal.AWS is_list {
+-                                Principal.AWS[*] != "*"
+-                                    <<##ERROR:SQS queue policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+-                            }
+-                        }
++                    when Principal is_string {
++                        Principal != "*"
++                            <<##ERROR:SQS queue policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
+                     }
++                    when Principal.AWS is_string {
++                        Principal.AWS != "*"
++                            <<##ERROR:SQS queue policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                    }
++                    # Only string elements are checked - intrinsic functions (maps like Fn::GetAtt) are skipped
++                    when Principal.AWS is_list {
++                        Principal.AWS[*][ this is_string ] != "*"
++                            <<##ERROR:SQS queue policy must not be world-accessible. Remove '*' from Principal and scope to specific accounts or roles.##>>
++                    }
++                }
++                # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
++                when NotPrincipal exists {
++                    NotPrincipal not exists
++                        <<##ERROR:SQS queue policy must not be world-accessible. Replace NotPrincipal with a Principal that names specific accounts or roles.##>>
+                 }
+             }
+         }
+```
+
+---
+
+### Incident Patch 2: `96f34b3b` (2026-11-27)
+**Commit Message**: docs(agents): resolve guide lines that contradict each other (#39900)
 
 ### Issue # (if applicable)
 
@@ -1237,561 +1674,97 @@ N/A
 
 ### Reason for this change
 
-Some rules in the review skills rate a change as blocking where the guide they cite allows it or only advises against it, some repeat checks the build already makes, and much of the text describes the guides or the skills themselves instead of telling the reviewer what to do.
+A few lines in the agent guides (`AGENTS.md`, `docs/AGENTS_CONSTRUCT_DESIGN.md`, `docs/AGENTS_CONSTRUCT_IMPLEMENTATION.md`) say something different from each other, from `docs/DESIGN_GUIDELINES.md` or from `CONTRIBUTING.md`, so a contributor or a reviewer can follow one guide and break another.
 
 ### Description of changes
 
-Rules that follow their guides:
+Each line now agrees with the design guidelines or the contributing guide:
 
-- `REG-API-SURFACE-BREAK` no longer calls deprecating a stable API breaking. `REG-VALIDATION-FALSE-POSITIVE` applies to input that deploys today. `REG-BEHAVIOR-BREAK` keeps to the breaking cases `CONTRIBUTING.md` defines, and a new rule, `REG-BEHAVIOR-CHANGE-NO-FLAG` (RECOMMENDED), asks for a feature flag when a stable module's observable behavior changes without one. `REG-UNDEFINED-BEHAVIOR` no longer rates default changes, and says that a change which only stops a configuration that never worked is not a finding.
-- `REG-STABILITY-GATE` exempts a break recorded in `allowed-breaking-changes.txt` only when the API was unusable before; an entry the pull request adds does not exempt it.
-- `CD-BAC
+- `AGENTS.md` no longer lists `yarn integ --dry-run --update-on-failed` as the way to update integ snapshots. CONTRIBUTING asks contributors not to use `--dry-run`; the deploying command stays.
+- `AGENTS.md` describes `FooBase` as internal by default, as the design guidelines do, and the implementation guide names the two ways to keep a base internal: no `export`, or `export` with `@internal`.
+- The design guide types the role prop as `iam.IRoleRef & iam.IGrantable` and the interface property as `iam.IRoleRef`, as the design guidelines do.
+- The design guide says a `from*` method passes the identifier it is given through unchanged, and points to the parsing 
 
-**File**: `skills/cdk-review/cdk-construct-design-review/SKILL.md` (modified, +8/-14)
+**File**: `AGENTS.md` (modified, +1/-2)
 ```diff
-@@ -28,26 +28,20 @@ Work the changed surface in this order; adapt to what the diff touches.
-    durable (see `cdk-review-principles` "Verify before you cite"). Then read
-    [`design-rules.md`](references/design-rules.md): its rows are your checklist.
+@@ -36,7 +36,6 @@ Principles:
+ | Rosetta (README compile check) | `/bin/bash ./scripts/run-rosetta.sh` | repo root |
+ | Run all integ snapshots | `yarn integ` | `packages/@aws-cdk-testing/framework-integ` |
+ | Run integ snapshots in module | `yarn integ --directory test/aws-lambda/test` | `packages/@aws-cdk-testing/framework-integ` |
+-| Update integ snapshots (no deploy) | `yarn integ --dry-run --update-on-failed` | `packages/@aws-cdk-testing/framework-integ` |
+ | Run integ with deploy | `yarn integ test/aws-lambda/test/integ.lambda.js --update-on-failed` | `packages/@aws-cdk-testing/framework-integ` |
  
--2. **Check the diff against the rules.** Walk the changed surface family by family — **Feature placement**,
--   **Abstraction / L1 leak**, **Conformance**, **Footgun / ages-well** — judging the shape it produces. For
--   each rule check both directions: what is present and violating, and what the kind owes but the diff
--   omits. Before flagging an absence, confirm the service supports the affordance in the authoritative AWS
-+2. **Check the diff against the rules,** judging the shape the changed surface produces. For each rule
-+   check both directions: what is present and violating, and what the kind owes but the diff omits.
-+   Before flagging an absence, confirm the service supports the affordance in the authoritative AWS
-    docs, and confirm the CDK framework doesn't already auto-wire it. Rate a missing affordance exactly as a
-    declared defect.
+ > **Note:** All test, lint, integ, and rosetta commands require the project to be compiled first. Run the build command above before any of these.
+@@ -101,7 +100,7 @@ Standard constructor: `constructor(scope: Construct, id: string, props: FooProps
+ |------|---------|-----------------|
+ | `IFooRef` | Bare identifiers (ARN, name) — auto-generated | Default — when you only need IDs |
+ | `IFoo` | Full interface + Facade properties | When you need convenience methods |
+-| `FooBase` | Abstract base (exported, but treat as internal) | Never |
++| `FooBase` | Abstract base (internal by default) | Never |
+ | `Foo` | Concrete class | Exceptional cases only |
  
- 3. **Rate by harm and stop.** Rate every finding by the cost of shipping the shape, per
-    `cdk-review-principles` ("Confidence is not severity"); rate a wrong abstraction, an L1 leak, or a
-    footgun at that cost even when you are unsure it fires. When several defects share one code cause, give
-    one finding with the `ruleId`, `category` and `severity` of its most severe defect, since each field
--   takes one value. Stop once you can name the defect and cite its rule — file + section — with the concrete
--   fix.
-+   takes one value. Stop once you can name the defect and cite its rule — file + section.
- 
- ## What not to flag
- 
--Beyond the shared exclusions in `cdk-review-principles` (pre-existing, cosmetics, out-of-scope,
--no-nit-quota), stay silent on the following — not even as OPTIONAL — because none is a design defect in
--the changed surface. When a defect belongs to a different dimension, leave it — it's outside your scope.
--
- - **Correctness bugs** — missing implementations, logic errors, broken paths — outside your scope.
- - **Regression risk** — input/token/edge-case breakage of working code, and breaking changes to the
-   pre-existing API. Designing the *new* surface well is yours; classifying an existing-surface break is
-@@ -60,10 +54,10 @@ the changed surface. When a defect belongs to a different dimension, leave it 
- ## Output
- 
- Populate the structured finding fields the `cdk-review-principles` skill defines — write
--`message` as the complete posted comment (observation, impact, concrete fix, and the guideline cited
--inline by file + section). This dimension's `category` is one of: Feature placement & abstraction,
--Design Guidelines conformance, Clarity/simplicity/consistency, Footgun-free & ages-well interface
--quality.
-+`message` as the complete posted comment (observation, impact, a fix once you have checked one, and the
-+guideline cited inline by file + section). This dimension's `category` is one of: Feature placement &
-+abstraction, Design Guidelines conformance, Clarity/simplicity/consistency, Footgun-free & ages-well
-+interface quality.
- 
- ## Apply cdk-review-principles
- 
+ ### Static Type Check (never use `instanceof`)
 ```
 
-**File**: `skills/cdk-review/cdk-construct-design-review/references/design-rules.md` (modified, +13/-44)
+**File**: `docs/AGENTS_CONSTRUCT_DESIGN.md` (modified, +3/-3)
 ```diff
-@@ -1,18 +1,13 @@
- # Construct design rules
+@@ -214,7 +214,7 @@ Common facade types — see [AGENTS_CONSTRUCT_IMPLEMENTATION.md](./AGENTS_CONSTR
+ - Resources with an ARN MUST have `fromFooArn`
+ - Resources with multiple independent attributes MUST have `fromFooAttributes(scope, id, attrs: FooAttributes)`
+ - Imported constructs MUST only set properties meaningful for the imported resource — no placeholder objects for unavailable properties
+-- `from*` methods MUST NOT transform or validate identifiers (they are pass-through)
++- `from*` methods MUST pass the identifier they are given through unchanged; one that parses it follows [AGENTS_CONSTRUCT_IMPLEMENTATION.md § Import Method Implementation](./AGENTS_CONSTRUCT_IMPLEMENTATION.md#import-method-implementation) and lets a malformed value fail fast ([AGENTS.md § Error Handling](../AGENTS.md#error-handling))
+ - When `fromAttributes` receives multiple identifying attributes, prefer the most specific one (ARN) over throwing
  
--Rows are grouped by defect family (feature placement & abstraction, Design Guidelines conformance,
--ages-well anti-patterns). See the `cdk-review-principles` skill for the shared
--lookup convention (the BLOCKING → RECOMMENDED → OPTIONAL sort within a family, the conditional-severity
--encoding, the `(doc-absent detail)` marker, and links referencing `main`).
--
- ## Feature placement & abstraction
+ ### `fromLookup` Methods
+@@ -246,7 +246,7 @@ These are design decisions about what interfaces and props every L2 construct MU
  
--**[CD-IFOO-NO-FEATURE-METHODS] (BLOCKING)** — A feature method or config-mutation method added to the
--resource interface `IFoo` is a MUST violation; features belong on Facades. See
-+**[CD-IFOO-NO-FEATURE-METHODS] (BLOCKING)** — A feature method or a config-mutation method added to the
-+resource interface `IFoo`, other than a factory method that creates a new resource (`add{Bar}`) or a method
-+[`AGENTS_CONSTRUCT_DESIGN.md § Standard Interface Extensions`](https://github.com/aws/aws-cdk/blob/main/docs/AGENTS_CONSTRUCT_DESIGN.md#standard-interface-extensions)
-+requires on the interface; features belong on Facades. See
- [`AGENTS_CONSTRUCT_DESIGN.md § Construct Interface (IFoo)`](https://github.com/aws/aws-cdk/blob/main/docs/AGENTS_CONSTRUCT_DESIGN.md#construct-interface-ifoo)
- and [`§ Configuration Mutation`](https://github.com/aws/aws-cdk/blob/main/docs/AGENTS_CONSTRUCT_DESIGN.md#configuration-mutation).
--- **False-positive guard (doc-absent detail):** `grant*` methods, `from*` importers, and `add{Bar}`
--  factories SHOULD be on the interface; flagging one is a false BLOCKING against a conformant design.
+ ### IAM Role Integration
  
- **[CD-LAYER-MODEL] (BLOCKING)** — An L2 MUST hide CloudFormation (no `Cfn*`/`Token` in its surface),
- provide an escape hatch to the L1, and expose the full service surface (no hard-coded choice the service
-@@ -25,46 +20,34 @@ CfnPropsMixin / Facade / Trait) first, and only as an L2 method if none fits. Se
- for the first-match-wins table and
- [`AGENTS.md § L2 Building Blocks`](https://github.com/aws/aws-cdk/blob/main/AGENTS.md#l2-building-blocks)
- for each block.
--- **Tier (doc-absent detail):** the guide names no damage: a feature in L2 code still works for that L2's
--  users and only reuse is lost, so RECOMMENDED. A feature method on `IFoo` is `CD-IFOO-NO-FEATURE-METHODS`.
--- **Detection cue (doc-absent detail):** the "feature" to place is feature *logic* — input validation,
--  auxiliary-resource creation, or computed behavior — living in L2 glue code, or a grant/metric/event
--  helper implemented as a bare method rather than a building block.
+-- You MUST expose an optional `role: iam.IRole` prop and a readonly `role?: iam.IRole` property on the interface (undefined for imported constructs)
++- You MUST expose an optional `role?: iam.IRoleRef & iam.IGrantable` prop and a readonly `role?: iam.IRoleRef` property on the interface (undefined for imported constructs)
+ - You MUST extend `iam.IGrantable` and provide `addToRolePolicy(statement)` on the interface
  
- **[CD-README-DRIVEN] (RECOMMENDED)** — A new or significantly-changed L2 shipping with no README usage
- example is a design miss. See
- [`AGENTS.md § Module READMEs`](https://github.com/aws/aws-cdk/blob/main/AGENTS.md#module-readmes).
+ ### IAM Resource Policy Integration
+@@ -337,7 +337,7 @@ Tags.of(myDashboard).add('Environment', 'prod'); // traverses and tags all L1s u
  
- ## Design Guidelines conformance
+ ## Backward Compatibility & Deprecation
  
--**[CD-PROPS-SHAPE] (BLOCKING)** — Props must be `readonly`, flat, concise, and strongly typed (construct
-+**[CD-PROPS-SHAPE] (BLOCKING)** — Props must be flat, concise, and strongly typed (construct
- interfaces not ARN strings, `Duration`/`Size` not raw numbers, no `Cfn*`/`Token`). See
- [`AGENTS.md § Props Design`](https://github.com/aws/aws-cdk/blob/main/AGENTS.md#props-design).
- 
- **[CD-PROPS-DEFAULT] (BLOCKING)** — A `@default` that contradicts what the code does is a real
- behavioral surprise. See
- [`AGENTS_CONSTRUCT_DESIGN.md § Default Behavior`](https://github.com/aws/aws-cdk/blob/main/docs/AGENTS_CONSTRUCT_DESIGN.md#default-behavior).
--- **Scope split (doc-absent detail):** the default *behavior* is yours; whether the tag is merely present
--  or reads well is outside your scope.
- 
- **[CD-SECRET-VALUE] (BLOCKING)** — A prop named `password`, or carrying a token/secret, must be typed
- `SecretValue` so a plaintext secret can't pass through the API. See
- [`AGENTS_CONSTRUCT_DESIGN.md § Secrets`](https://github.com/aws/aws-cdk/blob/main/docs/AGENTS_CONSTRUCT_DESIGN.md#secrets).
--- **Scope split (doc-absent detail):** the type choice is design (yours); whether a specific value leaks
--  is outside your scope.
- 
- **[CD-NAMING] (BLOCKING)** — Name the resource and its props in official AWS/CloudFormation terminology,
--and derive related type names (`FooProps`, `IFoo`). See
-+and derive its resource interface name (`IFoo`). See
- [`AGENTS_CONSTRUCT_DESIGN.md § Property Naming`](https://github.com/aws/aws-cdk/blob/main/docs/AGENTS_CONSTRUCT_DESIGN.md#property-naming).
- 
--**[CD-ATTRIBUTES] (BLOCKING)** — Expose every CloudFormation attribute as a `readonly`,
--type-name-prefixed (`bucketArn`, not `arn`) opaque token. See
-+**[CD-ATTRIBUTES] (BLOCKING)** — Expose every CloudFormation attribute as a type-name-prefixed
-+(`bucketArn`, not `arn`) opaque token. See
- [`AGENTS_CONSTRUCT_DESIGN.md § Resource Attributes`](https://github.com/aws/aws-cdk/blob/main/docs/AGENTS_CONSTRUCT_DESIGN.md#resource-attributes).
--- **Scope split (doc-absent detail):** the surface design is yours; grading the tag/`@returns` prose is
--  outside your scope.
- 
--**[CD-CONSTRUCT-ANATOMY] (BLOCK
+-- You MUST NOT change any public-facing code that breaks backward compatibility (APIs, method signatures, validations, enum members, prop contracts, making required properties optional)
++- You MUST NOT change any public-facing code in a stable module in a way that breaks backward compatibility (APIs, method signatures, validations, enum members, prop contracts, making a required property optional on a type users read (a return type or a class property)); see [CONTRIBUTING.md § API surface changes](../CONTRIBUTING.md#api-surface-changes)
+ - When fixing defects or extending constructs for new modes, deprecate the old version and introduce a corrected replacement (e.g., `FooV2`) rather than modifying the original
+ - You MUST NOT include `@deprecated` properties in newly introduced interfaces
+ - You SHOULD keep implementation-detail types unexported (marked `@internal`) to minimize backward-compatibility obligations and public API surface
 ```
 
-**File**: `skills/cdk-review/cdk-documentation-review/SKILL.md` (modified, +10/-18)
+**File**: `docs/AGENTS_CONSTRUCT_IMPLEMENTATION.md` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,6 @@
- ---
- name: cdk-documentation-review
--description: "AWS CDK documentation-quality reviewer. Use when a PR changes a doc surface the CDK design guidelines govern — `@default`/`@param` JSDoc tags, migration notes, README usage examples, and rosetta `*.ts-fixture` files and fenced `ts` snippets. Leading concept: docs must be true and complete against the CDK design guidelines, so a doc that misstates a default or is missing where a guideline requires it is a defect with the standing of a code defect."
-+description: "AWS CDK documentation-quality reviewer. Use when a PR changes a doc surface the CDK design guidelines govern — `@default` JSDoc tags, migration notes, README usage examples, `*.ts-fixture` files and fenced `ts` snippets. Leading concept: docs must be true and complete against the CDK design guidelines, so a doc that misstates a default or is missing where a guideline requires it is a defect with the standing of a code defect."
+@@ -84,14 +84,14 @@
+ ## Abstract Base Class
+ 
+ - You SHOULD implement an abstract `FooBase` for each resource that implements the full construct interface with resource attributes as abstract properties
+-- Keep it internal (not exported)
++- Keep it internal: no `export`, or `export` with `@internal` when another file in the module needs it
+ - Use it to implement `from{Attribute}` import methods via ad-hoc local classes
+ 
  ---
  
- # AWS CDK Documentation Review
-@@ -30,8 +30,7 @@ concern; on each, own the documentation question:
- Work the changed docs in this order. Adapt to what the diff touches.
+ ## Import Method Implementation
  
- 1. **Inventory the doc surfaces, and load your rules.** From the diff, enumerate every doc surface the
--   PR touches: every exported public class / method / prop it adds or renames (a brand-new exported L2 is
--   highest-value — it triggers the README-example and JSDoc-tag checks at once); every
-+   PR touches: every exported public class / method / prop it adds or renames; every
-    `@default` it adds or changes; every `@deprecated` tag and breaking API change; and every fenced
-    ` ```ts ` block and `*.ts-fixture` it adds or edits. Then read
-    [`documentation-rules.md`](references/documentation-rules.md) — its rows are your checklist. Before
-@@ -43,10 +42,9 @@ Work the changed docs in this order. Adapt to what the diff touches.
- 2. **Check the inventory against the rules.** Walk the changed docs family by family — **README
-    examples**, **`@default` accuracy**, **Public-API doc completeness**, **Migration notes**. For each
-    rule check both directions — what is present-and-wrong, and what is owed-but-missing. From the step-1
--   inventory, check each doc a surface of that kind owes and flag the absent. One method the rows lack: for
--   a `@default`, **read the constructor / `?? ` handling in the same
--   diff and compare** what the code applies when the prop is omitted against the tag — a contradiction is
--   this dimension's highest-value defect.
-+   inventory, check each doc a surface of that kind owes and flag the absent. For a `@default`, read the
-+   constructor / `??` handling in the same diff and compare what the code applies when the prop is
-+   omitted against the tag.
+-- You MUST validate that input does not contain unresolved tokens (via `Token.isUnresolved`) before parsing in `from*` methods
++- A `from*` method that parses its input MUST use the Arn helpers (`Arn.split`, `Stack.of(scope).splitArn`), which accept tokens, or check `Token.isUnresolved` before parsing the string another way
+ - When implementing `fromLookup` methods via context providers, prefer `fromResourceAttributes()` over `fromResourceName()` to avoid reconstructing ARNs with the wrong environment
  
- 3. **Rate by harm and stop.** Rate every finding by the harm the defect does — misled consumer, a feature
-    shipped without the usage docs a guide requires — per `cdk-review-principles` (its
-@@ -58,16 +56,10 @@ Work the changed docs in this order. Adapt to what the diff touches.
- 
- ## What not to flag
- 
--Beyond the shared exclusions in `cdk-review-principles` (pre-existing, cosmetics, out-of-scope,
--no-nit-quota), this dimension stays silent on the following — not even as OPTIONAL — because each
--belongs to a different dimension or is not a documentation defect at all. When a defect belongs to
--another dimension, leave it — it's outside your scope.
--
- - **Prose wording is not a `@default` defect** — a misspelled word, an awkward sentence, a comment that
-   "reads a little off", capitalization, Oxford-comma preferences break no build and misstate no behavior.
--  **This is the single most important exclusion for this dimension:** a misspelled word in a JSDoc comment
--  breaks nothing; a `@default false` that is actually `true` misleads every consumer — only the second is
--  a finding.
-+  A misspelled word in a JSDoc comment breaks nothing; a `@default false` that is actually `true` misleads
-+  every consumer — only the second is a finding.
- - **Comment-density or style opinions** — whether a block "needs more comments", inline-comment placement,
-   docstring formatting idioms.
- - **Code correctness** — whether the code the docs describe is itself buggy is a code-correctness question,
-@@ -78,9 +70,9 @@ another dimension, leave it — it's outside your scope.
- ## Output
- 
- Populate the structured finding fields the `cdk-review-principles` skill defines — write
--`message` as the complete posted comment (observation, impact, concrete fix, guideline cited inline by
--file + section). This dimension's `category` is one of: README examples, `@default` accuracy,
--Public-API doc completeness, Migration notes. The `suggestedFix` (folded into `message`) shows the doc or
-+`message` as the complete posted comment (observation, impact, a fix once you have checked one, guideline
-+cited inline by file + section). This dimension's `category` is one of: README examples, `@default` accuracy,
-+Public-API doc completenes
-```
-
-**File**: `skills/cdk-review/cdk-documentation-review/references/documentation-rules.md` (modified, +3/-19)
-```diff
-@@ -1,14 +1,5 @@
- # Documentation review rules
- 
--Rows group by defect family — the four `category` values (README examples, `@default` accuracy,
--public-API doc completeness, migration notes). See
--the `cdk-review-principles` skill for the shared lookup convention (the
--BLOCKING → RECOMMENDED → OPTIONAL sort within a family, the conditional-severity encoding, the
--`(doc-absent detail)` marker, and links referencing `main`).
--
--Severity across these rows is set by shipped-doc consumer impact: a doc that is *wrong*, or a new L2
--with no usage example at all, is BLOCKING; a doc *thin* on a required facet is RECOMMENDED.
--
- ## README examples
- 
- **[DOC-README-STALE-SNIPPET] (RECOMMENDED)** — A public API changed (prop/method/construct
-@@ -19,9 +10,6 @@ added/renamed, signature changed) but the module README not updated to match. Se
- PR adds, or hides the feature in a fixture, so it documents nothing the PR introduced. See
- [`AGENTS.md § Module READMEs`](https://github.com/aws/aws-cdk/blob/main/AGENTS.md#module-readmes)
- (the simple-example-per-use-case requirement; use `nofixture` to surface setup in the doc).
--- **Reviewer lens (doc-absent detail):** values stored in a `.ts-fixture` do not surface to the docs the
--  user sees. So an example that compiles only because it hides everything meaningful in a fixture — showing
--  the user nothing of the feature — is this gap even though it passes the build.
- 
- ## `@default` accuracy
- 
-@@ -31,22 +19,18 @@ code actually does when the prop is omitted (e.g. `@default false` on a prop the
- [`AGENTS.md § Props Design`](https://github.com/aws/aws-cdk/blob/main/AGENTS.md#props-design) for the
- `@default` format rule and
- [`AGENTS_CONSTRUCT_DESIGN.md § Default Behavior`](https://github.com/aws/aws-cdk/blob/main/docs/AGENTS_CONSTRUCT_DESIGN.md#default-behavior)
--for why the default *behavior* is a design decision the tag documents (so a wrong `@default` often signals
--a real behavioral surprise).
-+for the default behavior the tag documents.
- 
- ## Public-API doc completeness
- 
- **[DOC-README-MISSING-EXAMPLE] (BLOCKING)** — A new L2 construct (or substantial new feature) with no
- README usage example. See
- [`AGENTS.md § Module READMEs`](https://github.com/aws/aws-cdk/blob/main/AGENTS.md#module-readmes).
--- **Conditional severity (doc-absent detail):** BLOCKING for a brand-new public L2 with zero usage docs.
--  Down to RECOMMENDED for a new prop on an existing construct with no README mention; a new mixin with no
--  `## Mixins` README entry is a RECOMMENDED completeness gap.
-+- **Tier:** RECOMMENDED for a new prop on an existing construct with no README mention, and for a new mixin
-+  with no `## Mixins` README entry.
- 
- ## Migration notes
- 
- **[DOC-MIGRATION-NOTE-MISSING] (RECOMMENDED)** — A `@deprecated` tag (or a breaking change to an
- experimental module) with no migration note pointing at the replacement API. See
- [`AGENTS_CONSTRUCT_DESIGN.md § Backward Compatibility & Deprecation`](https://github.com/aws/aws-cdk/blob/main/docs/AGENTS_CONSTRUCT_DESIGN.md#backward-compatibility--deprecation).
--- **Scope split (doc-absent detail):** whether the break *exists* and is *allowed* is
--  outside documentation's scope — your concern is purely whether the migration path is documented.
-```
-
-**File**: `skills/cdk-review/cdk-regression-review/SKILL.md` (modified, +16/-28)
-```diff
-@@ -8,33 +8,30 @@ description: "AWS CDK regression + breaking-change reviewer. Use when reviewing
- You review whether the PR breaks code that works today — existing user programs, deployed stacks, or the
- public API / synthesized-template contract CDK users depend on. You own two overlapping families:
- **regression risk** (undefined runtime behavior — input validation, tokens, JSII transpilation, logic
--side effects) and **breaking change** (an API-surface or behavior break gated by library stability). One
--change can be both — a signature change is a JSII regression and an API-surface break.
-+side effects) and **breaking change** (an API-surface or behavior break gated by library stability).
- 
- **Scope gate — review only risks this PR introduces.** Point to the changed line that creates the risk.
- Judge the implementation: a well-meant bug fix, added validation, or optimization can still introduce a
- regression or a break.
- 
--**You own regression + breaking-change, including JSII.** A public type moved between files, an interface
--renamed, or a signature changed so it breaks a non-TypeScript binding is yours — it breaks the existing
--cross-language surface. (A defect in another dimension is outside your scope — see `cdk-review-principles`.)
-+**You own regression + breaking-change, including JSII.** A change that breaks a non-TypeScript binding is
-+yours — it breaks the existing cross-language surface. (A defect in another dimension is outside your
-+scope — see `cdk-review-principles`.)
- 
- ## The review process
- 
- Work the changed surface rules-first. Adapt it to what the diff touches.
- 
--1. **Orient and load your rules.** Name the public surface the PR changes. Establish its stability tier
--   first — the row sets the verdict by tier. Read [`regression-rules.md`](references/regression-rules.md):
--   its rows are your checklist. Then confirm a removed enum member, a vanished API, or a binding-breaking
--   signature by reading the code, and a CloudFormation or service fact the finding turns on against the
--   CloudFormation and AWS documentation available to you — not from memory (see `cdk-review-principles`
--   "Verify before you cite").
-+1. **Orient and load your rules.** Name the public surface the PR changes. Establish first whether its
-+   module is stable or experimental, since the breaking-change rows rate by it. Read
-+   [`regression-rules.md`](references/regression-rules.md): its rows are your checklist. Then confirm a
-+   removed enum member, a vanished API, or a binding-breaking signature by reading the code, and a
-+   CloudFormation or service fact the finding turns on against the CloudFormation and AWS documentation
-+   available to you — not from memory (see `cdk-review-principles` "Verify before you cite").
- 
--2. **Check the diff against the rules.** Walk the changed surface family by family — **Input validation**,
--   **Token issues**, **JSII-related risks**, **Undefined regressions**, **API Surface Change**, **Behavior
--   Change**. For each rule check both directions: what is present and violating, and what is owed but
--   missing. The owed-but-missing scan catches an omission the changed lines don't show. Enumerate what the
--   change owes; flag each owed item that is absent.
-+2. **Check the diff against the rules.** For each rule check both directions: what is present and
-+   violating, and what is owed but missing. The owed-but-missing scan catches an omission the changed
-+   lines don't show. Enumerate what the change owes; flag each owed item that is absent.
- 
- 3. **Rate by harm and stop.** Rate every finding by the harm when its mechanism triggers, per
-    `cdk-review-principles` (its severity scale, "Confidence is not severity") — rate a concrete regression
-@@ -43,25 +40,16 @@ Work the changed surface rules-first. Adapt it to what the diff touches.
- 
- ## What not to flag
- 
--Beyond the shared exclusions in `cdk-review-principles` (pre-existing, cosmetics, out-of-scope,
--no-nit-quota), stay silent on the following too — not even as OPTIONAL — because none breaks an existing
--program. When a defect is in another dimension, leave it — it's outside your scope.
--
--- **Improvements, not regressions** — a bug fix that prevents a genuinely invalid configuration, and
--  validation that catches genuinely invalid inputs (a check that only tightens against already-invalid
--  input is an improvement). For the boolean-token false-positive guard (a `Token.isUnresolved()` guard on a
--  boolean, enum, or construct reference is dead code, and a boolean prop needs no token guard at all), see
--  `REG-TOKEN-UNRESOLVED-GUARD` in [`regression-rules.md`](references/regression-rules.md).
- - **Performance and dependency-range opinions** — a micro-optimization or performance opinion with no
-   measured regression; a dependency-range bump (`glob ^7 → ^11`) unless you can show it raises a floor
-   CDK ships against and thereby breaks existing consumers.
- 
- ## Output
- 
- Populate the structured finding fields the `
-```
-
-**File**: `skills/cdk-review/cdk-regression-review/references/regression-rules.md` (modified, +60/-111)
-```diff
-@@ -1,178 +1,127 @@
- # Regression & breaking-change rules
- 
--Rows group by defect family (input validation, token handling, JSII cross-language compatibility,
--undefined runtime behavior, library stability & breaking changes). See the `cdk-review-principles`
--skill for the shared lookup convention: the
--BLOCKING → RECOMMENDED → OPTIONAL sort within a family, the conditional-severity encoding, the
--`(doc-absent detail)` marker, and links referencing `main`.
--
- ## Input validation
- 
--**[REG-VALIDATION-FALSE-POSITIVE] (BLOCKING)** — New validation must not reject a value CDK accepts today;
--an over-strict check turns a working stack into one that stops synthesizing. Confirm the real constraint
--against the authoritative AWS service docs before rating.
--- **Detection (doc-absent detail):** for every new `throw` / rejection / bound / regex, name one concrete
--  input that was valid before the PR and is rejected after (a negative-vs-preserved-valid comparison).
--  Signals: an **over-narrow regex** (a new `if (!/^[a-z]+$/.test(props.name)) throw …` rejecting a
--  hyphenated, numeric, or uppercase name the construct previously synthesized); an **off-by-one / too-tight
--  bound** (a new min/max/length narrower than the service's real limit); an **enum-membership check
--  omitting a live value** (a new allowlist / `switch`-with-throw missing a value the construct synthesizes
--  today); a **newly-required prop or non-null assertion** on a prop that was optional or defaulted,
--  breaking callers that relied on the old default. A check that only tightens against genuinely-invalid
--  input is an improvement, not a regression; a validation that only worsens the error message on an
--  already-invalid input rejects no previously-valid value — at most OPTIONAL. A new validation that also
--  skips `Token.isUnresolved()` false-rejects any token-valued input — pair this with
--  [REG-TOKEN-UNRESOLVED-GUARD].
-+**[REG-VALIDATION-FALSE-POSITIVE] (BLOCKING)** — New validation must not reject a value CDK accepts today,
-+meaning input that deploys successfully; an over-strict check turns a working stack into one that stops
-+synthesizing. Confirm the real constraint against the authoritative AWS service docs before rating. See
-+[`AGENTS.md § Anti-Patterns`](https://github.com/aws/aws-cdk/blob/main/AGENTS.md#anti-patterns--things-not-to-do)
-+for new validation on existing constructs.
-+- **Detection:** for each new rejection, name one concrete input that deployed before
-+  the PR and is rejected after.
- 
- **[REG-INPUT-VALIDATION] (RECOMMENDED)** — Missing input validation: the CDK never validates a
--configuration property, letting an invalid value through. *(Conditional — BLOCKING when the unvalidated
-+configuration property, letting an invalid value through. *(conditional — BLOCKING when the unvalidated
- value flows into a working stack and breaks its update.)*
--- **The three failure modes (doc-absent detail):** an unvalidated value can **fail at deployment**
--  (CloudFormation rejects the configuration), **create a misconfigured resource** (created but does not
--  work as expected), or be **silently ignored** (no error, but the property has no effect).
- 
--**[REG-CFN-TYPE-LEAK] (RECOMMENDED)** — A change to an existing public API that newly exposes an
--L1/CFN-layer type where it did not before, breaking or coupling existing consumers to CloudFormation. (The
-+**[REG-CFN-TYPE-LEAK] (RECOMMENDED)** — A change to an existing public API that newly exposes an L1
-+property type (`CfnFoo.BarProperty`) anywhere, or a `Cfn*` type in a method, a class member, or a struct
-+other than the construct's `<Name>Props`, breaking or coupling existing consumers to CloudFormation. (The
- same leak on a *brand-new* L2 surface is not a regression — outside your scope.) See
--[`AGENTS.md § Props Design`](https://github.com/aws/aws-cdk/blob/main/AGENTS.md#props-design)
--(`awslint:props-no-cfn-types`). Apply it with the false-positive scan in [REG-VALIDATION-FALSE-POSITIVE].
-+[`AGENTS.md § Props Design`](https://github.com/aws/aws-cdk/blob/main/AGENTS.md#props-design).
- 
- ## Token handling
- 
- **[REG-TOKEN-UNRESOLVED-GUARD] (BLOCKING)** — A check or manipulation on an unresolved token (a value that
- is actually a `Ref`/`Fn::` at synth) emits invalid CloudFormation or throws for users passing that token.
--Guard with `Token.isUnresolved()` before validating or comparing. For token fundamentals — the three
--encodings and the `Token.asString/asList/asNumber` conversions — read the
-+Guard with `Token.isUnresolved()` before validating or comparing. See
-+[`AGENTS.md § Token Safety`](https://github.com/aws/aws-cdk/blob/main/AGENTS.md#token-safety) and the
- [CDK Tokens guide](https://docs.aws.amazon.com/cdk/v2/guide/tokens.html).
--- **Guard before validate:** the guard-before-validate rule — with typed string/number/list examples, the
--  opaque-value `Fn.select`/`Fn.join` manipulation pattern, and the tokenized-list `.length === 1` gotcha —
--  is stated at
--  [`AGENTS.md § 
-```
-
-**File**: `skills/cdk-review/cdk-review-principles/SKILL.md` (modified, +11/-15)
-```diff
-@@ -1,6 +1,6 @@
  ---
- name: cdk-review-principles
--description: "Shared foundation every CDK review-dimension skill applies — the harm-based severity scale (BLOCKING/RECOMMENDED/OPTIONAL), evidence + citation authority order, exact file:line, the concrete-fix rule, the bar a finding must meet to be posted, review tone, the shared what-not-to-flag exclusions, the finding-output contract (ruleId + reference fields), and the rules-lookup convention. Apply whenever conducting a CDK PR review, rating a finding's severity, deciding whether something is a finding at all, or turning a finding into a posted comment."
-+description: "Shared foundation every CDK review-dimension skill applies — the harm-based severity scale (BLOCKING/RECOMMENDED/OPTIONAL), evidence + citation authority order, exact file:line, when to offer a fix, the bar a finding must meet to be posted, review tone, the shared what-not-to-flag exclusions, the finding-output contract (ruleId + reference fields), and how a rule's conditional severity reads. Apply whenever conducting a CDK PR review, rating a finding's severity, deciding whether something is a finding at all, or turning a finding into a posted comment."
- ---
- 
- # Review Principles
-@@ -31,7 +31,8 @@ harm:
-   grouping with identical effect.
- 
- A finding's `severity` field takes exactly one of these three words —
--`BLOCKING` / `RECOMMENDED` / `OPTIONAL`.
-+`BLOCKING` / `RECOMMENDED` / `OPTIONAL`. A rule with a conditional severity is one rule: its
-+header carries the primary severity, and its body states when it up- or down-tiers.
- 
- ### Calibrate the harm honestly
- 
-@@ -61,7 +62,8 @@ code once, as a must-fix or as a design nicety; reporting it as both double-coun
- 
- ## Make each finding land
- 
--A correctly-rated finding still has to be actionable. Every finding carries three things:
-+A correctly-rated finding still has to be actionable. Every finding carries a location and evidence, and
-+a fix once you have checked one:
- 
- - **An exact location** — `path/to/file.ts:L42`, or a range `path/to/file.ts:L42-L50`. A
-   finding with no code location stays in the report as a high-level observation; it cannot
-@@ -81,9 +83,12 @@ A correctly-rated finding still has to be actionable. Every finding carries thre
-   by reading that code, and what CDK's testing or README guidance says by reading that
-   guide; post only what you have read. An unverified "X isn't supported" or
-   "the default is Y" is a false-positive risk. Cite the page you read in `reference`.
--- **A concrete fix** — a code example, or a question framing a specific alternative ("What
--  do you think about scoping this to the bucket ARN?"). Always offer a direction out. A fix
--  you suggest follows the same guides as the code under review.
-+- **A fix, once you have checked it** — a code example, or a question framing a specific
-+  alternative ("What do you think about scoping this to the bucket ARN?"). You have checked a
-+  fix when you have read that what it uses exists at the reviewed commit and that the code
-+  depending on what it changes still fits it, because an unchecked fix can break where it is
-+  applied. Without a checked fix, report the problem and its evidence and leave `suggestedFix`
-+  null. A fix you suggest follows the same guides as the code under review.
- 
- Write it in a reviewer's voice: prefer "we" and "consider" over "you should"; frame
- suggestions as questions where you can; stay direct and constructive on blocking issues
-@@ -127,15 +132,6 @@ carve-outs. None is a finding, at any severity:
-   changelog placeholders, maturity banners; flag one only if you have verified the specific
-   value is actually wrong.
- 
--## Rules-lookup convention
--
--Each dimension skill keeps its detailed rules in a `references/*-rules.md` lookup. Every
--lookup shares one shape so they never drift: rows grouped by family, sorted
--BLOCKING → RECOMMENDED → OPTIONAL within each family, `[id]`s stable. A conditional
--severity is one rule — the row header carries the primary severity, the body states when it
--up- or down-tiers. A row marked `(doc-absent detail)` carries reviewer calibration the source
--doc does not state, kept in full. All aws/aws-cdk links reference `main`.
--
- ## Sources
- 
- Public aws/aws-cdk `main` guidance:
-```
-
-**File**: `skills/cdk-review/cdk-review-principles/references/pr-comment-format.md` (modified, +11/-31)
-```diff
-@@ -1,22 +1,20 @@
- # Finding & Comment Format Reference
- 
--Produce **structured findings**.
--
- ## The structured finding contract
- 
--Produce each finding as a structured object with these fields:
-+Give each finding these fields:
- 
- - `file` — repo-relative path of the file the finding is on.
- - `lineRange: { startLine, endLine }` — the line or line span the finding is about.
-   A single-line finding sets both to that line.
- - `category` — this dimension's finding type (its own taxonomy enum; each dimension
-   skill names the values it uses).
--- `severity` — one of `BLOCKING` / `RECOMMENDED` / `OPTIONAL` (see below). The only
--  severity vocabulary.
-+- `severity` — one of `BLOCKING` / `RECOMMENDED` / `OPTIONAL`, defined in `SKILL.md` "Severity — rate
-+  by the harm it does when it triggers". The only severity vocabulary.
- - `ruleId` — the stable `[id]` of the rule that fired, taken verbatim from the dimension's
--  rules lookup. The debug/trace key: it names exactly which rule produced the finding.
-+  rules file. The debug/trace key: it names exactly which rule produced the finding.
- - `message` — the human-visible comment text (see the next section).
--- `reference` — the authoritative source the finding cites: a CDK design guideline, jsii doc, CloudFormation resource spec, or AWS service doc — file + section, or a URL — per the authority order below; or null.
-+- `reference` — the authoritative source the finding cites: a CDK design guideline, jsii doc, CloudFormation resource spec, or AWS service doc — file + section, or a URL — per the authority order in `SKILL.md` "Make each finding land"; or null.
- - `evidence` — the supporting detail behind the finding.
- - `suggestedFix` — a concrete fix, or null.
- 
-@@ -29,51 +27,33 @@ complete comment. Write it as a self-contained review comment:
- 
- - **Observation** — what the issue is, specific, referencing the code (1-2 sentences).
- - **Impact** — why it matters, what happens if it is not addressed.
--- **Concrete fix** — the change to make (a code example or a question framing a
-+- **Fix, once you have checked one** — the change to make (a code example or a question framing a
-   specific alternative), with the guideline cited inline where one backs the finding.
- 
- Populate `evidence`, `reference`, and `suggestedFix` as structured fields too, and fold
- their essentials into the `message` prose so it stands alone. Write it in a reviewer's
--voice (see "Tone Rules"). `ruleId` is the exception: a structured metadata field for
-+voice (see `SKILL.md` "Make each finding land"). `ruleId` is the exception: a structured metadata field for
- debug/tracing that stays in its own field (though a finding may still cite the rule inline
- where that aids the author).
- 
--## Severity vocabulary
--
--The `severity` field takes one of `BLOCKING` / `RECOMMENDED` / `OPTIONAL`. Their harm
--definitions live in `SKILL.md` "Severity — rate by the harm it does when it triggers"
--(authoritative).
--
- ## Evidence & References
- 
--The citation authority order and when a citation may be skipped live in `SKILL.md` "Make
--each finding land", and how an aws-cdk rule's own stated harm sets the severity lives in
--"Calibrate the harm honestly" (both authoritative). The format contract this adds: put the
--citation in `reference`/`evidence` and name it inline in `message` so the posted comment
-+Put the citation in `reference`/`evidence` and name it inline in `message`, so the posted comment
- carries its own authority.
- 
- ## Filtering — what becomes a finding
- 
- Emit a finding only when it meets the posting conditions in `SKILL.md` "Findings must meet the
--bar" (authoritative). In this format, "tied to a specific line" means it has
-+bar". In this format, "tied to a specific line" means it has
- a `file` and a `lineRange`; a high-level observation with no line to anchor to belongs in the
- review `summary`.
- 
- Keep these out of the findings (put them in the `summary` text if they matter):
- high-level design observations not tied to a line, positive feedback, clusters of
--related nits (consolidate into one finding on the first occurrence), findings already
-+related nits, findings already
- surfaced by automated PR analysis (unless you add new context), and philosophical
- questions.
- 
--### Every tier
--
--A candidate that meets the posting conditions becomes a finding at its tier (`SKILL.md`
--"Findings must meet the bar", authoritative). Consolidate related findings on
--one cause into one.
-+Consolidate related findings on one cause into one.
- 
- Let the review `summary` carry the broader picture.
--
--## Tone Rules
--
--The reviewer's-voice rules live in `SKILL.md` "Make each finding land"
--(authoritative). Write every `message` in that voice.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39910** (2026-11-27): fix(assertions): support Template.fromStack for a StackSet and a ProductStack (@gudipati)
+- **PR #39903** (2026-11-27): docs(cloudformation): clarify StackSet permission models (@gudipati)
 - **PR #39902** (2026-11-26): docs(cloudformation): fix StackSet README and doc-comments (@gudipati)
+- **PR #39900** (2026-11-27): docs(agents): resolve guide lines that contradict each other (@ozelalisen)
 - **PR #39898** (2026-11-25): docs(agents): write requirement keywords in capitals (@ozelalisen)
 - **PR #39897** (2026-11-25): chore: npm-check-updates && yarn upgrade (@aws-cdk-automation)
-- **PR #39888** (2026-11-24): docs(agents): drop grant methods from the configuration-mutation exception (@ozelalisen)
-- **PR #39881** (2026-11-26): chore(skills): align compatibility rules with their guides and prune the review skills (@ozelalisen)
-- **PR #39880** (2026-11-26): feat(cloudformation): look up StackSet asset buckets by region (@gudipati)
 
 ---
 
@@ -1811,51 +1784,45 @@ Rules that follow their guides:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skills): align compatibility rules with their guides and prune the review skills
+## X. security-guardian): make the world access rules evaluate their policies
 
 **RULE**:
-When implementing operations in `skills/cdk-review/cdk-construct-design-review/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/@aws-cdk/security-guardian/rules/resource-policies/resource-policy-root-principal-needs-conditions.guard`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6efedd4d`: skills): align compatibility rules with their guides and prune the review skills. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1267366`: security-guardian): make the world access rules evaluate their policies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/cdk-review/cdk-construct-design-review/SKILL.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/@aws-cdk/security-guardian/rules/resource-policies/resource-policy-root-principal-needs-conditions.guard`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-2. **Check the diff against the rules,** judging the shape the changed surface produces. For each rule
-   check both directions: what is present and violating, and what the kind owes but the diff omits.
-   Before flagging an absence, confirm the service supports the affordance in the authoritative AWS
-   takes one value. Stop once you can name the defect and cite its rule — file + section.
-`message` as the complete posted comment (observation, impact, a fix once you have checked one, and the
-guideline cited inline by file + section). This dimension's `category` is one of: Feature placement &
-abstraction, Design Guidelines conformance, Clarity/simplicity/consistency, Footgun-free & ages-well
-interface quality.
+# Also fails an Allow statement that uses NotPrincipal, whatever it lists: IAM supports NotPrincipal only with Deny.
+                    # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
+                    when NotPrincipal exists {
+                        NotPrincipal not exists
+                        <<##ERROR:Resource policy must not use NotPrincipal in an Allow statement. Replace NotPrincipal with a Principal that names specific accounts or roles.##>>
+                    }
+                    # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
+                    when NotPrincipal exists {
+                        NotPrincipal not exists
+                        <<##ERROR:Resource policy must not use NotPrincipal in an Allow statement. Replace NotPrincipal with a Principal that names specific accounts or roles.##>>
+                    }
+                    # IAM supports NotPrincipal only with Deny, so an Allow statement with NotPrincipal fails whatever it lists
+                    when NotPrincipal exists {
+                        NotPrincipal not exists
+          
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-2. **Check the diff against the rules.** Walk the changed surface family by family — **Feature placement**,
-   **Abstraction / L1 leak**, **Conformance**, **Footgun / ages-well** — judging the shape it produces. For
-   each rule check both directions: what is present and violating, and what the kind owes but the diff
-   omits. Before flagging an absence, confirm the service supports the affordance in the authoritative AWS
-   takes one value. Stop once you can name the defect and cite its rule — file + section — with the concrete
-   fix.
-Beyond the shared exclusions in `cdk-review-principles` (pre-existing, cosmetics, out-of-scope,
-no-nit-quota), stay silent on the following — not even as OPTIONAL — because none is a design defect in
-the changed surface. When a defect belongs to a different dimension, leave it — it's outside your scope.
-
-`message` as the complete posted comment (observation, impact, concrete fix, and the guideline cited
-inline by file + section). This dimension's `category` is one of: Feature placement & abstraction,
-Design Guidelines conformance, Clarity/simplicity/consistency, Footgun-free & ages-well interface
-quality.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6efedd4d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1267366` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

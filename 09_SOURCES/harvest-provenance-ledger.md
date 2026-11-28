@@ -14019,3 +14019,4 @@ Every entry in this ledger must capture:
 | `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `372709db` | Multi-dimensional audit evidence | 2026-11-28T05:24:47.687Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `aef597ae` | Multi-dimensional audit evidence | 2026-11-28T05:24:58.206Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `85c63335` | Multi-dimensional audit evidence | 2026-11-28T05:33:42.405Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `f6d320a1` | Multi-dimensional audit evidence | 2026-11-28T05:46:47.321Z |
