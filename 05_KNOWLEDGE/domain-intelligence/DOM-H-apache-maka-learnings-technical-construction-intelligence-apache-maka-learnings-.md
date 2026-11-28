@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T04:13:40.096Z",
+  "timestamp": "2026-11-28T04:39:21.639Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-maka-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-maka-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T04:13:40.096Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T04:39:21.639Z`  
 > **Learning ID**: `LEARN-EVO-apache-maka-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: B (Product Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache-maka-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-maka-learnings.md`  
 > **Source**: github ([https://github.com/apache/maka](https://github.com/apache/maka))  
-> **Source Version**: `00c6027a`  
+> **Source Version**: `9c051de3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T04:13:22.998Z  
+> **Timestamp**: 2026-11-28T04:38:39.494Z  
 > **Learning ID**: `learn-github-apache-maka`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-maka-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/maka](https://github.com/apache/maka))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T04:13:22.992Z  
+> **Harvest Timestamp**: 2026-11-28T04:38:39.358Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Apache Maka (Incubating) is a high-performance agent workspace that keeps a complete record of everything it did.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 6008 stars
+- **Stars / Engagement**: 6015 stars
 
 ---
 
@@ -2926,1427 +2926,1402 @@ impl Lifecycle {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9bd44203` (2026-11-26)
-**Commit Message**: feat(workbench): show left-side Markdown TOC for overflowing turn replies (#7256)
+### Incident Patch 1: `3dd8e9f8` (2026-11-28)
+**Commit Message**: fix(external): isolate Antigravity ACP supervisor per Run (#7379)
 
-Add a left-side Markdown table of contents overlay in Conversation for
-whichever turn's final assistant or bot output is currently viewed when
-it contains Markdown headings and its rendered height exceeds the
-viewport height.
+Previously all concurrent Antigravity sessions shared a single
+--maka-agy-acp-front supervisor process. When one session's
+session/resume or session/close stalled, the shared router marked that
+route expired and waited until every other route on the same front
+drained before terminating agy and sealing closure.json. Any long-running
+peer session held the stalled session indefinitely in wait_for_close,
+blocking timeout errors, Stop requests, and queued follow-ups.
 
-- Expose native TextView heading and block-navigation primitives in NSH
-  (HeadingsChange, VisibleBlocksChange, TextView::headings(), and
-  scroll_to_block() backed by virtual_list.scroll_to_index()) so headings
-  come directly from TextView's parsed document without re-parsing
-  Markdown in JS, mutating extensions during streaming, or reporting
-  off-screen blocks when only footnotes are visible.
-- Coordinate turn-level TOC state in turnToc.ts by combining live mounted
-  TextView bindings (with per-instance spare-cell isolation) with
-  cached native-parsed outlines for virtualized output rows of the same
-  turn, gating active-heading selection on both outer-row and inner-block
-  visibility, and relaying cross-row jumps from outer List scroll to
-  inner TextView scrollToBlock.
-- Render MarkdownToc as a desktop left-margin overlay that adapts
-  between a docked quiet heading lis
+Give each Antigravity Run its own dedicated stdio supervisor and agy
+process group with explicit Opening/Open/Closing state:
+- Remove the shared Fronts pool, LocalListener socket multiplexing, and
+  draining/retiring state machine in agy_front.rs / agy_front/router.rs.
+- On Host disconnect (normal end, timeout, Stop, or Host crash), close
+  immediately if no session opened yet, or wait up to 2s for
+  session/close before terminating only this Run's agy process group and
+  sealing closure.json.
+- Replace &mut Option<TaskOwner> with explicit agy_front::OpenError
+  states (BeforeLaunch / Closed / Unconfirmed) and honor cancellation
+  and retirement during sup
 
-**File**: `plugins/agent/conversations/ui/Conversation.tsx` (modified, +121/-17)
+**File**: `plugins/agent/native/src/executor/external.rs` (modified, +0/-4)
 ```diff
-@@ -117,6 +117,7 @@ import {
-   acceptedSend,
-   activityMessage,
-   applyWorkTailThought,
-+  hasTextPrefix,
-   sameHistoryRow,
-   compareHistoryOrder,
-   historyTurnKey,
-@@ -223,6 +224,8 @@ import {
-   MessageRow,
-   type MessageViewState,
- } from '../../../../products/maka/workbench/app/MessageRow';
-+import { MarkdownToc } from '../../../../products/maka/workbench/app/MarkdownToc';
-+import { createTurnToc } from '../../../../products/maka/workbench/app/turnToc';
- import { compactTranscriptSize } from '../../../../products/maka/workbench/app/QuickBar';
- import { FinalActions } from '../../../../products/maka/workbench/app/FinalActions';
- import { SideNotes, SideQuoteTray } from '../../../../products/maka/workbench/app/SideQuestionCard';
-@@ -1800,6 +1803,7 @@ export function Conversation(props: ConversationProps) {
-   const entryTurn = (key: string) => {
-     const entry = displayEntry(key);
-     if (entry?.kind === 'process') return entry.group.turnKey;
-+    if (entry?.kind === 'bot') return entry.turnId;
-     if (entry && 'turnKey' in entry) return entry.turnKey ?? null;
-     return null;
-   };
-@@ -4894,18 +4898,70 @@ export function Conversation(props: ConversationProps) {
-       cancel={inputAction(cancelNavigation, navigatingTurn())}
-     />
-   );
-+  const turnToc = createTurnToc({
-+    enabled: () => !props.compact && ready() && reading() === 'chat',
-+    listRef: () => list,
-+    listWidth: historyWidth,
-+    viewportHeight: () => readingSize().height,
-+    railInset,
-+    atBottom: () => !historyBelow(),
-+    isTerminal: () => platform.idiom === 'terminal',
-+    rowTurnKey: entryTurn,
-+    turnOutputRowKeys: (turnKey) => {
-+      if (botView() === 'bot') {
-+        return bot.forTurn(turnKey).length > 0 ? [`bot/${turnKey}`] : [];
-+      }
-+      const turn = projectedTurn(turnKey);
-+      if (!turn) return [];
-+      const ids = turn.finalOutputIds.length > 0 ? turn.finalOutputIds : turn.answerOutputIds;
-+      return ids.filter((id) => !currentRow(id)?.sourceCitation);
-+    },
-+    rowOutputSources: (rowKey) => {
-+      if (rowKey.startsWith('bot/')) {
-+        const turnKey = rowKey.slice(4);
-+        return bot.forTurn(turnKey).map((message) => ({
-+          keyPrefix: `${message.sequence}:`,
-+          text: message.text,
-+          streaming: false,
-+        }));
-+      }
-+      if (rowStates.get(rowKey)?.sourceMode()) return [];
-+      const row = currentRow(rowKey);
-+      if (
-+        !row ||
-+        row.role !== 'assistant' ||
-+        row.field !== 'body' ||
-+        row.tool ||
-+        row.sourceCitation ||
-+        !hasTextPrefix(row)
-+      ) {
-+        return [];
-+      }
-+      return [{ keyPrefix: '', text: row.text, streaming: true }];
-+    },
-+    scrollToRow: (rowKey) => {
-+      const index = displayKeys().indexOf(rowKey);
-+      if (index < 0 || !list) return false;
-+      list.scrollToIndex({ index, viewPosition: 0, animated: false });
-+      return true;
-+    },
-+    onBeforeJump: () => {
-+      cancelNavigation();
-+      historyScrollInput = 'idle';
-+      batch(() => {
-+        historyFollowPaused.set(true);
-+        innerReader.set(null);
-+      });
-+    },
-+  });
-   const transcriptSize = props.compact ? compactTranscriptSize() : undefined;
-   const entryRow = (key: () => string) => (
--    <View
--      style={readingColumn}
--      onLayout={
--        transcriptSize
--          ? ({ bounds }) => transcriptSize.measure(key(), bounds.size.height)
--          : undefined
--      }
--    >
--      <Each of={[key()]} key={(id: string) => id}>
--        {(ownedKey) => {
-+    <Each of={[key()]} key={(id: string) => id}>
-+      {(ownedKey) => {
-+        const rowId = ownedKey();
-+        const tocRow = !props.compact ? turnToc.bindRow(rowId) : undefined;
-+        if (tocRow) cleanup(tocRow.dispose);
-+        const renderEntryBody = () => {
-           const initial = displayEntry(ownedKey());
-           if (!initial) return <View />;
-           const entry = () => displayEntry(ownedKey()) ?? initial;
-@@ -5185,6 +5241,7 @@ export function Conversation(props: ConversationProps) {
-             };
-             return (
-               <BotReply
-+                bindToc={tocRow?.bindTextView}
-                 metrics={
-                   props.compact
-                     ? (at) => {
-@@ -5253,11 +5310,20 @@ export function Conversation(props: ConversationProps) {
-           const first = currentRow(initial.rowId);
-           if (!first) return <View />;
-           const row = () => currentRow(initial.rowId) ?? first;
-+          const bindToc =
-+            tocRow &&
-+            first.role === 'assistant' &&
-+            first.field === 'body' &&
-+            !first.tool &&
-+            !first.sourceCitation
-+              ? tocRow.bindTextView
-+              : undefined;
-           return (
-             <MessageRow
-               item={row}
-               compactChat={props.compact}
-               beside={props.side}
-+              bindToc={bindToc}
-               hasSources={() => {
-      
-```
-
-**File**: `products/maka/terminal-shell/tests/real_host/desktop_new_session.rs` (modified, +642/-0)
-```diff
-@@ -3099,6 +3099,640 @@ async fn desktop_external_agent_satisfies_new_session_connection_prompt() {
-     fixture.finish().await;
+@@ -171,7 +171,6 @@ async fn await_closed_task(
  }
  
-+async fn desktop_markdown_toc_follows_active_turn_and_jumps_to_headings() {
-+    let mut fixture = Fixture::open().await;
-+    let desktop = Desktop::open_at(
-+        &fixture,
-+        &fixture.address,
-+        size(
-+            nsh_terminal::DevicePixels(1560),
-+            nsh_terminal::DevicePixels(600),
-+        ),
-+        nsh_core::platform::Appearance::Dark,
-+    )
-+    .await;
-+    desktop.new_draft().await;
-+
-+    let long_block = |tag: &str, count: usize| {
-+        (1..=count)
-+            .map(|i| {
-+                format!(
-+                    "{tag} paragraph {i}: detailed explanation spanning multiple lines so the reply overflows the visible reading window cleanly."
-+                )
-+            })
-+            .collect::<Vec<_>>()
-+            .join("\n\n")
-+    };
-+
-+    // Turn 1: stream across headings in multiple chunks, including a fenced code block
-+    // inside a list item and a long sparse middle section + wide single-line JSON block.
-+    desktop.type_text("Turn one long markdown").await;
-+    desktop.submit().await;
-+    let mut reply1 = desktop.request(&mut fixture).await;
-+    reply1
-+        .delta(&format!(
-+            "# Turn One Overview\n\n<details><summary>Overview Marker</summary>Overview details.</details>\n\n{}\n\n1. ```python\n   # code comment ignored\n   print(1)\n   ```\n\n",
-+            long_block("overview", 8),
-+        ))
-+        .await;
-+    let wide_json = format!(r#"{{"entries":[{}]}}"#, r#""payload","#.repeat(600));
-+    reply1
-+        .delta(&format!(
-+            "## Architecture\n\n{}\n\n```json\n{wide_json}\n```\n\n",
-+            long_block("arch", 28),
-+        ))
-+        .await;
-+    reply1
-+        .delta(&format!(
-+            "### Deep Dive\n\n<details><summary>Deep Dive Marker</summary>Deep dive details.</details>\n\n{}\n\n<details><summary>Turn One End</summary>End of turn one.</details>",
-+            long_block("deep", 10),
-+        ))
-+        .await;
-+    desktop
-+        .wait("turn 1 reply did not finish", reply1.finish())
-+        .await;
-+    desktop
-+        .until("turn 1 did not settle", || {
-+            desktop.controls("Stop response").is_empty().then_some(())
-+        })
-+        .await;
-+
-+    // Wait for all three streamed headings before reading settled TOC bounds.
-+    let deep_toc = desktop.control("Jump to section: Deep Dive").await;
-+    let arch_toc = desktop.control("Jump to section: Architecture").await;
-+    let overview_toc = desktop.control("Jump to section: Turn One Overview").await;
-+    assert!(
-+        desktop
-+            .controls("Jump to section: code comment ignored")
-+            .is_empty(),
-+        "list-nested fenced code comment must not appear in TOC"
-+    );
-+    // TOC sits in the left margin beside the reading column.
-+    assert!(
-+        overview_toc.origin.x < px(520.)
-+            && arch_toc.origin.x < px(520.)
-+            && deep_toc.origin.x < px(520.),
-+        "docked TOC should render in the left margin: overview={overview_toc:?}"
-+    );
-+    desktop.artifact("toc-turn1-wide");
-+
-+    // Clicking the first heading scrolls the top section into the viewport.
-+    desktop.press("Jump to section: Turn One Overview").await;
-+    let overview_marker = desktop.control("▸ Overview Marker").await;
-+    assert!(
-+        overview_marker.origin.y < px(320.),
-+        "Overview Marker should land near the top of the viewport: {overview_marker:?}"
-+    );
-+    desktop.artifact("toc-turn1-overview");
-+
-+    // Clicking a distant virtualized heading across 28 paragraphs + wide JSON lands on Deep Dive.
-+    desktop.press("Jump to section: Deep Dive").await;
-+    let deep_marker = desktop.control("▸ Deep Dive Marker").await;
-+    assert!(
-+        deep_marker.origin.y < px(320.),
-+        "Deep Dive Marker should land near the top of the viewport: {deep_marker:?}"
-+    );
-+    desktop.artifact("toc-turn1-deep-dive");
-+
-+    // Turn 2: short Markdown reply with a heading that fits inside the viewport -> TOC hides.
-+    desktop.press("Return to latest").await;
-+    desktop.control("▸ Turn One End").await;
-+    desktop.type_text("Turn two short markdown").await;
-+    desktop.submit().await;
-+    let mut reply2 = desktop.request(&mut fixture).await;
-+    // Fits completely within the 406pt reading viewport while taking >50% of it so Turn 2
-+    // becomes the viewed turn instead of Turn 1's tail above it.
-+    reply2
-+        .delta(
-+            "# Short Note\n\n- First concise point.\n- Second concise point.\n- Third concise point.\n\nThis short answer fills most of the screen without overflowing.",
-+        )
-+        .await;
-+    desktop
-+        .wait("turn 2 reply did not finish", reply2.finish())
-+        .await;
-+    desktop
-+        .until("turn 2 did not settle", || {
-+            desktop.controls("Stop response").is_empty().then_some(())
-+        })
-+ 
+ pub(crate) struct External {
+-    agy_fronts: agy_front::Fronts,
+     commands: BTreeMap<NativeRuntime, NativeCommand>,
+     queries: Arc<maka_plugin_core::work::resources::Resources>,
+     catalog: tokio::sync::Mutex<Catalog>,
+@@ -245,7 +244,6 @@ impl External {
+             .map_err(|error| error.to_string())?,
+         );
+         Ok(Arc::new(Self {
+-            agy_fronts: Default::default(),
+             commands,
+             sessions,
+             queries: Arc::default(),
+@@ -776,10 +774,8 @@ impl External {
+             .map(|(key, endpoint)| (key.clone(), endpoint.clone()))
+             .collect();
+         let endpoints = self.finish_endpoints(selected).await;
+-        let fronts = self.agy_fronts.finish().await;
+         let queries = self.queries.finish().await.map_err(|e| e.to_string());
+         let sessions = self.sessions.finish().await;
+-        fronts?;
+         queries?;
+         endpoints?;
+         sessions
 ```
 
-**File**: `products/maka/workbench/app/BotReply.tsx` (modified, +19/-1)
+**File**: `plugins/agent/native/src/executor/external/agy_acp.rs` (modified, +61/-27)
 ```diff
-@@ -17,7 +17,7 @@
+@@ -35,7 +35,6 @@ const HOST_SERVER: &str = "maka";
+     reason = "one invocation owns the original process, protocol and Host bridge"
+ )]
+ pub(super) async fn execute(
+-    fronts: &agy_front::Fronts,
+     config: &NativeCommand,
+     cwd: &str,
+     request: &Value,
+@@ -47,36 +46,63 @@ pub(super) async fn execute(
+ ) -> Result<Outcome, Error> {
+     let observation = journal.observation();
+     let descriptor = owner.descriptor();
+-    let mut owner = Some(owner);
+-    let (lease, ticket) = match fronts.open(config, cwd, &mut owner).await {
+-        Ok(lease) => {
+-            let mut ticket = observation
+-                .resources
+-                .reserve()
+-                .map_err(|_| Error::ObservationRetired)?;
+-            ticket.start();
+-            (lease, ticket)
+-        }
+-        Err(error) => {
+-            if let Some(owner) = owner {
++    let (session, ticket) =
++        match agy_front::open(config, cwd, owner, &cancellation, &observation.retired).await {
++            Ok(session) => {
++                let mut ticket = observation
++                    .resources
++                    .reserve()
++                    .map_err(|_| Error::ObservationRetired)?;
++                ticket.start();
++                (session, ticket)
++            }
++            Err(agy_front::OpenError::BeforeLaunch(owner, error)) => {
+                 let error = if cancellation.is_cancelled() {
+                     Error::Cancelled
++                } else if observation.retired.is_cancelled() {
++                    Error::ObservationRetired
+                 } else {
+                     error
+                 };
+-                return runtime::fail_without_launch(&observation, owner, error).await;
++                return runtime::fail_without_launch(&observation, *owner, error).await;
+             }
+-            let mut ticket = observation
+-                .resources
+-                .reserve()
+-                .map_err(|_| Error::ObservationRetired)?;
+-            ticket.start();
+-            ticket.unconfirmed(error.to_string(), descriptor);
+-            return Err(error);
+-        }
+-    };
++            Err(agy_front::OpenError::Closed(error)) => {
++                let mut ticket = observation
++                    .resources
++                    .reserve()
++                    .map_err(|_| Error::ObservationRetired)?;
++                ticket.start();
++                ticket.complete(Ok(()));
++                observation
++                    .binding
++                    .cleanup(OperationCleanup::Confirmed)
++                    .await?;
++                return if cancellation.is_cancelled() {
++                    Err(Error::Cancelled)
++                } else if observation.retired.is_cancelled() {
++                    Err(Error::ObservationRetired)
++                } else {
++                    runtime::preparation_failure(error)
++                };
++            }
++            Err(agy_front::OpenError::Unconfirmed(error)) => {
++                let mut ticket = observation
++                    .resources
++                    .reserve()
++                    .map_err(|_| Error::ObservationRetired)?;
++                ticket.start();
++                ticket.unconfirmed(error.to_string(), descriptor);
++                return Err(Error::CleanupUnconfirmed);
++            }
++        };
++    let agy_front::Session {
++        stdin,
++        stdout,
++        child,
++    } = session;
+     let mut io = Pipe::session(
+-        lease.socket,
++        stdin,
++        stdout,
+         observation.clone(),
+         cancellation,
+         bridge.failed.clone(),
+@@ -99,9 +125,9 @@ pub(super) async fn execute(
+         }
+     };
+     bridge.close_admission();
+-    drop(io); // EOF asks the supervisor to close just this session.
++    drop(io); // EOF asks this Run's supervisor to close and reap its agy process tree.
+     let (closed, bridge_closed) = tokio::join!(
+-        agy_front::wait_for_close(&descriptor, lease.exited),
++        agy_front::wait_for_close(&descriptor, child),
+         bridge.close()
+     );
+     bridge.clone().original_root_cleanup_signal().await;
+@@ -206,6 +232,14 @@ impl Protocol<'_> {
+         io: &mut Pipe,
+     ) -> Result<(String, Vec<Value>, Option<String>, bool), Error> {
+         let initialized = io.request("initialize", initialize_params()).await?;
++        if initialized["protocolVersion"] != 1
++            || initialized.pointer("/agentCapabilities/mcpCapabilities/http")
++                != Some(&Value::Bool(true))
++        {
++            return Err(Error::Invalid(
++                "agy must support ACP 1 with HTTP MCP".into(),
++            ));
++        }
+         let system_prompt_append = supports_system_prompt_append(&initialized);
+         let system_prompt = system_prompt_append
+             .then(|| {
+@@ -284,7 +318,7 @@ fn open_params(
+     (method, params)
+ }
+ 
+-pub(super) fn initialize_params() -> Value {
++fn initialize_params() -> Value {
+     json!({"protocolVersion":1,"clientCapabilit
+```
+
+**File**: `plugins/agent/native/src/executor/external/agy_front.rs` (modified, +421/-211)
+```diff
+@@ -17,153 +17,154 @@
   * under the License.
   */
  
--import { Clipboard, computed, platform, signal, Text, View } from 'nsh';
-+import { cleanup, Clipboard, computed, platform, signal, Text, View } from 'nsh';
- import { Button, ContextMenu, MenuItem, TextView } from 'nsh/base';
- import { MarkdownImageView } from './MarkdownImage';
- import { MermaidView } from './MermaidView';
-@@ -29,11 +29,13 @@ import type { replyMetrics } from './replyDetails';
- import { Icon } from './Icon';
- import { ShimmerText, ThinkingMark } from './Loading';
- import { splitSpecMarkdown } from './spec/session.ts';
-+import type { BindTextViewToc } from './turnToc';
- import { C, bodyTextStyle, captionTextStyle } from './ui';
+-//! One stdio ACP front per resolved command in this activation. A private
+-//! supervisor owns its group and the original transcripts across Host loss.
+ use super::*;
+-use maka_host_runtime::ipc::{LocalListener, LocalStream};
+-use maka_process::isolated::{Descriptor, TaskOwner};
+-use std::{io, path::Path, process::Stdio};
+-use tokio::{
+-    io::{AsyncBufReadExt, AsyncWriteExt, BufReader},
+-    process::ChildStdin,
+-    sync::Mutex,
+-    task::JoinSet,
+-};
+-mod router;
+-pub use router::serve_front;
++use futures_util::StreamExt;
++use maka_process::isolated::{Descriptor, SessionSpool, TaskOwner};
++use serde::{Deserialize, Serialize};
++use serde_json::json;
++use std::collections::BTreeMap;
++use std::io;
++use std::path::PathBuf;
++use std::process::Stdio;
++use std::time::Duration;
++use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt, BufReader};
++use tokio::process::{Child, ChildStdin};
++use tokio::sync::watch;
++use tokio_util::codec::{FramedRead, LinesCodec};
++
++/// Private helper mode for a single isolated Antigravity ACP Run.
+ pub const FRONT_HELPER: &str = "--maka-agy-acp-front";
  
- /** Messages the Bot sent with `SendUser`, shown as its reply in the Chat view. */
- export function BotReply(props: {
-   messages: () => BotTranscriptMessage[];
-+  bindToc?: BindTextViewToc;
-   sessionId?: string;
-   metrics?(at: number): ReturnType<typeof replyMetrics>;
-   openLink(target: string, restoreFocus: () => boolean): Promise<void>;
-@@ -72,6 +74,15 @@ export function BotReply(props: {
-                     const selected = signal('');
-                     const menuText = signal('');
-                     let menuOpen = false;
-+                    const initialSeg = seg();
-+                    const toc =
-+                      initialSeg.kind === 'markdown'
-+                        ? props.bindToc?.(
-+                            `${message().sequence}:${initialSeg.key}`,
-+                            message().sequence * 1e9 + initialSeg.start,
-+                          )
-+                        : undefined;
-+                    if (toc) cleanup(() => toc.dispose());
-                     return (
-                       <If
-                         when={seg().kind === 'spec'}
-@@ -83,6 +94,13 @@ export function BotReply(props: {
-                             }}
-                             trigger={
-                               <TextView
-+                                ref={toc ? (node) => toc.onRef(node) : undefined}
-+                                onHeadingsChange={
-+                                  toc ? (event) => toc.onHeadingsChange(event) : undefined
-+                                }
-+                                onVisibleBlocksChange={
-+                                  toc ? (event) => toc.onVisibleBlocksChange(event) : undefined
-+                                }
-                                 markdown={(() => {
-                                   const s = seg();
-                                   return s.kind === 'markdown' ? s.text : '';
-```
-
-**File**: `products/maka/workbench/app/MarkdownBody.tsx` (modified, +13/-0)
-```diff
-@@ -31,11 +31,13 @@ import { SourceText } from './SourceText';
- import { tr } from './locale';
- import { notePassage, type SideMark } from './sideQuestions';
- import { splitSpecMarkdown } from './spec/session.ts';
-+import type { BindTextViewToc } from './turnToc';
- import { C, bodyTextStyle, isDark, secondaryTextStyle } from './ui';
- 
- export function MarkdownBody(props: {
-   row: () => Row;
-   citations?(): readonly InlineCitation[] | undefined;
-+  bindToc?: BindTextViewToc;
-   sourceId: string;
-   sessionId: string;
-   compact?: boolean;
-@@ -182,6 +184,12 @@ export function MarkdownBody(props: {
-                 if (segmentMatches.delete(segKey)) reportMatches();
-               });
-               const atSegment = () => segmentMarkers().get(seg().key);
-+              const initialSeg = seg();
-+              const toc =
-+                initialSeg.kind === 'markdown'
-+                  ? props.bindToc?.(initialSeg.key, initialSeg.start)
-+                  : undefined;
-+              if (toc) cleanup(() => toc.dispose());
-               const extensions = () => {
-                 const base = props.interactiveBlocks === false ? [] : markdownExtensions;
-                 const inline = atSegment();
-@@ -194,6 +202,11 @@ export function MarkdownBody(props: {
-                   when={seg().kind === 'spec'}
-                   else={
-                     <TextView
-+                      ref={toc ? (node) => toc.onRef(node) : undefined}
-+                      onHeadingsChange={toc ? (event) => toc.onHeadingsChange(event) : undefined}
-+                      onVisibleBlocksChange={
-+                        toc ? (event) => toc.onVisibleBlocksChange(event) : undefined
-+                      }
-                       markdown={(() => {
-                         const s = seg();
-                         return s.kind === 'markdown' ? s.text : '';
-```
-
-**File**: `products/maka/workbench/app/MarkdownToc.tsx` (added, +461/-0)
-```diff
-@@ -0,0 +1,461 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
++const CLOSE_TIMEOUT: Duration = Duration::from_secs(2);
 +
-+import {
-+  Canvas,
-+  cleanup,
-+  computed,
-+  effect,
-+  List,
-+  platform,
-+  signal,
-+  Text,
-+  untracked,
-+  View,
-+  windowSize,
-+  type ListRef,
-+} from 'nsh';
-+import { Button, Popover, Tooltip } from 'nsh/base';
-+import { tr } from './locale';
-+import type { TocHeadingItem, TocLayoutMode } from './markdownTocModel';
-+import { C, captionTextStyle, floatingStyle, tooltipStyle, tooltipTextStyle } from './ui';
-+
-+const ROW_HEIGHT = platform.idiom === 'terminal' ? 16 : 26;
-+const FADE_HEIGHT = 24;
-+const RAIL_WIDTH = 20;
-+const MAX_RAIL_MARKS = 24;
-+const RAIL_HOVER_CLOSE_MS = 160;
-+const MARK_WIDTHS = [10, 7, 5] as const;
-+
-+function TocFade(props: {
-+  readonly bottom?: boolean;
-+  readonly height: number;
-+  readonly width: number;
-+  readonly surface: () => string;
-+}) {
-+  return (
-+    <Canvas
-+      accessibilityElementsHidden
-+      style={[
-+        {
-+          position: 'absolute',
-+          left: 0,
-+          right: 0,
-+          top: props.bottom ? undefined : 0,
-+          bottom: props.bottom ? 0 : undefined,
-+          height: props.height,
-+        },
-+        { pointerEvents: 'none' },
-+      ]}
-+      draw={(cx) => {
-+        const bg = props.surface();
-+        const fade = cx.createLinearGradient(0, 0, 0, props.height);
-+        fade.addColorStop(0, props.bottom ? `${bg}00` : bg);
-+        fade.addColorStop(1, props.bottom ? bg : `${bg}00`);
-+        cx.fillStyle = fade;
-+        cx.fillRect(0, 0, props.width, props.height);
-+      }}
-+    />
-+  );
-+}
-+
-+function TocHeadingList(props: {
-+  readonly turnKey: () => string | null;
-+  readonly items: () => readonly TocHeadingItem[];
-+  readonly active: () => string | null;
-+  readonly baseLevel: () => number;
-+  readonly width: () => number;
-+  readonly availableHeight: () => number;
-+  readonly floating: boolean;
-+  readonly select: (item: TocHeadingItem) => void;
-+}) {
-+  const scrollOffset = signal(0);
-+  const listRef = signal<ListRef | undefined>(undefined);
-+  let hovered = false;
-+
-+  const contentHeight = computed(() => props.items().length * ROW_HEIGHT);
-+  const frameHeight = computed(() => {
-+    const maxBudget = Math.min(
-+      480,
-+      windowSize().height * 0.65,
-+      Math.max(0, props.availableHeight() - (props.floating ? 36 : 24)),
-+    );
-+    if (platform.idiom === 'terminal') {
-+      return Math.min(contentHeight(), Math.floor(maxBudget / ROW_HEIGHT) * ROW_HEIGHT);
-+    }
-+    return Math.min(contentHeight(), maxBudget);
-+  });
-+
-+  const edgeFade = computed(() => {
-+    const content = contentHeight();
-+    const frame = frameHeight();
-+    if (content <= frame + 1) return { top: 0, bottom: 0 };
-+    const offset = Math.max(0, Math.min(scrollOffset(), content - frame));
-+    return {
-+      top: Math.min(FADE_HEIGHT, offset),
-+      bottom: Math.min(FADE_HEIGHT, Math.max(0, content - frame - offset)),
-+    };
-+  });
-+
-+  const activeIndex = computed(() => {
-+    const id = props.active();
-+    return id === null ? -1 : props.items().findIndex((item) => item.id === id);
-+  });
-+
-+  let syncedTurn: string | null = null;
-+  effect(() => {
-+    const turn = props.turnKey();
-+    const list = listRef();
-+    const index = activeIndex();
-+    const frame = frameHeight();
-+    if (!list || index < 0 || frame < ROW_HEIGHT) return;
-+    const turnChanged = turn !== syncedTurn;
-+    syncedTurn = turn;
-+    if (hovered && !turnChanged) return;
-+    const start = index * ROW_HEIGHT;
-+    const current = untracked(scrollOffset);
-+    if (turnChanged || start < current || start + ROW_HEIGHT > current + frame) {
-+      list.scrollToIndex({
-+        index,
-+        viewPosition: start <= current ? 0 : 1,
-+        animated: false,
-+      });
-+    }
-+  });
-+
-+  const surface = () => (props.floating ? C.floating : C.panel);
-+
-+  return (
-+    <View
-+      onMouseEnter={() => {
-+        hovered = true;
-+      }}
-+      onMouseLeave={() => {
-+        hovered = false;
-+      }}
-+      style={{ width: props.width(), height: frameHeight(), minHeight: 0 }}
-+    >
-+      <List
-+        ref={(node) => {
-+          listRef.set(node);
-+        }}
-+        testID="markdown-toc-list"
-+        accessibilit
-```
-
-**File**: `products/maka/workbench/app/MessageRow.tsx` (modified, +4/-0)
-```diff
-@@ -38,6 +38,7 @@ import {
- import type { MessageOrigin } from '../../../../packages/plugin-sdk/src/index.js';
- import type { InlineCitation } from './answerCitations';
- import { MarkdownBody } from './MarkdownBody';
-+import type { BindTextViewToc } from './turnToc';
- import { SourceText } from './SourceText';
- import { compactCopyInset, CompactReplyFooter, LocalMessageCopy } from './CompactReplyFooter';
- import { replyDetails, replyMetrics } from './replyDetails';
-@@ -172,6 +173,7 @@ export function MessageRow({
-   compactChat,
-   beside,
-   citations,
-+  bindToc,
-   hasSources,
-   openSources,
-   highlighted,
-@@ -204,6 +206,7 @@ export function MessageRow({
-   beside?: boolean;
-   localQuickReply?: boolean;
-   citations?(): readonly InlineCitation[] | undefined;
-+  bindToc?: BindTextViewToc;
-   hasSources?(): boolean;
-   openSources?(): void;
-   highlighted?: () => boolean;
-@@ -625,6 +628,7 @@ export function MessageRow({
-                           >
-                             <MarkdownBody
-                               citations={citations}
-+                              bindToc={bindToc}
-                               sessionId={sessionId}
-                               row={row}
-                               sourceId={sourceId()}
-```
-
-**File**: `products/maka/workbench/app/markdownTocModel.ts` (added, +168/-0)
-```diff
-@@ -0,0 +1,168 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
-+
-+export type TocHeadingItem = {
-+  readonly id: string;
-+  readonly level: number;
-+  readonly title: string;
-+};
-+
-+export type TocLayoutMode =
-+  | { readonly kind: 'docked'; readonly width: number; readonly left: number }
-+  | { readonly kind: 'compact'; readonly railLeft: number; readonly popoverWidth: number }
-+  | { readonly kind: 'hidden' };
-+
-+export type TurnViewportSpan = {
-+  readonly turnKey: string;
-+  readonly top: number;
-+  readonly bottom: number;
-+};
-+
-+export type PartVisibleBlocks = {
-+  readonly partKey: string;
-+  readonly firstBlock: number | null;
-+  readonly lastBlock: number | null;
-+};
-+
-+export type PartHeadingRef = {
-+  readonly id: string;
-+  readonly partKey: string;
-+  readonly blockIndex: number;
-+};
-+
-+const READING_COLUMN_MAX_WIDTH = 800;
-+const DOCKED_MIN_MARGIN = 196;
-+const DOCKED_MAX_WIDTH = 220;
-+const DOCKED_EDGE_INSET = 12;
-+const DOCKED_COLUMN_GAP = 12;
-+const COMPACT_MIN_MARGIN = 32;
-+const COMPACT_RAIL_WIDTH = 20;
-+const COMPACT_POPOVER_WIDTH = 220;
-+
-+export function tocLayoutMode(input: {
-+  readonly listWidth: number;
-+  readonly railInset: number;
-+  readonly terminal: boolean;
-+}): TocLayoutMode {
-+  const { listWidth, railInset, terminal } = input;
-+  if (listWidth <= 0) return { kind: 'hidden' };
-+  const contentWidth = Math.max(0, listWidth - railInset * 2);
-+  const readingColumnLeft = railInset + Math.max(0, (contentWidth - READING_COLUMN_MAX_WIDTH) / 2);
-+  if (readingColumnLeft >= DOCKED_MIN_MARGIN) {
-+    const width = Math.min(
-+      DOCKED_MAX_WIDTH,
-+      Math.floor(readingColumnLeft - DOCKED_EDGE_INSET - DOCKED_COLUMN_GAP),
-+    );
-+    return { kind: 'docked', width, left: DOCKED_EDGE_INSET };
-+  }
-+  if (!terminal && readingColumnLeft >= COMPACT_MIN_MARGIN) {
-+    const railLeft = Math.max(
-+      4,
-+      Math.min(DOCKED_EDGE_INSET, Math.floor((readingColumnLeft - COMPACT_RAIL_WIDTH) / 2)),
-+    );
-+    return { kind: 'compact', railLeft, popoverWidth: COMPACT_POPOVER_WIDTH };
-+  }
-+  return { kind: 'hidden' };
-+}
-+
-+export function pickViewedTurn(
-+  turns: readonly TurnViewportSpan[],
-+  viewportTop: number,
-+  viewportBottom: number,
-+  preferredTurnKey: string | null = null,
-+): string | null {
-+  if (turns.length === 0 || viewportBottom <= viewportTop) return null;
-+  let bestKey: string | null = null;
-+  let bestOverlap = 0;
-+  for (const turn of turns) {
-+    const overlap = Math.max(
-+      0,
-+      Math.min(turn.bottom, viewportBottom) - Math.max(turn.top, viewportTop),
-+    );
-+    if (overlap <= 0) continue;
-+    if (
-+      overlap > bestOverlap + 1 ||
-+      (Math.abs(overlap - bestOverlap) <= 1 && turn.turnKey === preferredTurnKey)
-+    ) {
-+      bestOverlap = overlap;
-+      bestKey = turn.turnKey;
-+    }
-+  }
-+  return bestKey;
-+}
-+
-+export function pickActiveHeading(
-+  items: readonly PartHeadingRef[],
-+  partsInOrder: readonly PartVisibleBlocks[],
-+  atBottom: boolean,
-+  fallbackId: string | null = null,
-+): string | null {
-+  if (items.length === 0) return null;
-+  const partOrder = new Map<string, number>();
-+  let firstVisibleOrder = -1;
-+  let firstVisibleBlock = -1;
-+  let lastVisibleOrder = -1;
-+  let lastVisibleBlock = -1;
-+
-+  for (let i = 0; i < partsInOrder.length; i += 1) {
-+    const part = partsInOrder[i]!;
-+    partOrder.set(part.partKey, i);
-+    if (part.firstBlock !== null && firstVisibleOrder < 0) {
-+      firstVisibleOrder = i;
-+      firstVisibleBlock = part.firstBlock;
-+    }
-+    if (part.lastBlock !== null) {
-+      lastVisibleOrder = i;
-+      lastVisibleBlock = part.lastBlock;
-+    }
-+  }
-+
-+  if (atBottom && lastVisibleOrder >= 0) {
-+    const lastItem = items[items.length - 1]!;
-+    const itemOrder = partOrder.get(lastItem.partKey) ?? -1;
-+    if (
-+      itemOrder >= 0 &&
-+      (itemOrder < lastVisibleOrder ||
-+        (itemOrder === lastVisibleOrder && lastItem.blockIndex <= lastVisibleBlock))
-+    ) {
-+      return lastItem.id;
-+    }
-+  }
-+
-+  if (firstVisibleOrder < 0) {
-+    if (atBottom) return items[items.length - 1]!.id;
-+    if (fallbackId !== null && items.some((item) => item.id === fallbackId)) return fallbackId;
-+    return items[0]!.id;
-+  }
-+
-+
-```
-
-**File**: `products/maka/workbench/app/processGroups.ts` (modified, +6/-0)
-```diff
-@@ -503,6 +503,12 @@ export function projectProcessGroups(input: {
-       } else {
-         flush(true);
-         entries.push({ kind: 'message', key: position.rowId, rowId: position.rowId });
-+        if (row.role === 'assistant' && row.field === 'body' && !row.sourceCitation) {
-+          const presentation = turn(rowTurn);
-+          if (!presentation.answerOutputIds.includes(position.rowId)) {
-+            presentation.answerOutputIds.push(position.rowId);
-+          }
-+        }
-       }
-       continue;
-     }
-```
-
----
-
-### Incident Patch 2: `37a6782d` (2026-11-25)
-**Commit Message**: feat(executor): support isolated external executors across macOS, Linux, and Windows (#7253)
-
-* feat(process): support isolated native tasks on Linux
-
-Generated-by: Maka
-
-* feat(process): support isolated native tasks on Windows
-
-Anchor private snapshots, launch material, and output evidence to Windows directory handles and retain full file IDs. Carry the trusted sandbox backend through the detached helper and settle the provider tree and terminal output before publishing closure.
-
-Use MXC 1.1.0 to keep namespace denials alongside per-task read and write grants. Exercise managed pipes and live ConPTY through the real CLI.
-
-Generated-by: Maka
-
-* feat(executor): deliver receipt-verified programs to isolated native tasks
-
-Publish the verified server and helper together and retain setup inputs through provider shutdown. Exercise ACP setup and receipt delivery across macOS, Linux and Windows, including native MXC and original process cleanup.
-
-Generated-by: Maka
-
-* fix(executor): settle isolation cleanup before confirming native jobs
-
-Generated-by: Maka
-
-* fix(process): harden isolated tasks across Windows accounts, AppData, and runtime cleanup
-
-Address round-2 independent review findin
-
-**File**: `.cargo/config.toml` (modified, +5/-0)
-```diff
-@@ -39,3 +39,8 @@ rustc-wrapper = ""
- # without relying on a racy runtime sqlite3_config() call.
- [env]
- LIBSQLITE3_FLAGS = "SQLITE_DEFAULT_MEMSTATUS=0"
-+
-+# MXC's release build otherwise enables Required ETW diagnostics independently
-+# of the per-request telemetry preference. Use the SDK's unrouted build.
-+MXC_TELEMETRY_COMPONENT_PATH = { value = "", force = true }
-+MXC_TELEMETRY_TEST_KEYWORDS = { value = "", force = true }
-```
-
-**File**: `Cargo.lock` (modified, +21/-6)
-```diff
-@@ -8656,6 +8656,7 @@ dependencies = [
- name = "maka-acp-native"
- version = "0.3.0"
- dependencies = [
-+ "dunce",
-  "futures-util",
-  "hex",
-  "maka-agent-api",
-@@ -8668,6 +8669,7 @@ dependencies = [
-  "maka-host-runtime",
-  "maka-interactions-api",
-  "maka-plugin-core",
-+ "maka-process",
-  "maka-workspace-api",
-  "serde",
-  "serde_json",
-@@ -8859,6 +8861,7 @@ dependencies = [
-  "tracing-subscriber",
-  "unicode-normalization",
-  "uuid",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -8994,6 +8997,7 @@ dependencies = [
-  "base64 0.23.1",
-  "clap",
-  "crossterm",
-+ "dunce",
-  "flate2",
-  "futures-util",
-  "hex",
-@@ -9018,6 +9022,7 @@ dependencies = [
-  "maka-computer-use",
-  "maka-config",
-  "maka-event-log",
-+ "maka-external-agent",
-  "maka-fs-tools",
-  "maka-host-js",
-  "maka-host-runtime",
-@@ -9327,12 +9332,15 @@ dependencies = [
-  "base64 0.23.1",
-  "cap-fs-ext",
-  "cap-std",
-+ "dunce",
-  "futures-util",
-  "hex",
-+ "libc",
-  "maka-agent-facts",
-  "maka-agent-ports",
-  "maka-capabilities",
-  "maka-plugin-core",
-+ "maka-process",
-  "schemars 1.2.3",
-  "serde",
-  "serde_json",
-@@ -9751,9 +9759,11 @@ name = "maka-process"
- version = "0.3.0"
- dependencies = [
-  "alacritty_terminal",
-+ "dirs",
-  "dunce",
-  "libc",
-  "maka-agent-facts",
-+ "maka-event-log",
-  "maka-network",
-  "maka-plugin-core",
-  "maka-sandbox",
-@@ -9762,6 +9772,7 @@ dependencies = [
-  "schemars 1.2.3",
-  "serde",
-  "serde_json",
-+ "sha2 0.11.1",
-  "tempfile",
-  "thiserror 2.0.21",
-  "tokio",
-@@ -9938,8 +9949,6 @@ version = "0.3.0"
- dependencies = [
-  "cap-fs-ext",
-  "cap-std",
-- "dunce",
-- "flatbuffers",
-  "globset",
-  "hex",
-  "libc",
-@@ -10799,8 +10808,9 @@ dependencies = [
- 
- [[package]]
- name = "mxc-sdk"
--version = "1.0.1"
--source = "git+https://github.com/microsoft/mxc?rev=05a430bc17a3e1b3fa2131524fc52e4319e07298#05a430bc17a3e1b3fa2131524fc52e4319e07298"
-+version = "1.1.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "a6f702443261f9e5d12f607f16f591e99ea3ff6fd886281e041b700cbbb2b5de"
- dependencies = [
-  "anyhow",
-  "base64 0.22.1",
-@@ -10810,6 +10820,7 @@ dependencies = [
-  "flatbuffers",
-  "getrandom 0.2.17",
-  "libc",
-+ "native-tls",
-  "nix 0.29.0",
-  "same-file",
-  "semver",
-@@ -10822,6 +10833,7 @@ dependencies = [
-  "tokio",
-  "tracelogging",
-  "unicode-general-category",
-+ "ureq",
-  "url",
-  "uuid",
-  "widestring",
-@@ -11321,9 +11333,9 @@ dependencies = [
- 
- [[package]]
- name = "notify"
--version = "8.2.1"
-+version = "8.2.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "82f812702fbc75d35416d3f884e04925be7e9498f4eceea2e24ba34559284674"
-+checksum = "c41a04a5f59df9322cc657286dd2d79f90816119b22c5f847607c850110205ab"
- dependencies = [
-  "bitflags 2.13.2",
-  "inotify",
-@@ -19258,14 +19270,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3ac5cecf619ca81f66a96482db09687c9f7465af65f4300a8c30cca05bd5a59d"
- dependencies = [
-  "base64 0.23.1",
-+ "der 0.8.2",
-  "flate2",
-  "log",
-+ "native-tls",
-  "percent-encoding",
-  "rustls",
-  "rustls-pki-types",
-  "rustls-platform-verifier",
-  "ureq-proto",
-  "utf8-zero",
-+ "webpki-root-certs",
-  "webpki-roots 1.0.11",
- ]
- 
-```
-
-**File**: `Cargo.toml` (modified, +1/-2)
-```diff
-@@ -100,8 +100,7 @@ publish = false
- [workspace.dependencies]
- zstd = { version = "0.14.3", default-features = false }
- asyncband = "*"
--mxc-sdk = { git = "https://github.com/microsoft/mxc", rev = "05a430bc17a3e1b3fa2131524fc52e4319e07298" }
--flatbuffers = "25.12.19"
-+mxc-sdk = "1.1.0"
- maka-python-runtime = { path = "platform/python-runtime" }
- maka-mcp = { path = "plugins/agent/mcp" }
- hex = "0.4.3"
-```
-
-**File**: `platform/event-log/src/root/windows.rs` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ pub use filesystem::{
-     FileIdentity, create_private_directory, create_private_file, file_identity, open_nofollow,
-     private_directory,
- };
--pub use security::{PrivateSecurity, validate_private};
-+pub use security::{PrivateSecurity, validate_private, validate_protected_private};
- 
- use std::{ffi::c_void, io, os::windows::ffi::OsStrExt};
- use windows_sys::Win32::Foundation::LocalFree;
-```
-
-**File**: `platform/event-log/src/root/windows/security.rs` (modified, +22/-4)
-```diff
-@@ -158,12 +158,30 @@ impl SecurityInfo {
-     }
+ #[derive(Serialize, Deserialize)]
+ struct Launch {
+     executable: PathBuf,
+     args: Vec<String>,
+     env: BTreeMap<String, String>,
++    resource: Descriptor,
  }
  
--/// Validate the held object, not a separately resolved pathname. Unknown ACE
--/// forms fail closed; inherited account/SYSTEM entries are valid for child files.
--pub fn validate_private(file: &File) -> io::Result<()> {
-+/// Private task evidence requires a protected DACL on the held object itself.
-+pub fn validate_protected_private(file: &File) -> io::Result<()> {
-+    use windows_sys::Win32::Security::{GetSecurityDescriptorControl, SE_DACL_PROTECTED};
-     let info = SecurityInfo::read(file)?;
-+    let mut control = 0;
-+    let mut revision = 0;
-+    // SAFETY: GetSecurityInfo owns the descriptor for the duration of this query.
-+    checked(unsafe {
-+        GetSecurityDescriptorControl(info._allocation.0, &mut control, &mut revision)
-+    })?;
-+    if control & SE_DACL_PROTECTED == 0 {
-+        return Err(denied());
-+    }
-+    validate_account_acl(&info)
-+}
+-#[derive(Serialize, Deserialize)]
+-struct Connect {
+-    socket: PathBuf,
+-    resource: Descriptor,
++pub(super) struct Session {
++    pub stdin: ChildStdin,
++    pub stdout: BufReader<Box<dyn AsyncRead + Unpin + Send>>,
++    pub child: Child,
+ }
+ 
+-#[derive(Default)]
+-pub(super) struct Fronts(Mutex<Pool>);
+-#[derive(Default)]
+-struct Pool {
+-    fronts: BTreeMap<PathBuf, Front>,
+-    supervisors: JoinSet<io::Result<()>>,
++pub(super) enum OpenError {
++    BeforeLaunch(Box<TaskOwner>, Error),
++    Closed(Error),
++    Unconfirmed(Error),
+ }
+-#[derive(Clone)]
+-struct Front {
 +
-+/// Root children may inherit account/SYSTEM entries from their private parent.
-+pub fn validate_private(file: &File) -> io::Result<()> {
-+    validate_account_acl(&SecurityInfo::read(file)?)
-+}
++pub(super) async fn open(
++    config: &NativeCommand,
++    cwd: &str,
++    owner: TaskOwner,
++    cancellation: &CancellationToken,
++    retired: &CancellationToken,
++) -> Result<Session, OpenError> {
++    let resolved = match runtime::resolve(config, cwd).await.require() {
++        Ok(resolved) => resolved.executable,
++        Err(error) => return Err(OpenError::BeforeLaunch(Box::new(owner), error)),
++    };
++    let resource = match owner.prepare_session(resolved.clone()).await {
++        Ok(resource) => resource,
++        Err(error) => return Err(OpenError::BeforeLaunch(Box::new(owner), provider(error))),
++    };
++    let start = match serde_json::to_vec(&Launch {
++        executable: resolved,
++        args: config.args.clone(),
++        env: config.env.clone(),
++        resource: resource.clone(),
++    }) {
++        Ok(start) => start,
++        Err(error) => return Err(OpenError::BeforeLaunch(Box::new(owner), provider(error))),
++    };
 +
-+fn validate_account_acl(info: &SecurityInfo) -> io::Result<()> {
-     let account = AccountSid::current()?;
--    validate_owner(&info, &account)?;
-+    validate_owner(info, &account)?;
-     // SAFETY: Windows returned a valid ACL and owns its structural validation.
-     for index in 0..unsafe { (*info.dacl).AceCount } {
-         let mut ace = ptr::null_mut();
++    let mut command = tokio::process::Command::new(owner.helper_executable());
+     #[cfg(windows)]
+-    pid: u32,
+-    ready: futures_util::future::Shared<BoxFuture<'static, Result<(), String>>>,
+-    registrations: tokio::sync::mpsc::UnboundedSender<Vec<u8>>,
+-    retire: CancellationToken,
+-    exited: CancellationToken,
+-}
+-pub(super) struct Lease {
+-    pub socket: LocalStream,
+-    pub exited: CancellationToken,
+-}
+-impl Fronts {
+-    pub(super) async fn open(
+-        &self,
+-        config: &NativeCommand,
+-        cwd: &str,
+-        owner: &mut Option<TaskOwner>,
+-    ) -> Result<Lease, Error> {
+-        let resolved = runtime::resolve(config, cwd).await.require()?.executable;
+-        let task = owner.as_ref().expect("unregistered Run");
+-        #[cfg(unix)]
+-        let dir = tempfile::Builder::new()
+-            .prefix("maka-acp-")
+-            .permissions(std::os::unix::fs::PermissionsExt::from_mode(0o700))
+-            .tempdir_in("/tmp")
+-            .map_err(provider)?;
+-        #[cfg(unix)]
+-        let socket = dir.path().join("run");
+-        #[cfg(windows)]
+-        let socket = PathBuf::from(format!(r"\\.\pipe\maka-agy-{}", uuid::Uuid::new_v4()));
+-        let mut listener = LocalListener::bind(&socket).map_err(provider)?;
+-        let front = {
+-            let mut pool = self.0.lock().await;
+-            while let Some(result) = pool.supervisors.try_join_next() {
+-                if let Err(error) = result.map_err(io::Error::other).and_then(|r| r) {
+-                    tracing::warn!(%error,"agy ACP supervisor exited");
+-                }
+-            }
+-            if pool
+-                .fronts
+-                .get(&resolved)
+-                .is_none_or(|f| f.retire.is_cancelled() || f.exited.is_cancelled())
+-            {
+-                let launch = Launch {
+-                    executable: resolved.clone(),
+-                    args: config.args.clone(),
+-                    env: config.env.clone(),
+-                };
+-                let front = Front::start(task.helper_e
 ```
 
-**File**: `platform/host-runtime/Cargo.toml` (modified, +1/-1)
+**File**: `plugins/agent/native/src/executor/external/agy_front/router.rs` (removed, +0/-452)
 ```diff
-@@ -70,7 +70,7 @@ tempfile.workspace = true
- windows-sys = { version = "0.61.2", features = ["Win32_Security"] }
- 
- [target.'cfg(windows)'.dependencies]
--windows-sys = { version = "0.61.2", features = ["Win32_Storage_FileSystem", "Win32_System_Threading"] }
-+windows-sys = { version = "0.61.2", features = ["Win32_Storage_FileSystem", "Win32_System_Threading", "Win32_System_Pipes"] }
- 
- [[test]]
- name = "integration"
-```
-
-**File**: `platform/host-runtime/examples/windows_mxc.rs` (modified, +55/-31)
-```diff
-@@ -359,7 +359,7 @@ mod native {
-         run_case!(hardlink_conflict);
-         run_case!(protected_ancestor);
-         run_case!(guard_registry);
--        run_case!(unsupported_reopening);
-+        run_case!(reopened_descendants);
-         run_case!(arguments_and_environment);
-         run_case!(pipe_input);
-         run_case!(cancel_hung_admission);
-@@ -729,41 +729,47 @@ mod native {
-         Ok(())
-     }
- 
--    async fn unsupported_reopening(fixture: &Fixture) -> Result<()> {
--        let reopened = fixture.work.join("private/reopened");
--        std::fs::create_dir(&reopened)?;
-+    async fn reopened_descendants(fixture: &Fixture) -> Result<()> {
-+        let private = fixture.work.join("private");
-+        let workspace = private.join("workspace");
-+        let inputs = private.join("inputs");
-+        let hidden = private.join("existing");
-+        for path in [&workspace, &inputs, &hidden] {
-+            std::fs::create_dir_all(path)?;
-+        }
-+        std::fs::write(inputs.join("input"), b"input")?;
-+        std::fs::write(hidden.join("secret"), b"existing")?;
-         let filesystem = Policy {
-             default: Access::Read,
-             rules: vec![
--                Rule::subtree(&fixture.work, Access::Write),
--                Rule::subtree(fixture.work.join("private"), Access::Deny),
--                Rule::subtree(&reopened, Access::Write),
-+                Rule::subtree(&private, Access::Deny),
-+                Rule::subtree(&workspace, Access::Write),
-+                Rule::subtree(&inputs, Access::Read),
-             ],
--            deny_globs: vec![],
-+            deny_globs: Vec::new(),
-         };
--        assert!(matches!(
--            maka_sandbox::windows::mxc::PreparedPolicy::new(&filesystem, &Network::Denied, &fixture.work),
--            Err(maka_sandbox::Error::Unsupported(reason)) if reason == "native MXC cannot reopen a descendant of a denied path"
--        ));
--        let command =
--            fixture
--                .command("must-not-run", Network::Denied)?
--                .sandbox(&Sandbox::Managed {
--                    filesystem,
--                    network: Network::Denied,
--                })?;
--        let failure = match pipe::spawn(command).await {
--            Err(failure) => failure,
--            Ok(_) => return Err("unsupported denial reopening executed a command".into()),
+@@ -1,452 +0,0 @@
+-/*
+- * Licensed to the Apache Software Foundation (ASF) under one
+- * or more contributor license agreements.  See the NOTICE file
+- * distributed with this work for additional information
+- * regarding copyright ownership.  The ASF licenses this file
+- * to you under the Apache License, Version 2.0 (the
+- * "License"); you may not use this file except in compliance
+- * with the License.  You may obtain a copy of the License at
+- *
+- *     http://www.apache.org/licenses/LICENSE-2.0
+- *
+- * Unless required by applicable law or agreed to in writing,
+- * software distributed under the License is distributed on an
+- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+- * KIND, either express or implied.  See the License for the
+- * specific language governing permissions and limitations
+- * under the License.
+- */
+-
+-use super::*;
+-use futures_util::StreamExt;
+-use maka_process::isolated::SessionSpool;
+-use serde_json::json;
+-use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt};
+-use tokio::sync::{mpsc, watch};
+-use tokio_util::codec::{FramedRead, LinesCodec};
+-
+-type Run = u64;
+-enum Event {
+-    Frame(Run, String),
+-    Detached(Run),
+-    CloseExpired(Run),
+-}
+-
+-struct Route {
+-    spool: SessionSpool,
+-    written: watch::Sender<u64>,
+-    session: Option<String>,
+-    detached: bool,
+-    expired: bool,
+-}
+-impl Route {
+-    async fn emit(&mut self, frame: &Value) -> io::Result<()> {
+-        let bytes = line(frame)?;
+-        self.spool.output.write_all(&bytes).await?;
+-        self.spool.output.flush().await?;
+-        self.written.send_modify(|n| *n += bytes.len() as u64);
+-        Ok(())
+-    }
+-}
+-fn line(value: &Value) -> io::Result<Vec<u8>> {
+-    let mut bytes = serde_json::to_vec(value)?;
+-    bytes.push(b'\n');
+-    Ok(bytes)
+-}
+-fn frames(read: impl AsyncRead) -> FramedRead<impl AsyncRead, LinesCodec> {
+-    FramedRead::new(
+-        read,
+-        LinesCodec::new_with_max_length(runtime::MAX_MESSAGE_BYTES),
+-    )
+-}
+-async fn copy_committed(
+-    mut file: tokio::fs::File,
+-    mut destination: impl AsyncWrite + Unpin,
+-    mut committed: watch::Receiver<u64>,
+-) -> io::Result<()> {
+-    let mut offset = 0;
+-    loop {
+-        let end = *committed.borrow_and_update();
+-        if end > offset {
+-            let copied =
+-                tokio::io::copy(&mut (&mut file).take(end - offset), &mut destination).await?;
+-            if copied != end - offset {
+-                return Err(io::Error::other("short ACP session transcript"));
+-            }
+-            offset = end;
+-        }
+-        if committed.changed().await.is_err() {
+-            return Ok(());
+-        }
+-    }
+-}
+-
+-struct Pending {
+-    run: Run,
+-    local: Option<u64>,
+-    method: String,
+-    resume: Option<String>,
+-}
+-
+-struct Router {
+-    routes: BTreeMap<Run, Route>,
+-    sessions: BTreeMap<String, Run>,
+-    pending: BTreeMap<u64, Pending>,
+-    next_id: u64,
+-    next_run: u64,
+-    events: mpsc::Sender<Event>,
+-    initialized: Value,
+-    writer: maka_process::pipe::Input,
+-    clients: JoinSet<()>,
+-}
+-impl Router {
+-    async fn connect(&mut self, spec: Connect) -> io::Result<()> {
+-        let path = spec.resource.resource_ref.join("owner/stdout.bin");
+-        let spool = SessionSpool::open(spec.resource).await?;
+-        let socket = match maka_host_runtime::ipc::connect(&spec.socket).await {
+-            Ok(socket) => socket,
+-            Err(_) => return spool.seal().await,
 -        };
--        assert!(
--            failure
--                .to_string()
--                .contains("native MXC cannot reopen a descendant of a denied path"),
--            "{failure}"
+-        let (read, write) = tokio::io::split(socket);
+-        let run = self.next_run;
+-        self.next_run += 1;
+-        let (written, committed) = watch::channel(0);
+-        let file = tokio::fs::File::open(path).await?;
+-        let tx = self.events.clone();
+-        self.clients.spawn(async move {
+-            let mut input = frames(read);
+-            while let Some(Ok(line)) = input.next().await {
+-                if tx.send(Event::Frame(run, line)).await.is_err() {
+-                    return;
+-                }
+-            }
+-            let _ = tx.send(Event::Detached(run)).await;
+-        });
+-        self.clients.spawn(async move {
+-            // A slow or disconnected observer cannot block another session's replies.
+-            if let Err(error) = copy_committed(file, write, committed).await
+-                && !matches!(
+-                    error.kind(),
+-                    io::ErrorKind::BrokenPipe | io::ErrorKind::ConnectionReset
+-                )
+-            {
+-                eprintln!("agy ACP session output: {error}");
+-            }
+-        });
+-        self.routes.insert(
+-            run,
+-            Route {
+-                spool,
+-                written,
+-                session: None,
+-                detached: false,
+-                expired: false,
+-            },
 -        );
--        assert!(!fixture.work.join("unexpected-execution").exists());
--        println!("PASS unrepresentable Deny→Write policy rejects before execution");
-+        let mut command = Command::new(&fixture.executable, &workspace)
-+            .with_backend(fixture.backend.clone())
-+            .sandbox(&Sandbox::Managed {
-+                filesystem,
-+                network: Network::Denied,
-+            })?;
-+        command.args(["__fixture", "reopened"]);
-+        let mut spawned = pipe::spawn(command).await?;
-+        let mut output = tokio::io::BufReader::new(spawned.stdout);
-+        let mut line = String::new();
-+        output.read_line(&mut line).await?;
-+        assert_eq!(line.trim(), "ready");
-+        std::fs::create_dir(private.join("future"))?;
-+        std::fs::write(private.join("future/secret"), b"future")?;
-+        spawned.stdin.write_all(b"go").await?;
-+        drop(spawned.stdin);
-+        let mut errors = Vec::new();
-+        let (status, _) = tokio::try_join!(
-+            spawned.child.wait(),
-+            spawned.stderr.read_to_end(&mut errors)
-+        )?;
-+        assert!(status.success(), "{}", String::from_utf8_lossy(&errors));
-         Ok(())
-     }
- 
-@@ -1187,6 +1193,24 @@ mod native {
- 
-     fn worker(args: Vec<String>) -> Result<()> {
-         match args.first().map(String::as_str) {
-+            Some("reopened") => {
-+                std::fs::write("probe", b"write")?;
-+                assert_eq!(std::fs::read("probe")?, b"write");
-+                assert_eq!(std::fs::read("../inputs/input")?, b"input");
-+                assert_eq!(
-+                    std::fs::write("../inputs/input", b"x")
-+                        .unwrap_err()
-+                        .raw_os_error(),
-+                    Some(5)
-+                );
-+                println!("ready");
-+                std::io::stdout().flush()?;
-+                let mut go = [0; 2];
-+                std::io::stdin().read_exact(&mut go)?;
-+                for name in ["../existing/secret", "../future/secret"] {
-+                    assert_eq!(std::fs::read(name).unwrap_err().raw_os_error(), Some(5));
-+                }
-+            }
-             Some("filesystem") => {
-                 std::fs::write("文件 with spaces.txt", "写入 😀")?;
-                 denied_write(Path::new(&args[1]));
+-        Ok(())
+-    }
+-    async fn request(
+-        &mut self,
+-        run: Run,
+-        local: Option<u64>,
+-        method: &str,
+-        mut message: Value,
+-  
 ```
 
-**File**: `platform/host-runtime/src/ipc/windows/stream.rs` (modified, +13/-0)
+**File**: `plugins/agent/native/src/executor/external/runtime.rs` (modified, +4/-5)
 ```diff
-@@ -38,6 +38,19 @@ enum Pipe {
-     Client(NamedPipeClient),
+@@ -500,7 +500,6 @@ async fn execute_observed(
+         }
+         NativeRuntime::Antigravity => {
+             agy_acp::execute(
+-                &external.agy_fronts,
+                 config,
+                 cwd,
+                 &request,
+@@ -740,16 +739,16 @@ pub(super) struct Pipe {
  }
- impl LocalStream {
-+    pub fn client_pid(&self) -> io::Result<u32> {
-+        use std::os::windows::io::AsRawHandle;
-+        use windows_sys::Win32::System::Pipes::GetNamedPipeClientProcessId;
-+        let Some(Pipe::Server(pipe)) = &self.pipe else {
-+            return Err(io::Error::other("Expected a connected pipe server"));
-+        };
-+        let mut pid = 0;
-+        // SAFETY: the connected server owns the handle throughout the query.
-+        if unsafe { GetNamedPipeClientProcessId(pipe.as_raw_handle(), &mut pid) } == 0 {
-+            return Err(io::Error::last_os_error());
-+        }
-+        Ok(pid)
-+    }
-     pub(super) fn server(pipe: NamedPipeServer) -> Self {
+ impl Pipe {
+     pub(super) fn session(
+-        socket: maka_host_runtime::ipc::LocalStream,
++        stdin: tokio::process::ChildStdin,
++        stdout: BufReader<Box<dyn tokio::io::AsyncRead + Unpin + Send>>,
+         observation: Observation,
+         stop: CancellationToken,
+         failed: CancellationToken,
+     ) -> Self {
+-        let (read, write) = tokio::io::split(socket);
          Self {
-             pipe: Some(Pipe::Server(pipe)),
+             wire: Wire::Lines {
+-                input: Box::new(write),
+-                reader: BufReader::new(Box::new(read)),
++                input: Box::new(stdin),
++                reader: stdout,
+                 buffer: Vec::new(),
+             },
+             next_id: 0,
+```
+
+**File**: `products/maka/cli/tests/external_jobs.rs` (modified, +221/-25)
+```diff
+@@ -507,6 +507,61 @@ impl Rig {
+         {
+             return self.controller.resource(pid);
+         }
++        if let Some(pending) = events
++            .iter()
++            .find(|e| e["kind"] == "resume_pending" && e["pid"] == pid)
++            && !events
++                .iter()
++                .any(|e| e["kind"] == "ready" && e["pid"] == pid)
++        {
++            let thread = pending["thread"].as_str().unwrap().to_owned();
++            let path = self.sandbox.root.join("runtime-rust.sqlite");
++            return phase("locate pre-bind ACP resource", async {
++                let mut tick = tokio::time::interval(Duration::from_millis(20));
++                loop {
++                    tick.tick().await;
++                    let path = path.clone();
++                    let thread = thread.clone();
++                    let resource = tokio::task::spawn_blocking(move || {
++                        let db = rusqlite::Connection::open_with_flags(
++                            path,
++                            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
++                        )?;
++                        maka_event_log::content::register_sql_functions(&db)
++                            .map_err(|e| rusqlite::Error::ToSqlConversionFailure(Box::new(e)))?;
++                        let mut stmt = db.prepare(
++                            "SELECT json_extract(maka_content_text(c.payload, c.encoding), '$.payload.privateResource.resourceRef')
++                               FROM agent_runs r JOIN contents c
++                                 ON c.content_sha256 = json_extract(r.external, '$.descriptor.digest')
++                              WHERE json_extract(r.external, '$.binding') IS NULL
++                              ORDER BY r.rowid DESC",
++                        )?;
++                        let rows = stmt.query_map([], |row| row.get::<_, Option<String>>(0))?;
++                        for row in rows {
++                            if let Some(resource_ref) = row? {
++                                let stdin = PathBuf::from(&resource_ref).join("owner/stdin.bin");
++                                if let Ok(body) = std::fs::read_to_string(&stdin)
++                                    && body.contains("\"session/resume\"")
++                                    && body.contains(&thread)
++                                {
++                                    return Ok(Some(resource_ref));
++                                }
++                            }
++                        }
++                        Ok::<_, rusqlite::Error>(None)
++                    })
++                    .await
++                    .map_err(|error| error.to_string())?
++                    .map_err(|error| error.to_string())?;
++                    if let Some(resource) = resource {
++                        return Ok(Descriptor {
++                            resource_ref: resource.into(),
++                        });
++                    }
++                }
++            })
++            .await;
++        }
+         let ready = events
+             .iter()
+             .find(|e| e["kind"] == "ready" && e["pid"] == pid)
+@@ -1797,41 +1852,182 @@ async fn antigravity_keeps_the_peer_alive_while_a_worker_fails_to_close() {
+         )
+         .await?;
+         let peer = phase("B is live", rig.controller.event("ACP-peer", "ready")).await?;
+-        assert_eq!(first["front"], peer["front"]);
++        assert_ne!(first["front"], peer["front"]);
+         assert_ne!(first["pid"], peer["pid"]);
+ 
+-        let stop = mutate(&sdk, "agent", "stop", json!({"sessionId":a,"runId":run_a}));
+-        let check = async {
+-            phase(
+-                "A's close is outstanding",
+-                rig.controller.event("ACP-stuck-close", "close_pending"),
+-            )
+-            .await?;
+-            let original = rig.resource(first["pid"].as_u64().unwrap()).await?;
+-            assert!(
+-                isolated::cleanup_evidence(&original)
+-                    .await
+-                    .map_err(|e| e.to_string())?
+-                    .is_none()
+-            );
+-            rig.controller.send(
+-                peer["pid"].as_u64().unwrap(),
+-                json!({"action":"complete","promptId":peer["promptId"]}),
+-            )?;
+-            phase("B completes", terminal_state(&sdk, &b, &run_b, "completed")).await?;
+-            phase("A has original closure evidence", sealed(original)).await?;
+-            Ok::<_, String>(())
+-        };
+-        let (stopped, ()) = tokio::try_join!(stop, check)?;
++        let original_a = rig.resource(first["pid"].as_u64().unwrap()).await?;
++        let original_b = rig.resource(peer["pid"].as_u64().unwrap()).await?;
++
++        let stopped = phase(
++            "stop A while B stays active",
++            mutate(&sdk, "agent", "stop", json!({"sessionId":a,"runId":run_a})),
++        )
++        .await?;
+         assert_eq!(stopped["requested"], true);
+         phase(
+-            "A is cancelled",
++            "A's
 ```
 
 ---
 
-### Incident Patch 3: `aaaa6a66` (2026-11-25)
-**Commit Message**: fix(agent): cold-rebuild stale snapshot derived indexes on demand (#7260)
+### Incident Patch 2: `5b0c2861` (2026-11-27)
+**Commit Message**: fix(agent-state): avoid reading contents.encoding during v54 queue migration and fix clippy lints (#7375)
 
-* fix(agent): cold-rebuild stale snapshot derived indexes on demand
+Cold upgrades from pre-v54 databases (caught by Upgrade Compatibility replay of
+capsule-first-nightly.tar.gz at schema v52) run migration 54
+(queue::rebuild_queue_projections) before migration 63 adds contents.encoding
+and contents.logical_bytes. While the outer queue event scan checked
+has_encoding_column, project() still called content::read, pin, run_head, and
+artifacts::pin_request -> read::lookup -> tool::content_id which queried
+contents.encoding / contents.logical_bytes unconditionally.
 
-After #7245 bumped snapshot navigation VERSION from 3 to 4, persisted snapshots from prior releases still carried version 3 in agent_history_snapshot_nav_heads. Read paths that required a ready snapshot derived index failed immediately instead of triggering Snapshot::ensure_navigation, breaking post-merge Upgrade Compatibility across all historical capsules.
+- Thread has_encoding_column once through replay_queue_events -> project ->
+  exact_content / pin / run_head / artifacts::pin_request_with_encoding so
+  pre-v63 cold upgrades use raw contents.payload / length(payload) with zero
+  extra runtime probes on live paths.
+- Add cold_v53_upgrade_rebuilds_queue_projections_before_contents_encoding
+  regression test covering queued session artifact attachments and completion
+  caller run_head lookup across a real v53 -> v66 cold upgrade.
+- Clean up Rust 1.100 clippy warnings across maka-agent-state, maka-agent-engine,
+  maka-agent-native, maka-i1
 
-Make snapshot derived-index readiness self-healing and type-enforced across all read paths:
-- Return typed IndexedRead / IndexedReadError from navigation::require_ready, metrics_metadata::require_ready, and Snapshot::catalog_summary_in_snapshot so no query can bypass cold rebuild, with zero extra queries or allocations on the already-ready hot path.
-- Wire shared run_with_snapshot_rebuild retry across every peer path: SessionHistory::{metrics, current_model_context, calibration_sample}, HistoryDataSource::{model_request_traces_for_reader, compaction_duration_ms}, Snapshot::{navigation_find, navigation_landmark_count, navigation_landmarks, terminated}, SessionCatalog::{page, record, pla
-
-**File**: `plugins/agent/native/src/owner/catalog.rs` (modified, +6/-1)
+**File**: `platform/i18n/build.rs` (modified, +3/-6)
 ```diff
-@@ -35,12 +35,17 @@ impl Owner {
-         .map_err(|error| error.to_string())
-     }
+@@ -128,12 +128,9 @@ fn main() {
+     code.push_str("        }\n    }\n\n");
  
--    pub(crate) async fn session_summary(&self, id: &str) -> Result<Session, String> {
-+    pub(crate) async fn session_summary(
-+        &self,
-+        id: &str,
-+        stop: &tokio_util::sync::CancellationToken,
-+    ) -> Result<Session, String> {
-         if !self.owns(id) {
-             return Err("agent_session_unavailable".into());
-         }
-         let record = self
-             .canonical_catalog()?
-+            .with_cancellation(stop.clone())
-             .record(id)
-             .await
-             .map_err(|error| error.to_string())?
-```
-
-**File**: `plugins/agent/native/src/owner/driver/tests/tool_history.rs` (modified, +343/-1)
-```diff
-@@ -2133,7 +2133,7 @@ async fn assert_restricted_retry_history(
-     reader.finish().await?;
+     code.push_str("    pub fn from_exact_tag(tag: &str) -> Option<Self> {\n");
+-    code.push_str("        for locale in Self::ALL {\n");
+-    code.push_str("            if locale.tag().eq_ignore_ascii_case(tag) {\n");
+-    code.push_str("                return Some(locale);\n");
+-    code.push_str("            }\n");
+-    code.push_str("        }\n");
+-    code.push_str("        None\n");
++    code.push_str(
++        "        Self::ALL.into_iter().find(|&locale| locale.tag().eq_ignore_ascii_case(tag))\n",
++    );
+     code.push_str("    }\n");
+     code.push_str("}\n");
  
-     let traces = HistoryDataSource::Snapshot(earlier)
--        .model_request_traces_for_reader(driver.access.execution().run_id, 0, 24, true)
-+        .model_request_traces_for_reader(driver.access.execution().run_id, 0, 24, true, None)
-         .await?;
-     assert!(!traces.run_terminated);
-     assert_eq!(traces.requests.len(), 2);
-@@ -4554,3 +4554,345 @@ async fn wait_terminal(client: &HostClient, session: &str, run_id: Value) -> Tes
-         tokio::time::sleep(Duration::from_millis(10)).await;
-     }
- }
-+
-+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+async fn stale_snapshot_indexes_rebuild_without_skipping_pages_or_aborting_sibling_writes()
-+-> TestResult<()> {
-+    use maka_agent_state::{
-+        recall::{RecallStore, SearchQuery},
-+        session_catalog::{Filter, Position as CatalogPosition, SideQuestions},
-+        session_history::{
-+            navigation::SourceFind,
-+            source_tree::{HistoryDataSource, SourceTree},
-+        },
-+    };
-+    use maka_event_log::{
-+        StoreError,
-+        connection::Query,
-+        sessions::{CatalogFilter, CatalogScope},
-+        writeback::{Notification, Prepared, Statement},
-+    };
-+
-+    struct SqlWrite<F>(F);
-+    impl<F: FnOnce(&rusqlite::Connection) -> Result<bool, StoreError> + Send + 'static> Statement
-+        for SqlWrite<F>
-+    {
-+        type Value = ();
-+        type Output = ();
-+        fn execute(self, c: &rusqlite::Connection) -> Result<Prepared<()>, StoreError> {
-+            let changed = (self.0)(c)?;
-+            Ok(Prepared {
-+                value: (),
-+                changed,
-+                notification: Notification::NONE,
-+            })
-+        }
-+        fn committed(_: ()) {}
-+        fn isolated_rejection(_: &StoreError) -> bool {
-+            false
-+        }
-+    }
-+    struct SqlQuery<F>(F);
-+    impl<
-+        T: Send + 'static,
-+        F: FnOnce(&rusqlite::Connection) -> Result<T, StoreError> + Send + 'static,
-+    > Query for SqlQuery<F>
-+    {
-+        type Output = T;
-+        fn execute(self, c: &rusqlite::Connection) -> Result<T, StoreError> {
-+            (self.0)(c)
-+        }
-+    }
-+
-+    let mut rig = Rig::new()?;
-+    let base = rig.directory.path().to_path_buf();
-+    let server = MockAiBuilder::new()
-+        .scripted(vec![
-+            TurnPlan::new()
-+                .push_text("Alpha milestone answer.")
-+                .with_usage(Usage::new(120, 40)),
-+            TurnPlan::new()
-+                .push_text("Beta followup answer.")
-+                .with_usage(Usage::new(180, 50)),
-+            TurnPlan::new()
-+                .push_text("Compacted summary.")
-+                .with_usage(Usage::new(90, 30)),
-+        ])
-+        .start()
-+        .await?;
-+    let boot = model_recovery::bootstrap(&base, server.base_url(), false).await?;
-+    model_recovery::attach(&mut rig, &boot).await?;
-+
-+    let result = AssertUnwindSafe(tokio::time::timeout(
-+        Duration::from_secs(60),
-+        Box::pin(async {
-+            let client = rig.client.as_ref().ok_or("client missing")?;
-+            let owner = rig.captured.lock().unwrap().clone().ok_or("owner missing")?;
-+            let writer = owner.store.data_writer()?;
-+            let run_owner = owner.run_owner();
-+
-+            let conns = model_recovery::call(client, "settings", "connections", json!({"kind": "start"})).await?;
-+            let conn_id = model_recovery::call(client, "settings", "create", json!({
-+                "expectedCatalogRevision": conns["revision"],
-+                "connection": {
-+                    "slug": "snapshot-rebuild", "name": "Snapshot Rebuild",
-+                    "provider": {"packageId":"maka.providers","entryId":"maka.providers","scope":"profile","name":"ollama"},
-+                    "configuration": {"baseUrl": boot.base_url},
-+                    "enabled": true, "enabledModelIds": ["llama3.2"],
-+                    "modelOverrides": {"llama3.2": {"apiProtocol": "openai-chat-completions"}}
-+                }
-+            })).await?["connection"]["connectionId"].clone();
-+            let backend = json!({"kind": "model", "connectionId": conn_id, "modelId": "llama3.2"});
-+
-+            let create_session = |title: &str| {
-+                let (title, path) = (title.to_owned(), base.join("workspace"));
-+                async move {
-+                    let r = model_recovery::call(client, "agent", "create", json!({
-+                        "title": title, "automaticTitle": false, "labels": [],
-+                        "workspace": {"kind": "directory", "path": path}
-+                    })).await?;
-+                    Ok::<String, Box<dyn Error + Send + Sync>>(r["session"]["id"].as_str().ok_or("session id")?.to_owned())
-+                }
-+            };
-+            let fork_session = |source: &str, title: &str| {
-+                let (owner, source, title) = (owner.clone(), source.to_
 ```
 
-**File**: `plugins/agent/native/src/owner/driver_model/codex_switch.rs` (modified, +5/-1)
+**File**: `platform/i18n/src/lib.rs` (modified, +11/-12)
 ```diff
-@@ -165,7 +165,11 @@ impl DriverModel {
-             model_context_window: target.context.as_ref().and_then(|c| c.model_context_window),
-             provenance,
-         };
--        let Some(previous) = self.history.current_model_context(cut).await? else {
-+        let Some(previous) = self
-+            .history
-+            .current_model_context(cut, Some(&self.cancellation))
-+            .await?
-+        else {
-             return Ok(None);
-         };
-         let reader = match previous.source {
-```
-
-**File**: `plugins/agent/native/src/owner/driver_model/compacted.rs` (modified, +3/-1)
-```diff
-@@ -436,7 +436,9 @@ impl DriverModel {
-         let history = self
-             .state
-             .session_history(view.spec.owner.clone(), view.spec.session_id.clone());
--        let sample = history.calibration_sample(&source.current).await?;
-+        let sample = history
-+            .calibration_sample(&source.current, Some(&self.cancellation))
-+            .await?;
-         let route = preparation::route_identity(&model.provider)?;
-         Ok(sample.and_then(|sample| {
-             maka_agent_engine::preparation::Calibration::for_route(
-```
-
-**File**: `plugins/agent/native/src/owner/fork.rs` (modified, +3/-1)
-```diff
-@@ -350,7 +350,9 @@ impl Owner {
-             .map_err(fork_failure)?;
-         let at = now();
-         let recorded_at = UnixMillis(at.try_into().map_err(|_| "agent_clock_invalid")?);
--        let catalog = self.canonical_catalog()?;
-+        let catalog = self
-+            .canonical_catalog()?
-+            .with_cancellation(scope.cancellation.clone());
-         let control = catalog.control_statement(
-             claim.session_id.clone(),
-             ControlCommand {
-```
-
-**File**: `plugins/agent/native/src/owner/imports.rs` (modified, +4/-1)
-```diff
-@@ -252,7 +252,10 @@ impl Owner {
-                     .imported_sessions(self.run_owner(), self.prefix.clone(), after, 16)
-                     .await
-                     .map_err(Failure::from)?;
--                let catalog = self.canonical_catalog().map_err(|_| Failure::Unavailable)?;
-+                let catalog = self
-+                    .canonical_catalog()
-+                    .map_err(|_| Failure::Unavailable)?
-+                    .with_cancellation(scope.cancellation.clone());
-                 let mut sessions = Vec::with_capacity(page.ids.len());
-                 for id in page.ids {
-                     if let Some(session) = catalog
-```
-
-**File**: `plugins/agent/native/src/owner/recall.rs` (modified, +1/-1)
-```diff
-@@ -86,7 +86,7 @@ impl Recall {
+@@ -271,19 +271,18 @@ pub fn resolve_translation<'a>(
+                 }
              }
-             RecallStore::new(data, self.owner.clone(), self.prefix.clone())
-                 .map_err(failed)?
--                .validate_execution(execution.clone())
-+                .validate_execution(execution.clone(), &call.cancellation)
-                 .await
-                 .map_err(failed)?;
          }
+-        if let Some((lang, _)) = normalized.split_once('-') {
+-            if !lang.eq_ignore_ascii_case("zh") && !lang.eq_ignore_ascii_case("yue") {
+-                if let Some(found) = lookup_ci(translations, lang) {
+-                    return found;
+-                }
+-            }
++        if let Some((lang, _)) = normalized.split_once('-')
++            && !lang.eq_ignore_ascii_case("zh")
++            && !lang.eq_ignore_ascii_case("yue")
++            && let Some(found) = lookup_ci(translations, lang)
++        {
++            return found;
+         }
+-        if let Some(b) = builtin {
+-            if b.fallbacks().contains(&BuiltinLocale::En) {
+-                if let Some(found) = lookup_ci(translations, BuiltinLocale::En.tag()) {
+-                    return found;
+-                }
+-            }
++        if let Some(b) = builtin
++            && b.fallbacks().contains(&BuiltinLocale::En)
++            && let Some(found) = lookup_ci(translations, BuiltinLocale::En.tag())
++        {
++            return found;
+         }
+     }
+     fallback
 ```
 
-**File**: `plugins/agent/native/src/owner/session_tools.rs` (modified, +1/-0)
+**File**: `platform/i18n/src/plural.rs` (modified, +2/-2)
 ```diff
-@@ -398,6 +398,7 @@ impl Owner {
-                     scope: list_scope.clone(),
-                     title_query: String::new(),
-                 },
-+                &scope.cancellation,
+@@ -49,7 +49,7 @@ pub const fn plural_category(locale: BuiltinLocale, n: i64) -> PluralCategory {
+         BuiltinLocale::Es | BuiltinLocale::It => {
+             if abs == 1 {
+                 PluralCategory::One
+-            } else if abs != 0 && abs % 1_000_000 == 0 {
++            } else if abs != 0 && abs.is_multiple_of(1_000_000) {
+                 PluralCategory::Many
+             } else {
+                 PluralCategory::Other
+@@ -58,7 +58,7 @@ pub const fn plural_category(locale: BuiltinLocale, n: i64) -> PluralCategory {
+         BuiltinLocale::Fr | BuiltinLocale::PtBr => {
+             if abs == 0 || abs == 1 {
+                 PluralCategory::One
+-            } else if abs != 0 && abs % 1_000_000 == 0 {
++            } else if abs != 0 && abs.is_multiple_of(1_000_000) {
+                 PluralCategory::Many
+             } else {
+                 PluralCategory::Other
+```
+
+**File**: `plugins/agent/engine/src/context_input.rs` (modified, +1/-4)
+```diff
+@@ -187,10 +187,7 @@ async fn fit_generated_summary(
+         } else {
+             format!(
+                 "{notice}{}",
+-                maka_agent_facts::i18n::summary::media_omitted(
+-                    language,
+-                    i64::try_from(omitted).unwrap_or(i64::MAX),
+-                )
++                maka_agent_facts::i18n::summary::media_omitted(language, i64::from(omitted),)
              )
+         };
+         let omission = if omitted == 0 {
+```
+
+**File**: `plugins/agent/engine/src/history/canonical_prompt.rs` (modified, +82/-112)
+```diff
+@@ -758,91 +758,93 @@ pub(crate) async fn validate_external_media_directory(
+     if !valid_version {
+         return Err(invalid());
+     }
+-    let owner: Arc<dyn Send + Sync> = Arc::new(());
+-    async fn read_record(
+-        arena: &CaptureArena,
+-        offset: u64,
++    struct MediaCheckCtx<'a> {
++        arena: &'a CaptureArena,
+         byte_len: u64,
+-        owner: &Arc<dyn Send + Sync>,
+-    ) -> io::Result<Record> {
+-        if offset
+-            .checked_add(RECORD_BYTES as u64)
+-            .is_none_or(|end| end > byte_len)
+-        {
+-            return Err(invalid());
+-        }
+-        let bytes = arena
+-            .read_control_owned::<RECORD_BYTES>(offset, owner.clone())
+-            .await?;
+-        Ok(std::array::from_fn(|i| {
+-            u64::from_le_bytes(bytes[i * 8..i * 8 + 8].try_into().unwrap())
+-        }))
++        version: u32,
++        expected_media: &'a [([u8; 32], u64)],
++        owner: Arc<dyn Send + Sync>,
++        cancellation: &'a CancellationToken,
+     }
+-    async fn read_list_item(
+-        arena: &CaptureArena,
+-        list: List,
+-        index: usize,
+-        byte_len: u64,
+-        owner: &Arc<dyn Send + Sync>,
+-    ) -> io::Result<Record> {
+-        let entry_offset = list
+-            .offset
+-            .checked_add((index as u64).checked_mul(8).ok_or_else(overflow)?)
+-            .ok_or_else(overflow)?;
+-        if entry_offset.checked_add(8).is_none_or(|end| end > byte_len) {
+-            return Err(invalid());
++    impl MediaCheckCtx<'_> {
++        async fn read_record(&self, offset: u64) -> io::Result<Record> {
++            if offset
++                .checked_add(RECORD_BYTES as u64)
++                .is_none_or(|end| end > self.byte_len)
++            {
++                return Err(invalid());
++            }
++            let bytes = self
++                .arena
++                .read_control_owned::<RECORD_BYTES>(offset, self.owner.clone())
++                .await?;
++            Ok(std::array::from_fn(|i| {
++                u64::from_le_bytes(bytes[i * 8..i * 8 + 8].try_into().unwrap())
++            }))
+         }
+-        let bytes = arena
+-            .read_control_owned::<8>(entry_offset, owner.clone())
+-            .await?;
+-        read_record(arena, u64::from_le_bytes(bytes), byte_len, owner).await
+-    }
+-    async fn check_content_list(
+-        arena: &CaptureArena,
+-        list: List,
+-        byte_len: u64,
+-        version: u32,
+-        expected_media: &[([u8; 32], u64)],
+-        referenced: &mut [bool],
+-        owner: &Arc<dyn Send + Sync>,
+-        cancellation: &CancellationToken,
+-    ) -> io::Result<()> {
+-        if list
+-            .offset
+-            .checked_add((list.len as u64).checked_mul(8).ok_or_else(overflow)?)
+-            .is_none_or(|end| end > byte_len)
+-        {
+-            return Err(invalid());
++        async fn read_list_item(&self, list: List, index: usize) -> io::Result<Record> {
++            let entry_offset = list
++                .offset
++                .checked_add((index as u64).checked_mul(8).ok_or_else(overflow)?)
++                .ok_or_else(overflow)?;
++            if entry_offset
++                .checked_add(8)
++                .is_none_or(|end| end > self.byte_len)
++            {
++                return Err(invalid());
++            }
++            let bytes = self
++                .arena
++                .read_control_owned::<8>(entry_offset, self.owner.clone())
++                .await?;
++            self.read_record(u64::from_le_bytes(bytes)).await
+         }
+-        for i in 0..list.len {
+-            if cancellation.is_cancelled() {
+-                return Err(crate::preparation_cancelled(
+-                    "frozen prompt restore cancelled",
+-                ));
++        async fn check_content_list(&self, list: List, referenced: &mut [bool]) -> io::Result<()> {
++            if list
++                .offset
++                .checked_add((list.len as u64).checked_mul(8).ok_or_else(overflow)?)
++                .is_none_or(|end| end > self.byte_len)
++            {
++                return Err(invalid());
+             }
+-            let r = read_list_item(arena, list, i, byte_len, owner).await?;
+-            match r[0] {
+-                1 | 2 => {}
+-                3 => {
+-                    if version != 3 {
+-                        return Err(invalid());
+-                    }
+-                    let slot = usize::try_from(r[1]).map_err(|_| invalid())?;
+-                    let expected_bytes = r[2];
+-                    let expected_digest = digest(&r[6..10]);
+-                    let (actual_digest, actual_bytes) =
+-                        expected_media.get(slot).ok_or_else(invalid)?;
+-                    if *actual_digest != expected_digest || *actual_bytes != expected_bytes {
+-                        return Err(invalid());
++            for i in 0..list.len {
++                if self.cancellation.is_cancelled() {
++                    return Err(crate::preparation_cancelled(
++     
+```
+
+**File**: `plugins/agent/engine/src/preparation/snapshot.rs` (modified, +1/-2)
+```diff
+@@ -940,7 +940,7 @@ mod tests {
+                         Box::pin(async move { Ok(item) })
+                     }
+                 }
+-                Box::new(VecCursor(self.0[start..].to_vec().into_iter()))
++                Box::new(VecCursor(Vec::from(&self.0[start..]).into_iter()))
+             }
+         }
+ 
+@@ -1021,7 +1021,6 @@ mod tests {
+             resident_bytes: base_meta + 64 * 1024,
+             work_bytes: 64 * 1024,
+             progress_bytes: 128 * 1024,
+-            ..PreparationPolicy::default()
+         })
+         .unwrap();
+         let many_parts: Vec<_> = (0u8..20)
+```
+
+**File**: `plugins/agent/native/src/executor/external/agy_front.rs` (modified, +1/-0)
+```diff
+@@ -117,6 +117,7 @@ impl Fronts {
+             .send(registration)
+             .map_err(|_| Error::Provider("agy ACP supervisor exited before admission".into()))?;
+         owner.take();
++        #[cfg_attr(not(windows), allow(clippy::never_loop))]
+         let socket = loop {
+             let socket = tokio::select! {
+                 connection = listener.accept() => connection.map_err(provider)?,
+```
+
+**File**: `plugins/agent/native/src/owner/completions.rs` (modified, +2/-4)
+```diff
+@@ -658,10 +658,8 @@ impl Owner {
+         entries: Vec<Completion>,
+         now: u64,
+     ) -> Result<(), String> {
+-        let mut groups: BTreeMap<
+-            (String, String),
+-            Vec<(Completion, CompletionRequest, MessageResolution)>,
+-        > = BTreeMap::new();
++        type CompletionGroup = Vec<(Completion, CompletionRequest, MessageResolution)>;
++        let mut groups: BTreeMap<(String, String), CompletionGroup> = BTreeMap::new();
+         let mut runs = BTreeSet::new();
+         for entry in entries {
+             let prepare = async {
+```
+
+---
+
+### Incident Patch 3: `2df4f5c4` (2026-11-27)
+**Commit Message**: fix(agent,memory): drop session visibility taint tracking and simplify memory replay (#7361)
+
+* fix(agent,memory): drop session visibility taint tracking and simplify memory replay
+
+Migration 0058 removes the session/history read taint tables, recursive CTE visibility-propagation triggers, external conversation epoch rotation, and session-recap visibility wrapper introduced in #7184, while keeping pinned memory admission/freezing, hidden_spans evidence masking, and agent_memory_tool_inputs tracking.
+
+- Scope HasReads and CheckReads to agent_memory_tool_inputs joined directly against current active memory versions (removing the derived revoked column and trigger).
+- Evaluate cross-run replay and Recall checkpoint sharing directly against producer agent_memory_tool_inputs so normal runs (including legacy MemoryReplay::Run checkpoints from #7184) reuse compaction checkpoints across turns without re-compacting, and archiving a read source session no longer kills in-flight runs.
+- Restore external executor conversation keys to session_id and unwrap session-recap receipts in migration 0058.
+- Replace the regression-locking test with behavioral coverage verifying archive survival and cros
+
+**File**: `plugins/agent/native/src/owner/access/model.rs` (modified, +1/-5)
+```diff
+@@ -133,11 +133,7 @@ impl RunAccess {
              .await
-             .map_err(humanize_agent_error)?;
+             .map_err(memory_read_failure)?;
+         let spec = self.spec();
+-        if spec.memory_projection.is_none()
+-            && !reads.facts
+-            && !(reads.history
+-                && spec.memory_admission == maka_agent_facts::memory::MemoryAdmission::Enabled)
+-        {
++        if spec.memory_projection.is_none() && !reads.facts {
+             return Ok(());
+         }
+ 
+```
+
+**File**: `plugins/agent/native/src/owner/auxiliary.rs` (modified, +12/-28)
+```diff
+@@ -77,7 +77,6 @@ pub(super) enum Admission {
+         execution: Execution,
+     },
+     Operation {
+-        history_visibility: Option<u64>,
+         reference: Box<maka_plugin_core::operation::RecoveryRef>,
+         attempt: Option<std::num::NonZeroU32>,
+         scope: Box<maka_event_log::applications::operations::OperationDispatchScope>,
+@@ -125,7 +124,6 @@ impl Auxiliary {
+         }
+         let (source, binding, purpose, execution, session, operation) = match admission {
+             Admission::Operation {
+-                history_visibility,
+                 reference,
+                 attempt,
+                 scope,
+@@ -147,7 +145,7 @@ impl Auxiliary {
+                     purpose,
+                     execution,
+                     session_id,
+-                    Some((reference, scope, history_visibility)),
++                    Some((reference, scope)),
+                 )
+             }
+             Admission::Source {
+@@ -195,10 +193,6 @@ impl Auxiliary {
+         let data = log
+             .data_writer_for_work(custody.as_ref(), &session)
+             .map_err(admission_error)?;
+-        let guard = operation
+-            .as_ref()
+-            .and_then(|(_, _, visibility)| *visibility)
+-            .map(|revision| (data.clone(), revision, session.clone()));
+         let (journal, write) = UsageStore::new(data)
+             .auxiliary(
+                 AuxiliarySpec {
+@@ -222,7 +216,7 @@ impl Auxiliary {
+                 .map_err(admission_error)?,
+         ));
+         let lease = pending.0.take().expect("auxiliary lease");
+-        let physical = if let Some((reference, dispatch, _)) = operation {
++        let physical = if let Some((reference, dispatch)) = operation {
+             // The pending owner releases an unstarted lease if lookup fails.
+             let mut pending = IdleLease(Some(lease));
+             let operation = log.operation(&reference).map_err(admission_error)?;
+@@ -252,26 +246,16 @@ impl Auxiliary {
+         let id = custody.journal().id();
+         let model_id = request.provider.model.clone();
+         let result = async {
+-            let stream = match guard {
+-                Some((data, revision, session)) => {
+-                    super::recap::stream(
+-                        &self.models,
+-                        request,
+-                        cancellation.clone(),
+-                        data,
+-                        revision,
+-                        session,
+-                    )
+-                    .await
+-                }
+-                None => self.models.stream(request, cancellation.clone()).await,
+-            }
+-            .map_err(|error| {
+-                if error.cleanup_unconfirmed() {
+-                    custody.phase = ProviderPhase::Active;
+-                }
+-                Error::Model(error)
+-            })?;
++            let stream = self
++                .models
++                .stream(request, cancellation.clone())
++                .await
++                .map_err(|error| {
++                    if error.cleanup_unconfirmed() {
++                        custody.phase = ProviderPhase::Active;
++                    }
++                    Error::Model(error)
++                })?;
+             custody.phase = ProviderPhase::Active;
+             let generation = receive(stream, &mut custody, model_id, delta).await?;
+             if generation.finish_reason == ModelFinishReason::ToolCalls {
+```
+
+**File**: `plugins/agent/native/src/owner/compaction.rs` (modified, +7/-15)
+```diff
+@@ -326,21 +326,13 @@ impl super::driver::NativeDriver {
+         let user_run = writer
+             .query(maka_agent_state::memory::reads::OriginalUserRun(view.run))
+             .await?;
+-        let (mut admission_kind, memory) = owner
+-            .admit_memory(
+-                session,
+-                &metadata.configuration,
+-                user_run.unwrap_or(true),
+-                &policy,
+-            )
+-            .await
+-            .map_err(RunError::InvalidInput)?;
+-        if user_run.is_none() {
+-            if memory.is_some() {
+-                return Err(RunError::InvalidInput("original memory admission unavailable; start a new user Run to load pinned memory".into()));
+-            }
+-            admission_kind = maka_agent_facts::memory::MemoryAdmission::Unknown;
+-        }
++        let (admission_kind, memory) = match user_run {
++            Some(user_run) => owner
++                .admit_memory(session, &metadata.configuration, user_run, &policy)
++                .await
++                .map_err(RunError::InvalidInput)?,
++            None => (maka_agent_facts::memory::MemoryAdmission::Unknown, None),
++        };
+         if let Some(memory) = &memory {
+             let system: Option<SystemPrompt> = owner
+                 .run_content(view.run, &view.spec.system_prompt)
+```
+
+**File**: `plugins/agent/native/src/owner/driver/tests/model_recovery/preset_acceptance/pinned_memory.rs` (modified, +51/-24)
+```diff
+@@ -781,7 +781,8 @@ async fn expect_revoked(
+ }
+ 
+ #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+-async fn recall_without_memory_only_revokes_a_returned_source() -> TestResult<()> {
++async fn archiving_read_source_preserves_run_and_reuses_compaction_checkpoint_across_runs()
++-> TestResult<()> {
+     let mut rig = Rig::new()?;
+     let mut provider = Provider::start().await?;
+     let base = rig.directory.path().to_owned();
+@@ -811,7 +812,6 @@ async fn recall_without_memory_only_revokes_a_returned_source() -> TestResult<()
+     .await?;
+     let source = create(client, &base, &model, None).await?;
+     let reader = create(client, &base, &model, None).await?;
+-    let unrelated = create(client, &base, &model, None).await?;
+     let source = source["id"].as_str().unwrap();
+     let reader = reader["id"].as_str().unwrap();
+     let marker = "Clementine field notes";
+@@ -825,44 +825,71 @@ async fn recall_without_memory_only_revokes_a_returned_source() -> TestResult<()
+     let (_, reply) = provider.next().await?;
+     reply.reply_text("Filed.");
+     quiescent_message(client, source, &sent["messageId"]).await?;
++
++    // Run 1 reads another session via Recall, then that source session is archived mid-Run.
++    // Archiving must not kill Run 1, and Run 1's compaction checkpoint must remain reusable by Run 2.
+     let sent = call(
+         client,
+         "agent",
+         "send",
+-        json!({"sessionId":reader,"message":"Find the field notes"}),
++        json!({"sessionId":reader,"message":"Find the field notes and compact"}),
+     )
+     .await?;
+     let (_, reply) = provider.next().await?;
+     reply.send_plan(tool_response("Recall", json!({"terms":["clementine"]})));
+     let (wire, reply) = provider.next().await?;
+     assert!(wire["messages"].to_string().contains(marker), "{wire}");
+-    let archived=call(client,"agent","changeSession",json!({
+-        "sessionId":unrelated["id"], "expectedRevision":unrelated["revision"], "action":"archive"
+-    })).await?;
+-    assert_eq!(archived["kind"], "changed", "{archived}");
+-    reply.send_plan(TurnPlan::http_error(
+-        HttpErrorSpec::plain(429, "rate limited").with_header("retry-after", "0"),
+-    ));
+-    let (retry, reply) = provider.next().await?;
+-    assert_eq!(retry["messages"], wire["messages"]);
+     let owner = rig.captured.lock().unwrap().clone().unwrap();
+-    let archived=call(client,"agent","changeSession",json!({
+-        "sessionId":source, "expectedRevision":owner.session(source).await?.revision, "action":"archive"
+-    })).await?;
++    let archived = call(
++        client,
++        "agent",
++        "changeSession",
++        json!({
++            "sessionId":source,
++            "expectedRevision":owner.session(source).await?.revision,
++            "action":"archive"
++        }),
++    )
++    .await?;
+     assert_eq!(archived["kind"], "changed", "{archived}");
+-    reply.reply_tool_call(
+-        "lookup-again",
+-        "Recall",
+-        json!({"terms":["unmatchedsecondlookup"]}),
++
++    // Continue Run 1 with CompactContext; Run 1 must survive the archive and finish cleanly.
++    reply.send_plan(tool_response("CompactContext", json!({})));
++    let (_, summary_reply) = provider.next().await?;
++    let summary_text = "Compacted checkpoint after reading field notes.";
++    summary_reply.reply_text(summary_text);
++    let (post_compact_wire, post_compact_reply) = provider.next().await?;
++    assert!(
++        post_compact_wire["messages"]
++            .to_string()
++            .contains(summary_text),
++        "{post_compact_wire}"
+     );
+-    expect_revoked(
++    post_compact_reply.reply_text("Run 1 finished after compaction.");
++    quiescent_message(client, reader, &sent["messageId"]).await?;
++
++    // Run 2 sends a short follow-up: it must reuse Run 1's compacted checkpoint directly
++    // instead of discarding it and replaying raw pre-compaction history.
++    let followup = call(
+         client,
+-        &mut provider,
+-        reader,
+-        &sent["messageId"],
+-        "memory tool input revoked",
++        "agent",
++        "send",
++        json!({"sessionId":reader,"message":"Continue"}),
+     )
+     .await?;
++    let (run2_wire, run2_reply) = provider.next().await?;
++    let run2_body = run2_wire["messages"].to_string();
++    assert!(
++        run2_body.contains(summary_text),
++        "Run 2 dropped Run 1's compaction checkpoint: {run2_wire}"
++    );
++    assert!(
++        !run2_body.contains(marker),
++        "Run 2 replayed pre-compaction raw history instead of checkpoint: {run2_wire}"
++    );
++    run2_reply.reply_text("Continued from checkpoint.");
++    quiescent_message(client, reader, &followup["messageId"]).await?;
++    assert!(provider.requests.try_recv().is_err());
+     assert!(rig.finish().await.is_empty());
+     Ok(())
+ }
+```
+
+**File**: `plugins/agent/native/src/owner/driver/tests/tool_history.rs` (modified, +0/-23)
+```diff
+@@ -357,16 +357,6 @@ async fn assert_partial_result_pages(
+         );
+         input = json!({"sessionId":session,"cursor":page["transcript"]["afterCursor"]});
+     }
+-    let fenced = driver
+-        .access
+-        .data_writer()?
+-        .query(maka_agent_state::memory::reads::CheckReads(
+-            driver.access.execution().run_id,
+-        ))
+-        .await;
+-    assert!(
+-        matches!(fenced, Err(maka_event_log::StoreError::InvalidTransition(reason)) if reason.contains("memory tool input revoked"))
+-    );
+     reader.finish().await?;
+     Ok(())
+ }
+@@ -465,19 +455,6 @@ async fn external_return_keeps_the_name_of_its_original_call() -> TestResult<()>
+         session_id: session.clone(),
+         turn_id: external.spec.turn_id,
+     };
+-    let external_reader = driver.owner.services.request_with_work(
+-        maka_capabilities::call::Identity::Agent {
+-            execution: execution.clone(),
+-            operation_id: None,
+-        },
+-        CancellationToken::new(),
+-        driver.access.custody().clone(),
+-    )?;
+-    driver
+-        .owner
+-        .record_history_read(external_reader.scope(), &session, None)
+-        .await?;
+-    external_reader.finish().await?;
+     let task = ExternalTaskId::new();
+     let key = ExternalEffectKey {
+         task,
+```
+
+**File**: `plugins/agent/native/src/owner/driver_executor.rs` (modified, +1/-21)
+```diff
+@@ -680,19 +680,6 @@ impl DriverExecutor {
+         request: &Request,
+         cancellation: &CancellationToken,
+     ) -> Result<maka_sandbox::Sandbox, RunError> {
+-        let current = self
+-            .access
+-            .data_writer()
+-            .map_err(RunError::Internal)?
+-            .query(maka_agent_state::memory::reads::ExternalConversation(
+-                request.execution.session_id.clone(),
+-            ))
+-            .await?;
+-        if current != request.conversation_key {
+-            return Err(RunError::FrozenMemoryDenied(
+-                "external conversation input revoked; start a new Run".into(),
+-            ));
+-        }
+         let configuration = self.access.live_configuration().await?;
+         self.authority_floor(request, cancellation, configuration)
+             .await
+@@ -1041,14 +1028,7 @@ impl ExternalPorts for DriverExecutor {
+                 task_id: task,
+                 language: view.spec.language,
+                 execution: self.access.execution().clone(),
+-                conversation_key: self
+-                    .access
+-                    .data_writer()
+-                    .map_err(RunError::InvalidInput)?
+-                    .query(maka_agent_state::memory::reads::ExternalConversation(
+-                        view.spec.session_id.clone(),
+-                    ))
+-                    .await?,
++                conversation_key: view.spec.session_id.clone(),
+                 content,
+                 cwd: view.spec.workspace.clone(),
+                 instructions,
+```
+
+**File**: `plugins/agent/native/src/owner/execution.rs` (modified, +0/-22)
+```diff
+@@ -91,21 +91,11 @@ impl Owner {
+                     ),
+             } = &mut execution.state
+         {
+-            let before = self.history_read_start(scope).await?;
+             *diagnostic = crate::service::history::scoped_state(self, scope)?
+                 .session_history(view.spec.owner.clone(), view.spec.session_id.clone())
+                 .mask_terminal_diagnostic(view.run, std::mem::take(diagnostic))
+                 .await
+                 .map_err(|error| error.to_string())?;
+-            self.record_history_sources(
+-                scope,
+-                maka_agent_state::memory::reads::HistorySources::Producer {
+-                    session: view.spec.session_id.clone(),
+-                    run: view.run,
+-                },
+-                before,
+-            )
+-            .await?;
+         }
+         Ok(execution)
+     }
+@@ -193,7 +183,6 @@ impl Owner {
+     ) -> Result<Work, String> {
+         use maka_agent_state::queue::MessageResolution;
+         self.scoped_session(scope, &input.session_id).await?;
+-        let before = self.history_read_start(scope).await?;
+         let state = crate::service::history::scoped_state(self, scope)?;
+         let model_read = scope.identity.agent().is_some();
+         let cursor = input.cursor.map(|cursor| (cursor.run_id, cursor.offset));
+@@ -262,17 +251,6 @@ impl Owner {
+             })
+         };
+         let execution = self.execution_for_reader(&observed.view, scope).await?;
+-        if answer.is_some() {
+-            self.record_history_sources(
+-                scope,
+-                maka_agent_state::memory::reads::HistorySources::Producer {
+-                    session: input.session_id,
+-                    run,
+-                },
+-                before,
+-            )
+-            .await?;
+-        }
+         Ok(Work::Delivered {
+             shared,
+             execution,
+```
+
+**File**: `plugins/agent/native/src/owner/memory.rs` (modified, +1/-44)
+```diff
+@@ -365,50 +365,7 @@ impl Owner {
+         }
+         management(scope)
+     }
+-    pub(crate) async fn history_read_start(&self, call: &Scope) -> Result<Option<u64>, String> {
+-        if call.identity.agent().is_none() {
+-            return Ok(None);
+-        }
+-        self.memory_data(call)?
+-            .query(stored::reads::SearchVisibility)
+-            .await
+-            .map(Some)
+-            .map_err(|e| e.to_string())
+-    }
+-    pub(crate) async fn record_history_read(
+-        &self,
+-        call: &Scope,
+-        session: &str,
+-        before: Option<u64>,
+-    ) -> Result<Option<u64>, String> {
+-        self.record_history_sources(
+-            call,
+-            stored::reads::HistorySources::session(session),
+-            before,
+-        )
+-        .await
+-    }
+-    pub(crate) async fn record_history_sources(
+-        &self,
+-        call: &Scope,
+-        sources: stored::reads::HistorySources,
+-        before: Option<u64>,
+-    ) -> Result<Option<u64>, String> {
+-        if let Some(execution) = call.identity.agent() {
+-            return self
+-                .memory_data(call)?
+-                .write(stored::reads::RecordHistory {
+-                    sources,
+-                    before,
+-                    owner: self.run_owner(),
+-                    execution: execution.clone(),
+-                })
+-                .await
+-                .map(Some)
+-                .map_err(|e| e.to_string());
+-        }
+-        Ok(None)
+-    }
++
+     pub(super) async fn record_memory_reads(
+         &self,
+         call: &Scope,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7295** (2026-11-26): perf(workbench): keep the settings pages list so a palette slider drags smoothly (@UncertaintyDeterminesYou4ndMe)
-- **PR #7294** (2026-11-26): fix(cli,agent): synchronize waiter signal test and locate fixture quote (@M4n5ter)
-- **PR #7293** (2026-11-26): fix(updater): honor Windows system proxy settings (@ARE404)
-- **PR #7292** (2026-11-26): feat(agent,workbench): smooth WorkspaceWrite MCP UX, project consent decline, and prefix-cache preservation (@M4n5ter)
-- **PR #7282** (2026-11-26): fix(nsh,workbench): keep upward scrolling from jumping to the bottom during async reflow (@M4n5ter)
-- **PR #7281** (2026-11-26): feat(workbench,i18n): format numeric UI values by default (@Colafornia)
+- **PR #7380** (2026-11-27): fix(release): avoid shadowing bundled static C libs in Linux zigbuild (@M4n5ter)
+- **PR #7379** (2026-11-28): fix(external): isolate Antigravity ACP supervisor per Run (@M4n5ter)
+- **PR #7375** (2026-11-27): fix(agent-state): fix v54 cold queue migration before contents.encoding and clean clippy lints (@M4n5ter)
+- **PR #7373** (closed): fix(ios): polish offline copy/quote, non-drag top paging, and turn keys (@me2seeks)
+- **PR #7367** (2026-11-27): fix(nsh): retain virtual list rows and layout across scope replacement (@me2seeks)
+- **PR #7363** (2026-11-27): feat(ios): paginate chat lists and complete history turns on scroll (@me2seeks)
 
 ---
 
@@ -4360,73 +4335,6 @@ Make snapshot derived-index readiness self-healing and type-enforced across all 
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. workbench): show left-side Markdown TOC for overflowing turn replies
-
-**RULE**:
-When implementing operations in `plugins/agent/conversations/ui/Conversation.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/maka. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `9bd44203`: workbench): show left-side Markdown TOC for overflowing turn replies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/agent/conversations/ui/Conversation.tsx`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-  hasTextPrefix,
-import { MarkdownToc } from '../../../../products/maka/workbench/app/MarkdownToc';
-import { createTurnToc } from '../../../../products/maka/workbench/app/turnToc';
-    if (entry?.kind === 'bot') return entry.turnId;
-  const turnToc = createTurnToc({
-    enabled: () => !props.compact && ready() && reading() === 'chat',
-    listRef: () => list,
-    listWidth: historyWidth,
-    viewportHeight: () => readingSize().height,
-    railInset,
-    atBottom: () => !historyBelow(),
-    isTerminal: () => platform.idiom === 'terminal',
-    rowTurnKey: entryTurn,
-    turnOutputRowKeys: (turnKey) => {
-      if (botView() === 'bot') {
-        return bot.forTurn(turnKey).length > 0 ? [`bot/${turnKey}`] : [];
-      }
-      const turn = projectedTurn(turnKey);
-      if (!turn) return [];
-      const ids = turn.finalOutputIds.length > 0 ? turn.finalOutputIds : turn.answerOutputIds;
-      return ids.filter((id) => !currentRow(id)?.sourceCitation);
-    },
-    rowOutputSources: (rowKey) => {
-      if (rowKey.startsWith('bot/')) {
-        const turnKey = rowKey.slice(4);
-        return bot.forTurn(turnKey).map((message) => ({
-          keyPrefix: `${message.sequence}:`,
-          text: mess
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-    <View
-      style={readingColumn}
-      onLayout={
-        transcriptSize
-          ? ({ bounds }) => transcriptSize.measure(key(), bounds.size.height)
-          : undefined
-      }
-    >
-      <Each of={[key()]} key={(id: string) => id}>
-        {(ownedKey) => {
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9bd44203` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

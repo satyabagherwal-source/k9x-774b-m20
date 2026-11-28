@@ -13971,3 +13971,6 @@
 | `CYCLE-20261128-VVU1` | `2026-11-28T04:29:56.329Z` | `encode/httpx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11034` | Yes (`30e623b5...`) |
 | `CYCLE-20261128-VYCQ` | `2026-11-28T04:29:59.594Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11035` | Yes (`e6d496ff...`) |
 | `CYCLE-20261128-W025` | `2026-11-28T04:30:01.805Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11036` | Yes (`2594db83...`) |
+| `CYCLE-20261128-73ZG` | `2026-11-28T04:38:40.108Z` | `apache/maka` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/apache-maka-learnings.md` | Yes (`f3dfeb68...`) |
+| `CYCLE-20261128-760T` | `2026-11-28T04:38:42.749Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11037` | Yes (`436f2e30...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T04:39:21.416Z` | `apache-maka` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F44634E3` [Domain D] | Yes (`79b16682...`) |

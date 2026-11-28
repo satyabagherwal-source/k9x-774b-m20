@@ -14004,3 +14004,6 @@ Every entry in this ledger must capture:
 | `learn-github-encode-httpx` | `https://github.com/encode/httpx` | `e347fb5e` | Multi-dimensional audit evidence | 2026-11-28T04:29:56.343Z |
 | `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `67040db0` | Multi-dimensional audit evidence | 2026-11-28T04:29:59.608Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `27a50820` | Multi-dimensional audit evidence | 2026-11-28T04:30:01.818Z |
+| `learn-github-apache-maka` | `https://github.com/apache/maka` | `9c051de3` | Multi-dimensional audit evidence | 2026-11-28T04:38:40.118Z |
+| `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `1290e699` | Multi-dimensional audit evidence | 2026-11-28T04:38:42.761Z |
+| `learn-dom-d-f44634e3` | `project://apache-maka` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-maka-learnings.md` | 2026-11-28T04:39:21.416Z |

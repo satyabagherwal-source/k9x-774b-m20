@@ -9673,10 +9673,10 @@
     "repository": "aio-libs/aiohttp",
     "platform": "github",
     "sourceUrl": "https://github.com/aio-libs/aiohttp",
-    "sourceVersion": "0373445e",
+    "sourceVersion": "1290e699",
     "license": "Apache-2.0",
-    "contentHash": "eddcf05e2e6474c294d4c3f7ef257ca673e5c4cd20f9a12792d51a3d0c7a964d",
-    "lastHarvestedAt": "2026-11-24T19:44:51.423Z",
+    "contentHash": "436f2e3084500d18c578914c46488ba264d169424514a937e4f4f91ceb8dc9fc",
+    "lastHarvestedAt": "2026-11-28T04:38:42.761Z",
     "learningId": "learn-github-aio-libs-aiohttp"
   },
   "iplug2-iplug2": {
@@ -13163,10 +13163,10 @@
     "repository": "apache/maka",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/maka",
-    "sourceVersion": "218225f5",
+    "sourceVersion": "9c051de3",
     "license": "Apache-2.0",
-    "contentHash": "4ddd7396abef2325ab567ed9d9bdbe2155db57a2312bf3dbec60e10dc23d8282",
-    "lastHarvestedAt": "2026-11-27T05:02:38.960Z",
+    "contentHash": "f3dfeb6893975506ed11ebefdc696604aa3d7c18d8971942de7f1a24a8a0b511",
+    "lastHarvestedAt": "2026-11-28T04:38:40.118Z",
     "learningId": "learn-github-apache-maka"
   },
   "hf-lakonik-pi-h3": {

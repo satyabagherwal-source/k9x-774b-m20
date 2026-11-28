@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T04:30:01.824Z",
-  "total_cycles_completed": 13258,
-  "total_learnings_persisted": 13258,
-  "total_rules_promoted": 11956,
+  "last_updated": "2026-11-28T04:38:42.767Z",
+  "total_cycles_completed": 13260,
+  "total_learnings_persisted": 13260,
+  "total_rules_promoted": 11957,
   "history": [
-    {
-      "timestamp": "2026-11-27T10:34:17.806Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T10:34:22.428Z",
-      "repository": "tencent/Hy-Memory-30B-A3B",
-      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T10:34:23.900Z",
       "repository": "dosco/deeporg",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T04:30:01.824Z",
       "repository": "clastix/kamaji",
       "learningId": "learn-github-clastix-kamaji",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:38:40.124Z",
+      "repository": "apache/maka",
+      "learningId": "learn-github-apache-maka",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:38:42.767Z",
+      "repository": "aio-libs/aiohttp",
+      "learningId": "learn-github-aio-libs-aiohttp",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

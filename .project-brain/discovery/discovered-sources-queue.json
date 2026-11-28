@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T04:21:19.524Z",
+  "updated_at": "2026-11-28T04:39:23.190Z",
   "stats": {
-    "total_discovered": 10741,
-    "approved_pending_harvest": 10194,
+    "total_discovered": 10744,
+    "approved_pending_harvest": 10197,
     "harvested_count": 0,
     "rejected_count": 547,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10209,
+      "COMMUNITY_AND_EXPERT": 10210,
       "OFFICIAL_DOCUMENTATION": 293,
-      "STANDARDS_AND_SPECIFICATIONS": 163,
+      "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 58,
       "LEGAL_AND_REGULATORY": 2,
@@ -232500,6 +232500,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
         "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-07B73F18CF1E": {
+      "id": "SRC-07B73F18CF1E",
+      "url": "https://www.rfc-editor.org/info/rfc7692",
+      "title": "https://www.rfc-editor.org/info/rfc7692",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:39:22.507Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-F8E8C93ED3EA": {
+      "id": "SRC-F8E8C93ED3EA",
+      "url": "https://datatracker.ietf.org/doc/html/rfc7692",
+      "title": "https://datatracker.ietf.org/doc/html/rfc7692",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:39:22.599Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-345BBAB06F30": {
+      "id": "SRC-345BBAB06F30",
+      "url": "https://www.rfc-editor.org/rfc/rfc7692",
+      "title": "IETF RFC 7692",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:39:23.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
+        "fileName": "aio-libs-aiohttp-learnings.md"
       }
     }
   }

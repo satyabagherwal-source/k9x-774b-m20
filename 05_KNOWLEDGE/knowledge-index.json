@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T04:30:08.882Z",
+  "last_updated": "2026-11-28T04:39:25.152Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26953,
+  "total_items": 26955,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9cc76e961e4f5dc9643fbcda91ee8086beb4d9484804bbc857f2a2c08c71825",
+      "content_hash": "2ef621985eb244cd82b7221aa45401ac7f29a0ee25f0d51be3de36310fcab25d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T04:12:32.731Z"
+      "persisted_at": "2026-11-28T04:39:24.917Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "747f1e9f342928bb6afa14f8cadb8e69a989d1bee04382ef4cc3a01afa41d46b",
+      "content_hash": "9ecb14f1aacda6c40b322e74c1570bcb2bdfea749534b439526a79c778bd4508",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T04:12:32.944Z"
+      "persisted_at": "2026-11-28T04:39:25.152Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -268418,8 +268418,8 @@
       "slug": "aio-libs-aiohttp",
       "platform": "github",
       "source_url": "https://github.com/aio-libs/aiohttp",
-      "source_version": "b60c6125",
-      "content_hash": "8098073ae94b9f03bcd02ede1754d892181700ce2eb7fa1e89663c8fe048cf37",
+      "source_version": "1290e699",
+      "content_hash": "436f2e3084500d18c578914c46488ba264d169424514a937e4f4f91ceb8dc9fc",
       "dossier_path": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
       "promoted_rules": [
@@ -268432,6 +268432,11 @@
           "number": 9637,
           "title": "Bump virtualenv from 21.15.6 to 21.15.7",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11037,
+          "title": "compressed body corruption after a cancelled write",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -268439,7 +268444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T20:49:35.876Z",
+      "verified_at": "2026-11-28T04:38:42.482Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268481,10 +268486,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aio-libs-aiohttp-technical-construction-intelligence-aio-libs-aiohttp-core-invar.md",
       "title": "Technical Construction Intelligence: aio-libs/aiohttp Core Invariants",
       "repository": "aio-libs/aiohttp",
-      "source_version": "0373445e",
-      "content_hash": "9b618d79d9d643b5aa0b3a9cb9ebf42123889b998cc65b2f2048a247aff08419",
+      "source_version": "1290e699",
+      "content_hash": "0ff961224dd8a258f4d60dd51929bbd8d4cf46ec3e57dabc27652fa66b0c44fe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:44:51.920Z"
+      "persisted_at": "2026-11-28T04:38:43.248Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp",
@@ -268493,10 +268498,10 @@
       "relative_path": "08_VERIFICATION/aio-libs-aiohttp-verification-protocol-empirical-defect-shield-for-aio-libs-aioh.md",
       "title": "Verification Protocol: Empirical Defect Shield for aio-libs/aiohttp",
       "repository": "aio-libs/aiohttp",
-      "source_version": "0373445e",
-      "content_hash": "63c6b9e71e6ee222ec270651ccbfa0ef1610195e6de474c22ff746caf244b105",
+      "source_version": "1290e699",
+      "content_hash": "7d3c734b4d61db545d2bd62884f8ba60d1eb0e83c949b7689ef6005b19d4ee8c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:44:52.124Z"
+      "persisted_at": "2026-11-28T04:38:43.475Z"
     },
     "learn-github-wzh4869-appports": {
       "learning_id": "learn-github-wzh4869-appports",
@@ -268764,9 +268769,9 @@
       "title": "Technical Construction Intelligence: aio-libs-aiohttp-learnings Core Invariants",
       "repository": "aio-libs-aiohttp-learnings",
       "source_version": "HEAD",
-      "content_hash": "20d048e95dbed61047b988912079077cdcca74d57ac4f20040668481f92b1666",
+      "content_hash": "86bdaaec9af96f3b7cbd3c6e9caca35162be34ead7e527a5fc5d8868764cad97",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:45:01.646Z"
+      "persisted_at": "2026-11-28T04:39:23.805Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aio-libs-aiohttp-learnings",
@@ -268776,9 +268781,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aio-libs-aiohttp-learnings",
       "repository": "aio-libs-aiohttp-learnings",
       "source_version": "HEAD",
-      "content_hash": "deeaf645b6ee5c6d45971c1d66be95c30182be17dcb9fab5cb782c7c2198574a",
+      "content_hash": "80d04a632d014ad2d989e3ba02996084388679cfa30ceb1eb91ae23fda05a818",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:45:01.840Z"
+      "persisted_at": "2026-11-28T04:39:24.049Z"
     },
     "candidate_directive-docs-2-3-0-build-68-ci": {
       "item_id": "candidate_directive-docs-2-3-0-build-68-ci",
@@ -324887,8 +324892,8 @@
       "slug": "apache-maka",
       "platform": "github",
       "source_url": "https://github.com/apache/maka",
-      "source_version": "218225f5",
-      "content_hash": "4ddd7396abef2325ab567ed9d9bdbe2155db57a2312bf3dbec60e10dc23d8282",
+      "source_version": "9c051de3",
+      "content_hash": "f3dfeb6893975506ed11ebefdc696604aa3d7c18d8971942de7f1a24a8a0b511",
       "dossier_path": "07_PROJECT_LEARNING/apache-maka-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-maka-learnings.md",
       "promoted_rules": [
@@ -324923,7 +324928,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T05:02:38.696Z",
+      "verified_at": "2026-11-28T04:38:39.828Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -324965,10 +324970,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-maka-technical-construction-intelligence-apache-maka-core-invariants.md",
       "title": "Technical Construction Intelligence: apache/maka Core Invariants",
       "repository": "apache/maka",
-      "source_version": "00c6027a",
-      "content_hash": "619c77e5a6586d99dc244ed8d02a2bc611932f796ee1b9a22d65e83c7678167f",
+      "source_version": "9c051de3",
+      "content_hash": "bada2690c4b35f56d51c67ceb26469e7ba8cb9aba53fa75d0716d460edab7cd4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:13:24.579Z"
+      "persisted_at": "2026-11-28T04:38:40.373Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka",
@@ -324990,9 +324995,9 @@
       "title": "Technical Construction Intelligence: apache-maka-learnings Core Invariants",
       "repository": "apache-maka-learnings",
       "source_version": "HEAD",
-      "content_hash": "241e5ae1506ad8cb94cfa3a59d1962899794767e75e114778c61c03f9fd565c4",
+      "content_hash": "5d9d0609ce8535e52460ec64608f545920c210bc8f24c98ed1bfb768a4937fa2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:13:40.439Z"
+      "persisted_at": "2026-11-28T04:39:21.812Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka-learnings",
@@ -361844,13 +361849,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9IFF-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-82D7-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6efc2491729cee47313d237dff30a721dcb261ec2cc38c2715982b0834ecd799",
+      "content_hash": "72db4498143eddb25352d6044dad594a92fd81418ca5cc927e08fdfa5eec3391",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T04:12:32.526Z"
+      "persisted_at": "2026-11-28T04:39:24.677Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -370363,6 +370368,32 @@
       "content_hash": "867ed961884c46579d203a4b753b565be4a77f45fbbf2db318d950e69ae740f0",
       "domain_letter": "L",
       "persisted_at": "2026-11-28T04:30:08.651Z"
+    },
+    "rule-11037": {
+      "learning_id": "rule-11037",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11037,
+      "title": "compressed body corruption after a cancelled write",
+      "source_url": "https://github.com/aio-libs/aiohttp",
+      "source_version": "1290e699",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T04:38:42.482Z"
+    },
+    "candidate_directive-compressed-body-corruption-after-a-cancelled-write": {
+      "item_id": "candidate_directive-compressed-body-corruption-after-a-cancelled-write",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-81IE-compressed-body-corruption-after-a-cancelled-write.md",
+      "title": "compressed body corruption after a cancelled write",
+      "repository": "aio-libs-aiohttp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "670cf69da723fd5c35375c8218b58a18554c6fc14067686bf9d8a6dbae3ae702",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T04:39:23.568Z"
     }
   },
   "ai-builder-brain": {

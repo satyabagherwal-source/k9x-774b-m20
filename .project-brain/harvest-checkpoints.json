@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T04:30:01.828Z",
+  "last_updated": "2026-11-28T04:38:42.770Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14556,14 +14556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aio-libs-aiohttp",
-      "content_hash": "eddcf05e2e6474c294d4c3f7ef257ca673e5c4cd20f9a12792d51a3d0c7a964d",
-      "verified_at": "2026-11-24T19:44:51.441Z",
+      "content_hash": "436f2e3084500d18c578914c46488ba264d169424514a937e4f4f91ceb8dc9fc",
+      "verified_at": "2026-11-28T04:38:42.769Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T19:44:51.441Z"
+      "last_updated": "2026-11-28T04:38:42.769Z"
     },
     "iPlug2/iPlug2": {
       "repository": "iPlug2/iPlug2",
@@ -19866,14 +19866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-maka",
-      "content_hash": "4ddd7396abef2325ab567ed9d9bdbe2155db57a2312bf3dbec60e10dc23d8282",
-      "verified_at": "2026-11-27T05:02:38.973Z",
+      "content_hash": "f3dfeb6893975506ed11ebefdc696604aa3d7c18d8971942de7f1a24a8a0b511",
+      "verified_at": "2026-11-28T04:38:40.127Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T05:02:38.973Z"
+      "last_updated": "2026-11-28T04:38:40.127Z"
     },
     "Lakonik/pi-H3": {
       "repository": "Lakonik/pi-H3",

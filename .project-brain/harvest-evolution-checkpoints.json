@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T04:30:09.090Z",
+  "last_updated": "2026-11-28T04:39:25.363Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T03:26:38.658Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-28T04:12:32.170Z",
+      "processed_at": "2026-11-28T04:39:24.287Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -873,7 +873,7 @@
       "staged_for_review": 1
     },
     "aio-libs-aiohttp-learnings.md": {
-      "processed_at": "2026-11-24T19:45:00.566Z",
+      "processed_at": "2026-11-28T04:39:22.087Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3703,9 +3703,9 @@
       "staged_for_review": 0
     },
     "apache-maka-learnings.md": {
-      "processed_at": "2026-11-27T05:02:48.088Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-28T04:39:21.416Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-lakonik-pi-h3-learnings.md": {
       "processed_at": "2026-11-26T04:05:10.296Z",
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5244,
-  "total_canonical_promoted": 591,
-  "total_staged_for_review": 3977
+  "total_dossiers_evaluated": 5247,
+  "total_canonical_promoted": 592,
+  "total_staged_for_review": 3979
 }
