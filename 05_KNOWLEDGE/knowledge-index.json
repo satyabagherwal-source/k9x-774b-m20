@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T07:13:12.565Z",
+  "last_updated": "2026-11-28T07:22:06.228Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27016,
+  "total_items": 27018,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d1b071db4aff35cd8ac107f0a8cceafc03a0f5ac23ac833ffff996a0f0d79b2",
+      "content_hash": "9e08d8d6fed3cd59ede304749ed0028454d1884f2b572856df32700947e45431",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T07:03:51.823Z"
+      "persisted_at": "2026-11-28T07:22:06.010Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c62a425ea1030c96323c7b8a7adf0ddd4073f6e3eb7266b4f0eccad48262a1d9",
+      "content_hash": "2c9861a154165b9e111ad0816cba5fa8e6a0124cb3216ff2c3519dcd699cfab2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T07:03:52.072Z"
+      "persisted_at": "2026-11-28T07:22:06.228Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c4204ad407f2a6e23c8c69f8380ba7eaa3922252fecf1d3fae207538f33b837c",
+      "content_hash": "7ddf51bf4efec150bcd61d6f30d195c886a55155e6738a191052d00a680b74e7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T07:13:12.565Z"
+      "persisted_at": "2026-11-28T07:22:04.546Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -271792,8 +271792,8 @@
       "slug": "sveltejs-svelte",
       "platform": "github",
       "source_url": "https://github.com/sveltejs/svelte",
-      "source_version": "36cb19ee",
-      "content_hash": "ef6dc4e10264d11eead6779a6b47a834afcc807cfcfe23f56d0beec327b9b6eb",
+      "source_version": "fd610a26",
+      "content_hash": "6f60a460e000b2c8ad4d4e4b76e6b716f69280e3991bae48f55814ca7a75a42f",
       "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "promoted_rules": [
@@ -271811,6 +271811,11 @@
           "number": 10375,
           "title": "avoid quadratic batch write collection during effect flushing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11059,
+          "title": "catch errors in deferred await block branches",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -271818,7 +271823,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T22:50:59.842Z",
+      "verified_at": "2026-11-28T07:21:54.452Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271860,10 +271865,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-technical-construction-intelligence-sveltejs-svelte-core-invaria.md",
       "title": "Technical Construction Intelligence: sveltejs/svelte Core Invariants",
       "repository": "sveltejs/svelte",
-      "source_version": "36cb19ee",
-      "content_hash": "860c475c47976ade8dc51c0fd68b9402700e1745359b76d7a1b464b6d842ef5c",
+      "source_version": "fd610a26",
+      "content_hash": "1c9de104f4677e9caba1f93c12faf1c895744c63c6aa9c0cdad8674f9807c65f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T22:51:00.469Z"
+      "persisted_at": "2026-11-28T07:21:55.377Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte",
@@ -271872,10 +271877,10 @@
       "relative_path": "08_VERIFICATION/sveltejs-svelte-verification-protocol-empirical-defect-shield-for-sveltejs-svelt.md",
       "title": "Verification Protocol: Empirical Defect Shield for sveltejs/svelte",
       "repository": "sveltejs/svelte",
-      "source_version": "36cb19ee",
-      "content_hash": "ef00ef62ef2974838ab9138d878b34390f3484e22600c0ff2bc264848b51b727",
+      "source_version": "fd610a26",
+      "content_hash": "30b3a91dbf79adbfbc3aabb1e13eae19a2fe012ef9723efe40b886869ba7a14a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:51:00.655Z"
+      "persisted_at": "2026-11-28T07:21:55.679Z"
     },
     "rule-8860": {
       "learning_id": "rule-8860",
@@ -271959,9 +271964,9 @@
       "title": "Technical Construction Intelligence: sveltejs-svelte-learnings Core Invariants",
       "repository": "sveltejs-svelte-learnings",
       "source_version": "HEAD",
-      "content_hash": "83bf4d7311d158dca5531e11def3b0f833aa763a456959b0e75a3eeaa51d9a4b",
+      "content_hash": "b94b77564ee747ab6799ec1d1522130eeee56748f9866ff64f6c0d012a480b9d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T22:51:14.229Z"
+      "persisted_at": "2026-11-28T07:22:02.858Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte-learnings",
@@ -271971,9 +271976,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sveltejs-svelte-learnings",
       "repository": "sveltejs-svelte-learnings",
       "source_version": "HEAD",
-      "content_hash": "b905cea0133ab8230e2a6b1bd4e943d318e9ebb952b3652fa66db8b2a0ff910a",
+      "content_hash": "a32f3a30e8da810180df0758d1207c0f4c821948cdc7519f59d64df6d2160b7c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:51:14.393Z"
+      "persisted_at": "2026-11-28T07:22:03.105Z"
     },
     "candidate_directive-persist-build-txn-wal-batches-without-hollow-runs": {
       "item_id": "candidate_directive-persist-build-txn-wal-batches-without-hollow-runs",
@@ -301722,9 +301727,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f40a913d177ec383c174e118c1da7fea65884d49ccce3d14229c2a135b1a9a4c",
+      "content_hash": "9ab3608aab7be6497081af5fed1353dbddfaf00f052f9f72e7f47eea110992ed",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T07:03:51.555Z"
+      "persisted_at": "2026-11-28T07:22:05.769Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -359049,13 +359054,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PUAA-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-18PT-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c2529e1573a4fc109c255eb627710036741f96f8f8fd5756eacfa3e5966b9bb",
+      "content_hash": "be29dca9e651bd2b81860a18744b420d0a26ed15220c0ee113495d3741c21a6a",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T07:13:12.088Z"
+      "persisted_at": "2026-11-28T07:22:04.007Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -359065,9 +359070,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "5905f88d25c7d365515faf8d8fdfa3a1fe3bdf406e13e7f69a0c561d92b0b02c",
+      "content_hash": "eb41dff6ad032bf417b0c7f681ff06f150e9c75b8a4bb5816a7bab8fa0d8fe64",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T07:13:12.333Z"
+      "persisted_at": "2026-11-28T07:22:04.306Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -363535,13 +363540,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DTJL-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-19V2-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7a3baea46bad113f92a802288f6b4c60d772be1e7ffa45e57dc119881cf7ff7b",
+      "content_hash": "6017c9bfab885c12dd30e4e3271c9deb016a4edbf3220aadb4d234d69bed7016",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T07:03:51.249Z"
+      "persisted_at": "2026-11-28T07:22:05.487Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -371295,6 +371300,32 @@
       "content_hash": "0621d99fa52a151124c594eec63c53a833f626a15b62255251c992d9fa6bdd6a",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T07:13:10.947Z"
+    },
+    "rule-11059": {
+      "learning_id": "rule-11059",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11059,
+      "title": "catch errors in deferred await block branches",
+      "source_url": "https://github.com/sveltejs/svelte",
+      "source_version": "fd610a26",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T07:21:54.452Z"
+    },
+    "candidate_directive-catch-errors-in-deferred-await-block-branches": {
+      "item_id": "candidate_directive-catch-errors-in-deferred-await-block-branches",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-17M9-catch-errors-in-deferred-await-block-branches.md",
+      "title": "catch errors in deferred await block branches",
+      "repository": "sveltejs-svelte-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3a8d36677bb9868979750ee8fb957d25c0902e7ba9eb428acfdcb0ee32a1d323",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T07:22:02.584Z"
     }
   },
   "ai-builder-brain": {

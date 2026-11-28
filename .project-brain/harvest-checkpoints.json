@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T07:13:04.889Z",
+  "last_updated": "2026-11-28T07:21:54.837Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14991,14 +14991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sveltejs-svelte",
-      "content_hash": "ef6dc4e10264d11eead6779a6b47a834afcc807cfcfe23f56d0beec327b9b6eb",
-      "verified_at": "2026-11-24T22:51:00.078Z",
+      "content_hash": "6f60a460e000b2c8ad4d4e4b76e6b716f69280e3991bae48f55814ca7a75a42f",
+      "verified_at": "2026-11-28T07:21:54.837Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T22:51:00.078Z"
+      "last_updated": "2026-11-28T07:21:54.837Z"
     },
     "solidjs/solid": {
       "repository": "solidjs/solid",

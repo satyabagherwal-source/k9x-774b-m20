@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T07:13:10.684Z",
+  "updated_at": "2026-11-28T07:22:02.224Z",
   "stats": {
-    "total_discovered": 10834,
-    "approved_pending_harvest": 10286,
+    "total_discovered": 10838,
+    "approved_pending_harvest": 10290,
     "harvested_count": 0,
     "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10296,
+      "COMMUNITY_AND_EXPERT": 10300,
       "OFFICIAL_DOCUMENTATION": 296,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
@@ -234539,6 +234539,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
         "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-D577221C823C": {
+      "id": "SRC-D577221C823C",
+      "url": "https://github.com/sveltejs/svelte/pull/17684",
+      "title": "https://github.com/sveltejs/svelte/pull/17684",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:22:01.901Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-5405BE944105": {
+      "id": "SRC-5405BE944105",
+      "url": "https://github.com/sveltejs/svelte/pull/16977",
+      "title": "https://github.com/sveltejs/svelte/pull/16977",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:22:02.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-7A68A5D4A454": {
+      "id": "SRC-7A68A5D4A454",
+      "url": "https://github.com/sveltejs/svelte/pull/18243",
+      "title": "https://github.com/sveltejs/svelte/pull/18243",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:22:02.122Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-AC941B9CCAA9": {
+      "id": "SRC-AC941B9CCAA9",
+      "url": "https://github.com/sveltejs/svelte/issues/19026",
+      "title": "https://github.com/sveltejs/svelte/issues/19026",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:22:02.224Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
       }
     }
   }

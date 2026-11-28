@@ -9963,10 +9963,10 @@
     "repository": "sveltejs/svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/sveltejs/svelte",
-    "sourceVersion": "36cb19ee",
+    "sourceVersion": "fd610a26",
     "license": "MIT",
-    "contentHash": "ef6dc4e10264d11eead6779a6b47a834afcc807cfcfe23f56d0beec327b9b6eb",
-    "lastHarvestedAt": "2026-11-24T22:51:00.061Z",
+    "contentHash": "6f60a460e000b2c8ad4d4e4b76e6b716f69280e3991bae48f55814ca7a75a42f",
+    "lastHarvestedAt": "2026-11-28T07:21:54.827Z",
     "learningId": "learn-github-sveltejs-svelte"
   },
   "solidjs-solid": {

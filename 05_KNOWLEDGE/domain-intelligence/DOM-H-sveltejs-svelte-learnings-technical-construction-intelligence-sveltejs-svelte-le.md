@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T22:51:13.937Z",
+  "timestamp": "2026-11-28T07:22:02.438Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-sveltejs-svelte-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sveltejs-svelte-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T22:51:13.937Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T07:22:02.438Z`  
 > **Learning ID**: `LEARN-EVO-sveltejs-svelte-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 91%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 88%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from sveltejs-svelte-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source**: github ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
-> **Source Version**: `36cb19ee`  
+> **Source Version**: `fd610a26`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T22:50:59.001Z  
+> **Timestamp**: 2026-11-28T07:21:53.271Z  
 > **Learning ID**: `learn-github-sveltejs-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:50:58.899Z  
+> **Harvest Timestamp**: 2026-11-28T07:21:53.136Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: web development for the rest of us
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 89837 stars
+- **Stars / Engagement**: 89854 stars
 
 ---
 
@@ -2023,589 +2023,643 @@ function validate_code(code, is_attribute_value) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9f33ed2` (2026-11-24)
-**Commit Message**: fix: avoid quadratic batch write collection during effect flushing (#19395)
+### Incident Patch 1: `e7ef5463` (2026-11-24)
+**Commit Message**: fix: catch errors in deferred await block branches (#19028)
 
-Fixes https://github.com/sveltejs/svelte/issues/19392
+- Deferred await branches lacked an error-routing entry point: initial
+render errors intentionally unwind the call stack, but no enclosing
+boundary was executing in the continuation.
+- Catch errors in the shared continuation and invoke the boundary from
+the restored await effect. Preserve first-render cleanup from
+[#17684](https://github.com/sveltejs/svelte/pull/17684), rather than
+weakening global error propagation.
+- Keep batch-linked branch management from
+[#16977](https://github.com/sveltejs/svelte/pull/16977) and independent
+await-state batching from
+[#18243](https://github.com/sveltejs/svelte/pull/18243) unchanged.
+- Cover pending/then/catch errors, rejection without a catch branch,
+mount/hydration, legacy/runes, late settlement, nested-boundary
+forwarding, and reset.
 
-Mounting many components that write state after mounting became
-quadratic because each writing effect rescanned every write accumulated
-in `Batch.current`. Legacy `bind:this` assignments expose this
-particularly clearly, but the same collection path handles runes and
-queued async render effects.
+Fixes https://github.com/sveltejs/svelte/issues/19026
 
-The collection introduced in
-[#19030](https://github.com/sveltejs/svelte/pull/19030) still serves an
-important purpose: eager block teardowns must revert the running
-effect's writes while retaining earlier effects' writes. Deferred branch
-callbacks also retain snapshots of that view. Removing this machinery or
-bypassing it only for legacy components would either lose those ordering
-guarantees or leave other effect types with the same performance defect.
+Fixes #15803
 
-Instead, `Batch.capture` records touched source keys in a collector
-scoped to the queued-effect flush. After each effect and its eager block
-reruns, only that delta is visited. Entries are still selected from the
-current batch with the existing version filter, preserving
-overwritten/equal-version writes and ex
+<!--
+svelte-triage-bot:feedback-baseline:2742fdd05003623c0f99daf77f0639a462ff4f10
+-->
 
-**File**: `.changeset/quick-batches-write-once.md` (added, +5/-0)
+---------
+
+Co-authored-by: svelte-triage-bot <[REDACTED_EMAIL]>
+Co-authored-by: Rich Harris <[REDACTED_EMAIL]>
+
+**File**: `.changeset/bright-await-boundaries.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'svelte': patch
 +---
 +
-+fix: avoid quadratic work when flushing effects that write state
++fix: catch errors in deferred await block branches with error boundaries
 ```
 
-**File**: `packages/svelte/src/internal/client/reactivity/batch.js` (modified, +36/-10)
+**File**: `packages/svelte/src/internal/client/dom/blocks/await.js` (modified, +5/-0)
 ```diff
-@@ -692,14 +692,23 @@ export class Batch {
- 		// append/remove branches
- 		this.#run_callbacks(this.#commit_callbacks);
+@@ -19,6 +19,7 @@ import { BranchManager } from './branches.js';
+ import { capture, merge_target, unset_context } from '../../reactivity/async.js';
+ import { DEV } from 'esm-env';
+ import { active_effect } from '../../runtime.js';
++import { invoke_error_boundary } from '../../error-handling.js';
  
--		var earlier_writes = flush_queued_effects(render_effects);
-+		var was_flushing_effects = is_flushing_effects;
-+		var previous_captured_writes = captured_writes;
+ const PENDING = 0;
+ const THEN = 1;
+@@ -161,6 +162,8 @@ export function await_block(node, get_input, pending_fn, then_fn, catch_fn) {
  
--		// the content has been updated, and user effects are about to see it
--		if (custom_renderers_flag && before_effects !== null) {
--			before_effects();
--		}
-+		try {
-+			is_flushing_effects = true;
-+			var earlier_writes = flush_queued_effects(render_effects);
+ 					try {
+ 						fn((source, v) => /** @type {Batch} */ (target).capture(source, v, source.equals(v)));
++					} catch (error) {
++						invoke_error_boundary(error, effect);
+ 					} finally {
+ 						unset_context(false);
+ 						target.flush();
+@@ -186,6 +189,8 @@ export function await_block(node, get_input, pending_fn, then_fn, catch_fn) {
  
--		flush_queued_effects(effects, earlier_writes);
-+			// the content has been updated, and user effects are about to see it
-+			if (custom_renderers_flag && before_effects !== null) {
-+				before_effects();
-+			}
+ 				try {
+ 					fn(internal_set);
++				} catch (error) {
++					invoke_error_boundary(error, effect);
+ 				} finally {
+ 					unset_context(false);
+ 
+```
+
+**File**: `packages/svelte/tests/runtime-legacy/samples/error-boundary-await-reset/_config.js` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++import { flushSync, tick } from 'svelte';
++import { create_deferred } from '../../../helpers';
++import { test } from '../../test';
 +
-+			flush_queued_effects(effects, earlier_writes);
-+		} finally {
-+			is_flushing_effects = was_flushing_effects;
-+			captured_writes = previous_captured_writes;
-+		}
- 
- 		this.#deferred?.resolve();
- 
-@@ -1011,6 +1020,10 @@ export class Batch {
- 
- 		this.current.set(source, entry);
- 
-+		if (is_flushing_effects) {
-+			(captured_writes ??= new Set()).add(source);
-+		}
++let deferred = create_deferred();
 +
- 		// The active view of the world sees writes made while it's active, even if they don't belong to the batch whose
- 		// view it is — e.g. those of effects that run while a batch commits, which go to a new batch. (Async results
- 		// are only captured while no view is active, see `async_derived`)
-@@ -1645,6 +1658,15 @@ function infinite_loop_guard() {
++export default test({
++	before_test() {
++		deferred = create_deferred();
++	},
++	get props() {
++		return { promise: deferred.promise };
++	},
++	async test({ assert, target }) {
++		assert.htmlEqual(target.innerHTML, '<p>loading</p>');
++
++		// The inner boundary forwards the deferred render error to the outer one.
++		deferred.resolve('resolved');
++		await tick();
++		assert.htmlEqual(target.innerHTML, '<p>failed: then</p><button>reset</button>');
++
++		// Reset creates a new await effect with an already-settled promise.
++		flushSync(() => target.querySelector('button')?.click());
++		await tick();
++		assert.htmlEqual(target.innerHTML, '<p>resolved</p>');
++	}
++});
+```
+
+**File**: `packages/svelte/tests/runtime-legacy/samples/error-boundary-await-reset/main.svelte` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++<script>
++	export let promise;
++	let broken = true;
++
++	function render(value) {
++		if (broken) throw new Error('then');
++		return value;
++	}
++</script>
++
++<svelte:boundary>
++	<svelte:boundary onerror={(error) => { throw error; }}>
++		{#await promise}
++			<p>loading</p>
++		{:then value}
++			<p>{render(value)}</p>
++		{/await}
++	</svelte:boundary>
++
++	{#snippet failed(error, reset)}
++		<p>failed: {error.message}</p>
++		<button onclick={() => { broken = false; reset(); }}>reset</button>
++	{/snippet}
++</svelte:boundary>
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/async-fork-await-block-error-boundary/_config.js` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++import { tick } from 'svelte';
++import { test } from '../../test';
++
++export default test({
++	mode: ['client'],
++
++	async test({ assert, target }) {
++		const [fork, settle, discard, commit] = target.querySelectorAll('button');
++		const [output] = target.querySelectorAll('output');
++
++		await tick();
++		assert.htmlEqual(
++			output.innerHTML,
++			'<p>loading then</p><p>loading catch</p><p>loading rejection</p>'
++		);
++
++		// Errors in a forked await block must not trigger the boundary before commit or when discarded
++		fork.click();
++		settle.click();
++		await tick();
++		assert.htmlEqual(
++			output.innerHTML,
++			'<p>loading then</p><p>loading catch</p><p>loading rejection</p>'
++		);
++
++		discard.click();
++		await tick();
++		assert.htmlEqual(
++			output.innerHTML,
++			'<p>loading then</p><p>loading catch</p><p>loading rejection</p>'
++		);
++
++		// Committing a fork whose await branches errored should trigger the boundaries
++		fork.click();
++		settle.click();
++		await tick();
++		assert.htmlEqual(
++			output.innerHTML,
++			'<p>loading then</p><p>loading catch</p><p>loading rejection</p>'
++		);
++
++		commit.click();
++		await tick();
++		assert.htmlEqual(
++			output.innerHTML,
++			'<p>failed: then</p><p>failed: catch</p><p>failed: rejection</p>'
++		);
++	}
++});
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/async-fork-await-block-error-boundary/main.svelte` (added, +65/-0)
+```diff
+@@ -0,0 +1,65 @@
++<script lang="ts">
++	import { fork, type Fork } from 'svelte';
++
++	let n = $state(0);
++	let current_fork: Fork | undefined;
++
++	const resolvers = new Map<number, { resolve: () => void; reject: (err: Error) => void }>();
++
++	function create_promise(key: number) {
++		const deferred = Promise.withResolvers<void>();
++		resolvers.set(key, {
++			resolve: () => deferred.resolve(),
++			reject: (e) => deferred.reject(e)
++		});
++		return deferred.promise;
++	}
++
++	function boom(message: string): string {
++		throw new Error(message);
++	}
++
++	function settle() {
++		resolvers.get(1)?.resolve();
++		resolvers.get(101)?.reject(new Error('original'));
++		resolvers.get(201)?.reject(new Error('rejection'));
++	}
++</script>
++
++<button onclick={() => (current_fork = fork(() => n++))}>fork</button>
++<button onclick={settle}>settle</button>
++<button onclick={() => current_fork?.discard()}>discard</button>
++<button onclick={() => current_fork?.commit()}>commit</button>
++
++<output>
++	<svelte:boundary>
++		{#await create_promise(n)}
++			<p>loading then</p>
++		{:then}
++			<p>{boom('then')}</p>
++		{/await}
++		{#snippet failed(error)}
++			<p>failed: {(error as Error).message}</p>
++		{/snippet}
++	</svelte:boundary>
++
++	<svelte:boundary>
++		{#await create_promise(100 + n)}
++			<p>loading catch</p>
++		{:catch}
++			<p>{boom('catch')}</p>
++		{/await}
++		{#snippet failed(error)}
++			<p>failed: {(error as Error).message}</p>
++		{/snippet}
++	</svelte:boundary>
++
++	<svelte:boundary>
++		{#await create_promise(200 + n)}
++			<p>loading rejection</p>
++		{/await}
++		{#snippet failed(error)}
++			<p>failed: {(error as Error).message}</p>
++		{/snippet}
++	</svelte:boundary>
++</output>
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/error-boundary-await-pending/_config.js` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import { tick } from 'svelte';
++import { create_deferred } from '../../../helpers';
++import { test } from '../../test';
++
++const deferred = create_deferred();
++
++export default test({
++	mode: ['client'],
++	props: { promise: deferred.promise },
++	async test({ assert, target }) {
++		await tick();
++		assert.htmlEqual(target.innerHTML, '<p>failed: pending</p>');
++
++		// Settling a promise after its boundary failed must not render another branch.
++		deferred.resolve();
++		await tick();
++		assert.htmlEqual(target.innerHTML, '<p>failed: pending</p>');
++	}
++});
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/error-boundary-await-pending/main.svelte` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++<script>
++	let { promise } = $props();
++
++	function boom() {
++		throw new Error('pending');
++	}
++</script>
++
++<svelte:boundary>
++	{#await promise}
++		<p>{boom()}</p>
++	{:then}
++		<p>resolved</p>
++	{/await}
++	{#snippet failed(error)}<p>failed: {error.message}</p>{/snippet}
++</svelte:boundary>
+```
+
+---
+
+### Incident Patch 2: `f076077c` (2026-11-26)
+**Commit Message**: fix: keep hydrating after a boundary catches an error from a mismatched block (#19021)
+
+Closes #19020
+
+When an if, each or await block or a dynamic component inside a
+`<svelte:boundary>` renders a different branch than the server did, it
+turns hydration off, renders the client branch and turns hydration back
+on afterwards. If the client branch throws, the error reaches the
+boundary with hydration still off. The boundary only skips its server
+nodes and resets the hydration position while hydrating, so it does
+neither, and everything after it is rendered as if there were no server
+HTML. A button after the boundary doesn't respond to clicks, the server
+markup is left behind after unmount, and a text expression after the
+boundary makes hydration throw a TypeError and mount the app again.
+
+`#hydrate_resolved_content` now turns hydration back on before handling
+the error when it was on at the start, with the same guard
+`svelte-head.js` uses, so the restore is dropped from client-only
+bundles. Restoring it in the boundary covers every mismatch path, while
+a try block around the item loop in `each.js` fails the hydration
+treeshakeability check.
+
+Added five `runtime-runes` hydrate samples, 
+
+**File**: `.changeset/quiet-blocks-recover.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++fix: keep hydrating after a boundary catches an error from a mismatched block
+```
+
+**File**: `packages/svelte/src/internal/client/dom/blocks/boundary.js` (modified, +6/-1)
+```diff
+@@ -36,7 +36,8 @@ import {
+ 	next,
+ 	read_hydration_instruction,
+ 	skip_nodes,
+-	set_hydrate_node
++	set_hydrate_node,
++	set_hydrating
+ } from '../hydration.js';
+ import { queue_micro_task } from '../task.js';
+ import * as e from '../../errors.js';
+@@ -204,9 +205,13 @@ export class Boundary {
  	}
+ 
+ 	#hydrate_resolved_content() {
++		var was_hydrating = hydrating;
++
+ 		try {
+ 			this.#main_effect = branch(() => this.#children(this.#anchor));
+ 		} catch (error) {
++			// a block with a hydration mismatch may have turned hydration off before throwing
++			if (was_hydrating) set_hydrating(true);
+ 			this.error(error);
+ 		}
+ 	}
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/hydration-mismatch-error-boundary/_config.js` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++import { tick } from 'svelte';
++import { test } from '../../test';
++
++export default test({
++	mode: ['hydrate'],
++	server_props: { browser: false },
++	props: { browser: true },
++
++	async test({ assert, target }) {
++		await tick();
++		assert.htmlEqual(target.innerHTML, '<p>failed: oops</p><p>hello</p>');
++	}
++});
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/hydration-mismatch-error-boundary/main.svelte` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++<script>
++	let { browser, message = 'hello' } = $props();
++
++	function boom() {
++		throw new Error('oops');
++	}
++</script>
++
++<svelte:boundary>
++	{#if browser}
++		{boom()}
++	{/if}
++
++	{#snippet failed(error)}
++		<p>failed: {error.message}</p>
++	{/snippet}
++</svelte:boundary>
++
++<p>{message}</p>
+```
+
+---
+
+### Incident Patch 3: `b69c8828` (2026-11-27)
+**Commit Message**: fix: don't re-run deriveds read outside an effect exponentially while another batch is pending (#19368)
+
+Fixes #19366.
+
+With `experimental.async`, while another batch is pending, a chain of
+deriveds that is read where nothing tracks it (a component's `<script>`,
+`untrack`, a prop read in a child's `<script>`) and then read again
+re-runs exponentially in the length of the chain. Since #19030 (5.58.1),
+mounting 10 rows that each own a chain of 20 deriveds next to a pending
+`<svelte:boundary>` runs 5,243,070 derived functions instead of 200. The
+issue has a playground and a bisect.
+
+### Cause
+
+`get_view` only caches a derived in `view_cache` if it is `CONNECTED`.
+At the end of a run, `seen_version` looks up each derived dependency's
+version in `view_cache` and records `-1` if it isn't there. So a derived
+that read a disconnected derived gets a record whose `dv` contains `-1`,
+which `is_current` never matches. Every later `get_view` of it walks
+`is_current`, which evaluates the dependency, finds the record stale and
+re-executes the derived, which evaluates the dependency again: two
+evaluations per level.
+
+### Fix
+
+The run knows which version it read: `get` has the entry `get_view`
+retu
+
+**File**: `.changeset/quiet-chains-wait.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'svelte': patch
++---
++
++fix: don't re-run deriveds read outside an effect exponentially while another batch is pending
+```
+
+**File**: `packages/svelte/src/internal/client/runtime.js` (modified, +35/-5)
+```diff
+@@ -137,6 +137,15 @@ export let new_deps = null;
+ 
+ export let skipped_deps = 0;
+ 
++/**
++ * The versions of the disconnected deriveds that the current reaction's run read while a view of the world was
++ * active, as `get_view` returned them. The view's cache doesn't hold disconnected deriveds, so it can't tell
++ * afterwards which version the run saw (see `seen_version`), but the run itself knows. `-1` if it read different
++ * versions of the same derived
++ * @type {Map<Derived, number> | null}
++ */
++let view_read_versions = null;
++
+ /**
+  * Tracks writes that the effect it's executed in doesn't listen to yet,
+  * so that the dependency can be added to the effect later on if it then reads it
+@@ -523,6 +532,7 @@ export function update_reaction(reaction) {
+ 	const batch = current_batch;
+ 	var previous_deps = new_deps;
+ 	var previous_skipped_deps = skipped_deps;
++	var previous_view_read_versions = view_read_versions;
+ 	var previous_untracked_writes = untracked_writes;
+ 	var previous_reaction = active_reaction;
+ 	var previous_sources = current_sources;
+@@ -534,6 +544,7 @@ export function update_reaction(reaction) {
+ 
+ 	new_deps = /** @type {null | Value[]} */ (null);
+ 	skipped_deps = 0;
++	view_read_versions = null;
+ 	untracked_writes = null;
+ 	active_reaction = (flags & (BRANCH_EFFECT | ROOT_EFFECT)) === 0 ? reaction : null;
+ 
+@@ -639,6 +650,7 @@ export function update_reaction(reaction) {
+ 		reaction.f ^= REACTION_IS_UPDATING;
+ 		new_deps = previous_deps;
+ 		skipped_deps = previous_skipped_deps;
++		view_read_versions = previous_view_read_versions;
+ 		untracked_writes = previous_untracked_writes;
+ 		active_reaction = previous_reaction;
+ 		current_sources = previous_sources;
+@@ -978,18 +990,24 @@ function keep_global_run(derived, flags) {
  }
  
-+var is_flushing_effects = false;
-+
-+/**
-+ * Sources captured since the last effect in `flush_queued_effects` finished, including
-+ * writes by its eager block reruns. Nested flushes use their own collector.
-+ * @type {Set<Value> | null}
-+ */
-+var captured_writes = null;
-+
- /** @type {Set<Effect> | null} */
- export let eager_block_effects = null;
+ /**
+- * The version of `signal` that the current run saw. Recording it never evaluates anything: a derived that
+- * isn't in the view's cache (anymore) was invalidated by a write during the run, or can't be cached —
+- * the run then doesn't count as having seen its current version, just like in the real world, where
+- * a derived that changes during the run gets a new version only once it is evaluated again
++ * The version of `signal` that the current run saw. Recording it never evaluates anything. A derived that
++ * isn't in the view's cache anymore was invalidated by a write during the run — the run then doesn't count
++ * as having seen its current version, just like in the real world, where a derived that changes during the
++ * run gets a new version only once it is evaluated again. A derived that was disconnected when the run read
++ * it can't be cached: the run remembers the version it read instead (see `view_read_versions`)
+  * @param {Value} signal
+  */
+ function seen_version(signal) {
+ 	if (batch_values === null) return signal.wv;
  
-@@ -1772,15 +1794,19 @@ function flush_queued_effects(effects, earlier_writes = null) {
- 				}
- 			}
- 
--			// if the effect — or the block effects — wrote anything
--			if (write_version !== version && current_batch !== null) {
--				for (const [value, write] of current_batch.current) {
--					if (write.wv > version) {
-+			// Only visit sources captured by this effect or its eager block reruns.
-+			// A nested flush may have drained their batch, so use the current entry.
-+			if (write_version !== version && current_batch !== null && captured_writes !== null) {
-+				for (const value of captured_writes) {
-+					var write = current_batch.current.get(value);
-+					if (write !== undefined && write.wv > version) {
- 						(earlier_writes ??= new Map()).set(value, write);
- 					}
- 				}
- 			}
- 		}
+ 	if ((signal.f & DERIVED) !== 0) {
+ 		var cache = /** @type {Map<Derived, Derived | DerivedRecord | BatchValue>} */ (view_cache);
+-		return cache.get(/** @type {Derived} */ (signal))?.wv ?? -1;
++		var cached = cache.get(/** @type {Derived} */ (signal));
++		if (cached !== undefined) return cached.wv;
 +
-+		captured_writes?.clear();
++		// the version the run read, if the derived was disconnected then: if a write invalidated it
++		// since, it gets a new version when it's evaluated again, and the run is stale
++		return view_read_versions?.get(/** @type {Derived} */ (signal)) ?? -1;
  	}
  
- 	eager_block_effects = null;
-```
-
-**File**: `packages/svelte/tests/signals/batch.test.ts` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+import { assert, it } from 'vitest';
-+import { push, pop } from '../../src/internal/client/context';
-+import {
-+	disable_async_mode_flag,
-+	enable_async_mode_flag,
-+	enable_legacy_mode_flag
-+} from '../../src/internal/flags';
-+import { flushSync } from '../../src/internal/client/reactivity/batch';
-+import { block, effect, effect_root } from '../../src/internal/client/reactivity/effects';
-+import { state, set } from '../../src/internal/client/reactivity/sources';
-+import { get } from '../../src/internal/client/runtime';
-+
-+enable_legacy_mode_flag();
-+
-+it.each([
-+	{ async: false, runes: false },
-+	{ async: false, runes: true },
-+	{ async: true, runes: false },
-+	{ async: true, runes: true }
-+])(
-+	'retains writes after a nested effect flush (async: $async, runes: $runes)',
-+	({ async, runes }) => {
-+		if (async) enable_async_mode_flag();
-+		push({}, runes);
-+
-+		const trigger = state(0);
-+		const nested_trigger = state(0);
-+		const nested_value = state(0);
-+		const earlier = state(0);
-+		const show = state(true);
-+		const log: string[] = [];
-+
-+		// A separate root ensures the nested flush doesn't also traverse the outer siblings.
-+		const destroy_nested = effect_root(() => {
-+			effect(() => {
-+				if (get(nested_trigger) === 1) set(nested_value, 42);
-+			});
-+		});
-+
-+		const destroy = effect_root(() => {
-+			block(() => {
-+				get(show);
-+				return () => log.push(`${get(earlier)}:${get(show)}`);
-+			});
-+
-+			effect(() => {
-+				if (get(trigger) === 1) {
-+					flushSync(() => set(nested_trigger, 1));
-+					set(earlier, 1);
-+					set(earlier, 2);
-+				}
-+			});
-+
-+			effect(() => {
-+				if (get(trigger) === 1) set(show, false);
-+			});
-+		});
-+		pop();
-+
-+		try {
-+			flushSync();
-+			flushSync(() => set(trigger, 1));
-+			assert.equal(get(nested_value), 42);
-+			assert.deepEqual(log, ['2:true']);
-+		} finally {
-+			destroy();
-+			destroy_nested();
-+			disable_async_mode_flag();
-+		}
-+	}
-+);
-```
-
-**File**: `packages/svelte/tests/signals/test.ts` (modified, +79/-1)
-```diff
-@@ -22,7 +22,7 @@ import {
- import type { Derived, Effect, Source, Value } from '../../src/internal/client/types';
- import { proxy } from '../../src/internal/client/proxy';
- import { derived } from '../../src/internal/client/reactivity/deriveds';
--import { source_stacks } from '../../src/internal/client/reactivity/batch';
-+import { Batch, source_stacks } from '../../src/internal/client/reactivity/batch';
- import { snapshot } from '../../src/internal/shared/clone.js';
- import { SvelteSet } from '../../src/reactivity/set';
- import { CONNECTED, DESTROYED } from '../../src/internal/client/constants';
-@@ -65,6 +65,84 @@ test.skip = (text: string, fn: (runes: boolean) => any) => {
- };
+ 	return (batch_values.get(signal) ?? signal).wv;
+@@ -1410,6 +1428,18 @@ export function get(signal) {
  
- describe('signals', () => {
-+	for (const [async, render] of [
-+		[false, false],
-+		[true, false],
-+		[true, true]
-+	]) {
-+		test(`flushing writing ${render ? 'render' : 'user'} effects does linear work (async: ${async})`, () => {
-+			if (async) enable_async_mode_flag();
-+			const count = 100;
-+			const trigger = state(0);
-+			const create = render ? render_effect : effect;
-+			const values = Array.from({ length: count }, () => state(0));
-+			let visited = 0;
+ 		if (batch_values !== null) {
+ 			view = get_view(derived);
 +
-+			for (const [i, value] of values.entries()) {
-+				create(() => {
-+					if ($.get(trigger) === 0) return;
-+					set(value, 1);
-+					if (i === 0) {
-+						// Count visits to batch writes, rather than asserting wall-clock timings.
-+						const writes = Batch.ensure().current;
-+						const iterate = writes[Symbol.iterator].bind(writes);
-+						Object.defineProperty(writes, Symbol.iterator, {
-+							value: function* () {
-+								for (const entry of iterate()) {
-+									visited++;
-+									yield entry;
-+								}
-+							}
-+						});
-+					}
-+				});
-+			}
-+
-+			return () => {
-+				try {
-+					flushSync();
-+					flushSync(() => set(trigger, 1));
-+					assert.deepEqual(
-+						values.map((value) => $.get(value)),
-+						Array(count).fill(1)
-+					);
-+					assert.isAtMost(visited, count * 4);
-+				} finally {
-+					if (async) disable_async_mode_flag();
-+				}
-+			};
-+		});
-+	}
-+
-+	test('eager block teardowns retain the last write of an earlier effect', () => {
-+		const trigger = state(0);
-+		const earlier = state(0);
-+		const show = state(true);
-+		const log: string[] = [];
-+
-+		block(() => {
-+			$.get(show);
-+			return () => log.push(`${$.get(earlier)}:${$.get(show)}`);
-+		});
-+
-+		effect(() => {
-+			if ($.get(trigger) === 1) {
-+				set(earlier, 1);
-+				set(earlier, 2);
-+			}
-+		});
-+
-+		effect(() => {
-+			if ($.get(trigger) === 1) set(show, false);
-+		});
-+
-+		return () => {
-+			flushSync();
-+			flushSync(() => set(trigger, 1));
-+			assert.deepEqual(log, ['2:true']);
-+		};
-+	});
-+
- 	test('nested commit retains latest block dependencies', () => {
- 		const trigger = state(0);
- 		const mode = state(0);
-```
-
----
-
-### Incident Patch 2: `1bbeac7c` (2026-11-24)
-**Commit Message**: fix: hint at missing `lang="ts"` when TypeScript syntax fails to parse (#19428)
-
-Closes #16835. Builds on and supersedes #17954.
-
-When TypeScript syntax is used without `<script lang="ts">`, report a
-parse error with a hint such as:
-
-```text
-Unexpected token (did you forget to add `lang="ts"`?)
-```
-
-### Delta from #17954
-
-#17954 started with snippet parameter annotations, but its current
-implementation also handles template expressions and attributes using a
-`:` check at Acorn's error position and lookahead checks for `:`, `as`,
-`satisfies`, and `!` after expressions.
-
-This PR replaces those token/regex heuristics with a single retry of the
-component parser in TypeScript mode:
-
-- Covers cases the heuristics miss, including nested assertions (`{foo(x
-as number)}`), type arguments (`{foo<string>()}`), typed `<script>`
-declarations, typed declaration/`@const` tags, typed each-block
-bindings, and generic snippets.
-- Avoids suggesting `lang="ts"` for invalid syntax such as `{x:
-number}`, `{foo(a: 1)}`, and broken ternaries.
-- Removes the expression lookahead checks from the successful parsing
-path. There are no separate probes for individual expression, statement,
-script, or snippet con
-
-**File**: `.changeset/gentle-dots-dream.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'svelte': patch
-+---
-+
-+fix: hint at missing `lang="ts"` when TypeScript syntax fails to parse
-```
-
-**File**: `packages/svelte/src/compiler/phases/1-parse/index.js` (modified, +50/-7)
-```diff
-@@ -1,10 +1,12 @@
--/** @import { AST } from '#compiler' */
-+/** @import { AST, CompileError } from '#compiler' */
- /** @import { Location } from 'locate-character' */
- /** @import * as ESTree from 'estree' */
- // @ts-expect-error acorn type definitions are borked in the release we use
- import { isIdentifierStart, isIdentifierChar } from 'acorn';
- import fragment from './state/fragment.js';
- import * as e from '../../errors.js';
-+import * as w from '../../warnings.js';
-+import { walk } from 'zimmerframe';
- import { create_fragment, disallow_children } from '../nodes.js';
- import read_options from './read/options.js';
- import { is_reserved } from '../../../utils.js';
-@@ -77,8 +79,9 @@ export class Parser {
- 	/**
- 	 * @param {string} template
- 	 * @param {boolean} loose
-+	 * @param {boolean} [ts] Force TypeScript parsing when checking for a missing `lang="ts"`
- 	 */
--	constructor(template, loose) {
-+	constructor(template, loose, ts = false) {
- 		if (typeof template !== 'string') {
- 			throw new TypeError('Template must be a string');
- 		}
-@@ -94,7 +97,7 @@ export class Parser {
- 
- 		regex_lang_attribute.lastIndex = 0; // reset matched index to pass tests - otherwise declare the regex inside the constructor
- 
--		this.ts = match_lang?.[2] === 'ts';
-+		this.ts = ts || match_lang?.[2] === 'ts';
- 
- 		this.root = {
- 			css: null,
-@@ -116,10 +119,50 @@ export class Parser {
- 		this.fragments.push(this.root.fragment);
- 
- 		/** @type {ParserState} */
--		let state = fragment;
-+		let next = fragment;
- 
--		while (this.index < this.template.length) {
--			state = state(this) || fragment;
-+		try {
-+			while (this.index < this.template.length) {
-+				next = next(this) || fragment;
-+			}
-+		} catch (error) {
-+			const err = /** @type {CompileError} */ (error);
-+
++			// the view doesn't cache a disconnected derived, so the run that reads it
++			// remembers which version it saw (see `seen_version`)
 +			if (
-+				!this.ts &&
-+				!loose &&
-+				(err?.code === 'js_parse_error' || err?.code === 'expected_token')
++				(derived.f & CONNECTED) === 0 &&
++				active_reaction !== null &&
++				!untracking &&
++				(active_reaction.f & REACTION_IS_UPDATING) !== 0
 +			) {
-+				// Only suggest `lang="ts"` if it would make the component parse successfully.
-+				// Suppress warnings during the retry, including calls to the user's warningFilter.
-+				state.ignore_stack.push(new Set(w.codes));
-+				let ts = false;
-+				try {
-+					walk(/** @type {any} */ (new Parser(template, false, true).root), null, {
-+						_(node, { next }) {
-+							// Acorn also accepts Flow-style casts, which aren't valid TypeScript.
-+							if (node.type === 'TSTypeCastExpression') throw error;
-+							if (node.type.startsWith('TS')) ts = true;
-+							next();
-+						}
-+					});
-+				} catch {
-+					throw error;
-+				} finally {
-+					state.ignore_stack.pop();
-+				}
-+
-+				if (!ts) throw error;
-+
-+				const message =
-+					err.code === 'js_parse_error' ? err.message.split('\n')[0] : 'Unexpected token';
-+				e.js_parse_error(
-+					err.position?.[0] ?? null,
-+					`${message} (did you forget to add \`lang="ts"\`?)`
-+				);
++				var seen = (view_read_versions ??= new Map()).get(derived);
++				view_read_versions.set(derived, seen === undefined || seen === view.wv ? view.wv : -1);
 +			}
+ 		} else {
+ 			update_derived(derived);
+ 		}
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/async-derived-chain-untracked-read-pending/Row.svelte` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++<script lang="ts">
++	import { stats } from './stats.js';
 +
-+			throw error;
- 		}
- 
- 		if (this.stack.length > 1) {
-@@ -136,7 +179,7 @@ export class Parser {
- 			}
- 		}
- 
--		if (state !== fragment) {
-+		if (next !== fragment) {
- 			e.unexpected_eof(this.index);
- 		}
- 
++	let n = $state(0);
++
++	// a chain of ten deriveds, each reading the previous one
++	let previous = () => n;
++	for (let i = 0; i < 10; i++) {
++		const read = previous;
++		const value = $derived((stats.runs++, read() + 1));
++		previous = () => value;
++	}
++	const last = previous;
++
++	// one read in the script, where nothing tracks it...
++	const initial = last();
++</script>
++
++<!-- ...and one in the template -->
++<p>{initial} {last()}</p>
 ```
 
-**File**: `packages/svelte/src/compiler/phases/1-parse/read/context.js` (modified, +1/-1)
+**File**: `packages/svelte/tests/runtime-runes/samples/async-derived-chain-untracked-read-pending/_config.js` (added, +18/-0)
 ```diff
-@@ -56,7 +56,7 @@ function read_type_annotation(parser) {
- 	const start = parser.index;
- 	parser.allow_whitespace();
- 
--	if (!parser.eat(':')) {
-+	if (!parser.ts || !parser.eat(':')) {
- 		parser.index = start;
- 		return undefined;
- 	}
-```
-
-**File**: `packages/svelte/tests/compiler-errors/samples/snippet-ts-annotation-no-lang/_config.js` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,18 @@
++import { tick } from 'svelte';
 +import { test } from '../../test';
 +
 +export default test({
-+	error: {
-+		code: 'js_parse_error',
-+		message: 'Unexpected token (did you forget to add `lang="ts"`?)',
-+		position: [18, 18]
++	async test({ assert, target }) {
++		const [show, runs] = target.querySelectorAll('button');
++		const [output] = target.querySelectorAll('output');
++
++		show.click();
++		await tick();
++		assert.htmlEqual(target.querySelector('p')?.innerHTML ?? '', '10 10');
++
++		runs.click();
++		await tick();
++		// each derived in the chain runs once, not once per path through the chain
++		assert.htmlEqual(output.innerHTML, '10');
 +	}
 +});
 ```
 
-**File**: `packages/svelte/tests/compiler-errors/samples/snippet-ts-annotation-no-lang/main.svelte` (added, +3/-0)
+**File**: `packages/svelte/tests/runtime-runes/samples/async-derived-chain-untracked-read-pending/main.svelte` (added, +29/-0)
 ```diff
-@@ -0,0 +1,3 @@
-+{#snippet bar(text: string)}
-+	{text}
-+{/snippet}
-```
-
-**File**: `packages/svelte/tests/compiler-errors/samples/ts-annotation-no-lang-as/_config.js` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+import { test } from '../../test';
+@@ -0,0 +1,29 @@
++<script lang="ts">
++	import Row from './Row.svelte';
++	import { stats } from './stats.js';
 +
-+export default test({
-+	error: {
-+		code: 'js_parse_error',
-+		message: 'Unexpected token (did you forget to add `lang="ts"`?)',
-+		position: [3, 3]
++	let show = $state(false);
++	let runs = $state('');
++
++	// keeps another batch pending while the row mounts
++	const { promise } = Promise.withResolvers<void>();
++
++	function mount() {
++		stats.runs = 0;
++		show = true;
 +	}
-+});
++</script>
++
++<button onclick={mount}>show</button>
++<button onclick={() => (runs = String(stats.runs))}>runs</button>
++
++<svelte:boundary>
++	{await promise}
++	{#snippet pending()}{/snippet}
++</svelte:boundary>
++
++{#if show}
++	<Row />
++{/if}
++
++<output>{runs}</output>
 ```
 
-**File**: `packages/svelte/tests/compiler-errors/samples/ts-annotation-no-lang-as/main.svelte` (added, +1/-0)
+**File**: `packages/svelte/tests/runtime-runes/samples/async-derived-chain-untracked-read-pending/stats.js` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+{x as number}
-\ No newline at end of file
-```
-
-**File**: `packages/svelte/tests/compiler-errors/samples/ts-annotation-no-lang-attribute/_config.js` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+import { test } from '../../test';
-+
-+export default test({
-+	error: {
-+		code: 'js_parse_error',
-+		message: 'Unexpected token (did you forget to add `lang="ts"`?)',
-+		position: [14, 14]
-+	}
-+});
-```
-
----
-
-### Incident Patch 3: `2e919580` (2026-11-23)
-**Commit Message**: docs: note that the `css` compiler option defaults to `'external'` (#19261)
-
-The `css` compile option has no `@default` in its JSDoc, unlike the
-options around it, so from the docs you can't tell that CSS isn't
-injected unless you ask for it. In `validate-options.js` the default is
-`'external'`, and compiling a component with a `<style>` block and no
-options confirms it (styles come back in `result.css`, not in the JS).
-This adds `@default 'external'` and updates the generated types to
-match.
-
-### Before submitting the PR, please make sure you do the following
-
-- [ ] It's really useful if your PR references an issue where it is
-discussed ahead of time. In many cases, features are absent for a
-reason. For large changes, please create an RFC:
-https://github.com/sveltejs/rfcs
-- [x] Prefix your PR title with `feat:`, `fix:`, `chore:`, or `docs:`.
-- [x] This message body should clearly illustrate what problems it
-solves.
-- [ ] Ideally, include a test that fails without this PR but passes with
-it.
-- [ ] If this PR changes code within `packages/svelte/src`, add a
-changeset (`npx changeset`).
-
-### Tests and linting
-
-- [ ] Run the tests with `pnpm test` and lint the project with `pnpm
-lint`
-
-**File**: `packages/svelte/src/compiler/types/index.d.ts` (modified, +2/-0)
-```diff
-@@ -105,6 +105,8 @@ export interface CompileOptions extends ModuleCompileOptions {
- 	 * This is always `'injected'` when compiling with `customElement` mode.
- 	 *
- 	 * You can also pass a function that receives `{ filename }` and returns either `'injected'` or `'external'`.
-+	 *
-+	 * @default 'external'
- 	 */
- 	css?: 'injected' | 'external' | ((options: { filename: string }) => 'injected' | 'external');
- 	/**
-```
-
-**File**: `packages/svelte/types/index.d.ts` (modified, +4/-0)
-```diff
-@@ -1102,6 +1102,8 @@ declare module 'svelte/compiler' {
- 		 * This is always `'injected'` when compiling with `customElement` mode.
- 		 *
- 		 * You can also pass a function that receives `{ filename }` and returns either `'injected'` or `'external'`.
-+		 *
-+		 * @default 'external'
- 		 */
- 		css?: 'injected' | 'external' | ((options: { filename: string }) => 'injected' | 'external');
- 		/**
-@@ -3373,6 +3375,8 @@ declare module 'svelte/types/compiler/interfaces' {
- 		 * This is always `'injected'` when compiling with `customElement` mode.
- 		 *
- 		 * You can also pass a function that receives `{ filename }` and returns either `'injected'` or `'external'`.
-+		 *
-+		 * @default 'external'
- 		 */
- 		css?: 'injected' | 'external' | ((options: { filename: string }) => 'injected' | 'external');
- 		/**
++export const stats = { runs: 0 };
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19441** (2026-11-24): fix: do not cache setters for unregistered custom elements (@elliott-with-the-longest-name-on-github)
-- **PR #19429** (2026-11-24): docs: remove h4 headers (@sacrosanctic)
-- **PR #19428** (2026-11-24): fix: hint at missing `lang="ts"` when TypeScript syntax fails to parse (@Rich-Harris)
-- **PR #19426** (2026-11-24): fix: don't keep a stale value for a derived that disconnects while another batch is pending (@Rich-Harris)
-- **PR #19419** (2026-11-24): docs: use an uncloneable value in the `state_snapshot_uncloneable` example (@Nic-Polumeyv)
-- **PR #19418** (2026-11-24): docs: clarify which `bind:group` inputs can span components (@Nic-Polumeyv)
+- **PR #19461** (2026-11-27): fix: prune obsolete derived edges while other batches are pending (@svelte-triage-bot[bot])
+- **PR #19453** (2026-11-27): chore: tree-shake unused async features (@dummdidumm)
+- **PR #19450** (2026-11-25): chore: ignore CHANGELOG.md formatting (@teemingc)
+- **PR #19449** (2026-11-25): fix: `svelte/internal/init-operations` to noop file on the server (@paoloricciuti)
+- **PR #19445** (closed): fix: pass function-valued attributes from spreads to custom renderers (@ayam04)
+- **PR #19444** (2026-11-25): fix: correctly apply styles to elements with `duration: 0` transitions (@Rich-Harris)
 
 ---
 
@@ -2625,16 +2679,16 @@ lint`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. avoid quadratic batch write collection during effect flushing
+## X. catch errors in deferred await block branches
 
 **RULE**:
-When implementing operations in `.changeset/quick-batches-write-once.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/bright-await-boundaries.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9f33ed2`: avoid quadratic batch write collection during effect flushing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7ef5463`: catch errors in deferred await block branches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/quick-batches-write-once.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/bright-await-boundaries.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
@@ -2643,7 +2697,7 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 'svelte': patch
 ---
 
-fix: avoid quadratic work when flushing effects that write state
+fix: catch errors in deferred await block branches with error boundaries
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2653,7 +2707,7 @@ fix: avoid quadratic work when flushing effects that write state
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9f33ed2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7ef5463` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

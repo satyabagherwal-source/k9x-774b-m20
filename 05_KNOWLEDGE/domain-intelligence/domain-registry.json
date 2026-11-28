@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T07:13:12.333Z",
+  "last_updated": "2026-11-28T07:22:05.769Z",
   "total_records": 2880,
   "domains": {
     "A": {
@@ -26451,8 +26451,8 @@
       "title": "Technical Construction Intelligence: sveltejs/svelte Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-technical-construction-intelligence-sveltejs-svelte-core-invaria.md",
       "repository": "sveltejs/svelte",
-      "content_hash": "860c475c47976ade8dc51c0fd68b9402700e1745359b76d7a1b464b6d842ef5c",
-      "created_at": "2026-11-24T22:51:00.469Z"
+      "content_hash": "1c9de104f4677e9caba1f93c12faf1c895744c63c6aa9c0cdad8674f9807c65f",
+      "created_at": "2026-11-28T07:21:55.377Z"
     },
     "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants",
@@ -26478,8 +26478,8 @@
       "title": "Technical Construction Intelligence: sveltejs-svelte-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-learnings-technical-construction-intelligence-sveltejs-svelte-le.md",
       "repository": "sveltejs-svelte-learnings",
-      "content_hash": "83bf4d7311d158dca5531e11def3b0f833aa763a456959b0e75a3eeaa51d9a4b",
-      "created_at": "2026-11-24T22:51:14.229Z"
+      "content_hash": "b94b77564ee747ab6799ec1d1522130eeee56748f9866ff64f6c0d012a480b9d",
+      "created_at": "2026-11-28T07:22:02.858Z"
     },
     "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari",
@@ -34010,8 +34010,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "f40a913d177ec383c174e118c1da7fea65884d49ccce3d14229c2a135b1a9a4c",
-      "created_at": "2026-11-28T07:03:51.555Z"
+      "content_hash": "9ab3608aab7be6497081af5fed1353dbddfaf00f052f9f72e7f47eea110992ed",
+      "created_at": "2026-11-28T07:22:05.769Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -46827,8 +46827,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "5905f88d25c7d365515faf8d8fdfa3a1fe3bdf406e13e7f69a0c561d92b0b02c",
-      "created_at": "2026-11-28T07:13:12.333Z"
+      "content_hash": "eb41dff6ad032bf417b0c7f681ff06f150e9c75b8a4bb5816a7bab8fa0d8fe64",
+      "created_at": "2026-11-28T07:22:04.306Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
