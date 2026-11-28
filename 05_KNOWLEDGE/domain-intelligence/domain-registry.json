@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T06:31:04.495Z",
+  "last_updated": "2026-11-28T06:40:39.407Z",
   "total_records": 2879,
   "domains": {
     "A": {
@@ -34009,8 +34009,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "c7e82506c65da355466b8201ab7c65d8e1958fd6df9883bb956069fb0508f992",
-      "created_at": "2026-11-28T06:31:02.744Z"
+      "content_hash": "38ca6362a39d2343815f98e59e5a37d1f9e306f6c6f3b467eae7040b5b0f5d9a",
+      "created_at": "2026-11-28T06:40:39.407Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -43853,8 +43853,8 @@
       "title": "Architecture Intelligence: str4d/rage Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-str4d-rage-architecture-intelligence-str4d-rage-core-invariants.md",
       "repository": "str4d/rage",
-      "content_hash": "36be978ef1838f98144467ebdc3f2f71584beedb98c3bb7e35bf5507218d4633",
-      "created_at": "2026-11-24T23:58:36.878Z"
+      "content_hash": "52c374b6378063075e4309187ade9597f3939cb35f891c93b78e625cca7d0bce",
+      "created_at": "2026-11-28T06:40:25.295Z"
     },
     "DOM-D-74B4B6C4": {
       "record_id": "DOM-D-74B4B6C4",
@@ -43904,8 +43904,8 @@
       "title": "Architecture Intelligence: str4d-rage-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-str4d-rage-learnings-architecture-intelligence-str4d-rage-learnings-core-invaria.md",
       "repository": "str4d-rage-learnings",
-      "content_hash": "0f93577274dbd6391343caa35386051fc278b2e42f82a46d01284f393afb2aca",
-      "created_at": "2026-11-24T23:59:17.039Z"
+      "content_hash": "ec09390cad04ee992e2f0e7b8a4ee004a114058eca4d91ad23d9d558da3d7661",
+      "created_at": "2026-11-28T06:40:36.218Z"
     },
     "DOM-D-FF5AF4F8": {
       "record_id": "DOM-D-FF5AF4F8",
@@ -46826,8 +46826,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "c689b17b1221b0d958e97e8f4348a6d5a3ddc3cacf9c414d48f7743c152d8990",
-      "created_at": "2026-11-28T06:22:15.970Z"
+      "content_hash": "2b575f4c21e64f05fcb182601d64c7a2a5ff503982ed4b1f695d70379e45d2b7",
+      "created_at": "2026-11-28T06:40:37.756Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

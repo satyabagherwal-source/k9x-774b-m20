@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T06:31:00.253Z",
-    "lastVerified": "2026-11-28T06:31:00.253Z",
+    "lastChecked": "2026-11-28T06:40:34.440Z",
+    "lastVerified": "2026-11-28T06:40:34.440Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -171,9 +171,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-28T02:31:08.114Z",
+    "lastChecked": "2026-11-28T06:40:29.417Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-28T02:31:08.114Z"
+    "lastVerified": "2026-11-28T06:40:29.417Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -399,12 +399,12 @@
     "revisionIdentifier": "40d4f79e"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T06:04:29.274Z",
-    "lastVerified": "2026-11-28T06:04:29.274Z",
+    "lastChecked": "2026-11-28T06:40:34.427Z",
+    "lastVerified": "2026-11-28T06:40:34.427Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -413,7 +413,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "761b277c"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1204,8 +1205,8 @@
     "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T12:12:30.006Z",
-    "lastVerified": "2026-11-27T12:12:30.006Z",
+    "lastChecked": "2026-11-28T06:40:31.966Z",
+    "lastVerified": "2026-11-28T06:40:31.966Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clockworklabs-spacetimedb",
@@ -5755,9 +5756,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-11-27T13:46:28.633Z",
+    "lastChecked": "2026-11-28T06:40:27.083Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-11-27T13:46:28.633Z"
+    "lastVerified": "2026-11-28T06:40:27.083Z"
   },
   "apache-shardingsphere": {
     "name": "apache/shardingsphere",
@@ -8245,22 +8246,21 @@
     "lastVerified": "2026-11-27T10:25:53.847Z"
   },
   "str4d-rage": {
-    "name": "rage",
+    "name": "str4d/rage",
     "officialUrl": "https://github.com/str4d/rage",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T07:03:33.069Z",
-    "lastVerified": "2026-11-27T07:03:33.069Z",
+    "lastChecked": "2026-11-28T06:40:23.372Z",
+    "lastVerified": "2026-11-28T06:40:23.372Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-str4d-rage",
-    "contentHash": "8caecbbe2857583e926fe76b5a4631f3954a347572462d1aa74a5726dd6d9b61",
-    "promotedRulesCount": 0,
+    "contentHash": "5f324e0160c15011d92fdf78f08df272d9f6945d2ea4cc46d399f45f3839e079",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "eaa85530"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
     "name": "Phocinae/Phocinae-Largha-150M-v1",
@@ -11486,8 +11486,8 @@
     "officialUrl": "https://github.com/StikDebug/StikDebug",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-26T04:39:09.390Z",
-    "lastVerified": "2026-11-26T04:39:09.390Z",
+    "lastChecked": "2026-11-28T06:40:24.447Z",
+    "lastVerified": "2026-11-28T06:40:24.447Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-stikdebug-stikdebug",
@@ -11859,9 +11859,9 @@
   "mozilla-readability": {
     "name": "readability",
     "officialUrl": "https://github.com/mozilla/readability",
-    "lastChecked": "2026-11-24T22:07:18.049Z",
+    "lastChecked": "2026-11-28T06:40:21.954Z",
     "revisionIdentifier": "ab4027a8",
-    "lastVerified": "2026-11-24T22:07:18.049Z"
+    "lastVerified": "2026-11-28T06:40:21.954Z"
   },
   "wzh4869-appports": {
     "name": "wzh4869/AppPorts",

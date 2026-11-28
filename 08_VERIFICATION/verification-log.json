@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-REVD",
-    "timestamp": "2026-11-26T16:30:57.289Z",
-    "repository": "VectifyAI/PageIndex",
-    "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "9a4f0fbf4d62786c12b3fe2cae1e1f5b158c2f5b8d7dbf65e76718920c0e3ce4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-3PDP",
     "timestamp": "2026-11-26T16:40:30.781Z",
     "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "chroma-core/chroma",
     "learningId": "learn-github-chroma-core-chroma",
     "contentHash": "bad7e45d8bbe07b5c0be2342895bcc34a3a5d3671442e5935629e4aa7814d974",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-JO6L",
+    "timestamp": "2026-11-28T06:40:24.621Z",
+    "repository": "str4d/rage",
+    "learningId": "learn-github-str4d-rage",
+    "contentHash": "5f324e0160c15011d92fdf78f08df272d9f6945d2ea4cc46d399f45f3839e079",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

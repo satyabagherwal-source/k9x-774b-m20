@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T06:31:04.495Z",
+  "last_updated": "2026-11-28T06:40:39.922Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27002,
+  "total_items": 27004,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "974bb8b895f56f42830891fce0bd800d079b712d2cbdc95910b1867f17b30e98",
+      "content_hash": "756f779e965dcf56383afc5c0cb98757ff9c4cc1b42bdcd9736aeb907ccce558",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T06:31:02.952Z"
+      "persisted_at": "2026-11-28T06:40:39.677Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "446e4567b8f1e9ce3ba6e38991d2d7e9ea1ac07e7667aaecab67359a4ef97dcd",
+      "content_hash": "13d0443f090cf26e94de62afb8eead729db708a56ab2b7af1ecc913859ceaf64",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T06:31:03.143Z"
+      "persisted_at": "2026-11-28T06:40:39.922Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "67e385a88baf9da7b38c40bd0a1d7577e93d06c24d8ab20053c5ec6f7270b2ab",
+      "content_hash": "07eb280037335af27b98056c0b0fde9daef9bc147055defd39d1b92b32155123",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T06:22:16.176Z"
+      "persisted_at": "2026-11-28T06:40:38.027Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -216541,26 +216541,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "0c11c147",
+      "source_url": "https://github.com/str4d/rage",
+      "source_version": "11c93ccd",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-26T16:30:47.322Z"
+      "verified_at": "2026-11-28T06:40:24.265Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RIOU-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JWWJ-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "unhappychoice-gitlogue-learnings",
+      "repository": "str4d-rage-learnings",
       "source_version": "HEAD",
-      "content_hash": "af7ba3196bde7e7fa4c7f7ea36083a19369bede5d81d997b1dead3aea13026da",
+      "content_hash": "d13d02b419f6eb88fd477e0769f184450067966d9c938dc19f837387f27f5d24",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T16:31:02.246Z"
+      "persisted_at": "2026-11-28T06:40:35.930Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -301707,9 +301707,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7e82506c65da355466b8201ab7c65d8e1958fd6df9883bb956069fb0508f992",
+      "content_hash": "38ca6362a39d2343815f98e59e5a37d1f9e306f6c6f3b467eae7040b5b0f5d9a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T06:31:02.744Z"
+      "persisted_at": "2026-11-28T06:40:39.407Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -345186,17 +345186,23 @@
       "slug": "str4d-rage",
       "platform": "github",
       "source_url": "https://github.com/str4d/rage",
-      "source_version": "eaa85530",
-      "content_hash": "8caecbbe2857583e926fe76b5a4631f3954a347572462d1aa74a5726dd6d9b61",
+      "source_version": "11c93ccd",
+      "content_hash": "5f324e0160c15011d92fdf78f08df272d9f6945d2ea4cc46d399f45f3839e079",
       "dossier_path": "07_PROJECT_LEARNING/str4d-rage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/str4d-rage-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 8012,
+          "title": "Empirical Invariant Guard in Cargo.lock",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:58:36.468Z",
+      "verified_at": "2026-11-28T06:40:24.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -345212,10 +345218,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-str4d-rage-architecture-intelligence-str4d-rage-core-invariants.md",
       "title": "Architecture Intelligence: str4d/rage Core Invariants",
       "repository": "str4d/rage",
-      "source_version": "eaa85530",
-      "content_hash": "36be978ef1838f98144467ebdc3f2f71584beedb98c3bb7e35bf5507218d4633",
+      "source_version": "11c93ccd",
+      "content_hash": "52c374b6378063075e4309187ade9597f3939cb35f891c93b78e625cca7d0bce",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T23:58:36.878Z"
+      "persisted_at": "2026-11-28T06:40:25.295Z"
     },
     "rule-10391": {
       "learning_id": "rule-10391",
@@ -345277,9 +345283,9 @@
       "title": "Architecture Intelligence: str4d-rage-learnings Core Invariants",
       "repository": "str4d-rage-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f93577274dbd6391343caa35386051fc278b2e42f82a46d01284f393afb2aca",
+      "content_hash": "ec09390cad04ee992e2f0e7b8a4ee004a114058eca4d91ad23d9d558da3d7661",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T23:59:17.039Z"
+      "persisted_at": "2026-11-28T06:40:36.218Z"
     },
     "rule-10393": {
       "learning_id": "rule-10393",
@@ -359017,13 +359023,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-WC0E-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JY3K-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1f8d1e01e9dd213c8486d0f237e7585fc88f851749e0c477aa413878961e3a33",
+      "content_hash": "dd6954bc0c7dfb3eabc69ba5b3fda54808066b37cb6f064059fb8a58ac176294",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T06:22:15.761Z"
+      "persisted_at": "2026-11-28T06:40:37.478Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -359033,9 +359039,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c689b17b1221b0d958e97e8f4348a6d5a3ddc3cacf9c414d48f7743c152d8990",
+      "content_hash": "2b575f4c21e64f05fcb182601d64c7a2a5ff503982ed4b1f695d70379e45d2b7",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T06:22:15.970Z"
+      "persisted_at": "2026-11-28T06:40:37.756Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -363503,13 +363509,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7MGZ-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JZCU-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "afb2b94982b61898d57cd532702a0a3bd4cb3ab857e2643c501f6dcf9686318e",
+      "content_hash": "5fcdfb00ae3daf284bac7eeda37fcef9e046972fe166a4ddf78f0395208c5b97",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T06:31:02.532Z"
+      "persisted_at": "2026-11-28T06:40:39.103Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -371085,6 +371091,30 @@
       "content_hash": "a5bf3fe4be1b2db7942e10f1ead2f626a954c7c65f2d09dd48c4e8cec580a5a0",
       "domain_letter": "K",
       "persisted_at": "2026-11-28T06:31:01.799Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-str4d-rage": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-str4d-rage",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/str4d-rage-verification-protocol-empirical-defect-shield-for-str4d-rage.md",
+      "title": "Verification Protocol: Empirical Defect Shield for str4d/rage",
+      "repository": "str4d/rage",
+      "source_version": "11c93ccd",
+      "content_hash": "8b823d75dbb6011390d623a0b4cc9f841585c21cd26a088ab3a15e087de67a72",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T06:40:25.571Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-str4d-rage-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-str4d-rage-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/str4d-rage-learnings-verification-protocol-empirical-defect-shield-for-str4d-rag.md",
+      "title": "Verification Protocol: Empirical Defect Shield for str4d-rage-learnings",
+      "repository": "str4d-rage-learnings",
+      "source_version": "HEAD",
+      "content_hash": "854d2603822fc079c907bc191ce3b6ed57d715b273d70dd808006075024a1628",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T06:40:36.491Z"
     }
   },
   "ai-builder-brain": {

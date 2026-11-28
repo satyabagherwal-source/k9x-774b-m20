@@ -13995,3 +13995,4 @@
 | `CYCLE-20261128-KVLW` | `2026-11-28T06:13:21.284Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11051` | Yes (`d7e1aa8b...`) |
 | `CYCLE-20261128-W6OZ` | `2026-11-28T06:22:08.867Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11052` | Yes (`6efeb35f...`) |
 | `CYCLE-20261128-7I52` | `2026-11-28T06:30:56.918Z` | `chroma-core/chroma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11053` | Yes (`bad7e45d...`) |
+| `CYCLE-20261128-JO6L` | `2026-11-28T06:40:24.621Z` | `str4d/rage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`5f324e01...`) |

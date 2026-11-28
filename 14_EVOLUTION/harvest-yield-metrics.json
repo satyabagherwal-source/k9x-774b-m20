@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T06:30:56.928Z",
-  "total_cycles_completed": 13280,
-  "total_learnings_persisted": 13280,
-  "total_rules_promoted": 11973,
+  "last_updated": "2026-11-28T06:40:24.662Z",
+  "total_cycles_completed": 13281,
+  "total_learnings_persisted": 13281,
+  "total_rules_promoted": 11974,
   "history": [
-    {
-      "timestamp": "2026-11-27T12:12:32.183Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T12:21:10.051Z",
       "repository": "yyjeqhc/webcodex",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T06:30:56.928Z",
       "repository": "chroma-core/chroma",
       "learningId": "learn-github-chroma-core-chroma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T06:40:24.662Z",
+      "repository": "str4d/rage",
+      "learningId": "learn-github-str4d-rage",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

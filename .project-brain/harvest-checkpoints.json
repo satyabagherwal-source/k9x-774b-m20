@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T06:30:56.931Z",
+  "last_updated": "2026-11-28T06:40:24.667Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10956,14 +10956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-str4d-rage",
-      "content_hash": "8caecbbe2857583e926fe76b5a4631f3954a347572462d1aa74a5726dd6d9b61",
-      "verified_at": "2026-11-24T23:58:36.655Z",
+      "content_hash": "5f324e0160c15011d92fdf78f08df272d9f6945d2ea4cc46d399f45f3839e079",
+      "verified_at": "2026-11-28T06:40:24.666Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:58:36.655Z"
+      "last_updated": "2026-11-28T06:40:24.666Z"
     },
     "memvid/memvid": {
       "repository": "memvid/memvid",

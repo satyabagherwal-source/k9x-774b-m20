@@ -14028,3 +14028,4 @@ Every entry in this ledger must capture:
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `4c6a489e` | Multi-dimensional audit evidence | 2026-11-28T06:13:21.297Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `c7b96196` | Multi-dimensional audit evidence | 2026-11-28T06:22:08.872Z |
 | `learn-github-chroma-core-chroma` | `https://github.com/chroma-core/chroma` | `de23e663` | Multi-dimensional audit evidence | 2026-11-28T06:30:56.923Z |
+| `learn-github-str4d-rage` | `https://github.com/str4d/rage` | `11c93ccd` | Multi-dimensional audit evidence | 2026-11-28T06:40:24.654Z |
