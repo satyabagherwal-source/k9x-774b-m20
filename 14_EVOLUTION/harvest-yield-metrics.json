@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T11:47:38.345Z",
-  "total_cycles_completed": 13323,
-  "total_learnings_persisted": 13323,
-  "total_rules_promoted": 12021,
+  "last_updated": "2026-11-28T12:09:29.896Z",
+  "total_cycles_completed": 13325,
+  "total_learnings_persisted": 13325,
+  "total_rules_promoted": 12023,
   "history": [
-    {
-      "timestamp": "2026-11-27T17:19:32.233Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T17:32:04.988Z",
-      "repository": "ai-sage/GigaChat4-708B-A41B",
-      "learningId": "learn-huggingface-ai-sage-gigachat4-708b-a41b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T17:32:14.756Z",
       "repository": "vanniktech/gradle-maven-publish-plugin",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T11:47:38.345Z",
       "repository": "mikelikesdesign/SwiftUI-experiments",
       "learningId": "learn-github-mikelikesdesign-swiftui-experiments",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T12:09:26.030Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T12:09:29.896Z",
+      "repository": "DevExpress/testcafe",
+      "learningId": "learn-github-devexpress-testcafe",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -14049,3 +14049,5 @@
 | `CYCLE-20261128-MV9I` | `2026-11-28T11:22:49.926Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11095` | Yes (`6f58170a...`) |
 | `CYCLE-20261128-IQFY` | `2026-11-28T11:47:36.670Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11096` | Yes (`6492c11e...`) |
 | `CYCLE-20261128-IRQ6` | `2026-11-28T11:47:38.334Z` | `mikelikesdesign/SwiftUI-experiments` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11097` | Yes (`be6ddd5a...`) |
+| `CYCLE-20261128-ASQR` | `2026-11-28T12:09:26.019Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11098` | Yes (`f2d06e61...`) |
+| `CYCLE-20261128-AVQ6` | `2026-11-28T12:09:29.886Z` | `DevExpress/testcafe` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11099` | Yes (`a966b2ed...`) |

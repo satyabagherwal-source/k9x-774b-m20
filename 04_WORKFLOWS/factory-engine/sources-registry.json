@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T11:47:43.509Z",
-    "lastVerified": "2026-11-28T11:47:43.509Z",
+    "lastChecked": "2026-11-28T12:09:34.086Z",
+    "lastVerified": "2026-11-28T12:09:34.086Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-28T10:36:17.452Z",
+    "lastChecked": "2026-11-28T12:09:34.074Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-28T10:36:17.452Z"
+    "lastVerified": "2026-11-28T12:09:34.074Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1885,8 +1885,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-28T05:24:49.660Z",
-    "lastVerified": "2026-11-28T05:24:49.660Z",
+    "lastChecked": "2026-11-28T12:09:29.407Z",
+    "lastVerified": "2026-11-28T12:09:29.407Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -2801,12 +2801,12 @@
     "lastVerified": "2026-11-27T23:30:28.974Z"
   },
   "ontos-ai-knowhere": {
-    "name": "Ontos-AI/knowhere",
+    "name": "knowhere",
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-27T15:45:38.152Z",
-    "lastVerified": "2026-11-27T15:45:38.152Z",
+    "lastChecked": "2026-11-28T12:09:31.780Z",
+    "lastVerified": "2026-11-28T12:09:31.780Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
@@ -2815,7 +2815,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7036495c"
   },
   "sharkdp-hyperfine": {
     "name": "hyperfine",
@@ -7017,12 +7018,12 @@
     "lastVerified": "2026-11-27T06:29:08.118Z"
   },
   "open-policy-agent-opa": {
-    "name": "open-policy-agent/opa",
+    "name": "opa",
     "officialUrl": "https://github.com/open-policy-agent/opa",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T17:01:47.363Z",
-    "lastVerified": "2026-11-27T17:01:47.363Z",
+    "lastChecked": "2026-11-28T12:09:26.973Z",
+    "lastVerified": "2026-11-28T12:09:26.973Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-opa",
@@ -7031,7 +7032,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "58d46831"
   },
   "mariadb-server": {
     "name": "MariaDB/server",
@@ -9065,14 +9067,14 @@
     "officialUrl": "https://github.com/pola-rs/polars",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T10:51:51.072Z",
-    "lastVerified": "2026-11-27T10:51:51.072Z",
+    "lastChecked": "2026-11-28T12:09:24.528Z",
+    "lastVerified": "2026-11-28T12:09:24.528Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "03fb72db54b384d870c96565a841ec6c79b36ce7e027e0e6d7e5caa5f17d126f",
+    "contentHash": "f2d06e619a7168cc840c9abb60fb95b7398e47443ca3b13afb52d78d64bd460f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11936,9 +11938,9 @@
   "jaywcjlove-devhub": {
     "name": "DevHub",
     "officialUrl": "https://github.com/jaywcjlove/DevHub",
-    "lastChecked": "2026-11-26T07:28:37.434Z",
+    "lastChecked": "2026-11-28T12:09:24.066Z",
     "revisionIdentifier": "15d258ec",
-    "lastVerified": "2026-11-26T07:28:37.434Z"
+    "lastVerified": "2026-11-28T12:09:24.066Z"
   },
   "google-closure-compiler": {
     "name": "google/closure-compiler",
@@ -12359,11 +12361,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "devexpress-testcafe": {
-    "name": "testcafe",
+    "name": "DevExpress/testcafe",
     "officialUrl": "https://github.com/DevExpress/testcafe",
-    "lastChecked": "2026-11-25T01:00:49.454Z",
-    "revisionIdentifier": "1870103c",
-    "lastVerified": "2026-11-25T01:00:49.454Z"
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-28T12:09:28.521Z",
+    "lastVerified": "2026-11-28T12:09:28.521Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-devexpress-testcafe",
+    "contentHash": "a966b2ed658fbf2ff40ca3c0cf6cbc2951fad35564779fbc9fb2c2fc9ce1e4b3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sweetpad-dev-sweetpad": {
     "name": "sweetpad-dev/sweetpad",

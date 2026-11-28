@@ -14082,3 +14082,5 @@ Every entry in this ledger must capture:
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `e3bbc3fc` | Multi-dimensional audit evidence | 2026-11-28T11:22:49.930Z |
 | `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `f50ab796` | Multi-dimensional audit evidence | 2026-11-28T11:47:36.675Z |
 | `learn-github-mikelikesdesign-swiftui-experiments` | `https://github.com/mikelikesdesign/SwiftUI-experiments` | `6effebb7` | Multi-dimensional audit evidence | 2026-11-28T11:47:38.339Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `4ba28fb5` | Multi-dimensional audit evidence | 2026-11-28T12:09:26.023Z |
+| `learn-github-devexpress-testcafe` | `https://github.com/DevExpress/testcafe` | `3e933c68` | Multi-dimensional audit evidence | 2026-11-28T12:09:29.890Z |

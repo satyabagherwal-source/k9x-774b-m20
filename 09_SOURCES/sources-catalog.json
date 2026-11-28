@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "be2a5221",
+    "sourceVersion": "4ba28fb5",
     "license": "MIT",
-    "contentHash": "03fb72db54b384d870c96565a841ec6c79b36ce7e027e0e6d7e5caa5f17d126f",
-    "lastHarvestedAt": "2026-11-27T10:51:52.452Z",
+    "contentHash": "f2d06e619a7168cc840c9abb60fb95b7398e47443ca3b13afb52d78d64bd460f",
+    "lastHarvestedAt": "2026-11-28T12:09:26.023Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
@@ -10133,10 +10133,10 @@
     "repository": "DevExpress/testcafe",
     "platform": "github",
     "sourceUrl": "https://github.com/DevExpress/testcafe",
-    "sourceVersion": "1870103c",
+    "sourceVersion": "3e933c68",
     "license": "MIT",
-    "contentHash": "e775f6056872480cf06555afe9735542eea2e6af8376353e18f53df297760c20",
-    "lastHarvestedAt": "2026-11-12T15:25:09.789Z",
+    "contentHash": "a966b2ed658fbf2ff40ca3c0cf6cbc2951fad35564779fbc9fb2c2fc9ce1e4b3",
+    "lastHarvestedAt": "2026-11-28T12:09:29.890Z",
     "learningId": "learn-github-devexpress-testcafe"
   },
   "planetable-planet": {

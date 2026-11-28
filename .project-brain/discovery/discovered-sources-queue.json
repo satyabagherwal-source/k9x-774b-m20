@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T11:47:44.705Z",
+  "updated_at": "2026-11-28T12:09:36.960Z",
   "stats": {
-    "total_discovered": 10906,
-    "approved_pending_harvest": 10358,
+    "total_discovered": 10921,
+    "approved_pending_harvest": 10373,
     "harvested_count": 0,
     "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10365,
+      "COMMUNITY_AND_EXPERT": 10380,
       "OFFICIAL_DOCUMENTATION": 299,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
@@ -236123,6 +236123,336 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikelikesdesign-swiftui-experiments-learnings.md",
         "fileName": "mikelikesdesign-swiftui-experiments-learnings.md"
+      }
+    },
+    "SRC-123CFC43C8BA": {
+      "id": "SRC-123CFC43C8BA",
+      "url": "https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md",
+      "title": "https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:35.589Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-7870EC98D103": {
+      "id": "SRC-7870EC98D103",
+      "url": "https://github.com/DevExpress/testcafe/releases/tag/v3.7.8",
+      "title": "https://github.com/DevExpress/testcafe/releases/tag/v3.7.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:35.686Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-0FC9E1D9C360": {
+      "id": "SRC-0FC9E1D9C360",
+      "url": "https://registry.npmjs.org/chai/-/chai-4.3.4.tgz",
+      "title": "https://registry.npmjs.org/chai/-/chai-4.3.4.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:35.818Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-F55CCA504B4A": {
+      "id": "SRC-F55CCA504B4A",
+      "url": "https://eslint.org/version-support",
+      "title": "https://eslint.org/version-support",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:35.906Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-EC5877ED18A1": {
+      "id": "SRC-EC5877ED18A1",
+      "url": "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz",
+      "title": "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:35.995Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-20006F25FC10": {
+      "id": "SRC-20006F25FC10",
+      "url": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
+      "title": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:36.099Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-CFF6F94978FB": {
+      "id": "SRC-CFF6F94978FB",
+      "url": "https://registry.npmjs.org/chokidar/-/chokidar-4.0.3.tgz",
+      "title": "https://registry.npmjs.org/chokidar/-/chokidar-4.0.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:36.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-BC0C67116DCD": {
+      "id": "SRC-BC0C67116DCD",
+      "url": "https://registry.npmjs.org/typescript/-/typescript-4.9.5.tgz",
+      "title": "https://registry.npmjs.org/typescript/-/typescript-4.9.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:36.287Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-C1D76226C3F6": {
+      "id": "SRC-C1D76226C3F6",
+      "url": "https://www.devexpress.com/",
+      "title": "https://www.devexpress.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:36.376Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-DA8B2AA4DA6D": {
+      "id": "SRC-DA8B2AA4DA6D",
+      "url": "https://github.com/DevExpress/testcafe/issues/8573",
+      "title": "https://github.com/DevExpress/testcafe/issues/8573",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:36.467Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-5FAA4BF4918F": {
+      "id": "SRC-5FAA4BF4918F",
+      "url": "https://example.com/path",
+      "title": "https://example.com/path",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:36.554Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-4885D9244350": {
+      "id": "SRC-4885D9244350",
+      "url": "https://auth.example.com/login?redirect=1",
+      "title": "https://auth.example.com/login?redirect=1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:36.656Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-D6C5ED4260CC": {
+      "id": "SRC-D6C5ED4260CC",
+      "url": "https://example.com/other",
+      "title": "https://example.com/other",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:36.745Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-B0A7A50E12EB": {
+      "id": "SRC-B0A7A50E12EB",
+      "url": "https://auth.example.com/",
+      "title": "https://auth.example.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:36.833Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
+      }
+    },
+    "SRC-4880F96AB8EB": {
+      "id": "SRC-4880F96AB8EB",
+      "url": "https://broken.com/",
+      "title": "https://broken.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T12:09:36.960Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
+        "fileName": "devexpress-testcafe-learnings.md"
       }
     }
   }

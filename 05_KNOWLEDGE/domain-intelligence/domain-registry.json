@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T11:47:46.439Z",
-  "total_records": 2898,
+  "last_updated": "2026-11-28T12:09:38.953Z",
+  "total_records": 2900,
   "domains": {
     "A": {
       "total": 27,
@@ -1779,7 +1779,7 @@
       ]
     },
     "H": {
-      "total": 705,
+      "total": 707,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2485,7 +2485,9 @@
         "domain_intelligence-technical-construction-intelligence-biomejs-biome-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tanstack-router-core-invariants",
         "domain_intelligence-technical-construction-intelligence-biomejs-biome-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-tanstack-router-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-tanstack-router-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-devexpress-testcafe-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-devexpress-testcafe-learnings-core-invariant"
       ]
     },
     "I": {
@@ -17780,8 +17782,8 @@
       "title": "Architecture Intelligence: pola-rs/polars Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-architecture-intelligence-pola-rs-polars-core-invariants.md",
       "repository": "pola-rs/polars",
-      "content_hash": "f1d7f853f4f914b4c42f7fcfec52d18079625b2a07c6fe15d6892328ec26ca26",
-      "created_at": "2026-11-27T10:51:52.908Z"
+      "content_hash": "bcf67ea8dd4ee350028a1678fa6ca0065d85872831335f4673f3153027a1989d",
+      "created_at": "2026-11-28T12:09:26.678Z"
     },
     "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -17798,8 +17800,8 @@
       "title": "Architecture Intelligence: pola-rs-polars-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-learnings-architecture-intelligence-pola-rs-polars-learnings-core.md",
       "repository": "pola-rs-polars-learnings",
-      "content_hash": "b75ebe0ce018e0b83a283323c65adca9c7979e46ad3944663798643500214ed4",
-      "created_at": "2026-11-27T10:52:01.748Z"
+      "content_hash": "1998a90f85c59621a803398df87ff66e26bf4bbb3ba4611db8f15515d6e2f88f",
+      "created_at": "2026-11-28T12:09:34.994Z"
     },
     "DOM-D-A6170DB1": {
       "record_id": "DOM-D-A6170DB1",
@@ -46845,8 +46847,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "4ee99bf230649c9ea317a997a853921d348655605fda894b27f04049fde7389a",
-      "created_at": "2026-11-28T11:47:46.439Z"
+      "content_hash": "729b8f02abb6673b4e5d31673d1827fa3df7609453d6ffeddb7988185e9e854a",
+      "created_at": "2026-11-28T12:09:38.953Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -49247,6 +49249,24 @@
       "repository": "mikelikesdesign-swiftui-experiments-learnings",
       "content_hash": "cdd76e029ab8d46d37ebc9cc780371121ef6b488b78eeb82c1b5031b5ef8c4e8",
       "created_at": "2026-11-28T11:47:45.222Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-devexpress-testcafe-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-devexpress-testcafe-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: DevExpress/testcafe Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-devexpress-testcafe-technical-construction-intelligence-devexpress-testcafe-core.md",
+      "repository": "DevExpress/testcafe",
+      "content_hash": "bdaaac26ba34cf3c93454c53ed3c1b6b5371128a0618d60fdd33e2d51910bc71",
+      "created_at": "2026-11-28T12:09:30.432Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-devexpress-testcafe-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-devexpress-testcafe-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: devexpress-testcafe-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-devexpress-testcafe-learnings-technical-construction-intelligence-devexpress-tes.md",
+      "repository": "devexpress-testcafe-learnings",
+      "content_hash": "2a163b1e5b9b87b8974fe9f4d0ec3ec4d6aa0e690ecc14c1a72abada2bdba69a",
+      "created_at": "2026-11-28T12:09:37.564Z"
     }
   }
 }

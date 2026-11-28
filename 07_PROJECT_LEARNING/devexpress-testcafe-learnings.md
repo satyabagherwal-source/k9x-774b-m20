@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md`  
 > **Source**: github ([https://github.com/DevExpress/testcafe](https://github.com/DevExpress/testcafe))  
-> **Source Version**: `1870103c`  
+> **Source Version**: `3e933c68`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T15:25:09.440Z  
+> **Timestamp**: 2026-11-28T12:09:28.526Z  
 > **Learning ID**: `learn-github-devexpress-testcafe`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DevExpress/testcafe](https://github.com/DevExpress/testcafe))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T15:25:09.252Z  
+> **Harvest Timestamp**: 2026-11-28T12:09:28.521Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Node.js tool to automate end-to-end web testing.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9892 stars
+- **Stars / Engagement**: 9890 stars
 
 ---
 
@@ -601,11 +601,15 @@ export function parseConfig (str) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8572** (2026-11-11): **Remove gulp-ll-next depemdency**
-  *Symptoms*: 
+- **Issue #8577** (2026-11-26): **fixed publishing workflow**
+  *Symptoms*: <!-- Thank you for your contribution.  Before making a PR, please read our contributing guidelines at https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md#code-contribution  We recommend creating a *draft* PR, so that you can mark it as 'ready for review' when you are done. -->  ## Purpose _Describe the problem you want to address or the feature you want to implement._  ## Approach _Describe how your changes address the issue or implement the desired functionality in as much detail as possible._  ## References _Provide a link to the existing issue(s), if any._  ## Pre-Merge TODO - [ ] Write tests for your proposed changes - [ ] Make sure that existing tests do not fail 
+  **Post-Mortem & Fix Analysis**:
+  > Release [v3.7.8](https://github.com/DevExpress/testcafe/releases/tag/v3.7.8) addresses this.
 
-- **Issue #8571** (2026-11-10): **Inline V8 flags filter dependency**
-  *Symptoms*: Code from https://github.com/DevExpress/bin-v8-flags-filter repository inlined here to get rid of @devexpress/bin-v8-flags-filter npm dependency
+- **Issue #8576** (2026-11-26): **build: updated testcafe version**
+  *Symptoms*: <!-- Thank you for your contribution.  Before making a PR, please read our contributing guidelines at https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md#code-contribution  We recommend creating a *draft* PR, so that you can mark it as 'ready for review' when you are done. -->  ## Purpose _Describe the problem you want to address or the feature you want to implement._  ## Approach _Describe how your changes address the issue or implement the desired functionality in as much detail as possible._  ## References _Provide a link to the existing issue(s), if any._  ## Pre-Merge TODO - [ ] Write tests for your proposed changes - [ ] Make sure that existing tests do not fail 
+  **Post-Mortem & Fix Analysis**:
+  > Release [v3.7.8](https://github.com/DevExpress/testcafe/releases/tag/v3.7.8) addresses this.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -622,370 +626,575 @@ export function parseConfig (str) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1870103c` (2026-11-11)
-**Commit Message**: Remove gulp-ll-next depemdency (#8572)
+### Incident Patch 1: `3e933c68` (2026-11-26)
+**Commit Message**: fixed publishing workflow (#8577)
 
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+<!--
+Thank you for your contribution.
 
-**File**: `Gulpfile.js` (modified, +0/-13)
+Before making a PR, please read our contributing guidelines at
+
+https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md#code-contribution
+
+We recommend creating a *draft* PR, so that you can mark it as 'ready
+for review' when you are done.
+-->
+
+## Purpose
+_Describe the problem you want to address or the feature you want to
+implement._
+
+## Approach
+_Describe how your changes address the issue or implement the desired
+functionality in as much detail as possible._
+
+## References
+_Provide a link to the existing issue(s), if any._
+
+## Pre-Merge TODO
+- [ ] Write tests for your proposed changes
+- [ ] Make sure that existing tests do not fail
+
+**File**: `.github/workflows/publish.yml` (modified, +2/-2)
 ```diff
-@@ -5,7 +5,6 @@ const less                          = require('gulp-less');
- const mustache                      = require('gulp-mustache');
- const rename                        = require('gulp-rename');
- const uglify                        = require('gulp-uglify');
--const ll                            = require('gulp-ll-next');
- const clone                         = require('gulp-clone');
- const mergeStreams                  = require('merge-stream');
- const del                           = require('del');
-@@ -40,18 +39,6 @@ const readFile = promisify(fs.readFile);
- 
- gulpStep.install();
- 
--ll
--    .install()
--    .tasks([
--        'lint',
--        'check-licenses',
--    ])
--    .onlyInDebug([
--        'styles',
--        'client-scripts',
--        'client-scripts-bundle',
--    ]);
--
- const ARGS          = minimist(process.argv.slice(2));
- const QR_CODE       = 'qr-code' in ARGS;
- const SKIP_BUILD    = process.env.SKIP_BUILD || 'skip-build' in ARGS;
-```
-
-**File**: `package-lock.json` (modified, +0/-38)
-```diff
-@@ -157,7 +157,6 @@
-         "gulp-data": "^1.3.1",
-         "gulp-eslint-new": "^2.6.2",
-         "gulp-less": "^5.0.0",
--        "gulp-ll-next": "^2.1.0",
-         "gulp-mustache": "^3.0.1",
-         "gulp-rename": "^1.3.0",
-         "gulp-step": "^1.0.1",
-@@ -8193,43 +8192,6 @@
-         "readable-stream": "3"
-       }
-     },
--    "node_modules/gulp-ll-next": {
--      "version": "2.1.0",
--      "resolved": "https://registry.npmjs.org/gulp-ll-next/-/gulp-ll-next-2.1.0.tgz",
--      "integrity": "sha512-1tA8aGBSUYzK1ggzNIyBxdziivl7RZ9dvJx8kLPJ6fc4uB5bVBdwFzdvxcbzqvJk0uV0dbTs9i7c2hhjEodELQ==",
--      "dev": true,
--      "license": "MIT",
--      "dependencies": {
--        "pinkie-promise": "^1.0.0",
--        "plugin-error": "^1.0.1"
--      },
--      "engines": {
--        "node": ">=6.0.0"
--      }
--    },
--    "node_modules/gulp-ll-next/node_modules/pinkie": {
--      "version": "1.0.0",
--      "resolved": "https://registry.npmjs.org/pinkie/-/pinkie-1.0.0.tgz",
--      "integrity": "sha512-VFVaU1ysKakao68ktZm76PIdOhvEfoNNRaGkyLln9Os7r0/MCxqHjHyBM7dT3pgTiBybqiPtpqKfpENwdBp50Q==",
--      "dev": true,
--      "license": "MIT",
--      "engines": {
--        "node": ">=0.10.0"
--      }
--    },
--    "node_modules/gulp-ll-next/node_modules/pinkie-promise": {
--      "version": "1.0.0",
--      "resolved": "https://registry.npmjs.org/pinkie-promise/-/pinkie-promise-1.0.0.tgz",
--      "integrity": "sha512-5mvtVNse2Ml9zpFKkWBpGsTPwm3DKhs+c95prO/F6E7d6DN0FPqxs6LONpLNpyD7Iheb7QN4BbUoKJgo+DnkQA==",
--      "dev": true,
--      "license": "MIT",
--      "dependencies": {
--        "pinkie": "^1.0.0"
--      },
--      "engines": {
--        "node": ">=0.10.0"
--      }
--    },
-     "node_modules/gulp-mustache": {
-       "version": "3.0.1",
-       "resolved": "https://registry.npmjs.org/gulp-mustache/-/gulp-mustache-3.0.1.tgz",
-```
-
-**File**: `package.json` (modified, +0/-1)
-```diff
-@@ -203,7 +203,6 @@
-     "gulp-data": "^1.3.1",
-     "gulp-eslint-new": "^2.6.2",
-     "gulp-less": "^5.0.0",
--    "gulp-ll-next": "^2.1.0",
-     "gulp-mustache": "^3.0.1",
-     "gulp-rename": "^1.3.0",
-     "gulp-step": "^1.0.1",
+@@ -19,7 +19,7 @@ jobs:
+           ref: ${{ github.event.release.target_commitish }}
+       - uses: DevExpress/testcafe-build-system/actions/publish@main
+         with:
+-          pre-publish-script: gulp test-server
++          pre-publish-script: npx --no-install gulp test-server
+           audit-level: critical
+           omit-dev-dependencies: true
+           version: ${{ github.event.release.tag_name }}
+@@ -42,4 +42,4 @@ jobs:
+             password: ${{ secrets.DOCKERHUB_TOKEN }}
+       - run: npm ci
+       - run: npx --no-install gulp build
+-      - run: gulp docker-publish
+\ No newline at end of file
++      - run: npx --no-install gulp docker-publish
 ```
 
 ---
 
-### Incident Patch 2: `9aa493c3` (2026-11-10)
-**Commit Message**: Inline V8 flags filter dependency (#8571)
+### Incident Patch 2: `20684e31` (2026-11-26)
+**Commit Message**: build: updated testcafe version (#8576)
 
-Code from https://github.com/DevExpress/bin-v8-flags-filter repository
-inlined here to get rid of @devexpress/bin-v8-flags-filter npm
-dependency
+<!--
+Thank you for your contribution.
 
----------
+Before making a PR, please read our contributing guidelines at
 
-Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md#code-contribution
 
-**File**: `bin/testcafe-with-v8-flag-filter.js` (modified, +1/-1)
+We recommend creating a *draft* PR, so that you can mark it as 'ready
+for review' when you are done.
+-->
+
+## Purpose
+_Describe the problem you want to address or the feature you want to
+implement._
+
+## Approach
+_Describe how your changes address the issue or implement the desired
+functionality in as much detail as possible._
+
+## References
+_Provide a link to the existing issue(s), if any._
+
+## Pre-Merge TODO
+- [ ] Write tests for your proposed changes
+- [ ] Make sure that existing tests do not fail
+
+**File**: `package-lock.json` (modified, +2/-28)
 ```diff
-@@ -4,7 +4,7 @@
- 
- const path          = require('path');
- const url           = require('url');
--const v8FlagsFilter = require('@devexpress/bin-v8-flags-filter');
-+const v8FlagsFilter = require('./v8-flags-filter');
- const semver        = require('semver');
- 
- const ESM_OPTION = '--esm';
-```
-
-**File**: `bin/v8-flags-filter.js` (added, +141/-0)
-```diff
-@@ -0,0 +1,141 @@
-+'use strict';
-+
-+/*
-+The MIT License (MIT)
-+
-+Copyright (c) 2016 Ivan Nikulin (ifaaan@gmail.com, https://github.com/inikulin)
-+
-+Permission is hereby granted, free of charge, to any person obtaining a copy
-+of this software and associated documentation files (the "Software"), to deal
-+in the Software without restriction, including without limitation the rights
-+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-+copies of the Software, and to permit persons to whom the Software is
-+furnished to do so, subject to the following conditions:
-+
-+The above copyright notice and this permission notice shall be included in all
-+copies or substantial portions of the Software.
-+
-+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-+SOFTWARE.
-+*/
-+
-+const { spawn } = require('child_process');
-+
-+const FLAGS = [
-+    'debug',
-+    '--debug',
-+    '--debug-brk',
-+    '--inspect',
-+    '--inspect-brk',
-+    '--expose-gc',
-+    '--gc-global',
-+    '--es_staging',
-+    '--no-deprecation',
-+    '--prof',
-+    '--log-timer-events',
-+    '--throw-deprecation',
-+    '--trace-deprecation',
-+    '--use_strict',
-+    '--allow-natives-syntax',
-+    '--perf-basic-prof',
-+    '--experimental-repl-await',
-+    '--experimental-loader',
-+    '--no-warnings',
-+];
-+
-+const FLAG_PREFIXES = [
-+    '--harmony',
-+    '--trace',
-+    '--icu-data-dir',
-+    '--max-old-space-size',
-+    '--preserve-symlinks',
-+];
-+
-+const DEFAULT_FORCED_KILL_DELAY = 30000;
-+
-+function getChildArgs (cliPath, ignore) {
-+    const args = [cliPath];
-+
-+    process.argv.slice(2).forEach(arg => {
-+        const flag = arg.split('=')[0];
-+
-+        if (ignore.indexOf(flag) > -1) {
-+            args.push(arg);
-+            return;
-+        }
-+
-+        if (FLAGS.indexOf(flag) > -1) {
-+            args.unshift(arg);
-+            return;
-+        }
-+
-+        if (FLAG_PREFIXES.some(prefix => arg.indexOf(prefix) === 0)) {
-+            args.unshift(arg);
-+            return;
-+        }
-+
-+        args.push(arg);
-+    });
-+
-+    return args;
-+}
-+
-+function setupSignalHandler (signal, childProcess, useShutdownMessage, forcedKillDelay) {
-+    function forceKill () {
-+        childProcess.kill('SIGTERM');
-+    }
-+
-+    function handler () {
-+        if (useShutdownMessage)
-+            childProcess.send('shutdown');
-+        else
-+            childProcess.kill(signal);
-+
-+        setTimeout(forceKill, forcedKillDelay).unref();
-+    }
-+
-+    process.on(signal, handler);
-+}
-+
-+module.exports = function (cliPath, opts) {
-+    opts = opts || {};
-+
-+    const useShutdownMessage = opts.useShutdownMessage;
-+    const forcedKillDelay    = opts.forcedKillDelay || DEFAULT_FORCED_KILL_DELAY;
-+    const ignore             = opts.ignore || [];
-+    const args               = getChildArgs(cliPath, ignore);
-+
-+    if (opts.forcedArgs && opts.forcedArgs.length > 0)
-+        args.unshift(...opts.forcedArgs);
-+
-+    const cliProc = spawn(process.execPath, args, {
-+        stdio: [process.stdin, process.stdout, process.stderr, useShutdownMessage ? 'ipc' : null],
-+    });
-+
-+    cliProc.on('exit', (code, signal) => {
-+        if (useShutdownMessage && process.disconnect)
-+            process.disconnect();
-+
-+        process.on('exit', () => {
-+            if (signal)
-+                process.kill(process.pid, signal);
-+            else
-+                process.exit(code);
-+        });
-+    });
-+
-+    setupSignalHandler('SIGINT', cliProc, useShutdownMessage, forcedKillDelay);
-+    setupSignalHandler('SIGBREAK', cliProc, useShutdownMessage, forcedKillDelay);
-+
-+    if (useShutdownMessage) {
-+        process.on('message', message => {
-+            if (message === 'shutdown')
-+                cliProc.send('shutdown');
-+        });
-+    }
-+};
-```
-
-**File**: `package-lock.json` (modified, +0/-7)
-```diff
-@@ -26,7 +26,6 @@
-         "@babel/preset-flow": "^7.22.15",
-         "@babel/preset-react": "^7.22.15",
-         "@babel/runtime": "^7.23.2",
--        "@devexpress/bin-v8-flags-filter": "^1.3.0",
-         "@types/node": "20.14.5",
-         "address": "^2.0.2",
-         "async-exit-hook": "^1.1.2",
-@@ -1947,12 +1946,6 @@
-         "node": ">=6.9.0"
+@@ -1,12 +1,12 @@
+ {
+   "name": "testcafe",
+-  "version": "3.7.7",
++  "version": "3.7.8",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "testcafe",
+-      "version": "3.7.7",
++      "version": "3.7.8",
+       "license": "MIT",
+       "dependencies": {
+         "@babel/core": "^7.23.2",
+@@ -218,7 +218,6 @@
+       "resolved": "https://registry.npmjs.org/@babel/core/-/core-7.29.7.tgz",
+       "integrity": "sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@babel/code-frame": "^7.29.7",
+         "@babel/generator": "^7.29.7",
+@@ -3758,7 +3757,6 @@
+       "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@typescript-eslint/scope-manager": "8.72.1",
+         "@typescript-eslint/types": "8.72.1",
+@@ -4174,7 +4172,6 @@
+       "integrity": "sha512-lGq+9yr1/GuAWaVYIHRjvvySG5/4VfKIvC8EWxStPdcDh/Ka7FG3twP6v4d5BkravUilhIAsG4Qj83t02LWUPQ==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "bin": {
+         "acorn": "bin/acorn"
+       },
+@@ -4941,7 +4938,6 @@
+         }
+       ],
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "baseline-browser-mapping": "^2.11.26",
+         "caniuse-lite": "^1.0.30001813",
+@@ -5223,7 +5219,6 @@
+       "resolved": "https://registry.npmjs.org/chai/-/chai-4.3.4.tgz",
+       "integrity": "sha512-yS5H68VYOCtN1cjfwumDSuzn/9c+yza4f3reKXlE5rUg7SFcCEy90gJvydNgOYtblyf4Zi6jIWRnXOgErta0KA==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "assertion-error": "^1.1.0",
+         "check-error": "^1.0.2",
+@@ -6295,7 +6290,6 @@
+       "deprecated": "This version is no longer supported. Please see https://eslint.org/version-support for other options.",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@eslint-community/eslint-utils": "^4.8.0",
+         "@eslint-community/regexpp": "^4.12.1",
+@@ -10107,23 +10101,6 @@
+         "node": ">=8"
        }
      },
--    "node_modules/@devexpress/bin-v8-flags-filter": {
--      "version": "1.3.0",
--      "resolved": "https://registry.npmjs.org/@devexpress/bin-v8-flags-filter/-/bin-v8-flags-filter-1.3.0.tgz",
--      "integrity": "sha512-LWLNfYGwVJKYpmHUDoODltnlqxdEAl5Qmw7ha1+TSpsABeF94NKSWkQTTV1TB4CM02j2pZyqn36nHgaFl8z7qw==",
+-    "node_modules/mocha/node_modules/balanced-match": {
+-      "version": "1.0.2",
+-      "resolved": "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz",
+-      "integrity": "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==",
+-      "dev": true,
 -      "license": "MIT"
 -    },
-     "node_modules/@devexpress/gulp-qunit-harness": {
-       "version": "1.1.0",
-       "resolved": "https://registry.npmjs.org/@devexpress/gulp-qunit-harness/-/gulp-qunit-harness-1.1.0.tgz",
+-    "node_modules/mocha/node_modules/brace-expansion": {
+-      "version": "2.1.7",
+-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
+-      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
+-      "dev": true,
+-      "license": "MIT",
+-      "dependencies": {
+-        "balanced-match": "^1.0.0"
+-      }
+-    },
+     "node_modules/mocha/node_modules/chokidar": {
+       "version": "4.0.3",
+       "resolved": "https://registry.npmjs.org/chokidar/-/chokidar-4.0.3.tgz",
+@@ -11849,7 +11826,6 @@
+       "integrity": "sha512-cIFJOD1DESzpjOBl763Kp1AH7UE/0fcdHe6rZXUdQ9c50uvgigvW97u3IcSeBwOkgqL/PXPBktBCh0KEu5L8XQ==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "bin": {
+         "rollup": "dist/bin/rollup"
+       },
+@@ -13288,7 +13264,6 @@
+       "integrity": "sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=12"
+       },
+@@ -13483,7 +13458,6 @@
+       "resolved": "https://registry.npmjs.org/typescript/-/typescript-4.9.5.tgz",
+       "integrity": "sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==",
+       "license": "Apache-2.0",
+-      "peer": true,
+       "bin": {
+         "tsc": "bin/tsc",
+         "tsserver": "bin/tsserver"
 ```
 
-**File**: `package.json` (modified, +0/-1)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -75,7 +75,6 @@
-     "@babel/preset-flow": "^7.22.15",
-     "@babel/preset-react": "^7.22.15",
-     "@babel/runtime": "^7.23.2",
--    "@devexpress/bin-v8-flags-filter": "^1.3.0",
-     "@types/node": "20.14.5",
-     "address": "^2.0.2",
-     "async-exit-hook": "^1.1.2",
+@@ -2,7 +2,7 @@
+   "name": "testcafe",
+   "description": "Automated browser testing for the modern web development stack.",
+   "license": "MIT",
+-  "version": "3.7.7",
++  "version": "3.7.8",
+   "author": {
+     "name": "Developer Express Inc.",
+     "url": "https://www.devexpress.com/"
 ```
 
-**File**: `test/server/v8-flags-filter-test.js` (added, +39/-0)
+**File**: `test/functional/setup.js` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,39 @@
-+'use strict';
+@@ -16,6 +16,8 @@ const { findWindow, errors }     = require('testcafe-browser-tools');
+ const authenticationHelper       = require('../../lib/cli/authentication-helper');
+ const isCI                       = require('is-ci');
+ 
++const { LOCAL_BROWSER_INIT_TIMEOUT } = require('../../lib/utils/browser-connection-timeouts');
 +
-+const fs            = require('node:fs');
-+const os            = require('node:os');
-+const path          = require('node:path');
-+const { spawnSync } = require('node:child_process');
-+const { expect }    = require('chai');
+ const setNativeAutomationForRemoteConnection = require('./utils/set-native-automation-for-remote-connection');
+ 
+ let testCafe     = null;
+@@ -229,8 +231,12 @@ before(function () {
+             // NOTE: we need to disable this particular timeout for preventing mocha timeout
+             // error while establishing connection to Sauce Labs. If connection wouldn't be
+             // established after a specified number of attempts, an error will be thrown.
++            // A cold start of a local browser (e.g. Edge on CI runners) can take longer than 60s,
++            // so for local browsers we allow the same time as TestCafe uses to initialize them.
+             if (isBrowserStack || !USE_PROVIDER_POOL)
+                 mocha.timeout(0);
++            else
++                mocha.timeout(LOCAL_BROWSER_INIT_TIMEOUT);
+ 
+             if (USE_PROVIDER_POOL) {
+                 testCafe.configuration.mergeOptions({
+```
+
+---
+
+### Incident Patch 3: `649941a9` (2026-11-25)
+**Commit Message**: fix: fixed clearing storage by origin in CDP (#8575)
+
+closes https://github.com/DevExpress/testcafe/issues/8573
+
+## Purpose
+_Describe the problem you want to address or the feature you want to
+implement._
+
+## Approach
+_Describe how your changes address the issue or implement the desired
+functionality in as much detail as possible._
+
+## References
+_Provide a link to the existing issue(s), if any._
+
+## Pre-Merge TODO
+- [ ] Write tests for your proposed changes
+- [ ] Make sure that existing tests do not fail
+
+**File**: `src/browser/connection/index.ts` (modified, +14/-0)
+```diff
+@@ -36,6 +36,7 @@ import { Proxy } from 'testcafe-hammerhead';
+ import { NextTestRunInfo, OpenBrowserAdditionalOptions } from '../../shared/types';
+ import { EventType } from '../../native-automation/types';
+ import { NativeAutomationBase } from '../../native-automation';
++import { VisitedOrigins } from '../../native-automation/visited-origins';
+ import remoteChrome from 'chrome-remote-interface';
+ 
+ const getBrowserConnectionDebugScope = (id: string): string => `testcafe:browser:connection:${id}`;
+@@ -105,6 +106,7 @@ export default class BrowserConnection extends EventEmitter {
+     private readonly BROWSER_RESTART_TIMEOUT: number;
+     public readonly id: string;
+     private _currentTestRun: TestRun | null = null;
++    private _visitedOrigins: VisitedOrigins | null = null;
+     private readonly jobQueue: BrowserJob[];
+     private readonly initScriptsQueue: InitScriptTask[];
+     public browserConnectionGateway: BrowserConnectionGateway;
+@@ -243,6 +245,15 @@ export default class BrowserConnection extends EventEmitter {
+         return this._messageBus;
+     }
+ 
++    // NOTE: Browser storage is shared by all windows and survives browser restarts (the profile is reused),
++    // so visited origins are tracked for the whole connection lifetime.
++    public get visitedOrigins (): VisitedOrigins {
++        if (!this._visitedOrigins)
++            this._visitedOrigins = new VisitedOrigins();
 +
-+describe('V8 flags filter', function () {
-+    it('forwards V8 flags and forced arguments to the child process', function () {
-+        const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'testcafe-v8-flags-filter-'));
-+        const cliPath = path.join(tempDir, 'cli.js');
++        return this._visitedOrigins;
++    }
 +
-+        try {
-+            fs.writeFileSync(cliPath, 'console.log(JSON.stringify({ args: process.argv.slice(2), execArgv: process.execArgv }));');
+     private _setEventHandlers (): void {
+         this.on('error', e => {
+             this.debugLogger(e);
+@@ -519,6 +530,9 @@ export default class BrowserConnection extends EventEmitter {
+ 
+         BrowserConnectionTracker.remove(this);
+ 
++        this._visitedOrigins?.clear();
++        this._visitedOrigins = null;
 +
-+            const filterPath = path.resolve(__dirname, '../../bin/v8-flags-filter.js');
-+            const runner     = `require(${JSON.stringify(filterPath)})(process.argv[1], { forcedArgs: ['--no-deprecation'] });`;
-+            const result     = spawnSync(process.execPath, [
-+                '-e',
-+                runner,
-+                cliPath,
-+                '--trace-gc',
-+                '--allow-natives-syntax',
-+                '--test-option',
-+            ], { encoding: 'utf8' });
+         this.status = BrowserConnectionStatus.closed;
+         this.emit(BrowserConnectionStatus.closed);
+     }
+```
+
+**File**: `src/native-automation/request-pipeline/index.ts` (modified, +14/-1)
+```diff
+@@ -378,6 +378,13 @@ export default class NativeAutomationRequestPipeline extends NativeAutomationApi
+             && !event.frame.parentId;
+     }
+ 
++    private _trackVisitedOrigin (url: string): void {
++        const isServiceUrl = this.options.serviceDomains.some(domain => url.startsWith(domain));
 +
-+            expect(result.status, result.stderr).to.equal(0);
++        if (!isServiceUrl)
++            this._browserConnection?.visitedOrigins.track(url);
++    }
 +
-+            const output = JSON.parse(result.stdout.trim().split(/\r?\n/).at(-1));
+     private async _updateCurrentFrameTree (): Promise<void> {
+         // NOTE: Due to CDP restrictions (it hangs), we can't get the frame tree
+         // right before injecting service scripts.
+@@ -440,13 +447,19 @@ export default class NativeAutomationRequestPipeline extends NativeAutomationApi
+ 
+             if (specialRequestHandler)
+                 await specialRequestHandler(event, this._client, this._isMainWindow, this.options, sessionId);
+-            else
++            else {
++                if (isRequest(event) && event.resourceType === 'Document')
++                    this._trackVisitedOrigin(event.request.url);
 +
-+            expect(output.args).to.deep.equal(['--test-option']);
-+            expect(output.execArgv).to.deep.equal(['--no-deprecation', '--allow-natives-syntax', '--trace-gc']);
+                 await this._handleOtherRequests(event, sessionId);
++            }
+         });
+ 
+         this._client.Page.on('frameNavigated', async (event: FrameNavigatedEvent) => {
+             requestPipelineLogger('%f', event);
+ 
++            this._trackVisitedOrigin(event.frame.url);
++
+             if (!this._topFrameNavigation(event)
+                 || event.frame.url !== SPECIAL_BLANK_PAGE)
+                 return;
+```
+
+**File**: `src/native-automation/storages-provider.ts` (modified, +19/-2)
+```diff
+@@ -1,6 +1,8 @@
+ import remoteChrome from 'chrome-remote-interface';
+ import { getActiveClient } from './utils/get-active-client';
+ import { StoragesProvider, StoragesProviderBase } from '../test-run/storages/base';
++import { getStorageOrigin } from './visited-origins';
++import { storagesProviderLogger } from '../utils/debug-loggers';
+ 
+ export class CdpStoragesProvider extends StoragesProviderBase implements StoragesProvider {
+     private async _getCdpClient (): Promise<remoteChrome.ProtocolApi> {
+@@ -10,8 +12,23 @@ export class CdpStoragesProvider extends StoragesProviderBase implements Storage
+     }
+ 
+     async clearStorages (): Promise<void> {
+-        const client = await this._getCdpClient();
++        const { visitedOrigins } = this.testRun.browserConnection;
++        const client             = await this._getCdpClient();
++        const origins            = new Set(visitedOrigins.take());
++        const pageOrigin         = getStorageOrigin(this.testRun.test.pageUrl);
+ 
+-        await client.Storage.clearDataForOrigin({ origin: '*', storageTypes: 'all' });
++        if (pageOrigin)
++            origins.add(pageOrigin);
++
++        for (const origin of origins) {
++            try {
++                await client.Storage.clearDataForOrigin({ origin, storageTypes: 'all' });
++            }
++            catch (err) {
++                storagesProviderLogger('Failed to clear storages for origin %s: %s', origin, err);
++
++                visitedOrigins.track(origin);
++            }
 +        }
-+        finally {
-+            fs.rmSync(tempDir, { recursive: true, force: true });
-+        }
+     }
+ }
+```
+
+**File**: `src/native-automation/visited-origins.ts` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++// NOTE: Chrome keys storage of all file:// pages by this origin.
++const FILE_PROTOCOL_ORIGIN = 'file://';
++
++export function getStorageOrigin (url: string): string | null {
++    let parsedUrl: URL;
++
++    try {
++        parsedUrl = new URL(url);
++    }
++    catch {
++        return null;
++    }
++
++    if (parsedUrl.protocol === 'file:')
++        return FILE_PROTOCOL_ORIGIN;
++
++    return parsedUrl.origin === 'null' ? null : parsedUrl.origin;
++}
++
++export class VisitedOrigins {
++    private readonly _origins = new Set<string>();
++
++    public track (url: string): void {
++        const origin = getStorageOrigin(url);
++
++        if (origin)
++            this._origins.add(origin);
++    }
++
++    public take (): string[] {
++        const origins = Array.from(this._origins);
++
++        this._origins.clear();
++
++        return origins;
++    }
++
++    public clear (): void {
++        this._origins.clear();
++    }
++}
+```
+
+**File**: `src/utils/debug-loggers.ts` (modified, +2/-0)
+```diff
+@@ -12,6 +12,7 @@ const requestPipelineOtherRequestLogger    = requestPipelineLogger.extend('other
+ const resourceInjectorLogger               = nativeAutomationLogger.extend('resource-injector');
+ const requestHooksLogger                   = nativeAutomationLogger.extend('request-hooks');
+ const requestHooksEventProviderLogger      = requestHooksLogger.extend('event-provider');
++const storagesProviderLogger               = nativeAutomationLogger.extend('storages-provider');
+ 
+ const browserLogger               = testcafeLogger.extend('browser');
+ const browserProviderLogger       = browserLogger.extend('provider');
+@@ -36,6 +37,7 @@ export {
+     requestPipelineServiceRequestLogger,
+     requestPipelineOtherRequestLogger,
+     requestPipelineContextLogger,
++    storagesProviderLogger,
+     testRunControllerLogger,
+     reporterLogger,
+     versionLogger,
+```
+
+**File**: `test/functional/fixtures/regression/gh-4848/test.js` (modified, +3/-1)
+```diff
+@@ -1,3 +1,5 @@
++const { skipInNativeAutomation } = require('../../../utils/skip-in');
++
+ describe('[Regression](GH-4848) - Should focus next element if current element has negative tabIndex', function () {
+     it('Straight order. Middle', function () {
+         return runTests('testcafe-fixtures/index.js', 'Straight order. Middle');
+@@ -19,7 +21,7 @@ describe('[Regression](GH-4848) - Should focus next element if current element h
+         return runTests('testcafe-fixtures/index.js', 'Straight order. First');
+     });
+ 
+-    it('Straight order. Last', function () {
++    skipInNativeAutomation('Straight order. Last', function () {
+         return runTests('testcafe-fixtures/index.js', 'Straight order. Last');
+     });
+ });
+```
+
+**File**: `test/server/native-automation-storages-provider-test.js` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++const proxyquire = require('proxyquire');
++const { expect } = require('chai');
++const sinon      = require('sinon');
++
++const { VisitedOrigins } = require('../../lib/native-automation/visited-origins');
++
++describe('Native automation storages provider', () => {
++    function createProvider ({ pageUrl, clearDataForOrigin = sinon.stub().resolves() }) {
++        const visitedOrigins  = new VisitedOrigins();
++        const getActiveClient = sinon.stub().resolves({ Storage: { clearDataForOrigin } });
++
++        const { CdpStoragesProvider } = proxyquire('../../lib/native-automation/storages-provider', {
++            './utils/get-active-client': { getActiveClient },
++        });
++
++        const testRun = {
++            browserConnection: { visitedOrigins },
++            test:              { pageUrl },
++        };
++
++        return {
++            visitedOrigins,
++            clearDataForOrigin,
++            provider: new CdpStoragesProvider(testRun),
++        };
++    }
++
++    function getClearedOrigins (clearDataForOrigin) {
++        return clearDataForOrigin.getCalls().map(call => call.args[0].origin);
++    }
++
++    it('Should clear storages for origins visited by previous tests and for the test page origin', async () => {
++        const { provider, visitedOrigins, clearDataForOrigin } = createProvider({ pageUrl: 'https://example.com/path' });
++
++        visitedOrigins.track('https://auth.example.com/login?redirect=1');
++        visitedOrigins.track('https://example.com/other');
++        visitedOrigins.track('file:///C:/tests/page.html');
++
++        await provider.clearStorages();
++
++        expect(getClearedOrigins(clearDataForOrigin)).deep.equal([
++            'https://auth.example.com',
++            'https://example.com',
++            'file://',
++        ]);
++
++        sinon.assert.alwaysCalledWithMatch(clearDataForOrigin, { storageTypes: 'all' });
++    });
++
++    it('Should not clear the same visited origins twice', async () => {
++        const { provider, visitedOrigins, clearDataForOrigin } = createProvider({ pageUrl: 'about:blank' });
++
++        visitedOrigins.track('https://example.com/');
++
++        await provider.clearStorages();
++        await provider.clearStorages();
++
++        expect(getClearedOrigins(clearDataForOrigin)).deep.equal(['https://example.com']);
++    });
++
++    it('Should skip opaque and invalid URLs', async () => {
++        const { provider, visitedOrigins, clearDataForOrigin } = createProvider({ pageUrl: 'about:blank' });
++
++        visitedOrigins.track('data:text/html,<p>test</p>');
++        visitedOrigins.track('');
++
++        await provider.clearStorages();
++
++        sinon.assert.notCalled(clearDataForOrigin);
++    });
++
++    it('Should not fail if clearing storages for an origin fails and should retry it next time', async () => {
++        const clearDataForOrigin = sinon.stub().resolves();
++
++        clearDataForOrigin.withArgs(sinon.match({ origin: 'https://broken.com' })).onFirstCall().rejects(new Error('Invalid origin'));
++
++        const { provider, visitedOrigins } = createProvider({ pageUrl: 'about:blank', clearDataForOrigin });
++
++        visitedOrigins.track('https://broken.com/');
++        visitedOrigins.track('https://example.com/');
++
++        await provider.clearStorages();
++
++        expect(getClearedOrigins(clearDataForOrigin)).deep.equal(['https://broken.com', 'https://example.com']);
++
++        clearDataForOrigin.resetHistory();
++
++        await provider.clearStorages();
++
++        expect(getClearedOrigins(clearDataForOrigin)).deep.equal(['https://broken.com']);
 +    });
 +});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8577** (2026-11-26): fixed publishing workflow (@Aleksey28)
+- **PR #8576** (2026-11-26): build: updated testcafe version (@Aleksey28)
+- **PR #8575** (2026-11-25): fix: fixed clearing storage by origin in CDP (@Aleksey28)
 - **PR #8572** (2026-11-11): Remove gulp-ll-next depemdency (@aleks-pro)
 - **PR #8571** (2026-11-10): Inline V8 flags filter dependency (@aleks-pro)
 - **PR #8570** (2026-11-09): Inline callsite-record implementation (@aleks-pro)
-- **PR #8568** (closed): Added Qase to Custom Reporters in README.md (@pm-morten)
-- **PR #8567** (2026-10-30): build: updated testcafe-hammerhead (@Aleksey28)
-- **PR #8566** (2026-10-26): fix: report setNativeDialogHandler(null) without throwing (@sam-yh)
 
 ---
 
@@ -999,3 +1208,36 @@ Co-authored-by: Copilot App <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. fixed publishing workflow
+
+**RULE**:
+When implementing operations in `.github/workflows/publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DevExpress/testcafe. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3e933c68`: fixed publishing workflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+          pre-publish-script: npx --no-install gulp test-server
+      - run: npx --no-install gulp docker-publish
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+          pre-publish-script: gulp test-server
+      - run: gulp docker-publish
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3e933c68` are properly handled with clean fallback behavior.

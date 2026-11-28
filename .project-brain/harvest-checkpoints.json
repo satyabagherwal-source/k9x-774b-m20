@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T11:47:38.349Z",
+  "last_updated": "2026-11-28T12:09:29.900Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "03fb72db54b384d870c96565a841ec6c79b36ce7e027e0e6d7e5caa5f17d126f",
-      "verified_at": "2026-11-27T10:51:52.465Z",
+      "content_hash": "f2d06e619a7168cc840c9abb60fb95b7398e47443ca3b13afb52d78d64bd460f",
+      "verified_at": "2026-11-28T12:09:26.034Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T10:51:52.465Z"
+      "last_updated": "2026-11-28T12:09:26.034Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",
@@ -15246,14 +15246,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-devexpress-testcafe",
-      "content_hash": "e775f6056872480cf06555afe9735542eea2e6af8376353e18f53df297760c20",
-      "verified_at": "2026-11-12T15:25:09.798Z",
+      "content_hash": "a966b2ed658fbf2ff40ca3c0cf6cbc2951fad35564779fbc9fb2c2fc9ce1e4b3",
+      "verified_at": "2026-11-28T12:09:29.900Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T15:25:09.798Z"
+      "last_updated": "2026-11-28T12:09:29.900Z"
     },
     "Planetable/Planet": {
       "repository": "Planetable/Planet",

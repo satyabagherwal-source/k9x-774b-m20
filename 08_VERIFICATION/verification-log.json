@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-477M",
-    "timestamp": "2026-11-26T18:32:52.354Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "4d5becae93ceadb9090cd8f46f6507489f45af2db6a67de17bab615c7a3519fb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-4ETG",
-    "timestamp": "2026-11-26T18:33:02.212Z",
-    "repository": "aquasecurity/trivy",
-    "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "fa4989470005cf082cad070ea85fee23745c5c0e308560aec201550e2015c15f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-FEV2",
     "timestamp": "2026-11-26T18:41:35.486Z",
     "repository": "hexgrad/Kokoro-82M",
@@ -7490,6 +7460,36 @@
     "repository": "mikelikesdesign/SwiftUI-experiments",
     "learningId": "learn-github-mikelikesdesign-swiftui-experiments",
     "contentHash": "be6ddd5ab7a5433e72da62dc776f11964902f435abe312d1f0a88d473cda5616",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-ASQR",
+    "timestamp": "2026-11-28T12:09:26.019Z",
+    "repository": "pola-rs/polars",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "f2d06e619a7168cc840c9abb60fb95b7398e47443ca3b13afb52d78d64bd460f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-AVQ6",
+    "timestamp": "2026-11-28T12:09:29.886Z",
+    "repository": "DevExpress/testcafe",
+    "learningId": "learn-github-devexpress-testcafe",
+    "contentHash": "a966b2ed658fbf2ff40ca3c0cf6cbc2951fad35564779fbc9fb2c2fc9ce1e4b3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
