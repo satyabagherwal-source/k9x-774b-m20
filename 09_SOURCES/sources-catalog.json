@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "fdc8041b",
+    "sourceVersion": "9e3af362",
     "license": "Apache-2.0",
-    "contentHash": "bae4568beb2413778e219431bf7acee92b3aa0cb73b852ae97bd64430251485d",
-    "lastHarvestedAt": "2026-11-27T14:05:10.676Z",
+    "contentHash": "95a230309321b931cc3b7f84a58d6eb82fb2949c5340b9298df7785cf4e16f26",
+    "lastHarvestedAt": "2026-11-28T08:38:57.901Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T08:17:37.967Z",
+  "last_updated": "2026-11-28T08:40:16.455Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27045,
+  "total_items": 27051,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c4149bc28d3db5c29fb704b523e1de4dcf0a32c45db909c03c7774ac348455f",
+      "content_hash": "41ed79eadb9878dbf75a2a72e4f979845ba943ca940e3b3a57b938a36fec24c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T07:31:28.222Z"
+      "persisted_at": "2026-11-28T08:40:16.455Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a98bd46acc4ea542f3b0c20c14501900ba3e7a17e0d04e6c4d612e1c9cbd7c5b",
+      "content_hash": "b6ad14df10106a932566c1fbb4f50b6943da1882852931f271542c6d32efab37",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T07:31:26.483Z"
+      "persisted_at": "2026-11-28T08:40:14.631Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "786427587592a925f7f3e4c18c3e6b8a17d48e0ec37da9b07224b5fceb14eb3d",
+      "content_hash": "c55f46c81dfd5530e561358f0b7db4dff3e37540f33168c2988b26f9818abe3a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T07:31:26.746Z"
+      "persisted_at": "2026-11-28T08:40:14.905Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -217521,8 +217521,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "fdc8041b",
-      "content_hash": "bae4568beb2413778e219431bf7acee92b3aa0cb73b852ae97bd64430251485d",
+      "source_version": "9e3af362",
+      "content_hash": "95a230309321b931cc3b7f84a58d6eb82fb2949c5340b9298df7785cf4e16f26",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -217595,6 +217595,21 @@
           "number": 10912,
           "title": "reject merge inserts on version-pinned tables",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11070,
+          "title": "Linear Resource Guard for FFI-Bridged Consuming Builders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11071,
+          "title": "POSIX Post-Fork Asynchronous State Purge Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11072,
+          "title": "Canonical Zero-Allocation Wire Deserialization with Omission Semantics",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217602,7 +217617,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T14:05:10.331Z",
+      "verified_at": "2026-11-28T08:38:57.611Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217656,10 +217671,10 @@
       "relative_path": "08_VERIFICATION/lancedb-lancedb-verification-protocol-empirical-defect-shield-for-lancedb-lanced.md",
       "title": "Verification Protocol: Empirical Defect Shield for lancedb/lancedb",
       "repository": "lancedb/lancedb",
-      "source_version": "fdc8041b",
-      "content_hash": "4403316c6669cde17bdaf949956d2665008888365f94db2eb8cdb3960a82bcd2",
+      "source_version": "9e3af362",
+      "content_hash": "f837e45e4eeff56a35bb86e8efc9210db319614eab8a529c8c32ba3c01045eb2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:05:11.578Z"
+      "persisted_at": "2026-11-28T08:38:59.030Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
@@ -249954,10 +249969,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "repository": "lancedb/lancedb",
-      "source_version": "1c011801",
-      "content_hash": "56c7809fc53b1a671e332663dcc348ffc828eb1191ffe5f53ac545e3b3468f87",
+      "source_version": "9e3af362",
+      "content_hash": "62538fb245b76e6af35a4d1adc18ec8e6ae7f6de0d8053ac572e5b6582d6be7d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:07:49.539Z"
+      "persisted_at": "2026-11-28T08:38:58.811Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb",
@@ -250168,9 +250183,9 @@
       "title": "Technical Construction Intelligence: lancedb-lancedb-learnings Core Invariants",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "bb74e6d94896c3c30ad0e65d29d0adf4891c4daeae1c1a2f78fb77ac47010d70",
+      "content_hash": "574bbdb0685c756b17c8c145065a8851df8dea2af35da5b86b1482334d690fca",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:07:55.971Z"
+      "persisted_at": "2026-11-28T08:40:13.349Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb-learnings",
@@ -250192,9 +250207,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lancedb-lancedb-learnings",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "af8281556f50a250a10e179e4615005373702c420e7d6a652a56e49f3ecf83d0",
+      "content_hash": "fafa1d2d3930b9174991fef0e172fb79c287c7fac55668455700d2636f0e2d02",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:07:06.053Z"
+      "persisted_at": "2026-11-28T08:40:13.625Z"
     },
     "learn-github-thaw-app-thaw": {
       "learning_id": "learn-github-thaw-app-thaw",
@@ -359104,13 +359119,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DBNY-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TT0J-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1e892be1886de551b928b4985c2d41844a7bba401329ca13ca732a9b89dfd0e1",
+      "content_hash": "44371e4d30f0e071a179c2ee60d376bf5382646e6781b0693effaeec49bd50b7",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T07:31:27.706Z"
+      "persisted_at": "2026-11-28T08:40:15.925Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -359120,9 +359135,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "bec8d04b1d453030d6fe2deb92ab29d48927b072e153e814cdda39d71dd7d154",
+      "content_hash": "3cb478a46c53d06ae279c703ef77240389a36cc09f69f3f051581fec1841f849",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T07:31:27.963Z"
+      "persisted_at": "2026-11-28T08:40:16.181Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362011,13 +362026,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DAH6-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TRTL-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f1b4861b1844ac7675941c3ff5f7ce07248a81585f01efce8e9a5bde8a7ee2eb",
+      "content_hash": "8955e6942f6ceb10830c548cff7059e1ff6f2deb3cae681e3e61634b6e7910ae",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T07:31:26.166Z"
+      "persisted_at": "2026-11-28T08:40:14.377Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -371720,6 +371735,84 @@
       "content_hash": "70e0aee1f9342500f5a27764ad8a30efe71c3036c36afea90b92340ace91efbb",
       "domain_letter": "I",
       "persisted_at": "2026-11-28T08:17:36.509Z"
+    },
+    "rule-11070": {
+      "learning_id": "rule-11070",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11070,
+      "title": "Linear Resource Guard for FFI-Bridged Consuming Builders",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "9e3af362",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T08:38:57.611Z"
+    },
+    "rule-11071": {
+      "learning_id": "rule-11071",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11071,
+      "title": "POSIX Post-Fork Asynchronous State Purge Invariant",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "9e3af362",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T08:38:57.611Z"
+    },
+    "rule-11072": {
+      "learning_id": "rule-11072",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11072,
+      "title": "Canonical Zero-Allocation Wire Deserialization with Omission Semantics",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "9e3af362",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T08:38:57.611Z"
+    },
+    "candidate_directive-linear-resource-guard-for-ffi-bridged-consuming-builders": {
+      "item_id": "candidate_directive-linear-resource-guard-for-ffi-bridged-consuming-builders",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TQEL-linear-resource-guard-for-ffi-bridged-consuming-builders.md",
+      "title": "Linear Resource Guard for FFI-Bridged Consuming Builders",
+      "repository": "lancedb-lancedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2f06bedec0cf2559cabf3fff25d9c6976e384aac1198ca87545839f32c0e3285",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T08:40:12.527Z"
+    },
+    "candidate_directive-posix-post-fork-asynchronous-state-purge-invariant": {
+      "item_id": "candidate_directive-posix-post-fork-asynchronous-state-purge-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TQEM-posix-post-fork-asynchronous-state-purge-invariant.md",
+      "title": "POSIX Post-Fork Asynchronous State Purge Invariant",
+      "repository": "lancedb-lancedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bf0df562b172d93eeb4b640c5d11f5cf82f5ff24a1edee51686487aa4de99d6d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T08:40:12.802Z"
+    },
+    "candidate_directive-canonical-zero-allocation-wire-deserialization-with-omission-semantics": {
+      "item_id": "candidate_directive-canonical-zero-allocation-wire-deserialization-with-omission-semantics",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TQEM-canonical-zero-allocation-wire-deserialization-with-omission-semantics.md",
+      "title": "Canonical Zero-Allocation Wire Deserialization with Omission Semantics",
+      "repository": "lancedb-lancedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "08ef2d6ddb5d12db4d22b19cc16a2d1deb58a3e1957db3dc169154b7b547526e",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-28T08:40:13.073Z"
     }
   },
   "ai-builder-brain": {

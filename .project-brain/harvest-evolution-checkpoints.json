@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T08:17:38.190Z",
+  "last_updated": "2026-11-28T08:40:16.710Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-28T07:31:27.011Z",
+      "processed_at": "2026-11-28T08:40:15.184Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-28T07:31:25.710Z",
+      "processed_at": "2026-11-28T08:40:13.896Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1268,9 +1268,9 @@
       "staged_for_review": 0
     },
     "lancedb-lancedb-learnings.md": {
-      "processed_at": "2026-11-27T14:07:04.995Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-28T08:40:12.155Z",
+      "promoted_canonical": 2,
+      "staged_for_review": 0
     },
     "restatedev-restate-learnings.md": {
       "processed_at": "2026-11-28T05:33:51.294Z",
@@ -4068,7 +4068,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5313,
-  "total_canonical_promoted": 600,
-  "total_staged_for_review": 4035
+  "total_dossiers_evaluated": 5316,
+  "total_canonical_promoted": 602,
+  "total_staged_for_review": 4037
 }

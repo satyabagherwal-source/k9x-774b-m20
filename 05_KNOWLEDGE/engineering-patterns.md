@@ -837138,3 +837138,330 @@ fn verify_block_and_fn_body_serialization_parity() {
 ```
 
 ---
+
+
+---
+
+## 11070. Linear Resource Guard for FFI-Bridged Consuming Builders (Harvested from lancedb/lancedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Linear Resource Guard for FFI-Bridged Consuming Builders",
+  "source": "lancedb/lancedb",
+  "source_url": "https://github.com/lancedb/lancedb",
+  "source_version": "9e3af362",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-28T08:38:55.889Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lancedb-lancedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `9e3af362`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When exposing Rust consuming-builder patterns (`fn build(self) -> T`) to garbage-collected host environments (PyO3, NAPI-RS, JNI), the native wrapper **MUST** enclose the builder in a `Mutex<Option<T>>` and extract the value via `take()`. It **MUST NOT** rely on raw pointers or assume the GC will prevent second-time invocation.
+
+**WHY**:
+In Rust, consuming methods enforce compile-time single-use guarantees. When passed to Python or JavaScript, the reference to the underlying native wrapper can be retained and re-invoked from user scripts. Without an explicit extraction guard, re-invoking a method on an already moved/freed struct results in memory corruption, null dereferences, or panic panics that crash the host runtime.
+
+**WHEN TO APPLY**:
+Any cross-language FFI bridge where the Rust layer requires ownership transfer or builder finalization, but the consumer language has dynamic object lifetimes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::sync::Mutex;
+use pyo3::{exceptions::PyRuntimeError, PyResult};
+
+pub struct BuilderWrapper<T> {
+    name: String,
+    inner: Mutex<Option<T>>,
+}
+
+impl<T> BuilderWrapper<T> {
+    pub fn new(name: impl AsRef<str>, inner: T) -> Self {
+        Self {
+            name: name.as_ref().to_string(),
+            inner: Mutex::new(Some(inner)),
+        }
+    }
+
+    pub fn consume<O>(&self, mod_fn: impl FnOnce(T) -> O) -> PyResult<O> {
+        let mut inner = self.inner.lock().map_err(|e| {
+            PyRuntimeError::new_err(format!("Lock poisoned during consume on {}: {}", self.name, e))
+        })?;
+        let inner_builder = inner.take().ok_or_else(|| {
+            PyRuntimeError::new_err(format!("{} has already been consumed", self.name))
+        })?;
+        Ok(mod_fn(inner_builder))
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER store raw inner builders directly and clone or dereference them 
+// without checking lifecycle ownership across FFI boundaries.
+pub struct UnsafeBuilderWrapper<T> {
+    inner: Option<T>, // Non-atomic, prone to data races or panic on double-execution
+}
+impl<T: Clone> UnsafeBuilderWrapper<T> {
+    pub fn consume(&mut self) -> T {
+        self.inner.clone().unwrap() // Anti-pattern: forces costly deep clones or crashes
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Run an automated concurrency unit test invoking `consume()` concurrently or sequentially from multiple threads or simulated script calls:
+```rust
+#[test]
+fn verify_double_consume_fails_gracefully() {
+    let wrapper = BuilderWrapper::new("TestBuilder", vec![1, 2, 3]);
+    assert!(wrapper.consume(|v| v.len()).is_ok());
+    let err = wrapper.consume(|v| v.len()).unwrap_err();
+    assert!(err.to_string().contains("already been consumed"));
+}
+```
+
+---
+
+
+---
+
+## 11071. POSIX Post-Fork Asynchronous State Purge Invariant (Harvested from lancedb/lancedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "POSIX Post-Fork Asynchronous State Purge Invariant",
+  "source": "lancedb/lancedb",
+  "source_url": "https://github.com/lancedb/lancedb",
+  "source_version": "9e3af362",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-28T08:38:56.553Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lancedb-lancedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `9e3af362`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Any native library or Python runtime module embedding background worker threads and asynchronous event loops **MUST** register an `os.register_at_fork(after_in_child=...)` or native `pthread_atfork` hook. The child hook **MUST NOT** attempt to join or clean up the inherited parent thread handles, and **MUST** re-initialize synchronization primitives (`threading.Lock`) from scratch.
+
+**WHY**:
+Under POSIX `fork()`, only the calling thread is duplicated into the child process. Any existing background event loop threads, Tokio worker threads, or thread-pool executors abruptly vanish without triggering destructors. If the parent process was holding an internal mutex at the instant of the fork, the child inherits that mutex in an irrevocably locked state. Attempting to acquire or safely shut down the old thread leads to immediate child deadlocks.
+
+**WHEN TO APPLY**:
+All systems embedding background async runtimes (Tokio, asyncio), thread pools, or connection pools inside shared libraries imported into multiprocessing-capable languages (Python, Ruby).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import os
+import threading
+import asyncio
+import concurrent.futures
+
+class BackgroundEventLoop:
+    def __init__(self):
+        self.loop: asyncio.AbstractEventLoop | None = None
+        self.thread: threading.Thread | None = None
+        self._start_lock = threading.Lock()
+
+    def _reset_after_fork(self):
+        # Threads do not survive fork(). Never invoke join() on dead threads.
+        # Overwrite the lock completely because the inherited lock may be held
+        # by a parent thread that ceased to exist.
+        self.loop = None
+        self.thread = None
+        self._start_lock = threading.Lock()
+
+_GLOBAL_LOOP = BackgroundEventLoop()
+_EMBEDDING_POOL = concurrent.futures.ThreadPoolExecutor(thread_name_prefix="db-worker")
+
+def _reset_runtime_after_fork():
+    global _EMBEDDING_POOL
+    _GLOBAL_LOOP._reset_after_fork()
+    # Replace executor without calling .shutdown(wait=True) on dead threads
+    _EMBEDDING_POOL = concurrent.futures.ThreadPoolExecutor(thread_name_prefix="db-worker")
+
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=_reset_runtime_after_fork)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER attempt to cleanly shut down existing thread pools in the post-fork child hook.
+def _bad_reset():
+    global _EMBEDDING_POOL
+    # DEADLOCK HAZARD: The threads in _EMBEDDING_POOL do not exist in this child process.
+    # .shutdown(wait=True) will wait indefinitely for non-existent threads to join.
+    _EMBEDDING_POOL.shutdown(wait=True) 
+```
+
+**VERIFICATION METHOD**:
+Execute a multi-process spawn test asserting that a child process can re-instantiate and run queries after a parent had already initialized background threads:
+```python
+import multiprocessing as mp
+
+def _worker(loop_instance):
+    # Verify child creates a new loop without deadlock
+    assert loop_instance._start_lock.acquire(timeout=2.0)
+    loop_instance._start_lock.release()
+
+def test_fork_safety():
+    mp.set_start_method("fork", force=True)
+    p = mp.Process(target=_worker, args=(_GLOBAL_LOOP,))
+    p.start()
+    p.join(timeout=5)
+    assert p.exitcode == 0
+```
+
+---
+
+
+---
+
+## 11072. Canonical Zero-Allocation Wire Deserialization with Omission Semantics (Harvested from lancedb/lancedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Canonical Zero-Allocation Wire Deserialization with Omission Semantics",
+  "source": "lancedb/lancedb",
+  "source_url": "https://github.com/lancedb/lancedb",
+  "source_version": "9e3af362",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-28T08:38:57.246Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lancedb-lancedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `9e3af362`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When serializing distributed configuration, payload metadata, or execution manifests where server admission policies differentiate between "omitted" and "explicit default" values, the client-side AST **MUST** preserve three-state logic (`None` vs `Explicit(val)`) through to wire serialization and runtime digest hashing. It **MUST NOT** collapse missing optional fields into assumed client-side defaults prior to wire serialization.
+
+**WHY**:
+Modern distributed catalog servers and older backward-compatible enterprise deployments often employ admission controllers with hardcoded validation rules. Forcing an explicit field (e.g., `gpus_per_worker: 1`) when the caller simply requested boolean capability (`gpu: True`) causes older or strictly-scoped servers to reject the query as unrecognized. Furthermore, computing an environment verification digest over pre-defaulted payloads invalidates fingerprint caches between heterogeneous client-server versions.
+
+**WHEN TO APPLY**:
+API boundary normalizers, AST builders, and remote service RPC dispatchers communicating with heterogeneous distributed nodes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import Optional, Tuple
+
+def normalize_compute_spec(
+    gpu_enabled: bool,
+    gpu_count: Optional[int]
+) -> Tuple[bool, Optional[int]]:
+    if not gpu_enabled:
+        return False, None
+    if gpu_count is None:
+        # Invariant: Preserve None to allow the server admission controller
+        # to apply its own cluster-wide defaults without breaking wire schema checks.
+        return True, None
+    if isinstance(gpu_count, bool) or not isinstance(gpu_count, int) or gpu_count < 1:
+        raise ValueError("gpu_count must be a positive integer")
+    return True, gpu_count
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+def normalize_compute_spec_anti_pattern(gpu_enabled: bool, gpu_count: Optional[int]):
+    # ANTI-PATTERN: Forcing implicit defaults at the edge prevents server-side schema evolution
+    # and breaks runtime compatibility with back-level servers.
+    if gpu_enabled and gpu_count is None:
+        gpu_count = 1 
+    return gpu_enabled, gpu_count
+```
+
+**VERIFICATION METHOD**:
+Unit test comparing serialized JSON outputs under omitted vs explicit conditions:
+```python
+def test_compute_spec_omission_preserves_wire_format():
+    enabled, count = normalize_compute_spec(True, None)
+    payload = {"gpu": enabled, **({"gpus_per_worker": count} if count is not None else {})}
+    assert "gpus_per_worker" not in payload
+```
+
+---

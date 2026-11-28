@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T08:17:34.007Z",
+  "updated_at": "2026-11-28T08:40:12.152Z",
   "statistics": {
-    "total_nodes": 600,
+    "total_nodes": 602,
     "total_edges": 240,
     "domain_distribution": {
       "D": 358,
       "M": 1,
-      "H": 118,
+      "H": 120,
       "J": 23,
       "K": 35,
       "L": 9,
@@ -13386,6 +13386,50 @@
       ],
       "created_at": "2026-11-28T08:17:34.007Z",
       "updated_at": "2026-11-28T08:17:34.007Z"
+    },
+    "DOM-H-6CED55F4": {
+      "id": "DOM-H-6CED55F4",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Function Catalog SDK Compatibility Failure on Enterprise Downgrades (BUG-CATALOG-01)",
+      "summary": "The client-side SQL generator evolved to emit newly supported clauses (`FORMAT`, `LIMIT`) that were unparseable by legacy server-side DataFu -> Client SDKs executing dialect-expanding SQL over RPC boundaries must maintain diagnostic interception filters that recognize exact trailing ",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://lancedb-lancedb/lancedb-lancedb-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T08:39:01.936Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lancedb-lancedb)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-28T08:39:33.261Z",
+      "updated_at": "2026-11-28T08:39:33.261Z"
+    },
+    "DOM-H-73F87CC1": {
+      "id": "DOM-H-73F87CC1",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Implicit GPU Count Injection Breaking Cluster Function Registration (BUG-GPU-02)",
+      "summary": "Premature client-side defaulting in `_normalize_gpu_request()`. It collapsed `gpu_count=None` into `gpu_count=1`, mutating the wire manifest -> Do not confuse semantic runtime defaults with registration wire formats. Omission must remain `None` throughout serialization; defaults belo",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://lancedb-lancedb/lancedb-lancedb-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T08:39:01.936Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lancedb-lancedb)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-28T08:40:12.152Z",
+      "updated_at": "2026-11-28T08:40:12.152Z"
     }
   },
   "edges": [

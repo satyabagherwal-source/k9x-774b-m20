@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T08:17:37.717Z",
-  "total_records": 2888,
+  "last_updated": "2026-11-28T08:40:16.181Z",
+  "total_records": 2890,
   "domains": {
     "A": {
       "total": 27,
@@ -1776,7 +1776,7 @@
       ]
     },
     "H": {
-      "total": 699,
+      "total": 701,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2476,7 +2476,9 @@
         "DOM-H-3B7BECBA",
         "DOM-H-5CC5EBBF",
         "DOM-H-34761320",
-        "DOM-H-AA0E6A7E"
+        "DOM-H-AA0E6A7E",
+        "DOM-H-6CED55F4",
+        "DOM-H-73F87CC1"
       ]
     },
     "I": {
@@ -9621,8 +9623,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "a98bd46acc4ea542f3b0c20c14501900ba3e7a17e0d04e6c4d612e1c9cbd7c5b",
-      "created_at": "2026-11-28T07:31:26.483Z"
+      "content_hash": "b6ad14df10106a932566c1fbb4f50b6943da1882852931f271542c6d32efab37",
+      "created_at": "2026-11-28T08:40:14.631Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -21382,8 +21384,8 @@
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "repository": "lancedb/lancedb",
-      "content_hash": "56c7809fc53b1a671e332663dcc348ffc828eb1191ffe5f53ac545e3b3468f87",
-      "created_at": "2026-11-26T19:07:49.539Z"
+      "content_hash": "62538fb245b76e6af35a4d1adc18ec8e6ae7f6de0d8053ac572e5b6582d6be7d",
+      "created_at": "2026-11-28T08:38:58.811Z"
     },
     "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant",
@@ -21443,8 +21445,8 @@
       "title": "Technical Construction Intelligence: lancedb-lancedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-learnings-technical-construction-intelligence-lancedb-lancedb-le.md",
       "repository": "lancedb-lancedb-learnings",
-      "content_hash": "bb74e6d94896c3c30ad0e65d29d0adf4891c4daeae1c1a2f78fb77ac47010d70",
-      "created_at": "2026-11-26T19:07:55.971Z"
+      "content_hash": "574bbdb0685c756b17c8c145065a8851df8dea2af35da5b86b1482334d690fca",
+      "created_at": "2026-11-28T08:40:13.349Z"
     },
     "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants",
@@ -46835,8 +46837,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "bec8d04b1d453030d6fe2deb92ab29d48927b072e153e814cdda39d71dd7d154",
-      "created_at": "2026-11-28T07:31:27.963Z"
+      "content_hash": "3cb478a46c53d06ae279c703ef77240389a36cc09f69f3f051581fec1841f849",
+      "created_at": "2026-11-28T08:40:16.181Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -49047,6 +49049,74 @@
       "repository": "iplug2-iplug2-learnings",
       "content_hash": "70e0aee1f9342500f5a27764ad8a30efe71c3036c36afea90b92340ace91efbb",
       "created_at": "2026-11-28T08:17:36.509Z"
+    },
+    "DOM-H-6CED55F4": {
+      "record_id": "DOM-H-6CED55F4",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Function Catalog SDK Compatibility Failure on Enterprise Downgrades (BUG-CATALOG-01)",
+      "content": "Client SDKs executing dialect-expanding SQL over RPC boundaries must maintain diagnostic interception filters that recognize exact trailing input grammar diagnostics from back-level parsers and augment the error with version-pinning instructions without mutating the underlying error taxonomy.",
+      "content_hash": "df49e7a1932207c9e19086054c9914652649b1b847b8c15af511977f8fa18f04",
+      "summary": "The client-side SQL generator evolved to emit newly supported clauses (`FORMAT`, `LIMIT`) that were unparseable by legacy server-side DataFu -> Client SDKs executing dialect-expanding SQL over RPC boundaries must maintain diagnostic interception filters that recognize exact trailing ",
+      "provenance": {
+        "source_uri": "project://lancedb-lancedb/lancedb-lancedb-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T08:39:01.936Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lancedb-lancedb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `c55eaae0`, PR #5250."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T08:39:33.231Z"
+    },
+    "DOM-H-73F87CC1": {
+      "record_id": "DOM-H-73F87CC1",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Implicit GPU Count Injection Breaking Cluster Function Registration (BUG-GPU-02)",
+      "content": "Do not confuse semantic runtime defaults with registration wire formats. Omission must remain `None` throughout serialization; defaults belong on the server admission controller.",
+      "content_hash": "ca5b4ccd8cdb3507254b099eb40502e41d67178973d8d31cca21c77542a6a996",
+      "summary": "Premature client-side defaulting in `_normalize_gpu_request()`. It collapsed `gpu_count=None` into `gpu_count=1`, mutating the wire manifest -> Do not confuse semantic runtime defaults with registration wire formats. Omission must remain `None` throughout serialization; defaults belo",
+      "provenance": {
+        "source_uri": "project://lancedb-lancedb/lancedb-lancedb-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T08:39:01.936Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (lancedb-lancedb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `6283f83a`, PR #5249."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T08:40:12.124Z"
     }
   }
 }

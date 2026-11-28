@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T08:16:30.081Z",
-  "total_cycles_completed": 13299,
-  "total_learnings_persisted": 13299,
-  "total_rules_promoted": 11990,
+  "last_updated": "2026-11-28T08:38:57.906Z",
+  "total_cycles_completed": 13300,
+  "total_learnings_persisted": 13300,
+  "total_rules_promoted": 11993,
   "history": [
-    {
-      "timestamp": "2026-11-27T14:16:53.153Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T14:39:33.127Z",
       "repository": "databendlabs/databend",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T08:16:30.081Z",
       "repository": "rollup/rollup",
       "learningId": "learn-github-rollup-rollup",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T08:38:57.906Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

@@ -4,1095 +4,91 @@
 {
   "source_repository": "lancedb/lancedb",
   "source_url": "https://github.com/lancedb/lancedb",
-  "source_version": "fdc8041b",
+  "source_version": "9e3af362",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T14:05:11.028Z",
-  "ai_provider": "zero-clone-structural-synthesizer",
+  "timestamp": "2026-11-28T08:38:58.147Z",
+  "ai_provider": "google-gemini-cloud-agent",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lancedb-lancedb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `fdc8041b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T14:05:11.028Z`  
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `9e3af362`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T08:38:58.147Z`  
 > **Learning ID**: `learn-github-lancedb-lancedb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `lancedb/lancedb` (Commit: `fdc8041b`)
+- **Target Repository**: `lancedb/lancedb` (Commit: `9e3af362`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-# Forensic Learning Record (Deep Inspection): lancedb/lancedb
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T14:05:09.015Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): lancedb/lancedb
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `lancedb/lancedb`
-- **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11996 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+LanceDB is an embedded and distributed multimodal vector database built on top of the Apache Arrow ecosystem and the Lance columnar data format. Its core problem domain is low-latency, zero-copy vector similarity search (IVF-PQ, HNSW), hybrid search (dense vectors + sparse BM25 text), and SQL metadata filtering across local disk, NVMe, and cloud object storage (Amazon S3, Azure Blob, Google Cloud Storage).
+
+```
++---------------------------------------------------------------------------------------+
+|                              Client Interfaces Layer                                  |
+|     Python SDK (PyO3)       |     Node.js SDK (NAPI-RS)      |        Rust Core       |
+|  - Decorator Registries     |  - Buffer serialization        |  - Type-safe builders  |
+|  - Async/Sync Bridges       |  - TTLCache / SQL Escaping     |  - Tokio async runtime |
++---------------------------------------------------------------------------------------+
+                                           |
+                                           v
++---------------------------------------------------------------------------------------+
+|                              Cross-Boundary Abstraction                               |
+|  - BackgroundEventLoop (Lazy Threaded Async Bridge + POSIX at-fork safety)            |
+|  - BuilderWrapper<T> (Linear rust ownership over GC runtimes via Mutex<Option<T>>)     |
+|  - Apache Arrow Flight SQL Client & gRPC Protocol Encoders                            |
++---------------------------------------------------------------------------------------+
+                                           |
+                                           v
++---------------------------------------------------------------------------------------+
+|                            Execution & Query Engine                                   |
+|  - Apache DataFusion 55 Query Engine (Physical Plans, Custom Scans, Spilling)         |
+|  - Schema Mutation Pipeline (Zero-copy column re-aliasing & Arrow Batch Streams)      |
+|  - Data Catalog Engine & Function Runtime Digests (SHA-256 canonical environment keys)|
++---------------------------------------------------------------------------------------+
+                                           |
+                                           v
++---------------------------------------------------------------------------------------+
+|                                Storage Format (Lance)                                 |
+|  - Lance v2 Columnar Layout: Fast point lookups, secondary indices, structural nulls  |
+|  - Multi-tier Disk Spilling (TemporaryDirectory -> DataFusion DiskManagerMode)       |
+|  - ObjectStore abstraction (S3 / Azure Blob via adlfs / Local Posix FS)               |
++---------------------------------------------------------------------------------------+
+```
+
+### Architectural Subsystem Boundaries & Decoupling
+1. **The Native Storage Boundary (Lance Format Core)**: Lance bypasses traditional Parquet/ORC row-group inefficiencies for random access and vectorized distance computations by utilizing custom encodings and columnar structural indexing. Disk manager modes govern whether permutation and sort operators spill to `/tmp`, a user-specified path, or fail fast (`TemporaryDirectory::None`).
+2. **The Language FFI Boundary (Rust to PyO3 & NAPI-RS)**: Rust utilizes linear type ownership where builders consume `self`. Because Python and Node.js are garbage-collected and reference-counted, the bridge uses `BuilderWrapper<T>` wrapping `Mutex<Option<T>>` to enforce run-time consumption guards instead of leaking pointers or invoking undefined behavior on double-free.
+3. **The Concurrency Runtime Barrier (`BackgroundEventLoop`)**: Running asynchronous Tokio pipelines and native Python async loops simultaneously risks deadlock. LanceDB implements a lazy-initialized daemon thread hosting an isolated `asyncio` event loop alongside a dedicated `ThreadPoolExecutor` reserved strictly for blocking model/embedding inference, preventing thread starvation in the general I/O loop.
+4. **Flight SQL Remote Communication**: Distributed and enterprise instances interface through Arrow Flight SQL over gRPC, serializing commands to tickets and deserializing Arrow `RecordBatchStream` buffers directly with zero intermediate serde overhead.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: Cargo.toml, README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. Linear Resource Guard for FFI-Bridged Consuming Builders
+**RULE**:
+When exposing Rust consuming-builder patterns (`fn build(self) -> T`) to garbage-collected host environments (PyO3, NAPI-RS, JNI), the native wrapper **MUST** enclose the builder in a `Mutex<Option<T>>` and extract the value via `take()`. It **MUST NOT** rely on raw pointers or assume the GC will prevent second-time invocation.
 
-### Core Architecture Module: `nodejs/examples/util.ts`
-```
-// SPDX-License-Identifier: Apache-2.0
-// SPDX-FileCopyrightText: Copyright The LanceDB Authors
-import * as fs from "node:fs";
-import { tmpdir } from "node:os";
-import * as path from "node:path";
+**WHY**:
+In Rust, consuming methods enforce compile-time single-use guarantees. When passed to Python or JavaScript, the reference to the underlying native wrapper can be retained and re-invoked from user scripts. Without an explicit extraction guard, re-invoking a method on an already moved/freed struct results in memory corruption, null dereferences, or panic panics that crash the host runtime.
 
-export async function withTempDirectory(
-  fn: (tempDir: string) => Promise<void>,
-) {
-  const tmpDirPath = fs.mkdtempSync(path.join(tmpdir(), "temp-dir-"));
-  try {
-    await fn(tmpDirPath);
-  } finally {
-    fs.rmSync(tmpDirPath, { recursive: true });
-  }
-}
+**WHEN TO APPLY**:
+Any cross-language FFI bridge where the Rust layer requires ownership transfer or builder finalization, but the consumer language has dynamic object lifetimes.
 
-```
-
-### Core Architecture Module: `nodejs/lancedb/util.ts`
-```
-// SPDX-License-Identifier: Apache-2.0
-// SPDX-FileCopyrightText: Copyright The LanceDB Authors
-
-export type IntoSql =
-  | string
-  | number
-  | boolean
-  | null
-  | Date
-  | ArrayBufferLike
-  | Buffer
-  | IntoSql[];
-
-export function toSQL(value: IntoSql): string {
-  if (typeof value === "string") {
-    return `'${value.replace(/'/g, "''")}'`;
-  } else if (typeof value === "number") {
-    // toString() gives "NaN" / "Infinity", which SQL reads as column names.
-    if (Number.isNaN(value)) {
-      return "CAST('NaN' AS DOUBLE)";
-    } else if (!Number.isFinite(value)) {
-      return value > 0
-        ? "CAST('Infinity' AS DOUBLE)"
-        : "CAST('-Infinity' AS DOUBLE)";
-    }
-    return value.toString();
-  } else if (typeof value === "boolean") {
-    return value ? "TRUE" : "FALSE";
-  } else if (value === null) {
-    return "NULL";
-  } else if (value instanceof Date) {
-    return `'${value.toISOString()}'`;
-  } else if (Array.isArray(value)) {
-    return `[${value.map(toSQL).join(", ")}]`;
-  } else if (Buffer.isBuffer(value)) {
-    return `X'${value.toString("hex")}'`;
-  } else if (value instanceof ArrayBuffer) {
-    return `X'${Buffer.from(value).toString("hex")}'`;
-  } else {
-    throw new Error(
-      `Unsupported value type: ${typeof value} value: (${value})`,
-    );
-  }
-}
-
-export function packBits(data: Array<number>): Array<number> {
-  const packed = Array(data.length >> 3).fill(0);
-  for (let i = 0; i < data.length; i++) {
-    const byte = i >> 3;
-    const bit = i & 7;
-    packed[byte] |= data[i] << bit;
-  }
-  return packed;
-}
-
-export class TTLCache {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  private readonly cache: Map<string, { value: any; expires: number }>;
-
-  /**
-   * @param ttl Time to live in milliseconds
-   */
-  constructor(private readonly ttl: number) {
-    this.cache = new Map();
-  }
-
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  get(key: string): any | undefined {
-    const entry = this.cache.get(key);
-    if (entry === undefined) {
-      return undefined;
-    }
-
-    if (entry.expires < Date.now()) {
-      this.cache.delete(key);
-      return undefined;
-    }
-
-    return entry.value;
-  }
-
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  set(key: string, value: any): void {
-    this.cache.set(key, { value, expires: Date.now() + this.ttl });
-  }
-
-  delete(key: string): void {
-    this.cache.delete(key);
-  }
-}
-
-```
-
-### Core Architecture Module: `nodejs/src/util.rs`
-```
-// SPDX-License-Identifier: Apache-2.0
-// SPDX-FileCopyrightText: Copyright The LanceDB Authors
-
-use arrow_ipc::writer::FileWriter;
-use arrow_schema::Schema;
-use lancedb::DistanceType;
-use napi::bindgen_prelude::Buffer;
-
-pub fn parse_distance_type(distance_type: impl AsRef<str>) -> napi::Result<DistanceType> {
-    match distance_type.as_ref().to_lowercase().as_str() {
-        "l2" => Ok(DistanceType::L2),
-        "cosine" => Ok(DistanceType::Cosine),
-        "dot" => Ok(DistanceType::Dot),
-        "hamming" => Ok(DistanceType::Hamming),
-        _ => Err(napi::Error::from_reason(format!(
-            "Invalid distance type '{}'.  Must be one of l2, cosine, dot, or hamming",
-            distance_type.as_ref()
-        ))),
-    }
-}
-
-/// Convert an Arrow Schema to an Arrow IPC file buffer
-pub fn schema_to_buffer(schema: &Schema) -> napi::Result<Buffer> {
-    let mut writer = FileWriter::try_new(vec![], schema)
-        .map_err(|e| napi::Error::from_reason(format!("Failed to create IPC file: {}", e)))?;
-    writer
-        .finish()
-        .map_err(|e| napi::Error::from_reason(format!("Failed to finish IPC file: {}", e)))?;
-    Ok(Buffer::from(writer.into_inner().map_err(|e| {
-        napi::Error::from_reason(format!("Failed to get IPC file: {}", e))
-    })?))
-}
-
-```
-
-### Core Architecture Module: `python/python/lancedb/background_loop.py`
-```
-# SPDX-License-Identifier: Apache-2.0
-# SPDX-FileCopyrightText: Copyright The LanceDB Authors
-
-import asyncio
-import concurrent.futures
-import os
-import threading
-import warnings
-
-
-class BackgroundEventLoop:
-    """
-    A background event loop that can run futures.
-
-    Used to bridge sync and async code, without messing with users event loops.
-
-    The loop and its thread are created by the first call to :meth:`run`, not
-    by constructing this object, so importing lancedb does not leave an idle
-    background thread behind.
-    """
-
-    def __init__(self):
-        self.loop: asyncio.AbstractEventLoop | None = None
-        self.thread: threading.Thread | None = None
-        self._start_lock = threading.Lock()
-
-    def _start(self) -> asyncio.AbstractEventLoop:
-        loop = self.loop
-        if loop is not None:
-            return loop
-        with self._start_lock:
-            loop = self.loop
-            if loop is not None:
-                return loop
-            loop = asyncio.new_event_loop()
-            thread = threading.Thread(
-                target=loop.run_forever,
-                name="LanceDBBackgroundEventLoop",
-                daemon=True,
-            )
-            thread.start()
-            # Publish the loop first and the thread last. Callers that reach
-            # _start while this is in progress wait on _start_lock, so they
-            # cannot observe a half-initialized loop/thread pair.
-            self.loop = loop
-            self.thread = thread
-            return loop
-
-    def _reset_after_fork(self):
-        # Threads do not survive fork(). Reset to the unstarted state without
-        # calling into the inherited loop or thread: the thread is gone, and
-        # it may have held _start_lock when the fork happened. A fresh lock
-        # lets the child start a new loop on its first run().
-        self.loop = None
-        self.thread = None
-        self._start_lock = threading.Lock()
-
-    def run(self, future):
-        loop = self._start()
-        concurrent_future = asyncio.run_coroutine_threadsafe(future, loop)
-        try:
-            return concurrent_future.result()
-        except BaseException:
-            concurrent_future.cancel()
-            raise
-
-
-LOOP = BackgroundEventLoop()
-
-
-def _new_embedding_executor() -> concurrent.futures.ThreadPoolExecutor:
-    return concurrent.futures.ThreadPoolExecutor(thread_name_prefix="lancedb-embedding")
-
-
-# Embedding functions can block for a long time -- a heavy local model or an
-# HTTP request to a remote embeddings API. Running them on asyncio's default
-# executor lets them starve the unrelated blocking I/O that shares that pool,
-# so they get a dedicated one. See
-# https://github.com/lancedb/lancedb/issues/3310.
-_EMBEDDING_EXECUTOR = _new_embedding_executor()
-
-
-def embedding_executor() -> concurrent.futures.ThreadPoolExecutor:
-    """Return the executor dedicated to running blocking embedding calls."""
-    return _EMBEDDING_EXECUTOR
-
-
-_FORK_WARNED = False
-
-
-def _reset_after_fork():
-    # Threads do not survive fork(), so the loop in LOOP.thread is dead in
-    # the child. Reset the singleton in place so existing
-    # `from .background_loop import LOOP` references in other modules see
-    # the unstarted state and create a fresh loop on their first run(). Do
-    # not restart it here: the child may never use LanceDB, and the at-fork
-    # handler must not touch the vanished thread or acquire inherited locks.
-    # The Rust-side tokio runtime is reset analogously by a pthread_atfork
-    # hook installed in the _lancedb extension.
-    LOOP._reset_after_fork()
-    # The embedding executor's worker threads are dead in the child as well.
-    # Replace it with a fresh pool (threads are spawned lazily, so this is
-    # cheap); we don't shut down the old one, since joining its dead workers
-    # could hang.
-    global _EMBEDDING_EXECUTOR
-    _EMBEDDING_EXECUTOR = _new_embedding_executor()
-    global _FORK_WARNED
-    if not _FORK_WARNED:
-        _FORK_WARNED = True
-        warnings.warn(
-            "lancedb fork support is experimental: the internal async "
-            "runtime has been reset in the forked child, but a small chance "
-            "of deadlock remains if other state was mid-operation at fork "
-            "time. The 'forkserver' or 'spawn' multiprocessing start method "
-            "is likely a safer alternative.",
-            RuntimeWarning,
-            stacklevel=2,
-        )
-
-
-if hasattr(os, "register_at_fork"):
-    os.register_at_fork(after_in_child=_reset_after_fork)
-
-```
-
-### Core Architecture Module: `python/python/lancedb/embeddings/utils.py`
-```
-# SPDX-License-Identifier: Apache-2.0
-# SPDX-FileCopyrightText: Copyright The LanceDB Authors
-
-
-import functools
-import math
-import random
-import socket
-import sys
-import threading
-import time
-import urllib.error
-import urllib.request
-import weakref
-import logging
-from functools import wraps
-from typing import Callable, List, Union
-import numpy as np
-import pyarrow as pa
-
-from ..dependencies import pandas as pd
-from ..util import attempt_import_or_raise
-
-
-def create_import_stub(module_name: str, package_name: str = None):
-    """
-    Create a stub module that allows class definition but fails when used.
-    This allows modules to be imported for doctest collection even when
-    optional dependencies are not available.
-
-    Parameters
-    ----------
-    module_name : str
-        The name of the module to create a stub for
-    package_name : str, optional
-        The package name to suggest in the error message
-
-    Returns
-    -------
-    object
-        A stub object that can be used in place of the module
-    """
-
-    class _ImportStub:
-        def __getattr__(self, name):
-            return _ImportStub  # Return stub for chained access like nn.Module
-
-        def __call__(self, *args, **kwargs):
-            pkg = package_name or module_name
-            raise ImportError(f"You need to install {pkg} to use this functionality")
-
-    return _ImportStub()
-
-
-# ruff: noqa: PERF203
-def retry(tries=10, delay=1, max_delay=30, backoff=3, jitter=1):
-    def wrapper(fn):
-        @wraps(fn)
-        def wrapped(*args, **kwargs):
-            for i in range(tries):
-                try:
-                    return fn(*args, **kwargs)
-                except Exception:
-                    if i + 1 == tries:
-                        raise
-                    else:
-                        sleep = min(delay * (backoff**i) + jitter, max_delay)
-                        time.sleep(sleep)
-
-        return wrapped
-
-    return wrapper
-
-
-DATA = Union[pa.Table, "pd.DataFrame"]
-TEXT = Union[str, List[str], pa.Array, pa.ChunkedArray, np.ndarray]
-IMAGES = Union[
-    str, bytes, List[str], List[bytes], pa.Array, pa.ChunkedArray, np.ndarray
-]
-AUDIO = Union[str, bytes, List[str], List[bytes], pa.Array, pa.ChunkedArray, np.ndarray]
-
-
-class RateLimiter:
-    def __init__(self, max_calls: int = 1, period: float = 1.0):
-        self.period = period
-        self.max_calls = max(1, min(sys.maxsize, math.floor(max_calls)))
-
-        self._last_reset = time.time()
-        self._num_calls = 0
-        self._lock = threading.RLock()
-
-    def _check_sleep(self) -> float:
-        current_time = time.time()
-        elapsed = current_time - self._last_reset
-        period_remaining = self.period - elapsed
-
-        # If the time window has elapsed then reset.
-        if period_remaining <= 0:
-            self._num_calls = 0
-            self._last_reset = current_time
-
-        self._num_calls += 1
-
-        if self._num_calls > self.max_calls:
-            return period_remaining
-
-        return 0.0
-
-    def __call__(self, func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            with self._lock:
-                time.sleep(self._check_sleep())
-            return func(*args, **kwargs)
-
-        return wrapper
-
-
-class FunctionWrapper:
-    """
-    A wrapper for embedding functions that adds rate limiting, retries, and batching.
-    """
-
-    def __init__(self, func: Callable):
-        self.func = func
-        self.rate_limiter_kwargs = {}
-        self.retry_kwargs = {}
-        self._batch_size = None
-        self._progress = False
-
-    def __call__(self, text):
-        # Get the embedding with retry
-        if len(self.retry_kwargs) > 0:
-
-            @retry(**self.retry_kwargs)
-            def embed_func(c):
-                return self.func(c.tolist())
-
-        else:
-
-            def embed_func(c):
-                return self.func(c.tolist())
-
-        if self.rate_limiter_kwargs:
-            limiter = RateLimiter(
-                max_calls=self.rate_limiter_kwargs["max_calls"],
-                period=self.rate_limiter_kwargs["period"],
-            )
-            embed_func = limiter(embed_func)
-        batches = self.to_batches(text)
-        embeds = [emb for c in batches for emb in embed_func(c)]
-        return embeds
-
-    def __repr__(self):
-        return f"EmbeddingFunction(func={self.func})"
-
-    def rate_limit(self, max_calls=0.9, period=1.0):
-        self.rate_limiter_kwargs = dict(max_calls=max_calls, period=period)
-        return self
-
-    def retry(self, tries=10, delay=1, max_delay=30, backoff=3, jitter=1):
-        self.retry_kwargs = dict(
-            tries=tries,
-            delay=delay,
-            max_delay=max_delay,
-            backoff=backoff,
-            jitter=jitter,
-        )
-        return self
-
-    def batch_size(self, batch_size):
-        self._batch_size = batch_size
-        return self
-
-    def show_progress(self):
-        self._progress = True
-        return self
-
-    def to_batches(self, arr):
-        length = len(arr)
-
-        def _chunker(arr):
-            for start_i in range(0, len(arr), self._batch_size):
-                yield arr[start_i : start_i + self._batch_size]
-
-        if self._progress:
-            from tqdm.auto import tqdm
-
-            yield from tqdm(_chunker(arr), total=math.ceil(length / self._batch_size))
-        else:
-            yield from _chunker(arr)
-
-
-def weak_lru(maxsize=128):
-    """
-    LRU cache that keeps weak references to the objects it caches. Only caches the
-    latest instance of the objects to make sure memory usage is bounded.
-
-    Parameters
-    ----------
-    maxsize : int, default 128
-        The maximum number of objects to cache.
-
-    Returns
-    -------
-    Callable
-        A decorator that can be applied to a method.
-
-    Examples
-    --------
-    >>> class Foo:
-    ...     @weak_lru()
-    ...     def bar(self, x):
-    ...         return x
-    >>> foo = Foo()
-    >>> foo.bar(1)
-    1
-    >>> foo.bar(2)
-    2
-    >>> foo.bar(1)
-    1
-    """
-
-    def wrapper(func):
-        @functools.lru_cache(maxsize)
-        def _func(_self, *args, **kwargs):
-            return func(_self(), *args, **kwargs)
-
-        @functools.wraps(func)
-        def inner(self, *args, **kwargs):
-            return _func(weakref.ref(self), *args, **kwargs)
-
-        return inner
-
-    return wrapper
-
-
-def retry_with_exponential_backoff(
-    func,
-    initial_delay: float = 1,
-    exponential_base: float = 2,
-    jitter: bool = True,
-    max_retries: int = 7,
-    max_delay: float = 60,
-    *,
-    do_not_retry: Callable[[Exception], bool] | None = None,
-):
-    """Retry a function with exponential backoff.
-
-    Only errors that may succeed when repeated are retried. Errors that carry an
-    HTTP status code are retried when the status is 408, 409, 429 or >= 500; any
-    other 4xx status (for example 400, 401, 403, 404 or 422) is a permanent failure
-    that is raised immediately. Errors without a recognisable status code (for
-    example connection errors, timeouts, or exceptions raised by a custom embedding
-    function) are retried.
-
-    The delay before the n-th retry is ``initial_delay * exponential_base ** n``,
-    never more than ``max_delay``. With ``jitter`` enabled, a random amount of up to
-    half of that delay is removed ("equal jitter"), so the actual wait is always in
-    the range ``[delay / 2, delay]``.
-
-    Args:
-        func (function): The function to be retried.
-        initial_delay (float): Initial delay in seconds (default is 1).
-        exponential_base (float): The base for exponential backoff (default is 2).
-        jitter (bool): Whether to add jitter to the delay (default is True).
-        max_retries (int): Maximum number of retries (default is 7).
-        max_delay (float): Maximum delay between two attempts, in seconds
-            (default is 60).
-        do_not_retry: Optional predicate for additional permanent failures.
-
-    Returns:
-        function: The decorated function.
-    """
-
-    def wrapper(*args, **kwargs):
-        num_retries = 0
-        delay = initial_delay
-
-        # Loop until a successful response or max_retries is hit or an exception
-        # is raised
-        while True:
-            try:
-                return func(*args, **kwargs)
-
-            # Errors are retried unless they are known to be permanent (see
-            # `_is_non_retryable_error`). Custom embedding functions can raise
-            # arbitrary exceptions, so unknown errors are assumed to be transient.
-            except Exception as e:  # noqa: PERF203
-                # Don't retry permanent failures (e.g., OpenAI 401 or 404). They
-                # won't be fixed by retrying and would only delay the real error.
-                if _is_non_retryable_error(e) or (
-                    do_not_retry is not None and do_not_retry(e)
-                ):
-                    raise
-
-                num_retries += 1
-
-                if num_retries > max_retries:
-                    raise Exception(
-                        f"Maximum number of retries ({max_retries}) exceeded.", e
-                    ) from e
-
-                delay = min(delay * exponential_base, max_delay)
-                sleep_for = delay
-                if jitter:
-                    sleep_for = delay / 2 + random.random() * delay / 2
-                logging.warning(
-                    "Error occurred: %s \n Retrying in %s seconds (retry %s of %s) \n",
-                    e,
-                    sleep_for,
-                    num_retries,
-                    max_retries,
-                )
-                time.sleep(sleep_for)
-
-    return wrapper
-
-
-# HTTP statuses in the 4xx range that are worth retrying: request timeout,
-# conflict (the OpenAI SDK treats it as transient) and rate limiting.
-_RETRYABLE_CLIENT_STATUSES = (408, 409, 429)
-
-# AWS error codes that are reported with a 4xx status but are transient.
-_RETRYABLE_AWS_ERROR_CODES = (
-    "Throttl",
-    "TooManyRequests",
-    "RequestLimitExceeded",
-    "ProvisionedThroughputExceeded",
-
-```
-
-### Core Architecture Module: `python/python/lancedb/namespace_utils.py`
-```
-# SPDX-License-Identifier: Apache-2.0
-# SPDX-FileCopyrightText: Copyright The LanceDB Authors
-
-"""Utility functions for namespace operations."""
-
-from typing import Optional
-
-
-_CREATE_NAMESPACE_MODES = frozenset({"create", "exist_ok", "overwrite"})
-_DROP_NAMESPACE_MODES = frozenset({"SKIP", "FAIL"})
-_DROP_NAMESPACE_BEHAVIORS = frozenset({"RESTRICT", "CASCADE"})
-
-
-def _normalize_create_namespace_mode(mode: Optional[str]) -> Optional[str]:
-    """Normalize create namespace mode to lowercase (API expects lowercase)."""
-    if mode is None:
-        return None
-    normalized = mode.lower()
-    if normalized not in _CREATE_NAMESPACE_MODES:
-        raise ValueError(
-            f"Invalid create namespace mode {mode!r}: "
-            f"expected one of 'create', 'exist_ok', 'overwrite'"
-        )
-    return normalized
-
-
-def _normalize_drop_namespace_mode(mode: Optional[str]) -> Optional[str]:
-    """Normalize drop namespace mode to uppercase (API expects uppercase)."""
-    if mode is None:
-        return None
-    normalized = mode.upper()
-    if normalized not in _DROP_NAMESPACE_MODES:
-        raise ValueError(
-            f"Invalid drop namespace mode {mode!r}: expected one of 'skip', 'fail'"
-        )
-    return normalized
-
-
-def _normalize_drop_namespace_behavior(behavior: Optional[str]) -> Optional[str]:
-    """Normalize drop namespace behavior to uppercase (API expects uppercase)."""
-    if behavior is None:
-        return None
-    normalized = behavior.upper()
-    if normalized not in _DROP_NAMESPACE_BEHAVIORS:
-        raise ValueError(
-            f"Invalid drop namespace behavior {behavior!r}: "
-            f"expected one of 'restrict', 'cascade'"
-        )
-    return normalized
-
-```
-
-### Core Architecture Module: `python/python/lancedb/rerankers/util.py`
-```
-# SPDX-License-Identifier: Apache-2.0
-# SPDX-FileCopyrightText: Copyright The LanceDB Authors
-
-
-import pyarrow as pa
-
-
-def check_reranker_result(result):
-    if not isinstance(result, pa.Table):  # Enforce type
-        raise TypeError(
-            f"rerank_hybrid must return a pyarrow.Table, got {type(result)}"
-        )
-
-    # Enforce that `_relevance_score` column is present in the result of every
-    # rerank_hybrid method
-    if "_relevance_score" not in result.column_names:
-        raise ValueError(
-            "rerank_hybrid must return a pyarrow.Table with a column"
-            "named `_relevance_score`"
-        )
-
-```
-
-### Core Architecture Module: `python/python/lancedb/util.py`
-```
-# SPDX-License-Identifier: Apache-2.0
-# SPDX-FileCopyrightText: Copyright The LanceDB Authors
-
-
-import binascii
-import functools
-import importlib
-import math
-import os
-import pathlib
-import sys
-import warnings
-from datetime import date, datetime, time, timedelta
-from decimal import Decimal
-from enum import Enum
-from functools import singledispatch
-from typing import Tuple, Union, Optional, Any, List
-from urllib.parse import urlparse
-
-import numpy as np
-import pyarrow as pa
-import pyarrow.fs as pa_fs
-
-from ._lancedb import validate_table_name as native_validate_table_name
-
-
-def safe_import_adlfs():
-    try:
-        import adlfs
-
-        return adlfs
-    except ImportError:
-        return None
-
-
-adlfs = safe_import_adlfs()
-
-
-def get_uri_scheme(uri: Union[str, pathlib.Path]) -> str:
-    """
-    Get the scheme of a URI. If the URI does not have a scheme, assume it is a file URI.
-
-    Parameters
-    ----------
-    uri : str or pathlib.Path
-        The URI to parse.
-
-    Returns
-    -------
-    str: The scheme of the URI.
-    """
-    parsed = urlparse(str(uri))
-    scheme = parsed.scheme
-    if not scheme:
-        scheme = "file"
-    elif scheme in ["s3a", "s3n"]:
-        scheme = "s3"
-    elif len(scheme) == 1:
-        # Windows drive names are parsed as the scheme
-        # e.g. "c:\path" -> ParseResult(scheme="c", netloc="", path="/path", ...)
-        # So we add special handling here for schemes that are a single character
-        scheme = "file"
-    return scheme
-
-
-def get_uri_location(uri: Union[str, pathlib.Path]) -> str:
-    """
-    Get the location of a URI. If the parameter is not a url, assumes it is just a path
-
-    Parameters
-    ----------
-    uri : str or pathlib.Path
-        The URI to parse.
-
-    Returns
-    -------
-    str: Location part of the URL, without scheme
-    """
-    uri_str = str(uri)
-    parsed = urlparse(uri_str)
-    if len(parsed.scheme) == 1:
-        # Windows drive names are parsed as the scheme
-        # e.g. "c:\path" -> ParseResult(scheme="c", netloc="", path="/path", ...)
-        # So we add special handling here for schemes that are a single character
-        return uri_str
-
-    if not parsed.netloc:
-        return parsed.path
-    else:
-        return parsed.netloc + parsed.path
-
-
-def fs_from_uri(uri: str) -> Tuple[pa_fs.FileSystem, str]:
-    """
-    Get a PyArrow FileSystem from a URI, handling extra environment variables.
-    """
-    if get_uri_scheme(uri) == "s3":
-        fs = pa_fs.S3FileSystem(
-            endpoint_override=os.environ.get("AWS_ENDPOINT"),
-            request_timeout=30,
-            connect_timeout=30,
-        )
-        path = get_uri_location(uri)
-        return fs, path
-
-    elif get_uri_scheme(uri) == "az" and adlfs is not None:
-        az_blob_fs = adlfs.AzureBlobFileSystem(
-            account_name=os.environ.get("AZURE_STORAGE_ACCOUNT_NAME"),
-            account_key=os.environ.get("AZURE_STORAGE_ACCOUNT_KEY"),
-        )
-
-        fs = pa_fs.PyFileSystem(pa_fs.FSSpecHandler(az_blob_fs))
-
-        path = get_uri_location(uri)
-        return fs, path
-
-    return pa_fs.FileSystem.from_uri(uri)
-
-
-def join_uri(base: Union[str, pathlib.Path], *parts: str) -> str:
-    """
-    Join a URI with multiple parts, handles both local and remote paths
-
-    Parameters
-    ----------
-    base : str
-        The base URI
-    parts : str
-        The parts to join to the base URI, each separated by the
-        appropriate path separator for the URI scheme and OS
-    """
-    if isinstance(base, pathlib.Path):
-        return base.joinpath(*parts)
-    base = str(base)
-    if get_uri_scheme(base) == "file":
-        # using pathlib for local paths make this windows compatible
-        # `get_uri_scheme` returns `file` for windows drive names (e.g. `c:\path`)
-        return str(pathlib.Path(base, *parts))
-    else:
-        # there might be query parameters in the base URI
-        url = urlparse(base)
-        new_path = "/".join([p.rstrip("/") for p in [url.path, *parts]])
-        return url._replace(path=new_path).geturl()
-
-
-def attempt_import_or_raise(module: str, mitigation=None):
-    """
-    Import the specified module. If the module is not installed,
-    raise an ImportError with a helpful message.
-
-    Parameters
-    ----------
-    module : str
-        The name of the module to import
-    mitigation : Optional[str]
-        The package(s) to install to mitigate the error.
-        If not provided then the module name will be used.
-    """
-    try:
-        return importlib.import_module(module)
-    except ImportError:
-        raise ImportError(f"Please install {mitigation or module}")
-
-
-def flatten_columns(tbl: pa.Table, flatten: Optional[Union[int, bool]] = None):
-    """
-    Flatten all struct columns in a table.
-
-    Parameters
-    ----------
-    flatten: Optional[Union[int, bool]]
-        If flatten is True, flatten all nested columns.
-        If flatten is an integer, flatten the nested columns up to the
-        specified depth.
-        If unspecified, do not flatten the nested columns.
-    """
-    if flatten is True:
-        while True:
-            tbl = tbl.flatten()
-            # loop through all columns to check if there is any struct column
-            if any(pa.types.is_struct(col.type) for col in tbl.schema):
-                continue
-            else:
-                break
-    # `bool` is a subclass of `int`, so guard against it explicitly: `flatten=False`
-    # (and `None`) must mean "do not flatten" rather than falling into the integer
-    # branch and raising on the `flatten <= 0` check.
-    elif isinstance(flatten, int) and not isinstance(flatten, bool):
-        if flatten <= 0:
-            raise ValueError(
-                "Please specify a positive integer for flatten or the boolean "
-                "value `True`"
-            )
-        while flatten > 0:
-            tbl = tbl.flatten()
-            flatten -= 1
-    return tbl
-
-
-def _format_field_path(path: List[str]) -> str:
-    def format_segment(segment: str) -> str:
-        if all(char.isalnum() or char == "_" for char in segment):
-            return segment
-        return f"`{segment.replace('`', '``')}`"
-
-    return ".".join(format_segment(segment) for segment in path)
-
-
-def _iter_vector_columns(
-    field: pa.Field, path: List[str], dim: Optional[int] = None
-) -> List[str]:
-    field_path = [*path, field.name]
-    if is_vector_column(field.type):
-        vector_dim = infer_vector_column_dim(field.type)
-        if dim is None or vector_dim == dim:
-            return [_format_field_path(field_path)]
-        return []
-    if pa.types.is_struct(field.type):
-        columns = []
-        for idx in range(field.type.num_fields):
-            columns.extend(_iter_vector_columns(field.type.field(idx), field_path, dim))
-        return columns
-    return []
-
-
-def inf_vector_column_query(schema: pa.Schema, dim: Optional[int] = None) -> str:
-    """
-    Get the vector column name
-
-    Parameters
-    ----------
-    schema : pa.Schema
-        The schema of the vector column.
-
-    Returns
-    -------
-    str: the vector column name.
-    """
-    vector_col_names = []
-    for field in schema:
-        vector_col_names.extend(_iter_vector_columns(field, [], dim))
-
-    if len(vector_col_names) == 0 and dim is not None:
-        # The query's dimension matched no column. If the schema is
-        # unambiguous without that filter, the single vector column is still
-        # the right one to search: a dimension mismatch is a query-execution
-        # error, not a missing-column error.
-        unfiltered = []
-        for field in schema:
-            unfiltered.extend(_iter_vector_columns(field, []))
-        if len(unfiltered) == 1:
-            return unfiltered[0]
-        vector_col_names = unfiltered
-
-    if len(vector_col_names) > 1:
-        raise ValueError(
-            "Schema has more than one vector column. "
-            "Please specify the vector column name "
-            f"for vector search. Candidates: {vector_col_names}"
-        )
-    if len(vector_col_names) == 0:
-        raise ValueError(
-            "There is no vector column in the data. "
-            "Please specify the vector column name for vector search"
-        )
-    return vector_col_names[0]
-
-
-def is_vector_column(data_type: pa.DataType) -> bool:
-    """
-    Check if the column is a vector column.
-
-    Parameters
-    ----------
-    data_type : pa.DataType
-        The data type of the column.
-
-    Returns
-    -------
-    bool: True if the column is a vector column.
-    """
-    if pa.types.is_fixed_size_list(data_type) and (
-        pa.types.is_floating(data_type.value_type)
-        or pa.types.is_uint8(data_type.value_type)
-    ):
-        return True
-    elif pa.types.is_list(data_type):
-        return is_vector_column(data_type.value_type)
-    return False
-
-
-def infer_vector_column_dim(data_type: pa.DataType) -> Optional[int]:
-    if pa.types.is_fixed_size_list(data_type):
-        return data_type.list_size
-    if pa.types.is_list(data_type):
-        return infer_vector_column_dim(data_type.value_type)
-    return None
-
-
-def _validate_query_vector(query: Any) -> None:
-    """Reject empty vector inputs before vector-column inference or execution."""
-    if (isinstance(query, list) and not query) or (
-        isinstance(query, np.ndarray) and query.size == 0
-    ):
-        raise ValueError("Query vector must not be empty")
-
-
-def _query_vector_dim(query: Optional[Any]) -> Optional[int]:
-    if query is None:
-        return None
-    if isinstance(query, np.ndarray):
-        if query.ndim == 0:
-            return None
-        return query.shape[-1]
-    if isinstance(query, (pa.Array, pa.ChunkedArray)):
-        if len(query) == 0:
-            return None
-        if pa.types.is_fixed_size_list(query.type):
-            return query.type.list_size
-        if pa.types.is_list(query.type) or pa.types.is_large_list(query.type):
-            first = query[0].as_py()
-            return len(first) if first is not None else None
-        return len(query)
-    if isinstance(query, (
-```
-
-### Core Architecture Module: `python/src/util.rs`
-```
-// SPDX-License-Identifier: Apache-2.0
-// SPDX-FileCopyrightText: Copyright The LanceDB Authors
-
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
 use std::sync::Mutex;
+use pyo3::{exceptions::PyRuntimeError, PyResult};
 
-use lancedb::DistanceType;
-use pyo3::{
-    PyResult,
-    exceptions::{PyRuntimeError, PyValueError},
-    pyfunction,
-};
-use rattler_conda_types::{MatchSpec, ParseStrictness};
-
-/// A wrapper around a rust builder
-///
-/// Rust builders are often implemented so that the builder methods
-/// consume the builder and return a new one. This is not compatible
-/// with the pyo3, which, being garbage collected, cannot easily obtain
-/// ownership of an object.
-///
-/// This wrapper converts the compile-time safety of rust into runtime
-/// errors if any attempt to use the builder happens after it is consumed.
 pub struct BuilderWrapper<T> {
     name: String,
     inner: Mutex<Option<T>>,
@@ -1107,129 +103,249 @@ impl<T> BuilderWrapper<T> {
     }
 
     pub fn consume<O>(&self, mod_fn: impl FnOnce(T) -> O) -> PyResult<O> {
-        let mut inner = self.inner.lock().unwrap();
+        let mut inner = self.inner.lock().map_err(|e| {
+            PyRuntimeError::new_err(format!("Lock poisoned during consume on {}: {}", self.name, e))
+        })?;
         let inner_builder = inner.take().ok_or_else(|| {
             PyRuntimeError::new_err(format!("{} has already been consumed", self.name))
         })?;
-        let result = mod_fn(inner_builder);
-        Ok(result)
+        Ok(mod_fn(inner_builder))
     }
 }
-
-pub fn parse_distance_type(distance_type: impl AsRef<str>) -> PyResult<DistanceType> {
-    match distance_type.as_ref().to_lowercase().as_str() {
-        "l2" => Ok(DistanceType::L2),
-        "cosine" => Ok(DistanceType::Cosine),
-        "dot" => Ok(DistanceType::Dot),
-        "hamming" => Ok(DistanceType::Hamming),
-        _ => Err(PyValueError::new_err(format!(
-            "Invalid distance type '{}'.  Must be one of l2, cosine, dot, or hamming",
-            distance_type.as_ref()
-        ))),
-    }
-}
-
-#[pyfunction]
-pub fn validate_table_name(table_name: &str) -> PyResult<()> {
-    lancedb::utils::validate_table_name(table_name)
-        .map_err(|e| PyValueError::new_err(e.to_string()))
-}
-
-#[pyfunction(name = "_validate_conda_requirement")]
-pub fn validate_conda_requirement(requirement: &str) -> PyResult<()> {
-    MatchSpec::from_str(requirement, ParseStrictness::Lenient)
-        .map(|_| ())
-        .map_err(|error| PyValueError::new_err(error.to_string()))
-}
-
-/// Parse field references with the same identifier syntax as Lance writes.
-#[pyfunction(name = "_parse_field_path")]
-pub fn parse_field_path(path: &str) -> PyResult<Vec<String>> {
-    lance_core::datatypes::parse_field_path(path).map_err(|e| PyValueError::new_err(e.to_string()))
-}
-
-/// A wrapper around a LanceDB type to allow it to be used in Python
-#[derive(Debug, Clone)]
-pub struct PyLanceDB<T>(pub T);
-/// Validate the Function retry wire contract using the same rules as Rust APIs.
-#[pyo3::pyfunction]
-pub fn validate_function_retry_policy(json: &str) -> pyo3::PyResult<()> {
-    let policy: lancedb::function::FunctionRetryPolicy =
-        serde_json::from_str(json).map_err(|error| {
-            pyo3::exceptions::PyValueError::new_err(format!("invalid retry_policy: {error}"))
-        })?;
-    policy
-        .validate()
-        .map_err(|error| pyo3::exceptions::PyValueError::new_err(error.to_string()))
-}
-
 ```
 
-### Core Architecture Module: `rust/lancedb/src/dataloader/permutation/util.rs`
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER store raw inner builders directly and clone or dereference them 
+// without checking lifecycle ownership across FFI boundaries.
+pub struct UnsafeBuilderWrapper<T> {
+    inner: Option<T>, // Non-atomic, prone to data races or panic on double-execution
+}
+impl<T: Clone> UnsafeBuilderWrapper<T> {
+    pub fn consume(&mut self) -> T {
+        self.inner.clone().unwrap() // Anti-pattern: forces costly deep clones or crashes
+    }
+}
 ```
-// SPDX-License-Identifier: Apache-2.0
-// SPDX-FileCopyrightText: Copyright The LanceDB Authors
 
-use std::{path::PathBuf, sync::Arc};
-
-use arrow_array::RecordBatch;
-use arrow_schema::{Fields, Schema};
-use datafusion_execution::disk_manager::DiskManagerMode;
-use futures::TryStreamExt;
-use rand::{RngCore, SeedableRng, rngs::SmallRng};
-use tempfile::TempDir;
-
-use crate::{
-    Error, Result,
-    arrow::{SendableRecordBatchStream, SimpleRecordBatchStream},
-};
-
-/// Directory to use for temporary files
-#[derive(Debug, Clone, Default)]
-pub enum TemporaryDirectory {
-    /// Use the operating system's default temporary directory (e.g. /tmp)
-    #[default]
-    OsDefault,
-    /// Use the specified directory (must be an absolute path)
-    Specific(PathBuf),
-    /// If spilling is required, then error out
-    None,
+**VERIFICATION METHOD**:
+Run an automated concurrency unit test invoking `consume()` concurrently or sequentially from multiple threads or simulated script calls:
+```rust
+#[test]
+fn verify_double_consume_fails_gracefully() {
+    let wrapper = BuilderWrapper::new("TestBuilder", vec![1, 2, 3]);
+    assert!(wrapper.consume(|v| v.len()).is_ok());
+    let err = wrapper.consume(|v| v.len()).unwrap_err();
+    assert!(err.to_string().contains("already been consumed"));
 }
+```
 
-impl TemporaryDirectory {
-    pub fn create_temp_dir(&self) -> Result<TempDir> {
-        match self {
-            Self::OsDefault => tempfile::tempdir(),
-            Self::Specific(path) => tempfile::Builder::default().tempdir_in(path),
-            Self::None => {
-                return Err(Error::Runtime {
-                    message: "No temporary directory was supplied and this operation requires spilling to disk".to_string(),
-                });
-            }
-        }
-        .map_err(|err| Error::Other {
-            message: "Failed to create temporary directory".to_string(),
-            source: Some(err.into()),
-        })
-    }
+---
 
-    pub fn to_disk_manager_mode(&self) -> DiskManagerMode {
-        match self {
-            Self::OsDefault => DiskManagerMode::OsTmpDirectory,
-            Self::Specific(path) => DiskManagerMode::Directories(vec![path.clone()]),
-            Self::None => DiskManagerMode::Disabled,
-        }
-    }
-}
+### 2. POSIX Post-Fork Asynchronous State Purge Invariant
+**RULE**:
+Any native library or Python runtime module embedding background worker threads and asynchronous event loops **MUST** register an `os.register_at_fork(after_in_child=...)` or native `pthread_atfork` hook. The child hook **MUST NOT** attempt to join or clean up the inherited parent thread handles, and **MUST** re-initialize synchronization primitives (`threading.Lock`) from scratch.
 
-pub fn non_crypto_rng(seed: &Option<u64>) -> Box<dyn RngCore + Send> {
-    Box::new(
-        seed.as_ref()
-            .map(|seed| SmallRng::seed_from_u64(*seed))
-            .unwrap_or_else(SmallRng::from_os_rng),
-    )
-}
+**WHY**:
+Under POSIX `fork()`, only the calling thread is duplicated into the child process. Any existing background event loop threads, Tokio worker threads, or thread-pool executors abruptly vanish without triggering destructors. If the parent process was holding an internal mutex at the instant of the fork, the child inherits that mutex in an irrevocably locked state. Attempting to acquire or safely shut down the old thread leads to immediate child deadlocks.
 
+**WHEN TO APPLY**:
+All systems embedding background async runtimes (Tokio, asyncio), thread pools, or connection pools inside shared libraries imported into multiprocessing-capable languages (Python, Ruby).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import os
+import threading
+import asyncio
+import concurrent.futures
+
+class BackgroundEventLoop:
+    def __init__(self):
+        self.loop: asyncio.AbstractEventLoop | None = None
+        self.thread: threading.Thread | None = None
+        self._start_lock = threading.Lock()
+
+    def _reset_after_fork(self):
+        # Threads do not survive fork(). Never invoke join() on dead threads.
+        # Overwrite the lock completely because the inherited lock may be held
+        # by a parent thread that ceased to exist.
+        self.loop = None
+        self.thread = None
+        self._start_lock = threading.Lock()
+
+_GLOBAL_LOOP = BackgroundEventLoop()
+_EMBEDDING_POOL = concurrent.futures.ThreadPoolExecutor(thread_name_prefix="db-worker")
+
+def _reset_runtime_after_fork():
+    global _EMBEDDING_POOL
+    _GLOBAL_LOOP._reset_after_fork()
+    # Replace executor without calling .shutdown(wait=True) on dead threads
+    _EMBEDDING_POOL = concurrent.futures.ThreadPoolExecutor(thread_name_prefix="db-worker")
+
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=_reset_runtime_after_fork)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER attempt to cleanly shut down existing thread pools in the post-fork child hook.
+def _bad_reset():
+    global _EMBEDDING_POOL
+    # DEADLOCK HAZARD: The threads in _EMBEDDING_POOL do not exist in this child process.
+    # .shutdown(wait=True) will wait indefinitely for non-existent threads to join.
+    _EMBEDDING_POOL.shutdown(wait=True) 
+```
+
+**VERIFICATION METHOD**:
+Execute a multi-process spawn test asserting that a child process can re-instantiate and run queries after a parent had already initialized background threads:
+```python
+import multiprocessing as mp
+
+def _worker(loop_instance):
+    # Verify child creates a new loop without deadlock
+    assert loop_instance._start_lock.acquire(timeout=2.0)
+    loop_instance._start_lock.release()
+
+def test_fork_safety():
+    mp.set_start_method("fork", force=True)
+    p = mp.Process(target=_worker, args=(_GLOBAL_LOOP,))
+    p.start()
+    p.join(timeout=5)
+    assert p.exitcode == 0
+```
+
+---
+
+### 3. Canonical Zero-Allocation Wire Deserialization with Omission Semantics
+**RULE**:
+When serializing distributed configuration, payload metadata, or execution manifests where server admission policies differentiate between "omitted" and "explicit default" values, the client-side AST **MUST** preserve three-state logic (`None` vs `Explicit(val)`) through to wire serialization and runtime digest hashing. It **MUST NOT** collapse missing optional fields into assumed client-side defaults prior to wire serialization.
+
+**WHY**:
+Modern distributed catalog servers and older backward-compatible enterprise deployments often employ admission controllers with hardcoded validation rules. Forcing an explicit field (e.g., `gpus_per_worker: 1`) when the caller simply requested boolean capability (`gpu: True`) causes older or strictly-scoped servers to reject the query as unrecognized. Furthermore, computing an environment verification digest over pre-defaulted payloads invalidates fingerprint caches between heterogeneous client-server versions.
+
+**WHEN TO APPLY**:
+API boundary normalizers, AST builders, and remote service RPC dispatchers communicating with heterogeneous distributed nodes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import Optional, Tuple
+
+def normalize_compute_spec(
+    gpu_enabled: bool,
+    gpu_count: Optional[int]
+) -> Tuple[bool, Optional[int]]:
+    if not gpu_enabled:
+        return False, None
+    if gpu_count is None:
+        # Invariant: Preserve None to allow the server admission controller
+        # to apply its own cluster-wide defaults without breaking wire schema checks.
+        return True, None
+    if isinstance(gpu_count, bool) or not isinstance(gpu_count, int) or gpu_count < 1:
+        raise ValueError("gpu_count must be a positive integer")
+    return True, gpu_count
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+def normalize_compute_spec_anti_pattern(gpu_enabled: bool, gpu_count: Optional[int]):
+    # ANTI-PATTERN: Forcing implicit defaults at the edge prevents server-side schema evolution
+    # and breaks runtime compatibility with back-level servers.
+    if gpu_enabled and gpu_count is None:
+        gpu_count = 1 
+    return gpu_enabled, gpu_count
+```
+
+**VERIFICATION METHOD**:
+Unit test comparing serialized JSON outputs under omitted vs explicit conditions:
+```python
+def test_compute_spec_omission_preserves_wire_format():
+    enabled, count = normalize_compute_spec(True, None)
+    payload = {"gpu": enabled, **({"gpus_per_worker": count} if count is not None else {})}
+    assert "gpus_per_worker" not in payload
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Function Catalog SDK Compatibility Failure on Enterprise Downgrades (BUG-CATALOG-01)
+- **Context**: Flight SQL client query execution engine (`rust/lancedb/src/remote/sql/function.rs`, `python/python/tests/test_function_catalog_pairing.py`)
+- **What Was Expected**: When querying remote Function Catalogs via `get_function` or `list_functions`, new syntax extensions (such as `FORMAT JSON` or `LIMIT n FROM 'cursor'`) executed against older LanceDB Enterprise versions should return actionable diagnostics regarding version mismatches while preserving the underlying gRPC status codes and error trees.
+- **What Actually Happened**: Older catalog servers rejected the generated SQL queries with generic parser errors: `"unexpected trailing input after the statement: FORMAT"` or `"unexpected trailing input after the statement: LIMIT"`. The client threw raw, opaque `SqlError` exceptions, causing enterprise users to suspect syntax bugs rather than SDK/server version skew.
+- **Evidence in Repo**: Commit `c55eaae0`, PR #5250.
+- **Root Cause**: The client-side SQL generator evolved to emit newly supported clauses (`FORMAT`, `LIMIT`) that were unparseable by legacy server-side DataFusion SQL grammars. The error-handling pipeline did not inspect server error strings for exact syntax rejection patterns to inject pairing advisories.
+- **Remediation Code Diff**:
+```rust
+// rust/lancedb/src/remote/sql/function.rs
++fn with_catalog_pairing(mut error: Error, clause: &str) -> Error {
++    if let Error::Sql {
++        message,
++        grpc_code,
++        metadata,
++        ..
++    } = &mut error
++        && *grpc_code == tonic::Code::InvalidArgument as i32
++        && metadata.error_code.is_none()
++        && metadata.resource.is_none()
++    {
++        let diagnostic = metadata.server.as_ref().map_or(message.as_str(), |build| {
++            message
++                .strip_suffix(&format!(" [server: {build}]"))
++                .unwrap_or(message)
++        });
++        if diagnostic.strip_prefix("unexpected trailing input after the statement: ")
++            == Some(clause)
++        {
++            message.push_str(
++                ". Check the Python SDK version paired with your LanceDB Enterprise build. \
++                 For a build paired with b8, install lancedb==0.42.0b8. \
++                 To use lancedb==0.42.0b38, connect to a LanceDB Enterprise build that pins b38.",
++            );
++        }
++    }
++    error
++}
+```
+- **Lesson**: Client SDKs executing dialect-expanding SQL over RPC boundaries must maintain diagnostic interception filters that recognize exact trailing input grammar diagnostics from back-level parsers and augment the error with version-pinning instructions without mutating the underlying error taxonomy.
+
+---
+
+### Incident 2: Implicit GPU Count Injection Breaking Cluster Function Registration (BUG-GPU-02)
+- **Context**: Python Function Serialization and Admission Subsystem (`python/python/lancedb/functions.py`, `python/python/tests/test_function_creation.py`)
+- **What Was Expected**: Decorating a function with `@lancedb.function(gpu=True)` without specifying `gpu_count` should register the function on single-GPU clusters without sending unrequested parameters, defaulting execution dynamically on the cluster.
+- **What Actually Happened**: The registration request explicitly pushed `{"gpus_per_worker": 1}` into the wire JSON payload. Legacy and strict single-GPU enterprise function engines rejected the payload entirely because their admission schema rejected the `gpus_per_worker` attribute.
+- **Evidence in Repo**: Commit `6283f83a`, PR #5249.
+- **Root Cause**: Premature client-side defaulting in `_normalize_gpu_request()`. It collapsed `gpu_count=None` into `gpu_count=1`, mutating the wire manifest schema and altering the SHA-256 runtime digest calculation.
+- **Remediation Code Diff**:
+```python
+# python/python/lancedb/functions.py
+ def _normalize_gpu_request(
+     gpu: bool,
+     gpu_class: Optional[str],
+     gpu_count: Optional[int],
+ ) -> Tuple[bool, Optional[str], Optional[int]]:
+     if gpu_class is not None:
+         gpu_class = _validate_gpu_class_name(gpu_class)
+     if gpu_count is None:
+-        gpu_count = 1
++        return True, gpu_class, None
+     if isinstance(gpu_count, bool) or not isinstance(gpu_count, int):
+         raise ValueError("gpu_count must be a positive integer")
+     if not 1 <= gpu_count <= 2**32 - 1:
+```
+- **Lesson**: Do not confuse semantic runtime defaults with registration wire formats. Omission must remain `None` throughout serialization; defaults belong on the server admission controller.
+
+---
+
+### Incident 3: DataFusion Stream Invalidation on Batch Column Renaming (BUG-STREAM-03)
+- **Context**: Permutation and Dataloader Stream Transformation (`rust/lancedb/src/dataloader/permutation/util.rs`)
+- **What Was Expected**: Renaming an Arrow record batch stream field for permutation pipelines should be a zero-copy metadata operation that preserves the stream's lazy evaluation without allocating intermediate data arrays.
+- **What Actually Happened**: Naive stream modifications cloned the underlying column buffers or broke schema-metadata synchronization, causing schema mismatch panics down the DataFusion execution pipeline when batches were pulled by downstream physical operators.
+- **Evidence in Repo**: `rust/lancedb/src/dataloader/permutation/util.rs:rename_column`.
+- **Root Cause**: Modifying an Arrow schema without cloning and propagating the root table metadata (`schema.metadata()`), or trying to reallocate arrays rather than wrapping the original column pointers in a newly typed `RecordBatch`.
+- **Remediation Code Diff**:
+```rust
+// rust/lancedb/src/dataloader/permutation/util.rs
 pub fn rename_column(
     stream: SendableRecordBatchStream,
     old_name: &str,
@@ -1265,571 +381,188 @@ pub fn rename_column(
         new_schema_clone,
     )))
 }
-
 ```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5236** (2026-11-26): **fix(ci): hand off Pages artifact to a separate deploy job**
-  *Symptoms*: The docs workflow uploads `github-pages` and deploys in the same job. On `0adfd22`, attempt 1 finished the upload and the deploy immediately found zero artifacts; attempt 2 uploaded again and the deploy found two artifacts with the same name. Four earlier main runs show the same zero-artifact race.  This uploads the site as `github-pages-<run_id>-<run_attempt>`, exposes that name as a `build` job output, and deploys from a separate `needs: build` job using the same name. A full workflow re-run gets a fresh name, while a deploy-only retry keeps the original build output and reuses the artifact uploaded by that build.  The existing action pins already expose the required inputs (`name` on `upload-pages-artifact`, `artifact_name` on `deploy-pages`), so this does not bump actions. Workflow triggers, permissions, concurrency, docs build steps, and the Pages environment URL are unchanged.  Validation: `actionlint .github/workflows/docs.yml`, YAML parsing, and `git diff --check` pass locally. Hosted checks run on this PR; the actual Pages upload and deploy are verified on main after merge because the workflow only deploys from `main`.  Evidence: - [attempt 1](https://github.com/lancedb/lancedb/actions/runs/45805006874/job/139857949931): upload succeeded, deploy logged `Found 0 artifact(s)`. - [attempt 2](https://github.com/lancedb/lancedb/actions/runs/45805006874/job/139875545904): upload succeeded, deploy logged `Found 2 artifact(s)` and failed with `Multiple artifacts named "githu
-
-- **Issue #5229** (2026-11-27): **fix(sql)!: request JSON for storage integration descriptions**
-  *Symptoms*: BREAKING CHANGE: Enterprise Storage Integration descriptions now explicitly request `DESCRIBE STORAGE INTEGRATION ... FORMAT JSON` and decode a complete JSON metadata document. The client previously decoded separate typed columns; use a server supporting JSON descriptions with this client.  ### TEXT and JSON examples  For interactive SQL, the corresponding human-readable description is shown below. The SDK continues to request `FORMAT JSON`.  ```sql DESCRIBE STORAGE INTEGRATION raw FORMAT TEXT; ```  For a GCP integration using a credential Secret, the complete illustrative `description` value is:  ```text Storage Integration name: raw database: example namespace_path: [] storage_provider: GCP storage_prefix: gs://example-bucket/raw/ aws_role_arn: NULL aws_access_key_id_secret: NULL aws_secret_access_key_secret: NULL aws_region: NULL aws_endpoint: NULL aws_account_id:  aws_iam_principal_arn:  aws_external_id: 00000000-0000-0000-0000-000000000004 created_at_millis: 1795350000000 access_verified: false trust_policy: NULL permissions_policy: NULL configuration_instructions: Store the GCP application credentials JSON in the referenced Secret and grant its identity Cloud Storage object read and write access to gs://example-bucket/raw/. azure_storage_account: NULL azure_tenant_id_secret: NULL azure_client_id_secret: NULL azure_client_secret_secret: NULL gcp_credentials_json_secret:   namespace_path:     [0]: credentials   name: gcp_key huggingface_token_secret: NULL azure_storage_ac
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `0736ef02` (2026-11-27)
-**Commit Message**: fix: reject merge inserts on version-pinned tables (#4851)
-
-Local `merge_insert` skipped the mutability check, allowing a
-version-pinned handle to commit onto its branch's latest version. Add
-`ensure_mutable()` at the start of `NativeTable::merge_insert` so it
-returns the same `InvalidInput` error as other writes before processing
-the merge. This shared Rust path serves both Python and TypeScript local
-tables.
-
-Extend the existing branch-version and time-travel tests to cover pinned
-opens and checkouts on main and named branches. Assert that rejection
-preserves pinned data and the latest version, and that
-`checkout_latest()` restores merge writes.
-
-Validation:
-
-- Both regression tests failed before the fix, reproducing successful
-commits from pinned handles.
-- Table tests: 405 passed (`cargo test --quiet --locked --profile ci
---features remote -p lancedb --lib table::tests::`).
-- Merge tests: 20 passed (`cargo test --quiet --locked --profile ci
---features remote -p lancedb --lib table::merge::tests::`).
-- `cargo clippy --quiet --locked --profile ci --features remote -p
-lancedb --tests --examples` passed.
-- `cargo fmt --all` and `git diff --check` passed.
-
-Fixes #4844
-
-<!-- lance-ga
-
-**File**: `rust/lancedb/src/table.rs` (modified, +45/-1)
-```diff
-@@ -4805,6 +4805,7 @@ impl BaseTable for NativeTable {
-         params: MergeInsertBuilder,
-         new_data: Box<dyn RecordBatchReader + Send>,
-     ) -> Result<MergeResult> {
-+        self.dataset.ensure_mutable()?;
-         let source_schema = arrow_array::RecordBatchReader::schema(&new_data);
-         self.ensure_not_a_view("merge insert into").await?;
-         computed_columns::ensure_not_written(
-@@ -6005,6 +6006,22 @@ mod tests {
- 
-         // a pinned version is a detached head: writes are rejected
-         assert!(pinned.add(sample_rows(vec![9])).execute().await.is_err());
-+        let exp_head = head.version().await.unwrap();
-+        for pinned_table in [&pinned, &pinned_direct] {
-+            let mut merge = pinned_table.merge_insert(&["i"]);
-+            merge
-+                .when_matched_update_all(None)
-+                .when_not_matched_insert_all();
-+            let err = merge.execute(sample_rows(vec![300])).await.unwrap_err();
-+            assert!(matches!(err, Error::InvalidInput { message }
-+                if message == "table cannot be modified when a specific version is checked out"));
-+            assert_eq!(pinned_table.version().await.unwrap(), exp_v2);
-+            assert_eq!(pinned_table.count_rows(None).await.unwrap(), 2);
-+        }
-+        assert_eq!(head.version().await.unwrap(), exp_head);
-+        assert_eq!(head.count_rows(None).await.unwrap(), 3);
-+        assert_eq!(table.version().await.unwrap(), main_v2);
-+        assert_eq!(table.count_rows(None).await.unwrap(), 4);
- 
-         // version-only (no branch) time-travels main itself: its fork-point
-         // version holds only main's first row, and the shared version number
-@@ -6390,8 +6407,35 @@ mod tests {
-             .unwrap();
-         let version = table.version().await.unwrap();
-         table.add(some_sample_data()).execute().await.unwrap();
-+        let latest_version = table.version().await.unwrap();
-+        let opened = conn
-+            .open_table("my_table")
-+            .version(version)
-+            .execute()
-+            .await
-+            .unwrap();
-         table.checkout(version).await.unwrap();
--        assert!(table.add(some_sample_data()).execute().await.is_err())
-+        assert!(table.add(some_sample_data()).execute().await.is_err());
-+        for pinned_table in [&table, &opened] {
-+            let mut merge = pinned_table.merge_insert(&["i"]);
-+            merge
-+                .when_matched_update_all(None)
-+                .when_not_matched_insert_all();
-+            let err = merge.execute(sample_rows(vec![300])).await.unwrap_err();
-+            assert!(matches!(err, Error::InvalidInput { message }
-+                if message == "table cannot be modified when a specific version is checked out"));
-+            assert_eq!(pinned_table.version().await.unwrap(), version);
-+            assert_eq!(pinned_table.count_rows(None).await.unwrap(), 1);
-+        }
-+
-+        table.checkout_latest().await.unwrap();
-+        assert_eq!(table.version().await.unwrap(), latest_version);
-+        assert_eq!(table.count_rows(None).await.unwrap(), 2);
-+        let mut merge = table.merge_insert(&["i"]);
-+        merge.when_not_matched_insert_all();
-+        let result = merge.execute(sample_rows(vec![300])).await.unwrap();
-+        assert_eq!(result.num_inserted_rows, 1);
-+        assert_eq!(table.count_rows(None).await.unwrap(), 3);
-     }
- 
-     #[tokio::test]
-```
+- **Lesson**: When transforming stream schemas in Arrow, column data arrays (`batch.columns()`) are immutable reference-counted handles (`Arc<dyn Array>`). Zero-copy re-aliasing must construct a new `RecordBatch` over identical column vectors alongside a fresh `Schema` that preserves root schema metadata.
 
 ---
 
-### Incident Patch 2: `a663417f` (2026-11-27)
-**Commit Message**: fix: validate remote tag checkout branch and version (#4853)
-
-Remote tag checkout discarded the tag's branch and pinned its version on
-the handle's own branch without checking that the version existed. This
-could read a different snapshot or leave the handle pinned to a
-nonexistent version.
-
-Resolve the complete tag reference and reject cross-branch tags with an
-error naming both branches. For a tag on the handle's branch, reuse
-numeric checkout to validate the version before committing the selector
-and freshness state. This also protects Python's
-`open_table(version=tag)`, which delegates to tag checkout. To read a
-tag on another branch, obtain that branch's handle first with
-`checkout_branch` in Rust or `table.branches.checkout(...)` in Python.
-The Python checkout docstrings and tag-based versioning guide document
-this requirement.
-
-Add 17 regression cases covering cross-branch tags in both directions,
-main-branch aliases, same-branch reads, and failed validation on
-writable and pinned handles. Twelve cases failed against the original
-implementation. Update the existing freshness and schema-cache tests for
-the validation request.
-
-Validation:
-
-- `cargo test --locked --profile ci 
-
-**File**: `docs/web/management/table.mdx` (modified, +7/-0)
-```diff
-@@ -1736,6 +1736,13 @@ page).
- The tags API supports the standard CRUD operations (create, list, update, delete),
- plus checking out by tag name.
- 
-+A tag identifies both a branch and a version. On Enterprise tables, a tag must belong
-+to the handle's current branch; checking out a tag on another branch raises an
-+error without changing the current selection. Obtain a handle for the tag's
-+branch first: in Python, use `branch_table = table.branches.checkout("exp")`, then
-+`branch_table.checkout("baseline")` to read a tag named `baseline` on `exp`.
-+See [Branches](/tables/branching) for more on branch handles.
-+
- In Python, `tags.create()` accepts an optional `version`. If you omit it, the
- tag uses the version the table handle currently shows. That includes a handle
- checked out to an older version, so pass `version` explicitly when the tag must
-```
-
-**File**: `python/python/lancedb/remote/table.py` (modified, +10/-0)
-```diff
-@@ -332,6 +332,16 @@ def to_polars(self, batch_size=None) -> "pl.LazyFrame":
-         )
- 
-     def checkout(self, version: Union[int, str]):
-+        """Check out a version number or tag as a read-only view in place.
-+
-+        A tag must belong to this handle's current branch. To read a tag on
-+        another branch, first obtain that branch's handle with
-+        `table.branches.checkout("branch_name")`, then call `checkout(tag)` on
-+        that handle. A tag on another branch raises an error without changing
-+        the current selection.
-+
-+        Call `checkout_latest()` to return to the latest version of this branch.
-+        """
-         result = LOOP.run(self._table.checkout(version))
-         self._checkout_version = self.version
-         return result
-```
-
-**File**: `python/python/lancedb/table.py` (modified, +12/-0)
-```diff
-@@ -4247,6 +4247,12 @@ def checkout(self, version: Union[int, str]):
-         out state. To return the table to a normal state use
-         `[Self::checkout_latest]`.
- 
-+        For Enterprise tables, a tag must belong to this handle's current branch.
-+        To read a tag on another branch, first obtain that branch's handle with
-+        `table.branches.checkout("branch_name")`, then call `checkout(tag)` on
-+        that handle. A tag on another branch raises an error without changing
-+        the current selection.
-+
-         Parameters
-         ----------
-         version: int | str,
-@@ -10036,6 +10042,12 @@ async def checkout(self, version: int | str):
-         out state. To return the table to a normal state use
-         `[Self::checkout_latest]`.
- 
-+        For Enterprise tables, a tag must belong to this handle's current branch.
-+        To read a tag on another branch, first obtain that branch's handle with
-+        `await table.branches.checkout("branch_name")`, then call
-+        `await branch_table.checkout(tag)` on that handle. A tag on another
-+        branch raises an error without changing the current selection.
-+
-         Parameters
-         ----------
-         version: int | str,
-```
-
-**File**: `rust/lancedb/src/remote/table.rs` (modified, +248/-28)
-```diff
-@@ -1269,7 +1269,7 @@ impl<S: HttpSend> RemoteTable<S> {
-     }
- 
-     /// Resolve a tag to its `(branch, version)` coordinate via the `tags/version`
--    /// endpoint, since the `/branches/create` contract accepts no `from_tag`.
-+    /// endpoint.
-     async fn resolve_tag_ref(&self, tag: &str) -> Result<(Option<String>, u64)> {
-         let request = self
-             .client
-@@ -4286,22 +4286,19 @@ impl<S: HttpSend> BaseTable for RemoteTable<S> {
-         // Resolve the tag without attaching freshness headers; a stale
-         // `min_version` from a previous write should not ride along on an
-         // explicit time-travel request.
--        let request = self
--            .client
--            .post(&format!("/v1/table/{}/tags/version/", self.identifier));
--        let version = self
--            .resolve_tag_version_with_request(tag, request, false)
--            .await?;
--
--        let mut write_guard = self.version.write().await;
--        // Commit the selector and its freshness mode while holding the selector
--        // write lock, with no cancellation point between the two updates.
--        self.reset_freshness(None, true);
--        *write_guard = Some(version);
--        self.invalidate_schema_cache();
--        drop(write_guard);
-+        let (branch, version) = self.resolve_tag_ref(tag).await?;
-+        if branch != self.branch {
-+            return Err(Error::InvalidInput {
-+                message: format!(
-+                    "Tag '{tag}' belongs to branch '{}', but this table handle is scoped to branch '{}'. Check out the tag's branch first.",
-+                    branch.as_deref().unwrap_or("main"),
-+                    self.branch.as_deref().unwrap_or("main"),
-+                ),
-+            });
-+        }
- 
--        Ok(())
-+        // Validate the version before pinning the handle.
-+        self.checkout(version).await
-     }
-     /// Only `OptimizeAction::Compact` with supported `options` and no custom
-     /// `remap_options` is supported remotely: it submits a durable
-@@ -16191,12 +16188,13 @@ mod tests {
-             .checkout_tag("v2")
-             .await
-             .expect("checkout_tag should succeed");
-+        assert_eq!(call_count.load(Ordering::SeqCst), 2);
- 
-         // Schema call after checkout_tag should re-fetch (cache was invalidated)
-         let schema3 = table.schema().await.unwrap();
-         assert_eq!(
-             call_count.load(Ordering::SeqCst),
--            2,
-+            3,
-             "Cache should have been invalidated and re-fetched"
-         );
-         assert_ne!(
-@@ -18130,12 +18128,13 @@ mod tests {
-     }
- 
-     #[tokio::test]
--    async fn test_freshness_checkout_tag_resolve_sends_no_min_version() {
--        // Same invariant for checkout_tag: the tag-resolve request must not
--        // pick up a stale min_version from a prior write.
-+    async fn test_freshness_checkout_tag_validation_sends_no_min_version() {
-+        // Neither the tag lookup nor the version validation should pick up a
-+        // stale min_version from a prior write.
-         let (handler, captured) = path_capturing_handler(|path| match path {
-             "/v1/table/my_table/update/" => r#"{"rows_updated":1,"version":7}"#.to_string(),
-             "/v1/table/my_table/tags/version/" => r#"{"version":5}"#.to_string(),
-+            "/v1/table/my_table/describe/" => r#"{"version":5,"schema":{"fields":[]}}"#.to_string(),
-             _ => panic!("unexpected path: {}", path),
-         });
-         let table = Table::new_with_handler("my_table", handler);
-@@ -18144,14 +18143,20 @@ mod tests {
-         table.checkout_tag("v_initial").await.unwrap();
- 
-         let captured = captured.lock().unwrap();
--        let resolve_headers = captured
--            .get("/v1/table/my_table/tags/version/")
--            .expect("tags/version should have been called by checkout_tag");
--        assert!(
--            !resolve_headers.contains_key("x-lancedb-min-version"),
--            "checkout_tag resolve must not carry stale min_version",
--        );
--        assert!(!resolve_headers.contains_key("x-lancedb-min-timestamp"));
-+        for path in [
-+            "/v1/table/my_table/tags/version/",
-+            "/v1/table/my_table/describe/",
-+        ] {
-+            let headers = captured
-+                .get(path)
-+                .expect("checkout_tag should call endpoint");
-+            assert!(
-+                !headers.contains_key("x-lancedb-min-version"),
-+                "{path} must not carry stale min_version",
-+            );
-+            assert!(!headers.contains_key("x-lancedb-min-timestamp"));
-+            assert!(!headers.contains_key("x-lancedb-min-read-version"));
-+        }
-     }
- 
-     #[tokio::test]
-@@ -19017,6 +19022,221 @@ mod tests {
-         }
-     }
- 
-+    #[rstest]
-+    #[case(None, Some("exp"))]
-+    #[case(Some("exp"), None)]
-+    #[case(Some("exp"), Some("main"))]
-+    #[case(Some("exp"), Some("other"))]
-+    #[tokio::test]
-+    async fn test_checkout_tag_rejects_other_
-```
-
-**File**: `rust/lancedb/src/table.rs` (modified, +4/-0)
-```diff
-@@ -3075,6 +3075,10 @@ impl Table {
- 
-     /// Checks out a specific version of the Table by tag
-     ///
-+    /// On Enterprise tables, the tag must belong to this handle's branch. Use
-+    /// [`Self::checkout_branch`] to obtain a handle for another branch first.
-+    /// A failed Enterprise tag checkout leaves the handle unchanged.
-+    ///
-     /// Any read operation on the table will now access the data at the version referenced by the tag.
-     /// As a consequence, calling this method will disable any read consistency interval
-     /// that was previously set.
-```
-
----
-
-### Incident Patch 3: `fdfbb98a` (2026-11-27)
-**Commit Message**: fix(python): give tied FTS scores full weight in hybrid normalization (#4858)
-
-## Why
-
-Hybrid search normalizes FTS scores with min-max. When all FTS scores
-are equal (one match, or a tie), the range is 0 and every score became
-0. `LinearCombinationReranker` treats 0 as a missing FTS match. So a
-lone keyword match could rank below documents without the keyword. Fixes
-#4857.
-
-## What changed
-
-- `_normalize_scores` takes a `tie_value` for the zero-range case. The
-default stays 0, so vector distances are unchanged.
-- The FTS leg passes `tie_value=1.0`, so tied FTS matches count as the
-best FTS result.
-
-## Scope
-
-- Covers the zero-range case for both `normalize="score"` and
-`normalize="rank"`.
-- Leaves out how `_rank` breaks ties among equal scores. That is a
-separate question.
-
-## Blast Radius
-
-The change only affects hybrid queries where every FTS hit has the same
-score. RRF and MRR use list position, so their results don't change.
-LinearCombination and custom score-based rerankers now give those hits
-full FTS weight.
-
-## Verification
-
-- A new test in `test_hybrid_query.py` fails on main in both normalize
-modes and passes with the fix.
-- `pytest python/tests -m "not slow and not s3_t
-
-**File**: `python/python/lancedb/query.py` (modified, +10/-5)
-```diff
-@@ -3491,7 +3491,9 @@ def _combine_hybrid_results(
-             fts_results = fts_results.set_column(
-                 score_i,
-                 fts_results.field(score_i),
--                LanceHybridQueryBuilder._normalize_scores(fts_results.column(score_i)),
-+                LanceHybridQueryBuilder._normalize_scores(
-+                    fts_results.column(score_i), tie_value=1.0
-+                ),
+### Incident 4: Python Boolean Subclass Integer Coercion in Schema Flattening (BUG-COERCE-04)
+- **Context**: Structural Table Utilities (`python/python/lancedb/util.py:flatten_columns`)
+- **What Was Expected**: Calling `flatten_columns(tbl, flatten=False)` should leave the table unflattened.
+- **What Actually Happened**: In Python, `bool` is a direct subclass of `int` (`isinstance(False, int) == True`). When passing `flatten=False`, the integer depth branch was selected: `flatten <= 0` triggered a `ValueError("Please specify a positive integer for flatten or the boolean value True")`.
+- **Evidence in Repo**: `python/python/lancedb/util.py:flatten_columns`.
+- **Root Cause**: Failure to explicitly disallow boolean instances before branching on `isinstance(val, int)`.
+- **Remediation Code Diff**:
+```python
+# python/python/lancedb/util.py
+     if flatten is True:
+         while True:
+             tbl = tbl.flatten()
+             if any(pa.types.is_struct(col.type) for col in tbl.schema):
+                 continue
+             else:
+                 break
+-    elif isinstance(flatten, int):
++    # `bool` is a subclass of `int`, so guard against it explicitly: `flatten=False`
++    # (and `None`) must mean "do not flatten" rather than falling into the integer
++    # branch and raising on the `flatten <= 0` check.
++    elif isinstance(flatten, int) and not isinstance(flatten, bool):
+         if flatten <= 0:
+             raise ValueError(
+                 "Please specify a positive integer for flatten or the boolean value `True`"
              )
- 
-         results = reranker.rerank_hybrid(fts_query, vector_results, fts_results)
-@@ -3552,7 +3554,9 @@ def _rank(results: pa.Table, column: str, ascending: bool = True):
-         return results
- 
-     @staticmethod
--    def _normalize_scores(scores: pa.Array, invert=False) -> pa.Array:
-+    def _normalize_scores(
-+        scores: pa.Array, invert=False, tie_value: float = 0.0
-+    ) -> pa.Array:
-         if len(scores) == 0:
-             return scores
-         # normalize the scores by subtracting the min and dividing by the max
-@@ -3561,9 +3565,10 @@ def _normalize_scores(scores: pa.Array, invert=False) -> pa.Array:
- 
-         if not pc.equal(rng, pa.scalar(0.0)).as_py():
-             scores = pc.divide(pc.subtract(scores, min), rng)
--        elif not pc.equal(max, pa.scalar(0.0)).as_py():
--            # If rng is 0, then we at least want the scores to be 0
--            scores = pc.subtract(scores, min)
-+        else:
-+            # All scores are equal, so they are equally relevant. Distances
-+            # tie at 0 (best), while higher-is-better scores tie at 1.
-+            scores = pc.add(pc.subtract(scores, min), pa.scalar(tie_value, scores.type))
- 
-         if invert:
-             scores = pc.subtract(1, scores)
+         while flatten > 0:
+             tbl = tbl.flatten()
+             flatten -= 1
+     return tbl
 ```
-
-**File**: `python/python/tests/test_hybrid_query.py` (modified, +31/-0)
-```diff
-@@ -604,6 +604,37 @@ def test_normalize_scores():
-             )
- 
- 
-+@pytest.mark.parametrize("normalize", ["score", "rank"])
-+def test_hybrid_single_fts_match_keeps_fts_weight(tmp_path, normalize):
-+    from lancedb.rerankers import LinearCombinationReranker
-+
-+    db = lancedb.connect(tmp_path)
-+    table = db.create_table(
-+        "test",
-+        [
-+            {"text": "apple banana", "vector": [0.0, 0.0]},
-+            {"text": "zebra unicorn", "vector": [0.1, 0.0]},
-+            {"text": "cherry grape", "vector": [5.0, 5.0]},
-+        ],
-+    )
-+    table.create_fts_index("text")
-+
-+    results = (
-+        table.search(query_type="hybrid")
-+        .vector([0.0, 0.0])
-+        .text("zebra")
-+        .rerank(LinearCombinationReranker(weight=0.3), normalize=normalize)
-+        .limit(3)
-+        .to_arrow()
-+    )
-+
-+    assert results["text"].to_pylist() == [
-+        "zebra unicorn",
-+        "apple banana",
-+        "cherry grape",
-+    ]
-+
-+
- def test_hybrid_query_rejects_query_with_vector(sync_table: Table):
-     # Pins the full message: the space between "hybrid search." and "But" is
-     # load-bearing (see the _validate_query literal concatenation).
-```
-
-#### Recent Merged Pull Requests:
-- **PR #5246** (2026-11-27): chore: update lance dependency to v16.0.0-beta.5 (@lancedb-robot)
-- **PR #5242** (2026-11-27): chore: update lance dependency to v16.0.0-beta.4 (@lancedb-robot)
-- **PR #5238** (2026-11-26): feat(nodejs): open source-bearing blob descriptors (@Xuanwo)
-- **PR #5237** (2026-11-26): chore: update lance dependency to v16.0.0-beta.3 (@lancedb-robot)
-- **PR #5236** (2026-11-26): fix(ci): hand off Pages artifact to a separate deploy job (@Xuanwo)
-- **PR #5234** (2026-11-26): chore: update lance dependency to v16.0.0-beta.2 (@lancedb-robot)
+- **Lesson**: In dynamic languages with primitive subtyping (Python's `bool <: int`), any guard checking numeric ranges **MUST** explicitly filter `not isinstance(x, bool)`.
 
 ---
 
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+* **SQL Escaping for Floating Point Limits**: In JavaScript/Node.js, `Number.NaN.toString()` outputs `"NaN"` and `Infinity.toString()` outputs `"Infinity"`. If concatenated directly into SQL queries, database parsers interpret them as column names rather than numeric literals. The serializer in `nodejs/lancedb/util.ts` enforces exact SQL casting:
+  ```typescript
+  if (Number.isNaN(value)) {
+    return "CAST('NaN' AS DOUBLE)";
+  } else if (!Number.isFinite(value)) {
+    return value > 0
+      ? "CAST('Infinity' AS DOUBLE)"
+      : "CAST('-Infinity' AS DOUBLE)";
+  }
+  ```
+* **Bit Packing Shift Invariants**: In vector binary quantification (`packBits`), array bit shifting must prevent out-of-bounds byte increments using arithmetic right-shifts and bitwise ANDs:
+  ```typescript
+  const byte = i >> 3; // Fast divide by 8
+  const bit = i & 7;   // Fast modulo 8
+  packed[byte] |= data[i] << bit;
+  ```
+* **String Identifier Quoting**: When resolving vector columns across nested structs (`_format_field_path`), path segments containing non-alphanumeric or non-underscore characters must escape internal backticks by doubling them:
+  ```python
+  def format_segment(segment: str) -> str:
+      if all(char.isalnum() or char == "_" for char in segment):
+          return segment
+      return f"`{segment.replace('`', '``')}`"
+  ```
+
+### 2. Infinite Loop & Recursion Guards
+* **Struct Column Unnesting Loops**: In `flatten_columns`, deep unnesting of structs uses an unbounded `while True` loop that terminates if and only if no column schema satisfies `pa.types.is_struct`:
+  ```python
+  if flatten is True:
+      while True:
+          tbl = tbl.flatten()
+          if any(pa.types.is_struct(col.type) for col in tbl.schema):
+              continue
+          else:
+              break
+  ```
+  *Termination Proof*: In Apache Arrow, flattening a table reduces the struct nesting depth of all columns by strictly 1. Because Arrow schemas are acyclic finite directed trees, the maximum nesting depth $D$ is strictly finite. The loop runs exactly $D$ times and terminates.
+* **Bounded Retries with Monotonic Delay Clamps**:
+  ```python
+  delay = min(delay * exponential_base, max_delay)
+  if jitter:
+      sleep_for = delay / 2 + random.random() * delay / 2
+  ```
+  Every retry iteration checks `num_retries > max_retries` before sleeping, guaranteeing termination even under persistent network partitions.
+
+### 3. UI & UX Micro-Mechanics
+* **Progress Bar Chunker Generators**: Progress monitoring across large Arrow table transfers requires wrapping chunk iterators in generator pipelines. The generator computes total batches up front (`math.ceil(length / self._batch_size)`) to prevent display glitches or division by zero:
+  ```python
+  def to_batches(self, arr):
+      length = len(arr)
+      def _chunker(arr):
+          for start_i in range(0, len(arr), self._batch_size):
+              yield arr[start_i : start_i + self._batch_size]
+      if self._progress:
+          from tqdm.auto import tqdm
+          yield from tqdm(_chunker(arr), total=math.ceil(length / self._batch_size))
+      else:
+          yield from _chunker(arr)
+  ```
+
+### 4. Backend Concurrency & Memory Safety
+* **Isolated Thread Pools for Starvation Prevention**:
+  Embedding models and remote tokenizers execute long-running CPU or blocking I/O tasks. Running these on Python's default `asyncio` executor will exhaust threads needed for native database operations. LanceDB maintains an isolated executor:
+  ```python
+  _EMBEDDING_EXECUTOR = concurrent.futures.ThreadPoolExecutor(thread_name_prefix="lancedb-embedding")
+  ```
+* **Memory Leak Elimination via `weakref` Decorated LRU Caches**:
+  Standard `functools.lru_cache` keeps references to `self`, preventing garbage collection of large database instances. LanceDB implements `weak_lru`:
+  ```python
+  def weak_lru(maxsize=128):
+      def wrapper(func):
+          @functools.lru_cache(maxsize)
+          def _func(_self, *args, **kwargs):
+              return func(_self(), *args, **kwargs)
+          @functools.wraps(func)
+          def inner(self, *args, **kwargs):
+              return _func(weakref.ref(self), *args, **kwargs)
+          return inner
+      return wrapper
+  ```
+* **Lazy Expiration TTL Cache without Unbounded Timer Allocations**:
+  Rather than spawning background timeout timers for every cache entry (which leads to timer starvation under thousands of keys), `TTLCache` in `nodejs/lancedb/util.ts` validates deadlines lazily upon `get`:
+  ```typescript
+  get(key: string): any | undefined {
+    const entry = this.cache.get(key);
+    if (entry === undefined) return undefined;
+    if (entry.expires < Date.now()) {
+      this.cache.delete(key);
+      return undefined;
+    }
+    return entry.value;
+  }
+  ```
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+* **Case Normalization Guardrails**:
+  In `namespace_utils.py`, different server subsystems expect conflicting casing (e.g., `create_namespace` expects lowercase `'create'`, but `drop_namespace` expects uppercase `'RESTRICT'` or `'CASCADE'`). Normalization functions intercept, strip, case-convert, and validate against `frozenset` collections before forming RPC requests:
+  ```python
+  _DROP_NAMESPACE_BEHAVIORS = frozenset({"RESTRICT", "CASCADE"})
+  def _normalize_drop_namespace_behavior(behavior: Optional[str]) -> Optional[str]:
+      if behavior is None:
+          return None
+      normalized = behavior.upper()
+      if normalized not in _DROP_NAMESPACE_BEHAVIORS:
+          raise ValueError(f"Invalid drop namespace behavior {behavior!r}: expected one of 'restrict', 'cascade'")
+      return normalized
+  ```
+* **Windows Drive Path Parsing Pitfall**:
+  Using `urlparse` on Windows paths (e.g., `C:\data`) interprets `C` as the URL scheme. `get_uri_scheme` and `get_uri_location` detect single-character schemes and normalize them back to filesystem operations:
+  ```python
+  parsed = urlparse(str(uri))
+  scheme = parsed.scheme
+  if len(scheme) == 1:
+      # Windows drive letter detected (e.g., "c:\path")
+      scheme = "file"
+  ```
 
 ---
 
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+## 5. The 9 Deep Learning Dimensions
 
+### Dimension 1: Architecture
+* **Hybrid Storage Engine**: Decouples the physical Lance file layout from compute engines.
+* **Subsystem Partitioning**:
+  * Native Rust engine manages memory buffers, vector SIMD arithmetic, and DataFusion integration.
+  * Thin FFI wrappers expose zero-cost abstractions to Python and Node.js.
+  * Distributed operations translate into Arrow Flight SQL pipelines.
 
----
+### Dimension 2: Core Abstractions
+* `BuilderWrapper<T>`: Linear ownership container bridging Rust to foreign runtimes via interior mutability.
+* `SendableRecordBatchStream`: A pinned, asynchronous stream yielding `RecordBatch` items under DataFusion execution.
+* `FunctionRetryPolicy`: Immutable, validated wire-contract specifying retry bounds, exponential backoff, and jitter parameters for cluster jobs.
+* `TemporaryDirectory`: Spilling policy enumeration translating into DataFusion `DiskManagerMode`.
 
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+### Dimension 3: Error Handling
+* Multi-tiered taxonomy: `lancedb::Error` encloses `SqlError`, `InvalidInput`, `ArrowError`, and `TonicStatus`.
+* Context Preservation: When appending catalog pairing diagnostics, the engine preserves original gRPC status codes, request IDs, and server build headers while mutating only the diagnostic message payload.
 
-## X. reject merge inserts on version-pinned tables
-
-**RULE**:
-When implementing operations in `rust/lancedb/src/table.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `0736ef02`: reject merge inserts on version-pinned tables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/lancedb/src/table.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-        self.dataset.ensure_mutable()?;
-        let exp_head = head.version().await.unwrap();
-        for pinned_table in [&pinned, &pinned_direct] {
-            let mut merge = pinned_table.merge_insert(&["i"]);
-            merge
-                .when_matched_update_all(None)
-                .when_not_matched_insert_all();
-            let err = merge.execute(sample_rows(vec![300])).await.unwrap_err();
-            assert!(matches!(err, Error::InvalidInput { message }
-                if message == "table cannot be modified when a specific version is checked out"));
-            assert_eq!(pinned_table.version().await.unwrap(), exp_v2);
-            assert_eq!(pinned_table.count_rows(None).await.unwrap(), 2);
-        }
-        assert_eq!(head.version().await.unwrap(), exp_head);
-        assert_eq!(head.count_rows(None).await.unwrap(), 3);
-        assert_eq!(table.version().await.unwrap(), main_v2);
-        assert_eq!(table.count_rows(None).await.unwrap(), 4);
-        let latest_version = table.version().await.unwrap();
-        let opened = conn
-            .open_table("my_table")
-            .version(version)
-            .execute()
-            .await
-            .unwrap();
-        asse
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-        assert!(table.add(some_sample_data()).execute().await.is_err())
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0736ef02` are properly handled with clean fallback behavior.
-
+### Dimension 4: Testing
+* **Mock Flight SQL Services**: Python and Rust tests inject `TestSqlService` mocking Arrow Flight endpoints, verifying responses to broken tickets, invalid SQL statements, and opaque cursor continuation tokens.
+* **Deterministic Fixture Replay**: Canonical JSON fixtures verify that Function declarations serialize to identical SHA-256 digests across Python and Rust runtimes
 
 ## 3. Independent Verification Protocol
 1. Assert state existence before and after execution.

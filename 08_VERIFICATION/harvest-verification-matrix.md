@@ -14021,3 +14021,6 @@
 | `CYCLE-20261128-Z8TZ` | `2026-11-28T08:16:30.071Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11067, Rule 11068, Rule 11069` | Yes (`68011006...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T08:17:01.432Z` | `rollup-rollup` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-34761320` [Domain H] | Yes (`dc0be6ec...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T08:17:34.010Z` | `rollup-rollup` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-AA0E6A7E` [Domain H] | Yes (`8a796279...`) |
+| `CYCLE-20261128-S4TK` | `2026-11-28T08:38:57.896Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11070, Rule 11071, Rule 11072` | Yes (`95a23030...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T08:39:33.265Z` | `lancedb-lancedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-6CED55F4` [Domain H] | Yes (`df49e7a1...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T08:40:12.155Z` | `lancedb-lancedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-73F87CC1` [Domain H] | Yes (`ca5b4ccd...`) |

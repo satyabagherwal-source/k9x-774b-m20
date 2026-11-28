@@ -14054,3 +14054,6 @@ Every entry in this ledger must capture:
 | `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `73d63952` | Multi-dimensional audit evidence | 2026-11-28T08:16:30.076Z |
 | `learn-dom-h-34761320` | `project://rollup-rollup` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md` | 2026-11-28T08:17:01.432Z |
 | `learn-dom-h-aa0e6a7e` | `project://rollup-rollup` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md` | 2026-11-28T08:17:34.010Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `9e3af362` | Multi-dimensional audit evidence | 2026-11-28T08:38:57.901Z |
+| `learn-dom-h-6ced55f4` | `project://lancedb-lancedb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md` | 2026-11-28T08:39:33.265Z |
+| `learn-dom-h-73f87cc1` | `project://lancedb-lancedb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md` | 2026-11-28T08:40:12.155Z |

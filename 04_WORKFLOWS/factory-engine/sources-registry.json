@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T08:16:33.950Z",
-    "lastVerified": "2026-11-28T08:16:33.950Z",
+    "lastChecked": "2026-11-28T08:39:01.780Z",
+    "lastVerified": "2026-11-28T08:39:01.780Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T07:40:16.897Z",
-    "lastVerified": "2026-11-28T07:40:16.897Z",
+    "lastChecked": "2026-11-28T08:34:11.789Z",
+    "lastVerified": "2026-11-28T08:34:11.789Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1090,9 +1090,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-28T04:03:36.327Z",
+    "lastChecked": "2026-11-28T08:34:06.747Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-28T04:03:36.327Z"
+    "lastVerified": "2026-11-28T08:34:06.747Z"
   },
   "chroma-core-chroma": {
     "name": "chroma-core/chroma",
@@ -2112,14 +2112,14 @@
     "officialUrl": "https://github.com/lancedb/lancedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T14:05:09.015Z",
-    "lastVerified": "2026-11-27T14:05:09.015Z",
+    "lastChecked": "2026-11-28T08:34:13.611Z",
+    "lastVerified": "2026-11-28T08:34:13.611Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "bae4568beb2413778e219431bf7acee92b3aa0cb73b852ae97bd64430251485d",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "contentHash": "95a230309321b931cc3b7f84a58d6eb82fb2949c5340b9298df7785cf4e16f26",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6445,9 +6445,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-11-27T15:36:36.098Z",
+    "lastChecked": "2026-11-28T08:34:04.285Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-11-27T15:36:36.098Z"
+    "lastVerified": "2026-11-28T08:34:04.285Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",
@@ -8639,9 +8639,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-27T09:07:56.573Z",
+    "lastChecked": "2026-11-28T08:33:56.694Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-27T09:07:56.573Z"
+    "lastVerified": "2026-11-28T08:33:56.694Z"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
     "name": "openbmb/MiniCPM-V-4.7-1B",
@@ -11731,9 +11731,9 @@
   "jtrivedi-wave": {
     "name": "Wave",
     "officialUrl": "https://github.com/jtrivedi/Wave",
-    "lastChecked": "2026-11-26T06:18:16.211Z",
+    "lastChecked": "2026-11-28T08:34:01.690Z",
     "revisionIdentifier": "27b7e1d2",
-    "lastVerified": "2026-11-26T06:18:16.211Z"
+    "lastVerified": "2026-11-28T08:34:01.690Z"
   },
   "jsonld-java-jsonld-java": {
     "name": "jsonld-java",
@@ -12074,9 +12074,9 @@
   "evanw-esbuild": {
     "name": "esbuild",
     "officialUrl": "https://github.com/evanw/esbuild",
-    "lastChecked": "2026-11-24T23:41:38.018Z",
+    "lastChecked": "2026-11-28T08:33:59.223Z",
     "revisionIdentifier": "f6058f83",
-    "lastVerified": "2026-11-24T23:41:38.018Z"
+    "lastVerified": "2026-11-28T08:33:59.223Z"
   },
   "rafsoh-dimeapp": {
     "name": "rafsoh/dimeApp",

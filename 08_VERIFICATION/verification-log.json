@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-MHM6",
-    "timestamp": "2026-11-26T17:23:06.798Z",
-    "repository": "karakeep-app/karakeep",
-    "learningId": "learn-github-karakeep-app-karakeep",
-    "contentHash": "c6c83deeb14955e65401ae4a3c9af5a249f101bcbdc35c75ad764abaa76b7f0d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-WBA4",
     "timestamp": "2026-11-26T17:30:45.148Z",
     "repository": "google/electra-base-discriminator",
@@ -7490,6 +7475,21 @@
     "repository": "rollup/rollup",
     "learningId": "learn-github-rollup-rollup",
     "contentHash": "68011006157b47d9c83090a2f5697217f8e7cd5b57b52cef1bb55ebc15a05207",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-S4TK",
+    "timestamp": "2026-11-28T08:38:57.896Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "95a230309321b931cc3b7f84a58d6eb82fb2949c5340b9298df7785cf4e16f26",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

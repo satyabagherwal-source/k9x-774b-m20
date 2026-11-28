@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T08:16:30.084Z",
+  "last_updated": "2026-11-28T08:38:57.910Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "bae4568beb2413778e219431bf7acee92b3aa0cb73b852ae97bd64430251485d",
-      "verified_at": "2026-11-27T14:05:10.695Z",
+      "content_hash": "95a230309321b931cc3b7f84a58d6eb82fb2949c5340b9298df7785cf4e16f26",
+      "verified_at": "2026-11-28T08:38:57.909Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T14:05:10.695Z"
+      "last_updated": "2026-11-28T08:38:57.909Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
