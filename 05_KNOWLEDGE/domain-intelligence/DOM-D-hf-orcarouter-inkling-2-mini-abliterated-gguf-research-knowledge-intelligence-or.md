@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF",
   "source_version": "hf-orcarouter-inkling-2-mini-abliterated-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T19:55:17.047Z",
+  "timestamp": "2026-11-28T04:48:01.408Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [orcarouter/Inkling-2-Mini-abliterated-GGUF](https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF) (Revision: `hf-orcarou`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T19:55:17.047Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T04:48:01.408Z`  
 > **Learning ID**: `learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF](https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T19:55:16.175Z  
+> **Harvest Timestamp**: 2026-11-28T04:48:00.504Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5446 downloads | 142 likes
+- **Stars / Engagement**: 21019 downloads | 344 likes
 
 ---
 

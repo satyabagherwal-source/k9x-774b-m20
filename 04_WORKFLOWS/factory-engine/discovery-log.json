@@ -22549,5 +22549,17 @@
     "downloads": 5624,
     "qualityScore": 5900,
     "discoveredAt": "2026-11-27T20:17:28.957Z"
+  },
+  {
+    "name": "ai-sage/GigaChat4-37B-A4B",
+    "fullName": "ai-sage/GigaChat4-37B-A4B",
+    "url": "https://huggingface.co/ai-sage/GigaChat4-37B-A4B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ai-sage/GigaChat4-37B-A4B (96 likes, 348 downloads)",
+    "likes": 96,
+    "downloads": 348,
+    "qualityScore": 1308,
+    "discoveredAt": "2026-11-28T04:45:44.350Z"
   }
 ]

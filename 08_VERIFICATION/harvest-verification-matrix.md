@@ -13974,3 +13974,7 @@
 | `CYCLE-20261128-73ZG` | `2026-11-28T04:38:40.108Z` | `apache/maka` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/apache-maka-learnings.md` | Yes (`f3dfeb68...`) |
 | `CYCLE-20261128-760T` | `2026-11-28T04:38:42.749Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11037` | Yes (`436f2e30...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T04:39:21.416Z` | `apache-maka` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F44634E3` [Domain D] | Yes (`79b16682...`) |
+| `CYCLE-20261128-J2XN` | `2026-11-28T04:47:58.619Z` | `ai-sage/GigaChat4-37B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md` | Yes (`d17e7fb4...`) |
+| `CYCLE-20261128-J4VV` | `2026-11-28T04:48:01.147Z` | `orcarouter/Inkling-2-Mini-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md` | Yes (`84d6426b...`) |
+| `CYCLE-20261128-JHRL` | `2026-11-28T04:48:17.841Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11038` | Yes (`8b451207...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T04:48:52.972Z` | `hf-ai-sage-gigachat4-37b-a4b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-174E1CF1` [Domain D] | Yes (`d10257c3...`) |

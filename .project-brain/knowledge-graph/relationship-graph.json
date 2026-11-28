@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T04:39:21.413Z",
+  "updated_at": "2026-11-28T04:48:52.969Z",
   "statistics": {
-    "total_nodes": 592,
-    "total_edges": 239,
+    "total_nodes": 593,
+    "total_edges": 240,
     "domain_distribution": {
-      "D": 354,
+      "D": 355,
       "M": 1,
       "H": 114,
       "J": 23,
@@ -22,7 +22,7 @@
       "A": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 235,
+      "CONSTRAINED_BY_ARCHITECTURE": 236,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -13209,6 +13209,29 @@
       ],
       "created_at": "2026-11-28T04:39:21.413Z",
       "updated_at": "2026-11-28T04:39:21.413Z"
+    },
+    "DOM-D-174E1CF1": {
+      "id": "DOM-D-174E1CF1",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): ai-sage/GigaChat4-37B-A4B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-ai-sage-gigachat4-37b-a4b/hf-ai-sage-gigachat4-37b-a4b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T04:48:21.458Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ai-sage-gigachat4-37b-a4b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-28T04:48:52.968Z",
+      "updated_at": "2026-11-28T04:48:52.968Z"
     }
   },
   "edges": [
@@ -15601,6 +15624,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-J-068F8BD9 [J] with Domain G",
       "created_at": "2026-11-27T22:55:24.937Z"
+    },
+    {
+      "id": "EDGE-254B6D960185",
+      "sourceId": "DOM-D-174E1CF1",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-174E1CF1 [D] with Domain M",
+      "created_at": "2026-11-28T04:48:52.968Z"
     }
   ]
 }

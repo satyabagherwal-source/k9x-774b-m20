@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "fe38c7a5",
+  "source_version": "c9eb7758",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T19:43:27.608Z",
+  "timestamp": "2026-11-28T04:48:18.120Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `fe38c7a5`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T19:43:27.608Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `c9eb7758`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T04:48:18.120Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T19:43:26.566Z  
+> **Harvest Timestamp**: 2026-11-28T04:48:16.482Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -71,19 +71,16 @@ pub fn generate(statement: &Stmt) -> String {
     match statement {
         Stmt::Assign { target, value } => assignment_source(target, value),
         Stmt::ValueAssign { target, value } => format!("{target}:={value}"),
+        Stmt::NullishValueAssign { target, value } => format!("{target}??:={value}"),
+        Stmt::TruthyValueAssign { target, value } => format!("{target}&&:={value}"),
         Stmt::Expression(expression) => expression.to_string(),
         Stmt::If {
             condition,
             consequent,
             alternate,
-        } => {
-            let alternate = alternate
-                .as_ref()
-                .map(|branch| format!("else{{{}}}", generate(branch)))
-                .unwrap_or_default();
-            format!("if({condition}){{{}}}{alternate}", generate_all(consequent))
-        }
+        } => conditional_source(condition, consequent, alternate.as_deref()),
         Stmt::Block(statements) => format!("{{{}}}", generate_all(statements)),
+        Stmt::Defer(body) => format!("defer{{{}}}", generate_all(body)),
         Stmt::Return(Some(expression)) => format!("return {expression}"),
         Stmt::Return(None) => "return".to_string(),
         Stmt::Throw(expression) => format!("throw {expression}"),
@@ -128,6 +125,26 @@ pub fn generate(statement: &Stmt) -> String {
             )
         }
     }
+}
+
+fn conditional_source(condition: &Expr, consequent: &[Stmt], alternate: Option<&Stmt>) -> String {
+    let alternate = alternate
+        .map(|branch| format!("else{{{}}}", generate(branch)))
+        .unwrap_or_default();
+    format!("if({condition}){{{}}}{alternate}", generate_all(consequent))
+}
+
+fn conditional_suite(condition: &Expr, consequent: &[Stmt], alternate: Option<&Stmt>) -> String {
+    let mut rendered = format!("if {condition}:\n{}", indent(&source_all(consequent)));
+    if let Some(alternate) = alternate {
+        let body = match alternate {
+            Stmt::Block(body) => source_all(body),
+            branch => source(branch),
+        };
+        rendered.push_str("\nelse:\n");
+        rendered.push_str(&indent(&body));
+    }
+    rendered
 }
 
 fn loop_key(word: &str, header: &Expr, body: &[Stmt]) -> String {
@@ -236,18 +253,7 @@ fn source(statement: &Stmt) -> String {
             condition,
             consequent,
             alternate,
-        } => {
-            let mut rendered = format!("if {condition}:\n{}", indent(&source_all(consequent)));
-            if let Some(alternate) = alternate {
-                let body = match alternate.as_ref() {
-                    Stmt::Block(body) => source_all(body),
-                    branch => source(branch),
-                };
-                rendered.push_str("\nelse:\n");
-                rendered.push_str(&indent(&body));
-            }
-            rendered
-        }
+        } => conditional_suite(condition, consequent, alternate.as_deref()),
         Stmt::For {
             variable,
             iterable,
@@ -281,6 +287,7 @@ fn source(statement: &Stmt) -> String {
             catch,
             finally,
         } => finally_suite(&try_suite(body, parameter, catch), finally),
+        Stmt::Defer(body) => format!("defer:\n{}", indent(&source_all(body))),
         Stmt::Block(body) => format!("{{\n{}\n}}", source_all(body)),
         Stmt::Suppose { target, body } => format!(
             "{}suppose:\n{}",
@@ -421,12 +428,14 @@ impl Parser {
         }
 
         let depth = self.depth;
-        let result = self.within(false, |parser| {
-            match parser.destructuring()? {
-                Some(declarations) => statements.extend(declarations),
-                None => statements.push(parser.statement_inner()?),
-            }
-            Ok(())
+        let result = self.unreserved(|parser| {
+            parser.within(false, |parser| {
+                match parser.destructuring()? {
+                    Some(declarations) => statements.extend(declarations),
+                    None => statements.push(parser.statement_inner()?),
+                }
+                Ok(())
+            })
         });
         debug_assert_eq!(self.depth, depth);
         self.depth -= 1;
@@ -451,6 +460,14 @@ impl Parser {
     }
 
     fn statement_inner(&mut self) -> Result<Stmt> {
+        if self.starts_statement()
+            && matches!(self.peek(), Token::Identifier(name) if name == "defer")
+            && self.has_indented_suite(1)
+        {
+            self.advance();
+            return self.suite().map(Stmt::Defer);
+        }
+
         if let Some(condition) = self.while_condition() {
             let body = self.suite()?;
             return Ok(Stmt::While { condition, body });
@@ -460,7 +477,9 @@ impl Parser {
             return self.repeat_until_statement();
         }
 
+        let start = self.position;
         if let Some(count) = self.repeat_count() {
+            self.reserve_count(start)?;
             let body = self.suite()?;
             return Ok(Stmt::Repeat { count, body });
         }
@@ -506,7 +525,10 @@ impl Parser {
     }
 
     fn expression_statement(&mut self) -> Result<Stmt> {
-        let expression = self.without_head_read(Self::expression)?;
+        let outer = self.guarded_assignment_depth.replace(self.depth + 1);
+        let expression = self.without_head_read(Self::expression);
+        self.guarded_assignment_depth = outer;
+        let expression = expression?;
 
         if self.starts_is_assignment(&expression) {
             return self.is_assignment(expression);
@@ -520,6 +542,28 @@ impl Parser {
     }
 
     pub(super) fn expression_tail(&mut self, expression: Expr) -> Result<Stmt> {
+        if self.starts_truthy_assignment() {
+            self.check_path_target(&expression, "Invalid value assignment target")?;
+            self.advance();
+            self.advance();
+            let value = self.receiving(&expression, Self::expression)?;
+            return Ok(Stmt::TruthyValueAssign {
+                target: expression,
+                value,
+            });
+        }
+
+        if self.starts_nullish_assignment() {
+            self.check_path_target(&expression, "Invalid value assignment target")?;
+            self.advance();
+            self.advance();
+            let value = self.receiving(&expression, Self::expression)?;
+            return Ok(Stmt::NullishValueAssign {
+                target: expression,
+                value,
+            });
+        }
+
         if self.check(&Token::ColonAssign) {
             return self.value_assignment(expression);
         }
@@ -529,6 +573,14 @@ impl Parser {
         }
 
         Ok(simple_statement(expression))
+    }
+
+    pub(super) fn starts_nullish_assignment(&self) -> bool {
+        self.check(&Token::QuestionQuestion) && self.peek_at(1) == &Token::ColonAssign
+    }
+
+    pub(super) fn starts_truthy_assignment(&self) -> bool {
+        self.check(&Token::AndAnd) && self.peek_at(1) == &Token::ColonAssign
     }
 
     fn return_statement(&mut self) -> Result<Stmt> {
@@ -557,60 +609,7 @@ impl Parser {
         }
         let target = match expression {
             Expr::Assign { target, .. } => Some(target.as_ref().clone()),
-            _ => None,
-        };
-
-        let mut body = Vec::new();
-        if !self.check(&Token::Colon) {
-            let Some(premise) = self.suppose_premise() else {
-                return Ok(None);
-            };
-            body.push(premise);
-        }
-        body.extend(self.suite()?);
-
-        Ok(Some(Stmt::Suppose { target, body }))
-    }
-
-    pub(super) fn suppose_premise(&mut self) -> Option<Stmt> {
-        if self.starts_colon_statement_at(0)
-            || matches!(
-                self.peek(),
-                Token::Newline | Token::Semicolon | Token::Dedent | Token::RightBrace | Token::Eof
-            )
-        {
-            return None;
-        }
-
-        let attempt = (self.position, self.depth);
-        let outcome = if let Some(outcome) = self.suppose_premises.get(&attempt) {
-            outcome.clone()
-        } else {
-            let outcome = self.attempt_suppose_premise();
-            self.suppose_premises.insert(attempt, outcome.clone());
-            outcome
-        };
-        let SupposePremise {
-            premise,
-            end,
-            misplaced_every,
-        } = outcome?;
-        self.position = end;
-        self.adopt(misplaced_every);
-        Some(simple_statement(premise))
-    }
-
-    fn attempt_suppose_premise(&mut self) -> Option<SupposePremise> {
-        let start = self.position;
-        let (clause, misplaced_every) = self.tentatively(Self::clause_before_colon);
-        let outcome = clause.map(|premise| SupposePremise {
-            premise,
-            end: self.position,
-            misplaced_every,
-        });
-        self.position = start;
-        let end = outcome.as_ref()?.end;
-        if se
+            _ => Non
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1324,40 +1323,6 @@ export async function value({ instance_name, train, input_matrix, instance }) {
   instance.input_value = input_value;
 }
 
-export async function state(train) {
-  const objects = [];
-
-  for (const dataset of train.dataset) {
-    const implementations = dataset.instances.map(
-      ({ implementation }) => implementation
-    );
-
-    const canvas_width: number = dataset.input_matrix[0].length;
-    const canvas_height: number = dataset.input_matrix.length;
-    const obj_list = await nucleoid.run(
-      [
-        `canvas_width = ${canvas_width}`,
-        `canvas_height = ${canvas_height}`,
-        train.class_declaration,
-        ...train.declarations,
-        ...implementations,
-        "Obj[:]",
-      ].join("\n\n")
-    );
-
-    objects.push(...obj_list);
-
-    [...obj_list].forEach((instance) => {
-      const found_instance = dataset.instances.find(
-        ({ instance_name }) => instance.id === instance_name
-      );
-      found_instance.output_value = instance;
-    });
-  }
-
-  milestone.state({ phase: "analysis", objects: objects });
-}
-
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1373,7 +1338,7 @@ import synthesizer from "./synthesizer.ts";
 import object from "./object.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "3aa6fb7a") {
+export async function start(puzzle_id: string = "27a28665") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1401,7 +1366,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   let instance_index: number = 0;
   const next_instance_name = (): string =>
-    `obj${String(instance_index++).padStart(12, "0")}`;
+    `o${String(instance_index++).padStart(12, "0")}`;
 
   const { class_declaration, declarations, output_canvas } =
     await analyzer.declarations({
@@ -1427,10 +1392,15 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
       });
     }
 
+    await object.state({
+      class_declaration,
+      declarations,
+      input_matrix: dataset.input_matrix,
+      instances,
+    });
+
     dataset.instances = instances;
   }
-
-  await analyzer.state(train);
 
   milestone.synthesizing_training_dataset();
 
@@ -1447,7 +1417,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     Array(test_input_matrix[0].length).fill(0)
   );
 
-  const input_instances = [];
+  const test_instances = [];
 
   for (const { input_instance_matrix } of instances) {
     const instance_name: string = next_instance_name();
@@ -1459,7 +1429,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
       input_instance_matrix,
     });
 
-    input_instances.push({
+    test_instances.push({
       instance_name,
       implementation,
       input_value,
@@ -1471,10 +1441,10 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     class_declaration,
     declarations,
     input_matrix: test_input_matrix,
-    input_instances,
+    instances: test_instances,
   });
 
-  for (const input_instance of input_instances) {
+  for (const input_instance of test_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
       phase: "visualization",
       test_input_matrix,
@@ -1487,7 +1457,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
-  milestone.test_output_composed({ instances: input_instances });
+  milestone.test_output_composed({ instances: test_instances });
 
   result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
@@ -1503,7 +1473,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
   const debug = {
     puzzle_id,
     train,
-    test_input_instances: input_instances,
+    test_instances,
     test_input_matrix,
     test_output_matrix,
     result_matrix,
@@ -1595,448 +1565,119 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe38c7a5` (2026-11-22)
-**Commit Message**: NUC 133 Edge Lists of Reasoning Selections
+### Incident Patch 1: `c9eb7758` (2026-11-28)
+**Commit Message**: Draft NUC 157 Padding Method Aliases
 
-Accepted under the automatic acceptance rule in a continuous
-/nuc-proposal cycle: every hard criterion passes and every policy
-check passes, the required token non-regression gate included. The
-cycle drew Reasoning enhancement uniformly from the five eligible
-categories, allocated the NUC in 008cc5b3 and renewed its claim in
-fe5ffc0f. A fresh proposer prepared it in three phases, the caller's
-Rust improvement pass changed nothing, and a fresh independent
-evaluator decided Accepted.
+Category: Language compatibility, drawn uniformly at random (index 4 of
+the five eligible categories in NUC 1's registry, p = 1/5, no redraw, at
+23:24 on 27-Nov) for a continuous /nuc-proposal cycle. Continuous
+Language compatibility, so token comparison is skipped entirely.
 
-A reasoning pipeline gains the final stage SELECTION |> edges: one
-[input, node] pair for each name in each selected step's from list,
-in step and input order, through the final-stage path that nodes and
-holds share, with no recorded reads of the step records. Only
-programs that were whole-program parse errors at the accepted
-revision change.
+Requested change: string receivers gain Python's and Ruby's
+rjust(length, fill) and C#'s PadLeft(length, fill) as exact aliases of
+the accepted padStart(length, fill), and Python's and Ruby's
+ljust(length, fill) and C#'s PadRight(length, fill) as exact aliases of
+the accepted padEnd(length, fill) of NUC 111, sharing its fill default,
+fill repetition and cutting, length conversion, size limit and
+liveness. Only calls on a string receiver that raised
+TypeError("<receiver>.<name> is not a function") change, along with the
+programs that caught that error; property reads, other receivers,
+user-defined methods and object members of these names keep their
+meanings. Python's center and zfill, the one-character fill check, static
+calls and the names padLeft, padRight, pad and PadStart, which
+tests/string_padding.rs keeps as no functions, are not added.
 
-Hard criteria, evaluated on the frozen candidate at 008cc5b3:
-- no compile errors: fmt, build, both Clippy forms on 1.97.1 and
-  1.99.1, rustdoc and the diff checks pass without warnings;
-- every test passes: 3,892 passed, 0 failed, 25 ignored, against
-  3,856 at the pin; all 3,881 accepted identities present, 36 added;
-
-
-**File**: `README.md` (modified, +27/-0)
-```diff
-@@ -2876,6 +2876,33 @@ assert([undo, top, edits.length], [["fix typo", "trim intro", "draft"], "fix typ
-   made in. See the
-   [root contract](nucleoid.spec.md#reversal-method-aliases).
- 
-+## Edge lists of reasoning selections
-+
-+**Edges draws the wiring behind a heat alarm**
-+
-+```nuc
-+temp = 31
-+humidity = 70
-+heat = temp > 30
-+damp = humidity > 60
-+alarm = heat && damp
-+wiring = (alarm |> why |> edges).map(edge -> edge.join(" -> "))
-+assert(wiring, ["heat -> alarm", "damp -> alarm", "temp -> heat", "humidity -> damp"])
-+wind = 4
-+alarm = heat && damp && wind < 10
-+assert(wiring, ["heat -> alarm", "damp -> alarm", "wind -> alarm", "temp -> heat", "humidity -> damp"])
-+```
-+
-+- [NUC 133](docs/nuc-0133.md) adds the final reasoning stage `|> edges`,
-+  which lists the dependency edges of a selection's steps: for each step,
-+  in the selection's order, one `[input, node]` pair for every input the
-+  step reads. `alarm |> why |> edges` gives the edges of the alarm's
-+  explanation, and mapping each pair to an arrow draws it.
-+- The pairs are the ones the steps' `from` lists record, and they stay live
-+  the way the explanation does: once the alarm also reads the wind, the
-+  wind's edge joins the wiring. See the
-+  [root contract](nucleoid.spec.md#edge-lists-of-reasoning-selections).
-+
- ## Reactive list flattening
- 
- **Flat turns nested lists into one live list**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +25/-21)
-```diff
-@@ -830,24 +830,28 @@
- {"id":"spec-0830","description":"Nucleoid reverses class populations in reverse creation order","code":"class Stop(name):\n    this.name = name\nStop(\"Depot\")\nStop(\"Mill\")\nStop(\"Harbor\")\nhome = Stop.reversed()\nnames = Stop.toReversed().map(stop -> stop.name)\nassert(names, [\"Harbor\", \"Mill\", \"Depot\"])\nStop(\"Lighthouse\")\nassert([home.length, home[0].name, names], [4, \"Lighthouse\", [\"Lighthouse\", \"Harbor\", \"Mill\", \"Depot\"]])\nclass Train(cars):\n    this.cars = cars\n$Train.fromRear = $Train.cars.reversed()\nlocal = Train([\"engine\", \"coach\"])\nlocal.cars.push(\"caboose\")\nlocal.fromRear","return":"[\"caboose\",\"coach\",\"engine\"]"}
- {"id":"spec-0831","description":"Nucleoid reverses strings by character with reversed and reverse","code":"word = \"crème\"\nmirror = word.reversed()\nassert(mirror, \"emèrc\")\nword = \"café\"\nassert([mirror, word.reverse()], [\"éfac\", \"éfac\"])\nassert([\"a😀b\".reversed(), \"\".reverse(), \"stressed\".reversed()], [\"b😀a\", \"\", \"desserts\"])\nclass Word(text):\n    this.text = text\n$Word.palindrome = $Word.text.toLowerCase().reversed() == $Word.text.toLowerCase()\nanna = Word(\"Anna\")\nkayaks = Word(\"kayaks\")\nassert([anna.palindrome, kayaks.palindrome], [true, false])\nkayaks.text = \"Kayak\"\nkayaks.palindrome","return":"true"}
- {"id":"spec-0832","description":"Nucleoid rolls back failed updates through reversal aliases","code":"def latest(log):\n    if log.length > 3:\n        throw \"FULL\"\n    return log\nentries = [\"boot\", \"sync\"]\nrecent = latest(entries.reversed())\nfailure = \"\"\ntry:\n    entries.push(\"scan\", \"send\")\ncatch error:\n    failure = error\nassert([failure, entries, recent], [\"FULL\", [\"boot\", \"sync\"], [\"sync\", \"boot\"]])\ntry:\n    entries.push(\"scan\")\n    assert(recent, [\"scan\", \"sync\", \"boot\"])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([entries, recent], [[\"boot\", \"sync\"], [\"sync\", \"boot\"]])\ndef short(text):\n    if text.length > 4:\n        throw \"LONG\"\n    return text\nclass Tag(label):\n    this.label = label\n$Tag.code = short($Tag.label.reversed())\ntag = Tag(\"AB12\")\ntry:\n    tag.label = \"ABC123\"\ncatch error:\n    failure = error\nassert([failure, tag.label, tag.code], [\"LONG\", \"AB12\", \"21BA\"])\ntag.label = \"XY9\"\ntag.code","return":"\"9YX\""}
--{"id":"spec-0833","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0834","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0835","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0836","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0837","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0838","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch
-```
-
-**File**: `dataset/nucleoid.synth.95.jsonl` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-95-0001","description":"Edges lists every dependency edge of an explanation, as input and node pairs in the explanation's order","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> edges","return":"[[\"subtotal\",\"total\"],[\"shipping\",\"total\"],[\"price\",\"subtotal\"],[\"qty\",\"subtotal\"]]"}
-+{"id":"synth-95-0002","description":"Edges after affects lists the edges that a change travels, with the other inputs of the steps it reaches","code":"rate = 0.1\nbase = 100\nfee = base * rate\ntotal = base + fee\nbase |> affects |> edges","return":"[[\"base\",\"fee\"],[\"rate\",\"fee\"],[\"base\",\"total\"],[\"fee\",\"total\"]]"}
-+{"id":"synth-95-0003","description":"Edges over the model lists the edges of every node and leaves out the declarations that hold a stage","code":"a = 1\nb = a + 1\nc = b * 2\nwiring = c |> why |> edges\nmodel |> edges","return":"[[\"a\",\"b\"],[\"b\",\"c\"]]"}
-+{"id":"synth-95-0004","description":"A reference alone gives the edges into its own node","code":"width = 3\nheight = 4\narea = width * height\narea |> edges","return":"[[\"width\",\"area\"],[\"height\",\"area\"]]"}
-+{"id":"synth-95-0005","description":"Edges after stated is always empty, because a stated step has no inputs, and after derived it lists every edge","code":"x = 2\ny = x * 3\n[y |> why |> stated |> edges, y |> why |> derived |> edges]","return":"[[],[[\"x\",\"y\"]]]"}
-+{"id":"synth-95-0006","description":"Edges keeps the edges from inputs that a depth-limited selection leaves out","code":"a = 1\nb = a + 1\nc = b + 1\nd = c + 1\nwhy d |> depth(1) |> edges","return":"[[\"c\",\"d\"],[\"b\",\"c\"]]"}
-+{"id":"synth-95-0007","description":"Edges after union lists the edges of both explanations, each node once","code":"a = 1\nb = a + 2\nc = 5\nd = c + a\nb |> why |> union(d |> why) |> edges","return":"[[\"a\",\"b\"],[\"c\",\"d\"],[\"a\",\"d\"]]"}
-+{"id":"synth-95-0008","description":"A standing declaration that holds edges follows a rewiring: the new input's edge appears and the dropped one goes","code":"a = 1\nx = 5\nb = a + 1\nc = b * 2\nwiring = c |> why |> edges\nb = x * 2\nwiring","return":"[[\"b\",\"c\"],[\"x\",\"b\"]]"}
-+{"id":"synth-95-0009","description":"A change of a value alone leaves the edges as they are","code":"a = 1\nb = a + 1\nwiring = b |> why |> edges\na = 7\nwiring","return":"[[\"a\",\"b\"]]"}
-+{"id":"synth-95-0010","description":"A class-level rule that holds edges gives each instance the edges of its own property","code":"rate = 2\nclass Part(cost):\n    this.cost = cost\n$Part.price = $Part.cost * rate\n$Part.links = $Part.price |> why |> edges\nbolt = Part(3)\nbolt.links","return":"[[\"bolt.cost\",\"bolt.price\"],[\"rate\",\"bolt.price\"]]"}
-+{"id":"synth-95-0011","description":"Mapping each edge to an arrow renders an explanation as a graph","code":"hours = 8\npay = 20\nwage = hours * pay\nbonus = 50\ntotal = wage + bonus\n(total |> why |> edges).map(edge -> edge.join(\" -> \"))","return":"[\"wage -> total\",\"bonus -> total\",\"hours -> wage\",\"pay -> wage\"]"}
-+{"id":"synth-95-0012","description":"Filtering edges by the names that nodes gives keeps only the edges between the steps of a selection","code":"price = 10\nqty = 3\nrate = 0.2\nsubtotal = price * qty\ntax = subtotal * rate\ntotal = subtotal + tax\nkept = total |> why |> except(subtotal) |> nodes\n(total |> why |> except(subtotal) |> edges).filter(edge -> kept.includes(edge[0]))","return":"[[\"tax\",\"total\"],[\"rate\",\"tax\"]]"}
-```
-
-**File**: `docs/README.md` (modified, +74/-5)
-```diff
-@@ -4689,6 +4689,9 @@ route.shift()
- - `selection |> holds` lists the steps' `holds` values, as
-   `(selection).map(step => step.holds)` does for the selection the pipeline
-   denotes ([NUC 121](nuc-0121.md)).
-+- `selection |> edges` lists the steps' dependency edges, one
-+  `[input, node]` pair for each name in each step's `from` list
-+  ([NUC 133](nuc-0133.md)).
- 
- ```
- a = 1
-@@ -5128,6 +5131,66 @@ price = 20
-   [held values of reasoning selections](../nucleoid.spec.md#held-values-of-reasoning-selections)
-   section.
- 
-+### Edge lists of reasoning selections
-+
-+```
-+price = 10
-+qty = 3
-+shipping = 5
-+subtotal = price * qty
-+total = subtotal + shipping
-+wiring = total |> why |> edges
-+reach = price |> affects |> edges
-+assert(wiring, [["subtotal", "total"], ["shipping", "total"], ["price", "subtotal"], ["qty", "subtotal"]])
-+assert(reach, [["price", "subtotal"], ["qty", "subtotal"], ["subtotal", "total"], ["shipping", "total"]])
-+shipping = price / 2
-+[wiring, reach]
-+```
-+
-+- This is the complete `Nucleoid lists the edges of selections with edges`
-+  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns
-+  `[[["subtotal","total"],["shipping","total"],["price","subtotal"],["qty","subtotal"],["price","shipping"]],[["price","subtotal"],["qty","subtotal"],["price","shipping"],["subtotal","total"],["shipping","total"]]]`.
-+- [NUC 133](nuc-0133.md) adds the final stage `selection |> edges`. It lists
-+  the dependency edges of the selection's steps: for each step, in their
-+  order, one `[input, node]` pair for each name in the step's `from` list,
-+  in its order, both strings as the step's record holds them. So
-+  `total |> why |> edges` gives which inputs feed which results in the
-+  total's explanation, and `price |> affects |> edges` the edges that a
-+  change of the price travels, with the other inputs of the steps it
-+  reaches, such as the shipping into the total. It is exactly
-+  `(selection).flatMap(step => step.from.reduce((pairs, input) => pairs.concat([[input, pairs[0]]]), [step.node])[1:])`,
-+  where `selection` is the selection that the pipeline before `edges`
-+  denotes, read as the stages read their source.
-+- The selection is written as for `nodes`: a reference, which denotes its
-+  own one-step selection rather than its value, `model`, a prefix stage such
-+  as `why total`, or a pipeline of any of the stages above but `nodes` and
-+  `holds`. So `total |> edges` lists the edges into the total. An empty
-+  selection gives `[]`, and so does one whose steps have no inputs, such as
-+  `total |> why |> stated |> edges`; a selection that a `depth(null)` makes
-+  undefined gives undefined.
-+- Every input of a kept step is listed, whether the selection keeps that
-+  input's own step or not. After `kept = S |> nodes`,
-+  `(S |> edges).filter(edge => kept.includes(edge[0]))` keeps only the edges
-+  between the steps of `S`.
-+- The stage ends the pipeline, as `nodes` and `holds` do: a stage after it,
-+  or an `intersect`, `except`, `union` or `path` argument that ends with it,
-+  has a list of pairs rather than a selection and raises
-+  `TypeError("Cannot explain <source>")`, as it does after the accepted
-+  spelling.
-+- Only `|>` followed by `edges` is the stage; `edges` stays an ordinary name
-+  everywhere else, and there is no prefix form. A local or parameter,
-+  variable, function or class named `edges` shadows the stage, as bindings
-+  shadow the other stages: the pipeline then raises
-+  `TypeError("edges is not an operation")` before selecting its source.
-+- The list stays live through every observation its selection made, so a
-+  rewiring, a new or deleted node and a replaced class-level rule add and
-+  drop edges, and a declaration that holds it is a reasoning observer. It
-+  renders as `selection|>edges`.
-+- The authoritative contract is the
-+  [edge lists of reasoning selections](../nucleoid.spec.md#edge-lists-of-reasoning-selections)
-+  section.
-+
- ### Live structure
- 
- - A reasoning assignment follows both values and graph structure.
-@@ -5172,11 +5235,13 @@ c = b * 2
-   rather than a selection, the [NUC 120](nuc-0120.md) candidate adds a
-   `union(other)` stage, which NUC 11 does not plan either, the
-   [NUC 121](nuc-0121.md) candidate adds a final `holds` stage, which gives
--  the values of a selection's steps and, like `nodes`, returns a list, and
--  the [NUC 128](nuc-0128.md) candidate adds `origins` and `outcomes`
--  stages, which keep the steps at the two ends of a selection and which
--  NUC 11 does not plan either. Other NUC 11 operations remain proposals, not
--  dependencies.
-+  the values of a selection's steps and, like `nodes`, returns a list, the
-+  [NUC 128](nuc-0128.md) candidate adds `origins` and `outcomes` stages,
-+  which keep the steps at the two ends of a selection and which NUC 11 does
-+  not plan either, and the [NUC 133](nuc-0133.md) candidate adds a final
-+  `edges` stage, which lists the dependency edges of a selection's steps
-+ 
-```
-
-**File**: `docs/examples.md` (modified, +28/-0)
-```diff
-@@ -4383,6 +4383,34 @@ south.stops.push("orchard")
-   route's sign. See [NUC 131](nuc-0131.md) and the
-   [root contract](../nucleoid.spec.md#reversal-method-aliases).
- 
-+## Edge lists of reasoning selections
-+
-+**Edges traces where a supplier's delay travels through a build schedule**
-+
-+```nuc
-+delay = 2
-+parts = 5 + delay
-+assembly = parts + 3
-+testing = 2
-+ship = assembly + testing
-+moved = delay |> affects |> edges
-+assert(moved, [["delay", "parts"], ["parts", "assembly"], ["assembly", "ship"], ["testing", "ship"]])
-+paint = assembly + 1
-+ship = paint + testing
-+moved
-+# return: [["delay","parts"],["parts","assembly"],["assembly","paint"],["paint","ship"],["testing","ship"]]
-+```
-+
-+- `delay |> affects |> edges` lists every edge the delay travels along:
-+  from the delay to the parts, from the parts to the assembly and from the
-+  assembly to the shipping date, which also reads the testing time, so its
-+  edge from the testing stays in the list.
-+- The edges follow the schedule: once painting sits between the assembly
-+  and the shipping date, the delay travels through it, and the direct edge
-+  from the assembly to the shipping date is gone. See
-+  [NUC 133](nuc-0133.md) and the
-+  [root contract](../nucleoid.spec.md#edge-lists-of-reasoning-selections).
-+
- ## Reactive list flattening
- 
- **Flattening keeps the dirty tiles of every room counted**
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -157,7 +157,7 @@ Created: 31-Jul-2026
- | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
- | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
- | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
--| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Draft |
-+| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Accepted |
- 
- ### Language compatibility
- 
-@@ -321,7 +321,7 @@ Created: 31-Jul-2026
- | [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
- | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Accepted |
--| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Draft |
- 
- ## Copyright
-```
-
-**File**: `docs/nucleoid.ebnf` (modified, +10/-2)
-```diff
-@@ -567,6 +567,7 @@ stage
-       | DIFF
-       | NODES
-       | HOLDS
-+      | EDGES
-       | ORIGINS
-       | OUTCOMES                                            /* Expr::Reason */
-       | DEPTH LPAREN expression RPAREN                       /* Expr::Depth */
-@@ -979,6 +980,7 @@ enumName
-       | UNION
-       | NODES
-       | HOLDS
-+      | EDGES
-       | ORIGINS
-       | OUTCOMES
-       | MODEL
-@@ -1072,6 +1074,7 @@ AS               ::= 'as'
- UNION            ::= 'union'
- NODES            ::= 'nodes'
- HOLDS            ::= 'holds'
-+EDGES            ::= 'edges'
- ORIGINS          ::= 'origins'
- OUTCOMES         ::= 'outcomes'
- MODEL            ::= 'model'
-@@ -1152,8 +1155,8 @@ WORD_TOKEN
-       | TRUE | TRY | TYPEOF | WHILE | REPEAT | UNTIL | FINALLY | ENUM | EXTENDS
-       | ASSERT | SUPPOSE | LAMBDA | IS | ALL | EVERY | ANY | SUM | MAX | MIN
-       | MODE | WHY | AFFECTS | STATED | DERIVED | DIFF | DEPTH | PATH
--      | INTERSECT | EXCEPT | EXCEPTION | AS | UNION | NODES | HOLDS | ORIGINS
--      | OUTCOMES | MODEL | FIRST | LAST | PREVIOUS | INIT | PYTHON_INIT
-+      | INTERSECT | EXCEPT | EXCEPTION | AS | UNION | NODES | HOLDS | EDGES
-+      | ORIGINS | OUTCOMES | MODEL | FIRST | LAST | PREVIOUS | INIT | PYTHON_INIT
- 
- NEWLINE
-     ::= #xA
-@@ -1329,6 +1332,11 @@ REGEX_ESCAPE
-  *                             s's steps hold. It ends the pipeline as nodes
-  *                             does, and a binding named holds shadows it at
-  *                             run time.
-+ * s |> edges               -> Expr::Reason with Stage::Edges, one
-+ *                             [input, node] pair for each name in the from
-+ *                             list of each of s's steps. It ends the pipeline
-+ *                             as nodes and holds do, and a binding named
-+ *                             edges shadows it at run time.
-  * s |> origins             -> Expr::Reason with Stage::Origins, the steps of s
-  *                             that rest on no step of s, and
-  *                             s |> outcomes -> Stage::Outcomes, the steps that
-```
-
-**File**: `nucleoid.spec.md` (modified, +216/-4)
-```diff
-@@ -3272,8 +3272,8 @@ statement positions; caught values and transaction recovery are unchanged.
-   node, so after a union they keep what they keep of each side:
-   `S |> union(O) |> stated` is `(S |> stated).concat(O |> except(S) |> stated)`.
-   A later `why` or `affects` walks from every step of the union, `nodes`
--  names them, `holds` gives their values, and `origins` and `outcomes` keep
--  the ends of the union as one selection.
-+  names them, `holds` gives their values, `edges` lists their edges, and
-+  `origins` and `outcomes` keep the ends of the union as one selection.
- - Each step keeps the distance of the walk that selected it: the steps of
-   `SELECTION` their own, and the steps added from `OTHER` the distances they
-   have in `OTHER`'s own selection. So `S |> union(O) |> depth(n)` is
-@@ -3391,8 +3391,8 @@ statement positions; caught values and transaction recovery are unchanged.
-   derived step whose every input was deleted or is a reasoning observer.
- - The kept steps keep their distances and the direction of the most recent
-   walk, so `depth`, `path`, `stated`, `derived`, `diff`, `intersect`,
--  `except`, `union`, `nodes`, `holds` and later walks apply to the result as
--  to the results of the accepted filters. The two stages keep a step by its
-+  `except`, `union`, `nodes`, `holds`, `edges` and later walks apply to the
-+  result as to the results of the accepted filters. The two stages keep a step by its
-   relation to the steps of the selection, not by a property of its own, so
-   they do not commute with the filters: `total |> why |> derived |> origins`
-   is the subtotal, while `total |> why |> origins |> derived` is empty. A
-@@ -3644,6 +3644,133 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid rolls back failed updates through held values` specify the
-   executable behavior. `tests/held_values.rs` executes the rest.
- 
-+## Edge lists of reasoning selections
-+
-+- [NUC 133](docs/nuc-0133.md) adds the final pipeline stage
-+  `SELECTION |> edges`. It lists the dependency edges that the steps of
-+  `SELECTION` record: for each step, in the selection's order, and for each
-+  name in its `from` list, in that order, the two-item list `[INPUT, NODE]`
-+  of the input's name and the step's `node` name, both strings exactly as
-+  the step's record holds them. After `price = 10`, `quantity = 3`,
-+  `rate = 0.2`, `subtotal = price * quantity`, `tax = subtotal * rate` and
-+  `total = subtotal + tax`, `total |> why |> edges` is
-+  `[["subtotal", "total"], ["tax", "total"], ["price", "subtotal"], ["quantity", "subtotal"], ["subtotal", "tax"], ["rate", "tax"]]`.
-+- It is exactly
-+  `(SELECTION).flatMap(step => step.from.reduce((pairs, input) => pairs.concat([[input, pairs[0]]]), [step.node])[1:])`,
-+  where `SELECTION` is the selection that the pipeline before `edges`
-+  denotes, read as the accepted stages read their source. The direct
-+  `(SELECTION).flatMap(step => step.from.map(input => [input, step.node]))`
-+  raises `ReferenceError("step is not defined")`, because a callback does
-+  not read the parameters of the callback around it.
-+- An input is named as the step's `from` list names it: an instance
-+  property as `o.total` and a property of an anonymous object as
-+  `obj:0.gone`, and a node that a step reads twice gives one edge. An input
-+  may be a node that no selection selects, such as a pending property or a
-+  reasoning observer that the step reads. A step is stated exactly when it
-+  has no inputs and no class governs it, so `SELECTION |> stated |> edges`
-+  is always `[]` and `SELECTION |> derived |> edges` always gives the list
-+  that `SELECTION |> edges` gives. The steps of a class and of a function
-+  declaration have no inputs either, and the step of an `if` block, which
-+  is named after its condition, lists the names its condition reads: after
-+  `class Box(w)` with `this.w = w`, `b = Box(1)` and `if b.w > 0:` with a
-+  body, `model |> edges` is `[["b", "if(b.w>0)"], ["b.w", "if(b.w>0)"]]`.
-+- A reference alone denotes its own one-step selection, not its value, so
-+  `total |> edges` lists the edges into the total,
-+  `[["subtotal", "total"], ["tax", "total"]]`, as the accepted spelling over
-+  `total |> why |> depth(0)` does, while the value `(total).flatMap(...)` of
-+  a number raises `TypeError("number.flatMap is not a function")`.
-+- So `total |> why |> edges` gives the dependency structure of an
-+  explanation, which inputs feed which results, `price |> affects |> edges`
-+  the edges that a change of the price travels, with the other inputs of the
-+  steps it reaches, and `model |> edges` every edge of the model's nodes in
-+  model order, without the steps of pending nodes and reasoning observers.
-+- The stage lists every input of each step it keeps, whether the selection
-+  keeps that input's own step or not, because a step's inputs are what its
-+  record's `from` field holds, which no stage rewrites:
-+  `total |> why |> depth(1) |> ed
-```
-
----
-
-### Incident Patch 2: `5815a8cd` (2026-11-22)
-**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
+Co-Authored-By: Claude Opus 
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -177,6 +177,7 @@ Created: 31-Jul-2026
- | [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
- | [131](nuc-0131.md) | Reversal Method Aliases | Accepted |
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Accepted |
-+| [134](nuc-0134.md) | Ruby Collection Method Aliases | Draft |
+@@ -200,6 +200,7 @@ Created: 31-Jul-2026
+ | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Accepted |
+ | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Accepted |
+ | [150](nuc-0150.md) | C# Truncation Method Alias | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
++| [157](nuc-0157.md) | Padding Method Aliases | Draft |
  
  ### Documentation
  
-@@ -321,6 +322,7 @@ Created: 31-Jul-2026
- | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Accepted |
- | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Draft |
+@@ -367,6 +368,7 @@ Created: 31-Jul-2026
+ | [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Standards Track | Syntax enhancement | Rejected: eight historical source/field-seal tests fail |
+ | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Standards Track | Utility enhancement | Rejected: 74 existing corpus-count and historical-locator tests fail |
+ | [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
++| [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0134.md` (added, +60/-0)
+**File**: `docs/nuc-0157.md` (added, +89/-0)
 ```diff
-@@ -0,0 +1,60 @@
-+# NUC 134 -- Ruby Collection Method Aliases
+@@ -0,0 +1,89 @@
++# NUC 157 -- Padding Method Aliases
 +
 +```
-+NUC: 134
-+Title: Ruby Collection Method Aliases
-+Author: Copilot <223556219+Copilot@users.noreply.github.com>
++NUC: 157
++Title: Padding Method Aliases
++Author: Can Mingir <canmingir@gmail.com>
 +Status: Draft
 +Type: Standards Track
 +Category: Language compatibility
-+Created: 22-Nov-2026
-+Requires: 8, 61
++Created: 27-Nov-2026
++Requires: 111
 +```
 +
 +## Abstract
 +
-+- Add Ruby's `collect(callback)` and `select(callback)` names to lists and
-+  class instance lists as exact aliases of the accepted `map(callback)` and
-+  `filter(callback)` operations.
-+- Share the accepted callback validation, evaluation order, result ordering,
-+  dependency tracking and errors. Preserve every accepted spelling, property
-+  reading and other receiver's dispatch.
-+- Add no implicit Ruby blocks, enumerators, in-place variants, keywords,
-+  parser changes, configuration or dependencies.
-+- This open-ended invocation uses continuous mode. One unbiased draw from
-+  NUC 1's live registry selected Language compatibility, index 4 among five
-+  eligible categories; its token comparison is categorically skipped.
++- String receivers gain four familiar names for the padding methods of
++  [NUC 111](nuc-0111.md), each an exact alias of its accepted spelling:
++  - Python's and Ruby's `TEXT.rjust(length, fill)` and C#'s
++    `TEXT.PadLeft(length, fill)` are `TEXT.padStart(length, fill)`, so
++    `"7".rjust(3, "0")` is `"007"`;
++  - Python's and Ruby's `TEXT.ljust(length, fill)` and C#'s
++    `TEXT.PadRight(length, fill)` are `TEXT.padEnd(length, fill)`, so
++    `"ab".ljust(4, ".")` is `"ab.."`.
++- The aliases share the accepted implementation: `fill` defaults to one
++  space, a longer fill repeats and is cut to the missing count as Ruby's
++  does, `length` converts as the count of `repeat` does, an oversized result
++  raises `TypeError("Padded string is too large")`, and a declaration or
++  class-level rule that calls an alias stays live, as `padStart` and
++  `padEnd` do.
++- Only calls on a string receiver that raised
++  `TypeError("<receiver>.<name> is not a function")` change, along with
++  the programs that caught that error. Property reads without a call, other
++  receivers, user-defined methods, object members of these names and every
++  accepted result keep their meanings.
++- Not added: Python's `center` and `zfill`, Python's and C#'s
++  one-character fill check, static calls, the names `padLeft`, `padRight`,
++  `pad` and `PadStart`, which `tests/string_padding.rs` keeps as no
++  functions, and any keyword, token, syntax or public item.
++- These are familiar names for Nucleoid's accepted operation, not a claim
++  of full Python, Ruby or C# compatibility. The continuous Language
++  compatibility policy skips token comparison entirely; every hard
++  criterion and independent check still applies.
 +
 +## Motivation
 +
-+- Ruby programmers and language models use `items.collect(callback)` and
-+  `items.select(callback)` to transform and filter collections. Nucleoid
-+  already implements both operations under `map` and `filter`, but these
-+  familiar names currently raise a method-call `TypeError`.
-+- Exact aliases advance the language-superset aspiration without reserving
-+  identifiers, changing existing operations or introducing another callback
-+  implementation. This is a bounded spelling addition, not full Ruby
-+  compatibility.
++- Programmers and language models align text with the padding names of
++  their own language: Python writes `str(n).rjust(3, "0")` and
++  `name.ljust(12)`, Ruby writes `id.to_s.rjust(3, "0")` and
++  `name.ljust(12)`, and C# writes `code.PadLeft(3, '0')` and
++  `name.PadRight(12)`. Nucleoid accepts the same operation as `padStart`
++  and `padEnd`, but at the accepted revision each of these names raises:
++  - `"ab".ljust(5)` raises `TypeError("ab.ljust is not a function")`, at
++    line 1, column 1 of its statement;
++  - `"ab".rjust(5, "0")`, `"ab".PadLeft(5)` and `"ab".PadRight(5, ".")`
++    raise the same error with their own names.
++- Ruby's fill rule is the accepted one: `"ab".padStart(7, "xy")` is
++  `"xyxyxab"` and `"ab".padEnd(7, "xy")` is `"abxyxyx"`, which Ruby's
++  `rjust` and `ljust` give for the same arguments. Python and C# take a
++  single fill character, on which every spelling agrees.
++- The names are free on strings: a property read such as `s.ljust` reads
++  `null`, object members and instance methods of these names keep their
++  values, and numbers, lists and `null` keep their accepted results. No
++  accepted document case, dataset record or test calls them on a string.
++- One shared implementation keeps each alias equal to its accepted spelling
++  by construction, without a second padding routine or a parse-time
++  rewrite that would change how a call renders.
 +
 +## Rationale
 +
@@ -2052,7 +1693,7 @@ Hard criteria, evaluated on the frozen candidate at 008cc5b3:
 +
 +## Reference Implementation
 +
-+- Pending: the proposer completes this section in an isolated candidate.
++- Pending: the proposer completes this section.
 +
 +## Copyright
 +
@@ -2060,6 +1701,431 @@ Hard criteria, evaluated on the frozen candidate at 008cc5b3:
 +
 +This document is licensed under the Apache License, Version 2.0. See
 +[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `ad96b4e8` (2026-11-28)
+**Commit Message**: NUC 148 Integer Range Literals
+
+Accepted under the automatic acceptance rule in a continuous
+/nuc-proposal cycle: every hard criterion passes and every policy
+check passes, the required token comparison among them. A cycle found
+no stale Draft, drew Syntax enhancement uniformly from the five
+eligible categories and allocated the NUC in 3bf9d8e5. Its first
+preparation stopped after two phases, and the Draft went stale,
+unclaimed, until the claim a0377489. A later continuous cycle resumed
+it at the user's choice under the claim 7efa636c, the accepted
+revision: a fresh proposer ported the candidate onto it with fresh
+baselines, the caller's Rust improvement pass made range read its own
+left bound, and a fresh independent evaluator decided Accepted.
+
+Two range operators build a list of consecutive integers:
+START..<END excludes END and START..=END includes it. They are read
+from the adjacent tokens Dot Dot Less and Dot Dot Assign on one
+non-associative level between the comparisons and + and -, in a final
+run of the whole accepted parse sequence that starts only after that
+sequence fails. Subscripts, slices, for sources and repeat counts keep
+their accepted errors. Bounds must be integ
+
+**File**: `README.md` (modified, +24/-0)
+```diff
+@@ -3116,6 +3116,30 @@ item.total
+   labels are unchanged. See the
+   [root contract](nucleoid.spec.md#unknown-constructor-arguments-as-properties).
+ 
++## Integer range literals
++
++**Ranges keep a shift's hours in step with its bounds**
++
++```nuc
++open = 9
++close = 13
++hours = open..<close
++assert(hours, [9, 10, 11, 12])
++close = 15
++assert([hours.length, hours.sum()], [6, 69])
++hours
++# return: [9,10,11,12,13,14]
++```
++
++- [NUC 148](docs/nuc-0148.md) adds two range operators: `START..<END` lists
++  the integers from `START` up to, but not including, `END`, and
++  `START..=END` lists them through `END`. A range is an ordinary list, so
++  `hours.length` and `hours.sum()` read it as they read a list literal.
++- `hours = open..<close` is a standing declaration, so the hours follow the
++  shift's bounds when it is extended. Both bounds must be integers, a range
++  holds at most 100,000 items, and `close..<open` is empty. See the
++  [root contract](nucleoid.spec.md#integer-range-literals).
++
+ ## Symmetric difference reasoning selections
+ 
+ **Xor tells two alarms apart**
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +21/-17)
+```diff
+@@ -867,20 +867,24 @@
+ {"id":"spec-0867","description":"Nucleoid builds instances with unknown constructor arguments on every route","code":"class Tag(name):\n    this.name = name\nholder = {}\nfirst = new Tag(name=\"a\", color=\"RED\")\nholder.tag = Tag(name=\"b\", color=\"GREEN\")\nitems = [Tag(name=\"c\", color=\"BLUE\")]\nrecord = {tag: Tag(name=\"d\", color=\"GREY\")}\nassert([first.color, holder.tag.color, items[0].color, record.tag.color], [\"RED\", \"GREEN\", \"BLUE\", \"GREY\"])\nassert(Tag(name=\"e\", color=\"TEAL\").color, \"TEAL\")\nassert(Tag.length, 5)","return":null}
+ {"id":"spec-0868","description":"Nucleoid keeps unknown constructor arguments as snapshots under class level rules","code":"class Rect\n$Rect.area = $Rect.width * $Rect.height\nwidth = 10\nrect = Rect(width=2, height=3)\nassert(rect.area, 6)\nassert(width, 10)\nheight = 5\nrect.width = 4\nassert(rect.area, 12)\nassert(rect.height, 3)\nrect.area","return":"12"}
+ {"id":"spec-0869","description":"Nucleoid validates repeated unknown constructor arguments before any value","code":"class Shape(type):\n    this.type = type\nevents = {count: 0}\ntry:\n    Shape(color=(events.count=1), color=\"BLUE\")\ncatch error:\n    assert(error, TypeError(\"Duplicate constructor argument 'color' for Shape\"))\ntry:\n    Shape(color=(events.count=2), \"SQUARE\")\ncatch error:\n    assert(error, TypeError(\"Positional constructor argument after named arguments for Shape\"))\ntry:\n    Shape(type=\"SQUARE\", color=missing)\ncatch error:\n    assert(error, ReferenceError(\"missing is not defined\"))\nassert(events.count, 0)\nassert(Shape.length, 0)","return":null}
+-{"id":"spec-0870","description":"Nucleoid tells two explanations apart with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\napart = total |> why |> xor(freight |> why)\ncontrast = why freight |> xor(why total)\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"price\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"price\"])\nshipping = price + 1\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"quantity\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"quantity\"])\nquantity = 5\nassert(apart.map(s -> s.holds), [60, 50, 10, 5, 11.2, 11])","return":null}
+-{"id":"spec-0871","description":"Nucleoid finds what a change of only one of two inputs reaches with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\nmoved = price |> affects |> xor(rate |> affects)\nspread = affects quantity |> xor(affects price)\nassert(moved.map(s -> s.node), [\"subtotal\", \"freight\"])\nassert(spread.map(s -> s.node), [\"shipping\", \"freight\"])\nfreight = shipping + rate * price\nassert(moved.map(s -> s.node), [\"subtotal\"])\nassert(spread.map(s -> s.node), [\"shipping\"])\nprice = 20\nassert(moved.map(s -> s.holds), [60])\nmoved.length","return":"1"}
+-{"id":"spec-0872","description":"Nucleoid separates what two changes of each instance reach with xor","code":"class Part(cost, weight):\n    this.cost = cost\n    this.weight = weight\n$Part.price = $Part.cost * 2\n$Part.freight = $Part.weight * 3\n$Part.charge = $Part.price + $Part.freight\n$Part.split = $Part.cost |> affects |> xor($Part.weight |> affects)\nbolt = Part(4, 1)\nnut = Part(2, 5)\nassert(bolt.split.map(s -> s.node), [\"bolt.price\", \"bolt.freight\"])\nassert(nut.split.map(s -> s.node), [\"nut.price\", \"nut.freight\"])\n$Part.duty = $Part.weight * 0.1\nassert(nut.split.map(s -> s.node), [\"nut.price\", \"nut.freight\", \"nut.duty\"])\n$Part.price = $Part.cost * 2 + $Part.weight\nassert(bolt.split.map(s -> s.node), [\"bolt.freight\", \"bolt.duty\"])\nnut.weight = 10\nassert(nut.split.map(s -> s.holds), [30, 1])\nnut.split.length","return":"2"}
+-{"id":"spec-0873","description":"Nucleoid restores symmetric differences after failed changes","code":"price = 10\nquantity = 3\nsubtotal = price * quantity\nshipping = quantity * 2\napart = why subtotal |> xor(why shipping)\nfailure = \"\"\ntry:\n    apart = why subtotal |> xor(1)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(apart.map(s -> s.node), [\"subtotal\", \"price\", \"shipping\"])\ntry:\n    shipping = price / 2\n    assert(apart.map(s -> s.node), [\"subtotal\", \"quantity\", \"shipping\"])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(apart.map(s -> s.node), [\"subtotal\", \"price\", \"shipping\"])\nquantity = 6\nassert(apart.map(s -> s.holds), [60, 10, 12])","return":null}
+-{"id":"spec-0874","description":"Nucleoid tests negated membership with Kotlin's !in","code":"xs = [1, 2, 3]\n
+```
+
+**File**: `dataset/nucleoid.synth.148.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-148-0001","description":"A half-open range of hours follows the closing hour of a shop","code":"open = 9\nclose = 13\nhours = open..<close\nassert(hours, [9, 10, 11, 12])\nclose = 15\nhours","return":"[9,10,11,12,13,14]"}
++{"id":"synth-148-0002","description":"A closed range lists every floor from the basement to the top floor","code":"lowest = -1\nhighest = 3\nfloors = lowest..=highest\nassert(floors, [-1, 0, 1, 2, 3])\nhighest = 5\n[floors.length, floors.at(-1)]","return":"[7,5]"}
++{"id":"synth-148-0003","description":"A membership test against a closed range accepts whole star ratings only","code":"stars = 4\nvalid = stars in 1..=5\nassert(valid, true)\nstars = 4.5\nassert(valid, false)\nstars = 6\nvalid","return":"false"}
++{"id":"synth-148-0004","description":"Mapping a range of positions lists the coordinates of a grid that grows","code":"width = 2\nheight = 2\ncells = (0..<width * height).map(i -> [i % width, Math.floor(i / width)])\nassert(cells, [[0, 0], [1, 0], [0, 1], [1, 1]])\nwidth = 3\ncells.at(-1)","return":"[2,1]"}
++{"id":"synth-148-0005","description":"A class-level range rule gives every shift its hours and follows each shift's end","code":"class Shift(start, end):\n    this.start = start\n    this.end = end\nmorning = Shift(8, 12)\n$Shift.hours = $Shift.start..<$Shift.end\nevening = Shift(18, 20)\nassert(evening.hours, [18, 19])\nmorning.end = 10\nmorning.hours","return":"[8,9]"}
++{"id":"synth-148-0006","description":"A range empties when its bounds cross and fills again when they part","code":"first = 5\nlast = 3\nspan = first..=last\nassert(span, [])\nlast = 7\nspan.length","return":"3"}
++{"id":"synth-148-0007","description":"A comprehension reads a range as its source","code":"top = 4\nsquares = [i * i for i in 1..=top]\nassert(squares, [1, 4, 9, 16])\ntop = 5\nsquares.sum()","return":"55"}
++{"id":"synth-148-0008","description":"A fractional bound raises a TypeError and leaves the previous list in place","code":"count = 3\nitems = 0..<count\nfailure = \"\"\ntry:\n    count = 2.5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Range bounds must be integers\"))\n[count, items]","return":"[3,[0,1,2]]"}
++{"id":"synth-148-0009","description":"A range of more than 100,000 items raises before any item is built","code":"size = 10\nslots = 0..<size\nfailure = \"\"\ntry:\n    size = 200000\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Range is too large\"))\n[size, slots.length]","return":"[10,10]"}
++{"id":"synth-148-0010","description":"A range of positions pairs every name with its index even when names repeat","code":"names = [\"ann\", \"bob\", \"ann\"]\npairs = (0..<names.length).map(i -> [i, names[i]])\nassert(pairs, [[0, \"ann\"], [1, \"bob\"], [2, \"ann\"]])\nnames = [\"cy\"]\npairs","return":"[[0,\"cy\"]]"}
++{"id":"synth-148-0011","description":"An undefined bound makes the range null until the bound is set","code":"settings = {}\nlevels = 1..=settings.top\nassert(levels, null)\nsettings.top = 3\nlevels","return":"[1,2,3]"}
++{"id":"synth-148-0012","description":"An explanation quotes a range as it is written","code":"first = 1\nlast = 3\nspan = first..<last\nassert(span, [1, 2])\n(why span).map(step -> step.rule)","return":"[\"span = first..<last\",\"first = 1\",\"last = 3\"]"}
+```
+
+**File**: `docs/README.md` (modified, +76/-0)
+```diff
+@@ -931,6 +931,9 @@ settings.size
+   written `item !in collection` as in Kotlin, for lists, classes and
+   strings, at the level of `<`; see [membership tests](#membership-tests)
+   and [negated membership with `!in`](#negated-membership-with-in).
++- Ranges: `start..<end` and `start..=end` list consecutive integers, on one
++  level between the comparisons and `+` and `-`; see
++  [integer range literals](#integer-range-literals).
+ - Logical: `and` / `&&`, `or` / `||`, `not` / `!`.
+ - Conditional: `condition ? consequent : alternate` or
+   `consequent if condition else alternate`; see below.
+@@ -1233,6 +1236,66 @@ unlisted
+ 
+ Full detail: [NUC 135](nuc-0135.md).
+ 
++### Integer range literals
++
++```
++first = 2
++last = 5
++exclusive = first..<last
++inclusive = first..=last
++assert([exclusive, inclusive], [[2, 3, 4], [2, 3, 4, 5]])
++last = 3
++assert([exclusive, inclusive], [[2], [2, 3]])
++first = 4
++assert([exclusive, inclusive], [[], []])
++first = -1
++assert([exclusive.sum(), inclusive.length], [2, 5])
++inclusive
++```
++
++- This is the complete `Nucleoid writes consecutive integers as range literals`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `[-1, 0, 1, 2, 3]`.
++- `start..<end` lists the integers from `start` up to, but not including,
++  `end`, and `start..=end` lists them through `end`, in ascending order. A
++  range with no integer between its bounds is empty, as `4..<3` and `4..=3`
++  are. A declaration that holds a range stays live: it follows its bounds,
++  and `$Shift.hours = $Shift.start..<$Shift.end` holds for every shift.
++- A range is an ordinary list, so list methods, membership tests,
++  equality, indexing and JSON treat it as they treat a list literal:
++  `(1..=4).sum()` is `10` and `2 in 0..<3` is `true`. Like every list, a
++  range is truthy even when it is empty, so `while a..<b:` runs until the
++  loop limit raises `Loop did not terminate`.
++- Both bounds must be integers within `Number.MAX_SAFE_INTEGER` of zero,
++  or the range raises `TypeError("Range bounds must be integers")`, and a
++  range of more than 100,000 items raises `TypeError("Range is too large")`.
++  An undefined bound, such as a missing property, makes the range
++  undefined, which a declaration stores as `null`.
++- The two dots and the `<` or `=` are written together, with nothing
++  between them; spaces around the operator are free. Ranges bind more
++  loosely than `+` and `-` and more tightly than comparisons and membership
++  tests: `0..<n + 1` is `0..<(n + 1)` and `x in 1..=5` is `x in (1..=5)`.
++  They do not chain, so `a..<b..<c` is a syntax error.
++- Ranges are read only in a run of the parse passes that starts after every
++  accepted pass, the section run and the
++  [newline-separated list](#newline-separated-list-elements) run included,
++  has failed, so every input the accepted grammar reads keeps its reading.
++  That run separates list elements by line breaks too when it needs to, so
++  a list written one element per line can hold ranges.
++- A range is not read at the top level of a subscript's index, slice bound
++  or step, of a `for` statement's source or of a `repeat` statement's
++  count: `xs[0..<2]`, `for i in 0..<3:` and `repeat 0..<3:` keep their
++  syntax errors. Write `xs[0:2]` for positions, and map a range,
++  `(0..<3).map(i -> i * i)`, use a comprehension, `[i * i for i in 0..<3]`,
++  or use `repeat 3:` to run over integers.
++- Bare `..` and `...`, open ranges such as `..<n`, steps and descending
++  ranges are not added. A range renders as `first..<last`. Grammar, errors
++  and edge cases are in the authoritative
++  [integer range literals](../nucleoid.spec.md#integer-range-literals)
++  section.
++
++Full detail: [NUC 148](nuc-0148.md).
++
+ ### Indexing, slicing, and length
+ 
+ - Lists and instance lists index with brackets; the index may be a variable.
+@@ -1241,6 +1304,7 @@ Full detail: [NUC 135](nuc-0135.md).
+ - A range on a class's instance list, such as `Task[-2:]` or `Task[:]`, returns its instances in population order with the same bound rules, and depends on the population ([NUC 61](nuc-0061.md)).
+ - Both slice bounds are expressions whose references are checked when a class-level rule is declared.
+ - A step after a second colon, `[start:stop:step]`, takes every step-th item, and a negative step walks backward, as in Python: `xs[::2]`, `xs[1::2]` and `s[::-1]` ([Stepped slices](#stepped-slices), [NUC 125](nuc-0125.md)).
++- A range literal is not read at the top level of an index, a slice bound or a step, so `xs[0..<2]` stays a syntax error; `xs[(0..<2)]` indexes by a list, which converts to a number as any index does ([Integer range literals](#integer-range-literals), [NUC 148](nuc-0148.md)).
+ - `.length` is a dependency on the collection.
+ 
+ ```
+@@ -1973,6 +2037,11 @@ if $Device.profile:
+   literal objects in lists are skipped; order and duplicates are retained.
+ - Loops may nest, producing the cross product.
+ - Explicit sources keep arbitrary exp
+```
+
+**File**: `docs/examples.md` (modified, +31/-0)
+```diff
+@@ -4607,6 +4607,37 @@ heavy
+   [root contract](../nucleoid.spec.md#unknown-constructor-arguments-as-properties)
+   define. A vehicle built without a `color` label has none.
+ 
++## Integer range literals
++
++**Ranges keep every elevator's stops live**
++
++```nuc
++class Elevator(name, lowest, highest):
++    this.name = name
++    this.lowest = lowest
++    this.highest = highest
++$Elevator.stops = $Elevator.lowest..=$Elevator.highest
++low = Elevator("low", -1, 6)
++high = Elevator("high", 5, 12)
++call = 3
++serving = Elevator.filter(e -> call in e.stops).map(e -> e.name)
++assert(serving, ["low"])
++call = 5
++assert(serving, ["low", "high"])
++low.highest = 4
++assert([low.stops.length, serving], [6, ["high"]])
++serving
++# return: ["high"]
++```
++
++- Each elevator stops at the floors from its lowest through its highest,
++  `$Elevator.lowest..=$Elevator.highest`, a class-level rule that holds for
++  every elevator and follows a change of either floor, basements included.
++- The stops are an ordinary list, so `call in e.stops` tests them as it tests
++  any list, and the elevators that serve a call follow the call, the
++  elevators and their floors. See [NUC 148](nuc-0148.md) and the
++  [root contract](../nucleoid.spec.md#integer-range-literals).
++
+ ## Symmetric difference reasoning selections
+ 
+ **Xor lists what tells two diagnoses apart**
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -70,7 +70,7 @@ Created: 31-Jul-2026
+ | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
+ | [125](nuc-0125.md) | Stepped Slices | Accepted |
+ | [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Accepted |
+-| [148](nuc-0148.md) | Integer Range Literals | Draft |
++| [148](nuc-0148.md) | Integer Range Literals | Accepted |
+ | [149](nuc-0149.md) | Newline-Separated List Elements | Accepted |
+ | [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Rejected: eight historical source/field-seal tests fail |
+ 
+@@ -358,7 +358,7 @@ Created: 31-Jul-2026
+ | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [146](nuc-0146.md) | Reactive Cubing | Standards Track | Utility enhancement | Accepted |
+ | [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Accepted |
+-| [148](nuc-0148.md) | Integer Range Literals | Standards Track | Syntax enhancement | Draft |
++| [148](nuc-0148.md) | Integer Range Literals | Standards Track | Syntax enhancement | Accepted |
+ | [149](nuc-0149.md) | Newline-Separated List Elements | Standards Track | Syntax enhancement | Accepted |
+ | [150](nuc-0150.md) | C# Truncation Method Alias | Standards Track | Language compatibility | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
+ | [151](nuc-0151.md) | Truthy Value Assignment | Standards Track | Runtime features | Accepted |
+```
+
+**File**: `docs/nucleoid.ebnf` (modified, +52/-3)
+```diff
+@@ -645,7 +645,7 @@ equalityOperator
+ 
+ /*
+  * Membership contract (NUC 97, NUC 135):
+- * - IN, and NOT directly followed by IN, after an additive operand build
++ * - IN, and NOT directly followed by IN, after a range operand build
+  *   BinaryOp::In and BinaryOp::NotIn on the left-associative level of
+  *   LESS, LESS_EQUAL, GREATER and GREATER_EQUAL, sharing its MAX_CHAIN
+  *   operand limit. NOT before an operand stays a prefix, so
+@@ -668,7 +668,7 @@ equalityOperator
+  *   '}' but found '!'" for BANG IN, in an object value.
+  */
+ relational
+-    ::= additive (relationalOperator additive)*              /* Expr::Binary, left */
++    ::= range (relationalOperator range)*                    /* Expr::Binary, left */
+ 
+ relationalOperator
+     ::= LESS
+@@ -679,6 +679,34 @@ relationalOperator
+       | NOT IN                                              /* BinaryOp::NotIn */
+       | BANG IN                                             /* BinaryOp::NotIn */
+ 
++/*
++ * Range contract (NUC 148):
++ * - A rangeOperator is three adjacent tokens: each starts on the line of
++ *   the token before it, in the column right after it, so no whitespace,
++ *   comment or line break lies inside it. The lexer is unchanged.
++ * - It applies only in the range run of the parse-pass contract. Elsewhere
++ *   a postfix chain reads the first DOT as a member, so 'a..<b' keeps its
++ *   accepted "Expected a property but found '.'". In the range run a
++ *   postfix chain ends before an adjacent rangeOperator.
++ * - The level does not chain: a rangeOperator directly after the right
++ *   operand fails with "Unexpected '.'" at its first DOT.
++ * - Not at the top level, outside any LPAREN, LBRACK, LBRACE, call or stage
++ *   argument and statement, of a subscript's index, slice start, slice end
++ *   or slice step, or of a forStmt's source: there the postfix chain reads
++ *   DOT as a member and the accepted error stays. A repeatStmt whose count
++ *   holds a rangeOperator at that top level fails with the same error at
++ *   the operator's third token.
++ * - Bare '..' and '...', a rangeOperator without its left operand, and the
++ *   tokens of '..<=', '..==' and '..=>' are no ranges and keep their
++ *   accepted errors.
++ */
++range
++    ::= additive (rangeOperator additive)?                   /* Expr::Binary */
++
++rangeOperator
++    ::= DOT DOT LESS                                        /* BinaryOp::Range */
++      | DOT DOT ASSIGN                                      /* BinaryOp::RangeInclusive */
++
+ additive
+     ::= term ((PLUS | MINUS) term)*                          /* Expr::Binary, left */
+ 
+@@ -1341,6 +1369,16 @@ REGEX_ESCAPE
+  * sequence also fails, replace the original error only when its position
+  * is further into the source. This adds one finite outer retry, not an
+  * unbounded sequence or a different nesting/chain limit.
++ * Only when all of that fails, and the tokens hold an adjacent
++ * rangeOperator or a template whose text holds '..<' or '..=', the whole
++ * accepted sequence above, the section run and the listLineBreak run
++ * included, runs once more from a fresh parser that keeps the source's
++ * inter-token line breaks, starts again without listLineBreak and reads the
++ * range of the range contract. Its listLineBreak run follows the same
++ * condition as the accepted one. Every pass, probe, tentative statement and
++ * interpolation of that run reads the range. When it fails too, its error
++ * replaces the error above only when it lies further into the source, by
++ * line and column.
+  *
+  * Limits:
+  * MAX_NESTING = 64, shared by statement/expression nesting:
+@@ -1463,7 +1501,8 @@ REGEX_ESCAPE
+  * Tokens/keywords: src\lang\ast\lexer\raw.rs and lexer\token.rs.
+  * Regex/comments/version indexes: src\lang\ast\lexer\scanner.rs.
+  * Layout: src\lang\ast\lexer\indentation.rs.
+- * Passes/limits: src\lang\ast\parser.rs.
++ * Passes/limits: src\lang\ast\parser.rs and parser\source.rs, with the token
++ * cursor in parser\cursor.rs.
+  * Programs/suites/statements: src\lang\ast\parser\statement.rs.
+  * Conditions/loops/exceptions: src\lang\ast\parser\control.rs.
+  * Header probes and colon statements: loop headers in parser\control.rs,
+@@ -1510,4 +1549,14 @@ REGEX_ESCAPE
+  * src\lang\ast\parser.rs, the argument and the pending left operand in
+  * parser\postfix.rs, the mode carried into interpolations in
+  * parser\template.rs and the function in src\lang\ast\function.rs.
++ * Integer ranges: parser\range.rs, with the range run started after the
++ * listLineBreak run in parser\source.rs, which saves the source's line breaks
++ * for it and carries the mode through every restart, the level in
++ * parser\precedence.rs, the postfix stop and the reserved subscript parts in
++ * parser\postfix.rs, the reserved forStmt source in parser\control.rs, the
++ * repeatStmt count check in parser\statement.rs, the top levels that
++ * grouping, lists, objects, arguments and statements open in
++ * parser\primary.rs, parser\postfix.rs, parser\expre
+```
+
+**File**: `nucleoid.spec.md` (modified, +202/-1)
+```diff
+@@ -6309,7 +6309,9 @@ t.promote(bob)
+   `>=`, whose chain holds at most 128 of these operators. They bind more
+   tightly than `==`, `!=`, `===`, `!==`, `is`, `is not`, `and`, `&&`, `or`,
+   `||`, `??`, `|>`, the conditional forms and assignment, and more loosely
+-  than `+`, `-`, `*`, `/`, `%`, `**` and the prefix operators. So
++  than the range operators `..<` and `..=` of
++  [Integer range literals](#integer-range-literals), `+`, `-`, `*`, `/`,
++  `%`, `**` and the prefix operators. So
+   `x + 1 in xs` is `(x + 1) in xs`, `x in xs == true` is
+   `(x in xs) == true`, `a < b in c` is `(a < b) in c`, `a is b in c` is
+   `a is (b in c)`, `x in why c` tests the selection `why c`, and
+@@ -7932,6 +7934,120 @@ t.promote(bob)
+   `Nucleoid rolls back failed updates through stepped slices` specify the
+   executable behavior. `tests/stepped_slices.rs` executes the rest.
+ 
++## Integer range literals
++
++- [NUC 148](docs/nuc-0148.md) adds two range operators that build a list of
++  consecutive integers. `START..<END` holds the integers from `START` up to,
++  but not including, `END`, and `START..=END` holds the integers from
++  `START` through `END`. No keyword, token or error type is added; the
++  messages `Range bounds must be integers` and `Range is too large` are new.
++- **Spelling.** Each operator is three adjacent tokens: two dots and then
++  `<` or `=`, each on the line of the token before it and in the column
++  right after it, so no space, comment or line break stands inside the
++  operator. Space around it is free: `a..<b`, `a ..< b` and `a..< b` are the
++  same range, while `a. .<b`, `a.. <b`, `a..<=b`, `a..==b` and `a..=>b` keep
++  their accepted readings and errors.
++- **Precedence.** Both operators share one level between the comparisons
++  and `+` and `-`, and both operands are additive expressions, so
++  `0..<n + 1` is `0..<(n + 1)`, `-1..<2` is `(-1)..<2`, `a ** 2..=b` is
++  `(a ** 2)..=b`, `x in 1..=5` is `x in (1..=5)`, `a < 0..<3` is
++  `a < (0..<3)` and `0..<3 == xs` is `(0..<3) == xs`. The level does not
++  chain: a second range operator directly after the right operand, as in
++  `a..<b..<c`, raises a `SyntaxError`.
++- **Bounds.** `START` is evaluated first and then `END`, each once. When
++  either is undefined, such as a missing property, the range is undefined,
++  which a declaration stores as `null`, as for arithmetic. Otherwise each
++  bound must be a number whose value is an integer from
++  `-9007199254740991` to `9007199254740991`, and `-0` counts as `0`. Any
++  other bound raises `TypeError("Range bounds must be integers")`: `null`,
++  strings, numeric strings included, booleans, lists, objects, instances,
++  classes, functions, dates, regular expressions, NaN, `Infinity`,
++  `-Infinity`, fractions and integers beyond that interval.
++- **Items.** A range is a new list of the numbers `START`, `START + 1` and so
++  on, in ascending order, up to `END - 1` for `..<` and through `END` for
++  `..=`. It is empty when `START` is not below `END` for `..<`, or is above
++  it for `..=`: `5..<5`, `5..<2` and `5..=4` are `[]`, and `5..=5` is `[5]`.
++  A start of `-0` gives `0`. A range of more than 100,000 items raises
++  `TypeError("Range is too large")` before any item is built, the limit of
++  `while` loops and `repeat` counts: `1..=100000` holds 100,000 items and
++  `0..=100000` raises.
++- **A list like any other.** List methods and queries, membership tests,
++  deep equality, indexing, slicing, `push`, printing and JSON treat a range
++  exactly as they treat a list literal with the same items:
++  `(0..<3) == [0, 1, 2]` and `2 in 0..<3` are `true`, and `(1..=4).sum()`
++  is `10`. A range is truthy, as every list is, even when it is empty, so
++  `if 0..<0:` runs its body and `while a..<b:` runs until it raises
++  `TypeError("Loop did not terminate")`, as `while [0]:` does. Nothing else
++  about lists changes.
++- **Live.** A range is a binary expression. A declaration that holds one is
++  a standing declaration that depends on what both bounds read and
++  re-evaluates when they change, and `.value` freezes a bound. A class-level
++  rule with `$Class` bounds, such as
++  `$Shift.hours = $Shift.start..<$Shift.end`, holds for every instance,
++  created before or after it, follows each instance's bounds, and checks the
++  references in its bounds when it is declared. A bound error during a
++  re-evaluation fails and rolls back the statement that triggered it, so the
++  previous list stays, and `suppose` and transactions treat ranges as they
++  treat every operator.
++- **Where ranges are read.** An input first runs the whole accepted parse
++  sequence, the section run of
++  [Operator section arguments](#operator-section-arguments) and the
++  line-break run of
++  [Newline-separated list elements](#newline-separated-list-elements)
++  included. Only when all of it fails, and the tokens hold an adjacent `..<`
++  or `..=` or a template whose text holds `..<` or `..=`, does the same
++  sequence run once more, fro
 ```
 
 #### Recent Merged Pull Requests:
@@ -2088,47 +2154,22 @@ Hard criteria, evaluated on the frozen candidate at 008cc5b3:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 133 Edge Lists of Reasoning Selections
+## X. Draft NUC 157 Padding Method Aliases
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe38c7a5`: NUC 133 Edge Lists of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9eb7758`: Draft NUC 157 Padding Method Aliases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Edge lists of reasoning selections
-
-**Edges draws the wiring behind a heat alarm**
-
-```nuc
-temp = 31
-humidity = 70
-heat = temp > 30
-damp = humidity > 60
-alarm = heat && damp
-wiring = (alarm |> why |> edges).map(edge -> edge.join(" -> "))
-assert(wiring, ["heat -> alarm", "damp -> alarm", "temp -> heat", "humidity -> damp"])
-wind = 4
-alarm = heat && damp && wind < 10
-assert(wiring, ["heat -> alarm", "damp -> alarm", "wind -> alarm", "temp -> heat", "humidity -> damp"])
-```
-
-- [NUC 133](docs/nuc-0133.md) adds the final reasoning stage `|> edges`,
-  which lists the dependency edges of a selection's steps: for each step,
-  in the selection's order, one `[input, node]` pair for every input the
-  step reads. `alarm |> why |> edges` gives the edges of the alarm's
-  explanation, and mapping each pair to an arrow draws it.
-- The pairs are the ones the steps' `from` lists record, and they stay live
-  the way the explanation does: once the alarm also reads the wind, the
-  wind's edge joins the wiring. See the
-  [root contract](nucleoid.spec.md#edge-lists-of-reasoning-selections).
-
+| [157](nuc-0157.md) | Padding Method Aliases | Draft |
+| [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2138,7 +2179,7 @@ assert(wiring, ["heat -> alarm", "damp -> alarm", "wind -> alarm", "temp -> heat
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe38c7a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9eb7758` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

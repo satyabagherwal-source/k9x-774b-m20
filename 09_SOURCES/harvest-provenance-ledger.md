@@ -14007,3 +14007,7 @@ Every entry in this ledger must capture:
 | `learn-github-apache-maka` | `https://github.com/apache/maka` | `9c051de3` | Multi-dimensional audit evidence | 2026-11-28T04:38:40.118Z |
 | `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `1290e699` | Multi-dimensional audit evidence | 2026-11-28T04:38:42.761Z |
 | `learn-dom-d-f44634e3` | `project://apache-maka` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-maka-learnings.md` | 2026-11-28T04:39:21.416Z |
+| `learn-huggingface-ai-sage-gigachat4-37b-a4b` | `https://huggingface.co/ai-sage/GigaChat4-37B-A4B` | `hf-ai-sage` | Multi-dimensional audit evidence | 2026-11-28T04:47:58.633Z |
+| `learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf` | `https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-28T04:48:01.161Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `c9eb7758` | Multi-dimensional audit evidence | 2026-11-28T04:48:17.855Z |
+| `learn-dom-d-174e1cf1` | `project://hf-ai-sage-gigachat4-37b-a4b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md` | 2026-11-28T04:48:52.972Z |

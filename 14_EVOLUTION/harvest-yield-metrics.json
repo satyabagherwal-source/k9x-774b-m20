@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T04:38:42.767Z",
-  "total_cycles_completed": 13260,
-  "total_learnings_persisted": 13260,
-  "total_rules_promoted": 11957,
+  "last_updated": "2026-11-28T04:48:17.860Z",
+  "total_cycles_completed": 13263,
+  "total_learnings_persisted": 13263,
+  "total_rules_promoted": 11958,
   "history": [
-    {
-      "timestamp": "2026-11-27T10:34:23.900Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T10:43:11.615Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T10:43:16.109Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T10:51:52.462Z",
       "repository": "pola-rs/polars",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T04:38:42.767Z",
       "repository": "aio-libs/aiohttp",
       "learningId": "learn-github-aio-libs-aiohttp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:47:58.641Z",
+      "repository": "ai-sage/GigaChat4-37B-A4B",
+      "learningId": "learn-huggingface-ai-sage-gigachat4-37b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:48:01.167Z",
+      "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
+      "learningId": "learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:48:17.860Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

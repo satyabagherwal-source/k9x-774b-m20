@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T04:39:24.917Z",
-  "total_records": 2874,
+  "last_updated": "2026-11-28T04:48:55.295Z",
+  "total_records": 2877,
   "domains": {
     "A": {
       "total": 27,
@@ -76,7 +76,7 @@
       ]
     },
     "D": {
-      "total": 1055,
+      "total": 1058,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1132,7 +1132,10 @@
         "domain_intelligence-research-knowledge-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-i",
         "DOM-D-D82E6746",
         "DOM-D-089D64F0",
-        "DOM-D-F44634E3"
+        "DOM-D-F44634E3",
+        "domain_intelligence-research-knowledge-intelligence-ai-sage-gigachat4-37b-a4b-core-invariants",
+        "DOM-D-174E1CF1",
+        "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-37b-a4b-learnings-core-inva"
       ]
     },
     "E": {
@@ -16637,8 +16640,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "82b4fbb8732a6266ed9c031362a0d14225e1e043ea827a8a759df598ce59768e",
-      "created_at": "2026-11-22T19:43:27.838Z"
+      "content_hash": "7cf76489189c23a25085f7589e97a58ccea3ed6ea91c2675475e84cf260da37e",
+      "created_at": "2026-11-28T04:48:18.351Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -16697,8 +16700,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "aebab4cf42968560e8e98b26050e3ad31808eadde4c2212411a49ecd887711b5",
-      "created_at": "2026-11-22T06:11:36.584Z"
+      "content_hash": "a9e221fdfc65cf266ca713d284aff8a12ef109917344e2d7f6aac110429f80d2",
+      "created_at": "2026-11-28T04:48:55.295Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
@@ -43454,8 +43457,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/Inkling-2-Mini-abliterated-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-inkling-2-mini-abliterated-gguf-research-knowledge-intelligence-or.md",
       "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
-      "content_hash": "362f5c5a601811f511112104f05ac0b75c65ce171b230e3f22e9514e345c6338",
-      "created_at": "2026-11-24T19:55:17.048Z"
+      "content_hash": "6d10672b9e85dbe2ee45a37c63baf329d8f8ef1ec147741fe56deda388569d80",
+      "created_at": "2026-11-28T04:48:01.409Z"
     },
     "DOM-D-3B305647": {
       "record_id": "DOM-D-3B305647",
@@ -43505,8 +43508,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings-research-knowledge-intel.md",
       "repository": "hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings",
-      "content_hash": "69752b6555d28503fdfc64c522db0cfca2c729753b3091ebc7b67c2d0bdb47e0",
-      "created_at": "2026-11-24T19:55:59.702Z"
+      "content_hash": "652f50c398aab7e9df77d925bb961ad8739238ffc22b348a66eced99b5c772ca",
+      "created_at": "2026-11-28T04:48:53.962Z"
     },
     "domain_intelligence-design-intelligence-dembrandt-dembrandt-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-dembrandt-dembrandt-core-invariants",
@@ -48667,6 +48670,66 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-28T04:39:21.381Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ai-sage-gigachat4-37b-a4b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ai-sage-gigachat4-37b-a4b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ai-sage/GigaChat4-37B-A4B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ai-sage-gigachat4-37b-a4b-research-knowledge-intelligence-ai-sage-gigachat4-3.md",
+      "repository": "ai-sage/GigaChat4-37B-A4B",
+      "content_hash": "cd51990e8df6da1258b6cb1aa44f41c398ff3f06d7889b9ff47a0fa2240d7fd5",
+      "created_at": "2026-11-28T04:47:58.881Z"
+    },
+    "DOM-D-174E1CF1": {
+      "record_id": "DOM-D-174E1CF1",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ai-sage/GigaChat4-37B-A4B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ai-sage/GigaChat4-37B-A4B](https://huggingface.co/ai-sage/GigaChat4-37B-A4B))  \n> **Source Version**: `hf-ai-sage-g`  \n> **License**: Open-Source",
+      "content_hash": "d10257c38a9e3dc38f3997aedd6727c897d4c275bc0972e3e3c0daae79d64087",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "provenance": {
+        "source_uri": "project://hf-ai-sage-gigachat4-37b-a4b/hf-ai-sage-gigachat4-37b-a4b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T04:48:21.458Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ai-sage-gigachat4-37b-a4b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ai-sage-gigachat4-37b-a4b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T04:48:52.937Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-37b-a4b-learnings-core-inva": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-37b-a4b-learnings-core-inva",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ai-sage-gigachat4-37b-a4b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ai-sage-gigachat4-37b-a4b-learnings-research-knowledge-intelligence-hf-ai-sag.md",
+      "repository": "hf-ai-sage-gigachat4-37b-a4b-learnings",
+      "content_hash": "c1591ebbdc81f92f926a9e8e147749ac1a045876a6a68fad6898f0f5c9a83e71",
+      "created_at": "2026-11-28T04:48:53.361Z"
     }
   }
 }

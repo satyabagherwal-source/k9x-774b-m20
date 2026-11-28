@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T04:39:23.190Z",
+  "updated_at": "2026-11-28T04:48:53.027Z",
   "stats": {
-    "total_discovered": 10744,
-    "approved_pending_harvest": 10197,
+    "total_discovered": 10745,
+    "approved_pending_harvest": 10198,
     "harvested_count": 0,
     "rejected_count": 547,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10210,
+      "COMMUNITY_AND_EXPERT": 10211,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
@@ -232566,6 +232566,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md",
         "fileName": "aio-libs-aiohttp-learnings.md"
+      }
+    },
+    "SRC-97F75489E3DC": {
+      "id": "SRC-97F75489E3DC",
+      "url": "https://huggingface.co/ai-sage/GigaChat4-37B-A4B",
+      "title": "https://huggingface.co/ai-sage/GigaChat4-37B-A4B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:48:53.027Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md",
+        "fileName": "hf-ai-sage-gigachat4-37b-a4b-learnings.md"
       }
     }
   }

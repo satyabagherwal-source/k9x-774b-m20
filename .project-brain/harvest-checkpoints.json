@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T04:38:42.770Z",
+  "last_updated": "2026-11-28T04:48:17.864Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ec5dafaaef312c4c408b2e3f42526d9d89a2479b3f513baceba94965ced7ec4b",
-      "verified_at": "2026-11-28T02:59:17.233Z",
+      "content_hash": "8b451207fc0e7a7d03090fa8822f27d5f9cc0b335c34d1182a9c4c7b0d6349d4",
+      "verified_at": "2026-11-28T04:48:17.863Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-28T02:59:17.233Z"
+      "last_updated": "2026-11-28T04:48:17.863Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -20211,14 +20211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf",
-      "content_hash": "7f33b8cc073571a2f5362a805fee9f68e14f1c66f0850dc6e355c21c4120dc4d",
-      "verified_at": "2026-11-24T19:55:16.837Z",
+      "content_hash": "84d6426bc730b73884fc2fbb709bda120b4bef2d53157624dde2ed7cde915f0f",
+      "verified_at": "2026-11-28T04:48:01.170Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T19:55:16.837Z"
+      "last_updated": "2026-11-28T04:48:01.170Z"
     },
     "dembrandt/dembrandt": {
       "repository": "dembrandt/dembrandt",
@@ -20609,6 +20609,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-27T20:19:43.635Z"
+    },
+    "ai-sage/GigaChat4-37B-A4B": {
+      "repository": "ai-sage/GigaChat4-37B-A4B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-ai-sage-gigachat4-37b-a4b",
+      "content_hash": "d17e7fb4ffb349d7e59b8f9de15d7786c5d669c1f8d64ea433aba736809873d7",
+      "verified_at": "2026-11-28T04:47:58.644Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-28T04:47:58.644Z"
     }
   },
   "repos": {

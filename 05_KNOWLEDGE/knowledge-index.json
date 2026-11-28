@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T04:39:25.152Z",
-  "total_verified_learnings": 9148,
+  "last_updated": "2026-11-28T04:48:55.540Z",
+  "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26955,
+  "total_items": 26960,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -231576,8 +231576,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "2eca620d",
-      "content_hash": "ec5dafaaef312c4c408b2e3f42526d9d89a2479b3f513baceba94965ced7ec4b",
+      "source_version": "c9eb7758",
+      "content_hash": "8b451207fc0e7a7d03090fa8822f27d5f9cc0b335c34d1182a9c4c7b0d6349d4",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231915,6 +231915,11 @@
           "number": 11023,
           "title": "Draft NUC 156 Output Counts of Reasoning Selections",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11038,
+          "title": "Draft NUC 157 Padding Method Aliases",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231922,7 +231927,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T02:59:16.924Z",
+      "verified_at": "2026-11-28T04:48:17.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231976,10 +231981,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "2eca620d",
-      "content_hash": "9b441fb377fbf6d99e409a0c6a67659f844e98deff190f84f57912e13d01d8ac",
+      "source_version": "c9eb7758",
+      "content_hash": "8d63032ea28b7c0a1e5c0f4e0d4abd94d481f396a8a7042a7e92a57561312978",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T02:59:17.975Z"
+      "persisted_at": "2026-11-28T04:48:18.576Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -233174,9 +233179,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "739b4bea2ddbb889f25e67d45be861a0eb31bb390e4b9a4ac46c3e3734b9f381",
+      "content_hash": "f2a9b38ea98b7aebb2bc71992ec457b3904d3121830515b009fc750ccaed88f1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T02:59:24.576Z"
+      "persisted_at": "2026-11-28T04:48:55.540Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -233700,10 +233705,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "fe38c7a5",
-      "content_hash": "82b4fbb8732a6266ed9c031362a0d14225e1e043ea827a8a759df598ce59768e",
+      "source_version": "c9eb7758",
+      "content_hash": "7cf76489189c23a25085f7589e97a58ccea3ed6ea91c2675475e84cf260da37e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T19:43:27.838Z"
+      "persisted_at": "2026-11-28T04:48:18.351Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
@@ -233725,9 +233730,9 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "aebab4cf42968560e8e98b26050e3ad31808eadde4c2212411a49ecd887711b5",
+      "content_hash": "a9e221fdfc65cf266ca713d284aff8a12ef109917344e2d7f6aac110429f80d2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T06:11:36.584Z"
+      "persisted_at": "2026-11-28T04:48:55.295Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
@@ -343291,7 +343296,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF",
       "source_version": "hf-orcarouter-inkling-2-mini-abliterated-gguf",
-      "content_hash": "7f33b8cc073571a2f5362a805fee9f68e14f1c66f0850dc6e355c21c4120dc4d",
+      "content_hash": "84d6426bc730b73884fc2fbb709bda120b4bef2d53157624dde2ed7cde915f0f",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md",
       "promoted_rules": [],
@@ -343300,7 +343305,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T19:55:16.572Z",
+      "verified_at": "2026-11-28T04:48:00.849Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -343317,9 +343322,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/Inkling-2-Mini-abliterated-GGUF Core Invariants",
       "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
       "source_version": "hf-orcarouter-inkling-2-mini-abliterated-gguf",
-      "content_hash": "362f5c5a601811f511112104f05ac0b75c65ce171b230e3f22e9514e345c6338",
+      "content_hash": "6d10672b9e85dbe2ee45a37c63baf329d8f8ef1ec147741fe56deda388569d80",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T19:55:17.048Z"
+      "persisted_at": "2026-11-28T04:48:01.409Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-inkling-2-mini-abliterated-gguf-le": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-inkling-2-mini-abliterated-gguf-le",
@@ -343329,9 +343334,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings Core Invariants",
       "repository": "hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "69752b6555d28503fdfc64c522db0cfca2c729753b3091ebc7b67c2d0bdb47e0",
+      "content_hash": "652f50c398aab7e9df77d925bb961ad8739238ffc22b348a66eced99b5c772ca",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T19:55:59.702Z"
+      "persisted_at": "2026-11-28T04:48:53.962Z"
     },
     "learn-github-dembrandt-dembrandt": {
       "learning_id": "learn-github-dembrandt-dembrandt",
@@ -370394,6 +370399,83 @@
       "content_hash": "670cf69da723fd5c35375c8218b58a18554c6fc14067686bf9d8a6dbae3ae702",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T04:39:23.568Z"
+    },
+    "learn-huggingface-ai-sage-gigachat4-37b-a4b": {
+      "learning_id": "learn-huggingface-ai-sage-gigachat4-37b-a4b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ai-sage/GigaChat4-37B-A4B",
+      "repository": "ai-sage/GigaChat4-37B-A4B",
+      "slug": "hf-ai-sage-gigachat4-37b-a4b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ai-sage/GigaChat4-37B-A4B",
+      "source_version": "hf-ai-sage-gigachat4-37b-a4b",
+      "content_hash": "d17e7fb4ffb349d7e59b8f9de15d7786c5d669c1f8d64ea433aba736809873d7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ai-sage-gigachat4-37b-a4b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-28T04:47:58.321Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-ai-sage-gigachat4-37b-a4b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-ai-sage-gigachat4-37b-a4b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ai-sage-gigachat4-37b-a4b-research-knowledge-intelligence-ai-sage-gigachat4-3.md",
+      "title": "Research & Knowledge Intelligence: ai-sage/GigaChat4-37B-A4B Core Invariants",
+      "repository": "ai-sage/GigaChat4-37B-A4B",
+      "source_version": "hf-ai-sage-gigachat4-37b-a4b",
+      "content_hash": "cd51990e8df6da1258b6cb1aa44f41c398ff3f06d7889b9ff47a0fa2240d7fd5",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T04:47:58.881Z"
+    },
+    "rule-11038": {
+      "learning_id": "rule-11038",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11038,
+      "title": "Draft NUC 157 Padding Method Aliases",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "c9eb7758",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T04:48:17.542Z"
+    },
+    "candidate_directive-draft-nuc-157-padding-method-aliases": {
+      "item_id": "candidate_directive-draft-nuc-157-padding-method-aliases",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KAGS-draft-nuc-157-padding-method-aliases.md",
+      "title": "Draft NUC 157 Padding Method Aliases",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "edeb3b95f29ea3f17a437f68a549a61249c96f7443eeafde1b6675f4d79d3ad3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T04:48:55.049Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-37b-a4b-learnings-core-inva": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-37b-a4b-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ai-sage-gigachat4-37b-a4b-learnings-research-knowledge-intelligence-hf-ai-sag.md",
+      "title": "Research & Knowledge Intelligence: hf-ai-sage-gigachat4-37b-a4b-learnings Core Invariants",
+      "repository": "hf-ai-sage-gigachat4-37b-a4b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c1591ebbdc81f92f926a9e8e147749ac1a045876a6a68fad6898f0f5c9a83e71",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T04:48:53.361Z"
     }
   },
   "ai-builder-brain": {
