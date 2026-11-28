@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-28T02:59:23.939Z",
+  "timestamp": "2026-11-28T07:59:30.254Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-28T02:59:23.939Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T07:59:30.254Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `2eca620d`  
+> **Source Version**: `c56f9f1a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-28T02:59:15.866Z  
+> **Timestamp**: 2026-11-28T07:58:25.320Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-28T02:59:15.861Z  
+> **Harvest Timestamp**: 2026-11-28T07:58:25.316Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -442,12 +442,14 @@ impl Parser {
         }
 
         let depth = self.depth;
-        let result = self.within(false, |parser| {
-            match parser.destructuring()? {
-                Some(declarations) => statements.extend(declarations),
-                None => statements.push(parser.statement_inner()?),
-            }
-            Ok(())
+        let result = self.unreserved(|parser| {
+            parser.within(false, |parser| {
+                match parser.destructuring()? {
+                    Some(declarations) => statements.extend(declarations),
+                    None => statements.push(parser.statement_inner()?),
+                }
+                Ok(())
+            })
         });
         debug_assert_eq!(self.depth, depth);
         self.depth -= 1;
@@ -489,7 +491,9 @@ impl Parser {
             return self.repeat_until_statement();
         }
 
+        let start = self.position;
         if let Some(count) = self.repeat_count() {
+            self.reserve_count(start)?;
             let body = self.suite()?;
             return Ok(Stmt::Repeat { count, body });
         }
@@ -619,12 +623,7 @@ impl Parser {
         }
         let target = match expression {
             Expr::Assign { target, .. } => Some(target.as_ref().clone()),
-            _ => None,
-        };
-
-        let mut body = Vec::new();
-        if !self.check(&Token::Colon) {
-            let Some(premise) = self.suppose_premise() else {
+            _ => Non
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1580,267 +1579,20 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2eca620d` (2026-11-28)
-**Commit Message**: Draft NUC 156 Output Counts of Reasoning Selections
+### Incident Patch 1: `c56f9f1a` (2026-11-28)
+**Commit Message**: Resume NUC 158 List Invocation of Function Values
 
-Category: Reasoning enhancement.
+Resume same-revision finalization after a transient missing historical
+controller-source artifact. The exact original blob has been recovered at a
+new immutable external path and verified without changing the candidate,
+baseline, reports or diagnostic pins.
 
-Request the final SELECTION |> outdegrees projection: in selection order,
-count each selected node's occurrences as an input of that selection's
-recorded edges. Do not count outside-selected outputs or paths, change
-step records, or introduce a whole-model traversal.
-
-Preserve ordinary bindings, accepted selections, observer exclusion,
-reactivity, final-stage boundaries, diagnostics and all historical
-assertions. Continuous mode requires paired lexer-token evaluation and
-every hard criterion. No hint, rubric or strategy learner is configured.
-
-Allocate only this Draft and its two index rows before recording immutable
-accepted baselines or dispatching the fresh proposal/evaluation pair.
-This commit records no outcome and changes no accepted language behavior.
+Allocation: 761b277c1e19fcb61906981b566924dc13e7d548
+This empty claim records no proposal outcome and moves no pinned worktree.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -176,6 +176,7 @@ Created: 31-Jul-2026
- | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Accepted |
- | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Accepted |
- | [153](nuc-0153.md) | State Labels of Reasoning Selections | Rejected: three protected executable-document guards fail |
-+| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Draft |
- 
- ### Language compatibility
- 
-@@ -365,6 +366,7 @@ Created: 31-Jul-2026
- | [153](nuc-0153.md) | State Labels of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: three protected executable-document guards fail |
- | [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Standards Track | Syntax enhancement | Rejected: eight historical source/field-seal tests fail |
- | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Standards Track | Utility enhancement | Rejected: 74 existing corpus-count and historical-locator tests fail |
-+| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
- 
- ## Copyright
- 
-```
 
-**File**: `docs/nuc-0156.md` (added, +78/-0)
-```diff
-@@ -0,0 +1,78 @@
-+# NUC 156 -- Output Counts of Reasoning Selections
-+
-+```
-+NUC: 156
-+Title: Output Counts of Reasoning Selections
-+Author: Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Reasoning enhancement
-+Created: 27-Nov-2026
-+Requires: 48, 112, 133
-+```
-+
-+## Abstract
-+
-+- Add only the final reasoning stage `SELECTION |> outdegrees`. Return one
-+  nonnegative Number for each selected step, in selection order: the number
-+  of edges recorded by that selection whose input name is that step's node.
-+  Count the selected steps' recorded direct inputs, not paths or all
-+  dependents in the model.
-+- Equivalently, count each selected node name's occurrences as the first item
-+  of `SELECTION |> edges`. Outputs outside the selection do not contribute;
-+  an empty selection gives `[]`, and a selected step with no recorded output
-+  edge gives `0`. Do not change step records or the graph.
-+- Preserve existing selection, reference coercion, stage shadowing, observer
-+  exclusion, structural reactivity and final-projection boundaries.
-+  `outdegrees` stays an ordinary identifier outside its pipeline position.
-+  Add no prefix, call or member alias, keyword, token kind or configuration.
-+- The caller's one uniform live-registry draw selected Reasoning enhancement.
-+  This is a bounded explanation-structure projection, distinct from NUC 145's
-+  recorded input counts. Continuous evaluation requires original accepted
-+  replay, paired per-case lexer-token comparison and every hard criterion.
-+
-+## Motivation
-+
-+- A selection's recorded edges show which selected conclusions use each
-+  selected step. Per-step output counts expose that fan-out directly without
-+  constructing and reducing an edge list for every node.
-+- NUC 133 supplies edge pairs and NUC 145 supplies each step's input count;
-+  neither projects how often a selected step is an input of the selection's
-+  recorded edges. Keep the query local to the same selection rather than
-+  introduce another traversal or a whole-model degree query.
-+- Preserve all accepted syntax, programs, assertions, diagnostics and
-+  historical corpus guards. Add no pending-proposal dependency, new runtime
-+  data model, public API removal, project version change or ARC behavior.
-+
-+## Rationale
-+
-+To be completed by the fresh proposal agent against the pushed allocation.
-+
-+## Specification
-+
-+To be completed with the selection-local recorded-edge contract, ordinary
-+final-stage boundaries and synchronized normative documentation.
-+
-+## Errors
-+
-+To be completed without weakening any accepted diagnostic or parser limit.
-+
-+## Backwards Compatibility
-+
-+To be completed with immutable accepted-source replay, preserved ordinary
-+bindings and unchanged existing test assertions, fields and byte seals.
-+
-+## Reference Implementation
-+
-+To be completed in the isolated candidate after immutable accepted programs
-+and behavior-equivalent new controls have been executed and recorded.
-+
-+## Evaluation
-+
-+This allocation records no outcome. The caller will complete one required
-+Rust improvement pass, freeze the candidate and request fresh independent
-+evaluation. No hint, advisory rubric or proposal-strategy learner is configured.
-+
-+## Copyright
-+
-+This document has been placed in the public domain.
-```
-
----
-
-### Incident Patch 2: `3faeb009` (2026-11-28)
-**Commit Message**: NUC 155 Reactive Reciprocal Square Root
-
-Rejected: 74 existing corpus-count and historical-locator tests fail.
-
-The automatic acceptance rule rejects revision 1 because the every-test
-hard criterion failed: independent full Cargo tests returned 101 with
-4,133 passed, 74 failed and 25 ignored. All nine new tests passed, but they
-do not offset existing failures. Build, formatting, strict Clippy and
-accepted-language backward compatibility passed.
-
-The independent overall decision is Rejected; the deterministic core
-decision is Accepted. Required continuous Utility token comparison ran:
-two less, 1,326 same and zero more, including 100->98 and 83->81.
-
-Publish only the rejection proposal and its two index entries. All
-rejected runtime, executable-document, test, synthesized-data and export
-changes remain isolated. No existing assertions or guards are weakened.
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -152,7 +152,7 @@ Created: 31-Jul-2026
- | [142](nuc-0142.md) | Reactive Sign Copying | Automatic-Accepted: independent strict rollback graph-dependent ordering check failed, also reproduced on the accepted arithmetic runtime |
- | [143](nuc-0143.md) | Reactive Squaring | Accepted |
- | [146](nuc-0146.md) | Reactive Cubing | Accepted |
--| [155](nuc-0155.md) | Reactive Reciprocal Square Root | Draft |
-+| [155](nuc-0155.md) | Reactive Reciprocal Square Root | Rejected: 74 existing corpus-count and historical-locator tests fail |
- 
- ### Reasoning enhancement
- 
-@@ -364,7 +364,7 @@ Created: 31-Jul-2026
- | [152](nuc-0152.md) | Falsy Value Assignment | Standards Track | Runtime features | Rejected: protected truthy-assignment parser rejection test fails |
- | [153](nuc-0153.md) | State Labels of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: three protected executable-document guards fail |
- | [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Standards Track | Syntax enhancement | Rejected: eight historical source/field-seal tests fail |
--| [155](nuc-0155.md) | Reactive Reciprocal Square Root | Standards Track | Utility enhancement | Draft |
-+| [155](nuc-0155.md) | Reactive Reciprocal Square Root | Standards Track | Utility enhancement | Rejected: 74 existing corpus-count and historical-locator tests fail |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0155.md` (modified, +216/-13)
-```diff
-@@ -4,7 +4,7 @@
- NUC: 155
- Title: Reactive Reciprocal Square Root
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
--Status: Draft
-+Status: Rejected
- Type: Standards Track
- Category: Utility enhancement
- Created: 27-Nov-2026
-@@ -23,6 +23,10 @@ Created: 27-Nov-2026
-   This is a bounded numeric utility, not an alias, parser change or new
-   runtime data model. Continuous evaluation requires original accepted-source
-   replay, paired per-case lexer-token comparison and every hard criterion.
-+- **Rejected: 74 existing corpus-count and historical-locator tests fail.**
-+  The every-test hard criterion failed. The passing token policy does not
-+  override those independently reproduced failures; no language changes
-+  are integrated.
- 
- ## Motivation
- 
-@@ -36,33 +40,232 @@ Created: 27-Nov-2026
- 
- ## Rationale
- 
--To be completed by the fresh proposal agent against the pushed allocation.
-+- Name one useful composition, rather than add a numerical model or a
-+  cross-language alias. Utility enhancement is the confirmed category;
-+  runtime applicability is `not_applicable`.
-+- Reuse `math_unary` and the accepted `sqrt` primitive. Computing
-+  `1.0 / first.sqrt()` keeps the square root and reciprocal's separate
-+  ordinary rounding without new dispatch, argument handling or lowering.
-+- Reject fast inverse-square-root approximations, normalization, rescaling,
-+  `pow`/`powf`, reordered arithmetic and calls to shadowable `Number` or
-+  `Math.sqrt`. There is no accuracy or performance claim.
-+- Preserve every older executable case byte, assertion, expected return,
-+  diagnostic, historical seal and synthesized field. Insert the two new
-+  paired cases after cosecant and before sign copying, leaving the existing
-+  closed tail and sign-copying locator unchanged.
- 
- ## Specification
- 
--To be completed with the general native-call contract and synchronized
--normative documentation.
-+- Add only native static `Math.rsqrt(value)` wherever ordinary accepted call
-+  resolution reaches the native Math namespace.
-+- Evaluate every supplied expression exactly once, left to right, before
-+  the native dispatcher. If any supplied top-level value is Undefined,
-+  return Undefined before conversion, including an Undefined extra.
-+- Otherwise intrinsically convert only the first value using the existing
-+  `Value::to_number` path. An omitted first value supplies numeric NaN.
-+  Compute its ordinary `f64` square root, then ordinary `1.0 / root`.
-+- Preserve non-NaN results by bits against the accepted ordered numeric
-+  composition. Classify NaN without promising its sign or payload. Positive
-+  zero gives positive infinity; negative zero gives negative infinity;
-+  positive infinity gives positive zero. Negative nonzero inputs, including
-+  negative infinity, give NaN. Finite and subnormal rounding is unchanged.
-+- Literal null converts to zero; booleans, trimmed numeric strings,
-+  empty/singleton lists and millisecond dates retain intrinsic conversion.
-+  Invalid conversions give numeric NaN, not new coercion errors.
-+- Extras are ignored numerically and never converted, but retain eager
-+  effects, strict errors, reads and subscriptions, even after Undefined.
-+  Nested Undefined does not trigger the top-level gate.
-+- Literal-null coercion does not override live-input or parameter-null
-+  deferral. Named functions, methods, independent class rules, captures,
-+  observations, snapshots, frames, graph source, deletion/recovery and
-+  transactions retain the accepted machinery.
-+- Keep that deferral contextual: a standing call through a null or omitted
-+  parameter remains deferred; an immediate call retains the accepted
-+  intrinsic null conversion. Do not add a new blanket parameter-null gate.
-+- Local/state `Math` bindings and ordinary `.Math`/`.rsqrt` members retain
-+  lookup. Native `Math.rsqrt` value reads remain Undefined/non-callable.
-+  No global, lowercase, receiver or aggregate alias is introduced.
-+- Accepted identifier/member-call syntax already parses this name.
-+  `docs/nucleoid.ebnf`, lexer/parser rules, public Rust API, options,
-+  dependencies, MSRV and versions are unchanged.
-+- The rejected prototype's `Reactive reciprocal square root` specification
-+  section and `Nucleoid keeps reciprocal square roots reactive` case follow
-+  nested object-property and offset updates, including zero and infinity.
-+  Its reference counterpart follows the radicand and an ignored extra through
-+  deletion and recovery. These sections remain only in the isolated candidate;
-+  this proposal does not change the authoritative accepted specification.
- 
- ## Errors
- 
--To be completed without weakening any existing diagnostic or error pin.
-+- Introduce no arity, coercion, range or numeric errors. Missing input and
-+  invalid numeric conversion produce NaN after the unchanged native gate.
-+- Strict missing reads retain `ReferenceError("<name> is not defined")`,
-+  including extra arguments after Undefined; error positions, caught 
-```
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1862,38 +1614,6 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Draft NUC 156 Output Counts of Reasoning Selections
-
-**RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `2eca620d`: Draft NUC 156 Output Counts of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Draft |
-| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2eca620d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

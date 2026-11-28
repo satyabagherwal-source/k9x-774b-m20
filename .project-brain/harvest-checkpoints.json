@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T07:49:38.553Z",
+  "last_updated": "2026-11-28T07:58:25.914Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2976,14 +2976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webpack-webpack",
-      "content_hash": "f4a66f6570770ad124e9b1f0b0259f158eb0bd627756113d206c7af7ca53b4ca",
-      "verified_at": "2026-11-24T23:24:49.229Z",
+      "content_hash": "59652434d5eda50eef77f31b08c80257ef82a5f51169114d642c06dc4df8051a",
+      "verified_at": "2026-11-28T07:58:16.096Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:24:49.229Z"
+      "last_updated": "2026-11-28T07:58:16.096Z"
     },
     "rollup/rollup": {
       "repository": "rollup/rollup",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "92bbbb4ab431e5499e21fe50358c267decd9751f4324e57eb59326089d83cff3",
-      "verified_at": "2026-11-28T06:04:30.459Z",
+      "content_hash": "48bf9b5bfaaa057e31549d0a84555a446fa1f38f39855977aab2a1dbfaab8652",
+      "verified_at": "2026-11-28T07:58:25.913Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-28T06:04:30.459Z"
+      "last_updated": "2026-11-28T07:58:25.913Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "afa15b35aefc4f696d7e7259149a69c4f9a45e59708d836996fa5c3bb520d99c",
-      "verified_at": "2026-11-27T13:46:39.696Z",
+      "content_hash": "60b5294e54873f262d74fa6b12f4a527ca2785edfec2e4797b7da7455b0d8814",
+      "verified_at": "2026-11-28T07:58:24.374Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T13:46:39.696Z"
+      "last_updated": "2026-11-28T07:58:24.374Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",

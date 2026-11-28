@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `761b277c`  
+> **Source Version**: `c56f9f1a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-28T06:04:29.279Z  
+> **Timestamp**: 2026-11-28T07:58:25.320Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-28T06:04:29.274Z  
+> **Harvest Timestamp**: 2026-11-28T07:58:25.316Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1551,275 +1551,20 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `761b277c` (2026-11-28)
-**Commit Message**: Draft NUC 158 List Invocation of Function Values
+### Incident Patch 1: `c56f9f1a` (2026-11-28)
+**Commit Message**: Resume NUC 158 List Invocation of Function Values
 
-Category: Runtime features. Continuous mode.
+Resume same-revision finalization after a transient missing historical
+controller-source artifact. The exact original blob has been recovered at a
+new immutable external path and verified without changing the candidate,
+baseline, reports or diagnostic pins.
 
-Add only functionValue.invoke(argumentList), delivering an ordinary List's
-ordered values through the existing fixed/default/rest binder. Preserve
-Function-value context, lack of implicit this capture, source-order evaluation,
-nullish recovery, identities, reactivity and rollback; no spread syntax,
-closure, builtin/class construction, new global, dependency or version.
-
-Runtime applicability: new_feature. Accepted calls cannot deliver an arbitrary
-runtime-length List to an arbitrary user Function as positional arguments.
-Token comparison is skipped entirely; all behavior/integrity, accepted replay,
-compatibility and development checks remain mandatory.
-
-Allocate only the Draft proposal and both index rows before its details.
-One live-registry category draw, index 1 of 5, with no redraw or stale Draft.
-No hint, usefulness rubric or strategy learner is configured.
-Caller selection raw blob: 215578f9733dc24dc0e3dfa2743425e2f4bd948a.
+Allocation: 761b277c1e19fcb61906981b566924dc13e7d548
+This empty claim records no proposal outcome and moves no pinned worktree.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -110,6 +110,7 @@ Created: 31-Jul-2026
- | [147](nuc-0147.md) | Deferred Suites | Accepted |
- | [151](nuc-0151.md) | Truthy Value Assignment | Accepted |
- | [152](nuc-0152.md) | Falsy Value Assignment | Rejected: protected truthy-assignment parser rejection test fails |
-+| [158](nuc-0158.md) | List Invocation of Function Values | Draft |
- 
- ### Utility enhancement
- 
-@@ -369,6 +370,7 @@ Created: 31-Jul-2026
- | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Standards Track | Utility enhancement | Rejected: 74 existing corpus-count and historical-locator tests fail |
- | [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail |
- | [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Draft |
-+| [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Draft |
- 
- ## Copyright
- 
-```
 
-**File**: `docs/nuc-0158.md` (added, +82/-0)
-```diff
-@@ -0,0 +1,82 @@
-+# NUC 158 -- List Invocation of Function Values
-+
-+```
-+NUC: 158
-+Title: List Invocation of Function Values
-+Author: Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Runtime features
-+Created: 28-Nov-2026
-+Requires: 8, 54, 74
-+```
-+
-+## Abstract
-+
-+- Add only `functionValue.invoke(argumentList)` for user Function Values.
-+  Pass the ordered elements of its first ordinary List argument to the
-+  existing fixed/default/rest parameter binder. The outer list is an
-+  argument container, not a single positional value.
-+- Preserve ordinary Function-value definition identity, invocation context,
-+  lack of implicit `this` capture, fresh scopes, object identity, dependency
-+  tracking, reactivity and rollback. Evaluate the receiver and supplied call
-+  arguments at their existing source-order boundaries; supplied surplus
-+  call arguments are evaluated and ignored, as for existing built-in methods.
-+- A nullish receiver or argument container retains Undefined/deferred
-+  recovery. Other non-List containers raise a typed error. No class or
-+  native-builtin construction, population/string expansion, spread syntax,
-+  closure, receiver rebinding, new global, dependency or version is added.
-+- The caller's one uniform live-registry draw selected Runtime features.
-+  This is `new_feature`: accepted calls cannot deliver an arbitrary
-+  runtime-length List to an arbitrary Function as positional arguments.
-+  Continuous evaluation skips token comparison entirely, while retaining
-+  immutable accepted replay, behavior/integrity and every hard criterion.
-+
-+## Motivation
-+
-+- Functions can collect a variable number of positional operands through
-+  final rest formals, but callers cannot send a runtime-length list back
-+  through that calling convention. Passing the list directly binds one
-+  value, while a fixed number of indexed expressions fixes the arity.
-+- Expose the existing invocation binder through one Function-value method,
-+  without adding the call-site spread syntax whose errors accepted tests
-+  pin, changing higher-order helpers or inventing a second binder.
-+- Preserve every accepted executable source, assertion, diagnostic and
-+  historical guard. Only demonstrably count-only pins caused by legitimate
-+  case additions may move; do not repair a selector, partition or byte seal
-+  to manufacture a passing suite.
-+
-+## Rationale
-+
-+To be completed by the fresh proposal agent against the pushed allocation,
-+including independent verification of the new-feature applicability.
-+
-+## Specification
-+
-+To be completed with ordinary List argument delivery, existing Function-value
-+context and parameter binding, source-order evaluation and nullish recovery.
-+
-+## Errors
-+
-+To be completed without weakening accepted method, call or spread diagnostics.
-+
-+## Backwards Compatibility
-+
-+To be completed with pinned accepted-source replay and preserved ordinary
-+functions, object methods, member reads, contexts and rollback.
-+
-+## Reference Implementation
-+
-+To be completed only in the isolated candidate after accepted inputs are
-+recorded. Reuse the existing invocation path; do not alter accepted syntax.
-+
-+## Evaluation
-+
-+This allocation records no outcome. A fresh proposer, exactly one required
-+Rust improvement pass and a fresh independent evaluator will check the
-+frozen candidate. No hint, advisory rubric or strategy learner is configured.
-+The new-runtime-feature token check is skipped, not a zero-case passing gate.
-+
-+## Copyright
-+
-+This document has been placed in the public domain.
-```
-
----
-
-### Incident Patch 2: `2a771a12` (2026-11-28)
-**Commit Message**: NUC 156 Output Counts of Reasoning Selections
-
-Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail.
-
-Automatic acceptance is blocked by the every-test-passes hard criterion.
-The fresh independent full suite exits 101: 4,142 passed, 76 failed and
-25 ignored; all 20 additions pass and all 4,223 existing identities remain
-unweakened. Compilation, warning-denied Clippy, formatting and backward
-compatibility pass. Accepted replay protects 1,328 programs and 6,611
-canonical assertions.
-
-The independent overall decision is Rejected; the deterministic core is
-Accepted with zero issues. Required lexer-token comparison ran and passed:
-1,326 unchanged, two shorter, zero increases; specification 200 to 139,
-reference 223 to 152. Advisory reward is unscored (missing_rubric).
-Strategy learning is not configured; no checkpoint or reward is assigned.
-
-Publish only the evaluated proposal and its two index rows. Do not integrate
-the rejected runtime, specification, grammar, dataset or tests. Preserve the
-isolated frozen tree b93e64df579dd3cb39c6e91bfac8341223c5a53a and its reports.
-Caller review raw blob: ed5daabf200043197190767b5e8eb0195e79014c.
-
-Co-authored-by: C
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -176,7 +176,7 @@ Created: 31-Jul-2026
- | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Accepted |
- | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Accepted |
- | [153](nuc-0153.md) | State Labels of Reasoning Selections | Rejected: three protected executable-document guards fail |
--| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Draft |
-+| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail |
- 
- ### Language compatibility
- 
-@@ -367,7 +367,7 @@ Created: 31-Jul-2026
- | [153](nuc-0153.md) | State Labels of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: three protected executable-document guards fail |
- | [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Standards Track | Syntax enhancement | Rejected: eight historical source/field-seal tests fail |
- | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Standards Track | Utility enhancement | Rejected: 74 existing corpus-count and historical-locator tests fail |
--| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail |
- | [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Draft |
- 
- ## Copyright
-```
-
-**File**: `docs/nuc-0156.md` (modified, +215/-15)
-```diff
-@@ -4,7 +4,7 @@
- NUC: 156
- Title: Output Counts of Reasoning Selections
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
--Status: Draft
-+Status: Rejected
- Type: Standards Track
- Category: Reasoning enhancement
- Created: 27-Nov-2026
-@@ -16,8 +16,8 @@ Requires: 48, 112, 133
- - Add only the final reasoning stage `SELECTION |> outdegrees`. Return one
-   nonnegative Number for each selected step, in selection order: the number
-   of edges recorded by that selection whose input name is that step's node.
--  Count the selected steps' recorded direct inputs, not paths or all
--  dependents in the model.
-+  Count occurrences in selected outputs' recorded direct inputs, not
-+  paths or all dependents in the model.
- - Equivalently, count each selected node name's occurrences as the first item
-   of `SELECTION |> edges`. Outputs outside the selection do not contribute;
-   an empty selection gives `[]`, and a selected step with no recorded output
-@@ -30,6 +30,11 @@ Requires: 48, 112, 133
-   This is a bounded explanation-structure projection, distinct from NUC 145's
-   recorded input counts. Continuous evaluation requires original accepted
-   replay, paired per-case lexer-token comparison and every hard criterion.
-+- **Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail.**
-+  The independently evaluated candidate passes compilation, compatibility
-+  and token comparison, but fails the every-test-passes hard criterion.
-+  Its implementation remains isolated; none of its language changes is
-+  integrated.
- 
- ## Motivation
- 
-@@ -46,33 +51,228 @@ Requires: 48, 112, 133
- 
- ## Rationale
- 
--To be completed by the fresh proposal agent against the pushed allocation.
-+- Query the edges already recorded by the same selection; do not walk the
-+  global graph for each node or reinterpret `affects` as including its
-+  source. In a depth-limited impact, `union(source)` explicitly appends the
-+  source after the reached steps.
-+- Reuse the existing typed `Projection` and `Runtime::projected` path.
-+  Output counts depend on the selection, not an isolated `StepField`.
-+  Keep one record materialization per selected step, even for zero counts.
-+- Use a finite scan of selected outputs' `from` lists for each selected
-+  node, converting its `usize` count with `number::from_usize`. Add no
-+  traversal, graph mutation, dependency, configuration or record field.
-+- Preserve the final-only precedent of NUC 145: recognize the ordinary
-+  Identifier in the pipeline parser, never `Stage::from_name`, which
-+  recognizes prefix stages. Ordinary names, calls and members keep lookup.
-+- Append public `Stage::Outdegrees` after all eleven existing variants.
-+  Their implicit discriminants remain unchanged. Expanding an existing
-+  exhaustive public enum requires human SemVer/API review for downstream
-+  matches; do not add `non_exhaustive` or change project versions.
-+- The caller made one unbiased live-registry draw, index 3 of 5, with no
-+  redraw. This bounded graph-evidence projection advances declarative
-+  reasoning, not a compatibility alias. Runtime applicability is N/A.
-+- No hint, frozen usefulness rubric, policy, receipt or strategy was
-+  supplied. Learning is `not_configured` and this preparation is
-+  unattributed; advisory usefulness is unscored (`missing_rubric`), not zero.
- 
- ## Specification
- 
--To be completed with the selection-local recorded-edge contract, ordinary
--final-stage boundaries and synchronized normative documentation.
-+- For each Step in `selection.steps`, in its order, return the Number of
-+  occurrences of `step.node` across the `from` lists of those same selected
-+  Steps. Equivalently, count matches as the first item of
-+  `selection |> edges`. Outside-selected outputs never contribute.
-+- Inputs outside the selection can appear in recorded edges, but have no
-+  returned count unless themselves selected. Empty selections give `[]`;
-+  a selected node with no recorded outgoing match gives `0`. Existing
-+  recorded-input deduplication is unchanged.
-+- Preserve selection order through filters, depth, paths, intersection,
-+  difference, union and symmetric difference. Do not count paths,
-+  traversal visits, global dependents or the selection's cardinality.
-+- Sources keep existing projection coercion: a reference denotes its
-+  own step; `model` denotes the selectable graph; a variable holding
-+  records still denotes its graph node, not its stored list.
-+- Standing projections keep value and structural subscriptions, observer
-+  exclusion and refresh on rewiring, deletion and recovery. Step metadata,
-+  record materialization, class/function contexts, snapshots, transactions
-+  and nullish context remain unchanged.
-+- Null-valued selected steps still contribute their recorded output count.
-+  Absent properties/deleted sources supply no step. Undefined selections,
-+  including `depth(null)`, remain Undefined rather than becoming `[]`;
-+  standing declarations retain deferred-
-```
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1841,35 +1586,3 @@ Co-authored-by: C
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Draft NUC 158 List Invocation of Function Values
-
-**RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `761b277c`: Draft NUC 158 List Invocation of Function Values. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-| [158](nuc-0158.md) | List Invocation of Function Values | Draft |
-| [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Draft |
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `761b277c` are properly handled with clean fallback behavior.

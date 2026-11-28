@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T07:49:44.745Z",
-  "total_records": 2882,
+  "last_updated": "2026-11-28T07:59:30.394Z",
+  "total_records": 2884,
   "domains": {
     "A": {
       "total": 27,
@@ -76,7 +76,7 @@
       ]
     },
     "D": {
-      "total": 1060,
+      "total": 1061,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1137,7 +1137,8 @@
         "DOM-D-174E1CF1",
         "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-37b-a4b-learnings-core-inva",
         "DOM-D-5456C5F2",
-        "DOM-D-095C01F1"
+        "DOM-D-095C01F1",
+        "DOM-D-3BCEAD45"
       ]
     },
     "E": {
@@ -1775,7 +1776,7 @@
       ]
     },
     "H": {
-      "total": 696,
+      "total": 697,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2472,7 +2473,8 @@
         "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-learnings-co",
         "DOM-H-797E7DCD",
         "DOM-H-6F2C6AB3",
-        "DOM-H-3B7BECBA"
+        "DOM-H-3B7BECBA",
+        "DOM-H-5CC5EBBF"
       ]
     },
     "I": {
@@ -11343,8 +11345,8 @@
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "repository": "langchain4j/langchain4j",
-      "content_hash": "bb8785c27ce2556f1ce429203875396b5acecfff7dbdfdf16f5235ba7ea8a74f",
-      "created_at": "2026-11-27T13:46:40.281Z"
+      "content_hash": "a9fb0185e6454cb4df846b2a7b153dde36fdb9a521fdc69b02d1a3cccf40cf30",
+      "created_at": "2026-11-28T07:58:24.799Z"
     },
     "DOM-D-9936936B": {
       "record_id": "DOM-D-9936936B",
@@ -15961,8 +15963,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "0ddb8adc61b26e000ee1ef4c7535138f3c6115028df90d7687997654860a3fdb",
-      "created_at": "2026-11-28T06:04:30.869Z"
+      "content_hash": "28cb3f1e7a951f1381eb0c74e4f539c8fcab26811f29386d34f98b3af4b35599",
+      "created_at": "2026-11-28T07:58:26.137Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16411,8 +16413,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "e60fb82427e27a350fe4d191dca139e90a83b127c5f3ae06916699d3d9ef7b75",
-      "created_at": "2026-11-28T02:59:24.347Z"
+      "content_hash": "b128425c8fe63495d6fc3db49359abc6bcfaea1a3a88b5942f4a04ed99f7126c",
+      "created_at": "2026-11-28T07:59:30.394Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -26606,8 +26608,8 @@
       "title": "Technical Construction Intelligence: webpack/webpack Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webpack-webpack-technical-construction-intelligence-webpack-webpack-core-invaria.md",
       "repository": "webpack/webpack",
-      "content_hash": "d97d35108e171f0388c8d0473dbca80bb865f8d461d8e9617a6daa601e5124d0",
-      "created_at": "2026-11-17T04:13:24.986Z"
+      "content_hash": "5a9042349a519a528b4fc8166a51439777e0f62280b9cd046b295473a875a0a2",
+      "created_at": "2026-11-28T07:58:16.508Z"
     },
     "domain_intelligence-technical-construction-intelligence-electron-electron-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-electron-electron-core-invariants",
@@ -26666,8 +26668,8 @@
       "title": "Technical Construction Intelligence: webpack-webpack-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webpack-webpack-learnings-technical-construction-intelligence-webpack-webpack-le.md",
       "repository": "webpack-webpack-learnings",
-      "content_hash": "c7f009ca26c387b0a008e2724b3d448ea936bd98b41027baef58a3b158da5abc",
-      "created_at": "2026-11-17T04:14:00.570Z"
+      "content_hash": "b63c59e9e08de5b44dd2ea063adc47063ab7a31524f2df553ee67939e7d82ef4",
+      "created_at": "2026-11-28T07:58:56.746Z"
     },
     "domain_intelligence-technical-construction-intelligence-electron-electron-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-electron-electron-learnings-core-invariants",
@@ -29424,8 +29426,8 @@
       "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-learnings-technical-construction-intelligence-langchain4.md",
       "repository": "langchain4j-langchain4j-learnings",
-      "content_hash": "2d0fa2a0cb85bb642aa1ff9f26b9dcedff3f622cf5ac15d475008d05bbf9d3d5",
-      "created_at": "2026-11-27T13:46:44.453Z"
+      "content_hash": "f290df4214dad5012c65d4c87349ac33d5b1a1ed52e5d759ec2fb2ade851e4ec",
+      "created_at": "2026-11-28T07:58:58.631Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants",
@@ -48871,6 +48873,90 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-28T07:40:47.184Z"
+    },
+    "DOM-H-5CC5EBBF": {
+      "record_id": "DOM-H-5CC5EBBF",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "keep strings, comments and names from turning into code when webpack rewrites Ja",
+      "content": "When implementing operations in `.changeset/492-js-codegen-keeps-data-as-data.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webpack/webpack. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "76a34ea75f71ab4426ee6be4b9fa10bb561ddb98531161d2600c64c73d0e7daa",
+      "summary": "Prevents defects observed in production commit `d099046f`: keep strings, comments and names from turning into code when webpack rewrites Jav -> When implementing operations in `.changeset/492-js-codegen-keeps-data-as-data.md`, engineers MUST enforce rigorous boundary validation, safe",
+      "provenance": {
+        "source_uri": "project://webpack-webpack/webpack-webpack-learnings.md",
+        "source_version": "d099046f",
+        "observed_at": "2026-11-28T07:58:14.911Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (webpack-webpack)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of webpack-webpack"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T07:58:56.016Z"
+    },
+    "DOM-D-3BCEAD45": {
+      "record_id": "DOM-D-3BCEAD45",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): NucleoidAI/Nucleoid",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  \n> **Source Version**: `c56f9f1a`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-struct",
+      "content_hash": "957d5c5a312287addc791d24be1198bf4b87fb5781e627b12f26cc713017c039",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo",
+      "provenance": {
+        "source_uri": "project://nucleoidai-nucleoid/nucleoidai-nucleoid-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T07:58:59.071Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nucleoidai-nucleoid)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of nucleoidai-nucleoid"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T07:59:29.597Z"
     }
   }
 }

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T07:49:38.550Z",
-  "total_cycles_completed": 13294,
-  "total_learnings_persisted": 13294,
-  "total_rules_promoted": 11984,
+  "last_updated": "2026-11-28T07:58:25.911Z",
+  "total_cycles_completed": 13297,
+  "total_learnings_persisted": 13297,
+  "total_rules_promoted": 11986,
   "history": [
-    {
-      "timestamp": "2026-11-27T13:36:53.817Z",
-      "repository": "alibaba/zvec",
-      "learningId": "learn-github-alibaba-zvec",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T13:46:39.692Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T13:55:26.629Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T14:05:10.691Z",
       "repository": "lancedb/lancedb",
@@ -1403,6 +1382,27 @@
       "repository": "Checkmarx/kics",
       "learningId": "learn-github-checkmarx-kics",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T07:58:16.094Z",
+      "repository": "webpack/webpack",
+      "learningId": "learn-github-webpack-webpack",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T07:58:24.371Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T07:58:25.911Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T07:40:47.215Z",
+  "updated_at": "2026-11-28T07:59:29.635Z",
   "statistics": {
-    "total_nodes": 596,
+    "total_nodes": 598,
     "total_edges": 240,
     "domain_distribution": {
-      "D": 357,
+      "D": 358,
       "M": 1,
-      "H": 115,
+      "H": 116,
       "J": 23,
       "K": 35,
       "L": 9,
@@ -13298,6 +13298,50 @@
       ],
       "created_at": "2026-11-28T07:40:47.215Z",
       "updated_at": "2026-11-28T07:40:47.215Z"
+    },
+    "DOM-H-5CC5EBBF": {
+      "id": "DOM-H-5CC5EBBF",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "keep strings, comments and names from turning into code when webpack rewrites Ja",
+      "summary": "Prevents defects observed in production commit `d099046f`: keep strings, comments and names from turning into code when webpack rewrites Jav -> When implementing operations in `.changeset/492-js-codegen-keeps-data-as-data.md`, engineers MUST enforce rigorous boundary validation, safe",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://webpack-webpack/webpack-webpack-learnings.md",
+        "source_version": "d099046f",
+        "observed_at": "2026-11-28T07:58:14.911Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (webpack-webpack)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-28T07:58:56.045Z",
+      "updated_at": "2026-11-28T07:58:56.045Z"
+    },
+    "DOM-D-3BCEAD45": {
+      "id": "DOM-D-3BCEAD45",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): NucleoidAI/Nucleoid",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://nucleoidai-nucleoid/nucleoidai-nucleoid-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T07:58:59.071Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nucleoidai-nucleoid)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-28T07:59:29.634Z",
+      "updated_at": "2026-11-28T07:59:29.634Z"
     }
   },
   "edges": [

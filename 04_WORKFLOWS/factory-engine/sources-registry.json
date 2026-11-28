@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T07:49:41.968Z",
-    "lastVerified": "2026-11-28T07:49:41.968Z",
+    "lastChecked": "2026-11-28T07:58:28.853Z",
+    "lastVerified": "2026-11-28T07:58:28.853Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -399,22 +399,21 @@
     "revisionIdentifier": "40d4f79e"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T07:22:01.152Z",
-    "lastVerified": "2026-11-28T07:22:01.152Z",
+    "lastChecked": "2026-11-28T07:58:25.316Z",
+    "lastVerified": "2026-11-28T07:58:25.316Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "92bbbb4ab431e5499e21fe50358c267decd9751f4324e57eb59326089d83cff3",
-    "promotedRulesCount": 1,
+    "contentHash": "48bf9b5bfaaa057e31549d0a84555a446fa1f38f39855977aab2a1dbfaab8652",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "761b277c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -936,9 +935,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-28T03:44:54.463Z",
+    "lastChecked": "2026-11-28T07:58:16.219Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-28T03:44:54.463Z"
+    "lastVerified": "2026-11-28T07:58:16.219Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -1904,12 +1903,12 @@
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-27T13:46:37.960Z",
-    "lastVerified": "2026-11-27T13:46:37.960Z",
+    "lastChecked": "2026-11-28T07:58:23.180Z",
+    "lastVerified": "2026-11-28T07:58:23.180Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "afa15b35aefc4f696d7e7259149a69c4f9a45e59708d836996fa5c3bb520d99c",
+    "contentHash": "60b5294e54873f262d74fa6b12f4a527ca2785edfec2e4797b7da7455b0d8814",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -6314,9 +6313,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-27T15:18:21.451Z",
+    "lastChecked": "2026-11-28T07:58:13.708Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-27T15:18:21.451Z"
+    "lastVerified": "2026-11-28T07:58:13.708Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -8578,9 +8577,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-11-27T08:31:42.247Z",
+    "lastChecked": "2026-11-28T07:58:06.279Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-11-27T08:31:42.247Z"
+    "lastVerified": "2026-11-28T07:58:06.279Z"
   },
   "hf-autotrust-jev-35b": {
     "name": "autotrust/AutoTrust-Decider-Pro-35B",
@@ -11684,9 +11683,9 @@
   "elai950-alerttoast": {
     "name": "AlertToast",
     "officialUrl": "https://github.com/elai950/AlertToast",
-    "lastChecked": "2026-11-26T05:57:02.629Z",
+    "lastChecked": "2026-11-28T07:58:11.169Z",
     "revisionIdentifier": "76a1c179",
-    "lastVerified": "2026-11-26T05:57:02.629Z"
+    "lastVerified": "2026-11-28T07:58:11.169Z"
   },
   "rdflib-rdflib": {
     "name": "RDFLib/rdflib",
@@ -12029,12 +12028,12 @@
     "officialUrl": "https://github.com/webpack/webpack",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-24T23:24:47.597Z",
-    "lastVerified": "2026-11-24T23:24:47.597Z",
+    "lastChecked": "2026-11-28T07:58:14.786Z",
+    "lastVerified": "2026-11-28T07:58:14.786Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-webpack-webpack",
-    "contentHash": "f4a66f6570770ad124e9b1f0b0259f158eb0bd627756113d206c7af7ca53b4ca",
+    "contentHash": "59652434d5eda50eef77f31b08c80257ef82a5f51169114d642c06dc4df8051a",
     "promotedRulesCount": 1,
     "recentFixesCount": 15,
     "closedIssuesCount": 2,

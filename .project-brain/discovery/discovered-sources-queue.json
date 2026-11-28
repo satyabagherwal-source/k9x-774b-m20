@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T07:49:43.063Z",
+  "updated_at": "2026-11-28T07:58:58.096Z",
   "stats": {
-    "total_discovered": 10858,
-    "approved_pending_harvest": 10310,
+    "total_discovered": 10867,
+    "approved_pending_harvest": 10319,
     "harvested_count": 0,
     "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10320,
-      "OFFICIAL_DOCUMENTATION": 296,
+      "COMMUNITY_AND_EXPERT": 10327,
+      "OFFICIAL_DOCUMENTATION": 298,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 59,
@@ -235067,6 +235067,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
         "fileName": "checkmarx-kics-learnings.md"
+      }
+    },
+    "SRC-16DFBB2E47FB": {
+      "id": "SRC-16DFBB2E47FB",
+      "url": "https://ai.google.dev/gemini-api/docs/embeddings",
+      "title": "https://ai.google.dev/gemini-api/docs/embeddings",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:58:57.379Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-3D1CE9E19C96": {
+      "id": "SRC-3D1CE9E19C96",
+      "url": "https://learn.microsoft.com/en-us/azure/ai-services/openai/reference",
+      "title": "https://learn.microsoft.com/en-us/azure/ai-services/openai/reference",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:58:57.462Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-60FED216903D": {
+      "id": "SRC-60FED216903D",
+      "url": "https://github.com/googleapis/java-genai",
+      "title": "https://github.com/googleapis/java-genai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:58:57.550Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-E211B2F3CB16": {
+      "id": "SRC-E211B2F3CB16",
+      "url": "https://docs.langchain4j.dev`/",
+      "title": "https://docs.langchain4j.dev`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:58:57.632Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-BD64F1493BD1": {
+      "id": "SRC-BD64F1493BD1",
+      "url": "https://langchain4j.github.io/...%60",
+      "title": "https://langchain4j.github.io/...%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:58:57.715Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-8F7D45CD9751": {
+      "id": "SRC-8F7D45CD9751",
+      "url": "https://github.com/langchain4j/langchain4j/tree/main/langchain4j-core",
+      "title": "https://github.com/langchain4j/langchain4j/tree/main/langchain4j-core",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:58:57.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-9CE46006E282": {
+      "id": "SRC-9CE46006E282",
+      "url": "https://github.com/langchain4j/langchain4j/tree/main/langchain4j",
+      "title": "https://github.com/langchain4j/langchain4j/tree/main/langchain4j",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:58:57.882Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-B2E67E65E265": {
+      "id": "SRC-B2E67E65E265",
+      "url": "https://langchain4j.github.io/",
+      "title": "https://langchain4j.github.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:58:58.012Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-9C406B9612D2": {
+      "id": "SRC-9C406B9612D2",
+      "url": "https://docs.langchain4j.dev/",
+      "title": "https://docs.langchain4j.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:58:58.096Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
       }
     }
   }

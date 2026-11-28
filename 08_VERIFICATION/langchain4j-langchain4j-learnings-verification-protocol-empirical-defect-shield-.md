@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T13:46:43.985Z",
+  "timestamp": "2026-11-28T07:58:58.264Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-langchain4j-langchain4j-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [langchain4j-langchain4j-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T13:46:43.985Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T07:58:58.264Z`  
 > **Learning ID**: `LEARN-EVO-langchain4j-langchain4j-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `fbb7c9e0`  
+> **Source Version**: `112bb70b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T13:46:38.156Z  
+> **Timestamp**: 2026-11-28T07:58:23.185Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T13:46:37.960Z  
+> **Harvest Timestamp**: 2026-11-28T07:58:23.180Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13452 stars
+- **Stars / Engagement**: 13454 stars
 
 ---
 
@@ -863,222 +863,161 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1549577d` (2026-11-27)
-**Commit Message**: fix(tika): preserve published deprecation version (#7324)
+### Incident Patch 1: `e6096bf3` (2026-11-27)
+**Commit Message**: docs: repair stale section anchors in integration guides (#6630)
 
 ## Issue
 
-Closes #7323.
+Fixes #6629
 
 ## Change
 
-Keep `ApacheTikaDocumentParser.DEFAULT_CONTENT_HANDLER_SUPPLIER`'s
-deprecation version at `1.24.1`, matching the published `1.24.1-beta34`
-parser artifact. Main currently says `1.25.0`, so the normal Revapi
-check against `RELEASE` fails on
-`java.annotation.attributeValueChanged`.
+Six navigation links across five documentation pages point to removed or
+incorrectly cased section anchors. Replace them with existing
+destinations for Gemini authentication and batch embeddings, Ollama
+embedding listeners, Azure Spring Boot AI Services, and Gemini raw
+response schemas. Update the two renamed labels to reflect their
+destination headings.
 
-This is one annotation-value correction, not a parser behavior change.
-It does not suppress an API difference, change the comparison version or
-alter the MCP fix in #7322.
+Validation:
 
-## Verification
+- `git diff --check` passed.
+- `NODE_OPTIONS=--max-old-space-size=1024 npm run build` passed with the
+existing dependency installation from `npm ci --ignore-scripts
+--no-audit --no-fund`.
+- Checked all six repaired fragment targets against IDs in the generated
+HTML; the targeted broken-anchor warnings are gone.
+- Verified the upstream comparison contains only the five intended
+files, with six lines replaced in total.
 
-The existing Revapi check fails on unmodified main with the exact
-`since` mismatch and passes with this correction. The five-module
-dependency reactor also passes `verify`, including the existing 46 Tika
-parser tests, core tests, coverage checks and Revapi checks against the
-released artifacts:
+Other pre-existing site-wide link warnings remain. This
+documentation-only change does not alter Java code, examples, or runtime
+behavior. Java unit/integration suites were not run.
 
-```sh
-mvn -pl :langchain4j-document-parser-apache-tika -am verify \
-  -DskipITs -DembeddingsSkipDownload=true
+## General checklist
+
+- [x] There are no breaking changes (API, behaviour)
+- [ ] I have added unit and/or integration tests 
+
+**File**: `docs/docs/integrations/embedding-models/google-ai-gemini.md` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ https://ai.google.dev/gemini-api/docs/embeddings
+     - [Output Dimensionality](#output-dimensionality)
+     - [Batch Processing](#batch-processing)
+ - [Batch Embedding Processing](#batch-embedding-processing)
+-    - [GoogleAiGeminiBatchEmbeddingModel](#googleaigeminibatchembeddingmodel)
++    - [Batch Embedding Processing](#batch-embedding-processing)
+     - [Creating Batch Embedding Jobs](#creating-batch-embedding-jobs)
+     - [Handling Batch Responses](#handling-batch-responses)
+     - [Polling for Results](#polling-for-results)
 ```
 
-No new Java unit test was added: the regression is checked by the
-existing artifact-to-artifact API gate, rather than a test that
-hard-codes the annotation string. Provider-backed integration tests were
-not run.
-
-A full-r
-
-**File**: `document-parsers/langchain4j-document-parser-apache-tika/src/main/java/dev/langchain4j/data/document/parser/apache/tika/ApacheTikaDocumentParser.java` (modified, +1/-1)
+**File**: `docs/docs/integrations/embedding-models/ollama.md` (modified, +1/-1)
 ```diff
-@@ -81,7 +81,7 @@ public class ApacheTikaDocumentParser implements DocumentParser {
-      * To extract all the text, use {@link Builder#maxCharacters(Integer)} with {@code -1}:
-      * {@code ApacheTikaDocumentParser.builder().maxCharacters(-1).build()}.
-      */
--    @Deprecated(since = "1.25.0")
-+    @Deprecated(since = "1.24.1")
-     public static final Supplier<ContentHandler> DEFAULT_CONTENT_HANDLER_SUPPLIER =
-             () -> new BodyContentHandler(NO_WRITE_LIMIT);
+@@ -42,7 +42,7 @@ embedding API is text-only, so a request that sets an input type or an image inp
+ Ollama's optional output `dimensions` is model-dependent (only some models support reducing the output size),
+ so it is configured on the builder via `.dimensions(...)` rather than as a per-call parameter.
+ 
+-Attach [listeners](/tutorials/observability#embeddingmodel-observability) to observe requests, responses, and
++Attach [listeners](/tutorials/observability#embeddingmodel-listener) to observe requests, responses, and
+ errors:
+ 
+ ```java
+```
+
+**File**: `docs/docs/integrations/language-models/azure-open-ai.md` (modified, +1/-1)
+```diff
+@@ -103,7 +103,7 @@ langchain4j.azure-open-ai.chat-model.reasoningEffort=...
+ See the description of some of the parameters above [here](https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#completions).
+ 
+ This configuration will create an `AzureOpenAiChatModel` bean (with default model parameters),
+-which can be either used by an [AI Service](/tutorials/spring-boot-integration/#langchain4j-spring-boot-starter)
++which can be either used by an [AI Service](/tutorials/spring-boot-integration/#spring-boot-starter-for-declarative-ai-services)
+ or autowired where needed, for example:
+ 
+ ```java
+```
+
+**File**: `docs/docs/integrations/language-models/google-genai.md` (modified, +2/-2)
+```diff
+@@ -13,9 +13,9 @@ https://github.com/googleapis/java-genai
+ ## Table of Contents
+ 
+ - [Maven Dependency](#maven-dependency)
+-- [API Key](#api-key)
++- [Authentication](#authentication)
+ - [Models Available](#models-available)
+-- [GoogleGenAiChatModel](#googlegenAichatmodel)
++- [GoogleGenAiChatModel](#googlegenaichatmodel)
+     - [Configuring](#configuring)
+ - [GoogleGenAiStreamingChatModel](#googlegenaistreamingchatmodel)
+     - [Executor](#executor)
+```
+
+**File**: `docs/docs/tutorials/structured-outputs.md` (modified, +1/-1)
+```diff
+@@ -371,7 +371,7 @@ JsonRawSchema schema = JsonRawSchema.from(rawSchema);
+ 
+ :::note
+ The `JsonRawSchema` is currently supported only by Amazon Bedrock, Azure OpenAI, Mistral, Ollama, OpenAI, OpenAI Official and Google AI Gemini.
+-For Google AI Gemini specifically, see the example in the [Response JSON Schema](/integrations/language-models/google-ai-gemini/#response-json-schema).
++For Google AI Gemini specifically, see the example in the [Raw Response Schema](/integrations/language-models/google-ai-gemini/#raw-response-schema).
+ :::
+ 
  
 ```
 
 ---
 
-### Incident Patch 2: `b5ca5fbb` (2026-11-27)
-**Commit Message**: fix(mcp): preserve invocation context when listing resource templates (#7322)
+### Incident Patch 2: `e3b1b8d5` (2026-11-27)
+**Commit Message**: docs: set Docusaurus url to docs.langchain4j.dev (fixes 404 canonicals) (#6822)
 
 ## Issue
-
-Closes #7320.
+Closes #6821
 
 ## Change
+Sets the Docusaurus `url` in `docs/docusaurus.config.js` to
+`https://docs.langchain4j.dev`, the domain the docs are served from (and
+the repo's listed homepage). Docusaurus builds canonical links, `og:url`
+and `sitemap.xml` from this value; today they all point to
+`https://langchain4j.github.io/...`, which returns 404 (repro in #6821).
+`baseUrl` stays `/`, so routes and internal links are unchanged.
 
-Pass the synthetic `list_resources` tool's invocation context to
-`listResourceTemplates`, as is already done for `listResources`. The
-existing context-aware client overload carries it through pagination,
-listeners and the request metadata supplier.
+## General checklist
+- [X] There are no breaking changes (API, behaviour)
+- [ ] I have added unit and/or integration tests for my change (n/a:
+one-line docs site config change)
+- [ ] The tests cover both positive and negative cases (n/a)
+- [ ] I have manually run all the unit and integration tests in the
+module I have added/changed, and they are all green (n/a)
+- [ ] I have manually run all the unit and integration tests in the
+[core](https://github.com/langchain4j/langchain4j/tree/main/langchain4j-core)
+and
+[main](https://github.com/langchain4j/langchain4j/tree/main/langchain4j)
+modules, and they are all green (n/a)
+- [ ] I have added/updated the
+[documentation](https://gi
 
-Previously, templates were fetched through the no-argument overload, so
-their `McpCallContext.invocationContext()` was null even during an AI
-Service invocation. A loopback HTTP regression observes four missing
-metadata values across two template pages and two invocations before the
-fix; the corresponding resource-list values are present.
-
-Tests cover both clients receiving the context, the legacy null-context
-entry point, and the public presenter with a real `DefaultMcpClient` and
-paginated Streamable HTTP responses. The HTTP test checks metadata in
-actual request bodies, output descriptions and both page cursors.
-Resource caching is explicitly disabled for the test. This change does
-not partition caches or establish any new tenant-authorization
-guarantee.
-
-## Verification
-
-The three regressions fail against the original e
-
-**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/resourcesastools/ListResourcesToolExecutor.java` (modified, +1/-1)
+**File**: `docs/docusaurus.config.js` (modified, +1/-1)
 ```diff
-@@ -54,7 +54,7 @@ private String doExecute(InvocationContext invocationContext) {
-                         resource.description(),
-                         resource.mimeType()));
-             }
--            for (McpResourceTemplate template : client.listResourceTemplates()) {
-+            for (McpResourceTemplate template : client.listResourceTemplates(invocationContext)) {
-                 descriptions.add(new ResourceDescription(
-                         client.key(),
-                         null,
-```
-
-**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/resourcesastools/ListResourcesToolExecutorTest.java` (added, +169/-0)
-```diff
-@@ -0,0 +1,169 @@
-+package dev.langchain4j.mcp.resourcesastools;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.never;
-+import static org.mockito.Mockito.verify;
-+import static org.mockito.Mockito.when;
-+
-+import com.sun.net.httpserver.HttpExchange;
-+import com.sun.net.httpserver.HttpServer;
-+import dev.langchain4j.internal.Json;
-+import dev.langchain4j.invocation.InvocationContext;
-+import dev.langchain4j.mcp.client.DefaultMcpClient;
-+import dev.langchain4j.mcp.client.McpClient;
-+import dev.langchain4j.mcp.client.transport.http.StreamableHttpMcpTransport;
-+import dev.langchain4j.service.tool.ToolExecutor;
-+import java.io.IOException;
-+import java.net.InetSocketAddress;
-+import java.nio.charset.StandardCharsets;
-+import java.time.Duration;
-+import java.util.List;
-+import java.util.Map;
-+import java.util.UUID;
-+import java.util.concurrent.CopyOnWriteArrayList;
-+import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.api.Timeout;
-+
-+class ListResourcesToolExecutorTest {
-+
-+    @Test
-+    void forwards_invocation_context_to_both_lists_on_every_client() {
-+        InvocationContext context = InvocationContext.builder().build();
-+        McpClient first = mock(McpClient.class);
-+        McpClient second = mock(McpClient.class);
-+        for (McpClient client : List.of(first, second)) {
-+            when(client.listResources(context)).thenReturn(List.of());
-+            when(client.listResourceTemplates(context)).thenReturn(List.of());
-+        }
-+
-+        ToolExecutor executor = presenter().createListResourcesExecutor(List.of(first, second));
-+        assertThat(executor.executeWithContext(null, context).resultText()).isEqualTo("[]");
-+
-+        for (McpClient client : List.of(first, second)) {
-+            verify(client).listResources(context);
-+            verify(client).listResourceTemplates(context);
-+            verify(client, never()).listResourceTemplates();
-+        }
-+    }
-+
-+    @Test
-+    void legacy_execution_keeps_null_context_for_both_lists() {
-+        McpClient client = mock(McpClient.class);
-+        when(client.listResources(null)).thenReturn(List.of());
-+        when(client.listResourceTemplates(null)).thenReturn(List.of());
-+
-+        assertThat(presenter().createListResourcesExecutor(List.of(client)).execute(null, null))
-+                .isEqualTo("[]");
-+
-+        verify(client).listResources(null);
-+        verify(client).listResourceTemplates(null);
-+        verify(client, never()).listResourceTemplates();
-+    }
-+
-+    @Test
-+    @Timeout(20)
-+    void invocation_metadata_reaches_every_resource_and_template_page() throws Exception {
-+        List<ObservedRequest> requests = new CopyOnWriteArrayList<>();
-+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-+        server.createContext("/mcp", exchange -> respond(exchange, requests));
-+        server.start();
-+        try (McpClient client = new DefaultMcpClient.Builder()
-+                .key("test")
-+                .transport(StreamableHttpMcpTransport.builder()
-+                        .url("http://127.0.0.1:" + server.getAddress().getPort() + "/mcp")
-+                        .setHttpVersion1_1()
-+                        .build())
-+                .protocolVersion("2025-11-25")
-+                .initializationTimeout(Duration.ofSeconds(3))
-+                .resourcesTimeout(Duration.ofSeconds(3))
-+                .autoHealthCheck(false)
-+                .cacheResourceList(false)
-+                .metaSupplier(context -> context.invocationContext() == null
-+                        ? Map.of()
-+                        : Map.of(
-+                                "test/invocation",
-+                                context.invocationContext().invocationId().toString()))
-+                .build()) {
-+            ToolExecutor executor = presenter().createListResourcesExecutor(List.of(client));
-+            InvocationContext first = InvocationContext.builder()
-+                    .invocationId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
-+                    .build();
-+            InvocationContext second = InvocationContext.builder()
-+                    .invocationId(UUID.fromString("00000000-0000-0000-0000-000000000002"))
-+                    .build();
-+
-+            for (InvocationContext context : List.of(first, second)) {
-+                String result = executor.executeWithContext(null, context).resultText();
-+                assertThat(result).contains("resource-first", "resource-next", "template-first", "template-next");
-+            }
-+
-+            for (String method : List.of("resources/list", "resources/templates/list")) {
-+                assertThat(requests.stream().filter(request -> method.equals(request.method())))
-+                        .extracting(ObservedRequest::invocation)
-+                        .containsExactly(
-+                                first.invocationId().toStrin
+@@ -17,7 +17,7 @@ const config = {
+     onDuplicateRoutes: 'warn', // ideally this should have a stricter value set - 'throw'
+ 
+     // Set the production url of your site here
+-    url: 'https://langchain4j.github.io/',
++    url: 'https://docs.langchain4j.dev',
+     // Set the /<baseUrl>/ pathname under which your site is served
+     // For GitHub pages deployment, it is often '/<projectName>/'
+     baseUrl: '/',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7334** (2026-11-28): Remove the compiler and Javadoc warnings shown as notes on every PR (@dliubarskyi)
+- **PR #7333** (2026-11-27): Give agent listeners the responses of the models called by agentic patterns (@mariofusco)
 - **PR #7329** (2026-11-27): MCP: encode registry query parameters (@CryoThrust)
 - **PR #7327** (2026-11-27): MCP: avoid mutating registry client headers (@CryoThrust)
 - **PR #7324** (2026-11-27): fix(tika): preserve published deprecation version (@CryoThrust)
 - **PR #7322** (2026-11-27): fix(mcp): preserve invocation context when listing resource templates (@CryoThrust)
-- **PR #7314** (2026-11-27): Show the full stack of BlockHound violations in non-blocking test failures (@dliubarskyi)
-- **PR #7310** (2026-11-26): OpenAI Official and Azure OpenAI streaming: create the StreamingHandle before subscribing (@dliubarskyi)
 
 ---
 
@@ -1098,31 +1037,31 @@ The three regressions fail against the original e
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tika): preserve published deprecation version
+## X. docs: repair stale section anchors in integration guides
 
 **RULE**:
-When implementing operations in `document-parsers/langchain4j-document-parser-apache-tika/src/main/java/dev/langchain4j/data/document/parser/apache/tika/ApacheTikaDocumentParser.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/docs/integrations/embedding-models/google-ai-gemini.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1549577d`: tika): preserve published deprecation version. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6096bf3`: docs: repair stale section anchors in integration guides. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `document-parsers/langchain4j-document-parser-apache-tika/src/main/java/dev/langchain4j/data/document/parser/apache/tika/ApacheTikaDocumentParser.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/integrations/embedding-models/google-ai-gemini.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    @Deprecated(since = "1.24.1")
+    - [Batch Embedding Processing](#batch-embedding-processing)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    @Deprecated(since = "1.25.0")
+    - [GoogleAiGeminiBatchEmbeddingModel](#googleaigeminibatchembeddingmodel)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1549577d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6096bf3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

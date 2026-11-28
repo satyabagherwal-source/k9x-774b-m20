@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T07:49:44.970Z",
+  "last_updated": "2026-11-28T07:59:30.394Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27028,
+  "total_items": 27033,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216575,8 +216575,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "fbb7c9e0",
-      "content_hash": "afa15b35aefc4f696d7e7259149a69c4f9a45e59708d836996fa5c3bb520d99c",
+      "source_version": "112bb70b",
+      "content_hash": "60b5294e54873f262d74fa6b12f4a527ca2785edfec2e4797b7da7455b0d8814",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -216629,6 +216629,11 @@
           "number": 10910,
           "title": "preserve published deprecation version",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11065,
+          "title": "repair stale section anchors in integration guides",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216636,7 +216641,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T13:46:39.333Z",
+      "verified_at": "2026-11-28T07:58:24.113Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216678,10 +216683,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "repository": "langchain4j/langchain4j",
-      "source_version": "fbb7c9e0",
-      "content_hash": "bb8785c27ce2556f1ce429203875396b5acecfff7dbdfdf16f5235ba7ea8a74f",
+      "source_version": "112bb70b",
+      "content_hash": "a9fb0185e6454cb4df846b2a7b153dde36fdb9a521fdc69b02d1a3cccf40cf30",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T13:46:40.281Z"
+      "persisted_at": "2026-11-28T07:58:24.799Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j",
@@ -216690,10 +216695,10 @@
       "relative_path": "08_VERIFICATION/langchain4j-langchain4j-verification-protocol-empirical-defect-shield-for-langch.md",
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j/langchain4j",
       "repository": "langchain4j/langchain4j",
-      "source_version": "fbb7c9e0",
-      "content_hash": "ac881aa08aa9c27000946f55353f94fe49f48fd6e5f443303ab6e7dd3fe10f28",
+      "source_version": "112bb70b",
+      "content_hash": "a622bc7f016f616f218bdd349bdda5f0931497c103eadcdba96a7302263b2b3a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T13:46:40.561Z"
+      "persisted_at": "2026-11-28T07:58:24.994Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c",
@@ -231596,8 +231601,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "761b277c",
-      "content_hash": "92bbbb4ab431e5499e21fe50358c267decd9751f4324e57eb59326089d83cff3",
+      "source_version": "c56f9f1a",
+      "content_hash": "48bf9b5bfaaa057e31549d0a84555a446fa1f38f39855977aab2a1dbfaab8652",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231952,7 +231957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T06:04:30.198Z",
+      "verified_at": "2026-11-28T07:58:25.624Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231994,10 +231999,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "761b277c",
-      "content_hash": "0ddb8adc61b26e000ee1ef4c7535138f3c6115028df90d7687997654860a3fdb",
+      "source_version": "c56f9f1a",
+      "content_hash": "28cb3f1e7a951f1381eb0c74e4f539c8fcab26811f29386d34f98b3af4b35599",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T06:04:30.869Z"
+      "persisted_at": "2026-11-28T07:58:26.137Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -233197,9 +233202,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "e60fb82427e27a350fe4d191dca139e90a83b127c5f3ae06916699d3d9ef7b75",
+      "content_hash": "b128425c8fe63495d6fc3db49359abc6bcfaea1a3a88b5942f4a04ed99f7126c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T02:59:24.347Z"
+      "persisted_at": "2026-11-28T07:59:30.394Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -272636,8 +272641,8 @@
       "slug": "webpack-webpack",
       "platform": "github",
       "source_url": "https://github.com/webpack/webpack",
-      "source_version": "4e6cd866",
-      "content_hash": "f4a66f6570770ad124e9b1f0b0259f158eb0bd627756113d206c7af7ca53b4ca",
+      "source_version": "d099046f",
+      "content_hash": "59652434d5eda50eef77f31b08c80257ef82a5f51169114d642c06dc4df8051a",
       "dossier_path": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webpack-webpack-learnings.md",
       "promoted_rules": [
@@ -272655,6 +272660,11 @@
           "number": 10381,
           "title": "close more one-pass minifier gaps to terser and fix wrong output",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11064,
+          "title": "keep strings, comments and names from turning into code when webpack rewrites Ja",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -272662,7 +272672,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:24:48.823Z",
+      "verified_at": "2026-11-28T07:58:15.824Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -272704,10 +272714,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webpack-webpack-technical-construction-intelligence-webpack-webpack-core-invaria.md",
       "title": "Technical Construction Intelligence: webpack/webpack Core Invariants",
       "repository": "webpack/webpack",
-      "source_version": "82b8a937",
-      "content_hash": "d97d35108e171f0388c8d0473dbca80bb865f8d461d8e9617a6daa601e5124d0",
+      "source_version": "d099046f",
+      "content_hash": "5a9042349a519a528b4fc8166a51439777e0f62280b9cd046b295473a875a0a2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:13:24.986Z"
+      "persisted_at": "2026-11-28T07:58:16.508Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-webpack-webpack": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webpack-webpack",
@@ -272716,10 +272726,10 @@
       "relative_path": "08_VERIFICATION/webpack-webpack-verification-protocol-empirical-defect-shield-for-webpack-webpac.md",
       "title": "Verification Protocol: Empirical Defect Shield for webpack/webpack",
       "repository": "webpack/webpack",
-      "source_version": "4e6cd866",
-      "content_hash": "6d63d91ddcdbe5fcb22699850d007eae73e46dd52fe632ed13a8a09f9c98975f",
+      "source_version": "d099046f",
+      "content_hash": "90878bfca4237dc040527d31ac34c718d4dd85e155f3fc025fe695e2e9ec14d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:24:50.124Z"
+      "persisted_at": "2026-11-28T07:58:16.691Z"
     },
     "learn-github-electron-electron": {
       "learning_id": "learn-github-electron-electron",
@@ -272827,9 +272837,9 @@
       "title": "Technical Construction Intelligence: webpack-webpack-learnings Core Invariants",
       "repository": "webpack-webpack-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7f009ca26c387b0a008e2724b3d448ea936bd98b41027baef58a3b158da5abc",
+      "content_hash": "b63c59e9e08de5b44dd2ea063adc47063ab7a31524f2df553ee67939e7d82ef4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:14:00.570Z"
+      "persisted_at": "2026-11-28T07:58:56.746Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-webpack-webpack-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webpack-webpack-learnings",
@@ -272839,9 +272849,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for webpack-webpack-learnings",
       "repository": "webpack-webpack-learnings",
       "source_version": "HEAD",
-      "content_hash": "f19d066845941cb4b9103364ea0a5d0bf286c006d06883d7e92060cfd37897ca",
+      "content_hash": "80c4900fc8364b3841e4eddeba90739169ee793c023fd1d5c756ea109d4d6034",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:25:41.336Z"
+      "persisted_at": "2026-11-28T07:58:56.977Z"
     },
     "candidate_directive-build-make-natives-code-cache-generation-deterministic": {
       "item_id": "candidate_directive-build-make-natives-code-cache-generation-deterministic",
@@ -284547,9 +284557,9 @@
       "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
       "repository": "langchain4j-langchain4j-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d0fa2a0cb85bb642aa1ff9f26b9dcedff3f622cf5ac15d475008d05bbf9d3d5",
+      "content_hash": "f290df4214dad5012c65d4c87349ac33d5b1a1ed52e5d759ec2fb2ade851e4ec",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T13:46:44.453Z"
+      "persisted_at": "2026-11-28T07:58:58.631Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni",
@@ -284559,9 +284569,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j-langchain4j-learnings",
       "repository": "langchain4j-langchain4j-learnings",
       "source_version": "HEAD",
-      "content_hash": "05ab764e744c51701017dd49eb4b346eba667801c6add5b82d540b8fc8696305",
+      "content_hash": "f4d769ad2e7f0947378979281f3f6ad7d2c191a881f7333f06ae9f85b7a18c69",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T13:46:44.732Z"
+      "persisted_at": "2026-11-28T07:58:58.860Z"
     },
     "learn-huggingface-fastvideo-fasth3-omni-comfy": {
       "learning_id": "learn-huggingface-fastvideo-fasth3-omni-comfy",
@@ -371474,6 +371484,70 @@
       "content_hash": "fe98fe086fb48c700f9f7a64f4b6ea624b39c533bdd96365eb20f92f806eac26",
       "domain_letter": "D",
       "persisted_at": "2026-11-28T07:49:43.353Z"
+    },
+    "rule-11064": {
+      "learning_id": "rule-11064",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11064,
+      "title": "keep strings, comments and names from turning into code when webpack rewrites Ja",
+      "source_url": "https://github.com/webpack/webpack",
+      "source_version": "d099046f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T07:58:15.824Z"
+    },
+    "candidate_directive-keep-strings-comments-and-names-from-turning-into-code-when-webpack-rewrites-ja": {
+      "item_id": "candidate_directive-keep-strings-comments-and-names-from-turning-into-code-when-webpack-rewrites-ja",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CNWK-keep-strings-comments-and-names-from-turning-into-code-when-webpack-rewrites-ja.md",
+      "title": "keep strings, comments and names from turning into code when webpack rewrites Ja",
+      "repository": "webpack-webpack-learnings",
+      "source_version": "HEAD",
+      "content_hash": "140acb70e713e41049f278066f88ea0d9bf7e68b11afb8237a06e1db298dfe14",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T07:58:56.517Z"
+    },
+    "rule-11065": {
+      "learning_id": "rule-11065",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11065,
+      "title": "repair stale section anchors in integration guides",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "112bb70b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T07:58:24.113Z"
+    },
+    "candidate_directive-repair-stale-section-anchors-in-integration-guides": {
+      "item_id": "candidate_directive-repair-stale-section-anchors-in-integration-guides",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BZ9Y-repair-stale-section-anchors-in-integration-guides.md",
+      "title": "repair stale section anchors in integration guides",
+      "repository": "langchain4j/langchain4j",
+      "source_version": "112bb70b",
+      "content_hash": "f61b13c83e46b916710db22a11b89feb8457c0264d642babd8858ef53b93c38b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T07:58:24.599Z"
+    },
+    "candidate_directive-docs-repair-stale-section-anchors-in-integration-guides": {
+      "item_id": "candidate_directive-docs-repair-stale-section-anchors-in-integration-guides",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CPCO-docs-repair-stale-section-anchors-in-integration-guides.md",
+      "title": "docs: repair stale section anchors in integration guides",
+      "repository": "langchain4j-langchain4j-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f84c4f1b0f5e9bd22b3dc0a00cded148b8aa6f049a500d615d337d4fcbb0148c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T07:58:58.393Z"
     }
   },
   "ai-builder-brain": {

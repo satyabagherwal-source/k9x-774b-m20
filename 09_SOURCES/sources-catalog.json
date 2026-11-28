@@ -1893,10 +1893,10 @@
     "repository": "webpack/webpack",
     "platform": "github",
     "sourceUrl": "https://github.com/webpack/webpack",
-    "sourceVersion": "4e6cd866",
+    "sourceVersion": "d099046f",
     "license": "MIT",
-    "contentHash": "f4a66f6570770ad124e9b1f0b0259f158eb0bd627756113d206c7af7ca53b4ca",
-    "lastHarvestedAt": "2026-11-24T23:24:49.204Z",
+    "contentHash": "59652434d5eda50eef77f31b08c80257ef82a5f51169114d642c06dc4df8051a",
+    "lastHarvestedAt": "2026-11-28T07:58:16.089Z",
     "learningId": "learn-github-webpack-webpack"
   },
   "rollup-rollup": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "761b277c",
+    "sourceVersion": "c56f9f1a",
     "license": "Apache-2.0",
-    "contentHash": "92bbbb4ab431e5499e21fe50358c267decd9751f4324e57eb59326089d83cff3",
-    "lastHarvestedAt": "2026-11-28T06:04:30.451Z",
+    "contentHash": "48bf9b5bfaaa057e31549d0a84555a446fa1f38f39855977aab2a1dbfaab8652",
+    "lastHarvestedAt": "2026-11-28T07:58:25.884Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "fbb7c9e0",
+    "sourceVersion": "112bb70b",
     "license": "Apache-2.0",
-    "contentHash": "afa15b35aefc4f696d7e7259149a69c4f9a45e59708d836996fa5c3bb520d99c",
-    "lastHarvestedAt": "2026-11-27T13:46:39.677Z",
+    "contentHash": "60b5294e54873f262d74fa6b12f4a527ca2785edfec2e4797b7da7455b0d8814",
+    "lastHarvestedAt": "2026-11-28T07:58:24.366Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {

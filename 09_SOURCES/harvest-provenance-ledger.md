@@ -14045,3 +14045,8 @@ Every entry in this ledger must capture:
 | `learn-dom-d-095c01f1` | `project://vitejs-vite` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md` | 2026-11-28T07:40:47.218Z |
 | `learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-28T07:49:28.472Z |
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `39fc33be` | Multi-dimensional audit evidence | 2026-11-28T07:49:38.544Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `d099046f` | Multi-dimensional audit evidence | 2026-11-28T07:58:16.089Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `112bb70b` | Multi-dimensional audit evidence | 2026-11-28T07:58:24.366Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `c56f9f1a` | Multi-dimensional audit evidence | 2026-11-28T07:58:25.884Z |
+| `learn-dom-h-5cc5ebbf` | `project://webpack-webpack` | `d099046f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md` | 2026-11-28T07:58:56.048Z |
+| `learn-dom-d-3bcead45` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-28T07:59:29.637Z |

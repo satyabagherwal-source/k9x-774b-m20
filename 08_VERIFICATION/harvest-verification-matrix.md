@@ -14012,3 +14012,8 @@
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T07:40:47.218Z` | `vitejs-vite` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-095C01F1` [Domain D] | Yes (`df1294b7...`) |
 | `CYCLE-20261128-0HLF` | `2026-11-28T07:49:28.467Z` | `prism-ml/Ternary-Bonsai-2.5-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md` | Yes (`3141d971...`) |
 | `CYCLE-20261128-0PD7` | `2026-11-28T07:49:38.539Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11063` | Yes (`bd77c309...`) |
+| `CYCLE-20261128-BSPA` | `2026-11-28T07:58:16.078Z` | `webpack/webpack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11064` | Yes (`59652434...`) |
+| `CYCLE-20261128-BZ3D` | `2026-11-28T07:58:24.361Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11065` | Yes (`60b5294e...`) |
+| `CYCLE-20261128-C09A` | `2026-11-28T07:58:25.870Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`48bf9b5b...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T07:58:56.048Z` | `webpack-webpack` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-5CC5EBBF` [Domain H] | Yes (`76a34ea7...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T07:59:29.637Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3BCEAD45` [Domain D] | Yes (`957d5c5a...`) |

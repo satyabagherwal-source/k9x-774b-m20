@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T07:49:45.175Z",
+  "last_updated": "2026-11-28T07:59:30.623Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T07:31:27.011Z",
@@ -773,9 +773,9 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-28T04:48:54.226Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-28T07:59:29.637Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "tableproapp-tablepro-learnings.md": {
       "processed_at": "2026-11-27T16:03:12.733Z",
@@ -1113,9 +1113,9 @@
       "staged_for_review": 1
     },
     "webpack-webpack-learnings.md": {
-      "processed_at": "2026-11-24T23:25:40.156Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-28T07:58:56.049Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "touchlab-xcode-kotlin-learnings.md": {
       "processed_at": "2026-11-12T12:50:51.297Z",
@@ -3353,7 +3353,7 @@
       "staged_for_review": 1
     },
     "langchain4j-langchain4j-learnings.md": {
-      "processed_at": "2026-11-27T13:46:43.616Z",
+      "processed_at": "2026-11-28T07:58:57.211Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4068,7 +4068,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5307,
-  "total_canonical_promoted": 596,
-  "total_staged_for_review": 4032
+  "total_dossiers_evaluated": 5310,
+  "total_canonical_promoted": 598,
+  "total_staged_for_review": 4033
 }

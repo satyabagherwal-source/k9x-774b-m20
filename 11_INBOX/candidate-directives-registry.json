@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T07:49:44.497Z",
+  "last_updated": "2026-11-28T07:58:58.393Z",
   "directives": [
     {
       "id": "CD-001",
@@ -75426,6 +75426,39 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9BA232-bump-version-number.md",
       "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-CNWK",
+      "directive_title": "keep strings, comments and names from turning into code when webpack rewrites Ja",
+      "source_repo": "webpack-webpack-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CNWK-keep-strings-comments-and-names-from-turning-into-code-when-webpack-rewrites-ja.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-BZ9Y",
+      "directive_title": "repair stale section anchors in integration guides",
+      "source_repo": "langchain4j/langchain4j",
+      "source_commit": "112bb70b",
+      "staged_file": "11_INBOX/candidate-directives/CD-BZ9Y-repair-stale-section-anchors-in-integration-guides.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-CPCO",
+      "directive_title": "docs: repair stale section anchors in integration guides",
+      "source_repo": "langchain4j-langchain4j-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CPCO-docs-repair-stale-section-anchors-in-integration-guides.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
     }
   ]
 }
