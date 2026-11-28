@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-28T03:08:04.870Z",
-    "lastVerified": "2026-11-28T03:08:04.870Z",
+    "lastChecked": "2026-11-28T03:44:59.439Z",
+    "lastVerified": "2026-11-28T03:44:59.439Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T03:35:38.649Z",
-    "lastVerified": "2026-11-28T03:35:38.649Z",
+    "lastChecked": "2026-11-28T03:45:05.812Z",
+    "lastVerified": "2026-11-28T03:45:05.812Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -937,9 +937,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-27T23:30:31.349Z",
+    "lastChecked": "2026-11-28T03:44:54.463Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-27T23:30:31.349Z"
+    "lastVerified": "2026-11-28T03:44:54.463Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -4564,9 +4564,9 @@
   "kubeshop-botkube": {
     "name": "botkube",
     "officialUrl": "https://github.com/kubeshop/botkube",
-    "lastChecked": "2026-11-27T10:25:56.179Z",
+    "lastChecked": "2026-11-28T03:44:52.071Z",
     "revisionIdentifier": "ee94e191",
-    "lastVerified": "2026-11-27T10:25:56.179Z"
+    "lastVerified": "2026-11-28T03:44:52.071Z"
   },
   "helixdb-helix-db": {
     "name": "helix-db",
@@ -7048,22 +7048,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "graphprotocol-graph-node": {
-    "name": "graph-node",
+    "name": "graphprotocol/graph-node",
     "officialUrl": "https://github.com/graphprotocol/graph-node",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T03:54:51.697Z",
-    "lastVerified": "2026-11-27T03:54:51.697Z",
+    "lastChecked": "2026-11-28T03:44:48.326Z",
+    "lastVerified": "2026-11-28T03:44:48.326Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-graphprotocol-graph-node",
-    "contentHash": "d3a7133307f839f22384d317450040aaaf33e2713a8b6eaed7f7e31a56e7452a",
+    "contentHash": "fde91503c2cc4a45d99a3d4907ab4255f0146fcce5020f5396815f473c0edc1e",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "abab8260"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-bingsu-adetailer": {
     "name": "Bingsu/adetailer",
@@ -7732,22 +7731,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "open-source-legal-opencontracts": {
-    "name": "OpenContracts",
+    "name": "Open-Source-Legal/OpenContracts",
     "officialUrl": "https://github.com/Open-Source-Legal/OpenContracts",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-27T08:46:45.963Z",
-    "lastVerified": "2026-11-27T08:46:45.963Z",
+    "lastChecked": "2026-11-28T03:45:01.834Z",
+    "lastVerified": "2026-11-28T03:45:01.834Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-source-legal-opencontracts",
-    "contentHash": "30780389e40caa7e354d01d917202d36408ad2445634bf62d1de989e1a1dcdf4",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 27,
+    "contentHash": "5b42b4b815fa1111aab6f55f3fd4d41ea73f2e688e05a5f43f33995495bb8aa9",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "98286cab"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "medialab-xan": {
     "name": "xan",
@@ -11021,9 +11019,9 @@
   "rechsteiner-parchment": {
     "name": "Parchment",
     "officialUrl": "https://github.com/rechsteiner/Parchment",
-    "lastChecked": "2026-11-26T01:53:25.720Z",
+    "lastChecked": "2026-11-28T03:44:49.581Z",
     "revisionIdentifier": "dfb23ea5",
-    "lastVerified": "2026-11-26T01:53:25.720Z"
+    "lastVerified": "2026-11-28T03:44:49.581Z"
   },
   "jina-ai-reader": {
     "name": "reader",
@@ -11457,8 +11455,8 @@
     "officialUrl": "https://github.com/sindresorhus/got",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T18:51:47.060Z",
-    "lastVerified": "2026-11-24T18:51:47.060Z",
+    "lastChecked": "2026-11-28T03:44:46.947Z",
+    "lastVerified": "2026-11-28T03:44:46.947Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sindresorhus-got",

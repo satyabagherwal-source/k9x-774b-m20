@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T03:35:35.667Z",
-  "total_cycles_completed": 13246,
-  "total_learnings_persisted": 13246,
-  "total_rules_promoted": 11945,
+  "last_updated": "2026-11-28T03:45:02.481Z",
+  "total_cycles_completed": 13248,
+  "total_learnings_persisted": 13248,
+  "total_rules_promoted": 11946,
   "history": [
-    {
-      "timestamp": "2026-11-27T09:34:27.846Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T09:44:38.333Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T09:44:40.438Z",
       "repository": "oxc-project/oxc",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T03:35:35.667Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T03:44:49.730Z",
+      "repository": "graphprotocol/graph-node",
+      "learningId": "learn-github-graphprotocol-graph-node",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T03:45:02.481Z",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "learningId": "learn-github-open-source-legal-opencontracts",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -4,24 +4,24 @@
 {
   "source_repository": "Open-Source-Legal/OpenContracts",
   "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
-  "source_version": "8a4cf42b",
+  "source_version": "17261594",
   "license": "MIT",
-  "timestamp": "2026-11-20T13:48:27.057Z",
+  "timestamp": "2026-11-28T03:45:02.711Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-open-source-legal-opencontracts",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts) (Revision: `8a4cf42b`).  
-> **License**: MIT | **Timestamp**: `2026-11-20T13:48:27.057Z`  
+> **Provenance**: Harvested from [Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts) (Revision: `17261594`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T03:45:02.711Z`  
 > **Learning ID**: `learn-github-open-source-legal-opencontracts`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain J (Search & Distribution Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), F (Design Intelligence), C (Market & Business Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Open-Source-Legal/OpenContracts:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T13:48:25.915Z  
+> **Harvest Timestamp**: 2026-11-28T03:45:01.834Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The open document intelligence platform for builders and hackers - DMS for the agentic world
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1550 stars
+- **Stars / Engagement**: 1558 stars
 
 ---
 
@@ -1544,137 +1544,380 @@ def filterset_factory(model: type, fields: dict) -> type:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a4cf42b` (2026-11-20)
-**Commit Message**: fix(deps): update setuptools requirement from >=84.0.0 to >=84.2.1 (#2549)
+### Incident Patch 1: `17261594` (2026-11-27)
+**Commit Message**: Render PDF and DOCX with @os-legal/react-contract-annotate (#2603)
 
-Updates the requirements on [setuptools](https://github.com/pypa/setuptools) to permit the latest version.
-- [Release notes](https://github.com/pypa/setuptools/releases)
-- [Changelog](https://github.com/pypa/setuptools/blob/main/NEWS.rst)
-- [Commits](https://github.com/pypa/setuptools/compare/v84.0.0...v84.2.1)
+* Render PDF and DOCX with @os-legal/react-contract-annotate
 
----
-updated-dependencies:
-- dependency-name: setuptools
-  dependency-version: 84.2.1
-  dependency-type: direct:production
-...
+Replace OpenContracts' own PDF and DOCX renderers with the
+@os-legal/react-contract-annotate viewer/annotator extracted from them.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+- PdfAnnotatorWrapper / DocxAnnotatorWrapper mount the library on the
+  document OpenContracts already loads; annotator/bindings/ maps the
+  existing atoms to its props (annotations, relations, search hits, chat
+  sources and the ?tb= block as data; selection, zoom and the active
+  highlight controlled) and supplies the selection menu, Edit/Delete and
+  dialogs. Plain text stays on TxtAnnotator.
+- The viewer scrolls itself on selection and active-highlight changes;
+  annotatorHandleAtom moves it otherwise (relationship jumps).
+- Delete renderers/pdf, renderers/docx, the PDF overlay components and the
+  helpers, atoms, refs and constants only they used.
+- Retarget component tests to the library's DOM contract, port the DOCX
+  component tests to the production wrapper, and port the selection
+  layer's permission and URL-link tests to the new menu and bindings.
+- Docs: docs/frontend/document_viewer.md; renderer internals in the
 
-**File**: `requirements/base.txt` (modified, +1/-1)
+**File**: `.cursor/rules/pdf-viewer-and-annotator-architecture.mdc` (modified, +29/-79)
 ```diff
-@@ -111,7 +111,7 @@ jsonschema>=4.26.0,<5  # https://github.com/python-jsonschema/jsonschema - MCP t
- # ------------------------------------------------------------------------------
- twisted>=26.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
- ipython>=9.18.1 # not directly required, pinned by Snyk to avoid a vulnerability
--setuptools>=84.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
-+setuptools>=84.2.1 # not directly required, pinned by Snyk to avoid a vulnerability
- sqlparse>=0.6.1 # not directly required, pinned by Snyk to avoid a vulnerability
- tornado>=6.6 # not directly required, pinned by Snyk to avoid a vulnerability
- urllib3>=2.8.0 # not directly required, pinned by Snyk to avoid a vulnerability
-```
-
-**File**: `requirements/local.txt` (modified, +1/-1)
-```diff
-@@ -62,7 +62,7 @@ django==5.2.17  # https://www.djangoproject.com/
- twisted>=26.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
- ipython>=9.18.1 # not directly required, pinned by Snyk to avoid a vulnerability
- requests>=2.34.2,<3 # not directly required, pinned by Snyk to avoid a vulnerability
--setuptools>=84.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
-+setuptools>=84.2.1 # not directly required, pinned by Snyk to avoid a vulnerability
- sqlparse>=0.6.1 # not directly required, pinned by Snyk to avoid a vulnerability
- tornado>=6.6 # not directly required, pinned by Snyk to avoid a vulnerability
- urllib3>=2.8.0 # not directly required, pinned by Snyk to avoid a vulnerability
-```
-
-**File**: `requirements/production.txt` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ django==5.2.17  # https://www.djangoproject.com/
- twisted>=26.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
- ipython>=9.18.1 # not directly required, pinned by Snyk to avoid a vulnerability
- requests>=2.34.2,<3 # not directly required, pinned by Snyk to avoid a vulnerability
--setuptools>=84.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
-+setuptools>=84.2.1 # not directly required, pinned by Snyk to avoid a vulnerability
- sqlparse>=0.6.1 # not directly required, pinned by Snyk to avoid a vulnerability
- tornado>=6.6 # not directly required, pinned by Snyk to avoid a vulnerability
- urllib3>=2.8.0 # not directly required, pinned by Snyk to avoid a vulnerability
-```
-
----
-
-### Incident Patch 2: `98ccb859` (2026-11-20)
-**Commit Message**: fix(deps): update pydantic-ai-slim requirement (#2551)
-
-Updates the requirements on [pydantic-ai-slim](https://github.com/pydantic/pydantic-ai) to permit the latest version.
-- [Release notes](https://github.com/pydantic/pydantic-ai/releases)
-- [Changelog](https://github.com/pydantic/pydantic-ai/blob/main/docs/changelog.md)
-- [Commits](https://github.com/pydantic/pydantic-ai/compare/v1.107.9...v1.107.10)
-
----
-updated-dependencies:
-- dependency-name: pydantic-ai-slim
-  dependency-version: 1.107.10
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `requirements/base.txt` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ openai>=3.37.0,<4  # https://github.com/openai/openai-python (pydantic-ai 1.x re
- # extra caps ``fastmcp-slim<4``, and every fastmcp-slim 3.x requires
- # ``mcp<2`` -- against our ``mcp>=2.3`` pin that is unsatisfiable, and pip
- # reports it as ``resolution-too-deep`` rather than a conflict.
--pydantic-ai-slim[openai,anthropic,google]>=1.107.9,<2  # see issue #1451 before bumping the upper bound
-+pydantic-ai-slim[openai,anthropic,google]>=1.107.10,<2  # see issue #1451 before bumping the upper bound
- spacy
- # preshed 3.0.14 breaks spaCy model loading during fresh CI image builds.
- preshed==3.0.13
-```
-
----
-
-### Incident Patch 3: `7f5083fa` (2026-11-20)
-**Commit Message**: fix(deps): bump posthog from 7.75.6 to 7.86.4 (#2550)
-
-Bumps [posthog](https://github.com/posthog/posthog-python) from 7.75.6 to 7.86.4.
-- [Release notes](https://github.com/posthog/posthog-python/releases)
-- [Changelog](https://github.com/PostHog/posthog-python/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/posthog/posthog-python/compare/posthog-v7.75.6...posthog-v7.86.4)
-
----
-updated-dependencies:
-- dependency-name: posthog
-  dependency-version: 7.86.4
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `requirements/base.txt` (modified, +1/-1)
-```diff
-@@ -93,7 +93,7 @@ graphql-core>=3.3.2,<3.4  # strawberry>=0.328 requires 3.3; config/graphql/autom
+@@ -73,9 +73,11 @@ UISettingsAtom.tsx
+ └── showLabelsAtom - Label display behavior
  
- # Telemetry
- # ------------------------------------------------------------------------------
--posthog==7.75.6  # https://github.com/posthog/posthog-python
-+posthog==7.86.4  # https://github.com/posthog/posthog-python
+ DocumentAtom.tsx
+-├── scrollContainerRefAtom - Scroll container reference
+-├── pendingScrollAnnotationIdAtom - Annotation to scroll to
++├── scrollContainerRefAtom - The viewer's container
+ └── textSearchStateAtom - Search state management
++
++AnnotatorHandleAtom.ts
++└── annotatorHandleAtom - The mounted PDF/DOCX viewer's handle
+ ```
  
- # Model Context Protocol
- # ------------------------------------------------------------------------------
+ This approach provides:
+@@ -92,19 +94,13 @@ This approach provides:
+    - Initializes Jotai atoms with annotation data
+    - Manages layer switching and tab navigation
+ 
+-2. **PDF** component manages the virtualized rendering of pages:
+-   - Calculates page heights at current zoom level (cached per zoom)
+-   - Uses binary search to determine visible page range
+-   - Adds overscan buffer (2 pages above/below) for smooth scrolling
+-   - Ensures selected annotation/search result pages are always rendered
+-   - Absolutely positions all pages based on cumulative heights
+-
+-3. **PDFPage** renders individual pages with their annotations:
+-   - Only mounts when page is in visible range
+-   - Creates and manages its own PDF canvas
+-   - Overlays annotation components on top of the canvas
+-   - Handles user interactions for creating/selecting annotations
+-   - Implements two-phase scroll-to-annotation system
++2. **PdfAnnotatorWrapper / DocxAnnotatorWrapper** mount
++   `@os-legal/react-contract-annotate`'s `PdfAnnotator` / `DocxAnnotator`,
++   which own page rendering, virtualization, annotation and highlight
++   geometry, text selection and scroll-to-annotation. OpenContracts binds its
++   atoms to their props in `annotator/bindings/useViewerBindings.tsx` and
++   supplies the selection menu, Edit/Delete and dialogs. See
++   [document_viewer.md](mdc:docs/frontend/document_viewer.md).
+ 
+ ### Advanced Features
+ 
+@@ -138,39 +134,10 @@ Sophisticated chat panel width management:
+ - **FloatingDocumentInput**: Unified chat/search input
+ - **ZoomControls**: Simple zoom interface with keyboard shortcuts
+ 
+-### Virtualization Implementation Details
+-
+-The PDF component implements sophisticated virtualization:
+-
+-```typescript
+-// Page height calculation (cached per zoom level)
+-useEffect(() => {
+-  const heights = await calculatePageHeights(pdfDoc, zoomLevel);
+-  setPageHeights(heights);
+-}, [pdfDoc, zoomLevel]);
+-
+-// Visible range calculation using binary search
+-const calcRange = useCallback(() => {
+-  const scroll = getScrollPosition();
+-  const viewHeight = getViewportHeight();
+-
+-  // Binary search for first/last visible pages
+-  const firstVisible = binarySearchFirstVisible(cumulative, scroll);
+-  const lastVisible = binarySearchLastVisible(cumulative, scroll + viewHeight);
+-
+-  // Add overscan and ensure selected items are visible
+-  let start = Math.max(0, firstVisible - OVERSCAN);
+-  let end = Math.min(pageCount - 1, lastVisible + OVERSCAN);
++### Virtualization
+ 
+-  // Force selected annotation's page to be visible
+-  if (selectedPageIdx !== undefined) {
+-    start = Math.min(start, selectedPageIdx);
+-    end = Math.max(end, selectedPageIdx);
+-  }
+-
+-  setRange([start, end]);
+-}, [/* dependencies */]);
+-```
++PDF page virtualization is the viewer library's (`src/pdf/PdfViewport.tsx`
++in react-contract-annotate); OpenContracts does not reach into it.
+ 
+ ### Unified Annotation and Relationship Visibility System
+ 
+@@ -203,31 +170,18 @@ The system implements a unified, atom-based filtering architecture that ensures
+    - Respects selected-only and structural toggles
+ 
+ 5. **Components consume filtered data consistently**:
+-   - **PDFPage/TxtAnnotator**: Use `useVisibleAnnotations()` for rendering
++   - **PDF/DOCX viewer**: Gets the same display settings; the library applies the `useVisibleAnnotations()` rules
++   - **TxtAnnotator**: Uses `useVisibleAnnotations()` for rendering
+    - **UnifiedContentFeed**: Uses both `useVisibleAnnotations()` and `useVisibleRelationships()`
+    - **RelationshipList**: Uses `useVisibleRelationships()` for display
+    - All components react to the same atom state changes
+ 
+ ### Scroll-to-Annotation System
+ 
+-The system uses a two-phase approach for scrolling to annotations, triggered by:
+-- URL parameters (`?ann=id1,id2`)
+-- Direct props (`initialAnnotationIds`)
+-- Programmatic selection
+-
+-1. **Phase 1 (PDF.tsx)**: Scroll to make the page visible
+-   - Calculate which page contains the annotation
+-   - Expand virtualization range to include the page
+-   - Scroll container so page is in viewport
+-   - Set pendingScrollAnnotationIdAtom
+-
+-2. **Phase 2 (PDFPage.tsx)**: Center the specific annotation
+-   - Check if page owns the pending annotation
+-   - Find the annotation element once rendered
+-   - Scroll it into view with centering
+-   - Retry with requestAnimationFrame if element not yet rendered
+-
+-See [scroll-to-annotation-flow.md](mdc:docs/architecture/components/annotator/current-state/scroll-to-annotation-flow.md) for complete details.
++The viewer scrolls by itself when t
+```
+
+**File**: `CLAUDE.md` (modified, +5/-5)
+```diff
+@@ -165,11 +165,10 @@ docker compose -f production.yml up
+    - Components consume state via reactive vars, never touch URLs directly
+    - Deep linking and canonical redirects handled automatically
+ 
+-3. **PDF Annotation System** (see `.cursor/rules/pdf-viewer-and-annotator-architecture.mdc`):
+-   - **Virtualized rendering**: Only visible pages (+overscan) rendered for performance
+-   - Binary search to find visible page range (O(log n))
+-   - Height caching per zoom level
+-   - Two-phase scroll-to-annotation system
++3. **PDF/DOCX Viewer** (see `docs/frontend/document_viewer.md`):
++   - Drawn by the `@os-legal/react-contract-annotate` package (page rendering, virtualization, geometry, text selection, scroll-to-annotation). OpenContracts owns the data, controls, menus and persistence; plain text stays on `TxtAnnotator`
++   - Bindings: `frontend/src/components/annotator/bindings/` (`useViewerBindings` maps atoms → props, `convert.ts` maps data). The viewer scrolls itself on selection / active-highlight changes; use `annotatorHandleAtom` to move it otherwise
++   - Library slots (`renderSelectionMenu`, …) render inside the library's private Jotai `Provider`: wrap slot content that reads OpenContracts atoms in a `Provider` with OpenContracts' store
+    - Dual-layer architecture: Document layer (annotations) + Knowledge layer (summaries)
+ 
+ 4. **Unified Filtering Architecture**:
+@@ -485,6 +484,7 @@ Then use the printed session key directly in curl or Playwright route intercepti
+ - **Frontend Routing**: `docs/frontend/routing_system.md`
+ - **Frontend Auth Flow**: `docs/frontend/auth_flow.md`
+ - **PDF Data Layer**: `docs/architecture/PDF-data-layer.md`
++- **PDF/DOCX Viewer (react-contract-annotate bindings)**: `docs/frontend/document_viewer.md`
+ - **PAWLs Format (v1/v2)**: `docs/architecture/pawls-format.md`
+ - **Parser Pipeline**: `docs/pipelines/pipeline_overview.md`
+ - **LLM Framework**: `docs/architecture/llms/README.md`
+```
+
+**File**: `changelog.d/react-contract-annotate.changed.md` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++- **PDF and DOCX documents are drawn by `@os-legal/react-contract-annotate`**
++  (^0.1.4), the viewer/annotator extracted from this codebase, instead of
++  OpenContracts' own renderer. `PdfAnnotatorWrapper` and
++  `DocxAnnotatorWrapper` (`frontend/src/components/annotator/components/wrappers/`)
++  mount the library; `frontend/src/components/annotator/bindings/`
++  (`useViewerBindings.tsx`, `convert.ts`, `AnnotationSelectionMenu.tsx`)
++  binds it to the existing atoms: annotations, relations, search hits, chat
++  sources and the `?tb=` block go in as data, while selection, zoom and the
++  active highlight are controlled. The selection menu keeps its items,
++  test ids and shortcuts. Plain-text documents still use `TxtAnnotator`.
++  See `docs/frontend/document_viewer.md`.
++- The viewer's root is now the scroll container; `#pdf-container` /
++  `#docx-container` only frame it (`PDFContainer`'s `$frame`). Code that
++  must move the viewer without changing the selection goes through
++  `annotatorHandleAtom` (`useJumpToRelationship`); a change of the selection
++  or the active highlight scrolls the viewer by itself, so the PDF-only
++  `scrollIntoView` calls in `HighlightItem`, `FloatingDocumentInput` and
++  `MobileFindSheet` are gone.
++- DOCX gets the PDF's selection menu (Copy Text, Copy Link to a `?tb=` span,
++  Apply Label) and Edit / Delete beside annotation labels; the DOCX viewer
++  now applies "Show selected only" like the other formats, and shows the
++  selected chat message's sources (or the one picked) like the PDF does,
++  instead of every message's sources at once. A drag over a PDF that
++  captures no token no longer opens an (empty) selection menu.
++- The pdf.js worker is configured with the library's `configurePdfWorker`
++  (`DocumentKnowledgeBase.tsx`), on the same `pdfjs-dist/legacy` instance
++  OpenContracts loads documents with. Vitest inlines the library
++  (`vite.config.ts`, `server.deps.inline`).
+```
+
+**File**: `changelog.d/react-contract-annotate.fixed.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++- DOCX defects of the old renderer that the library does not have
++  (documented in its README): structural annotations are drawn when "Show
++  structural" is on (the old toggle projected nothing); documents with line
++  breaks, tables or images get their annotations (the projection failed on
++  their unclosed elements and showed none); annotations that cross a bold /
++  plain run boundary at a space are drawn; selecting repeated text resolves
++  to the occurrence selected; a zoomed page scrolls to its left edge; the
++  projected HTML no longer gains a blank line and an indent.
+```
+
+**File**: `changelog.d/react-contract-annotate.removed.md` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++- OpenContracts' own PDF and DOCX renderers, now in
++  `@os-legal/react-contract-annotate`: `annotator/renderers/pdf/`
++  (`PDF.tsx`, `PDFPage.tsx`, `SelectionLayer.tsx`, `NativeLinkLayer.tsx`),
++  `annotator/renderers/docx/` (`DocxAnnotator.tsx`, `docxOffsetUtils.ts`),
++  the PDF overlay components in `annotator/display/components/`
++  (`Selection`, `SelectionBoundary`, `SelectionTokenGroup`, `SearchResult`,
++  `ChatSourceResult`, `TextBlockHighlight`, `ResultBoundary`, `Tokens`, …)
++  and `display/effects.tsx`, with their unit tests and
++  `frontend/tests/SelectionInfo.ct.tsx` (the library carries the equivalent
++  tests).
++- What only they used: `PDFPageInfo`'s geometry methods (it is now the page
++  plus its tokens), the `pendingScroll*` and `isCreatingAnnotationAtom`
++  atoms, the page/canvas/renderer/search/chat-source refs in
++  `AnnotationRefsAtoms` (only TXT annotation refs remain),
++  `RenderedSpanAnnotation`, `annotationSelectedViaRelationship`,
++  `convertAnnotationTokensToText`, `computeAnnotationBoxShadow`,
++  `textBlockToBounds`, the bounds helpers in `utils/transform.tsx`, the
++  annotation-styling constants, `SELECTION_MENU_COOLDOWN_MS` and the PDF
++  layer z-indexes, `useDocumentLoader`'s `zoomLevel` parameter, and the docs
++  `scroll-to-annotation-flow.md` and `search_rendering.md`.
+```
+
+**File**: `changelog.d/react-contract-annotate.security.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++- **A converted DOCX can no longer style the OpenContracts page.** The old
++  renderer inserted the document's stylesheet page-globally, and docxodus
++  12.4.1 emits font names unescaped, so a crafted DOCX could inject CSS into
++  the app. The library scopes the stylesheet to its viewer, reduces document
++  CSS and HTML to allow-lists (no URLs fetched, no `position: fixed`, no
++  shared names), and contains the viewer's layout and paint. Links inside a
++  DOCX no longer navigate the host tab; they go through the same link policy
++  as PDF links.
+```
+
+**File**: `docs/architecture/components/annotator/current-state/how-annotations-are-created.md` (modified, +17/-16)
+```diff
+@@ -7,20 +7,21 @@ The annotation creation and handling system has evolved to use modern React patt
+ ## Annotation Creation Flow
+ 
+ ### 1. User Selection
+-- User selects text on the PDF by clicking and dragging
+-- This triggers mouse events in the `SelectionLayer` component within `PDFPage`
+-- The selection layer handles both single-page and multi-page selections
++- The user drags over a PDF page (Shift-drag adds regions, also on other
++  pages) or selects text in a DOCX. `@os-legal/react-contract-annotate`
++  works out the selected tokens (PDF) or character span (DOCX) and reports
++  the selection; a drag that captures no token makes no selection.
+ 
+ ### 2. Selection Handling
+-The `SelectionLayer` component:
+-- Detects mouse down/move/up events
+-- Calculates the selected tokens based on coordinates
+-- Checks if Shift key is pressed for multi-page selections
+-- Creates a `ServerTokenAnnotation` object with the selection data
++- The library shows OpenContracts' selection menu
++  (`annotator/bindings/AnnotationSelectionMenu.tsx`) at the selection.
++- Apply Label commits it with the active label; `useViewerBindings` turns
++  the draft into a `ServerTokenAnnotation` / `ServerSpanAnnotation`
++  (`bindings/convert.ts::draftToAnnotation`) and calls the create handler.
+ 
+ ### 3. Annotation Creation
+ ```typescript
+-// In PDFPage.tsx
++// In DocumentKnowledgeBase.tsx, passed to the PDF and DOCX viewers
+ const createAnnotationHandler = async (annotation: ServerTokenAnnotation) => {
+   if (!corpusId) {
+     toast.info("Add document to corpus to create annotations");
+@@ -43,15 +44,15 @@ When an annotation is created:
+ 3. `allAnnotationsAtom` automatically recomputes (includes new annotation)
+ 4. `perPageAnnotationsAtom` automatically updates with page indexing
+ 5. `useVisibleAnnotations` includes the new annotation based on filters
+-6. Affected `PDFPage` components re-render with the new annotation
++6. The viewer receives the new annotation and draws it
+ 
+ ## Annotation Data Flow
+ 
+ ```mermaid
+ graph TD
+-    A[User selects text] -->|Mouse events| B[SelectionLayer]
+-    B --> C[Calculate selected tokens]
+-    C --> D[Create ServerTokenAnnotation]
++    A[User selects text] -->|Mouse events| B[Viewer library]
++    B --> C[Selection menu: Apply Label]
++    C --> D[draftToAnnotation]
+     D --> E[createAnnotationHandler]
+     E --> F{Has corpus?}
+     F -->|No| G[Show info toast]
+@@ -63,7 +64,7 @@ graph TD
+     K --> M[allAnnotationsAtom recomputes]
+     M --> N[perPageAnnotationsAtom updates]
+     N --> O[useVisibleAnnotations filters]
+-    O --> P[PDFPage re-renders]
++    O --> P[Viewer redraws]
+ ```
+ 
+ ## Annotation Storage Architecture
+@@ -151,7 +152,7 @@ export function useVisibleAnnotations() {
+ 1. **Forced Visibility**: Selected annotations always shown
+ 2. **Structural Filter**: Hide/show based on `showStructuralAnnotationsAtom`
+ 3. **Label Filter**: Filter by annotation labels
+-4. **Page Filter**: PDFPage components filter by page number
++4. **Page Filter**: The PDF viewer draws a page's annotations while the page is mounted
+ 
+ ## Annotation Controls
+ 
+@@ -197,7 +198,7 @@ This prevents UI overload from showing all structural annotations at once.
+ 
+ 1. **Atom-based Updates**: Only components that use affected atoms re-render
+ 2. **Computed Atoms**: Automatic memoization of derived state
+-3. **Page-level Filtering**: Each PDFPage only processes its own annotations
++3. **Page-level Filtering**: The PDF viewer draws each page's annotations only while it is mounted
+ 4. **Virtualized Rendering**: Only visible pages render annotations
+ 5. **Deduplication**: `allAnnotationsAtom` prevents duplicate processing
+ 
+```
+
+**File**: `docs/architecture/components/annotator/current-state/how-search-works.md` (modified, +8/-9)
+```diff
+@@ -28,17 +28,16 @@ The search functionality in the document knowledge base allows users to search t
+ - The `useTextSearch()` hook must be called in `DocumentKnowledgeBase` for search processing to work
+ 
+ ### 4. Result Rendering
+-Results are rendered through a chain of components:
+-
+-1. [`SearchResult`](../../../../../frontend/src/components/annotator/display/components/SearchResult.tsx) - Renders both the highlight boundary and tokens
+-
+-2. [`ResultBoundary`](../../../../../frontend/src/components/annotator/display/components/ResultBoundary.tsx) - Creates the yellow highlight box around matched text
+-
+-3. [`SearchSelectionTokens`](../../../../../frontend/src/components/annotator/display/components/SelectionTokens.tsx) - Renders individual token highlights
++Each match becomes a highlight of the PDF/DOCX viewer
++(`annotator/bindings/convert.ts::searchHighlight`): its tokens on PDF, its
++span on DOCX. The PDF paints the current match only; DOCX paints them all.
++The current match is the viewer's active highlight, so stepping through the
++matches scrolls to each one (`useViewerBindings`).
+ 
+ ### 5. Visual Styling
+-- Matched text is highlighted using styled components
+-- See [`TokenSpan`](../../../../../frontend/src/components/annotator/display/components/Tokens.tsx) for the styling implementation
++- Search hits use `SEARCH_RESULT_HIGHLIGHT_COLOR` (`constants.ts`); the
++  library draws the box, the token highlights and the "Search Result n of
++  m" chip.
+ 
+ ### 6. Integration with Unified Feed
+ - Search results can also be displayed in the [`UnifiedContentFeed`](../../../../../frontend/src/components/knowledge_base/document/unified_feed/UnifiedContentFeed.tsx) when in feed mode
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2560** (2026-11-20): fix(deps): bump traefik from v3.7.17 to v3.7.19 in /compose/production/traefik (@dependabot[bot])
-- **PR #2559** (closed): fix(deps): bump traefik from v3.7.17 to v3.7.18 in /compose/production/traefik (@dependabot[bot])
-- **PR #2558** (closed): fix(deps): bump transformers from 5.22.2 to 5.23.0 in /compose/accelerated/embedder (@dependabot[bot])
-- **PR #2557** (2026-11-20): fix(deps): bump sentence-transformers from 6.2.0 to 6.3.0 in /compose/accelerated/embedder (@dependabot[bot])
-- **PR #2554** (2026-11-20): fix(deps): bump @types/node from 16.18.126 to 26.6.6 in /frontend (@dependabot[bot])
-- **PR #2552** (2026-11-20): fix(deps): bump react-json-tree from 0.19.0 to 0.20.0 in /frontend (@dependabot[bot])
+- **PR #2603** (2026-11-27): Render PDF and DOCX with @os-legal/react-contract-annotate (@JSv4)
+- **PR #2589** (2026-11-20): fix(deps): bump web-vitals from 2.1.4 to 6.2.3 in /frontend (@dependabot[bot])
+- **PR #2588** (2026-11-20): fix(deps): bump posthog-js from 1.312.0 to 1.450.0 in /frontend (@dependabot[bot])
+- **PR #2587** (2026-11-20): fix(deps): bump preshed from 3.0.13 to 3.0.15 (@dependabot[bot])
+- **PR #2586** (2026-11-20): fix(deps): bump django-cte from 4.0.0 to 5.0.1 (@dependabot[bot])
+- **PR #2585** (2026-11-20): fix(deps): bump react-router-dom from 7.18.2 to 7.18.5 in /frontend (@dependabot[bot])
 
 ---
 
@@ -1694,31 +1937,74 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update setuptools requirement from >=84.0.0 to >=84.2.1
+## X. Render PDF and DOCX with @os-legal/react-contract-annotate
 
 **RULE**:
-When implementing operations in `requirements/base.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cursor/rules/pdf-viewer-and-annotator-architecture.mdc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a4cf42b`: deps): update setuptools requirement from >=84.0.0 to >=84.2.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17261594`: Render PDF and DOCX with @os-legal/react-contract-annotate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements/base.txt`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cursor/rules/pdf-viewer-and-annotator-architecture.mdc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-setuptools>=84.2.1 # not directly required, pinned by Snyk to avoid a vulnerability
+├── scrollContainerRefAtom - The viewer's container
+
+AnnotatorHandleAtom.ts
+└── annotatorHandleAtom - The mounted PDF/DOCX viewer's handle
+2. **PdfAnnotatorWrapper / DocxAnnotatorWrapper** mount
+   `@os-legal/react-contract-annotate`'s `PdfAnnotator` / `DocxAnnotator`,
+   which own page rendering, virtualization, annotation and highlight
+   geometry, text selection and scroll-to-annotation. OpenContracts binds its
+   atoms to their props in `annotator/bindings/useViewerBindings.tsx` and
+   supplies the selection menu, Edit/Delete and dialogs. See
+   [document_viewer.md](mdc:docs/frontend/document_viewer.md).
+### Virtualization
+PDF page virtualization is the viewer library's (`src/pdf/PdfViewport.tsx`
+in react-contract-annotate); OpenContracts does not reach into it.
+   - **PDF/DOCX viewer**: Gets the same display settings; the library applies the `useVisibleAnnotations()` rules
+   - **TxtAnnotator**: Uses `useVisibleAnnotations()` for rendering
+The viewer scrolls by itself when t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-setuptools>=84.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
+├── scrollContainerRefAtom - Scroll container reference
+├── pendingScrollAnnotationIdAtom - Annotation to scroll to
+2. **PDF** component manages the virtualized rendering of pages:
+   - Calculates page heights at current zoom level (cached per zoom)
+   - Uses binary search to determine visible page range
+   - Adds overscan buffer (2 pages above/below) for smooth scrolling
+   - Ensures selected annotation/search result pages are always rendered
+   - Absolutely positions all pages based on cumulative heights
+
+3. **PDFPage** renders individual pages with their annotations:
+   - Only mounts when page is in visible range
+   - Creates and manages its own PDF canvas
+   - Overlays annotation components on top of the canvas
+   - Handles user interactions for creating/selecting annotations
+   - Implements two-phase scroll-to-annotation system
+### Virtualization Implementation Details
+
+The PDF component implements sophisticated virtualization:
+
+```typescript
+// Page height calculation (cached per zoom level)
+useEffect(() => {
+  const heights = await calculatePageHeights(pdfDoc, zoomLevel);
+  setPageHeights(heights);
+}, [pdfDoc, zoomLevel]);
+
+// Visible range calculation using binary search
+co
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a4cf42b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17261594` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T03:35:35.670Z",
+  "last_updated": "2026-11-28T03:45:02.484Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -200,14 +200,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-source-legal-opencontracts",
-      "content_hash": "30780389e40caa7e354d01d917202d36408ad2445634bf62d1de989e1a1dcdf4",
-      "verified_at": "2026-11-21T19:07:45.012Z",
+      "content_hash": "5b42b4b815fa1111aab6f55f3fd4d41ea73f2e688e05a5f43f33995495bb8aa9",
+      "verified_at": "2026-11-28T03:45:02.483Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T19:07:45.012Z"
+      "last_updated": "2026-11-28T03:45:02.483Z"
     },
     "Qwen/Qwen3.8-27B": {
       "repository": "Qwen/Qwen3.8-27B",
@@ -9756,14 +9756,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-graphprotocol-graph-node",
-      "content_hash": "d3a7133307f839f22384d317450040aaaf33e2713a8b6eaed7f7e31a56e7452a",
-      "verified_at": "2026-11-26T03:21:25.392Z",
+      "content_hash": "fde91503c2cc4a45d99a3d4907ab4255f0146fcce5020f5396815f473c0edc1e",
+      "verified_at": "2026-11-28T03:44:49.732Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T03:21:25.392Z"
+      "last_updated": "2026-11-28T03:44:49.732Z"
     },
     "hungps/flutter_pokedex": {
       "repository": "hungps/flutter_pokedex",

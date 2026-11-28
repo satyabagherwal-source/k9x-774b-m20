@@ -6323,10 +6323,10 @@
     "repository": "Open-Source-Legal/OpenContracts",
     "platform": "github",
     "sourceUrl": "https://github.com/Open-Source-Legal/OpenContracts",
-    "sourceVersion": "98286cab",
+    "sourceVersion": "17261594",
     "license": "MIT",
-    "contentHash": "30780389e40caa7e354d01d917202d36408ad2445634bf62d1de989e1a1dcdf4",
-    "lastHarvestedAt": "2026-11-21T19:07:45.004Z",
+    "contentHash": "5b42b4b815fa1111aab6f55f3fd4d41ea73f2e688e05a5f43f33995495bb8aa9",
+    "lastHarvestedAt": "2026-11-28T03:45:02.439Z",
     "learningId": "learn-github-open-source-legal-opencontracts"
   },
   "fastapi-fastapi": {
@@ -6443,10 +6443,10 @@
     "repository": "graphprotocol/graph-node",
     "platform": "github",
     "sourceUrl": "https://github.com/graphprotocol/graph-node",
-    "sourceVersion": "abab8260",
+    "sourceVersion": "58d6e98a",
     "license": "Apache-2.0",
-    "contentHash": "d3a7133307f839f22384d317450040aaaf33e2713a8b6eaed7f7e31a56e7452a",
-    "lastHarvestedAt": "2026-11-26T03:21:25.376Z",
+    "contentHash": "fde91503c2cc4a45d99a3d4907ab4255f0146fcce5020f5396815f473c0edc1e",
+    "lastHarvestedAt": "2026-11-28T03:44:49.724Z",
     "learningId": "learn-github-graphprotocol-graph-node"
   },
   "hungps-flutter_pokedex": {

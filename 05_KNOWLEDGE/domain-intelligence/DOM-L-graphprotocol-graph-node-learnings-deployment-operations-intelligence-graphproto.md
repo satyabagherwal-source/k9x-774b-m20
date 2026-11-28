@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T03:21:36.540Z",
+  "timestamp": "2026-11-28T03:45:06.104Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-graphprotocol-graph-node-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [graphprotocol-graph-node-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T03:21:36.540Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T03:45:06.104Z`  
 > **Learning ID**: `LEARN-EVO-graphprotocol-graph-node-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain L (Deployment & Operations Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 82%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from graphprotocol-graph-node-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md`  
 > **Source**: github ([https://github.com/graphprotocol/graph-node](https://github.com/graphprotocol/graph-node))  
-> **Source Version**: `abab8260`  
+> **Source Version**: `58d6e98a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T03:21:24.185Z  
+> **Timestamp**: 2026-11-28T03:44:48.503Z  
 > **Learning ID**: `learn-github-graphprotocol-graph-node`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/graphprotocol/graph-node](https://github.com/graphprotocol/graph-node))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T03:21:24.179Z  
+> **Harvest Timestamp**: 2026-11-28T03:44:48.326Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Graph Node indexes data from blockchains such as Ethereum and serves it over GraphQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 3170 stars
+- **Stars / Engagement**: 3169 stars
 
 ---
 
@@ -909,223 +909,729 @@ impl<S> Drop for GraphmanExecutionTracker<S> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `abab8260` (2026-11-24)
-**Commit Message**: all: Bump locked dependencies to fix RustSec advisories (#6788)
+### Incident Patch 1: `58d6e98a` (2026-11-27)
+**Commit Message**: store: Fix postponed indexes of copies and grafts (#6761)
 
-Lockfile-only update: rustls 0.23.46, rustls-webpki 0.103.16,
-webpki-roots 1.0.11, webpki-root-certs 1.0.11,
-postgres-protocol 0.6.12, tokio-postgres 0.7.18,
-quinn-proto 0.11.19, quinn-udp 0.5.16, pulldown-cmark 0.13.6,
-plus the transitive bumps they require (aws-lc-rs 1.18.2,
-aws-lc-sys 0.46.0, pkg-config 0.3.34, whoami 2.1.3).
+* store: Skip postponed indexes that already exist under another name
 
-**File**: `Cargo.lock` (modified, +111/-62)
+The background build of postponed indexes skipped an index only if one
+with the same name existed. Index names contain the positions of the
+table and the column. A copy's positions can differ from its source's,
+and older versions copied indexes under the source's names. If such a
+copy's flag was reset, the build added a second index on every shifted
+column.
+
+The build now compares the shape of the indexes, not their names. It
+only counts valid indexes, so that the leftover of an interrupted build
+is still dropped and rebuilt.
+
+* store: Copy postponed indexes of a graft/copy source under own names
+
+At the end of a copy or graft, `create_indexes` recreated the postponed
+indexes that existed on the source. It then always marked the
+destination as having built them. If the source hadn't built them yet,
+the destination never got them. Entity types that a graft added never
+got theirs either.
+
+The copy now reads the source's flag when it starts, before the source's
+indexes and on the source's shard. At the end, the destination gets its
+own postponed indexes for
+
+**File**: `store/postgres/src/catalog.rs` (modified, +14/-8)
 ```diff
-@@ -945,7 +945,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
+@@ -912,31 +912,37 @@ pub(crate) async fn index_creation_is_running(
+         .map_err::<StoreError, _>(Into::into)
+ }
  
- [[package]]
-@@ -1676,24 +1676,25 @@ checksum = "0c4b4d0bd25bd0b74681c0ad21497610ce1b7c91b1022cd21c80c6fbdd9476b0"
++/// The index definitions of a table, only the valid ones with `valid_only`.
+ pub(crate) async fn indexes_for_table(
+     conn: &mut AsyncPgConnection,
+     schema_name: &str,
+     table_name: &str,
++    valid_only: bool,
+ ) -> Result<Vec<String>, StoreError> {
+     #[derive(Queryable, QueryableByName)]
+-    struct IndexName {
++    struct IndexDef {
+         #[diesel(sql_type = Text)]
+-        #[diesel(column_name = indexdef)]
+         def: String,
+     }
  
- [[package]]
- name = "aws-lc-rs"
--version = "1.16.3"
-+version = "1.18.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0ec6fb3fe69024a75fa7e1bfb48aa6cf59706a101658ea01bfd33b2b248a038f"
-+checksum = "faac5829c2b74c28f830747e7818ccfb684261b5f48a1118b1e2a13d36dfab13"
- dependencies = [
-  "aws-lc-sys",
-  "zeroize",
- ]
+     let query = "
+         select
+-            indexdef
++            pg_get_indexdef(i.indexrelid) as def
+         from
+-            pg_indexes
++            pg_index i
++            join pg_class t on t.oid = i.indrelid
++            join pg_class c on c.oid = i.indexrelid
++            join pg_namespace n on n.oid = t.relnamespace
+         where
+-            schemaname = $1
+-            and tablename = $2
+-        order by indexname";
++            n.nspname = $1
++            and t.relname = $2
++            and (i.indisvalid or not $3)
++        order by c.relname";
+     let results = sql_query(query)
+         .bind::<Text, _>(schema_name)
+         .bind::<Text, _>(table_name)
+-        .load::<IndexName>(conn)
++        .bind::<Bool, _>(valid_only)
++        .load::<IndexDef>(conn)
+         .await
+         .map_err::<StoreError, _>(Into::into)?;
  
- [[package]]
- name = "aws-lc-sys"
--version = "0.40.0"
-+version = "0.46.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f50037ee5e1e41e7b8f9d161680a725bd1626cb6f8c7e901f91f942850852fe7"
-+checksum = "f1622d8446a2d4b2ce0c7eefc73dd43a99779028d5ee5c2dd8073a658ba8a2bc"
- dependencies = [
-  "cc",
-  "cmake",
-  "dunce",
-  "fs_extra",
-+ "pkg-config",
- ]
+```
+
+**File**: `store/postgres/src/copy.rs` (modified, +36/-35)
+```diff
+@@ -12,7 +12,6 @@
+ //! operation can resume after an interruption, for example, because
+ //! `graph-node` was restarted while the copy was running.
+ use std::{
+-    collections::HashSet,
+     convert::TryFrom,
+     future::Future,
+     pin::Pin,
+@@ -103,6 +102,14 @@ pub enum Status {
+     Cancelled,
+ }
  
- [[package]]
-@@ -2140,6 +2141,12 @@ dependencies = [
-  "cc",
- ]
- 
-+[[package]]
-+name = "cmov"
-+version = "0.5.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a"
++/// The source of a copy, as read when the copy starts.
++pub(crate) struct CopySource {
++    /// The source's indexes.
++    pub(crate) list: IndexList,
++    /// Whether the source has built its postponed indexes.
++    pub(crate) postponed_indexes_created: bool,
++}
 +
- [[package]]
- name = "cobs"
- version = "0.3.0"
-@@ -2626,6 +2633,15 @@ dependencies = [
-  "memchr",
- ]
+ struct CopyState {
+     src: Arc<Layout>,
+     dst: Arc<Layout>,
+@@ -299,45 +306,39 @@ impl CopyState {
+         self.finished.iter().chain(self.unfinished.iter())
+     }
  
-+[[package]]
-+name = "ctutils"
-+version = "0.4.8"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "261af4dc7a06ea8a527a8717d8cbba3417530d6ea14e1edb3de6b67806be474f"
-+dependencies = [
-+ "cmov",
-+]
+-    /// Create the indexes that were postponed at the start of the
+-    /// copy/graft operation: first the ones that existed in the source
+-    /// subgraph, then any indexes for new fields that don't exist in the
+-    /// source.
++    /// Create the postponed indexes `dst` needs and give it the source's
++    /// `postponed_indexes_created` flag.
+     async fn create_indexes(
+         &self,
+         conn: &mut AsyncPgConnection,
+-        index_list: &IndexList,
++        source: &CopySource,
+     ) -> Result<(), StoreError> {
+         let creat = self.dst.index_creator(false, true);
+-        let dst_nsp = self.dst.site.namespace.to_string();
+-
+-        // Create the indexes that existed in the source subgraph
+-        for table in self.all_tables() {
+-            let idxs = index_list
+-                .indexes_for_table(&table.dst)
+-                .filter(|idx| idx.to_postpone())
+-                .map(|idx| idx.with_nsp(dst_nsp.clone()))
+-                .collect::<Result<Vec<_>, _>>()?;
+ 
++        for dst_table in self.dst.tables.values() {
++            // May already hold postponed indexes from an interrupted run or an older version's copy.
++            let existing = dst_table.valid_indexes(conn).await?;
++            let src = self
++                .src
++                .table_for_entity(&dst_table.object)
++                .ok()
++                .map(|src_table| {
++                    let indexes = source
++                        .list
++                        .indexes
++                        .get(src_table.name.as_str())
++                        .map(Vec::as_slice)
++                        .unwrap_or(&[]);
++                    (src_table.as_ref(), indexes)
++                });
++            let idxs =
++                dst_table.postponed_indexes_to_create(&self.dst.input_schema, &existing, src)?;
+             creat.execute_many(conn, &idxs).await?;
+         }
+ 
+-        // Create indexes for new fields that don't exist in the source
+-        for table in self.all_tables() {
+-            let src_columns: HashSet<&str> =
+-                table.src.columns.iter().map(|c| c.name.as_str()).collect();
+-            let new_idxs: Vec<_> = table
+-                .dst
+-                .indexes(&self.dst.input_schema)
+-                .map_err(|_| internal_error!("failed to generate indexes for copy"))?
+-                .into_iter()
+-                .filter(|idx| idx.to_postpone() && idx.references_column_not_in(&src_columns))
+-                .collect();
+-            creat.execute_many(conn, &new_idxs).await?;
+-        }
+-
++        let created = source.postponed_indexes_created;
+         conn.transaction(async |conn| {
+-            deployment::set_postponed_indexes_created(conn, &self.dst.site).await
++            deployment::set_postponed_indexes_created(conn, &self.dst.site, created).await
+         })
+         .await?;
+ 
+@@ -1191,7 +1192,7 @@ impl Connection {
+         }
+     }
+ 
+-    async fn copy_data_internal(&mut self, index_list: IndexList) -> Result<Status, StoreError> {
++    async fn copy_data_internal(&mut self, source: CopySource) -> Result<Status, StoreError> {
+         let src = self.src.clone();
+         let dst = self.dst.clone();
+         let target_block = self.target_block.clone();
+@@ -1282,7 +1283,7 @@ impl Connection {
+         }
+         debug_assert!(self.conn.is_some());
+ 
+-        state.create_indexes(self.get_conn()?, &index_list).await?;
++        state.create_indexes(self.get_conn()?, &source).await?;
+ 
+         self.copy_private_data_sources(&state).await?;
+ 
+@@ -1299,7 +1300,7 @@ impl Connection {
+     /// block is guaranteed to not be subject to chain reorgs. All data up
+     /// to and including `target_block` will be copied.
+     ///
+-    /// The parameter index_list is a list of indexes that exist on the `src`.
++    /// The parameter `source` describes the indexes of `src`.
+     ///
+     /// The copy logic makes heavy use of the fact that the `vid` and
+     /// `block_range` of entity versions are related since for two entity
+@@ -1309,7 +1310,7 @@ impl Connection {
+     /// lower(v1.block_range) => v2.vid > v1.vid` and we can therefore stop
+     /// the copying of each table as soon as we hit `max_vid = max { v.vid |
+     /// lower(v.block_range)
+```
+
+**File**: `store/postgres/src/deployment.rs` (modified, +5/-4)
+```diff
+@@ -854,17 +854,18 @@ pub async fn postponed_indexes_created(
+     Ok(created)
+ }
+ 
+-/// Mark the postponed (deferred) attribute indexes as created for this
+-/// deployment. Once set, we never recreate these indexes — even if an
+-/// external process removes them.
++/// Record whether the postponed (deferred) attribute indexes have been
++/// created for this deployment. Once set, we never recreate these indexes —
++/// even if an external process removes them.
+ pub async fn set_postponed_indexes_created(
+     conn: &mut AsyncPgConnection,
+     site: &Site,
++    created: bool,
+ ) -> Result<(), StoreError> {
+     use deployment as d;
+ 
+     update(d::table.filter(d::id.eq(site.id)))
+-        .set(d::postponed_indexes_created.eq(true))
++        .set(d::postponed_indexes_created.eq(created))
+         .execute(conn)
+         .await?;
+     Ok(())
+```
+
+**File**: `store/postgres/src/deployment_store.rs` (modified, +57/-23)
+```diff
+@@ -48,6 +48,7 @@ use graph::prelude::{
+ use graph::schema::{ApiSchema, EntityKey, EntityType, InputSchema};
+ 
+ use crate::block_range::{BLOCK_COLUMN, BLOCK_RANGE_COLUMN};
++use crate::copy::CopySource;
+ use crate::deployment::{self, OnSync};
+ use crate::detail::ErrorDetail;
+ use crate::dynds::DataSourcesTable;
+@@ -711,16 +712,58 @@ impl DeploymentStore {
+         let table = resolve_table_name(&layout, &entity_name)?;
+         let table_name = &table.name;
+         let indexes =
+-            catalog::indexes_for_table(&mut conn, schema_name.as_str(), table_name.as_str())
++            catalog::indexes_for_table(&mut conn, schema_name.as_str(), table_name.as_str(), false)
+                 .await?;
+         Ok(indexes.into_iter().map(CreateIndex::parse).collect())
+     }
+ 
+-    pub(crate) async fn load_indexes(&self, site: Arc<Site>) -> Result<IndexList, StoreError> {
++    /// Load `site` as the source of a copy.
++    pub(crate) async fn load_copy_source(&self, site: Arc<Site>) -> Result<CopySource, StoreError> {
+         let mut conn = self.pool.get_permitted().await?;
++        // Read the flag before the indexes, so that a set flag never comes
++        // with a list from the middle of the background build.
++        let postponed_indexes_created =
++            deployment::postponed_indexes_created(&mut conn, &site).await?;
+         let layout = self.layout(&mut conn, site).await?;
++        let list = IndexList::load(&mut conn, &layout).await?;
++        Ok(CopySource {
++            list,
++            postponed_indexes_created,
++        })
++    }
 +
- [[package]]
- name = "darling"
- version = "0.20.10"
-@@ -3052,6 +3068,7 @@ dependencies = [
-  "block-buffer 0.12.0",
-  "const-oid 0.10.2",
-  "crypto-common 0.2.1",
-+ "ctutils",
- ]
++    pub(crate) async fn postponed_indexes_created(&self, site: &Site) -> Result<bool, StoreError> {
++        let mut conn = self.pool.get_permitted().await?;
++        deployment::postponed_indexes_created(&mut conn, site).await
++    }
  
- [[package]]
-@@ -3707,10 +3724,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "43a49c392881ce6d5c3b8cb70f98717b7c07aabbdff06687b9030dbfbe2725f8"
- dependencies = [
-  "cfg-if",
-- "js-sys",
-  "libc",
-  "wasi 0.13.3+wasi-0.2.2",
-- "wasm-bindgen",
-  "windows-targets 0.52.6",
- ]
- 
-@@ -3721,11 +3736,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555"
- dependencies = [
-  "cfg-if",
-+ "js-sys",
-  "libc",
-  "r-efi",
-  "rand_core 0.10.0",
-  "wasip2",
-  "wasip3",
-+ "wasm-bindgen",
- ]
- 
- [[package]]
-@@ -4451,6 +4468,15 @@ dependencies = [
-  "digest 0.10.7",
- ]
- 
-+[[package]]
-+name = "hmac"
-+version = "0.13.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "6303bc9732ae41b04cb554b844a762b4115a61bfaa81e3e83050991eeb56863f"
-+dependencies = [
-+ "digest 0.11.2",
-+]
+-        IndexList::load(&mut conn, &layout).await
++    // Only used for tests
++    #[cfg(debug_assertions)]
++    pub(crate) async fn set_postponed_indexes_created(
++        &self,
++        site: &Site,
++        created: bool,
++    ) -> Result<(), StoreError> {
++        let mut conn = self.pool.get_permitted().await?;
++        deployment::set_postponed_indexes_created(&mut conn, site, created).await
++    }
 +
- [[package]]
- name = "home"
- version = "0.5.9"
-@@ -5311,11 +5337,10 @@ checksum = "b6d2cec3eae94f9f509c767b45932f1ada8350c4bdb85af2fcab4a3c14807981"
++    // Only used for tests
++    #[cfg(debug_assertions)]
++    pub(crate) async fn create_btree_index(
++        &self,
++        site: &Site,
++        name: &str,
++        table: &str,
++        expr: &str,
++    ) -> Result<(), StoreError> {
++        let mut conn = self.pool.get_permitted().await?;
++        let query = format!(
++            "create index \"{}\" on \"{}\".\"{}\" using btree ({})",
++            name, site.namespace, table, expr
++        );
++        sql_query(query).execute(&mut conn).await?;
++        Ok(())
+     }
  
- [[package]]
- name = "libredox"
--version = "0.1.3"
-+version = "0.1.25"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c0ff37bd590ca25063e35af745c343cb7a0271906fb7b37e4813e8f79f00268d"
-+checksum = "61ff90caf6077a803a240f62fdbe88645a890bbca49ef8174c3cb0404362171d"
- dependencies = [
-- "bitflags 2.11.1",
-  "libc",
- ]
+     /// Drops an index for a given deployment, concurrently.
+@@ -1549,12 +1592,12 @@ impl DeploymentStore {
+         &self,
+         logger: &Logger,
+         site: Arc<Site>,
+-        graft_src: Option<(Arc<Layout>, BlockPtr, SubgraphDeploymentEntity, IndexList)>,
++        graft_src: Option<(Arc<Layout>, BlockPtr, SubgraphDeploymentEntity, CopySource)>,
+     ) -> Result<(), StoreError> {
+         let dst = self.find_layout(site.cheap_clone()).await?;
  
-@@ -5419,12 +5444,12 @@ checksum = "47e1ffaa40ddd1f3ed91f717a33c8c0ee23fff369e3aa8772b9605cc1d22f4c3"
+         // If `graft_src` is `Some`, then there is a pending graft.
+-        if let Some((src, block, src_deployment, index_list)) = graft_src {
++        if let Some((src, block, src_deployment, source)) = graft_src {
+             info!(
+                 logger,
+                 "Initializing graft by copying data from {} to {}",
+@@ -1585,7 +1628,7 @@ impl DeploymentStore {
+                 dst_manifest_idx_and_name,
+             )
+             .await?;
+-            let status = copy_conn.copy_data(index_list).await?;
++            let status = copy_conn.copy_data(source).await?;
+             if status == crate::copy::Status::Cancelled {
+                 return Err(StoreError::Canceled);
+             }
+@@ -1706,14 +1749,6 @@ impl DeploymentStore {
+             catalog::index_creation_is_running(&mut conn, site.namespace.as_str()).await
+         }
  
- [[package]]
- name = "md-5"
--version = "0.10.6"
-+version = "0.11.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d89e7ee0cfbedfc4da3340218492196241d89eefb6dab27de5df917a6d2e78cf"
-+checksum = "69b6441f590336821bb897fb28fc622898ccceb1d6cea3fde5ea86b090c4de98"
- dependencies = [
-  "cfg-if",
-- "digest 0.10.7",
-+ "digest 0.11.2",
- ]
+-        async fn postponed_indexes_created(
+-            store: &DeploymentStore,
+-            site: &Site,
+-        ) -> Result<bool, StoreError> {
+-            let mut conn = store.pool.get_permitted().await?;
+-            deployment::postponed_indexes_created(&mut conn, site).await
+-        }
+-
+         async fn wait_for_concurrent_index_creation(
+             logger: &Logger,
+             store: &DeploymentStore,
+@@ -1787,19 +1822,18 @@ impl DeploymentStore {
+             // connection for the whole time. Instead, we get a new
+             // connection for each index that we create.
  
- [[package]]
-@@ -5720,6 +5745,24 @@ dependencies = [
-  "smallvec",
- ]
+-            if postponed_indexes_created(&store, &site).await? {
++            if store.postponed_indexes_created(&site).await? {
+                 return Ok(());
+             }
  
-+[[package]]
-+name = "objc2-core-foundation"
-+version = "0.3.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "2a180dd8642fa45cdb7dd721cd4c11b1cadd4929ce112ebd8b9f5803cc79d536"
-+dependencies = [
-+ "bitflags 2.11.1",
-+]
+             for table in layout.tables.values() {
+-                let indexes = table.indexes(&layout.input_schema).map_err(|e| {
+-             
+```
+
+**File**: `store/postgres/src/relational/index.rs` (modified, +189/-125)
+```diff
+@@ -12,6 +12,7 @@ use graph::prelude::{
+     BlockNumber, lazy_static,
+     regex::{Captures, Regex},
+ };
++use graph::schema::InputSchema;
+ 
+ use crate::block_range::{BLOCK_COLUMN, BLOCK_RANGE_COLUMN};
+ use crate::relational::{BYTE_ARRAY_PREFIX_SIZE, STRING_PREFIX_SIZE};
+@@ -591,7 +592,7 @@ impl CreateIndex {
+         self.is_attribute_index() || self.is_default_non_attr_index()
+     }
+ 
+-    fn is_same_index(&self, other: &CreateIndex) -> bool {
++    pub(crate) fn is_same_index(&self, other: &CreateIndex) -> bool {
+         match (self, other) {
+             (CreateIndex::Unknown { .. }, _) | (_, CreateIndex::Unknown { .. }) => false,
+             (
+@@ -673,75 +674,18 @@ impl CreateIndex {
+         }
+     }
+ 
+-    /// Return `true` if any of the attribute columns (user-defined columns,
+-    /// not infrastructure columns like `vid`, `block$`, etc.) referenced by
+-    /// this index are NOT in `columns`.
+-    pub fn references_column_not_in(&self, columns: &std::collections::HashSet<&str>) -> bool {
++    /// The user-defined columns this index covers.
++    pub fn attribute_columns(&self) -> Vec<&str> {
+         match self {
+-            CreateIndex::Unknown { .. } => false,
+-            CreateIndex::Parsed { columns: exprs, .. } => exprs.iter().any(|expr| match expr {
+-                Expr::Column(name) | Expr::Prefix(name, _) => !columns.contains(name.as_str()),
+-                _ => false,
+-            }),
+-        }
+-    }
+-
+-    pub fn fields_exist_in_dest(&self, dest_table: &Table) -> bool {
+-        fn column_exists(dest_table: &Table, column_name: &str) -> bool {
+-            dest_table
+-                .columns
++            CreateIndex::Unknown { .. } => vec![],
++            CreateIndex::Parsed { columns, .. } => columns
+                 .iter()
+-                .any(|c| c.name.as_str() == column_name)
++                .filter_map(|expr| match expr {
++                    Expr::Column(name) | Expr::Prefix(name, _) => Some(name.as_str()),
++                    _ => None,
++                })
++                .collect(),
+         }
+-
+-        match self {
+-            CreateIndex::Unknown { defn: _ } => return true,
+-            CreateIndex::Parsed {
+-                columns: parsed_cols,
+-                ..
+-            } => {
+-                for c in parsed_cols {
+-                    match c {
+-                        Expr::Column(column_name) => {
+-                            if !column_exists(dest_table, column_name) {
+-                                return false;
+-                            }
+-                        }
+-                        Expr::Prefix(column_name, _) => {
+-                            if !column_exists(dest_table, column_name) {
+-                                return false;
+-                            }
+-                        }
+-                        Expr::BlockRange | Expr::BlockRangeLower | Expr::BlockRangeUpper => {
+-                            if dest_table.immutable {
+-                                return false;
+-                            }
+-                        }
+-                        Expr::Vid => (),
+-                        Expr::Block => {
+-                            if !dest_table.immutable {
+-                                return false;
+-                            }
+-                        }
+-                        Expr::Unknown(expression) => {
+-                            if expression.contains("block_range") && dest_table.immutable {
+-                                return false;
+-                            }
+-                            if !dest_table
+-                                .columns
+-                                .iter()
+-                                .any(|c| expression.contains(c.name.as_str()))
+-                                && !expression.contains("block_range")
+-                                && !expression.contains("vid")
+-                            {
+-                                return false;
+-                            }
+-                        }
+-                    }
+-                }
+-            }
+-        }
+-        true
+     }
+ 
+     /// Generate a SQL statement that creates this index. If `concurrent` is
+@@ -898,6 +842,55 @@ impl Layout {
+     }
+ }
+ 
++impl Table {
++    /// The valid indexes on this table.
++    pub(crate) async fn valid_indexes(
++        &self,
++        conn: &mut AsyncPgConnection,
++    ) -> Result<Vec<CreateIndex>, StoreError> {
++        let defs =
++            catalog::indexes_for_table(conn, self.nsp.as_str(), self.name.as_str(), true).await?;
++        Ok(defs.into_iter().map(CreateIndex::parse).collect())
++    }
 +
-+[[package]]
-+name = "objc2-system-configuration"
-+version = "0.3.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7216bd11cbda54ccabcab84d523dc93b858ec75ecfb3a7d89513fa22464da396"
-+dependencies = [
-+ "objc2-core-foundation",
-+]
++    /// The postponed indexes this table still needs. Leaves out an index if
++    /// `existing` has one of the same shape, or if the copy source `src` has
++    /// its columns but no postponed index on them.
++    pub(crate) fn postponed_indexes_to_create(
++        &self,
++        schema: &InputSchema,
++        existing: &[CreateIndex],
++        src: Option<(&Table, &
+```
+
+**File**: `store/postgres/src/subgraph_store.rs` (modified, +38/-6)
+```diff
+@@ -43,14 +43,12 @@ use graph::{derive::CheapClone, futures03::future::join_all, prelude::alloy::pri
+ use crate::{
+     ConnectionPool, NotificationSender,
+     catalog::Catalog,
++    copy::CopySource,
+     deployment::{OnSync, SubgraphHealth},
+     primary::{
+         self, DeploymentId, Mirror as PrimaryMirror, Primary, RestoreAction, RestoreMode, Site,
+     },
+-    relational::{
+-        self, Layout,
+-        index::{IndexList, Method},
+-    },
++    relational::{self, Layout, index::Method},
+     writable::{SourceableStore, WritableStore},
+ };
+ use crate::{
+@@ -1394,6 +1392,40 @@ impl Inner {
+         store.indexes_for_entity(site, entity_name).await
+     }
+ 
++    #[cfg(debug_assertions)]
++    pub async fn postponed_indexes_created(
++        &self,
++        deployment: &DeploymentLocator,
++    ) -> Result<bool, StoreError> {
++        let site = self.find_site(deployment.id.into()).await?;
++        let store = self.for_site(&site)?;
++        store.postponed_indexes_created(&site).await
++    }
 +
- [[package]]
- name = "object"
- version = "0.39.1"
-@@ -5909,7 +5952,7 @@ checksum = "2621685985a2ebf1c516881c026032ac7deafcda1a2c9b7850dc81e3dfcb64c1"
- dependencies = [
-  "cfg-if",
-  "libc",
-- "redox_syscall 0.5.2",
-+ "redox_syscall",
-  "smallvec",
-  "windows-link 0.2.1",
- ]
-@@ -6109,9 +6152,9 @@ dependencies = [
++    #[cfg(debug_assertions)]
++    pub async fn set_postponed_indexes_created(
++        &self,
++        deployment: &DeploymentLocator,
++        created: bool,
++    ) -> Result<(), StoreError> {
++        let site = self.find_site(deployment.id.into()).await?;
++        let store = self.for_site(&site)?;
++        store.set_postponed_indexes_created(&site, created).await
++    }
++
++    #[cfg(debug_assertions)]
++    pub async fn create_btree_index_for_deployment(
++        &self,
++        deployment: &DeploymentLocator,
++        name: &str,
++        table: &str,
++        expr: &str,
++    ) -> Result<(), StoreError> {
++        let site = self.find_site(deployment.id.into()).await?;
++        let store = self.for_site(&site)?;
++        store.create_btree_index(&site, name, table, expr).await
++    }
++
+     pub async fn drop_index_for_deployment(
+         &self,
+         deployment: &DeploymentLocator,
+@@ -1537,9 +1569,9 @@ impl Inner {
+         src_store.load_deployment(site).await
+     }
  
- [[package]]
- name = "pkg-config"
--version = "0.3.30"
-+version = "0.3.34"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
-+checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
+-    pub async fn load_indexes(&self, site: Arc<Site>) -> Result<IndexList, StoreError> {
++    pub(crate) async fn load_copy_source(&self, site: Arc<Site>) -> Result<CopySource, StoreError> {
+         let src_store = self.for_site(&site)?;
+-        src_store.load_indexes(site).await
++        src_store.load_copy_source(site).await
+     }
  
- [[package]]
- name = "polling"
-@@ -6182,27 +6225,27 @@ dependencies = [
+     pub async fn dump(
+```
+
+**File**: `store/postgres/src/writable.rs` (modified, +4/-4)
+```diff
+@@ -37,9 +37,9 @@ use tokio::select;
+ use tokio::sync::Notify;
+ use tokio::task::JoinHandle;
  
- [[
++use crate::copy::CopySource;
+ use crate::deployment_store::DeploymentStore;
+ use crate::primary::DeploymentId;
+-use crate::relational::index::IndexList;
+ use crate::{NotificationSender, retry};
+ use crate::{SubgraphStore, primary, primary::Site, relational::Layout};
+ 
+@@ -74,8 +74,8 @@ impl WritableSubgraphStore {
+         self.0.find_site(id).await
+     }
+ 
+-    async fn load_indexes(&self, site: Arc<Site>) -> Result<IndexList, StoreError> {
+-        self.0.load_indexes(site).await
++    async fn load_copy_source(&self, site: Arc<Site>) -> Result<CopySource, StoreError> {
++        self.0.load_copy_source(site).await
+     }
+ }
+ 
+@@ -219,7 +219,7 @@ impl SyncStore {
+                 Some((base_id, base_ptr)) => {
+                     let src = self.store.layout(&base_id).await?;
+                     let deployment_entity = self.store.load_deployment(src.site.clone()).await?;
+-                    let indexes = self.store.load_indexes(src.site.clone()).await?;
++                    let indexes = self.store.load_copy_source(src.site.clone()).await?;
+                     Some((src, base_ptr, deployment_entity, indexes))
+                 }
+                 None => None,
+```
+
+**File**: `store/test-store/src/store.rs` (modified, +65/-23)
+```diff
+@@ -167,36 +167,37 @@ pub async fn create_subgraph(
+     schema: &str,
+     base: Option<(DeploymentHash, BlockPtr)>,
+ ) -> Result<DeploymentLocator, StoreError> {
+-    let schema = InputSchema::parse_latest(schema, subgraph_id.clone()).unwrap();
+-
+-    let manifest = SubgraphManifest::<graph::blockchain::mock::MockBlockchain> {
+-        id: subgraph_id.clone(),
+-        spec_version: Version::new(1, 3, 0),
+-        features: BTreeSet::new(),
+-        description: Some(format!("manifest for {}", subgraph_id)),
+-        repository: Some(format!("repo for {}", subgraph_id)),
+-        schema: schema.clone(),
+-        data_sources: vec![],
+-        graft: None,
+-        templates: vec![],
+-        chain: PhantomData,
+-        indexer_hints: None,
+-    };
+-
++    let (schema, manifest) = test_manifest(subgraph_id, schema);
+     create_subgraph_with_manifest(subgraph_id, schema, manifest, base).await
+ }
+ 
++/// Like `create_subgraph`, but doesn't start the deployment.
++pub async fn create_subgraph_unstarted(
++    subgraph_id: &DeploymentHash,
++    schema: &str,
++    base: Option<(DeploymentHash, BlockPtr)>,
++) -> Result<DeploymentLocator, StoreError> {
++    let (schema, manifest) = test_manifest(subgraph_id, schema);
++    let (name, deployment) = deployment_create(subgraph_id, &manifest, base);
++    SUBGRAPH_STORE
++        .create_deployment_replace(
++            name,
++            &schema,
++            deployment,
++            NODE_ID.clone(),
++            NETWORK_NAME.to_string(),
++            SubgraphVersionSwitchingMode::Instant,
++        )
++        .await
++}
++
+ pub async fn create_subgraph_with_manifest(
+     subgraph_id: &DeploymentHash,
+     schema: InputSchema,
+     manifest: SubgraphManifest<graph::blockchain::mock::MockBlockchain>,
+     base: Option<(DeploymentHash, BlockPtr)>,
+ ) -> Result<DeploymentLocator, StoreError> {
+-    let mut yaml = serde_yaml::Mapping::new();
+-    yaml.insert("dataSources".into(), Vec::<serde_yaml::Value>::new().into());
+-    let yaml = serde_yaml::to_string(&yaml).unwrap();
+-    let deployment = DeploymentCreate::new(yaml, &manifest, None).graft(base);
+-    let name = SubgraphName::new_unchecked(subgraph_id.to_string());
++    let (name, deployment) = deployment_create(subgraph_id, &manifest, base);
+     let deployment = SUBGRAPH_STORE
+         .create_deployment_replace(
+             name,
+@@ -207,14 +208,55 @@ pub async fn create_subgraph_with_manifest(
+             SubgraphVersionSwitchingMode::Instant,
+         )
+         .await?;
++    start_subgraph(&deployment).await?;
++    Ok(deployment)
++}
+ 
++/// Start `deployment`; this runs a pending graft's copy.
++pub async fn start_subgraph(deployment: &DeploymentLocator) -> Result<(), StoreError> {
+     SUBGRAPH_STORE
+         .cheap_clone()
+         .writable(LOGGER.clone(), deployment.id, Arc::new(Vec::new()))
+         .await?
+         .start_subgraph_deployment(&LOGGER)
+-        .await?;
+-    Ok(deployment)
++        .await
++}
++
++fn test_manifest(
++    subgraph_id: &DeploymentHash,
++    schema: &str,
++) -> (
++    InputSchema,
++    SubgraphManifest<graph::blockchain::mock::MockBlockchain>,
++) {
++    let schema = InputSchema::parse_latest(schema, subgraph_id.clone()).unwrap();
++    let manifest = SubgraphManifest::<graph::blockchain::mock::MockBlockchain> {
++        id: subgraph_id.clone(),
++        spec_version: Version::new(1, 3, 0),
++        features: BTreeSet::new(),
++        description: Some(format!("manifest for {}", subgraph_id)),
++        repository: Some(format!("repo for {}", subgraph_id)),
++        schema: schema.clone(),
++        data_sources: vec![],
++        graft: None,
++        templates: vec![],
++        chain: PhantomData,
++        indexer_hints: None,
++    };
++    (schema, manifest)
++}
++
++fn deployment_create(
++    subgraph_id: &DeploymentHash,
++    manifest: &SubgraphManifest<graph::blockchain::mock::MockBlockchain>,
++    base: Option<(DeploymentHash, BlockPtr)>,
++) -> (SubgraphName, DeploymentCreate) {
++    let mut yaml = serde_yaml::Mapping::new();
++    yaml.insert("dataSources".into(), Vec::<serde_yaml::Value>::new().into());
++    let yaml = serde_yaml::to_string(&yaml).unwrap();
++    let deployment = DeploymentCreate::new(yaml, manifest, None).graft(base);
++    let name = SubgraphName::new_unchecked(subgraph_id.to_string());
++    (name, deployment)
+ }
+ 
+ pub async fn create_test_subgraph(subgraph_id: &DeploymentHash, schema: &str) -> DeploymentLocator {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6789** (2026-11-27): store: Select entity ids as text in FindPossibleDeletionsQuery (@dimitrovmaksim)
 - **PR #6788** (2026-11-24): all: Bump locked dependencies to fix RustSec advisories (@dimitrovmaksim)
+- **PR #6761** (2026-11-27): store: Fix postponed indexes of copies and grafts (@dimitrovmaksim)
 - **PR #6760** (2026-11-13): gnd: Don't unset nullable primitive fields set to 0 or false (@taiyangc)
 - **PR #6758** (closed): store: create a copy's attribute indexes from the source's index list (@lx3133584)
 - **PR #6757** (closed): core: keep the full trigger filter when a template handler is address-scoped (@lx3133584)
-- **PR #6756** (closed): store: keep postponed attribute indexes pending when a graft copies from an unsynced base (@lx3133584)
-- **PR #6755** (closed): store: reject write batches that overlap the deployment head (@lx3133584)
 
 ---
 
@@ -1145,87 +1651,51 @@ aws-lc-sys 0.46.0, pkg-config 0.3.34, whoami 2.1.3).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. all: Bump locked dependencies to fix RustSec advisories
+## X. store: Fix postponed indexes of copies and grafts
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in graphprotocol/graph-node. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `store/postgres/src/catalog.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in graphprotocol/graph-node. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `abab8260`: all: Bump locked dependencies to fix RustSec advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58d6e98a`: store: Fix postponed indexes of copies and grafts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `store/postgres/src/catalog.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.61.2",
-version = "1.18.2"
-checksum = "faac5829c2b74c28f830747e7818ccfb684261b5f48a1118b1e2a13d36dfab13"
-version = "0.46.0"
-checksum = "f1622d8446a2d4b2ce0c7eefc73dd43a99779028d5ee5c2dd8073a658ba8a2bc"
- "pkg-config",
-[[package]]
-name = "cmov"
-version = "0.5.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a"
-
-[[package]]
-name = "ctutils"
-version = "0.4.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "261af4dc7a06ea8a527a8717d8cbba3417530d6ea14e1edb3de6b67806be474f"
-dependencies = [
- "cmov",
-]
-
- "ctutils",
- "js-sys",
- "wasm-bindgen",
-[[package]]
-name = "hmac"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6303bc9732ae41b04cb554b844a762b4115a61bfaa81e3e83050991eeb56863f"
-dependencies = [
- "digest 0.11.2",
-]
-
-version = "0.1.25"
-checksum = "61ff90caf6077a803a240f62fdbe88645a890bbca49ef8174c3cb0404362171d"
-version = "0.11.0"
-checksum = "69b6441f590336821bb897fb28fc622898ccceb1d6cea3fde5ea86b090c4de98"
- "digest 0.11.2",
-[[package]]
-name = "objc2-core-foundation"
-version = "0.3.2"
-source = "registry+htt
+/// The index definitions of a table, only the valid ones with `valid_only`.
+    valid_only: bool,
+    struct IndexDef {
+            pg_get_indexdef(i.indexrelid) as def
+            pg_index i
+            join pg_class t on t.oid = i.indrelid
+            join pg_class c on c.oid = i.indexrelid
+            join pg_namespace n on n.oid = t.relnamespace
+            n.nspname = $1
+            and t.relname = $2
+            and (i.indisvalid or not $3)
+        order by c.relname";
+        .bind::<Bool, _>(valid_only)
+        .load::<IndexDef>(conn)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "windows-sys 0.60.2",
-version = "1.16.3"
-checksum = "0ec6fb3fe69024a75fa7e1bfb48aa6cf59706a101658ea01bfd33b2b248a038f"
-version = "0.40.0"
-checksum = "f50037ee5e1e41e7b8f9d161680a725bd1626cb6f8c7e901f91f942850852fe7"
- "js-sys",
- "wasm-bindgen",
-version = "0.1.3"
-checksum = "c0ff37bd590ca25063e35af745c343cb7a0271906fb7b37e4813e8f79f00268d"
- "bitflags 2.11.1",
-version = "0.10.6"
-checksum = "d89e7ee0cfbedfc4da3340218492196241d89eefb6dab27de5df917a6d2e78cf"
- "digest 0.10.7",
- "redox_syscall 0.5.2",
-version = "0.3.30"
-checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
+    struct IndexName {
+        #[diesel(column_name = indexdef)]
+            indexdef
+            pg_indexes
+            schemaname = $1
+            and tablename = $2
+        order by indexname";
+        .load::<IndexName>(conn)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `abab8260` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58d6e98a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

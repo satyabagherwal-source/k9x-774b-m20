@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-9WSK",
-    "timestamp": "2026-11-26T14:53:21.860Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-    "contentHash": "76c56319cb52f506f79b364fe1e9aa1b81c0e173162ef7d8e77b6d7a31b6b6dd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-9ZPD",
-    "timestamp": "2026-11-26T14:53:25.633Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "e2a9a46a150a5a8e385c0e1c3d4a575ded97f2883317f70a43a38fe0e6253679",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-A20V",
     "timestamp": "2026-11-26T14:53:28.639Z",
     "repository": "MetrolistGroup/Metrolist",
@@ -7490,6 +7460,36 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "d81ddb59b2390cff398374f60b333d5ad36d309625c1083341fb7b562c0312c3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-9VE9",
+    "timestamp": "2026-11-28T03:44:49.713Z",
+    "repository": "graphprotocol/graph-node",
+    "learningId": "learn-github-graphprotocol-graph-node",
+    "contentHash": "fde91503c2cc4a45d99a3d4907ab4255f0146fcce5020f5396815f473c0edc1e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-A57G",
+    "timestamp": "2026-11-28T03:45:02.428Z",
+    "repository": "Open-Source-Legal/OpenContracts",
+    "learningId": "learn-github-open-source-legal-opencontracts",
+    "contentHash": "5b42b4b815fa1111aab6f55f3fd4d41ea73f2e688e05a5f43f33995495bb8aa9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

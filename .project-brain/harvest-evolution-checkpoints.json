@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T03:36:12.159Z",
+  "last_updated": "2026-11-28T03:45:08.655Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T03:26:38.658Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-28T03:26:37.716Z",
+      "processed_at": "2026-11-28T03:45:07.781Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1963,7 +1963,7 @@
       "staged_for_review": 1
     },
     "open-source-legal-opencontracts-learnings.md": {
-      "processed_at": "2026-11-21T19:11:48.186Z",
+      "processed_at": "2026-11-28T03:45:06.828Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2313,7 +2313,7 @@
       "staged_for_review": 1
     },
     "graphprotocol-graph-node-learnings.md": {
-      "processed_at": "2026-11-26T03:21:36.385Z",
+      "processed_at": "2026-11-28T03:45:05.975Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5226,
+  "total_dossiers_evaluated": 5229,
   "total_canonical_promoted": 591,
-  "total_staged_for_review": 3959
+  "total_staged_for_review": 3962
 }

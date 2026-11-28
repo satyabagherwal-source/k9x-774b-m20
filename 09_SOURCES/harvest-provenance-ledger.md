@@ -13992,3 +13992,5 @@ Every entry in this ledger must capture:
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `1d83dbb9` | Multi-dimensional audit evidence | 2026-11-28T03:26:33.095Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `0dcd4f40` | Multi-dimensional audit evidence | 2026-11-28T03:35:35.661Z |
 | `learn-dom-d-089d64f0` | `project://tursodatabase-limbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md` | 2026-11-28T03:36:08.575Z |
+| `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `58d6e98a` | Multi-dimensional audit evidence | 2026-11-28T03:44:49.724Z |
+| `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `17261594` | Multi-dimensional audit evidence | 2026-11-28T03:45:02.439Z |

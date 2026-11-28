@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T19:11:50.482Z",
+  "timestamp": "2026-11-28T03:45:07.066Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-open-source-legal-opencontracts-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [open-source-legal-opencontracts-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T19:11:50.482Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T03:45:07.066Z`  
 > **Learning ID**: `LEARN-EVO-open-source-legal-opencontracts-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source**: github ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
-> **Source Version**: `98286cab`  
+> **Source Version**: `17261594`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T19:07:43.959Z  
+> **Timestamp**: 2026-11-28T03:45:01.839Z  
 > **Learning ID**: `learn-github-open-source-legal-opencontracts`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T19:07:43.954Z  
+> **Harvest Timestamp**: 2026-11-28T03:45:01.834Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The open document intelligence platform for builders and hackers - DMS for the agentic world
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1550 stars
+- **Stars / Engagement**: 1558 stars
 
 ---
 
@@ -1555,507 +1555,380 @@ def filterset_factory(model: type, fields: dict) -> type:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `261d624c` (2026-11-20)
-**Commit Message**: Security: PyTorch 2.13 / torchvision 0.28 in the accelerated images (clears 18 torch advisories) (#2562)
+### Incident Patch 1: `17261594` (2026-11-27)
+**Commit Message**: Render PDF and DOCX with @os-legal/react-contract-annotate (#2603)
 
-* Pin embedder transformers to 5.15.1 so the image resolves against optimum-intel
+* Render PDF and DOCX with @os-legal/react-contract-annotate
 
-The pinned optimum-intel development commit declares transformers<5.16.
-Dependabot moved transformers to 5.22.2 (#2495, #2510, #2538), which made
-pip fail with ResolutionImpossible in the embedder Dockerfile; no CI job
-builds that image so it went unnoticed. Return to the newest release under
-the cap (all transformers advisories remain patched) and tell Dependabot to
-skip >=5.16 until the optimum-intel pin is replaced (#2488).
+Replace OpenContracts' own PDF and DOCX renderers with the
+@os-legal/react-contract-annotate viewer/annotator extracted from them.
 
-* Move accelerated images to torch 2.13 / torchvision 0.28 (clears torch advisories)
+- PdfAnnotatorWrapper / DocxAnnotatorWrapper mount the library on the
+  document OpenContracts already loads; annotator/bindings/ maps the
+  existing atoms to its props (annotations, relations, search hits, chat
+  sources and the ?tb= block as data; selection, zoom and the active
+  highlight controlled) and supplies the selection menu, Edit/Delete and
+  dialogs. Plain text stays on TxtAnnotator.
+- The viewer scrolls itself on selection and active-highlight changes;
+  annotatorHandleAtom moves it otherwise (relationship jumps).
+- Delete renderers/pdf, renderers/docx, the PDF overlay components and the
+  helpers, atoms, refs and constants only they used.
+- Retarget component tests to the library's DOM contract, port the DOCX
+  component tests to the production wrapper, and port the selection
+  layer's permission and URL-link tests to the new menu and bindings.
+- Docs: docs/frontend/document_viewer.md; renderer internals in the
 
-**File**: `.github/dependabot.yml` (modified, +2/-2)
+**File**: `.cursor/rules/pdf-viewer-and-annotator-architecture.mdc` (modified, +29/-79)
 ```diff
-@@ -68,9 +68,9 @@ updates:
-     # indexes in both Dockerfiles and validation on the supported accelerators.
-     ignore:
-       - dependency-name: "torch"
--        versions: [">=2.7"]
-+        versions: [">=2.14"]
-       - dependency-name: "torchvision"
--        versions: [">=0.22"]
-+        versions: [">=0.29"]
-       # optimum-intel (pinned commit in embedder/requirements.txt) caps
-       # transformers below 5.16; lift together with that pin (issue #2488).
-       - dependency-name: "transformers"
-```
-
-**File**: `changelog.d/torch-2.13-series.security.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+- **PyTorch 2.6 → 2.13 / torchvision 0.21 → 0.28 in the accelerated images** (`compose/accelerated/{docling,embedder}/requirements-torch.txt` + Dockerfiles, `compose/README.md`, `.github/dependabot.yml`, `compose/accelerated/tests/test_compose_overlays.py`): clears the 18 open `torch` advisories (GHSA-63cw-57p8-fm3p RCE via untrusted checkpoints fixed in 2.10, plus the memory-corruption/DoS series; the three advisories with no 2.6.x fix are all `<= 2.6.0`). Wheel indexes follow the new series: CUDA `cu124` → `cu126`, ROCm `rocm6.2.4` → `rocm7.1`; `xpu` and `cpu` are unchanged. Dependabot's series cap moves to `torch >=2.14` / `torchvision >=0.29`. Validated on CPU only: both images build, `pip check` output matches the 2.6 image, and a 23-page PDF parses identically (254 text items) through docling; CUDA, ROCm and XPU runtimes were not exercised.
-```
-
-**File**: `compose/README.md` (modified, +3/-2)
-```diff
-@@ -28,8 +28,9 @@ update both build and runtime stages.
- Accelerated service Python pins live next to their Dockerfiles in
- `requirements*.txt`. Install PyTorch separately using the index selected by
- `ACCEL`, before the embedder's other requirements. PyTorch updates stay within
--the 2.6 / torchvision 0.21 series; new series require coordinating the CUDA/ROCm
--indexes in both Dockerfiles and validating the supported accelerators.
-+the 2.13 / torchvision 0.28 series (CUDA 12.6, ROCm 7.1 indexes); new series
-+require coordinating the CUDA/ROCm indexes in both Dockerfiles and validating
-+the supported accelerators.
+@@ -73,9 +73,11 @@ UISettingsAtom.tsx
+ └── showLabelsAtom - Label display behavior
  
- Update the frontend `docxodus` package and the Docxodus service image's
- `docxodus...` suffix together: their character offsets must agree. Automatic
-```
-
-**File**: `compose/accelerated/docling/Dockerfile` (modified, +2/-2)
-```diff
-@@ -40,8 +40,8 @@ RUN set -eux; \
- COPY docling/requirements-torch.txt /opt/accel/requirements-torch.txt
- RUN set -eux; \
-     case "${ACCEL}" in \
--      cuda)  IDX="https://download.pytorch.org/whl/cu124" ;; \
--      rocm)  IDX="https://download.pytorch.org/whl/rocm6.2.4" ;; \
-+      cuda)  IDX="https://download.pytorch.org/whl/cu126" ;; \
-+      rocm)  IDX="https://download.pytorch.org/whl/rocm7.1" ;; \
-       xpu)   IDX="https://download.pytorch.org/whl/xpu" ;; \
-       auto|cpu) IDX="https://download.pytorch.org/whl/cpu" ;; \
-       *) echo "Unsupported ACCEL=${ACCEL}; expected auto, cpu, xpu, cuda, or rocm" >&2; exit 2 ;; \
-```
-
-**File**: `compose/accelerated/docling/requirements-torch.txt` (modified, +2/-2)
-```diff
-@@ -1,4 +1,4 @@
- # Installed from the accelerator-specific index selected by the Dockerfile.
- # Update this series together with the CUDA/ROCm indexes in both images.
--torch==2.6.0
--torchvision==0.21.0
-+torch==2.13.0
-+torchvision==0.28.0
-```
-
-**File**: `compose/accelerated/embedder/Dockerfile` (modified, +2/-2)
-```diff
-@@ -26,8 +26,8 @@ ARG ACCEL=auto
- COPY embedder/requirements-torch.txt /opt/accel/requirements-torch.txt
- RUN set -eux; \
-     case "${ACCEL}" in \
--      cuda)  IDX="https://download.pytorch.org/whl/cu124" ;; \
--      rocm)  IDX="https://download.pytorch.org/whl/rocm6.2.4" ;; \
-+      cuda)  IDX="https://download.pytorch.org/whl/cu126" ;; \
-+      rocm)  IDX="https://download.pytorch.org/whl/rocm7.1" ;; \
-       xpu)   IDX="https://download.pytorch.org/whl/xpu" ;; \
-       auto|cpu) IDX="https://download.pytorch.org/whl/cpu" ;; \
-       *) echo "Unsupported ACCEL=${ACCEL}; expected auto, cpu, xpu, cuda, or rocm" >&2; exit 2 ;; \
-```
-
-**File**: `compose/accelerated/embedder/requirements-torch.txt` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- # Installed before service dependencies, from the accelerator-specific index.
- # Update this series together with the CUDA/ROCm indexes in both images.
--torch==2.6.0
-+torch==2.13.0
- # Optimum requires torchvision; install its matching accelerator wheel here so
- # service dependency resolution cannot replace the selected torch variant.
--torchvision==0.21.0
-+torchvision==0.28.0
-```
-
-**File**: `compose/accelerated/tests/test_compose_overlays.py` (modified, +5/-5)
-```diff
-@@ -24,20 +24,20 @@ def _service(document, name="vector-embedder"):
-     return document["services"][name]
- 
- 
--def test_accelerated_dockerfiles_use_published_torch_26_indexes():
-+def test_accelerated_dockerfiles_use_published_torch_213_indexes():
-     embedder_dockerfile = EMBEDDER_DOCKERFILE.read_text(encoding="utf-8")
-     docling_dockerfile = DOCLING_DOCKERFILE.read_text(encoding="utf-8")
- 
-     for service in ("embedder", "docling"):
-         requirements = (ACCEL_DIR / service / "requirements-torch.txt").read_text(
-             encoding="utf-8"
-         )
--        assert "torch==2.6." in requirements
-+        assert "torch==2.13." in requirements
-         if service == "docling":
--            assert "torchvision==0.21." in requirements
-+            assert "torchvision==0.28." in requirements
-     for dockerfile in (embedder_dockerfile, docling_dockerfile):
--        assert "https://download.pytorch.org/whl/cu124" in dockerfile
--        assert "https://download.pytorch.org/whl/rocm6.2.4" in dockerfile
-+        assert "https://download.pytorch.org/whl/cu126" in dockerfile
-+        assert "https://download.pytorch.org/whl/rocm7.1" in dockerfile
-         assert "https://download.pytorch.org/whl/xpu" in dockerfile
-         assert "https://download.pytorch.org/whl/cpu" in dockerfile
-         assert "Unsupported ACCEL=${ACCEL}" in dockerfile
-```
-
----
-
-### Incident Patch 2: `31134519` (2026-11-20)
-**Commit Message**: fix(deps-dev): pin playwright, @playwright/test and @playwright/experimental-ct-react to 1.62.1 (#2555)
-
-* fix(deps-dev): bump playwright from 1.56.1 to 1.65.0 in /frontend
-
-Bumps [playwright](https://github.com/microsoft/playwright) from 1.56.1 to 1.65.0.
-- [Release notes](https://github.com/microsoft/playwright/releases)
-- [Commits](https://github.com/microsoft/playwright/compare/v1.56.1...v1.65.0)
-
----
-updated-dependencies:
-- dependency-name: playwright
-  dependency-version: 1.65.0
-  dependency-type: direct:development
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-* Pin playwright, @playwright/test and @playwright/experimental-ct-react to 1.62.1 in lockstep
-
-The experimental CT packages publish later than playwright itself (latest is
-1.62.1 while playwright is at 1.65.x), so bumping playwright alone skews the
-CT babel bundle and every component spec fails with "Couldn't find a Program".
-Group the three in dependabot.yml so they update together.
-
-* Fix first-click-lost on composer Send and sidebar hover race exposed by Chromium 151
-
----------
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49
-
-**File**: `.github/dependabot.yml` (modified, +9/-0)
-```diff
-@@ -89,3 +89,12 @@ updates:
-           - "version-update:semver-major"
-           - "version-update:semver-minor"
-           - "version-update:semver-patch"
-+    # playwright, @playwright/test and @playwright/experimental-ct-react must
-+    # share one version (the CT babel bundle breaks on skew), and the
-+    # experimental CT packages publish later than playwright itself. Grouping
-+    # keeps them in a single PR instead of bumping playwright alone.
-+    groups:
-+      playwright:
-+        patterns:
-+          - "playwright"
-+          - "@playwright/*"
-```
-
-**File**: `changelog.d/playwright-lockstep.changed.md` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+- **Frontend: Playwright pinned in lockstep at 1.62.1** (`frontend/package.json`, `frontend/yarn.lock`): `playwright`, `@playwright/test` and `@playwright/experimental-ct-react` now share one exact version. Dependabot had bumped `playwright` alone to 1.65.0 while the experimental component-testing packages (latest published: 1.62.1) stayed behind, and the skew broke the component-test babel transform ("Couldn't find a Program" on every spec). `.github/dependabot.yml` now groups the three so they update together.
-+- **Fixes surfaced by the newer bundled Chromium (151)**: `MessageComposer`'s Send button now ignores mouse-press focus (`onMouseDown` `preventDefault`) — taking focus expanded the collapsed composer (`:focus-within`), shifting Send ~17px before `mouseup` so the first click was swallowed when focus was elsewhere (e.g. the thread title input). `tests/CorpusesView.ct.tsx` parks the pointer off the hover-to-expand sidebar before measuring; the newer Chromium treats the default top-left pointer as hovering it at mount.
-```
-
-**File**: `frontend/package.json` (modified, +3/-3)
-```diff
-@@ -155,8 +155,8 @@
-     "uuid": "^11.1.1"
-   },
-   "devDependencies": {
--    "@playwright/experimental-ct-react": "^1.52.0",
--    "@playwright/test": "^1.52.0",
-+    "@playwright/experimental-ct-react": "1.62.1",
-+    "@playwright/test": "1.62.1",
-     "@types/d3": "^7.4.3",
-     "@types/dompurify": "^3.2.0",
-     "@types/json-schema": "^7.0.15",
-@@ -171,7 +171,7 @@
-     "husky": "^8.0.1",
-     "jsdom": "^26.1.0",
-     "nyc": "^18.0.0",
--    "playwright": "^1.52.0",
-+    "playwright": "1.62.1",
-     "prettier": "^2.7.1",
-     "vite-plugin-istanbul": "^9.0.1",
-     "vitest": "^5.0.5"
-```
-
-**File**: `frontend/src/components/threads/MessageComposer.tsx` (modified, +5/-0)
-```diff
-@@ -807,6 +807,11 @@ export function MessageComposer({
-           {isOverLimit && " (too long)"}
-         </CharacterCount>
-         <SendButton
-+          // Keep focus where it is on mouse press. Moving focus onto the
-+          // button expands the collapsed composer (:focus-within), shifting
-+          // the button out from under the pointer before mouseup and
-+          // swallowing the click. Keyboard activation is unaffected.
-+          onMouseDown={(e) => e.preventDefault()}
-           onClick={handleSubmit}
-           disabled={disabled || isEmpty || isOverLimit}
-           title="Send (Cmd+Enter)"
-```
-
-**File**: `frontend/tests/CorpusesView.ct.tsx` (modified, +13/-0)
-```diff
-@@ -228,6 +228,19 @@ test("sidebar expands and tab navigation works", async ({ mount, page }) => {
-   const sidebar = page.locator('[data-testid="navigation-sidebar"]');
-   await expect(sidebar).toBeVisible();
- 
-+  // The sidebar expands on hover, and newer Chromium treats the default
-+  // pointer position (top-left, over the sidebar) as hovering it at mount.
-+  // Park the pointer over the main content and let the sidebar settle
-+  // collapsed before measuring.
-+  await page.mouse.move(800, 400);
-+  await expect
-+    .poll(
-+      async () =>
-+        await sidebar.evaluate((el) => el.getBoundingClientRect().width),
-+      { timeout: 3000 }
-+    )
-+    .toBeLessThan(100);
+ DocumentAtom.tsx
+-├── scrollContainerRefAtom - Scroll container reference
+-├── pendingScrollAnnotationIdAtom - Annotation to scroll to
++├── scrollContainerRefAtom - The viewer's container
+ └── textSearchStateAtom - Search state management
 +
-   // Get initial width
-   let widthNow = await sidebar.evaluate(
-     (el) => el.getBoundingClientRect().width
-```
-
-**File**: `frontend/yarn.lock` (modified, +48/-98)
-```diff
-@@ -102,7 +102,7 @@
-   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.29.7.tgz#6f0237f0f36d2e51c0570a636faed9d2d0efe629"
-   integrity sha512-locTkQyKvwIEgBzVrn8693ebc97F2U8ZHjbXwDXJ5Fn2TCpNwTlKcaKLkdHop5c/icOFE7qt7Q9JC5hnKNa6Gg==
++AnnotatorHandleAtom.ts
++└── annotatorHandleAtom - The mounted PDF/DOCX viewer's handle
+ ```
  
--"@babel/core@^7.21.3", "@babel/core@^7.23.9", "@babel/core@^7.28.0":
-+"@babel/core@^7.21.3", "@babel/core@^7.23.9":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.29.7.tgz#80c10b17248082968b57a857b91640971f2070f7"
-   integrity sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA==
-@@ -180,11 +180,6 @@
-     "@babel/helper-validator-identifier" "^7.29.7"
-     "@babel/traverse" "^7.29.7"
+ This approach provides:
+@@ -92,19 +94,13 @@ This approach provides:
+    - Initializes Jotai atoms with annotation data
+    - Manages layer switching and tab navigation
  
--"@babel/helper-plugin-utils@^7.27.1":
--  version "7.27.1"
--  resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.27.1.tgz#ddb2f876534ff8013e6c2b299bf4d39b3c51d44c"
--  integrity sha512-1gn1Up5YXka3YYAHGKpbideQ5Yjf1tDa9qYcgysz+cNCXukyLl6DjPXhD3VRwSb8c0J9tA4b2+rHEZtc6R0tlw==
+-2. **PDF** component manages the virtualized rendering of pages:
+-   - Calculates page heights at current zoom level (cached per zoom)
+-   - Uses binary search to determine visible page range
+-   - Adds overscan buffer (2 pages above/below) for smooth scrolling
+-   - Ensures selected annotation/search result pages are always rendered
+-   - Absolutely positions all pages based on cumulative heights
 -
- "@babel/helper-string-parser@^7.27.1":
-   version "7.27.1"
-   resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.27.1.tgz#54da796097ab19ce67ed9f88b47bb2ec49367687"
-@@ -218,41 +213,27 @@
-     "@babel/template" "^7.29.7"
-     "@babel/types" "^7.29.7"
+-3. **PDFPage** renders individual pages with their annotations:
+-   - Only mounts when page is in visible range
+-   - Creates and manages its own PDF canvas
+-   - Overlays annotation components on top of the canvas
+-   - Handles user interactions for creating/selecting annotations
+-   - Implements two-phase scroll-to-annotation system
++2. **PdfAnnotatorWrapper / DocxAnnotatorWrapper** mount
++   `@os-legal/react-contract-annotate`'s `PdfAnnotator` / `DocxAnnotator`,
++   which own page rendering, virtualization, annotation and highlight
++   geometry, text selection and scroll-to-annotation. OpenContracts binds its
++   atoms to their props in `annotator/bindings/useViewerBindings.tsx` and
++   supplies the selection menu, Edit/Delete and dialogs. See
++   [document_viewer.md](mdc:docs/frontend/document_viewer.md).
  
--"@babel/parser@^7.1.0", "@babel/parser@^7.20.7", "@babel/parser@^7.27.2", "@babel/parser@^7.28.5":
--  version "7.28.5"
--  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.28.5.tgz#0b0225ee90362f030efd644e8034c99468893b08"
--  integrity sha512-KKBU1VGYR7ORr3At5HAtUQ+TV3SzRCXmA/8OdDZiLDBIZxVyzXuztPjfLd3BV1PRAQGCMWWSHYhL0F8d5uHBDQ==
--  dependencies:
--    "@babel/types" "^7.28.5"
+ ### Advanced Features
+ 
+@@ -138,39 +134,10 @@ Sophisticated chat panel width management:
+ - **FloatingDocumentInput**: Unified chat/search input
+ - **ZoomControls**: Simple zoom interface with keyboard shortcuts
+ 
+-### Virtualization Implementation Details
 -
- "@babel/parser@^7.23.9":
-   version "7.29.2"
-   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.2.tgz#58bd50b9a7951d134988a1ae177a35ef9a703ba1"
-   integrity sha512-4GgRzy/+fsBa72/RZVJmGKPmZu9Byn8o4MoLpmNe1m8ZfYnz5emHLQz3U4gLud6Zwl0RZIcgiLD7Uq7ySFuDLA==
-   dependencies:
-     "@babel/types" "^7.29.0"
- 
-+"@babel/parser@^7.27.2", "@babel/parser@^7.28.5":
-+  version "7.28.5"
-+  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.28.5.tgz#0b0225ee90362f030efd644e8034c99468893b08"
-+  integrity sha512-KKBU1VGYR7ORr3At5HAtUQ+TV3SzRCXmA/8OdDZiLDBIZxVyzXuztPjfLd3BV1PRAQGCMWWSHYhL0F8d5uHBDQ==
-+  dependencies:
-+    "@babel/types" "^7.28.5"
-+
- "@babel/parser@^7.29.7":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.7.tgz#837b87387cbf5ec5530cb634b3c622f68edb9334"
-   integrity sha512-hnORnjP/1P/zFEndoeX+n+t1RwWRJiJpM/jO7FW32Kn9r5+sJB2JWOdYo4L6k78j15eCwY3Gm/7364B1EMwtNg==
-   dependencies:
-     "@babel/types" "^7.29.7"
- 
--"@babel/plugin-transform-react-jsx-self@^7.27.1":
--  version "7.27.1"
--  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.27.1.tgz#af678d8506acf52c577cac73ff7fe6615c85fc92"
--  integrity sha512-6UzkCs+ejGdZ5mFFC/OCUrv028ab2fp1znZmCZjAOBKiBK2jXD1O+BPSfX8X2qjJ75fZBMSnQn3Rq2mrBJK2mw==
--  dependencies:
--    "@babel/helper-plugin-utils" "^7.27.1"
+-The PDF component implements sophisticated virtualization:
 -
--"@babel/plugin-transform-react-jsx-source@^7.27.1":
--  version "7.27.1"
--  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.27.1.tgz#dcfe2c24094bb757bf73960374e7c55e434f19f0"
--  integrity sha512-zbwoTsBruTeKB9hSq73ha66iFeJHuaFkUbwvqElnygoNbj/jHRsSeokowZFN3CZ64IvEqcmmkVe89OPXc7ldAw==
--  dependencies:
--    "@babel/helper-plugin-utils" "^7.27.1"
+-```typescript
+-// Page height calculation (cached per zoom level)
+-useEffect(() => {
+-  const heights = await calculatePageHeights(pdfDoc, zoomLevel);
+-  setPageHeights(heights);
+-}, [pdfDoc, zoomLevel]);
 -
- "@babel/runtime@^7.0.0", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.5", "@babel/runtime@^7.17.8", "@babel/runtime@^7.18.3", "@babel/runtime@^7.20.13", "@babel/runtime@^7.26.7", "@babel/runtime@^7.28.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.7":
-   version "7.28.4"
-   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.28.4.tgz#a70226016fabe25c5783b2f22d3e1c9bc5ca3326"
-@@ -302,7 +283,7 @@
-     "@babel/types" "^7.29.7"
-     debug "^4.3.1"
+-// Visible range calculation using binary search
+-const calcRange = useCallback(() => {
+-  const scroll = getScrollPosition();
+-  const viewHeight = getViewportHeight();
+-
+-  // Binary search for first/last visible pages
+-  const firstVisible = binarySearchFirstVisible(cumulative, scroll);
+-  const lastVisible = binarySearchLastVisible(cumulative, scroll + viewHeight);
+-
+-  // Add overscan and ensure selected items are visible
+-  let start = Math.max(0, firstVisible - OVERSCAN);
+-  let end = Math.min(pageCount - 1, lastVisible + OVERSCAN);
++### Virtualization
  
--"@babel/types@^7.0.0", "@babel/types@^7.20.7", "@babel/types@^7.21.3", "@babel/types@^7.27.1", "@babel/types@^7.28.2", "@babel/types@^7.28.5":
-+"@babel/types@^7.0.0", "@babel/types@^7.21.3", "@babel/types@^7.27.1", "@babel/types@^7.28.5":
-   version "7.28.5"
-   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.28.5.tgz#10fc405f60897c35f07e85493c932c7b5ca0592b"
-   integrity sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==
-@@ -910,29 +891,29 @@
-   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
-   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
+-  // Force selected annotation's page to be visible
+-  if (selectedPageIdx !== undefined) {
+-    start = Math.min(start, selectedPageIdx);
+-    end = Math.max(end, selectedPageIdx);
+-  }
+-
+-  setRange([start, end]);
+-}, [/* dependencies */]);
+-```
++PDF page virtualization is the viewer library's (`src/pdf/PdfViewport.tsx`
++in react-contract-annotate); OpenContracts does not reach into it.
  
--"@playwright/experimental-ct-core@1.56.1":
--  version "1.56.1"
--  resolved "https://registry.yarnpkg.com/@playwright/experimental-ct-core/-/experimental-ct-core-1.56.1.tgz#c85a8ce3eb1c989ea938c2078474ddf04f1edd55
+ ### Unified Annotation and Relationship Visibility System
+ 
+@@ -203,31 +170,18 @@ The system implements a unified, atom-based filtering architecture that ensures
+    - Respects selected-only and structural toggles
+ 
+ 5. **Components consume filtered data consistently**:
+-   - **PDFPage/TxtAnnotator**: Use `useVisibleAnnotations()` for rendering
++   - **PDF/DOCX viewer**: Gets the same display settings; the library applies the `useVisibleAnnotations()` rules
++   - **TxtAnnotator**: Uses `useVisibleAnnotations()` for rendering
+    - **UnifiedContentFeed**: Uses both `useVisibleAnnotations()` and `useVisibleRelationships()`
+    - **RelationshipList**: Uses `useVisibleRelationships()` for display
+    - All components react to the same atom state changes
+ 
+ ### Scroll-to-Annotation System
+ 
+-The system uses a two-phase approach for scrolling to annotations, triggered by:
+-- URL parameters (`?ann=id1,id2`)
+-- Direct props (`initialAnnotationIds`)
+-- Programmatic selection
+-
+-1. **Phase 1 (PDF.tsx)**: Scroll to make the page visible
+-   - Calculate which page contains the annotation
+-   - Expand virtualization range to include the page
+-   - Scroll container so page is in viewport
+-   - Set pendingScrollAnnotationIdAtom
+-
+-2. **Phase 2 (PDFPage.tsx)**: Center the specific annotation
+-   - Check if page owns the pending annotation
+-   - Find the annotation element once rendered
+-   - Scroll it into view with centering
+-   - Retry with requestAnimationFrame if element not yet rendered
+-
+-See [scroll-to-annotation-flow.md](mdc:docs/architecture/components/annotator/current-state/scroll-to-annotation-flow.md) for complete details.
++The viewer scrolls by itself when t
 ```
 
----
-
-### Incident Patch 3: `56ca972a` (2026-11-20)
-**Commit Message**: fix(deps): bump posthog-js from 1.312.0 to 1.450.0 in /frontend (#2588)
-
-Bumps [posthog-js](https://github.com/PostHog/posthog-js) from 1.312.0 to 1.450.0.
-- [Release notes](https://github.com/PostHog/posthog-js/releases)
-- [Changelog](https://github.com/PostHog/posthog-js/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/PostHog/posthog-js/compare/[REDACTED_EMAIL]-js@1.450.0)
-
----
-updated-dependencies:
-- dependency-name: posthog-js
-  dependency-version: 1.450.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `frontend/package.json` (modified, +1/-1)
+**File**: `CLAUDE.md` (modified, +5/-5)
 ```diff
-@@ -62,7 +62,7 @@
-     "lucide-react": "^0.438.0",
-     "pdfjs-dist": "^6.5.438",
-     "polished": "^4.3.1",
--    "posthog-js": "^1.312.0",
-+    "posthog-js": "^1.450.0",
-     "react": "18",
-     "react-cool-inview": "^3.0.1",
-     "react-countup": "^6.5.3",
+@@ -165,11 +165,10 @@ docker compose -f production.yml up
+    - Components consume state via reactive vars, never touch URLs directly
+    - Deep linking and canonical redirects handled automatically
+ 
+-3. **PDF Annotation System** (see `.cursor/rules/pdf-viewer-and-annotator-architecture.mdc`):
+-   - **Virtualized rendering**: Only visible pages (+overscan) rendered for performance
+-   - Binary search to find visible page range (O(log n))
+-   - Height caching per zoom level
+-   - Two-phase scroll-to-annotation system
++3. **PDF/DOCX Viewer** (see `docs/frontend/document_viewer.md`):
++   - Drawn by the `@os-legal/react-contract-annotate` package (page rendering, virtualization, geometry, text selection, scroll-to-annotation). OpenContracts owns the data, controls, menus and persistence; plain text stays on `TxtAnnotator`
++   - Bindings: `frontend/src/components/annotator/bindings/` (`useViewerBindings` maps atoms → props, `convert.ts` maps data). The viewer scrolls itself on selection / active-highlight changes; use `annotatorHandleAtom` to move it otherwise
++   - Library slots (`renderSelectionMenu`, …) render inside the library's private Jotai `Provider`: wrap slot content that reads OpenContracts atoms in a `Provider` with OpenContracts' store
+    - Dual-layer architecture: Document layer (annotations) + Knowledge layer (summaries)
+ 
+ 4. **Unified Filtering Architecture**:
+@@ -485,6 +484,7 @@ Then use the printed session key directly in curl or Playwright route intercepti
+ - **Frontend Routing**: `docs/frontend/routing_system.md`
+ - **Frontend Auth Flow**: `docs/frontend/auth_flow.md`
+ - **PDF Data Layer**: `docs/architecture/PDF-data-layer.md`
++- **PDF/DOCX Viewer (react-contract-annotate bindings)**: `docs/frontend/document_viewer.md`
+ - **PAWLs Format (v1/v2)**: `docs/architecture/pawls-format.md`
+ - **Parser Pipeline**: `docs/pipelines/pipeline_overview.md`
+ - **LLM Framework**: `docs/architecture/llms/README.md`
 ```
 
-**File**: `frontend/yarn.lock` (modified, +52/-27)
+**File**: `changelog.d/react-contract-annotate.changed.md` (added, +28/-0)
 ```diff
-@@ -926,12 +926,27 @@
-   dependencies:
-     playwright "1.62.1"
+@@ -0,0 +1,28 @@
++- **PDF and DOCX documents are drawn by `@os-legal/react-contract-annotate`**
++  (^0.1.4), the viewer/annotator extracted from this codebase, instead of
++  OpenContracts' own renderer. `PdfAnnotatorWrapper` and
++  `DocxAnnotatorWrapper` (`frontend/src/components/annotator/components/wrappers/`)
++  mount the library; `frontend/src/components/annotator/bindings/`
++  (`useViewerBindings.tsx`, `convert.ts`, `AnnotationSelectionMenu.tsx`)
++  binds it to the existing atoms: annotations, relations, search hits, chat
++  sources and the `?tb=` block go in as data, while selection, zoom and the
++  active highlight are controlled. The selection menu keeps its items,
++  test ids and shortcuts. Plain-text documents still use `TxtAnnotator`.
++  See `docs/frontend/document_viewer.md`.
++- The viewer's root is now the scroll container; `#pdf-container` /
++  `#docx-container` only frame it (`PDFContainer`'s `$frame`). Code that
++  must move the viewer without changing the selection goes through
++  `annotatorHandleAtom` (`useJumpToRelationship`); a change of the selection
++  or the active highlight scrolls the viewer by itself, so the PDF-only
++  `scrollIntoView` calls in `HighlightItem`, `FloatingDocumentInput` and
++  `MobileFindSheet` are gone.
++- DOCX gets the PDF's selection menu (Copy Text, Copy Link to a `?tb=` span,
++  Apply Label) and Edit / Delete beside annotation labels; the DOCX viewer
++  now applies "Show selected only" like the other formats, and shows the
++  selected chat message's sources (or the one picked) like the PDF does,
++  instead of every message's sources at once. A drag over a PDF that
++  captures no token no longer opens an (empty) selection menu.
++- The pdf.js worker is configured with the library's `configurePdfWorker`
++  (`DocumentKnowledgeBase.tsx`), on the same `pdfjs-dist/legacy` instance
++  OpenContracts loads documents with. Vitest inlines the library
++  (`vite.config.ts`, `server.deps.inline`).
+```
+
+**File**: `changelog.d/react-contract-annotate.fixed.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++- DOCX defects of the old renderer that the library does not have
++  (documented in its README): structural annotations are drawn when "Show
++  structural" is on (the old toggle projected nothing); documents with line
++  breaks, tables or images get their annotations (the projection failed on
++  their unclosed elements and showed none); annotations that cross a bold /
++  plain run boundary at a space are drawn; selecting repeated text resolves
++  to the occurrence selected; a zoomed page scrolls to its left edge; the
++  projected HTML no longer gains a blank line and an indent.
+```
+
+**File**: `changelog.d/react-contract-annotate.removed.md` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++- OpenContracts' own PDF and DOCX renderers, now in
++  `@os-legal/react-contract-annotate`: `annotator/renderers/pdf/`
++  (`PDF.tsx`, `PDFPage.tsx`, `SelectionLayer.tsx`, `NativeLinkLayer.tsx`),
++  `annotator/renderers/docx/` (`DocxAnnotator.tsx`, `docxOffsetUtils.ts`),
++  the PDF overlay components in `annotator/display/components/`
++  (`Selection`, `SelectionBoundary`, `SelectionTokenGroup`, `SearchResult`,
++  `ChatSourceResult`, `TextBlockHighlight`, `ResultBoundary`, `Tokens`, …)
++  and `display/effects.tsx`, with their unit tests and
++  `frontend/tests/SelectionInfo.ct.tsx` (the library carries the equivalent
++  tests).
++- What only they used: `PDFPageInfo`'s geometry methods (it is now the page
++  plus its tokens), the `pendingScroll*` and `isCreatingAnnotationAtom`
++  atoms, the page/canvas/renderer/search/chat-source refs in
++  `AnnotationRefsAtoms` (only TXT annotation refs remain),
++  `RenderedSpanAnnotation`, `annotationSelectedViaRelationship`,
++  `convertAnnotationTokensToText`, `computeAnnotationBoxShadow`,
++  `textBlockToBounds`, the bounds helpers in `utils/transform.tsx`, the
++  annotation-styling constants, `SELECTION_MENU_COOLDOWN_MS` and the PDF
++  layer z-indexes, `useDocumentLoader`'s `zoomLevel` parameter, and the docs
++  `scroll-to-annotation-flow.md` and `search_rendering.md`.
+```
+
+**File**: `changelog.d/react-contract-annotate.security.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++- **A converted DOCX can no longer style the OpenContracts page.** The old
++  renderer inserted the document's stylesheet page-globally, and docxodus
++  12.4.1 emits font names unescaped, so a crafted DOCX could inject CSS into
++  the app. The library scopes the stylesheet to its viewer, reduces document
++  CSS and HTML to allow-lists (no URLs fetched, no `position: fixed`, no
++  shared names), and contains the viewer's layout and paint. Links inside a
++  DOCX no longer navigate the host tab; they go through the same link policy
++  as PDF links.
+```
+
+**File**: `docs/architecture/components/annotator/current-state/how-annotations-are-created.md` (modified, +17/-16)
+```diff
+@@ -7,20 +7,21 @@ The annotation creation and handling system has evolved to use modern React patt
+ ## Annotation Creation Flow
  
--"@posthog/core@1.9.0":
--  version "1.9.0"
--  resolved "https://registry.yarnpkg.com/@posthog/core/-/core-1.9.0.tgz#b0f3b2018e166dd47e8d5a38fbcf32c93ff384f7"
--  integrity sha512-j7KSWxJTUtNyKynLt/p0hfip/3I46dWU2dk+pt7dKRoz2l5CYueHuHK4EO7Wlgno5yo1HO4sc4s30MXMTICHJw==
-+"@posthog/browser-common@^0.12.0":
-+  version "0.12.1"
-+  resolved "https://registry.yarnpkg.com/@posthog/browser-common/-/browser-common-0.12.1.tgz#33717c5a0e2c519046e6213e1db9d8a6cee08c39"
-+  integrity sha512-MPQPsU89FwxZAtgo58RpIDTbREBVWz0ybWSEJ2gB56PxQUlsXBpBF4QZYbcb8yvEsIJ460NCnBLiFFJyrNB8cg==
-   dependencies:
--    cross-spawn "^7.0.6"
-+    "@posthog/core" "^1.69.1"
-+    "@posthog/types" "^1.425.1"
-+    dompurify "^3.4.13"
-+    preact "^10.29.3"
-+
-+"@posthog/core@^1.68.0", "@posthog/core@^1.69.1":
-+  version "1.69.2"
-+  resolved "https://registry.yarnpkg.com/@posthog/core/-/core-1.69.2.tgz#3f65b803138e483cf472a9d1f236f7e99c330358"
-+  integrity sha512-toMfPKklwLW+a4ZY3/EzM3GNMVXmk2ylGb8NPJXRH4igXMoI8wgNL2jqXOiglWAXqFBLZGYFN1oQx6LVmUTxTg==
-+  dependencies:
-+    "@posthog/types" "^1.427.0"
-+
-+"@posthog/types@^1.425.1", "@posthog/types@^1.427.0":
-+  version "1.427.0"
-+  resolved "https://registry.yarnpkg.com/@posthog/types/-/types-1.427.0.tgz#fd4791204925fc7406b2b016ae8af31cad93fe3d"
-+  integrity sha512-2RPVfuGIx0iys78mTOcfdzN7/w7AM1Ak3yu9++4/FonPf08mwGqDkJjThz2dA/34666ToNw5Q4fZoFdgvfNUHw==
+ ### 1. User Selection
+-- User selects text on the PDF by clicking and dragging
+-- This triggers mouse events in the `SelectionLayer` component within `PDFPage`
+-- The selection layer handles both single-page and multi-page selections
++- The user drags over a PDF page (Shift-drag adds regions, also on other
++  pages) or selects text in a DOCX. `@os-legal/react-contract-annotate`
++  works out the selected tokens (PDF) or character span (DOCX) and reports
++  the selection; a drag that captures no token makes no selection.
  
- "@react-leaflet/core@^2.1.0":
-   version "2.1.0"
-@@ -2900,10 +2915,10 @@ cookie@^1.0.1:
-   resolved "https://registry.yarnpkg.com/cookie/-/cookie-1.1.1.tgz#3bb9bdfc82369db9c2f69c93c9c3ceb310c88b3c"
-   integrity sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==
+ ### 2. Selection Handling
+-The `SelectionLayer` component:
+-- Detects mouse down/move/up events
+-- Calculates the selected tokens based on coordinates
+-- Checks if Shift key is pressed for multi-page selections
+-- Creates a `ServerTokenAnnotation` object with the selection data
++- The library shows OpenContracts' selection menu
++  (`annotator/bindings/AnnotationSelectionMenu.tsx`) at the selection.
++- Apply Label commits it with the active label; `useViewerBindings` turns
++  the draft into a `ServerTokenAnnotation` / `ServerSpanAnnotation`
++  (`bindings/convert.ts::draftToAnnotation`) and calls the create handler.
  
--core-js@^3.38.1:
--  version "3.47.0"
--  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.47.0.tgz#436ef07650e191afeb84c24481b298bd60eb4a17"
--  integrity sha512-c3Q2VVkGAUyupsjRnaNX6u8Dq2vAdzm9iuPj5FW0fRxzlxgq9Q39MDq10IvmQSpLgHQNyQzQmOo6bgGHmH3NNg==
-+core-js@^3.49.0:
-+  version "3.51.0"
-+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.51.0.tgz#9a7b197159ab83173b50efbe0c4846bec94b3abb"
-+  integrity sha512-7bDKx/5jm5MxzsXxc93g6Z2+4ZsuT/MddrfRmTDJNAkWsYWHU8EVNEsBiIEWnMAMCHMmRfUEjkuo3jeNBOIHRw==
+ ### 3. Annotation Creation
+ ```typescript
+-// In PDFPage.tsx
++// In DocumentKnowledgeBase.tsx, passed to the PDF and DOCX viewers
+ const createAnnotationHandler = async (annotation: ServerTokenAnnotation) => {
+   if (!corpusId) {
+     toast.info("Add document to corpus to create annotations");
+@@ -43,15 +44,15 @@ When an annotation is created:
+ 3. `allAnnotationsAtom` automatically recomputes (includes new annotation)
+ 4. `perPageAnnotationsAtom` automatically updates with page indexing
+ 5. `useVisibleAnnotations` includes the new annotation based on filters
+-6. Affected `PDFPage` components re-render with the new annotation
++6. The viewer receives the new annotation and draws it
  
- cosmiconfig@^7.0.0:
-   version "7.1.0"
-@@ -3339,7 +3354,7 @@ dom-helpers@^5.0.1:
-     "@babel/runtime" "^7.8.7"
-     csstype "^3.0.2"
+ ## Annotation Data Flow
  
--dompurify@*, dompurify@^3.4.18:
-+dompurify@*, dompurify@^3.4.13, dompurify@^3.4.18:
-   version "3.4.18"
-   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.4.18.tgz#82161003672c8780ad1db0335787e6aa6587e5d2"
-   integrity sha512-ofe3wI/uNm68HInABYFJYqQxRw1EaKAjNdrFVKqjUY+UZurvNd2L/HuQe097s/4RivWiZyP6tT7aoT8atjfhwg==
-@@ -5305,21 +5320,26 @@ postcss@^8.5.23, postcss@^8.5.30:
-     picocolors "^1.1.1"
-     source-map-js "^1.2.1"
+ ```mermaid
+ graph TD
+-    A[User selects text] -->|Mouse events| B[SelectionLayer]
+-    B --> C[Calculate selected tokens]
+-    C --> D[Create ServerTokenAnnotation]
++    A[User selects text] -->|Mouse events| B[Viewer library]
++    B --> C[Selection menu: Apply Label]
++    C --> D[draftToAnnotation]
+     D --> E[createAnnotationHandler]
+     E --> F{Has corpus?}
+     F -->|No| G[Show info toast]
+@@ -63,7 +64,7 @@ graph TD
+     K --> M[allAnnotationsAtom recomputes]
+     M --> N[perPageAnnotationsAtom updates]
+     N --> O[useVisibleAnnotations filters]
+-    O --> P[PDFPage re-renders]
++    O --> P[Viewer redraws]
+ ```
  
--posthog-js@^1.312.0:
--  version "1.312.0"
--  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.312.0.tgz#7caa60a794b55ee4e5bf677c0b06dbd66c4a092b"
--  integrity sha512-rdXprhuRzhutU8powMJpIfC0uRtI3OyuYktmLhZRMsD4DQaO3fnudKNq4zxtNmqMPFCSTfmlBH8ByLNOppm2tg==
-+posthog-js@^1.450.0:
-+  version "1.450.0"
-+  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.450.0.tgz#57bb688fe95b0f7ed146beabc0fbf7b4c9019159"
-+  integrity sha512-KsjBOy0At8HFm8aYIb3zZ+0oYdOeAMCDkGcvM4po/N08K+nyvFNJgqHL2DzyVXkN0FiB6lvdWzjbZk7QQbxJCQ==
-   dependencies:
--    "@posthog/core" "1.9.0"
--    core-js "^3.38.1"
-+    "@posthog/browser-common" "^0.12.0"
-+    "@posthog/core" "^1.68.0"
-+    "@posthog/types" "^1.425.1"
-+    core-js "^3.49.0"
-+    dompurify "^3.4.13"
-     fflate "^0.4.8"
--    preact "^10.19.3"
--    web-vitals "^4.2.4"
-+    preact "^10.29.3"
-+    query-selector-shadow-dom "^1.0.1"
-+    web-vitals "^6.2.1"
-+    web-vitals-soft-navs "npm:web-vitals@6.2.1"
+ ## Annotation Storage Architecture
+@@ -151,7 +152,7 @@ export function useVisibleAnnotations() {
+ 1. **Forced Visibility**: Selected annotations always shown
+ 2. **Structural Filter**: Hide/show based on `showStructuralAnnotationsAtom`
+ 3. **Label Filter**: Filter by annotation labels
+-4. **Page Filter**: PDFPage components filter by page number
++4. **Page Filter**: The PDF viewer draws a page's annotations while the page is mounted
  
--preact@^10.19.3:
--  version "10.28.2"
--  resolved "https://registry.yarnpkg.com/preact/-/preact-10.28.2.tgz#4b668383afa4b4a2546bbe4bd1747e02e2360138"
--  integrity sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA==
-+preact@^10.29.3:
-+  version "10.29.8"
-+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.29.8.tgz#fc85b82dc2474e245b1430b51781d417361f5fc3"
-+  integrity sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==
+ ## Annotation Controls
  
- prettier@^3.9.10:
-   version "3.9.10"
-@@ -5510,6 +5530,11 @@ pure-color@^1.2.0:
-   resolved "https://registry.yarnpkg.com/pure-color/-/pure-color-1.3.0.tgz#1fe064fb0ac851f0de61320a8bf796836422f33e"
-   integrity sha512-QFADYnsVoBMw1srW7OVKEYjG+MbIa49s54w1MA1EDY6r2r/sTcKKYqRX1f4GYvnXP7eN/Pe9HFcX+hwzmrXRHA==
+@@ -197,7 +198,7 @@ This prevents UI overload from showing all structural annotations at once.
  
-+query-selector-shadow-dom@^1.0.1:
-+  version "1.0.1"
-+  resolved "https://registry.yarnpkg.com/query-selector-shadow-dom/-/query-selector-shadow-dom-1.0.1.tgz#1c7b0058eff4881ac44f45d8f84ede32e9a2f349"
-+  integrity sha512-lT5yCqEBgfoMYpf3F2xQRK7zEr1rhIIZuceDK6+xRkJQ4NMbHTwXqk4NkwDwQMNqXgG9r9fyHnzwNVs6zV5KRw==
-+
- raf-schd@^4.0.3:
-   ve
+ 1. **Atom-based Updates**: Only components that use affected atoms re-render
+ 2. **Computed Atoms**: Automatic memoization of derived state
+-3. **Page-level Filtering**: Each PDFPage only processes its own annotations
++3. **Page-level Filtering**: The PDF viewer draws each page's annotations only while it is mounted
+ 4. **Virtualized Rendering**: Only visible pages render annotations
+ 5. **Deduplication**: `allAnnotationsAtom` prevents duplicate processing
+ 
+```
+
+**File**: `docs/architecture/components/annotator/current-state/how-search-works.md` (modified, +8/-9)
+```diff
+@@ -28,17 +28,16 @@ The search functionality in the document knowledge base allows users to search t
+ - The `useTextSearch()` hook must be called in `DocumentKnowledgeBase` for search processing to work
+ 
+ ### 4. Result Rendering
+-Results are rendered through a chain of components:
+-
+-1. [`SearchResult`](../../../../../frontend/src/components/annotator/display/components/SearchResult.tsx) - Renders both the highlight boundary and tokens
+-
+-2. [`ResultBoundary`](../../../../../frontend/src/components/annotator/display/components/ResultBoundary.tsx) - Creates the yellow highlight box around matched text
+-
+-3. [`SearchSelectionTokens`](../../../../../frontend/src/components/annotator/display/components/SelectionTokens.tsx) - Renders individual token highlights
++Each match becomes a highlight of the PDF/DOCX viewer
++(`annotator/bindings/convert.ts::searchHighlight`): its tokens on PDF, its
++span on DOCX. The PDF paints the current match only; DOCX paints them all.
++The current match is the viewer's active highlight, so stepping through the
++matches scrolls to each one (`useViewerBindings`).
+ 
+ ### 5. Visual Styling
+-- Matched text is highlighted using styled components
+-- See [`TokenSpan`](../../../../../frontend/src/components/annotator/display/components/Tokens.tsx) for the styling implementation
++- Search hits use `SEARCH_RESULT_HIGHLIGHT_COLOR` (`constants.ts`); the
++  library draws the box, the token highlights and the "Search Result n of
++  m" chip.
+ 
+ ### 6. Integration with Unified Feed
+ - Search results can also be displayed in the [`UnifiedContentFeed`](../../../../../frontend/src/components/knowledge_base/document/unified_feed/UnifiedContentFeed.tsx) when in feed mode
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2603** (2026-11-27): Render PDF and DOCX with @os-legal/react-contract-annotate (@JSv4)
 - **PR #2589** (2026-11-20): fix(deps): bump web-vitals from 2.1.4 to 6.2.3 in /frontend (@dependabot[bot])
 - **PR #2588** (2026-11-20): fix(deps): bump posthog-js from 1.312.0 to 1.450.0 in /frontend (@dependabot[bot])
 - **PR #2587** (2026-11-20): fix(deps): bump preshed from 3.0.13 to 3.0.15 (@dependabot[bot])
 - **PR #2586** (2026-11-20): fix(deps): bump django-cte from 4.0.0 to 5.0.1 (@dependabot[bot])
 - **PR #2585** (2026-11-20): fix(deps): bump react-router-dom from 7.18.2 to 7.18.5 in /frontend (@dependabot[bot])
-- **PR #2584** (2026-11-20): Dependabot: hold celery below 5.7 while kombu is pinned (@JSv4)
 
 ---
 
@@ -2075,33 +1948,74 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Security: PyTorch 2.13 / torchvision 0.28 in the accelerated images (clears 18 t
+## X. Render PDF and DOCX with @os-legal/react-contract-annotate
 
 **RULE**:
-When implementing operations in `.github/dependabot.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cursor/rules/pdf-viewer-and-annotator-architecture.mdc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `261d624c`: Security: PyTorch 2.13 / torchvision 0.28 in the accelerated images (clears 18 torch advisories). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17261594`: Render PDF and DOCX with @os-legal/react-contract-annotate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cursor/rules/pdf-viewer-and-annotator-architecture.mdc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        versions: [">=2.14"]
-        versions: [">=0.29"]
+├── scrollContainerRefAtom - The viewer's container
+
+AnnotatorHandleAtom.ts
+└── annotatorHandleAtom - The mounted PDF/DOCX viewer's handle
+2. **PdfAnnotatorWrapper / DocxAnnotatorWrapper** mount
+   `@os-legal/react-contract-annotate`'s `PdfAnnotator` / `DocxAnnotator`,
+   which own page rendering, virtualization, annotation and highlight
+   geometry, text selection and scroll-to-annotation. OpenContracts binds its
+   atoms to their props in `annotator/bindings/useViewerBindings.tsx` and
+   supplies the selection menu, Edit/Delete and dialogs. See
+   [document_viewer.md](mdc:docs/frontend/document_viewer.md).
+### Virtualization
+PDF page virtualization is the viewer library's (`src/pdf/PdfViewport.tsx`
+in react-contract-annotate); OpenContracts does not reach into it.
+   - **PDF/DOCX viewer**: Gets the same display settings; the library applies the `useVisibleAnnotations()` rules
+   - **TxtAnnotator**: Uses `useVisibleAnnotations()` for rendering
+The viewer scrolls by itself when t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-        versions: [">=2.7"]
-        versions: [">=0.22"]
+├── scrollContainerRefAtom - Scroll container reference
+├── pendingScrollAnnotationIdAtom - Annotation to scroll to
+2. **PDF** component manages the virtualized rendering of pages:
+   - Calculates page heights at current zoom level (cached per zoom)
+   - Uses binary search to determine visible page range
+   - Adds overscan buffer (2 pages above/below) for smooth scrolling
+   - Ensures selected annotation/search result pages are always rendered
+   - Absolutely positions all pages based on cumulative heights
+
+3. **PDFPage** renders individual pages with their annotations:
+   - Only mounts when page is in visible range
+   - Creates and manages its own PDF canvas
+   - Overlays annotation components on top of the canvas
+   - Handles user interactions for creating/selecting annotations
+   - Implements two-phase scroll-to-annotation system
+### Virtualization Implementation Details
+
+The PDF component implements sophisticated virtualization:
+
+```typescript
+// Page height calculation (cached per zoom level)
+useEffect(() => {
+  const heights = await calculatePageHeights(pdfDoc, zoomLevel);
+  setPageHeights(heights);
+}, [pdfDoc, zoomLevel]);
+
+// Visible range calculation using binary search
+co
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `261d624c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17261594` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
