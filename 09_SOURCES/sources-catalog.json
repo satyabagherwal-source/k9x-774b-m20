@@ -13353,10 +13353,10 @@
     "repository": "indexable-inc/blaze",
     "platform": "github",
     "sourceUrl": "https://github.com/indexable-inc/blaze",
-    "sourceVersion": "d358ce89",
+    "sourceVersion": "aa3ad7aa",
     "license": "Apache-2.0",
-    "contentHash": "ef4d89904c508f44918b1843068b2fa106066bfdeefdbce6797d92a4d12d4e43",
-    "lastHarvestedAt": "2026-11-27T00:50:10.789Z",
+    "contentHash": "6fa6ec8086da6607c427c4365869c8c456eef72fa4283f9c91482d49a4e63cf7",
+    "lastHarvestedAt": "2026-11-28T01:00:31.100Z",
     "learningId": "learn-github-indexable-inc-blaze"
   },
   "hf-aleph-alpha-kolibri-1.1": {

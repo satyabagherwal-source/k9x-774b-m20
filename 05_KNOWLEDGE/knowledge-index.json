@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T00:50:59.044Z",
+  "last_updated": "2026-11-28T01:00:43.925Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26861,
+  "total_items": 26864,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1cfad1f238ca600ad99fd018de533d5854dfbbae7cda9eecdcaccc124d7ee6d",
+      "content_hash": "a7c2b3a818c309fb69842d738841875c28aea6e9c5ed8a86f636881397b64e66",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T23:49:01.481Z"
+      "persisted_at": "2026-11-28T01:00:43.615Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "70f6bf13932529db7637f2be0ad6585fe68cccba8e2ef6d0f7b82ce45677abe8",
+      "content_hash": "862bfc62124374c0b87bc664b350013b5652cb534d75cc812ee8923911507612",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T23:49:01.762Z"
+      "persisted_at": "2026-11-28T01:00:43.925Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219797,9 +219797,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "807eb981583283bd52a68a5d76784d4334fae51f5788574672fc4ff9f749d1d4",
+      "content_hash": "8f52278eb4853c5f5969f98257a0eafe1cedc4c22c34fe93ab231fa7eea01ae0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T23:49:00.203Z"
+      "persisted_at": "2026-11-28T01:00:42.285Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219809,9 +219809,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "065d40b1944db50d7dcde49bac45101395bb1e3e78d7d69d1a828b93cddbb140",
+      "content_hash": "7b2f1f86d7baed4dc4fc353326393859877efffb29c83b22f02420121aa0f2ea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T23:49:00.471Z"
+      "persisted_at": "2026-11-28T01:00:42.575Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -341408,8 +341408,8 @@
       "slug": "indexable-inc-blaze",
       "platform": "github",
       "source_url": "https://github.com/indexable-inc/blaze",
-      "source_version": "d358ce89",
-      "content_hash": "ef4d89904c508f44918b1843068b2fa106066bfdeefdbce6797d92a4d12d4e43",
+      "source_version": "aa3ad7aa",
+      "content_hash": "6fa6ec8086da6607c427c4365869c8c456eef72fa4283f9c91482d49a4e63cf7",
       "dossier_path": "07_PROJECT_LEARNING/indexable-inc-blaze-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/indexable-inc-blaze-learnings.md",
       "promoted_rules": [
@@ -341427,6 +341427,11 @@
           "number": 10802,
           "title": "hermetic pinned clang-23 compiler probes with per-probe CAS cache",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11003,
+          "title": "thread c_probes and facts-only spawn_setting into wasm64 dep build scripts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -341434,7 +341439,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T00:50:10.528Z",
+      "verified_at": "2026-11-28T01:00:30.673Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -341476,10 +341481,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-indexable-inc-blaze-quality-verification-intelligence-indexable-inc-blaze-core-i.md",
       "title": "Quality & Verification Intelligence: indexable-inc/blaze Core Invariants",
       "repository": "indexable-inc/blaze",
-      "source_version": "d358ce89",
-      "content_hash": "235296edf63bd2d6ddd947c7a71df2329be93eb2e61ccc98e856de6162a8d2a6",
+      "source_version": "aa3ad7aa",
+      "content_hash": "5abb9d49329ec5cc7f8acb8be3bfd9ba5fd7ccf8a59eb6a079a3d6bfb8947dac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T00:50:11.272Z"
+      "persisted_at": "2026-11-28T01:00:31.790Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze",
@@ -341488,10 +341493,10 @@
       "relative_path": "12_DECISIONS/ADR-indexable-inc-blaze-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-b.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in indexable-inc/blaze",
       "repository": "indexable-inc/blaze",
-      "source_version": "d358ce89",
-      "content_hash": "7b2ea6e9b584b567138c759c1e882ea5ad21c6a3de534d0561d890ef1e50894f",
+      "source_version": "aa3ad7aa",
+      "content_hash": "4640a08ee27067d462d4c4c58a861954180a3d0acea3987b6798f94c8a1241a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T00:50:11.481Z"
+      "persisted_at": "2026-11-28T01:00:32.105Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze",
@@ -341500,10 +341505,10 @@
       "relative_path": "08_VERIFICATION/indexable-inc-blaze-verification-protocol-empirical-defect-shield-for-indexable-.md",
       "title": "Verification Protocol: Empirical Defect Shield for indexable-inc/blaze",
       "repository": "indexable-inc/blaze",
-      "source_version": "d358ce89",
-      "content_hash": "8dbdad0a4d282a37be0e8d3641bf617feacde64c570c960c15e86bacee9f6631",
+      "source_version": "aa3ad7aa",
+      "content_hash": "e8a2d3e7da2f2547f09e3158267d39de1c1c4d04a0ec5a6a66062483524a5d50",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T00:50:11.668Z"
+      "persisted_at": "2026-11-28T01:00:32.378Z"
     },
     "rule-10309": {
       "learning_id": "rule-10309",
@@ -341539,9 +341544,9 @@
       "title": "Quality & Verification Intelligence: indexable-inc-blaze-learnings Core Invariants",
       "repository": "indexable-inc-blaze-learnings",
       "source_version": "HEAD",
-      "content_hash": "cbc22cda5cb22d8f75e40dad622e79ab4296b895e3c895a2e10e8788cdd0f440",
+      "content_hash": "8940c058bf298822f6a3d2aa26c2d5371ed42bf4044a598460d0289eab4f5e87",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T00:50:26.428Z"
+      "persisted_at": "2026-11-28T01:00:40.662Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze-learnings",
@@ -341551,9 +341556,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in indexable-inc-blaze-learnings",
       "repository": "indexable-inc-blaze-learnings",
       "source_version": "HEAD",
-      "content_hash": "57911abe7ec0d622efa74f110cfad77827e28e8a5ed76b0706d37bc6bd50096a",
+      "content_hash": "158238327c5b8340f7a830fe368b54e96f52f6efc0d60c1f926e28d206a6024c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T00:50:26.639Z"
+      "persisted_at": "2026-11-28T01:00:40.962Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze-learnings",
@@ -341563,9 +341568,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for indexable-inc-blaze-learnings",
       "repository": "indexable-inc-blaze-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b88cec7e654744a1b080d68be02e9ab62f1b1369cbaac0f28d23288b6496d73",
+      "content_hash": "e6a32ee9656be307ca8d4522ba43cad7f582f3837284a30ef019452f8c5b45e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T00:50:26.820Z"
+      "persisted_at": "2026-11-28T01:00:41.212Z"
     },
     "candidate_directive-media-default-openai-transcription-to-gpt-transcribe-ahead-of-the-model-shutdo": {
       "item_id": "candidate_directive-media-default-openai-transcription-to-gpt-transcribe-ahead-of-the-model-shutdo",
@@ -350745,13 +350750,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-LEZO-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ESU7-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-bootsplash-learnings",
+      "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f054688f2afb9149ec49a39b018517ece99af3c4c4a7fab931c90fa3075395ea",
+      "content_hash": "2a7ee0b928db735e620f5b2fa71c31f136707cc6108c203bd7e5f8c825fd5607",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T00:09:51.397Z"
+      "persisted_at": "2026-11-28T01:00:41.984Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -361663,13 +361668,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UMC0-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ETVB-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f2fdab30603daa84e1b6c6eba2d65cf91dfbab629dbb41346c68098d1197cd9c",
+      "content_hash": "1bfbc46fda944627d8ef884010c3a3ac9ba6af01581572b2c9869dc21d5ef6a6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T23:49:01.206Z"
+      "persisted_at": "2026-11-28T01:00:43.323Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -369010,6 +369015,44 @@
       "content_hash": "f6a7b9e5a3b4d793240d9c60ab25d960d99056c8e9d908ab86e1a49f89d11b9c",
       "domain_letter": "K",
       "persisted_at": "2026-11-28T00:50:56.919Z"
+    },
+    "rule-11003": {
+      "learning_id": "rule-11003",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11003,
+      "title": "thread c_probes and facts-only spawn_setting into wasm64 dep build scripts",
+      "source_url": "https://github.com/indexable-inc/blaze",
+      "source_version": "aa3ad7aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T01:00:30.673Z"
+    },
+    "candidate_directive-thread-c_probes-and-facts-only-spawn_setting-into-wasm64-dep-build-scripts": {
+      "item_id": "candidate_directive-thread-c_probes-and-facts-only-spawn_setting-into-wasm64-dep-build-scripts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EKOX-thread-c_probes-and-facts-only-spawn_setting-into-wasm64-dep-build-scripts.md",
+      "title": "thread c_probes and facts-only spawn_setting into wasm64 dep build scripts",
+      "repository": "indexable-inc/blaze",
+      "source_version": "aa3ad7aa",
+      "content_hash": "2aac59a3928c902c375dd26f4e2e11062fc3186d273d3394d7e5dd967571cec6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T01:00:31.432Z"
+    },
+    "candidate_directive-cli-thread-c_probes-and-facts-only-spawn_setting-into-wasm64-dep-build-scripts": {
+      "item_id": "candidate_directive-cli-thread-c_probes-and-facts-only-spawn_setting-into-wasm64-dep-build-scripts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ERKN-cli-thread-c_probes-and-facts-only-spawn_setting-into-wasm64-dep-build-scripts.md",
+      "title": "cli): thread c_probes and facts-only spawn_setting into wasm64 dep build scripts",
+      "repository": "indexable-inc-blaze-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ed82ced869535d9a4d6197ac1e92ab3cbf50ca8af004f6f47c4ad7751365454",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T01:00:40.349Z"
     }
   },
   "ai-builder-brain": {

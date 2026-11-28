@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T00:50:51.976Z",
-  "total_cycles_completed": 13210,
-  "total_learnings_persisted": 13210,
-  "total_rules_promoted": 11917,
+  "last_updated": "2026-11-28T01:00:31.107Z",
+  "total_cycles_completed": 13211,
+  "total_learnings_persisted": 13211,
+  "total_rules_promoted": 11918,
   "history": [
-    {
-      "timestamp": "2026-11-27T07:03:36.622Z",
-      "repository": "inclusionAI/Ling-3.2-air",
-      "learningId": "learn-huggingface-inclusionai-ling-3-2-air",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T07:03:49.844Z",
       "repository": "cilium/cilium",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T00:50:51.976Z",
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T01:00:31.107Z",
+      "repository": "indexable-inc/blaze",
+      "learningId": "learn-github-indexable-inc-blaze",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

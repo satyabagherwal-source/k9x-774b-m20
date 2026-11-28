@@ -13953,3 +13953,4 @@ Every entry in this ledger must capture:
 | `learn-dom-h-797e7dcd` | `project://greptimeteam-greptimedb` | `9aebf3a8` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md` | 2026-11-28T00:39:03.634Z |
 | `learn-huggingface-angelslim-hy4-flash-gguf` | `https://huggingface.co/AngelSlim/Hy4-flash-GGUF` | `hf-angelsl` | Multi-dimensional audit evidence | 2026-11-28T00:50:34.974Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `a7dd32bc` | Multi-dimensional audit evidence | 2026-11-28T00:50:51.969Z |
+| `learn-github-indexable-inc-blaze` | `https://github.com/indexable-inc/blaze` | `aa3ad7aa` | Multi-dimensional audit evidence | 2026-11-28T01:00:31.100Z |

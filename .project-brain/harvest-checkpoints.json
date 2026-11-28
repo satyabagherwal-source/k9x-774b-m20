@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T00:50:51.980Z",
+  "last_updated": "2026-11-28T01:00:31.112Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -20151,14 +20151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-indexable-inc-blaze",
-      "content_hash": "ef4d89904c508f44918b1843068b2fa106066bfdeefdbce6797d92a4d12d4e43",
-      "verified_at": "2026-11-27T00:50:10.810Z",
+      "content_hash": "6fa6ec8086da6607c427c4365869c8c456eef72fa4283f9c91482d49a4e63cf7",
+      "verified_at": "2026-11-28T01:00:31.111Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T00:50:10.810Z"
+      "last_updated": "2026-11-28T01:00:31.111Z"
     },
     "Aleph-Alpha/Kolibri-1.1": {
       "repository": "Aleph-Alpha/Kolibri-1.1",

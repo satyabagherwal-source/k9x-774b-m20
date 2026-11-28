@@ -4,22 +4,22 @@
 {
   "source_repository": "indexable-inc/blaze",
   "source_url": "https://github.com/indexable-inc/blaze",
-  "source_version": "d358ce89",
+  "source_version": "aa3ad7aa",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T00:50:11.060Z",
+  "timestamp": "2026-11-28T01:00:31.431Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-indexable-inc-blaze",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [indexable-inc/blaze](https://github.com/indexable-inc/blaze) (Revision: `d358ce89`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T00:50:11.060Z`  
+> **Provenance**: Harvested from [indexable-inc/blaze](https://github.com/indexable-inc/blaze) (Revision: `aa3ad7aa`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T01:00:31.431Z`  
 > **Learning ID**: `learn-github-indexable-inc-blaze`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `indexable-inc/blaze` (Commit: `d358ce89`)
+- **Target Repository**: `indexable-inc/blaze` (Commit: `aa3ad7aa`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/indexable-inc-blaze-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/indexable-inc/blaze](https://github.com/indexable-inc/blaze))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T00:50:09.547Z  
+> **Harvest Timestamp**: 2026-11-28T01:00:29.219Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Incremental rust builds up to 92x faster than cargo/rustc. Backed by Y Combinator (F26).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 2951 stars
+- **Stars / Engagement**: 2997 stars
 
 ---
 
@@ -912,7 +912,7 @@ impl<A: Allocator + Clone> Plain<A> {
 
 ### Core Architecture Module: `crates/blaze-cli/src/engine_answer.rs`
 ```
-//! `engine-check`'s stored answer (engine.md E6, the incremental half): the engine's answer and
+//! `engine-check`'s stored answer (end-state.md D157, the incremental half): the engine's answer and
 //! causes as pages (blaze-engine pages.rs), the leaf table of what the request read (sweep.rs
 //! `Leaves`), and a sealed pointer naming both (seal.rs), under one root of the store per
 //! checkout ([`root_name`]).
@@ -1086,7 +1086,7 @@ pub(crate) fn scoped_root_name<'f>(checkout: &str, scope: crate::engine_check::C
 
 /// Unroots every stored answer root (whole-workspace, scoped, reach, journal, grains, members,
 /// scripts, view) belonging to `checkout` from `lent`, and removes any pointer owned by this
-/// checkout from [`BASES_ROOT`] / [`BASES
+/// checkout from [`BASES_ROOT`] / [`
 ```
 
 ### Core Architecture Module: `crates/blaze-cli/src/engine_answer_rows.rs`
@@ -1281,7 +1281,7 @@ impl<'m> RowsRoot<'m> {
 
 ### Core Architecture Module: `crates/blaze-cli/src/engine_bodies.rs`
 ```
-//! The `Bodies` stage of `blaze engine-check` (engine.md E5/E6, "The design" 4): every body of
+//! The `Bodies` stage of `blaze engine-check` (end-state.md D157): every body of
 //! the workspace's files type-checked and borrow-checked as ITS OWN engine task, entered once, on
 //! the pool, by `check_body_reads` (front2 tables/task.rs) over the read-only view.
 //!
@@ -1453,7 +1453,8 @@ fn member_lens(items: &ItemsRecord<'_>, g: blaze_own::Alloc<'static>) -> Vec<(It
         for member in members.iter().flatten() {
             lens.push((member.key, member.text.map_or(0, |span| span.len)));
         }
-
+    }
+    lens
 ```
 
 ### Core Architecture Module: `crates/blaze-cli/src/engine_body_facts.rs`
@@ -1702,7 +1703,7 @@ use core::fmt;
 
 use blaze_drive::cells::Cell;
 use blaze_drive::key::ABSENT;
-use blaze_drive::view::{UnitView, ViewKey, ViewPlan, at_view};
+use blaze_drive::view::{MemberView, UnitView, ViewKey, ViewPlan, at_view};
 use blaze_drive::{Kind, Locate, Name};
 use blaze_engine::{CellId, Task, View};
 use blaze_ids::ContentId;
@@ -1842,7 +1843,7 @@ pub(crate) enum Decision {
     /// The unit's records hold it: the unit checks it (`took`: its claim's index).
     Taken { took: u32, unit: u32 },
     /// The unit's records refused it, or refused its file.
-    Refused { why: &'stati
+    Refused { 
 ```
 
 ### Core Architecture Module: `crates/blaze-cli/src/engine_body_record.rs`
@@ -2042,1383 +2043,1389 @@ pub(crate) enum TypedReadError {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `314c5390` (2026-11-26)
-**Commit Message**: feat(build-script): hermetic pinned clang-23 compiler probes with per-probe CAS cache (#2574)
+### Incident Patch 1: `4b2cbc1f` (2026-11-28)
+**Commit Message**: fix(cli): thread c_probes and facts-only spawn_setting into wasm64 dep build scripts (#2793)
 
-* feat(build-script): hermetic pinned clang-23 compiler probes with per-probe CAS cache
+* fix(blaze-cli): thread c_probes and derived-fact spawn pins into wasm64 dep build scripts
 
-* fix(build-script): address Codex review on hermetic clang probes and NixOS Landlock closure
+Dependency build scripts executed during wasm64 proc-macro / build-script
+self-compilation (`wasm64_compile::run_dep_build_script`, e.g. `ring 0.17.14`
+under `sqlx-macros 0.9.0`) previously received `c_probes: None` and
+`SpawnSetting::off()`, causing C compiler probes (`clang -E ...`) and
+derived-fact version probes (`clang --version`) to be refused.
 
-* Address Round 2 Codex review findings on hermetic C probes
+- Extract `scripts::open_c_probes` so normal `Script` tasks and wasm64
+  dependency build scripts share the single `open_command_c_probes` / SDK
+  identity helper (Rule 30).
+- Add `c_probes` and `spawn_setting` fields to `CompileInputs` and lazily
+  open them in `ScriptQueue::ensure_compile_inputs` via
+  `DepScriptProbes::open` (zero overhead on warm `MacroModule` hits).
+- Thread `DepScriptProbes` through all wasm64 self-compilation entry points
+  into `run_dep_build_script`, enforcing strictly hermetic derived-fact pins
+  (`hvbox_allowed = false`, empty `tools`, `userland = None`) via
+  `dep_script_spawn_setting` and sharing `c_probes` via `dep_scrip
 
-1. Reject package/path-steering inputs in c_tasks_probe: non-empty CPATH /
-   C_INCLUDE_PATH / CPLUS_INCLUDE_PATH / OBJC_INCLUDE_PATH /
-   OBJCPLUS_INCLUDE_PATH / COMPILER_PATH / CCC_OVERRIDE_OPTIONS, relative or
-   non-OUT_DIR positional args, and #include/#include_next/#import directives
-   inside materialized OUT_DIR probe sources.
-2. Enforce MAX_RECORD_BYTES before allocating in DirStore::get_c_probe via
-   OnDir::read_sealed_bounded (matching sweep.rs).
-3. Include sdk_id_digest(sdk_id) as the 4th field of cc-probe read subjects
-   and validate it during both script read replay (fact_pins) and certificate
-   sweeps (sweep.rs + engine_check.rs via LazySdk::sdk_digest, 0 ms when no
-   cc-probe leaf is present).
-4. Expand NixOS minimal ELF64 Landlock closure to a bounded transitive BFS
-   over DT_NEEDED + DT_RUNPATH/DT_RPATH ( expansion) with zer
-
-**File**: `crates/blaze-build-script/src/c_tasks_probe.rs` (modified, +1382/-22)
+**File**: `crates/blaze-cli/src/engine_check.rs` (modified, +293/-18)
 ```diff
-@@ -40,19 +40,33 @@ pub const PATH: &str = "pins/answers/clang.json";
- /// The one form of the table read here (its `form`).
- pub const FORM: u64 = 1;
- const ID_DOMAIN: &str = "blaze-build-script clang answers table 1";
-+/// Domain for canonical [`ProbeKey`] hashing (answerer id, clang sha256, sdk/sysroot id, program,
-+/// canonical args, canonical `CLANG_ENV`, sorted input file sha256s).
-+pub const PROBE_KEY_DOMAIN: &str = "blaze-build-script c probe 1";
-+/// Domain for [`canonical_reply_digest`] (matches `spawn_route::reply_digest` so `fact_now` and
-+/// `spawn_probe` agree).
-+const REPLY_DOMAIN: &str = "blaze build-script spawn reply 1";
-+/// Magic bytes of an encoded binary probe cache record (`bzcp` v1).
-+const ANSWER_MAGIC: [u8; 4] = *b"bzcp";
-+const ANSWER_VERSION: u32 = 1;
- 
- /// The guest `OUT_DIR`'s spelling in a row.
- pub const OUT_DIR: &str = "$OUT_DIR";
- /// The guest SDK folder's spelling in a row.
- pub const SDKROOT: &str = "$SDKROOT";
-+/// The script's root mount / package directory spelling in a row (`/package`, `/workspace/...`).
-+pub const MOUNT: &str = "$MOUNT";
- /// The head of a file a probe reads under `OUT_DIR`, as a row spells it (`$IN0.c`).
- pub const INPUT: &str = "$IN";
- /// The head of a path under `OUT_DIR` a probe names where no file is (`-o $OUT0`).
- pub const OUTPUT: &str = "$OUT";
- 
- /// The environment variables clang's driver reads that can change a probe's answer, sorted. A
- /// spawn's value of each is part of its row; every other variable is not read by clang.
--pub const CLANG_ENV: [&str; 11] = [
-+/// `TMPDIR` is intentionally excluded: host ambient temp dirs (e.g. `/private/var/folders/...`)
-+/// must never pollute content-addressed probe keys; hermetic execution supplies the probe's own
-+/// private confined output directory as `TMPDIR`.
-+pub const CLANG_ENV: [&str; 10] = [
-     "CCC_OVERRIDE_OPTIONS",
-     "COMPILER_PATH",
-     "CPATH",
-@@ -63,7 +77,6 @@ pub const CLANG_ENV: [&str; 11] = [
-     "OBJC_INCLUDE_PATH",
-     "SDKROOT",
-     "SOURCE_DATE_EPOCH",
--    "TMPDIR",
- ];
- 
- /// The C and C++ compiler names a probe is spawned as.
-@@ -73,12 +86,393 @@ fn name_of(program: &str) -> &str {
-     program.rsplit('/').next().unwrap_or(program)
+@@ -452,7 +452,7 @@ pub(crate) fn warm_toolchain(
+         shown.quiet = true;
+         let mut check_opts = opts();
+         check_opts.fresh = fresh;
+-        let checked = check_live(cx, fs, host, rng, Some(args), net, root, check_opts, &mut shown, phases, out, err, None, Some(&lazy_sdk), None, crate::store::StoreTeardown::Drop)?;
++        let checked = check_live(cx, fs, host, rng, Some(args), net, root, check_opts, &mut shown, phases, out, err, None, Some(&lazy_sdk), None, None, crate::store::StoreTeardown::Drop)?;
+         let tc_hex = blaze_toolchain::PINNED.hex();
+         out.line(
+             cx,
+@@ -508,7 +508,7 @@ fn serve(
+                     let ran = crate::run_line::watched(cx, err, clock, line, |watch, bg| {
+                         watch.see(blaze_screen::Step::Began(blaze_screen::Stage::Checking));
+                         let live = line.live.then_some(bg);
+-                        let res = check_live(cx, fs, host, rng, Some(args), net, root, opts(), &mut shown, phases, out, err, live, Some(&lazy_sdk), None, crate::store::StoreTeardown::ForgetForExit);
++                        let res = check_live(cx, fs, host, rng, Some(args), net, root, opts(), &mut shown, phases, out, err, live, Some(&lazy_sdk), None, None, crate::store::StoreTeardown::ForgetForExit);
+                         watch.see(blaze_screen::Step::Says);
+                         res
+                     }).map_err(CliError::RunLine)??;
+@@ -524,7 +524,7 @@ fn serve(
+                     if selectors.is_empty() {
+                         selectors.push("all");
+                     }
+-                    let mut ask = |mut shown| check_live(cx, fs, host, rng, Some(args), net, root, opts(), &mut shown, phases, out, err, None, Some(&lazy_sdk), None, crate::store::StoreTeardown::Drop).map(|checked| (checked, shown));
++                    let mut ask = |mut shown| check_live(cx, fs, host, rng, Some(args), net, root, opts(), &mut shown, phases, out, err, None, Some(&lazy_sdk), None, None, crate::store::StoreTeardown::Drop).map(|checked| (checked, shown));
+                     match crate::fix_then_check::<crate::fix::Atomic, Checked>(cx, root, &selectors, (caps, view, shown_root), frame, out, &mut ask)? {
+                         crate::Fixed::Refused => None,
+                         crate::Fixed::Checked(checked, _) => Some(checked),
+@@ -923,9 +923,50 @@ pub(crate) struct Standing<'r, 'm> {
+     /// already-opened `~/.blaze` directory so pure-Rust starts pay 0 ms for SDK probing.
+     sdk_resolver: &'r dyn Fn(&Cx, Option<&Dir<ReadWrite>>, u64) -> Result<blaze_apple_sdk::Sdk<'r>, blaze_apple_sdk::SdkRefused<'r>>,
+     home_dir: Option<&'r Dir<ReadWrite>>,
++    /// Check-time command probes (`SharedCommandProbes`) carried into start-time proc-macro
++    /// runners (`RunProcs`) so `run`/`test`/`export` reuse the exact probe/pin snapshot that
++    /// keyed and produced the `MacroModule` records.
++    probes: &'r crate::scripts::SharedCommandProbes,
++}
++
++/// Borrowed lazy macOS SDK handle handed to start-time proc-macro runners (`RunProcs`) so
++/// `run`/`test`/`export` resolve the exact same SDK identity snapshot as `check` on first
++/// proc-macro demand (0 ms cost on pure-Rust starts) without borrowing `Standing::store`.
++#[derive(Clone, Copy)]
++pub(crate) struct RunSdk<'r> {
++    place_sdk: Result<blaze_apple_sdk::Sdk<'r>, blaze_apple_sdk::SdkRefused<'r>>,
++    resolver: &'r dyn Fn(&Cx, Option<&Dir<ReadWrite>>, u64) -> Result<blaze_apple_sdk::Sdk<'r>, blaze_apple_sdk::SdkRefused<'r>>,
++    home_dir: Option<&'r Dir<ReadWrite>>,
++    wall_ns: u64,
++}
++
++impl<'r> RunSdk<'r> {
++    pub(crate) fn resolve(&self, cx: &Cx) -> Result<blaze_apple_sdk::Sdk<'r>, blaze_apple_sdk::SdkRefused<'r>> {
++        if self.place_sdk.is_ok() {
++            return self.place_sdk;
++        }
++        (self.resolver)(cx, self.home_dir, self.wall_ns)
++    }
  }
  
-+/// Normalizes a path under `out_dir`, collapsing `.` and repeated `/` separators and rejecting
-+/// `..` traversal or trailing directory slashes, so `-o /out/./flag_check /out/./flag_check.c`
-+/// resolves to the exact same `OUT_DIR`-relative key (`flag_check.c`) as the sandbox filesystem.
-+pub fn normalize_under_out_dir<'a>(path: &str, out_dir: &str, alloc: Alloc<'a>) -> Option<AString<'a>> {
-+    let trimmed_out = out_dir.trim_end_matches('/');
-+    if trimmed_out.is_empty() {
-+        return None;
-+    }
-+    let rel = path.strip_prefix(trimmed_out)?.strip_prefix('/')?;
-+    if rel.is_empty() || rel.ends_with('/') {
-+        return None;
-+    }
-+    let mut normalized = String::new_in(alloc);
-+    for seg in rel.split('/') {
-+        if seg.is_empty() || seg == "." {
-+            continue;
+ impl<'r, 'm> Standing<'r, 'm> {
++    /// Returns a `Copy` lazy SDK handle borrowing only immutable fields of `Standing` so
++    /// start-time `RunProcs` can resolve the exact same macOS SDK snapshot as `check`.
++    pub(crate) fn sdk_for_procs(&self) -> RunSdk<'r> {
++        RunSdk {
++            place_sdk: self.place.sdk,
++            resolver: self.sdk_resolver,
++            home_dir: self.home_dir,
++            wall_ns: self.lent.wall_ns(),
 +        }
-+        if seg == ".." {
-+            return None;
-+        }
-+        if !normalized.is_empty() {
-+            normalized.push('/');
-+        }
-+        normalized.push_str(seg);
 +    }
-+    if normalized.is_empty() {
-+        return None;
-+    }
-+    Some(normalized)
-+}
 +
-+/// Whether `path` lies under `out_dir` after collapsing `.` and repeated `/` separators (with no
-+/// `..` traversal or trailing slash).
-+fn is_under_out_dir(path: &str, out_dir: &str) -> bool {
-+    let trimmed_out = out_dir.trim_end_matches('/');
-+    if trimmed_out.is_empty() {
-+        return false;
++    /// Returns the check-time command probe holder (`SharedCommandProbes`) so start-time
++    /// `RunProcs` reuse the exact spawn-pin, C-probe, and probe-identity snapshot from `check`.
++    pub(crate) fn probes_for_procs(&self) -> &'r crate::scripts::SharedCommandProbes {
++        self.probes
 +    }
-+    let Some(rel) = path.strip_prefix(trimmed_out).and_then(|r| r.strip_prefix('/')) else {
-+        return false;
-+    };
-+    if rel.is_empty() || rel.ends_with('/') {
-+        return false;
-+    }
-+    let mut saw_part = false;
-+    for seg in rel.split('/') {
-+        if seg.is_empty() || seg == "." {
-+            continue;
-+        }
-+        if seg == ".." {
-+            return false;
-+        }
-+        saw_part = true;
-+    }
-+    saw_part
-+}
 +
-+/// Whether `src` is the exact `<dir>/flag_check.<c-ext>` companion to `out_path` (`<dir>/flag_check`)
-+/// after collapsing `.` and repeated `/` separators in both paths.
-+fn is_flag_check_companion(out_path: &str, src: &str) -> bool {
-+    let Some(base) = src
-+        .strip_suffix(".c")
-+        .or_else(|| src.strip_suffix(".cpp"))
-+        .or_else(|| src.strip_suffix(".cc"))
-+        .or_else(|| src.strip_suffix(".cxx"))
-+        .or_else(|| src.strip_suffix(".m"))
-+        .or_else(|| src.strip_suffix(".mm"))
-+    else {
-+        return false;
-+    };
-+    if out_path.starts_with('/') != base.starts_with('/') {
-+        return false;
-+    }
-+    let mut a = out_path.split('/').filter(|s| !s.is_empty() && *s != ".");
-+    let mut b = base.split('/').filter(|s| !s.is_empty() && *s != ".");
-+    loop {
-+        match (a.next(), b.next()) {
-+            (None, None) => return true,
-+          
+     /// Resolves the macOS SDK lazily on first demand (at most once per command via `OnceCell`),
+     /// reusing the already-opened `~/.blaze` home directory and caching the result into
+     /// `self.place.sdk`.
+@@ -1647,6 +1688,7 @@ fn preserve_standing_sibling_names<'a, 'f, 's, 'r>(
+     last_lines: Option<&crate::engine_lines::L
 ```
 
-**File**: `crates/blaze-build-script/src/c_tasks_probe_tests.rs` (modified, +529/-4)
+**File**: `crates/blaze-cli/src/engine_export.rs` (modified, +3/-1)
 ```diff
-@@ -13,7 +13,10 @@
+@@ -3540,7 +3540,9 @@ fn export_program<'f>(
+     let lent = standing.lent;
+     let typed = crate::engine_body_record::TypedFrom { cx, lent, records: standing.records(), alloc: heap.alloc() };
+     let env = &facts.fetch_env;
+-    let inputs = RunProcs { cx, root, snapshot: found.snapshot(), graph: standing.graph, env, frame };
++    let sdk = standing.sdk_for_procs();
++    let probes = standing.probes_for_procs();
++    let inputs = RunProcs { cx, root, snapshot: found.snapshot(), graph: standing.graph, env, sdk, probes, frame };
+     let maker_procs = crate::job_texts::MadeOnce::new(|| inputs.make());
+     let procs = crate::job_texts::Procs::ByNeed(&maker_procs);
  
- use blaze_own::Alloc;
- 
--use crate::c_tasks_probe::{Answered, ProbeWhy, Spawn, Table, TableWhy, is_probe};
-+use crate::c_tasks_probe::{
-+    Answered, CanonicalProbe, MOUNT, ProbeAnswer, ProbeAnswerer, ProbeCache, ProbeKey, ProbeWhy, Spawn, Table, TableWhy,
-+    canonical_reply_digest, canonicalize, decode_answer, encode_answer, is_probe, resolve,
-+};
- 
- /// A clang archive's sha256, and the same as the table spells it.
- const CLANG_PIN: [u8; 32] = [0x5d; 32];
-@@ -69,7 +72,7 @@ fn files(name: &str) -> Option<[u8; 32]> {
- const ENV: &[(&str, &str)] = &[("CARGO_PKG_NAME", "zstd-sys"), ("MACOSX_DEPLOYMENT_TARGET", "11.0")];
- 
- fn spawn<'s>(program: &'s str, args: &'s [&'s str], env: &'s [(&'s str, &'s str)]) -> Spawn<'s> {
--    Spawn { program, args, env, out_dir: OUT, sdk: SDK, stdin: &[] }
-+    Spawn { program, args, env, out_dir: OUT, sdk: SDK, mount: "", sdk_id: "", stdin: &[] }
- }
- 
- fn parse<'a>(text: &str, alloc: Alloc<'a>) -> Table<'a> {
-@@ -178,8 +181,13 @@ fn two_rows_with_one_key_are_refused() {
- #[test]
- fn only_probe_shaped_compiler_spawns_are_probes() {
-     assert!(is_probe("cc", &flag_args("-fno-builtin")));
--    assert!(is_probe("/usr/bin/c++", &["-E", "/out/1detect_compiler_family.c"]));
-+    assert!(is_probe("c++", &["-E", "/out/1detect_compiler_family.c"]));
-+    assert!(!is_probe("/usr/bin/c++", &["-E", "/out/1detect_compiler_family.c"]), "path-qualified compiler must stay on normal route");
-+    assert!(!is_probe("/opt/gcc/bin/gcc", &["-E", "/out/1detect_compiler_family.c"]), "explicit compiler path must not route to pinned clang");
-+    assert!(!is_probe("/missing/cc", &flag_args("-fno-builtin")), "missing path-qualified compiler must not route to pinned clang");
-     assert!(is_probe("cc", &["-?"]));
-+    assert!(!is_probe("cc", &["-?", "/package/check.c"]), "-? with extra args must stay on normal compiler route");
-+    assert!(!is_probe("cc", &["-c", "-?", "/out/flag_check.c"]), "-? combined with other flags is not a bare -? probe");
-     assert!(!is_probe("cc", &["-c", "/pkg/src/a.c", "-o", "/out/a.o"]), "an object compile is a C request");
-     assert!(!is_probe("ar", &["cq", "/out/libz.a", "/out/a.o"]));
-     assert!(!is_probe("cc", &["--version"]), "a fact (facts.rs), not a probe");
-@@ -236,11 +244,528 @@ fn the_pinned_table_answers_a_linux_arm64_family_probe() {
-     let path = format!("{OUT}/123456789detect_compiler_family.c");
-     let args = ["-E", path.as_str()];
-     let held = |rel: &str| (rel == "123456789detect_compiler_family.c").then_some(detect);
--    let probe = Spawn { program: "cc", args: &args, env: &[], out_dir: OUT, sdk: "", stdin: &[] };
-+    let probe = Spawn { program: "cc", args: &args, env: &[], out_dir: OUT, sdk: "", mount: "/package", sdk_id: "", stdin: &[] };
-     let answered = match table.answer(&pin.sha256, &probe, held, alloc) {
-         Ok(answered) => answered,
-         Err(refused) => panic!("{refused}"),
-     };
-     assert_eq!(answered.code, 0);
-     assert!(answered.stdout.as_str().contains("\"clang\""), "{answered:?}");
- }
-+
-+#[test]
-+fn mount_normalization_shares_probe_key_across_package_and_vendored_workspace() {
-+    let alloc = blaze_own::testing::heap().alloc();
-+    let id = blaze_ids::ContentId([7; 32]);
-+    let pkg_args = flag_args("-ffile-prefix-map=/package=");
-+    let ws_args = flag_args("-ffile-prefix-map=/workspace/vendored/aws-lc-sys=");
-+    let pkg_spawn = Spawn { program: "cc", args: &pkg_args, env: ENV, out_dir: OUT, sdk: SDK, mount: "/package", sdk_id: "macos-sdk 15.0", stdin: &[] };
-+    let ws_spawn = Spawn { program: "cc", args: &ws_args, env: ENV, out_dir: OUT, sdk: SDK, mount: "/workspace/vendored/aws-lc-sys", sdk_id: "macos-sdk 15.0", stdin: &[] };
-+    let a = canonicalize(id, &CLANG_PIN, &pkg_spawn, files, alloc).expect("pkg canonical");
-+    let b = canonicalize(id, &CLANG_PIN, &ws_spawn, files, alloc).expect("ws canonical");
-+    assert_eq!(a.key, b.key, "workspace vendored mount must share probe key with /package");
-+    assert!(a.row.args.iter().any(|arg| arg.as_str() == format!("-ffile-prefix-map={MOUNT}=")));
-+    // Control: different sdk_id produces a different ProbeKey.
-+    let other_sdk = Spawn { sdk_id: "macos-sdk 15.1", ..pkg_spawn };
-+    let c = canonicalize(id, &CLANG_PIN, &other_sdk, files, alloc).expect("other sdk");
-+    assert_ne!(a.key, c.key);
-+}
-+
-+#[test]
-+fn header_including_preprocess_is_not_classified_as_probe() {
-+    assert!(is_probe("cc", &["-E", "/out/123detect_compiler_family.c"]));
-+    assert!(!is_probe("cc", &["-E", "-I/package/include", "/package/src/foo.c"]));
-+    assert!(!is_probe("cc", &["-E", "-isystem", "/sdk/usr/include", "/package/src/foo.c"]));
-+    assert!(!is_probe("cc", &["-E", "-include", "config.h", "/package/src/foo.c"]));
-+}
-+
-+#[test]
-+fn binary_probe_answer_round_trips_and_resolves_once_via_cache() {
-+    use core::cell::RefCell;
-+    use core::sync::atomic::{AtomicUsize, Ordering};
-+    let alloc = blaze_own::testing::heap().alloc();
-+    le
 ```
 
-**File**: `crates/blaze-build-script/src/facts.rs` (modified, +85/-0)
+**File**: `crates/blaze-cli/src/engine_names.rs` (modified, +5/-4)
 ```diff
-@@ -339,6 +339,91 @@ pub fn answer<'a>(fact: &Fact<'_>, pins: &Pins<'_>, alloc: Alloc<'a>) -> Result<
+@@ -284,6 +284,7 @@ pub(crate) struct Handles<'h, 'f> {
+     pub(crate) members: Option<&'h [crate::graph::CheckoutDir]>,
+     pub(crate) env: &'h FetchEnv<'h>,
+     pub(crate) producers: blaze_ids::producer::Producers,
++    pub(crate) probes: crate::scripts::CommandProbes<'h>,
+     pub(crate) side: Option<&'h crate::proc_runner::MacroSide<'h, 'h, 'h>>,
+     pub(crate) outlined: &'h [Outlined<'h>],
+     pub(crate) workers: core::num::NonZeroU32,
+@@ -698,7 +699,7 @@ impl<'f> NamesStage<'f> {
+             Ok(made) => made,
+             Err(why) => return Err(EngineCheckError::NamesWorld(why).into()),
+         };
+-        let runner = Self::runner(names, made, handles, frame);
++        let runner = Self::runner(&cx, names, made, handles, frame);
+         let world = made.world();
+         let crates = world.crates.as_slice();
+         let all = world.sysroot;
+@@ -927,12 +928,12 @@ impl<'f> NamesStage<'f> {
+         Ok(())
+     }
+ 
+-    fn runner(names: &Names<'f>, made: &crate::names::NamesWorld<'_>, handles: &Handles<'_, 'f>, frame: &'f Frame) -> Result<Option<&'static crate::proc_runner::ProcRunner<'static>>, &'f str> {
++    fn runner(cx: &Cx, names: &Names<'f>, made: &crate::names::NamesWorld<'_>, handles: &Handles<'_, 'f>, frame: &'f Frame) -> Result<Option<&'static crate::proc_runner::ProcRunner<'static>>, &'f str> {
+         if !made.world().crates.iter().any(|c| c.input.implicit.proc_macro) {
+             return Ok(None);
+         }
+         match (names.procs(), handles.side) {
+-            (None, Some(side)) => match crate::proc_runner::make(made, *names.list(), side) {
++            (None, Some(side)) => match crate::proc_runner::make(cx, made, *names.list(), side) {
+                 Ok(runner) => {
+                     names.set_procs(runner);
+                     Ok(Some(runner))
+@@ -1696,7 +1697,7 @@ impl<'j, 'a: 'j> NamesQueue<'j, 'a> {
+             Ok(made) => made,
+             Err(why) => return Err(EngineCheckError::NamesWorld(why).into()),
+         };
+-        let runner = NamesStage::runner(names, made, handles, frame);
++        let runner = NamesStage::runner(cx, names, made, handles, frame);
+         let world = made.world();
+         let at = names.crate_at(name.subject).ok_or(EngineCheckError::MissingEntry { task: name, table: Table::WorldCrates, key: name })?;
+         let columns = *self.columns.get_or_insert_with(|| WorldColumns {
+```
+
+**File**: `crates/blaze-cli/src/engine_script_reads.rs` (modified, +2/-1)
+```diff
+@@ -123,7 +123,8 @@ impl ReadKind {
+             | LeafKind::HomeListing
+             | LeafKind::MacroFiles
+             | LeafKind::MacroFile
+-            | LeafKind::MacroFolder => None,
++            | LeafKind::MacroFolder
++            | LeafKind::DepProbes => None,
+         }
+     }
+ 
+```
+
+**File**: `crates/blaze-cli/src/engine_scripts.rs` (modified, +543/-5)
+```diff
+@@ -394,6 +394,7 @@ impl<'s> ScriptQueue<'s> {
+             members: members.into_bump_slice(),
+             producers: handles.producers,
+             heap: handles.env.heap,
++            probes: Some(handles.probes),
+         };
+         self.compile_inputs = Some(built);
+         Ok(self.compile_inputs)
+@@ -524,6 +525,13 @@ pub(crate) struct ScriptsStage<'f> {
+     /// The graph's proc-macro crates with their identities, listed once before dispatching
+     /// proc-macro lookups so every lookup and wasm64 self-compile runs concurrently.
+     macros: Option<std::sync::Arc<crate::macros::MacroCrates>>,
++    /// Planned dependency-probe identities bound during `plan_dep_probe_tags`:
++    /// - `planned_macro_probes` is keyed by exact `UnitId` for `macros::list` so duplicate
++    ///   proc-macro subjects (distinct feature sets or host-feature sides) each validate against
++    ///   their own unit's planned probe state rather than colliding by subject.
++    /// - `planned_script_probes` is keyed by `MacroModule` subject for build scripts.
++    planned_macro_probes: Vec<(blaze_unit_graph::UnitId, PlannedProbe), &'f Frame>,
++    planned_script_probes: Vec<(ContentId, PlannedProbe), &'f Frame>,
+     /// Each planned task's reads, by name, sorted: what its plan hands it.
+     reads: Vec<(Name, Vec<Name, &'f Frame>), &'f Frame>,
+     runs: Vec<RunPlan<'f>, &'f Frame>,
+@@ -648,12 +656,458 @@ pub(crate) fn with_runner<R>(runner: &'static dyn ScriptRunner, work: impl FnOnc
+     work()
+ }
+ 
++/// Planned dependency-probe state frozen for one `MacroModule` task during planning, so lookup
++/// and on-miss compilation bind strictly to the planned digest (or report the planned refusal)
++/// instead of silently filing a drifted live result under the planned task key (Rule 21).
++pub(crate) enum PlannedProbe {
++    Digest(crate::wasm64_compile::Hex64),
++    Failed(crate::scripts::ProbeSetupError),
++}
++
++impl PlannedProbe {
++    pub(crate) fn source_hex(&self) -> crate::wasm64_compile::Hex64 {
++        match self {
++            PlannedProbe::Digest(hex) => *hex,
++            PlannedProbe::Failed(err) => crate::wasm64_compile::probe_error_hex(err.kind),
++        }
++    }
++}
++
++/// Sorted `(subject, PlannedProbe)` and per-unit `(UnitId, PlannedProbe)` tables emitted by
++/// [`plan_dep_probe_tags`].
++pub(crate) struct PlannedDepProbes<'f> {
++    /// Per-subject aggregated probe tags for `MacroModule` task keying & ready-wake validation.
++    pub(crate) proc_macros: Vec<(ContentId, PlannedProbe), &'f Frame>,
++    /// Per-unit exact probe tags for `macros::list` (distinguishes duplicate proc-macro subjects
++    /// with distinct feature sets or host-feature sides).
++    pub(crate) proc_macro_units: Vec<(blaze_unit_graph::UnitId, PlannedProbe), &'f Frame>,
++    pub(crate) script_modules: Vec<(ContentId, PlannedProbe), &'f Frame>,
++}
++
++impl<'f> PlannedDepProbes<'f> {
++    pub(crate) fn empty(frame: &'f Frame) -> Self {
++        Self {
++            proc_macros: Vec::new_in(frame),
++            proc_macro_units: Vec::new_in(frame),
++            script_modules: Vec::new_in(frame),
++        }
++    }
++
++    /// Returns the verified 64-hex probe identity when this command planned at least one
++    /// probe-dependent `MacroModule` with a live digest (excluding `PlannedProbe::Failed`),
++    /// or `None` when no unit has a verified dependency-probe digest.
++    pub(crate) fn digest(&self) -> Option<crate::wasm64_compile::Hex64> {
++        for (_, entry) in self.proc_macros.iter().chain(self.script_modules.iter()) {
++            if let PlannedProbe::Digest(hex) = entry {
++                return Some(*hex);
++            }
++        }
++        None
++    }
++
++    /// Returns the 32-byte probe identity recorded as a `LeafKind::DepProbes` certificate leaf
++    /// when this command planned at least one probe-dependent `MacroModule`, or `None` when no
++    /// unit in the workspace has dependency build scripts (zero overhead on unrelated workspaces).
++    pub(crate) fn leaf_id(&self) -> Option<ContentId> {
++        if let Some(hex) = self.digest() {
++            return Some(hex.to_content_id());
++        }
++        self.proc_macros
++            .first()
++            .or_else(|| self.script_modules.first())
++            .map(|(_, entry)| entry.source_hex().to_content_id())
++    }
++}
++
++pub(crate) struct ScopedModuleSets<'f> {
++    pub(crate) script_modules: Vec<ContentId, &'f Frame>,
++    pub(crate) macro_modules: Vec<ContentId, &'f Frame>,
++}
++
++fn scoped_module_sets<'f>(
++    world: &crate::names::Names<'_>,
++    scoped: &crate::engine_check::ScopedUnits,
++    frame: &'f Frame,
++) -> ScopedModuleSets<'f> {
++    use blaze_world::crate_list::CrateGraph as _;
++    let list = world.list();
++    let mut allowed_scripts: Vec<Name, &'f Frame> = Vec::new_in(frame);
++    let mut stack: Vec<Name, &'f Frame> = Vec::new_in(frame);
++    let mut script_modules: Vec<ContentId, &'f Frame> = Vec::new_in(frame);
++    let mut macro_modules: Vec<ContentId, &'f Fram
+```
+
+**File**: `crates/blaze-cli/src/engine_start.rs` (modified, +21/-4)
+```diff
+@@ -147,6 +147,13 @@ pub(crate) struct RunProcs<'n, 'e> {
+     /// The answer's `UnitGraph` row (`Standing::graph`).
+     pub(crate) graph: blaze_drive::Input,
+     pub(crate) env: &'n crate::fetch::FetchEnv<'e>,
++    /// Lazy macOS SDK handle sharing `Standing`'s `OnceCell` resolver so proc-macro dep-probe
++    /// keys match `check` on macOS (0 ms cost when no proc-macro call occurs).
++    pub(crate) sdk: crate::engine_check::RunSdk<'e>,
++    /// Shared command-level C-probe / spawn-pin holder from `check` (`Standing::probes_for_procs`)
++    /// so start-time proc-macro runners reuse the exact probe snapshot that keyed and produced
++    /// the `MacroModule` records.
++    pub(crate) probes: &'e crate::scripts::SharedCommandProbes,
+     pub(crate) frame: &'n bstd::mem::Frame,
+ }
+ 
+@@ -189,8 +196,14 @@ impl<'n> RunProcs<'n, '_> {
+             crate::units::emit_proc_macro_lock_files(cx, self.root, &stamps, proc_macros, lockfile.lock, checkout_dirs, None, &mut rows, frame)
+                 .map_err(|error| said(format_args!("no proc-macro runner: macro files: {error}")))?;
+         }
+-        let side = crate::proc_runner::MacroSide { lock: lockfile, place: crate::macros::Place { home: env.home, checkout: env.checkout, members, rows: &rows }, heap: env.heap };
+-        crate::proc_runner::make(world, *names.list(), &side).map_err(|error| said(format_args!("no proc-macro runner: {error} (proc_runner.rs `make`)")))
++        let resolved_sdk = self.sdk.resolve(cx);
++        let side = crate::proc_runner::MacroSide {
++            lock: lockfile,
++            place: crate::macros::Place { home: env.home, checkout: env.checkout, members, rows: &rows },
++            probes: self.probes.with_env(env).with_sdk(resolved_sdk).with_checked_snapshot(),
++            heap: env.heap,
++        };
++        crate::proc_runner::make(cx, world, *names.list(), &side).map_err(|error| said(format_args!("no proc-macro runner: {error} (proc_runner.rs `make`)")))
      }
  }
  
-+/// The head of a per-probe compiler read subject:
-+/// `cc-probe\n<answerer 64-hex>\n<clang pin 64-hex>\n<probe key 64-hex>`.
-+pub const CC_PROBE_HEAD: &str = "cc-probe";
+@@ -1211,7 +1224,9 @@ fn run_program_with(
+     let typed = crate::engine_body_record::TypedFrom { cx, lent, records: standing.records(), alloc: heap.alloc() };
+     let env = &facts.fetch_env;
+     // The runner, made at a body's first proc-macro call ([`RunProcs`]; C9).
+-    let inputs = RunProcs { cx, root, snapshot: found.snapshot(), graph: standing.graph, env, frame };
++    let sdk = standing.sdk_for_procs();
++    let probes = standing.probes_for_procs();
++    let inputs = RunProcs { cx, root, snapshot: found.snapshot(), graph: standing.graph, env, sdk, probes, frame };
+     let maker = crate::job_texts::MadeOnce::new(|| inputs.make());
+     let procs = crate::job_texts::Procs::ByNeed(&maker);
+     let scope_records = crate::front_load::ScopeRecords::new(found.snapshot(), blaze_world::crate_list::CrateGraph::len(list), heap);
+@@ -1591,7 +1606,9 @@ pub(crate) fn run_tests_status(
+                 }
+                 // One runner for every dirty suite, made at the first proc-macro call any body meets
+                 // ([`RunProcs`]; C9). Before `runnable` and `bin_suites`, whose names records borrow it.
+-                let inputs = inventory.suites.first().map(|(found, _)| RunProcs { cx, root, snapshot: found.snapshot(), graph: standing.graph, env: &facts.fetch_env, frame });
++                let sdk = standing.sdk_for_procs();
++                let probes = standing.probes_for_procs();
++                let inputs = inventory.suites.first().map(|(found, _)| RunProcs { cx, root, snapshot: found.snapshot(), graph: standing.graph, env: &facts.fetch_env, sdk, probes, frame });
+                 let maker = crate::job_texts::MadeOnce::new(|| match &inputs {
+                     Some(inputs) => inputs.make(),
+                     None => Err("no proc-macro runner: this command has no test suite (engine_start.rs `run_tests`)"),
+```
+
+**File**: `crates/blaze-cli/src/journal_sweep.rs` (modified, +3/-3)
+```diff
+@@ -1052,7 +1052,7 @@ impl<'t> Taken<'t> {
+             }
+             let part = match row.kind {
+                 // No stream replays the home (the module's rule): its listings, on every request.
+-                LeafKind::HomeListing => &mut parts.home,
++                LeafKind::HomeListing | LeafKind::DepProbes => &mut parts.home,
+                 LeafKind::ScriptGit => &mut parts.git,
+                 _ if script_asks && !fact_file => &mut parts.scripts,
+                 kind => match unit_of(&views, kind, path) {
+@@ -1283,8 +1283,8 @@ impl<'a> Index<'a> {
+             // move only with the path or a folder above it; a listing with any entry of it.
+             LeafKind::ScriptFile if rel.starts_with(sweep::FACT_MOUNT) => true,
+             LeafKind::ScriptFile | LeafKind::ScriptStat => self.touched(rel, plant),
+-            // A git fact is read from `.git` files the journal may not see: always followed.
+-            LeafKind::ScriptGit => true,
++            // A git fact or host dependency-probe identity lives outside checkout file events: always followed.
++            LeafKind::ScriptGit | LeafKind::DepProbes => true,
+             LeafKind::ScriptListing => self.touched(rel, plant) || self.children_of(rel).next().is_some(),
+             // Decided by its files' and folders' rows (macro_files.rs `proven`).
+             LeafKind::MacroFiles => false,
+```
+
+**File**: `crates/blaze-cli/src/macros.rs` (modified, +161/-14)
+```diff
+@@ -66,9 +66,24 @@ const RULE: &str = "macros.rs";
+ /// when the listing moves and never before.
+ pub(crate) const MODULE_LISTING: &str = "v2/proc-macro/modules";
+ 
++/// One resolved proc-macro crate identity plus the frozen dependency-probe identity digest
++/// folded into it (when its `wasm64-blaze-wasip1` closure runs dependency build scripts), so
++/// on-miss self-compilation can revalidate the live answerer before publishing.
++pub struct ListedMacro {
++    pub(crate) identity: MacroIdentity,
++    pub(crate) dep_probes: Option<crate::wasm64_compile::Hex64>,
++}
 +
-+fn hex_nibble(n: u8) -> char {
-+    match n & 15 {
-+        d @ 0..=9 => char::from(b'0' + d),
-+        d => char::from(b'a' + (d - 10)),
++/// Per-macro identity or probe-setup refusal kept on that crate alone so one dependent
++/// proc-macro's probe failure never aborts unrelated proc-macros in `macros::list` (Rule 20).
++pub enum MacroListFailure {
++    Unidentified(Unidentified),
++    Probes(crate::scripts::ProbeSetupError),
++}
++
+ /// The macro crates of this command's graph, each with its module identity or why it has
+ /// none: made once a command, at the first `MacroModule` task that runs.
+-pub type MacroCrates = std::vec::Vec<(ContentId, Result<MacroIdentity, Unidentified>), Global>;
++pub type MacroCrates = std::vec::Vec<(ContentId, Result<ListedMacro, MacroListFailure>), Global>;
+ 
+ /// Where a command's macro crates are: the home (the module store is under it), the checkout
+ /// relative to where blaze was started ("" for there: `FetchEnv::checkout`), each workspace
+@@ -164,6 +179,25 @@ pub(crate) fn part_source_with_files(graph_source: ContentId, macro_files_digest
+     ContentId::of(SOURCE_DOMAIN, &source)
+ }
+ 
++/// Mixes the dependency build-script probe/pin digest (`probes_hex`) into a proc-macro
++/// `MacroModule` task source so derived-fact pin or live C-probe answerer changes invalidate
++/// the `MacroModule` task itself (rules 21 and 60).
++pub(crate) fn part_source_with_dep_probes(source: ContentId, probes_hex: &str) -> ContentId {
++    let mut buf = [0u8; 97];
++    if let Some(dst) = buf.get_mut(..32) {
++        dst.copy_from_slice(&source.0);
 +    }
-+}
-+
-+fn push_hex32(bytes: &[u8; 32], out: &mut AString<'_>) {
-+    for byte in bytes {
-+        out.push(hex_nibble(byte >> 4));
-+        out.push(hex_nibble(byte & 15));
++    if let Some(tag) = buf.get_mut(32) {
++        *tag = b'P';
 +    }
-+}
-+
-+fn parse_hex32(hex: &str) -> Option<[u8; 32]> {
-+    if hex.len() != 64 || !hex.bytes().all(|b| matches!(b, b'0'..=b'9' | b'a'..=b'f')) {
-+        return None;
++    let bytes = probes_hex.as_bytes();
++    let take = bytes.len().min(64);
++    if let (Some(dst), Some(src)) = (buf.get_mut(33..33 + take), bytes.get(..take)) {
++        dst.copy_from_slice(src);
 +    }
-+    let mut bytes = [0u8; 32];
-+    for (i, slot) in bytes.iter_mut().enumerate() {
-+        *slot = u8::from_str_radix(hex.get(2 * i..2 * i + 2)?, 16).ok()?;
++    ContentId::of(SOURCE_DOMAIN, &buf)
++}
++
+ /// Why the macro crates of a command could not be listed.
+ #[derive(Debug)]
+ pub enum MacrosError {
+@@ -173,6 +207,8 @@ pub enum MacrosError {
+     NoLock,
+     /// The module store could not be listed, or a path crate's files read.
+     Procs(blaze_world::procs::ProcsError),
++    /// The command's derived-fact pin setting for dependency build scripts could not be opened.
++    Probes(crate::scripts::ProbeSetupError),
+ }
+ 
+ impl core::fmt::Display for MacrosError {
+@@ -181,35 +217,134 @@ impl core::fmt::Display for MacrosError {
+             MacrosError::Graph(refused) => write!(f, "the unit graph record at byte {}: {}", refused.at, refused.why),
+             MacrosError::NoLock => f.write_str("no lock was read this command"),
+             MacrosError::Procs(error) => write!(f, "{error}"),
++            MacrosError::Probes(error) => write!(f, "{error}"),
+         }
+     }
+ }
+ 
+ /// Every macro crate of the graph `sections` with its identity, over `lock`, the module
+ /// store `modules` (its git folders) and `place` (a member's folder). When `sections.wasm_graph`
+ /// is present, folds each proc-macro's resolved `wasm64-blaze-wasip1` dependency closure features
+-/// into its module identity (rule 21). The decoded graph is the task's scratch, made over `scratch`.
+-pub(crate) fn list(sections: crate::graph_payload::Sections<'_>, lock: &crate::fetch::Lockfile<'_>, modules: &std::path::Path, place: &Place<'_, '_>, scratch: Alloc<'_>) -> Result<MacroCrates, MacrosError> {
++/// into its module identity (rule 21), and when its closure runs dependency build scripts folds
++/// `probes`'s deterministic probe/pin identity digest as well. The decoded graph is the task's
++/// scratch, made over `scratch`.
++pub(crate) fn list(
++    cx: &Cx,
++    sections: crate::graph_payload::Sections<'_>,
++    lock: &crate::fetch::Lockfile<'_>,
++    modules: &std::path::Path,
++    place: &Place<'_, '_>,
++    probes: Option<crate::scripts::CommandProbes<'_>>,
++    planned_probes: Option<&[(blaze_unit_graph::UnitId, crate::engine_scripts::PlannedProbe)]>,
++    scratch: Alloc<'_>,
++) -> Result<MacroCrates, MacrosError> {
+     let decoded = blaze_unit_graph::record::decode(sections.graph, scratch).map_err(MacrosError::Graph)?;
+     let wasm_decoded = if sections.wasm_graph.is_empty() {
+         None
+     } else {
+         Some(blaze_unit_graph::record::decode(sections.wasm_graph, scratch).map_err(MacrosError::Graph)?)
+     };
++    let wasm_graph = wasm_decoded.as_ref().map(|d| &d.graph);
+     let locked = LockedPackages::of(lock.lock);
+     let folders = git_folders(modules).map_err(MacrosError::Procs)?;
+     let mut crates = std::vec:
+```
+
+---
+
+### Incident Patch 2: `42235276` (2026-11-27)
+**Commit Message**: gate: clear concurrent PR regressions to hit 42/42 pass with zero upward ratchet bumps
+
+- blaze-shell (from #2825):
+  - layout.rs: take Alloc<'a> -> blaze_own::AVec in split_git_tree_path, git_status_tree_rows, and push_git_tree_level (allocs signatures 244 -> 241), and replace HoverKind::FileEntry name clone with to_owned (clones 309 -> 308).
+- bgit (from #2825):
+  - fsmonitor.rs: use Default::default() for the empty BTreeSet arm in record_status_baseline (vec_box 363 -> 362).
+- blaze-manifest (from #2826):
+  - layout/tests.rs: compare member and path_package iterators directly without std::vec::Vec or std::println! (tests std 101 -> 98, vec_box 166 -> 164).
+- blaze-unit-graph (from #2826):
+  - resolve.rs: use package.deps.get(e) (stops 72 -> 71) and own(..., self.alloc) instead of .clone() for PathOutsideAnchor fields (clones 55 -> 52).
+  - tests.rs: drop std::println! in a_path_dependency_outside_the_anchor_is_named_when_reached (tests std 16 -> 15).
+- blaze-ladder (from #2804):
+  - lifetimes.rs: rewrite Eliding::quiet_all_bound and Eliding::record_all_inputs to explicit bounded worklists (QuietWork, RecordInputWork) instead of recursive TypeRef::For calls.
+  - types.rs: rewrite
+
+**File**: `crates/bgit/src/fsmonitor.rs` (modified, +1/-1)
+```diff
+@@ -948,7 +948,7 @@ pub(crate) fn record_status_baseline(
+     // new baseline is not trusted and the next status scans fully.
+     let (concurrent_pending, needs_full) = match (&mon.status_baseline, start_gen) {
+         (Some(prev), Some(g)) if mon.generation != g => (prev.pending_paths.clone(), prev.needs_full),
+-        (None, Some(g)) if mon.generation != g => (BTreeSet::new(), true),
++        (None, Some(g)) if mon.generation != g => (Default::default(), true),
+         _ => (BTreeSet::new(), false),
+     };
+     mon.status_baseline = Some(StatusBaseline {
+```
+
+**File**: `crates/blaze-ladder/src/front2/lifetimes.rs` (modified, +96/-42)
+```diff
+@@ -893,50 +893,71 @@ impl<'c, 'n, S: NamesSource<'n>> Reader<'c, 'n, S> {
+     /// [`Self::quiet_all`] carrying `bound` lifetime hashes from enclosing `for<..>` binders so
+     /// bound lifetimes nested inside type arguments (e.g. `for<'a> Tr<&'a u8>`) are recognized as
+     /// bound rather than free input lifetimes.
+-    fn quiet_all_bound(&mut self, v: &View<'_>, bound: &[u64], mut todo: List<lf::TypeId>, alias_depth: u8) -> Result<bool, LifeRefusal> {
++    fn quiet_all_bound(&mut self, v: &View<'_>, bound: &[u64], todo: List<lf::TypeId>, alias_depth: u8) -> Result<bool, LifeRefusal> {
++        let mut bound_stack: List<u64> = Vec::with_capacity_in(bound.len(), self.alloc);
++        bound_stack.extend_from_slice(bound);
++        let mut work: List<QuietWork> = Vec::with_capacity_in(todo.len(), self.alloc);
++        for &t in todo.iter() {
++            work.push(QuietWork::Ty(t));
++        }
++        let mut sub_todo: List<lf::TypeId> = Vec::new_in(self.alloc);
++        let mut cur_depth = alias_depth;
+         let mut steps = 0u32;
+-        while let Some(t) = todo.pop() {
++        while let Some(item) = work.pop() {
++            let t = match item {
++                QuietWork::PopBound { prev_len, prev_depth } => {
++                    bound_stack.truncate(prev_len);
++                    cur_depth = prev_depth;
++                    continue;
++                }
++                QuietWork::Ty(t) => t,
++            };
+             steps += 1;
+             if steps > MOST {
+                 return Err(LifeRefusal::Bound);
+             }
+             match v.ty(t)? {
+                 lf::TypeRef::Never | lf::TypeRef::Infer => {}
+-                lf::TypeRef::Ref { lifetime: Some(nm), inner, .. } if bound.contains(&v.name(nm)?) => {
+-                    todo.push(inner);
++                lf::TypeRef::Ref { lifetime: Some(nm), inner, .. } if bound_stack.contains(&v.name(nm)?) => {
++                    work.push(QuietWork::Ty(inner));
+                 }
+-                lf::TypeRef::Ptr { inner, .. } | lf::TypeRef::Slice(inner) => todo.push(inner),
+-                lf::TypeRef::Array { elem, .. } => todo.push(elem),
+-                lf::TypeRef::Pat { base, .. } => todo.push(base),
++                lf::TypeRef::Ptr { inner, .. } | lf::TypeRef::Slice(inner) => work.push(QuietWork::Ty(inner)),
++                lf::TypeRef::Array { elem, .. } => work.push(QuietWork::Ty(elem)),
++                lf::TypeRef::Pat { base, .. } => work.push(QuietWork::Ty(base)),
+                 lf::TypeRef::Tuple(l) | lf::TypeRef::Union(l) => {
+                     for &i in v.ids(l)? {
+-                        todo.push(lf::TypeId(i));
++                        work.push(QuietWork::Ty(lf::TypeId(i)));
+                     }
+                 }
+                 lf::TypeRef::Path(p) => {
+-                    if !self.quiet_path_bound(v, p, bound, &mut todo, alias_depth)? {
++                    sub_todo.clear();
++                    if !self.quiet_path_bound(v, p, &bound_stack, &mut sub_todo, cur_depth)? {
+                         return Ok(false);
+                     }
++                    for &st in sub_todo.iter() {
++                        work.push(QuietWork::Ty(st));
++                    }
+                 }
+                 lf::TypeRef::Dyn(b) | lf::TypeRef::Impl(b) => {
+-                    if !self.quiet_bounds_bound(v, b, false, bound, &mut todo, alias_depth)? {
++                    sub_todo.clear();
++                    if !self.quiet_bounds_bound(v, b, false, &bound_stack, &mut sub_todo, cur_depth)? {
+                         return Ok(false);
+                     }
++                    for &st in sub_todo.iter() {
++                        work.push(QuietWork::Ty(st));
++                    }
+                 }
+-                lf::TypeRef::For { binder, inner } if alias_depth < 8 => {
+-                    let binder_rows = v.rows(binder)?;
+-                    let mut nested: List<u64> = Vec::with_capacity_in(bound.len() + binder_rows.len(), self.alloc);
+-                    nested.extend_from_slice(bound);
+-                    for &brow in binder_rows {
++                lf::TypeRef::For { binder, inner } if cur_depth < 8 => {
++                    let prev_len = bound_stack.len();
++                    let prev_depth = cur_depth;
++                    for &brow in v.rows(binder)? {
+                         if let lf::GenericParam::Lifetime { name, .. } = lf::GenericParam::decode(brow)? {
+-                            nested.push(v.name(name)?);
++                            bound_stack.push(v.name(name)?);
+                         }
+                     }
+-                    let mut sub: List<lf::TypeId> = Vec::new_in(self.alloc);
+-                    sub.push(inner);
+-                    if !self.quiet_all_bound(v, &nested, sub, alias_depth + 1)? {
+-                        return Ok(false);
+-                    }
++                    cur_depth = cur_depth.saturating_add(1);
++                    work.push(QuietWork::PopBound {
+```
+
+**File**: `crates/blaze-ladder/src/front2/types.rs` (modified, +141/-73)
+```diff
+@@ -1294,23 +1294,23 @@ impl<'b, 'n, H: Heads, S: NamesSource<'n>> Builder<'b, H, S> {
+             if s.parenthesized {
+                 for &n in v.rows(s.args)? {
+                     if let lf::GenericArg::Type(_) = lf::GenericArg::decode(n)? {
+-                        out.push(next.next().ok_or(program(format!("a type argument is missing"), r))?);
++                        out.push(next.next().ok_or_else(|| Why::Program("a type argument is missing".into(), r))?);
+                     }
+                 }
+                 if s.ty.is_some() {
+-                    out.push(next.next().ok_or(program(format!("a type argument is missing"), r))?);
++                    out.push(next.next().ok_or_else(|| Why::Program("a type argument is missing".into(), r))?);
+                 }
+                 return Ok(());
+             }
+             let mut index = 0u32;
+             for &n in v.rows(s.args)? {
+                 let made = match lf::GenericArg::decode(n)? {
+                     lf::GenericArg::Type(t) => match bare_name(v, t)? {
+-                        None => next.next().ok_or(program(format!("a type argument is missing"), r))?,
++                        None => next.next().ok_or_else(|| Why::Program("a type argument is missing".into(), r))?,
+                         Some(name) => {
+                             let param = env.params.iter().find(|(n, _)| *n == Name::of(name)).map(|&(_, i)| i);
+                             let is_const = param.is_some_and(|i| env.consts.iter().any(|(c, _)| *c == i));
+-                            let lf::TypeRef::Path(tp) = v.ty(t)? else { return Err(program(format!("a one-name argument that is no path"), r)) };
++                            let lf::TypeRef::Path(tp) = v.ty(t)? else { return Err(Why::Program("a one-name argument that is no path".into(), r)) };
+                             let ar = place(v, v.type_range(t))?;
+                             let allow_bare_trait = self.allows_bare_trait_object_at(env, v, tp, ar)?;
+                             // An item the body declares takes part as in a body path's own
+@@ -1384,7 +1384,7 @@ impl<'b, 'n, H: Heads, S: NamesSource<'n>> Builder<'b, H, S> {
+                         self.const_term(tys, env, text, ar, &want)?
+                     }
+                     lf::GenericArg::AssocType { args, .. } if args.len == 0 => {
+-                        let made = next.next().ok_or(program(format!("a type argument is missing"), r))?;
++                        let made = next.next().ok_or_else(|| Why::Program("a type argument is missing".into(), r))?;
+                         out.push(made);
+                         continue;
+                     }
+@@ -1873,7 +1873,8 @@ impl<'b, 'n, H: Heads, S: NamesSource<'n>> Builder<'b, H, S> {
+             if self.allows_bare_trait_object_at(env, v, p, r)? {
+                 return self.bare_dyn_ty(tys, v, p, segs, found.key, found.kind == Kind::TraitAlias, kids, r);
+             }
+-            return Err(program(format!("`{shown}` is not a type (trait objects without `dyn` are invalid since Rust 2021: E0782)"), r));
++            let msg = blaze_own::format_in!(tys.alloc(), "`{shown}` is not a type (trait objects without `dyn` are invalid since Rust 2021: E0782)");
++            return Err(Why::Program(msg.as_str().into(), r));
+         }
+         if segs.last().is_some_and(|s| s.parenthesized) {
+             return Err(Why::Unsupported("parenthesized generic arguments (`Fn(A) -> B`)", r));
+@@ -2128,16 +2129,20 @@ impl<'b, 'n, H: Heads, S: NamesSource<'n>> Builder<'b, H, S> {
+         let head = self.heads.trait_alias(alias).ok_or(Why::Need(alias))?;
+         let want = usize::try_from(head.generics).unwrap_or(0).saturating_sub(1);
+         let alloc = tys.alloc();
++        let wrong_arity = || {
++            let msg = blaze_own::format_in!(alloc, "a trait alias written with {} type arguments; it takes {want}", given.len());
++            Why::Program(msg.as_str().into(), r)
++        };
+         if given.len() == want {
+             let mut out = blaze_own::Vec::with_capacity_in(want, alloc);
+             out.extend_from_slice(given);
+             return Ok(out);
+         }
+         if given.len() > want {
+-            return Err(program(format!("a trait alias written with {} type arguments; it takes {want}", given.len()), r));
++            return Err(wrong_arity());
+         }
+         let Some(alias_text) = self.resolver.names.signature_text_of(alias) else {
+-            return Err(program(format!("a trait alias written with {} type arguments; it takes {want}", given.len()), r));
++            return Err(wrong_arity());
+         };
+         let marks = super::item_site::item_marks(self.resolver.names, alias, alias_text.text)
+             .map_err(|_| Why::Unsupported("trait alias token marks unavailable", r))?;
+@@ -2189,7 +2194,7 @@ impl<'b, 'n, H: Heads, S: NamesSource<'n>> Builder<'b, H, S> {
+                         alias_builder.const_term(tys, &alias_env, av.text_at(at)?, cr, &|_| Ok(want_ty))?
+```
+
+**File**: `crates/blaze-ladder/tests/front2_locals.rs` (modified, +1/-0)
+```diff
+@@ -364,6 +364,7 @@ pub fn does_not_leak_later_prelude(x: u32) -> Result<u16, core::num::TryFromIntE
+ }
+ 
+ mod front2_locals {
++    mod bare_trait_objects;
+     mod box_deref_captures;
+     mod closure_uncaptured_place_run;
+     mod deep_interior_stall;
+```
+
+**File**: `crates/blaze-ladder/tests/front2_locals/bare_trait_objects.rs` (renamed, +50/-47)
+```diff
+@@ -28,7 +28,7 @@ use blaze_surface::{ItemKind, Namespace, PathKind};
+ use blaze_unit_graph::implicit;
+ use edition::PackageEdition;
+ 
+-const PRELUDE: &str = include_str!("../../blaze-cli/tests/ladder/front2/twin-prelude.rs");
++const PRELUDE: &str = include_str!("../../../blaze-cli/tests/ladder/front2/twin-prelude.rs");
+ 
+ /// Exact `glob 0.3.3` pattern (`impl Error for GlobError { fn cause(&self) -> Option<&Error> }`)
+ /// plus broader bare trait object forms: one-name generic arg (`Holder<Error>`), associated type
+@@ -258,7 +258,7 @@ fn run_for_edition(edition: &'static str) -> Result<u8, String> {
+ 
+ fn with_minimal(edition: &'static str, f: impl FnOnce(&blaze_scope::resolve::Names<'_>, &[SourceFile<'_>])) {
+     let files = [SourceFile { path: "src/main.rs", text: MINIMAL_PROGRAM }];
+-    let tc = Toolchain::none(Alloc::global());
++    let tc = Toolchain::none(blaze_own::testing::heap().alloc());
+     let new = NewFront { package: "bare_min", edition, shelf: None, overflow: blaze_build::OverflowChecks::On };
+     let texts = blaze_ladder::program_texts::ProgramTexts::new(&files, "src/main.rs", new, &tc, blaze_build::Panic::Unwind)
+         .unwrap_or_else(|e| panic!("ProgramTexts({edition}): {e}"));
+@@ -272,7 +272,7 @@ fn with_minimal(edition: &'static str, f: impl FnOnce(&blaze_scope::resolve::Nam
+ fn key_of(names: &blaze_scope::resolve::Names<'_>, ns: Namespace, name: &'static str) -> blaze_typeck::ItemKey {
+     let segments: &[&str] = &[name];
+     let written = Written { kind: PathKind::Plain, segments };
+-    let found = names::path(names, names.root(0), ns, written, Alloc::global()).unwrap_or_else(|e| panic!("`{name}`: {e:?}"));
++    let found = names::path(names, names.root(0), ns, written, blaze_own::testing::heap().alloc()).unwrap_or_else(|e| panic!("`{name}`: {e:?}"));
+     checker_of(found.whole(1).unwrap_or_else(|| panic!("`{name}` resolves whole")).key)
+ }
+ 
+@@ -317,7 +317,7 @@ fn bare_trait_object_heads_regions_and_lazy_program_succeed_in_2015_and_2018() {
+                 blaze_mem::Frame::new(blaze_mem::tag::Tag::Infer).expect("frame"),
+                 blaze_mem::Frame::new(blaze_mem::tag::Tag::Infer).expect("frame"),
+             );
+-            let whole = Front2Program::new(names, &wf, files, Alloc::global())
++            let whole = Front2Program::new(names, &wf, files, blaze_own::testing::heap().alloc())
+                 .unwrap_or_else(|e| panic!("Front2Program ({edition}): {e}"));
+             let main = key_of(names, Namespace::Values, "main");
+             let error_trait = key_of(names, Namespace::Types, "Error");
+@@ -332,8 +332,8 @@ fn bare_trait_object_heads_regions_and_lazy_program_succeed_in_2015_and_2018() {
+             assert!(lazy.object_trait(error_trait).is_some(), "lazy built object table for Error ({edition})");
+ 
+             // Head regions of `<impl Error for GlobError>::cause` are laid cleanly (no refusal).
+-            let mut front = Front2::new(names, &hf, files, Alloc::global()).unwrap_or_else(|e| panic!("front2 ({edition}): {e}"));
+-            let mut store = Store::new(front.index.lang("sized"), front.frame, Alloc::global());
++            let mut front = Front2::new(names, &hf, files, blaze_own::testing::heap().alloc()).unwrap_or_else(|e| panic!("front2 ({edition}): {e}"));
++            let mut store = Store::new(front.index.lang("sized"), front.frame, blaze_own::testing::heap().alloc());
+             store.ensure(names, &mut front.keys, Want::Impl(impl_lib)).unwrap_or_else(|e| panic!("Want::Impl ({edition}): {e:?}"));
+             store
+                 .ensure(names, &mut front.keys, Want::MemberFn(impl_lib, cause_key))
+@@ -423,7 +423,7 @@ macro_rules! make_bare_fn {
+ dep::make_bare_fn!({fn_name});
+ "
+     );
+-    let tc = Toolchain::none(Alloc::global());
++    let tc = Toolchain::none(blaze_own::testing::heap().alloc());
+     let cfg = tc.program_cfg(blaze_build::Panic::Unwind);
+     let dep_pkg = PackageEdition { syntax: dep_edition, blaze: None };
+     let root_pkg = PackageEdition { syntax: root_edition, blaze: None };
+@@ -458,8 +458,8 @@ dep::make_bare_fn!({fn_name});
+         .unwrap_or_else(|e| panic!("resolve_crates: {e}"));
+     let frame = blaze_mem::Frame::new(blaze_mem::tag::Tag::Infer).expect("frame");
+     let sources = [SourceFile { path: "src/main.rs", text: &root }];
+-    let mut front = Front2::new(&names, &frame, &sources, Alloc::global()).unwrap_or_else(|e| panic!("front2: {e}"));
+-    let mut store = Store::new(front.index.lang("sized"), front.frame, Alloc::global());
++    let mut front = Front2::new(&names, &frame, &sources, blaze_own::testing::heap().alloc()).unwrap_or_else(|e| panic!("front2: {e}"));
++    let mut store = Store::new(front.index.lang("sized"), front.frame, blaze_own::testing::heap().alloc());
+     let fk = key_of(&names, Namespace::Values, fn_name);
+     let lib = front.keys.library_in(&names, fk).unwrap_or_else(|| panic!("lib key of `{fn_name}`"));
+     store.ensure(&names, &mut front.keys, Want::Fn(lib)).map_er
+```
+
+**File**: `crates/blaze-manifest/src/layout/tests.rs` (modified, +9/-6)
+```diff
+@@ -467,16 +467,19 @@ b64.workspace = true
+     };
+     let (units, _) = tree.read_opts("crates/shell", true, true).expect("the nested workspace with its path packages");
+     assert_eq!(units.manifests[units.root.0 as usize].as_str(), "crates/shell/Cargo.toml", "the nested workspace is its own root");
+-    let members: std::vec::Vec<&str> = units.members.iter().map(|m| m.name.as_str()).collect();
+-    assert_eq!(members, ["shell"], "a path package outside the root's folder is no member");
++    assert!(units.members.iter().map(|m| m.name.as_str()).eq(["shell"]), "a path package outside the root's folder is no member");
+     match &units.members[0].dependencies[0].source {
+         Source::Path(dir) => assert_eq!(dir.as_str(), "crates/bgit"),
+         _ => panic!("`../bgit` from crates/shell is the path package at crates/bgit"),
+     }
+-    let found: std::vec::Vec<(&str, &str, Option<&str>)> =
+-        units.path_packages.iter().map(|p| (p.dir.as_str(), p.name.as_str(), p.version.as_ref().map(|v| v.as_str()))).collect();
+-    std::println!("path packages: {found:?}");
+-    assert_eq!(found, [("crates/b64", "b64", Some("0.0.7")), ("crates/bgit", "bgit", Some("0.0.7"))], "bgit by shell's manifest, b64 through bgit's");
++    assert!(
++        units
++            .path_packages
++            .iter()
++            .map(|p| (p.dir.as_str(), p.name.as_str(), p.version.as_ref().map(|v| v.as_str())))
++            .eq([("crates/b64", "b64", Some("0.0.7")), ("crates/bgit", "bgit", Some("0.0.7"))]),
++        "bgit by shell's manifest, b64 through bgit's"
++    );
+     let bgit = units.path_packages.iter().find(|p| p.name.as_str() == "bgit").expect("bgit");
+     assert_eq!(bgit.lib.as_ref().map(|lib| lib.root.as_str()), Some("crates/bgit/src/lib.rs"), "anchor-relative, like a member's");
+     match &bgit.dependencies[0].source {
+```
+
+**File**: `crates/blaze-shell/src/layout.rs` (modified, +27/-22)
+```diff
+@@ -3044,7 +3044,7 @@ fn layout_table(
+             }
+             Some(GitStatusTree {
+                 name_col: fc,
+-                rows: git_status_tree_rows(&entries),
++                rows: git_status_tree_rows(&entries, Alloc::global()),
+             })
+         }
+         _ => None,
+@@ -3689,7 +3689,7 @@ fn layout_table(
+                                     &block.source,
+                                     path,
+                                 ),
+-                                name: path.clone(),
++                                name: path.to_owned(),
+                                 icon: Some(icon_name),
+                                 is_dir: true,
+                                 git_change: false,
+@@ -4614,7 +4614,7 @@ const DATAFRAME_TREE_STEP: f32 = 18.0;
+ struct GitStatusTree {
+     /// The path column the tree is drawn in.
+     name_col: usize,
+-    rows: Vec<GitTreeRow>,
++    rows: blaze_own::AVec<'static, GitTreeRow>,
+ }
+ 
+ /// One drawn row of a [`GitStatusTree`].
+@@ -4665,9 +4665,9 @@ fn is_git_status_table(table: &Table<'_>, name_col: usize) -> bool {
+ 
+ /// Split a repo-relative path into segments; the last keeps a trailing `/` (an untracked
+ /// directory as git reports it), and empty segments from doubled slashes are dropped.
+-fn split_git_tree_path(path: &str) -> Vec<&str> {
++fn split_git_tree_path<'p, 'a>(path: &'p str, alloc: Alloc<'a>) -> blaze_own::AVec<'a, &'p str> {
+     let body = path.strip_suffix('/').unwrap_or(path);
+-    let mut segs: Vec<&str> = Vec::new();
++    let mut segs: blaze_own::AVec<'a, &'p str> = blaze_own::AVec::new_in(alloc);
+     let mut start = 0usize;
+     for (i, b) in body.bytes().enumerate() {
+         if b == b'/' {
+@@ -4686,27 +4686,31 @@ fn split_git_tree_path(path: &str) -> Vec<&str> {
+ /// Lay `(table_row, path)` entries out as a rough `eza --tree` scoped to them: sorted by path
+ /// segments, each directory a row above its entries, a directory whose only child is a directory
+ /// collapsed into one row (`crates/blaze-shell/src/`), and leaves showing their last segment.
+-fn git_status_tree_rows(entries: &[(usize, &str)]) -> Vec<GitTreeRow> {
+-    let mut items: Vec<(usize, Vec<&str>)> =
+-        entries.iter().map(|&(row, path)| (row, split_git_tree_path(path))).collect();
+-    items.sort_by(|a, b| a.1.cmp(&b.1).then(a.0.cmp(&b.0)));
+-    let mut out = Vec::with_capacity(items.len() * 2);
+-    let mut rails: Vec<bool> = Vec::new();
+-    push_git_tree_level(&items, 0, true, &mut rails, &mut out);
++fn git_status_tree_rows<'a>(entries: &[(usize, &str)], alloc: Alloc<'a>) -> blaze_own::AVec<'a, GitTreeRow> {
++    let mut items: blaze_own::AVec<'a, (usize, blaze_own::AVec<'a, &str>)> =
++        blaze_own::AVec::with_capacity_in(entries.len(), alloc);
++    for &(row, path) in entries {
++        items.push((row, split_git_tree_path(path, alloc)));
 +    }
-+    Some(bytes)
-+}
-+
-+/// Stable 32-byte digest of a probe's SDK / sysroot identity (empty string on Linux with no
-+/// sysroot, or the macOS SDK identity hex).
-+pub fn sdk_id_digest(sdk_id: &str) -> [u8; 32] {
-+    blaze_ids::ContentId::of("blaze c-probe sdk id 1", sdk_id.as_bytes()).0
-+}
-+
-+/// Parsed fields of a `cc-probe\n<answerer 64-hex>\n<clang 64-hex>\n<sdk 64-hex>\n<key 64-hex>`
-+/// read subject.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub struct CcProbeSubject {
-+    pub answerer: blaze_ids::ContentId,
-+    pub clang: [u8; 32],
-+    pub sdk: [u8; 32],
-+    pub key: crate::c_tasks_probe::ProbeKey,
-+}
-+
-+/// The read subject for a resolved compiler probe, binding the active answerer strategy, pinned
-+/// clang archive SHA-256, active SDK identity digest, and canonical [`crate::c_tasks_probe::ProbeKey`].
-+pub fn cc_probe_subject<'a>(
-+    answerer: &blaze_ids::ContentId,
-+    clang: &[u8; 32],
-+    sdk: &[u8; 32],
-+    key: &crate::c_tasks_probe::ProbeKey,
++    items.sort_by(|a, b| a.1.as_slice().cmp(b.1.as_slice()).then(a.0.cmp(&b.0)));
++    let mut out = blaze_own::AVec::with_capacity_in(items.len() * 2, alloc);
++    let mut rails: blaze_own::AVec<'a, bool> = blaze_own::AVec::new_in(alloc);
++    push_git_tree_level(&items, 0, true, &mut rails, &mut out, alloc);
+     out
+ }
+ 
+ /// Emit the rows for `items` (sorted, sharing their first `level` segments). Top-level rows
+ /// carry no guides; deeper rows get one `│`/blank per elbowed ancestor in `rails`, then an elbow.
+-fn push_git_tree_level(
+-    items: &[(usize, Vec<&str>)],
++fn push_git_tree_level<'p, 'a>(
++    items: &[(usize, blaze_own::AVec<'a, &'p str>)],
+     level: usize,
+     top: bool,
+-    rails: &mut Vec<bool>,
+-    out: &mut Vec<GitTreeRow>,
++    rails: &mut blaze_own::AVec<'a, bool>,
++    out: &mut blaze_own::AVec<'a, GitTreeRow>,
 +    alloc: Alloc<'a>,
-+) -> AString<'a> {
-+    let mut out = String::from_str_in(CC_PROBE_HEAD, alloc);
-+    out.push('\n');
-+    push_hex32(&answerer.0, &mut out);
-+    out.push('\n');
-+    push_hex32(clang, &mut out);
-+    out.push('\n');
-+    push_hex32(sdk, &mut out);
-+    out.push('\n');
-+    push_hex32(&key.0.0, &mut out);
-+    out
-+}
-+
-+/// Parses a `cc-probe\n<answerer 64-hex>\n<clang 64-hex>\n<sdk 64-hex>\n<key 64-hex>` read subject.
-+pub fn parse_cc_probe_subject(subject: &str) -> Option<CcProbeSubject> {
-+    let rest = subject.strip_prefix(CC_PROBE_HEAD)?.strip_prefix('\n')?;
-+    let mut parts = rest.split('\n');
-+    let answerer_hex = parts.next()?;
-+    let clang_hex = parts.next()?;
-+    let sdk_hex = parts.next()?;
-+    let key_hex = parts.next()?;
-+    if parts.next().is_some() {
-+        return None;
+ ) {
+     // Group into leaves (one item ending here) and directories (items sharing segment `level`).
+-    let mut groups: Vec<(usize, usize, bool)> = Vec::new();
++    let mut groups: blaze_own::AVec<'a, (usize, usize, bool)> = blaze_own::AVec::new_in(alloc);
+     let mut i = 0usize;
+     while i < items.len() {
+         let segs = &items[i].1;
+@@ -4766,7 +4770,7 @@ fn push_git_tree_level(
+         if !top {
+             rails.push(!is_last);
+         }
+-        push_git_tree_level(group, next, false, rails, out);
++        push_git_tree_level(group, next, false, rails, out, alloc);
+         if !top {
+             rails.pop();
+         }
+@@ -10944,9 +10948,10 @@ mod tests {
+                 leaf: leaf.to_owned(),
+             },
+         };
++        let alloc = blaze_own::Alloc::global();
+         assert_eq!(
+-            git_status_tree_rows(&entries),
+-            std::vec![
++            git_status_tree_rows(&entries, alloc).as_slice(),
++            [
+                 entry("", 3, "README.md"),
+                 dir("", "crates/", "crates/"),
+                 dir("├── ", "blaze-sh/src/", "crates/blaze-sh/src/"),
+@@ -10959,8 +10964,8 @@ mod tests {
+         );
+         // A single shared chain collapses into one top-level directory row.
+```
+
+**File**: `crates/blaze-unit-graph/src/resolve.rs` (modified, +7/-3)
+```diff
+@@ -351,11 +351,15 @@ impl<'l, 'a> Resolution<'l, 'a> {
+     /// [`UnitError::PathOutsideAnchor`]: no source can answer it, so it is never asked for.
+     fn locked(&self, id: LockId, package: &Package<'a>, e: usize) -> Result<LockId, UnitError<'a>> {
+         let child = self.locked_entry(id, package, e)?;
+-        let dep = &package.deps[e];
+-        if let DepSource::OutsideAnchor { path } = &dep.source
++        if let Some(dep) = package.deps.get(e)
++            && let DepSource::OutsideAnchor { path } = &dep.source
+             && matches!(self.answers.get(child.index()), Some(Answer::Pending))
+         {
+-            return Err(UnitError::PathOutsideAnchor { package: package.name.clone(), dep: dep.key.clone(), path: path.clone() });
++            return Err(UnitError::PathOutsideAnchor {
++                package: own(package.name.as_str(), self.alloc),
++                dep: own(dep.key.as_str(), self.alloc),
++                path: own(path.as_str(), self.alloc),
++            });
+         }
+         Ok(child)
+     }
+```
+
+---
+
+### Incident Patch 3: `c27c8b35` (2026-11-27)
+**Commit Message**: fix(scope,ladder): exclude wasm_import_module extern blocks and mismatched arities from export_shim (#2833)
+
+## Summary
+Fixes the PR `#2828` wasm64 `export_shim` regression where
+`#[link(wasm_import_module = "blaze_seed")]` Wasm host imports
+(`wasi_rt::rt::seed::unlink`) were mistakenly bound to same-program
+POSIX `#[no_mangle] unlink` wrappers (`call sig mismatch (ll->i) vs
+(l->i)`):
+
+- **`blaze-scope` (`ItemsRecord` v20, `WASM_IMPORT = 1 << 7`)**: records
+`wasm_import` on `ItemIdentity` for `#[link(wasm_import_module = ...)]`
+extern blocks (walking macro expansions), bumps `VERSION` `19 -> 20`
+with `previous_items_version_19_is_rejected` + `scripts/layouts.txt`,
+and includes `row.wasm_import` in `NameCell::Item`.
+- **`blaze-ladder` (`export_shim.rs`, `foreign_locals.rs`, `locals.rs`,
+`source.rs`, `tables/{view,task}.rs`)**: excludes both module-level and
+body-local `wasm_import_module` extern blocks from `export_shim`, and
+verifies `(fixed_param_count, c_variadic)` signature shape match before
+binding.
+
+## Verification
+- `blaze-scope` (`names_cells` + `previous_items_version`) &
+`blaze-ladder` (`front_equal_rules`, 36/36): **all passed**.
+- `blaze-cli` (`wasm64_self_compile_e2e`)
+
+**File**: `crates/blaze-ladder/src/front2/export_shim.rs` (modified, +46/-12)
+```diff
+@@ -57,6 +57,8 @@ pub(crate) fn format_refused<'a>(why: &ExportRefused<'_>, alloc: Alloc<'a>) -> A
+ pub struct Declared<'a> {
+     pub lib: LibKey,
+     pub symbol: AString<'a>,
++    pub params: usize,
++    pub c_variadic: bool,
+ }
+ 
+ /// Why a same-program export binding failed.
+@@ -187,8 +189,18 @@ pub fn declares<'n, 'a, S: NamesSource<'n>>(
+     let Some(raw_name) = raw_name else { return Ok(None) };
+     let ident = raw_name.strip_prefix("r#").unwrap_or(raw_name);
+     let abi = match local_abi {
+-        Some(local) => Some(local),
+-        None => names.extern_abi(h.lib).ok_or_else(|| ExportRefused::Unplaced { symbol: own_str(ident, alloc) })?,
++        Some(local) => {
++            if store.locals.foreign(key).is_some_and(|f| f.wasm_import) {
++                return Ok(None);
++            }
++            Some(local)
++        }
++        None => {
++            if names.is_wasm_import(h.lib).unwrap_or(false) {
++                return Ok(None);
++            }
++            names.extern_abi(h.lib).ok_or_else(|| ExportRefused::Unplaced { symbol: own_str(ident, alloc) })?
++        }
+     };
+     let Some(abi) = abi else { return Ok(None) };
+     if abi == super::llvm_intrinsic::ABI {
+@@ -207,22 +219,25 @@ pub fn declares<'n, 'a, S: NamesSource<'n>>(
+     let attrs_err = || ExportRefused::Attrs { symbol: own_str(ident, alloc) };
+     let krate = names.crate_of(h.lib).ok_or_else(attrs_err)?;
+     let values_at = super::links::values_key(names, store, h.lib);
++    let params = h.inputs.len();
++    let c_variadic = h.c_variadic;
+     match read_decl_attrs(names, krate, values_at, h.text, alloc).map_err(|()| attrs_err())? {
+         DeclAttrs::Intrinsic => Ok(None),
+-        DeclAttrs::LinkName(symbol) => Ok(Some(Declared { lib: h.lib, symbol })),
+-        DeclAttrs::Plain => Ok(Some(Declared { lib: h.lib, symbol: own_str(ident, alloc) })),
++        DeclAttrs::LinkName(symbol) => Ok(Some(Declared { lib: h.lib, symbol, params, c_variadic })),
++        DeclAttrs::Plain => Ok(Some(Declared { lib: h.lib, symbol: own_str(ident, alloc), params, c_variadic })),
+     }
+ }
+ 
+ /// Checks whether candidate function `key` in `krate` strongly exports `symbol` (i.e. has a body,
+-/// is not cfg'd out, is not `#[linkage = "weak"]`, and its effective exported symbol — with
+-/// `#[export_name]` taking precedence over `#[no_mangle]` per Reference `[abi.export_name]` —
+-/// equals `symbol`).
++/// is not cfg'd out, is not `#[linkage = "weak"]`, matches `sig_shape` when given, and its
++/// effective exported symbol — with `#[export_name]` taking precedence over `#[no_mangle]` per
++/// Reference `[abi.export_name]` — equals `symbol`).
+ fn exports_symbol<'n, 'a, S: NamesSource<'n>>(
+     names: S,
+     krate: usize,
+     key: LibKey,
+     symbol: &str,
++    sig_shape: Option<(usize, bool)>,
+     alloc: Alloc<'a>,
+ ) -> Result<bool, ExportRefused<'a>> {
+     let unread = || ExportRefused::Unread { symbol: own_str(symbol, alloc), krate };
+@@ -237,9 +252,26 @@ fn exports_symbol<'n, 'a, S: NamesSource<'n>>(
+     if v.cfg_out() {
+         return Ok(false);
+     }
+-    if v.head.get(head::FLAGS).copied().unwrap_or(0) & blaze_lower::machine::sig::HAS_BODY == 0 {
++    let flags = v.head.get(head::FLAGS).copied().unwrap_or(0);
++    if flags & blaze_lower::machine::sig::HAS_BODY == 0 {
+         return Ok(false);
+     }
++    if let Some((want_params, want_variadic)) = sig_shape {
++        let def_variadic = flags & blaze_lower::machine::sig::VARIADIC != 0;
++        if def_variadic != want_variadic {
++            return Ok(false);
++        }
++        let mut def_params = 0usize;
++        for &n in v.rows(v.list(head::PARAMS)).map_err(|_| attrs_err())? {
++            let prm = blaze_lower::Param::decode(n).map_err(|_| attrs_err())?;
++            if !prm.variadic {
++                def_params = def_params.saturating_add(1);
++            }
++        }
++        if def_params != want_params {
++            return Ok(false);
++        }
 +    }
-+    Some(CcProbeSubject {
-+        answerer: blaze_ids::ContentId(parse_hex32(answerer_hex)?),
-+        clang: parse_hex32(clang_hex)?,
-+        sdk: parse_hex32(sdk_hex)?,
-+        key: crate::c_tasks_probe::ProbeKey(blaze_ids::ContentId(parse_hex32(key_hex)?)),
+     let mut no_mangle = false;
+     let mut export_name: Option<AString<'a>> = None;
+     let mut weak = false;
+@@ -321,6 +353,7 @@ pub fn definition_in<'n, 'a, S: NamesSource<'n>>(
+     names: S,
+     crates: &[usize],
+     symbol: &str,
++    sig_shape: Option<(usize, bool)>,
+     alloc: Alloc<'a>,
+ ) -> Result<Option<LibKey>, ExportRefused<'a>> {
+     let mut found: Option<LibKey> = None;
+@@ -346,7 +379,7 @@ pub fn definition_in<'n, 'a, S: NamesSource<'n>>(
+             return Err(unread());
+         }
+         for &key in candidates.iter() {
+-            if !exports_symbol(names, krate, key, symbol, alloc)? {
++            if !exports_symbol(names, krate, key, symbol, sig_shape, alloc)? {
+                 continue;
+             }
+             // Keep the two smallest keys: the refusal names the same pair in any walk order.
+@@ -380,10 +413,11 @@ pub fn definition<'n, 'a, S: NamesSource<'n>>(
+     names: S,
+     roots: &[usize],
+     symbol: &str,
++    sig_shape: Option<(usize, bool)>,
+     alloc: Alloc<'a>,
+ ) -> R
+```
+
+**File**: `crates/blaze-ladder/src/front2/foreign_locals.rs` (modified, +6/-1)
+```diff
+@@ -49,6 +49,8 @@ pub struct Declared<'t> {
+     /// The `safe` qualifier is written ("implicitly unsafe unless the safe function qualifier
+     /// is present").
+     pub safe: bool,
++    /// Whether the enclosing `extern` block carries `#[link(wasm_import_module = ...)]`.
++    pub wasm_import: bool,
+ }
+ 
+ /// What a local foreign item's head and the code builder ask beyond its text: its block's ABI
+@@ -61,6 +63,8 @@ pub struct LocalForeign<'n> {
+     /// that the library they are calling uses the standard C ABI").
+     pub abi: &'n str,
+     pub safe: bool,
++    /// Whether the enclosing `extern` block carries `#[link(wasm_import_module = ...)]`.
++    pub wasm_import: bool,
+ }
+ 
+ /// Why an `extern` block in a body was not read: each a form refused by name.
+@@ -137,6 +141,7 @@ pub fn declared<'t, 'a>(block: &'t str, edition: Edition, cfg: &mut dyn Cfg, all
+     let mut top = outline.children(None);
+     let (Some((at, item)), None) = (top.next(), top.next()) else { return Err(Refused::NotOneBlock) };
+     let ItemDetail::ExternBlock { abi } = item.detail else { return Err(Refused::NotOneBlock) };
++    let wasm_import = blaze_scope::items_record::extern_block_wasm_import(block, &outline, item);
+     let abi = match abi {
+         None => C_ABI,
+         Some(r) => {
+@@ -183,7 +188,7 @@ pub fn declared<'t, 'a>(block: &'t str, edition: Edition, cfg: &mut dyn Cfg, all
+         let safe = quals.split_whitespace().any(|w| w == "safe");
+         let name = slice(text, name)?;
+         let name = name.strip_prefix("r#").unwrap_or(name);
+-        out.push(Declared { kind, name, text, at: child.range, safe });
++        out.push(Declared { kind, name, text, at: child.range, safe, wasm_import });
+     }
+     Ok((abi, out))
+ }
+```
+
+**File**: `crates/blaze-ladder/src/front2/locals.rs` (modified, +1/-1)
+```diff
+@@ -714,7 +714,7 @@ impl<'n> Locals<'n> {
+                         rows.push(Row { scope: s as u32, kind, name: d.name, key, range, path: &[], abs: false, first_mark: None, module: None });
+                         let ck = keys.local(key, kind).map_err(HeadError::Key)?;
+                         self.heads.insert(ck, LocalHead { lib: key, kind, text: d.text, module: at.module, names_at, enclosing: at.owner, scope: s as u32, range, copied: from.is_none(), marks });
+-                        self.foreign.insert(ck, LocalForeign { kind: d.kind, abi, safe: d.safe });
++                        self.foreign.insert(ck, LocalForeign { kind: d.kind, abi, safe: d.safe, wasm_import: d.wasm_import });
+                     }
+                     continue;
+                 }
+```
+
+**File**: `crates/blaze-ladder/src/front2/source.rs` (modified, +19/-0)
+```diff
+@@ -309,6 +309,11 @@ pub trait NamesSource<'n>: Copy {
+     /// records such a key is `None` with a gap naming it in the log.
+     fn extern_abi(self, key: ItemKey) -> Option<Option<&'n str>>;
+ 
++    /// Question 10c2: whether foreign item `key` is declared inside an `extern` block carrying
++    /// `#[link(wasm_import_module = ...)]` (a WebAssembly host import, never a same-program Rust
++    /// export). Covered by `NameCell::Item`.
++    fn is_wasm_import(self, key: ItemKey) -> Option<bool>;
++
+     /// Question 10d: the value of `attr` (`link_name` or `export_name`) on item `key` when it is
+     /// written as a macro call (ring's `#[link_name = concat!(prefix!(), stringify!(f))]`), as
+     /// the item's crate's solve expanded it once at the item (blaze-scope attr_values.rs): over
+@@ -716,6 +721,14 @@ impl<'n> NamesSource<'n> for &'n Names<'n> {
+         blaze_scope::items_record::foreign_abi(krate, at, item, key).ok()
+     }
+ 
++    fn is_wasm_import(self, key: ItemKey) -> Option<bool> {
++        let Some(Place { krate, at, item }) = self.place(key) else { return Some(false) };
++        let krate = *self.crates().get(krate)?;
++        blaze_scope::items_record::foreign_block(krate, at, item, key)
++            .ok()
++            .map(|found| found.is_some_and(|(_, wasm)| wasm))
++    }
++
+     fn attr_value(self, key: ItemKey, attr: &'static str) -> Option<Option<RowValue<'n>>> {
+         // The rows the crate's solve made (`CrateNames::values`, sorted by item and attribute):
+         // the very rows its items record's value table is written from.
+@@ -2197,6 +2210,12 @@ impl<'n> NamesSource<'n> for &'n Records<'n> {
+         }
+     }
+ 
++    fn is_wasm_import(self, key: ItemKey) -> Option<bool> {
++        let krate = self.items.crate_of(key)?;
++        let record = self.items_of(krate)?;
++        Some(self.read(krate, record.identity(key))?.is_some_and(|row| row.wasm_import))
++    }
++
+     /// The crate's items record's value table (blaze-scope items_record/values.rs): one binary
+     /// search, no text read, nothing expanded again (rule 77). A refusal comes back as the words
+     /// the solve wrote with the record.
+```
+
+**File**: `crates/blaze-ladder/src/front2/tables/task.rs` (modified, +1/-0)
+```diff
+@@ -498,6 +498,7 @@ impl<'n> NamesSource<'n> for DecodeLangSource<'n> {
+     fn expansion_text(self, _krate: usize, _call: ItemKey) -> Option<&'n str> { None }
+     fn text_marks(self, _krate: usize, _call: ItemKey) -> Result<Option<blaze_scope::crate_roots::TextMarks<'n>>, super::super::item_site::MarksLost> { Ok(None) }
+     fn extern_abi(self, _key: ItemKey) -> Option<Option<&'n str>> { None }
++    fn is_wasm_import(self, _key: ItemKey) -> Option<bool> { None }
+     fn attr_value(self, _key: ItemKey, _attr: &'static str) -> Option<Option<blaze_scope::attr_values::RowValue<'n>>> { None }
+     fn in_sans_io_scope(self, _key: ItemKey, _module: ItemKey) -> bool { false }
+     fn kind_of_item(self, _key: ItemKey) -> Option<ItemKind> { None }
+```
+
+**File**: `crates/blaze-ladder/src/front2/tables/view.rs` (modified, +5/-0)
+```diff
+@@ -445,6 +445,11 @@ impl<'n> NamesSource<'n> for Tables<'_, 'n> {
+         self.records.extern_abi(key)
+     }
+ 
++    fn is_wasm_import(self, key: ItemKey) -> Option<bool> {
++        self.item(key);
++        self.records.is_wasm_import(key)
++    }
++
+     fn kind_of_item(self, key: ItemKey) -> Option<ItemKind> {
+         self.item(key);
+         self.records.kind_of_item(key)
+```
+
+**File**: `crates/blaze-ladder/tests/front_equal_rules.rs` (modified, +114/-0)
+```diff
+@@ -1173,3 +1173,117 @@ mod b { #[unsafe(export_name = "dup_sym")] pub unsafe extern "C" fn other() -> i
+         assert!(wd.contains("dup_sym") && wd.contains("defined twice"), "unexpected refusal detail: {wd}");
+     });
+ }
++
++#[test]
++fn wasm_import_module_and_mismatched_arity_externs_stay_foreign() {
++    on_checker_stack(|| {
++        let caller: &'static str = r#"#![feature(no_core)]
++#![no_core]
++#[link(wasm_import_module = "blaze_seed")]
++unsafe extern "C" {
++    fn unlink(path: *const u8, len: usize) -> i32;
++    fn same_arity_host(x: i32) -> i32;
++}
++unsafe extern "C" {
++    fn mismatch_arity(a: i32, b: i32) -> i32;
++    fn matched_rt(x: i32) -> i32;
++}
++#[unsafe(no_mangle)]
++pub extern "C" fn main() -> i32 {
++    #[link(wasm_import_module = "wasi_snapshot_preview1")]
++    unsafe extern "C" {
++        fn local_host(x: i32) -> i32;
++    }
++    let p = 0usize as *const u8;
++    unsafe {
++        unlink(p, 0) + same_arity_host(1) + local_host(2) + mismatch_arity(3, 4) + matched_rt(5)
++    }
++}
++"#;
++        let provider: &'static str = r#"#![feature(no_core)]
++#![no_core]
++#[unsafe(no_mangle)]
++pub unsafe extern "C" fn unlink(_path: *const u8) -> i32 { 10 }
++#[unsafe(no_mangle)]
++pub unsafe extern "C" fn same_arity_host(_x: i32) -> i32 { 20 }
++#[unsafe(no_mangle)]
++pub unsafe extern "C" fn local_host(_x: i32) -> i32 { 30 }
++#[unsafe(no_mangle)]
++pub unsafe extern "C" fn mismatch_arity(_a: i32) -> i32 { 40 }
++#[unsafe(no_mangle)]
++pub unsafe extern "C" fn matched_rt(x: i32) -> i32 { x + 50 }
++"#;
++        let frame = Frame::new(blaze_mem::tag::Tag::Infer).expect("fixture frame");
++        let a = blaze_own::testing::heap().alloc();
++        let files = [SourceFile { path: ROOT, text: caller }];
++        let tc = Toolchain::none(a);
++        let new = NewFront { package: "ladder", edition: "2024", shelf: None, overflow: OverflowChecks::Off };
++        let texts = ProgramTexts::new(&files, ROOT, new, &tc, Panic::Unwind).expect("fixture texts");
++        let user = texts.user();
++        let inputs = Inputs::new(&user, &tc).expect("fixture inputs");
++        let app = inputs.crates()[0];
++        let crates = [
++            CrateInput { deps: &[("provider", 1)], ..app },
++            CrateInput {
++                name: "provider",
++                key: CrateItemKey(ContentId::of("wasm import fixture crate", b"provider")),
++                implicit: blaze_unit_graph::implicit(user.edition, &blaze_unit_graph::UnitKind::Lib),
++                root: "/provider/src/lib.rs",
++                shown_from: "/provider",
++                deps: &[],
++                ..app
++            },
++        ];
++        let roots = [(app.root, caller), (crates[1].root, provider)];
++        let names = resolve_crates(&crates, Sysroot::default(), &FixtureFiles(&roots), &Serial, blaze_own::testing::bump()).expect("fixture names");
++        let lib = |krate, name| names.items(krate).map(|(k, _, _)| k).find(|&k| names.name_of(k) == Some(name)).expect("named item");
++        let main = lib(0, "main");
++        let entry = checker_of(main);
++        let decl_unlink = checker_of(lib(0, "unlink"));
++        let decl_same_arity_host = checker_of(lib(0, "same_arity_host"));
++        let decl_mismatch = checker_of(lib(0, "mismatch_arity"));
++        let decl_matched = checker_of(lib(0, "matched_rt"));
++        let def_matched = checker_of(lib(1, "matched_rt"));
++
++        let whole = Front2Program::new(&names, &frame, &files, a).expect("whole program");
++        let log = frame.alloc(Log::new(&["ladder", "provider"], a));
++        let kept = keep(&names, &frame, a);
++        let records = frame.alloc(Records::new(frame.alloc_slice_copy(&[crates[0].key, crates[1].key]), kept, log, &frame, a));
++        let mut lazy = LazyProgram::from_records(records, &frame, &[0], Some(entry), a).expect("lazy program");
++        lazy.decide_start(blaze_ladder::run::special::MakerStart::ByRule).expect("exported main");
++        let (li, checked) = lazy.check_one(entry).expect("lazy check main").expect("main has a body");
++        let wi = whole.entry().expect("whole main");
++
++        let decl_local_host = *checked
++            .callees
++            .column::<1>()
++            .iter()
++            .find(|&&k| k != decl_unlink && k != decl_same_arity_host && k != decl_mismatch && k != decl_matched)
++            .expect("body-local wasm import callee");
++
++        let check_row = |front: &dyn FrontEnd, key, want_kind, want_sym: &str| {
++            let idx = front.fn_index(key).expect("tabled fn");
++            let f = front.function(idx);
++            assert_eq!((f.kind, f.symbol), (want_kind, want_sym));
++        };
++        // Module-level wasm_import_module (both mismatched and identical arity) stay Foreign.
++        check_row(&whole, decl_unlink, FnKind::Foreign, "unlink");
++        check_row(&lazy, decl_unlink, FnKind::Foreign, "unlink");
++        check_row(&whole, decl_same_arity_host, FnKind::Foreign, "same_arity_host");
++        check_row(&lazy, decl
+```
+
+**File**: `crates/blaze-scope/src/items_record.rs` (modified, +46/-23)
+```diff
+@@ -102,7 +102,11 @@ const MAGIC: [u8; 4] = *b"BZIT";
+ /// function items whose signature head mentions `no_mangle` or `export_name` so `NameCell::Exports`
+ /// and `export_shim` scan only the in-memory `meta` column without opening unrelated files; a
+ /// version-18 record is refused the same way.
+-const VERSION: u32 = 19;
++/// 20: item flag `WASM_IMPORT` (`1 << 7`) marks foreign items declared inside an `extern` block
++/// carrying `#[link(wasm_import_module = ...)]` so same-program `export_shim` binding never binds
++/// WebAssembly host imports (e.g. `blaze_seed::unlink`) to same-program POSIX `#[no_mangle]`
++/// definitions; a version-19 record is refused the same way.
++const VERSION: u32 = 20;
+ const KEY_TAIL: usize = 24;
+ const ALIGN: usize = 16;
+ const HEADER: usize = 256;
+@@ -174,6 +178,8 @@ const SANS_IO: u8 = 1 << 4;
+ const EXPORT_NO_MANGLE: u8 = 1 << 5;
+ /// Item only: function outside an `extern` block whose signature head mentions `export_name`.
+ const EXPORT_NAME: u8 = 1 << 6;
++/// Item only: foreign item declared inside an `extern` block with `#[link(wasm_import_module = ...)]`.
++const WASM_IMPORT: u8 = 1 << 7;
+ 
+ // Impl marks.
+ const HAS_TRAIT: u8 = 1;
+@@ -443,48 +449,50 @@ fn span_in(base: &str, part: &str) -> Option<(u32, u32)> {
+ /// walk/rows.rs `(EXTERN_BLOCK, ABI)`), relative to the block's start (rule 71). A range outside
+ /// the text is [`ItemsRecordError::Range`]; a written ABI that is not one quoted string (a raw
+ /// string, an escape) is [`ItemsRecordError::ForeignAbi`], never read as "C" (rule 3).
+-fn foreign_abi_in_outline<'t>(text: &'t str, outline: &blaze_file_items::Outline<'_>, entry: &blaze_surface::Item, item: ItemKey, krate: CrateItemKey) -> Result<Option<&'t str>, ItemsRecordError> {
++/// Whether the `extern` block `block` in `outline` of `text` carries a non-doc attribute naming
++/// `wasm_import_module` (e.g. `#[link(wasm_import_module = "blaze_seed")]`).
++pub fn extern_block_wasm_import(text: &str, outline: &blaze_file_items::Outline<'_>, block: &blaze_surface::Item) -> bool {
++    outline.attrs(block).iter().any(|attr| {
++        if attr.kind == blaze_surface::AttrKind::Doc {
++            return false;
++        }
++        let start = usize::try_from(block.range.start.saturating_add(attr.range.start)).unwrap_or(usize::MAX);
++        let end = usize::try_from(block.range.start.saturating_add(attr.range.end)).unwrap_or(usize::MAX);
++        text.get(start..end).is_some_and(|written| written.contains("wasm_import_module"))
 +    })
 +}
 +
- /// The fact's record subject for the script's read list (as D54's `git:` subjects): the whole
- /// question, one field per line. `pkgconf` is recorded as `pkg-config`: both are answered alike.
- pub fn subject<'a>(fact: &Fact<'_>, alloc: Alloc<'a>) -> AString<'a> {
-```
-
-**File**: `crates/blaze-build-script/src/key.rs` (modified, +8/-4)
-```diff
-@@ -109,7 +109,9 @@ impl<'k> HostToolKey<'k> {
- /// its spawn's folder when recorded (c_tasks.rs `rooted`): a `bzbsout6` record of run 2 holds
- /// them as spawned, which the C tasks refuse as host paths, so none is found again. 4: a
- /// `--param` value is no longer taken for a path (`rooted` made it `/package/ssp-buffer-size=4`).
--pub const DOMAIN: &str = "blaze v2 build-script run 4";
-+/// 5: compiler probes (`cc-probe`) are recorded per probe in the script's read list instead of
-+/// hashing the whole `pins/answers/clang.json` table into every script's base key.
-+pub const DOMAIN: &str = "blaze v2 build-script run 5";
- 
- /// The base key.
- pub fn base(inputs: &KeyInputs<'_>, scratch: &mut blaze_own::AVec<'_, u8>) -> ContentId {
-@@ -129,10 +131,12 @@ pub fn base(inputs: &KeyInputs<'_>, scratch: &mut blaze_own::AVec<'_, u8>) -> Co
-         .update(&l.out_dir_files.to_le_bytes())
-         .update(&l.output.to_le_bytes())
-         .update(&l.line.to_le_bytes());
-+    #[cfg(not(target_os = "linux"))]
-     if let RunnerKey::Wasm = inputs.runner {
--        // A wasm script's compiler probes are answered from this table (c_tasks_probe): a
--        // changed answer re-runs the scripts, and no probe is in a read list. A native script
--        // runs its compiler, so the table is not in its key.
-+        // On non-Linux hosts, wasm compiler probes still use the pinned table in
-+        // `pins/answers/clang.json` (preserving main's exact behavior until a descriptor-bound
-+        // macOS execution backend lands). On Linux, probes execute hermetically and record
-+        // per-probe `cc-probe` read subjects instead of hashing the whole table into every key.
-         hasher.part(b"clang answers").id(&crate::c_tasks_probe::table_id(blaze_pins::CLANG_ANSWERS_JSON.as_bytes()));
++fn foreign_block_in_outline<'t>(text: &'t str, outline: &blaze_file_items::Outline<'_>, entry: &blaze_surface::Item, item: ItemKey, krate: CrateItemKey) -> Result<Option<(&'t str, bool)>, ItemsRecordError> {
+     let Some(parent) = entry.parent else { return Ok(None) };
+     let block = outline.item(parent);
+     let ItemDetail::ExternBlock { abi } = block.detail else { return Ok(None) };
+-    let Some(r) = abi else { return Ok(Some("C")) };
++    let wasm_import = extern_block_wasm_import(text, outline, block);
++    let Some(r) = abi else { return Ok(Some(("C", wasm_import))) };
+     let (start, end) = (block.range.start.saturating_add(r.start), block.range.start.saturating_add(r.end));
+     let written = text.get(start as usize..end as usize).ok_or(ItemsRecordError::Range { krate, start, len: end.saturating_sub(start) })?;
+     let written = written.trim();
+     let written = written.strip_prefix("extern").map_or(written, str::trim_start);
+     if written.is_empty() {
+-        return Ok(Some("C"));
++        return Ok(Some(("C", wasm_import)));
      }
-     if let RunnerKey::Native { compiler, target, sysroot, host_tools } = inputs.runner {
-```
-
-**File**: `crates/blaze-build-script/src/probe.rs` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@ pub const NATIVE_TOOLS: &[&str] = &["gmake", "make", "perl"];
- /// [`NATIVE_TOOLS`] one, or a shell running a `configure` script (tikv-jemalloc-sys).
- pub fn is_deferred_tool(program: &str, args: &[&str]) -> bool {
-     let name = program.rsplit('/').next().unwrap_or(program);
--    is_c_tool(name)
-+    (is_c_tool(name) && !crate::c_tasks_probe::is_probe(program, args))
-         || NATIVE_TOOLS.contains(&name)
-         || (matches!(name, "sh" | "bash") && args.first().is_some_and(|script| script.rsplit('/').next() == Some("configure")))
- }
-```
-
-**File**: `crates/blaze-cli/src/engine_check.rs` (modified, +46/-3)
-```diff
-@@ -620,6 +620,37 @@ impl<'f> LazySdk<'f> {
-     ) -> Result<blaze_apple_sdk::Sdk<'f>, blaze_apple_sdk::SdkRefused<'f>> {
-         self.resolve_raw(cx, blaze_home, wall_ns).0
-     }
-+
-+    fn sdk_digest(&self, cx: &Cx, blaze_home: Option<&Dir<ReadWrite>>, wall_ns: u64) -> Result<[u8; 32], CliError> {
-+        match self.resolve_on_demand(cx, blaze_home, wall_ns) {
-+            Ok(sdk) => {
-+                let mut hex = [0u8; blaze_apple_sdk::SdkId::KEY_LEN * 2];
-+                for (i, byte) in sdk.identity().key().iter().enumerate() {
-+                    let hi = byte >> 4;
-+                    let lo = byte & 15;
-+                    if let Some(slot) = hex.get_mut(2 * i) {
-+                        *slot = if hi < 10 { b'0' + hi } else { b'a' + (hi - 10) };
-+                    }
-+                    if let Some(slot) = hex.get_mut(2 * i + 1) {
-+                        *slot = if lo < 10 { b'0' + lo } else { b'a' + (lo - 10) };
-+                    }
-+                }
-+                Ok(blaze_build_script::facts::sdk_id_digest(core::str::from_utf8(&hex).unwrap_or("")))
-+            }
-+            Err(blaze_apple_sdk::SdkRefused::Neither { xcrun: blaze_apple_sdk::XcrunFailed::NotMacos }) => {
-+                Ok(blaze_build_script::facts::sdk_id_digest(""))
-+            }
-+            Err(refused) => {
-+                use core::fmt::Write as _;
-+                let mut msg = blaze_own::String::new_in(blaze_own::SharedAlloc::global());
-+                let _ = write!(
-+                    msg,
-+                    "cannot resolve active SDK identity while following a saved c-probe read: {refused}"
-+                );
-+                Err(CliError::Sdk(msg))
-+            }
-+        }
-+    }
- }
- 
- /// The command's edge, read once (rule 75): what `check`, `why`, `run` and `test` each take of
-@@ -3485,9 +3516,13 @@ fn checking<'f, 's: 'f>(
-             crate::engine_ready_edit::StoredBase::OtherCheckout => None,
-             crate::engine_ready_edit::StoredBase::Own | crate::engine_ready_edit::StoredBase::ToolsMoved => journal.marked(&pointer.leaves, frame),
-         };
-+        let sdk_digest_fn = || match lazy_sdk {
-+            Some(lazy) => lazy.sdk_digest(cx, Some(opened.home.dir()), phases.clock().wall().as_ns()),
-+            None => Ok(blaze_build_script::facts::sdk_id_digest("")),
-+        };
-         let follow = sweep::Follow { stamps: FromMeta::now(phases.clock()), plant: sweep::Plant::None };
-         let follow_began = phases.clock().now();
--        let (followed, statted) = follow.follow_served(cx, root, Some(opened.home.dir()), &pointer.leaves, marked.as_deref(), script_sweep.as_mut(), frame)?;
-+        let (followed, statted) = follow.follow_served_with_sdk(cx, root, Some(opened.home.dir()), place.home, &pointer.leaves, marked.as_deref(), script_sweep.as_mut(), Some(&sdk_digest_fn), frame)?;
-         let follow_ns = phases.clock().now().since(follow_began).map_or(0, |it| u64::try_from(it.as_nanos()).unwrap_or(u64::MAX));
-         sweep_counts = journal.counts(statted, u32::try_from(pointer.leaves.len()).unwrap_or(u32::MAX)).with_parts(journal.parts(&pointer.leaves, frame)).with_looks(followed.looks, follow_ns);
-         // Set, then borrowed SHARED: `Option::insert` hands back a `&mut`, and `today_slots` below
-@@ -3615,9 +3650,13 @@ fn checking<'f, 's: 'f>(
-             strategy.changed_since(cx, fs, root, opened.home.dir(), phases.clock(), whole_chosen.places(), frame)?
-         };
-         let whole_marked = whole_journal.marked(&whole_ptr.leaves, frame);
-+        let sdk_digest_fn = || match lazy_sdk {
-+            Some(lazy) => lazy.sdk_digest(cx, Some(opened.home.dir()), phases.clock().wall().as_ns()),
-+            None => Ok(blaze_build_script::facts::sdk_id_digest("")),
-+        };
-         let follow = sweep::Follow { stamps: FromMeta::now(phases.clock()), plant: sweep::Plant::None };
-         let follow_began = phases.clock().now();
--        let (whole_followed, whole_statted) = follow.follow_served(cx, root, Some(opened.home.dir()), &whole_ptr.leaves, whole_marked.as_deref(), None, frame)?;
-+        let (whole_followed, whole_statted) = follow.follow_served_with_sdk(cx, root, Some(opened.home.dir()), place.home, &whole_ptr.leaves, whole_marked.as_deref(), None, Some(&sdk_digest_fn), frame)?;
-         let follow_ns = phases.clock().now().since(follow_began).map_or(0, |it| u64::try_from(it.as_nanos()).unwrap_or(u64::MAX));
-         let whole_moved = whole_followed.layout_moved
-             || whole_followed.now.rows.iter().zip(whole_followed.was.iter()).any(|(now, was)| now.state() != *was);
-@@ -3717,9 +3756,13 @@ fn checking<'f, 's: 'f>(
-                         unreadable = Some(why);
-                     }
-                     if let Some(new_ptr) = &pointer {
-+                        let sdk_digest_fn = || match lazy_sdk {
-+                            Some(lazy) => lazy.sdk_digest(cx, Some(opened.home.dir()), phases.clock().wall().as_ns()),
-+                            None =
-```
-
-**File**: `crates/blaze-cli/src/main.rs` (modified, +4/-0)
-```diff
-@@ -196,6 +196,9 @@ pub enum CliError {
-     Leaves(WireError),
-     /// A file the outline cannot read: not UTF-8, or past 4 GiB.
-     Text { what: &'static str },
-+    /// SDK resolution failed while following a saved `cc-probe` read, preserving the full
-+    /// `SdkRefused` diagnostic (path, xcrun status, or underlying I/O error).
-+    Sdk(blaze_own::String<blaze_own::SharedAlloc<'static>>),
-     /// The program did not run: the stage and the function it stopped at (program.rs's form;
-     /// the request names the command in [`CliError::Ran`]).
-     /// Its one form: the program's manifest refused ([`ManifestRefused`]); every constructor is
-@@ -327,6 +330,7 @@ impl fmt::Display for CliError {
-             CliError::MacroFiles(error) => write!(f, "{error}"),
-             CliError::Leaves(error) => write!(f, "the checkout's leaf table (in a pointer of .blaze/v2/at), of this build's form, is malformed: {error}"),
-             CliError::Text { what } => write!(f, "{what}"),
-+            CliError::Sdk(why) => write!(f, "{why}"),
-             CliError::Program(error) => write!(f, "the program: {error}"),
-             CliError::Ran { command, error } => write!(f, "blaze {command}: {error}"),
-             CliError::OwnProcess(error) => write!(f, "{error}"),
-```
-
-**File**: `crates/blaze-cli/src/scripts.rs` (modified, +86/-19)
-```diff
-@@ -272,6 +272,9 @@ pub(crate) struct Shared<'f> {
-     table: Arc<std::vec::Vec<Row>>,
-     macro_table: Arc<std::vec::Vec<Row>>,
-     spawn: Arc<SpawnSetting>,
-+    /// Hermetic pinned `clang-23` probe runner and CAS store, or retained refusal when the host
-+    /// has no clang pin or unpacked shelf (fails only scripts that actually ask a C probe).
-+    c_probes: blaze_proc_macro::probe_clang::CProbeSetting,
-     /// The native setting, or why the command has none (its words, naming the path).
-     native: Result<NativeSetting<'f>, &'f str>,
-     /// The command resolved no macOS SDK (sdk.rs). A native run's key then holds "no SDK"
-@@ -610,7 +613,24 @@ impl<'f> Scripts<'f> {
-         // resolved again here.
-         let checkout = env.served.within(frame);
-         let no_sdk = env.sdk.is_err();
--        let shared: &'f Shared<'f> = blaze_own::Box::into_bump_ref(blaze_own::Box::new_in(Shared { result_alloc: env.heap.shared(), runtime, store, checkout, table, macro_table, spawn, native, no_sdk, graph_record }, frame));
-+        let mut sdk_hex = [0u8; blaze_apple_sdk::SdkId::KEY_LEN * 2];
-+        let sdk_pair = env.sdk.as_ref().ok().map(|sdk| {
-+            let key = sdk.identity().key();
-+            for (i, byte) in key.iter().enumerate() {
-+                let hi = byte >> 4;
-+                let lo = byte & 15;
-+                if let Some(slot) = sdk_hex.get_mut(2 * i) {
-+                    *slot = if hi < 10 { b'0' + hi } else { b'a' + (hi - 10) };
-+                }
-+                if let Some(slot) = sdk_hex.get_mut(2 * i + 1) {
-+                    *slot = if lo < 10 { b'0' + lo } else { b'a' + (lo - 10) };
-+                }
-+            }
-+            let id_str = core::str::from_utf8(&sdk_hex).unwrap_or("");
-+            (sdk.folder(), id_str)
-+        });
-+        let c_probes = blaze_proc_macro::probe_clang::open_command_c_probes(cx, &env.fs, home, host, sdk_pair, alloc);
-+        let shared: &'f Shared<'f> = blaze_own::Box::into_bump_ref(blaze_own::Box::new_in(Shared { result_alloc: env.heap.shared(), runtime, store, checkout, table, macro_table, spawn, c_probes, native, no_sdk, graph_record }, frame));
-         Ok(shared)
-     }
- 
-@@ -1093,6 +1113,7 @@ fn run(cx: &Cx, job: &ScriptJob<'_>, scratch: &Frame, checkout: &mut crate::engi
-         // answers until the engine's checker has answered the real probes' ladder
-         // (handoff p1-probe-checker.txt).
-         probes: None,
-+        c_probes: Some(blaze_own::Share::share(&shared.c_probes)),
-         c_mode: C_MODE,
-         mode: MODE,
-         native,
-@@ -1112,15 +1133,19 @@ fn run(cx: &Cx, job: &ScriptJob<'_>, scratch: &Frame, checkout: &mut crate::engi
-     let is_checkout = checkout_prefix.is_some();
-     // A kept checkout-backed run's failure is a hole: the reads it made are not handed back with
-     // its error (`ScriptError`), so no read list makes it stand, and standing on its drive inputs
--    // alone would keep it failed past the edit that fixes it (rule 21). Under
--    // [`CheckoutReads::Hole`] its failure is filed.
--    let failed_hole = is_checkout && matches!(job.checkout, CheckoutReads::Kept { .. });
-+    // alone would keep it failed past the edit that fixes it (rule 21). On Linux, wasm runs do
-+    // not hash the C-probe table/answerer into `key::base` (probes are tracked per-probe in
-+    // `ran.reads`), so a failed Linux wasm script that may have consumed a C probe must likewise
-+    // stay a hole rather than filing a failure without `cc-probe` read dependencies.
-+    let failed_hole = (is_checkout && matches!(job.checkout, CheckoutReads::Kept { .. }))
-+        || (cfg!(target_os = "linux") && ran_as == RanAs::Wasm);
-     let ran = match script_unit::outputs_given(&shared.runtime, &setting, graph, job.script, side_cfg.as_ref().map(|atoms| atoms.as_slice()), tree, root, &given, alloc) {
-         Ok(ran) => ran,
-         Err(error) => return failed("a build script failed", format_args!("the build script of {package} failed: {error}"), failed_hole),
-     };
-     if let Some(error) = ran.outputs.errors.first() {
--        return failed("a build script printed `cargo::error`", format_args!("the build script of {package} failed: cargo::error={}", error.as_str()), failed_hole);
-+        let probed = ran.reads.iter().any(|read| blaze_build_script::facts::parse_cc_probe_subject(read.subject.as_str()).is_some());
-+        return failed("a build script printed `cargo::error`", format_args!("the build script of {package} failed: cargo::error={}", error.as_str()), failed_hole || probed);
-     }
-     // The record's reads, in the run's frame until the record is made.
-     let mut reads: blaze_own::Vec<(Name, ContentId), &Frame> = blaze_own::Vec::with_capacity_in(ran.reads.len() + job.producers.len(), scratch);
-@@ -1135,13 +1160,20 @@ fn run(cx: &Cx, job: &ScriptJob<'_>, scratch: &Frame, checkout: &mut crate::engi
-     // dependent. Under [`CheckoutReads::Hole`] every read of the checkout is a hole: its outputs
-     // s
-```
-
----
-
-### Incident Patch 2: `5fe6590a` (2026-11-26)
-**Commit Message**: fix(front2,cli): wave 18 — resolve sibling local consts in local item signatures and drain export inboxes on teardown (#2657)
-
-- Unify local-item signature/initializer block scope lookup into `Locals::scope_or_declared` so `body_const_len`, `const_open::local_arg`, `const_open::local_const`, and `scope_table::written` all fall back to `(h.enclosing, h.scope)` when a lowered view has `scope == None` (fixing `same_guest_dir::push_parts` in `blaze-proc-macro` and sibling local const generic args/repeats).
-- Add unit tests in `front2::const_open::tests` covering local `fn` signature array lengths (including E0308 negative control), const generic args, block `use` consts, and local `const` repeat initializers.
-- Drain closed worker inboxes before teardown join and raise `EXPORT_END_WAIT` to 300s in `engine_export.rs` so early-error teardown surfaces the real error instead of aborting.
-
-**File**: `crates/blaze-cli/src/engine_export.rs` (modified, +4/-2)
-```diff
-@@ -71,7 +71,7 @@ const EXPORT_PER_WORKER_IN_FLIGHT: usize = 6;
- const EXPORT_HAND_WAIT: core::time::Duration = core::time::Duration::from_secs(30);
- const EXPORT_PROCS_WAIT: core::time::Duration = core::time::Duration::from_secs(60);
- const EXPORT_RECV_SLICE: core::time::Duration = core::time::Duration::from_millis(10);
--const EXPORT_END_WAIT: core::time::Duration = core::time::Duration::from_secs(60);
-+const EXPORT_END_WAIT: core::time::Duration = core::time::Duration::from_secs(300);
- 
- /// Program root shape domain for `blaze build` (`start_list::ListName::of` -> `RootName::program`),
- /// distinct from `engine_start.rs`'s `RUN_SHAPE` so `blaze build`'s release-profile code root
-@@ -1484,9 +1484,11 @@ fn walk_remaining_parallel<'a, 'f, 'p, D: blaze_core::Driver>(
-         Ok(())
-     })();
- 
--    // Always close channels and join all worker tasks before returning (linear scope invariant).
-+    // Always close channels, drain unstarted queued jobs, and join all worker tasks before
-+    // returning (linear scope invariant).
-     for ch in inboxes.iter() {
-         ch.close();
-+        while ch.try_recv().is_ok() {}
-     }
-     done_ch.close();
-     procs_asked.close();
-```
-
-**File**: `crates/blaze-ladder/src/front2/const_open.rs` (modified, +48/-7)
-```diff
-@@ -343,8 +343,8 @@ pub(super) fn local_const<'n, H: Heads + ?Sized, S: NamesSource<'n>>(
-             _ => return Ok(None),
-         }
-     }
--    let Some(scope) = scope else { return Ok(None) };
--    local_const_in_scope(resolver, marks, locals, owner, module, heads, view, scope.0, found_path, name, range, ArrayLenSite::Repeat)
-+    let Some((owner, scope)) = locals.scope_or_declared(owner, scope.map(|s| s.0)) else { return Ok(None) };
-+    local_const_in_scope(resolver, marks, locals, owner, module, heads, view, scope, found_path, name, range, ArrayLenSite::Repeat)
- }
- 
- /// What a generic argument written as ONE plain name means when an item declared in the body
-@@ -383,18 +383,18 @@ pub(super) fn local_arg<'n, H: Heads + ?Sized, S: NamesSource<'n>>(
-     range: Range,
- ) -> Result<Option<LocalArg>, Why> {
-     let lf::TypeRef::Path(p) = view.ty(t)? else { return Ok(None) };
--    let Some(scope) = view.path(p)?.scope else { return Ok(None) };
--    if let Some(row) = locals.find(owner, Some(scope.0), name, LocalNs::Type) {
-+    let Some((owner, scope)) = locals.scope_or_declared(owner, view.path(p)?.scope.map(|s| s.0)) else { return Ok(None) };
-+    if let Some(row) = locals.find(owner, Some(scope), name, LocalNs::Type) {
-         if row.kind != LocalKind::Use {
-             return Ok(Some(LocalArg::Type));
-         }
--        let ty_target = resolve_use_target(resolver, marks, locals, owner, module, view, scope.0, Some(p), name, &row, Ns::Type, range)?;
-+        let ty_target = resolve_use_target(resolver, marks, locals, owner, module, view, scope, Some(p), name, &row, Ns::Type, range)?;
-         if let Some(target) = ty_target
-             && matches!(target.kind, Kind::Struct | Kind::Enum | Kind::Union | Kind::TypeAlias | Kind::Builtin(_) | Kind::WideInt { .. })
-         {
-             return Ok(Some(LocalArg::Type));
-         }
--        return match resolve_use_target(resolver, marks, locals, owner, module, view, scope.0, Some(p), name, &row, Ns::Value, range)? {
-+        return match resolve_use_target(resolver, marks, locals, owner, module, view, scope, Some(p), name, &row, Ns::Value, range)? {
-             Some(target) if target.kind == Kind::Const => {
-                 let bits = const_item_bits(heads, target.key, name, range)?;
-                 Ok(Some(LocalArg::Const(bits)))
-@@ -409,7 +409,7 @@ pub(super) fn local_arg<'n, H: Heads + ?Sized, S: NamesSource<'n>>(
-             }
-         };
-     }
--    let Some(row) = locals.find(owner, Some(scope.0), name, LocalNs::Value) else { return Ok(None) };
-+    let Some(row) = locals.find(owner, Some(scope), name, LocalNs::Value) else { return Ok(None) };
-     match row.kind {
-         LocalKind::Const => {
-             let bits = const_item_bits(heads, row.key, name, range)?;
-@@ -506,6 +506,41 @@ pub fn turbofish_use_fn_refused() {
-     use crate::diag::not_a_const;
-     let _ = take::<not_a_const>();
- }
-+pub fn local_fn_sig_const_array_len_ok() -> [u8; 4] {
-+    const MAX_PARTS: usize = 4;
-+    fn fill(out: &mut [u8; MAX_PARTS]) {
-+        out[0] = 1;
-+    }
-+    let mut buf = [0u8; MAX_PARTS];
-+    fill(&mut buf);
-+    buf
-+}
-+pub fn local_fn_sig_const_array_len_wrong() -> [u8; 5] {
-+    const MAX_PARTS: usize = 4;
-+    fn make() -> [u8; MAX_PARTS] {
-+        [0u8; MAX_PARTS]
-+    }
-+    make()
-+}
-+pub fn local_fn_sig_const_generic_arg_ok() -> Wrap<4> {
-+    const MAX_PARTS: usize = 4;
-+    fn wrap(w: Wrap<MAX_PARTS>) -> Wrap<MAX_PARTS> {
-+        w
-+    }
-+    wrap(Wrap([0u8; MAX_PARTS]))
-+}
-+pub fn local_fn_sig_use_const_array_len_ok() -> [u8; 4] {
-+    use crate::diag::MOST_PENDING_SHOWN;
-+    fn make() -> [u8; MOST_PENDING_SHOWN] {
-+        [0u8; MOST_PENDING_SHOWN]
-+    }
-+    make()
-+}
-+pub fn local_const_repeat_sibling_const_ok() -> [u8; 4] {
-+    const A: usize = 4;
-+    const B: [u8; A] = [0u8; A];
-+    B
-+}
- ";
- 
-     #[test]
-@@ -518,6 +553,10 @@ pub fn turbofish_use_fn_refused() {
-             "turbofish_use_const_ok",
-             "type_arg_use_const_ok",
-             "turbofish_use_type_ok",
-+            "local_fn_sig_const_array_len_ok",
-+            "local_fn_sig_const_generic_arg_ok",
-+            "local_fn_sig_use_const_array_len_ok",
-+            "local_const_repeat_sibling_const_ok",
-         ] {
-             let diags = check_fn(APP, ok).unwrap_or_else(|e| panic!("`{ok}` was refused: {e}"));
-             assert!(diags.is_empty(), "`{ok}` had unexpected diagnostics: {diags:?}");
-@@ -527,6 +566,8 @@ pub fn turbofish_use_fn_refused() {
-         assert!(wrong_repeat.contains(&"E0308"), "expected E0308, got {wrong_repeat:?}");
-         let wrong_arg = check_fn(APP, "turbofish_use_const_wrong_len").expect("turbofish_use_const_wrong_len should typecheck with E0308");
-         assert!(wrong_arg.contains(&"E0308"), "expected E0308, got {wrong_arg:?}");
-+        let wrong_local_sig = check_fn(APP, "local_fn_sig_const_array_len_wrong").expect("local_fn_sig_const_array_len_wrong should typecheck with E0308");
-+        assert!(wrong_local_sig.c
-```
-
-**File**: `crates/blaze-ladder/src/front2/locals.rs` (modified, +12/-0)
-```diff
-@@ -837,6 +837,18 @@ impl<'n> Locals<'n> {
-         (it.module == h.names_at && strip_leading_trivia(it.text) == strip_leading_trivia(text)).then_some(found.key)
-     }
- 
-+    /// The `(body, scope)` at which an AST node of `owner` with lowered block scope `scope` stands:
-+    /// inside `owner` at `s` when `scope` is `Some(s)`, or—when `scope` is `None` (a local item's
-+    /// signature or unblocked initializer, which has no enclosing `Expr::Block` in its own view)—at
-+    /// the declaring block `(h.enclosing, h.scope)` of that local item (`LocalHead`). `None` for a
-+    /// non-local item's signature.
-+    pub fn scope_or_declared(&self, owner: ItemKey, scope: Option<u32>) -> Option<(ItemKey, u32)> {
-+        match scope {
-+            Some(s) => Some((owner, s)),
-+            None => self.head(owner).map(|h| (h.enclosing, h.scope)),
-+        }
-+    }
-+
-     /// The local item `name` names in `ns`, written in block `scope` of the body `owner`: the
-     /// block's items, then each enclosing block's (innermost first); where the body is itself
-     /// a local item's, then the blocks around its declaration. `None`: the module's names.
-```
-
-**File**: `crates/blaze-ladder/src/front2/scope_table.rs` (modified, +8/-9)
-```diff
-@@ -263,15 +263,14 @@ pub(super) fn written<'n, S: super::source::NamesSource<'n>>(
-     // x0-ref-11-deref-unsized, x0-ref-12-wide-ptr-eq; tests/front2_block_use_types.rs). Any
-     // other body's signature path is its module's.
-     let declared;
--    let (body, scope) = match view.path(path)?.scope {
--        Some(s) => (body, s.0),
--        None => match body.locals.head(body.owner) {
--            Some(h) => {
--                declared = super::block_type_uses::BodyScope { owner: h.enclosing, ..*body };
--                (&declared, h.scope)
--            }
--            None => return Ok(None),
--        },
-+    let Some((owner, scope)) = body.locals.scope_or_declared(body.owner, view.path(path)?.scope.map(|s| s.0)) else {
-+        return Ok(None);
-+    };
-+    let body = if owner == body.owner {
-+        body
-+    } else {
-+        declared = super::block_type_uses::BodyScope { owner, ..*body };
-+        &declared
-     };
-     // Body lowering already put the first token's mark in the path's view. An opaque
-     // token names the definition module even if that module also encloses the invocation.
-```
-
-**File**: `crates/blaze-ladder/src/front2/types.rs` (modified, +5/-3)
-```diff
-@@ -2249,16 +2249,18 @@ fn body_const_len<'n, H: Heads + ?Sized, S: NamesSource<'n>>(
-     if !ident {
-         return Ok(None);
-     }
--    let Some(scope) = type_scope(v, t)? else { return Ok(None) };
-+    let Some((owner, scope)) = body.locals.scope_or_declared(body.owner, type_scope(v, t)?.map(|s| s.0)) else {
-+        return Ok(None);
-+    };
-     super::const_open::local_const_in_scope(
-         resolver,
-         marks,
-         body.locals,
--        body.owner,
-+        owner,
-         body.module,
-         heads,
-         v,
--        scope.0,
-+        scope,
-         None,
-         name,
-         r,
-```
-
----
-
-### Incident Patch 3: `e7d71472` (2026-11-27)
-**Commit Message**: perf,fix,feat(emit,cli,engine,screen): wave 22 — mra global liveness pruning, reach-root/tool-base consistency, and blaze run status lines (#2668)
-
-* fix(cli,engine): verify reach roots at load time and populate tool-base by_file
-
-1. Reach-shard partial eviction consistency (`engine_answer.rs`, `engine_check.rs`):
-   - `f6s3` LRU eviction (`evict_from_reach`) and crash recovery (`unroot_holed_par`)
-     can drop individual `.reach.XX` / `.reach.delta` shards while leaving the
-     answer pointer and `.answer` (with all 256 radix leaf shards) live in the
-     manifest. A subsequent scoped check (e.g. `blaze build -p blaze-cli`) would
-     open the root cleanly, never touch the dead shard during checking, carry the
-     untouched radix leaf shard forward in `encode_changes_radix`, and fail in
-     `publish_reach_shards_from` with `StoreError::RootNamesUnheld` on `reach.4a`.
-   - Added zero-I/O manifest reach completeness checks (`reach_roots_live_without_root`
-     for the certificate fast path and `verify_reach_roots` at `open_root` /
-     `open_named_base` / `open_base_for_tools` / `open_toolchain_base`), surfacing
-     `Unreadable::Pages(PagesError::Missing)` when pages/`beside_ke
-
-**File**: `crates/blaze-cli-spec/src/blaze_app.rs` (modified, +1/-0)
-```diff
-@@ -105,6 +105,7 @@ const BUILD_FLAGS: &[ArgSpec] = &[
- const RUN_FLAGS: &[ArgSpec] = &[
-     flag_multi("package", "package", Some('p'), "<name>", "Package to run", false),
-     flag_value("bin", "bin", None, "<name>", "Binary target to run", false),
-+    flag_bool("quiet", "quiet", Some('q'), "Do not print status lines", false),
-     flag_multi("grant", "grant", None, "<k=v>", "Grant an environment/host capability", false),
-     flag_bool("open", "open", None, "Open Explore viewer in browser", false),
-     flag_value("workers", "workers", None, "<N>", "Maximum concurrent workers", false),
-```
-
-**File**: `crates/blaze-cli/src/engine_answer.rs` (modified, +502/-18)
-```diff
-@@ -651,6 +651,30 @@ pub(crate) fn tools_digest(tools: &Tools) -> ContentId {
-     h.finish()
- }
- 
-+/// Which CAS reach root of a stored answer was missing or expired when validated at load time.
-+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-+pub(crate) enum MissingReachRoot {
-+    /// `<prefix>.answer` (pins root directory, radix leaf shards, lines, headers).
-+    Answer,
-+    /// `<prefix>.reach` (flat or single-root page reach index).
-+    Reach,
-+    /// `<prefix>.reach.<shard:02x>` (sharded radix page reach root).
-+    Shard(u16),
-+    /// `<prefix>.reach.delta` (sharded radix incremental delta reach root).
-+    Delta,
-+}
-+
-+impl fmt::Display for MissingReachRoot {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+        match self {
-+            MissingReachRoot::Answer => f.write_str("its `.answer` root is missing or expired"),
-+            MissingReachRoot::Reach => f.write_str("its `.reach` root is missing or expired"),
-+            MissingReachRoot::Shard(shard) => write!(f, "its `.reach.{shard:02x}` shard root is missing or expired"),
-+            MissingReachRoot::Delta => f.write_str("its `.reach.delta` root is missing or expired"),
-+        }
-+    }
-+}
-+
- /// Why the stored answer is not read: the request answers in full and writes it anew.
- #[derive(Debug)]
- pub(crate) enum Unreadable {
-@@ -669,6 +693,10 @@ pub(crate) enum Unreadable {
-     Headers { tag: u8 },
-     /// A page or the answer's root (pages.rs).
-     Pages(PagesError),
-+    /// One of the stored answer's CAS reach roots is missing or expired (e.g. partially evicted
-+    /// during compaction or unrooted after a crash), so its pages' `beside_key` reach indexes can
-+    /// no longer be assumed held.
-+    MissingReach { what: MissingReachRoot },
- }
- 
- impl fmt::Display for Unreadable {
-@@ -685,6 +713,7 @@ impl fmt::Display for Unreadable {
-             Unreadable::Torn(torn) => write!(f, "{torn}")?,
-             Unreadable::Headers { tag } => write!(f, "its producer header index field (tag {tag}) is no state a writer makes (engine_answer.rs `load_pointer`)")?,
-             Unreadable::Pages(why) => write!(f, "{why}")?,
-+            Unreadable::MissingReach { what } => write!(f, "{what}")?,
-         }
-         write!(f, "; answering in full and writing it anew")
-     }
-@@ -2222,7 +2251,7 @@ fn save<'m, D: Driver, S: Sharing>(
-             && rekeyed.pages == 0
-             && lent.renew_root(reach_name.as_str(), blaze_cas::plain::ROOT_LIFE_NS).is_live())
-         {
--            lent.root_through(reach_name.as_str(), &indexes, blaze_cas::plain::ROOT_LIFE_NS).map_err(crate::store::PlaceError::from)?;
-+            root_through_reach(lent, reach_name.as_str(), &indexes, Some(&indexed_beside), last_root)?;
-         }
-         // Retire any stale sharded reach roots left over if this answer previously exceeded the
-         // radix threshold and shrank back to unsharded, so certified no-ops never renew them.
-@@ -2659,8 +2688,7 @@ pub(crate) fn adopt_certified<'m, D: Driver, S: Sharing>(
-                 .map(|p| blaze_cas::plain::beside_key(blaze_cas::Key(p.0))),
-         );
-         indexes.sort_unstable();
--        lent.root_through(reach_name.as_str(), &indexes, blaze_cas::plain::ROOT_LIFE_NS)
--            .map_err(crate::store::PlaceError::from)?;
-+        root_through_reach(lent, reach_name.as_str(), &indexes, None, Some(pointer.root))?;
-         unroot_reach_shards(lent, name, 0, true, frame);
-     } else {
-         if lent.has_root(reach_name.as_str()) {
-@@ -2690,8 +2718,7 @@ pub(crate) fn adopt_certified<'m, D: Driver, S: Sharing>(
-                 );
-             }
-             scratch.sort_unstable();
--            lent.root_through(shard_name.as_str(), &scratch, blaze_cas::plain::ROOT_LIFE_NS)
--                .map_err(crate::store::PlaceError::from)?;
-+            root_through_reach(lent, shard_name.as_str(), &scratch, None, Some(pointer.root))?;
-         }
-         let delta_name = bstd::mem::format_in!(frame, "{name}.{REACH_ROOT}.{REACH_DELTA_SUFFIX}");
-         lent.root_through(delta_name.as_str(), &[], blaze_cas::plain::ROOT_LIFE_NS)
-@@ -2745,14 +2772,167 @@ pub(crate) struct LoadedBase<'m, 'a> {
-     pub(crate) aux: BaseAux,
- }
- 
-+/// How [`open_named_base`] checks that a stored answer's CAS reach roots are still live in the
-+/// store manifest before reusing its pages.
-+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-+pub(crate) enum ReachCheck<'a> {
-+    /// Standard answer root (`<prefix>.answer` + either `<prefix>.reach` or sharded
-+    /// `<prefix>.reach.00..` + `<prefix>.reach.delta`).
-+    Sharded(&'a str),
-+    /// Single-root answer (`tool-base.*`: always `<prefix>.answer` + `<prefix>.reach`).
-+    Single(&'a str),
-+    /// Test-only `BasePlant::OnePointer` (`LATEST_ROOT` carries no separate reach root).
-+    #[cfg(test)]
-+    None,
-+}
-+
-+/// Zero-I/O manifest check for the certificate fast path (before `open_root`): returns `true`
-+/// iff `<prefix>.answer` and either `<prefix>.reach` or a complet
-```
-
-**File**: `crates/blaze-cli/src/engine_check.rs` (modified, +48/-14)
-```diff
-@@ -3272,6 +3272,7 @@ fn checking<'f, 's: 'f>(
-     fn open_fallback_base<'m, 'f: 'm, 'a, D: blaze_core::Driver, S: crate::store::Sharing>(
-         cx: &Cx,
-         store: &mut crate::store::CommandStore<'m, '_, D, S>,
-+        lent: &blaze_cas::plain::Lent<D, crate::store::StoreAlloc>,
-         root: &Dir<ReadWrite>,
-         check_scope: CheckScope<'_>,
-         whole_root: &str,
-@@ -3284,15 +3285,26 @@ fn checking<'f, 's: 'f>(
-         frame: &'f Frame,
-     ) -> Result<Option<(crate::engine_answer::LoadedBase<'m, 'a>, FallbackFrom)>, CliError> {
-         if !check_scope.is_whole()
--            && let Some(loaded) = crate::engine_answer::open_named_base(cx, store, whole_root, tools, exclude, require_current_tools, alloc, frame)?
-+            && let Some(loaded) = crate::engine_answer::open_named_base(
-+                cx,
-+                store,
-+                lent,
-+                whole_root,
-+                crate::engine_answer::ReachCheck::Sharded(whole_root),
-+                tools,
-+                exclude,
-+                require_current_tools,
-+                alloc,
-+                frame,
-+            )?
-         {
-             return Ok(Some((loaded, FallbackFrom::OwnWhole)));
-         }
--        if let Some(loaded) = crate::engine_answer::open_base_for_tools(cx, store, root, tools, exclude, require_current_tools, alloc, frame)? {
-+        if let Some(loaded) = crate::engine_answer::open_base_for_tools(cx, store, lent, root, tools, exclude, require_current_tools, alloc, frame)? {
-             return Ok(Some((loaded, FallbackFrom::OtherWorkspace)));
-         }
-         if include_tool_base
--            && let Some(loaded) = crate::engine_answer::open_toolchain_base(cx, store, toolchain, tools, alloc, frame)?
-+            && let Some(loaded) = crate::engine_answer::open_toolchain_base(cx, store, lent, toolchain, tools, alloc, frame)?
-         {
-             return Ok(Some((loaded, FallbackFrom::Toolchain)));
-         }
-@@ -3314,7 +3326,7 @@ fn checking<'f, 's: 'f>(
-         if !fresh {
-             match recovery {
-                 StoredRecovery::SkipOwn { exclude } => {
--                    if let Some((loaded, from)) = open_fallback_base(cx, &mut store, root, check_scope, &whole_root, toolchain, &tools, Some(exclude), false, false, request_mem_of(request_mem_slot)?.shared(), frame)?
-+                    if let Some((loaded, from)) = open_fallback_base(cx, &mut store, &opened.lent, root, check_scope, &whole_root, toolchain, &tools, Some(exclude), false, false, request_mem_of(request_mem_slot)?.shared(), frame)?
-                         && from != FallbackFrom::Toolchain
-                     {
-                         pointer = Some(loaded.pointer);
-@@ -3346,7 +3358,7 @@ fn checking<'f, 's: 'f>(
-                                 loaded_own_whole = true;
-                             }
-                             if !loaded_own_whole
--                                && let Some((loaded, from)) = open_fallback_base(cx, &mut store, root, check_scope, &whole_root, toolchain, &tools, None, false, true, request_mem_of(request_mem_slot)?.shared(), frame)?
-+                                && let Some((loaded, from)) = open_fallback_base(cx, &mut store, &opened.lent, root, check_scope, &whole_root, toolchain, &tools, None, false, true, request_mem_of(request_mem_slot)?.shared(), frame)?
-                             {
-                                 pointer = Some(loaded.pointer);
-                                 last_lines = Some(loaded.lines);
-@@ -3364,7 +3376,7 @@ fn checking<'f, 's: 'f>(
-                         Some(Err(why)) => {
-                             phases.mark_cx(cx, "stored answer's pointer read", frame);
-                             if allow_stale_fallback
--                                && let Some((loaded, from)) = open_fallback_base(cx, &mut store, root, check_scope, &whole_root, toolchain, &tools, None, false, true, request_mem_of(request_mem_slot)?.shared(), frame)?
-+                                && let Some((loaded, from)) = open_fallback_base(cx, &mut store, &opened.lent, root, check_scope, &whole_root, toolchain, &tools, None, false, true, request_mem_of(request_mem_slot)?.shared(), frame)?
-                             {
-                                 pointer = Some(loaded.pointer);
-                                 last_lines = Some(loaded.lines);
-@@ -3392,7 +3404,7 @@ fn checking<'f, 's: 'f>(
-                             let mut used_fallback = false;
-                             if !own_ptr.certifies_under(&tools)
-                                 && allow_stale_fallback
--                                && let Some((loaded, from)) = open_fallback_base(cx, &mut store, root, check_scope, &whole_root, toolchain, &tools, Some(own_ptr.key), true, false, request_mem_of(request_mem_slot)?.shared(), frame)?
-+                                && let Some((loaded, from)) = open_fallback_base(cx, &mut store, &opened.lent, root, check_scope, &whole_root, toolchain, &tools, Some(ow
-```
-
-**File**: `crates/blaze-cli/src/engine_start.rs` (modified, +89/-5)
-```diff
-@@ -230,6 +230,9 @@ pub(crate) fn command(
-     if command != Command::Run && flags.open == blaze_run::viewer::OpenExplore::Open {
-         return Err(CliError::Usage("--open is `blaze run`'s"));
-     }
-+    if command != Command::Run && flags.quiet {
-+        return Err(CliError::Usage("-q / --quiet is `blaze run`'s"));
-+    }
-     if flags.output.is_some() {
-         return Err(CliError::Usage("-o / --output is `blaze build`'s"));
-     }
-@@ -247,13 +250,19 @@ pub(crate) fn command(
-     };
-     let view = flags.view.unwrap_or(blaze_report::frame::plain::View::Person);
-     let line = crate::run_line::LineOpts::from_env(env, err, flags.color, screen_cmd, view, flags.status_every.is_some());
--    let line = crate::run_line::LineOpts { live: line.live && matches!(command, Command::Run | Command::Test), ..line };
-+    let status_opts = crate::run_line::StatusOpts::for_run(screen_cmd, view, flags.quiet, line.terminal);
-+    let line = crate::run_line::LineOpts {
-+        live: line.live && matches!(command, Command::Run | Command::Test) && !flags.quiet,
-+        ..line
-+    };
-     let start_scope = match command {
-         Command::Run => crate::engine_check::StartScope::Bin(launch.select),
-         Command::Test => crate::engine_check::StartScope::Test(launch.select),
-         Command::Check => return Err(CliError::Usage("`check` is engine_check.rs's; engine_start.rs starts `run` and `test`")),
-     };
--    let lined = crate::run_line::watched(cx, err, clock, line, |watch, bg| {
-+    let checking_label = checking_target(&flags, env, cx.frame());
-+    let lined = crate::run_line::watched_run(cx, err, clock, line, status_opts, |watch, bg, status_out| {
-+        status_out.checking(checking_label.as_str());
-         watch.see(blaze_screen::Step::Began(blaze_screen::Stage::Checking));
-         let bg_live = if line.live { Some(bg) } else { None };
-         check_for_start(cx, Some(args), fs, env, net, host, rng, words, err, phases, heap, &flags, command == Command::Run, start_scope, bg_live, |standing, phases, rng| {
-@@ -262,8 +271,8 @@ pub(crate) fn command(
-             let select = run_package::Select { member: standing.member, ..launch.select };
-             let started = match command {
-                 Command::Run => match standing.picked {
--                    Some(picked) => run_program(cx, standing, &picked, &launch, phases, watch),
--                    None => run_package::pick(cx, root, select, frame).and_then(|picked| run_program(cx, standing, &picked, &launch, phases, watch)),
-+                    Some(picked) => run_program(cx, standing, &picked, &launch, phases, watch, status_out),
-+                    None => run_package::pick(cx, root, select, frame).and_then(|picked| run_program(cx, standing, &picked, &launch, phases, watch, status_out)),
-                 },
-                 Command::Test => match standing.test_packages {
-                     Some(packages) => run_tests(cx, standing, packages, select.bin, &launch, clock, rng, phases, watch),
-@@ -278,6 +287,37 @@ pub(crate) fn command(
-     lined.map_err(CliError::RunLine)?
- }
- 
-+/// Concise label shown on `blaze run`'s initial `    Checking <label>` status line using only
-+/// parsed CLI flags and `PWD` (zero filesystem syscalls).
-+fn checking_target<'f>(
-+    flags: &crate::Flags<'_>,
-+    env: Option<&bstd::env::Env>,
-+    frame: &'f bstd::mem::Frame,
-+) -> bstd::mem::String<&'f bstd::mem::Frame> {
-+    match (flags.select.package, flags.select.bin) {
-+        (Some(pkg), Some(bin)) if bin != pkg => return bstd::mem::format_in!(frame, "{pkg} ({bin})"),
-+        (Some(pkg), _) => return bstd::mem::format_in!(frame, "{pkg}"),
-+        (None, Some(bin)) => return bstd::mem::format_in!(frame, "{bin}"),
-+        (None, None) => {}
-+    }
-+    if let Some(dir) = flags.dir {
-+        let trimmed = dir.trim_end_matches('/');
-+        if !trimmed.is_empty() && trimmed != "." {
-+            return bstd::mem::format_in!(frame, "{trimmed}");
-+        }
-+    }
-+    if let Some(env) = env
-+        && let Ok(name) = bstd::env::VarName::new("PWD")
-+        && let Ok(Some(pwd)) = env.get(&name)
-+    {
-+        let trimmed = pwd.trim_end_matches('/');
-+        if let Some(base) = trimmed.rsplit('/').next().filter(|s| !s.is_empty()) {
-+            return bstd::mem::format_in!(frame, "{base}");
-+        }
-+    }
-+    bstd::mem::format_in!(frame, "workspace")
-+}
-+
- /// Domain for folding a non-whole `CheckScope` into the `RunIds` table's certificate so two
- /// scoped starts reusing the same whole-workspace stored answer root never collide on one table.
- const SCOPED_IDS_CERT_DOMAIN: &str = "blaze-cli run ids scoped cert 1";
-@@ -1068,7 +1108,13 @@ pub(crate) fn start_facts<'f>(
- /// image by key, its body ids, then the program under the lazy parent (program.rs `run`), which
- /// builds what it calls and refuses a called body whose check does not run (D151).
- pub(crate) fn run_program(
--    cx: &Cx, mut standing: Standing<'_, '_>, picked: &run_package::Program<'_
-```
-
-**File**: `crates/blaze-cli/src/main.rs` (modified, +6/-0)
-```diff
-@@ -425,6 +425,8 @@ struct Flags<'a> {
-     select: run_package::Select<'a>,
-     /// `--open`: opt-in to opening the Explore web page in the browser on `blaze run` (default: off).
-     open: blaze_run::viewer::OpenExplore,
-+    /// `-q` / `--quiet`: suppress `blaze run`'s persistent status lines and live TUI on stderr.
-+    quiet: bool,
-     /// `-o <path>` / `--output <path>`: where `blaze build` writes the standalone executable.
-     output: Option<&'a str>,
-     /// `--target <triple>`: target backend for `blaze build` (`native` or `wasm64`).
-@@ -459,6 +461,7 @@ impl<'a> Flags<'a> {
-             status_every: None,
-             select: run_package::Select::NONE,
-             open: blaze_run::viewer::OpenExplore::No,
-+            quiet: false,
-             output: None,
-             target: None,
-             names_oracle: engine_names::NamesOracle::Off,
-@@ -585,6 +588,9 @@ pub(crate) fn parse_flags_in<'a>(args: &'a Args, frame: &Frame, mut package: imp
-     if parsed.has("open") {
-         flags.open = blaze_run::viewer::OpenExplore::Open;
-     }
-+    if parsed.has("quiet") {
-+        flags.quiet = true;
-+    }
-     if parsed.has("names-oracle") {
-         flags.names_oracle = engine_names::NamesOracle::On;
-     }
-```
-
-**File**: `crates/blaze-cli/src/run_line.rs` (modified, +424/-7)
-```diff
-@@ -15,14 +15,18 @@
- //! Off a terminal (a pipe, a file, `CI`, `TERM=dumb`, `BLAZE_UI=plain`: blaze-screen `live`)
- //! the run is handed [`Unwatched`] and no thread is started.
- 
--use core::fmt;
-+use core::cell::RefCell;
-+use core::fmt::{self, Write as _};
- use core::time::Duration;
- 
- use blaze_core::lock::{Lock, Signal};
- use blaze_report::frame::Choice;
- use blaze_report::frame::plain::View;
- use blaze_report::terminal::{self, Color, Config, Terminal};
--use blaze_screen::{Caps, Command, LineBuf, RunStatus, RunStatusOpts, StatusFrame, Step, Unwatched, Watch, encode_status};
-+use blaze_screen::{
-+    Caps, Command, LineBuf, RunStatus, RunStatusOpts, StatusFrame, StatusVerb, Step, Unwatched, Watch, encode_status,
-+    write_command_line, write_elapsed_secs, write_status_line,
-+};
- use bstd::clock::{Clock, Instant};
- use bstd::cx::CxSpawn;
- use bstd::env::Env;
-@@ -38,6 +42,12 @@ const MOST_COLS: u16 = 512;
- const FRAME_BYTES: usize = 16384;
- /// Bounded wait slice when `ProgressSink::see` waits for the ticker to flush an erase.
- const ERASE_WAIT: Duration = Duration::from_millis(50);
-+/// Maximum UTF-8 bytes kept for the package name in a `Finished` line.
-+const LAUNCH_PKG_BYTES: usize = 128;
-+/// Maximum UTF-8 bytes kept for the formatted `` `<bin> <args...>` `` command line.
-+const LAUNCH_CMD_BYTES: usize = 1024;
-+/// Stack buffer for a persistent Cargo-style status line batch (`Checking`, or `Finished` + `Running`).
-+const STATUS_BYTES: usize = 2048;
- 
- /// Why the live line failed: said when the command ends (the run itself went on).
- #[derive(Debug)]
-@@ -106,23 +116,165 @@ impl LineOpts {
+     match written.strip_prefix('"').and_then(|t| t.strip_suffix('"')) {
+-        Some(abi) if !abi.contains(['"', '\\']) => Ok(Some(abi)),
++        Some(abi) if !abi.contains(['"', '\\']) => Ok(Some((abi, wasm_import))),
+         _ => Err(ItemsRecordError::ForeignAbi { item }),
      }
  }
  
-+/// Persistent Cargo-style status line configuration for `blaze run` on stderr.
-+#[derive(Clone, Copy, Debug)]
-+pub(crate) struct StatusOpts {
-+    /// Emit persistent `Checking` / `Finished` / `Running` lines on stderr (`Command::Run`,
-+    /// `View::Person`, `!quiet`), both on TTYs (colored) and non-TTYs (plain).
-+    pub enabled: bool,
-+    pub terminal: Terminal,
-+}
-+
-+impl StatusOpts {
-+    pub(crate) const OFF: StatusOpts = StatusOpts { enabled: false, terminal: Terminal::PIPE };
-+
-+    /// Enables Cargo-style persistent stderr status lines for human-facing non-quiet `blaze run`.
-+    pub(crate) fn for_run(command: Command, view: View, quiet: bool, terminal: Terminal) -> StatusOpts {
-+        StatusOpts { enabled: command == Command::Run && matches!(view, View::Person) && !quiet, terminal }
-+    }
-+}
-+
-+/// Truncates `text` to the longest UTF-8 prefix fitting in `max_bytes`.
-+fn truncate_utf8(text: &str, max_bytes: usize) -> &str {
-+    if text.len() <= max_bytes {
-+        return text;
-+    }
-+    let mut take = max_bytes;
-+    while take > 0 && !text.is_char_boundary(take) {
-+        take -= 1;
-+    }
-+    &text[..take]
-+}
-+
-+/// Bounded inline writer that caps output at `N - 4` bytes and flags truncation cleanly.
-+struct CappedLine<const N: usize> {
-+    buf: LineBuf<N>,
-+    truncated: bool,
-+}
-+
-+impl<const N: usize> CappedLine<N> {
-+    const fn new() -> Self {
-+        Self { buf: LineBuf::new(), truncated: false }
-+    }
-+}
-+
-+impl<const N: usize> fmt::Write for CappedLine<N> {
-+    fn write_str(&mut self, s: &str) -> fmt::Result {
-+        if self.truncated {
-+            return Ok(());
-+        }
-+        let limit = N.saturating_sub(4);
-+        let room = limit.saturating_sub(self.buf.as_bytes().len());
-+        if s.len() <= room {
-+            let _ = self.buf.write_str(s);
-+        } else {
-+            let _ = self.buf.write_str(truncate_utf8(s, room));
-+            self.truncated = true;
-+        }
-+        Ok(())
-+    }
-+}
-+
-+/// Resolved target metadata saved once `run_package::Program` is picked and emitted atomically
-+/// on `Step::Started` right after erasing the inline TUI and right before spawning the child.
-+struct LaunchInfo {
-+    package: LineBuf<LAUNCH_PKG_BYTES>,
-+    cmd: LineBuf<LAUNCH_CMD_BYTES>,
-+}
-+
-+impl LaunchInfo {
-+    fn new(package: &str, bin: &str, args: &[&str]) -> Self {
-+        let mut pkg_buf = LineBuf::<LAUNCH_PKG_BYTES>::new();
-+        let _ = pkg_buf.write_str(truncate_utf8(package, LAUNCH_PKG_BYTES));
-+        let mut capped = CappedLine::<LAUNCH_CMD_BYTES>::new();
-+        let _ = write_command_line(&mut capped, bin, args);
-+        if capped.truncated {
-+            let _ = capped.buf.write_str("...`");
-+        }
-+        Self { package: pkg_buf, cmd: capped.buf }
-+    }
-+}
-+
-+fn write_checking_line(cx: &Cx, err: &Out, terminal: &Terminal, failed: &mut Option<RunLineError>, target: &str) {
-+    if failed.is_some() {
-+        return;
-+    }
-+    let mut buf = LineBuf::<STATUS_BYTES>::new();
-+    let trimmed = truncate_utf8(target, 512);
-+    if write_status_line(&mut buf, terminal, StatusVerb::Checking, format_args!("{trimmed}")).is_err() {
-+        *failed = Some(RunLineError::Encode);
-+        return;
-+    }
-+    if let Err(why) = err.write_all(cx, buf.as_bytes()).and_then(|()| err.flush(cx)) {
-+        *failed = Some(RunLineError::Out(why));
-
-```
-
-**File**: `crates/blaze-cli/src/tests/engine_bases_worktrees_tests.rs` (modified, +282/-0)
-```diff
-@@ -319,3 +319,285 @@ fn stale_older_tools_answer_in_worktree_falls_back_to_current_binary_base_and_co
-     let control = run_case(BasePlant::NoStaleFallback);
-     assert!(control.entered(blaze_engine::Stage::Bodies) > 0, "control must re-enter bodies under older-tools own answer:\n{}", control.profile);
- }
-+
-+/// Regression test for Bug 2 (`CrateScope` `MissingEntry { table: WorldCrates }` after starting
-+/// from `tool-base` and hitting a layout/toolchain cell update):
-+/// 1. `keep_toolchain_base` must populate `by_file` / `root.files` for every non-inline toolchain
-+///    row so `Edit.files` retires any stale toolchain `CrateScope` not in today's `Names` world.
-+/// 2. A post-fix `tool-base` carrying an extra `CrateScope` row reading a cell defined by `core`
-+///    cleanly retires that row via `Edit.files` when repo B runs with a moved `Names` tool (so
-+///    `core` re-runs and updates its cells), never waking it into `MissingEntry { WorldCrates }`.
-+/// 3. A pre-fix legacy `tool-base` with empty `root.files` (`PagesPlant::FilesDropped`) is
-+///    rejected by `open_toolchain_base` and automatically rewritten with populated `root.files` on
-+///    the next check.
-+#[test]
-+fn toolchain_base_populates_by_file_and_retires_stale_cratescopes_on_layout_change() {
-+    use blaze_drive::{Kind, Name};
-+    use blaze_engine::{Cause, CellId, Phase, Row, Stage};
-+    use crate::store::Store as _;
-+
-+    BASE_PLANT.set(BasePlant::None);
-+    let io = Io::simulated(SimWorld::new(59, Limits::USUAL));
-+    let shelf = lang_shelf(&io);
-+    repository_a(&io, A1);
-+    repository_b(&io, B);
-+
-+    let check_with = |checkout: Checkout| {
-+        let opts = || {
-+            let mut opts = engine_check_tests::opts(&io, 2, false);
-+            opts.place.checkout = checkout.dir;
-+            opts.toolchain = shelf;
-+            opts
-+        };
-+        check_in::<fix::Atomic>(&io, checkout, &opts, View::Person, None)
-+    };
-+
-+    // 1. Cold check of A1 populates `tool-base`. Verify EVERY non-inline row in `tool-base` is
-+    //    owned by its `row.file` in both `decoded.answer.by_file` and `root.files`.
-+    let a1 = check_with(A1);
-+    assert_eq!(a1.errors, 0, "A1 cold check clean:\n{}", a1.profile);
-+
-+    let ghost_scope = Name::new(Kind::CrateScope, blaze_ids::ContentId::of("bug2 ghost cratescope", b"stale-edition-crate"));
-+    let mut core_cell: Option<(CellId, blaze_ids::ContentId)> = None;
-+    let orig_decoded_rows: usize;
-+
-+    {
-+        let cx = io.cx(BUDGET, TASK_FRAME).expect("root cx");
-+        let frame = Frame::with_reserve(16 << 20, bstd::mem::Tag::Other).expect("frame");
-+        let alloc = blaze_own::Erased::new(&frame);
-+        let opts = engine_check_tests::opts(&io, 2, false);
-+        let fs = io.need_fs().expect("files");
-+        let root = fs.open_dir(&cx, &Path::new(A1.dir).expect("a path")).expect("open");
-+        let err = io.need_err().expect("err");
-+        let clock = io.need_clock().expect("clock");
-+        let host = io.need_host().expect("host");
-+        let mut rng = io.need_rng().expect("rng");
-+        let opened = crate::store::open_for_command(&cx, &fs, &host, &mut rng, opts.place.home, None, &root, A1.dir, &clock, &err, opts.heap).expect("open store");
-+        let mut store = crate::store::CommandStore::new(&cx, &opened.lent, false, opened.open_ns, None, clock.clone(), &err, alloc.handle()).expect("store");
-+        let ptr = crate::engine_answer::load_toolchain_base(&cx, &mut store, shelf, &opts.tools, &frame)
-+            .expect("load tool-base")
-+            .expect("tool-base exists")
-+            .expect("tool-base readable");
-+        let dir = crate::engine_answer::open_root(&cx, &mut store, ptr.root, opts.heap.shared())
-+            .expect("open root")
-+            .expect("valid root");
-+        assert!(!dir.files.is_empty(), "tool-base root.files must be populated so stale rows can be retired");
-+
-+        let mut decoded = blaze_engine::pages::decode(
-+            ptr.root,
-+            |k| match store.get(&cx, k) {
-+                Ok(Some(held)) => Some(Ok(blaze_engine::pages::Sealed::by_store(k, held.bytes, held.proof))),
-+                _ => None,
-+            },
-+            opts.heap.shared(),
-+        )
-+        .expect("decode tool-base");
-+        orig_decoded_rows = decoded.answer.rows.len();
-+        assert!(orig_decoded_rows > 0, "tool-base holds toolchain rows");
-+        for (&name, row) in decoded.answer.rows.iter() {
-+            if !row.inline {
-+                assert!(
-+                    decoded.answer.by_file.get(&row.file).is_some_and(|members| members.binary_search(&name).is_ok()),
-+                    "tool-base row {name:?} must be listed under its file {:?} in by_file",
-+                    row.file
-+                );
-+                assert!(
-+                    dir.files.contains_key(&row.file),
-+                    "tool-base root.files must contain {:?} for row {name:?}",
-+                    row.file
-+              
-```
-
-**File**: `crates/blaze-cli/tests/run_output.rs` (modified, +16/-3)
-```diff
-@@ -1,6 +1,8 @@
- //! `blaze run` and `blaze export` as processes:
- //! - `blaze run` on a clean rung: its standard output is byte-equal to the rung's `expected`, its
--//!   standard error is empty, and its status is the program's.
-+//!   standard error carries Cargo-style persistent status lines (`Checking`/`Finished`/`Running`,
-+//!   plain without ANSI when piped), `-q` / `--quiet` leaves standard error empty, and its status
-+//!   is the program's.
- //! - `blaze export` on `no_core`, `std`, multi-threaded `#[thread_local]`/`thread_local!`, and
- //!   multi-package workspaces (`-p`, `--bin`, `-o`, `--workers`, `--stats`): executes the emitted
- //!   standalone native binary directly with `env_clear()` (no `blaze-launcher`) and verifies its
-@@ -135,9 +137,20 @@ fn a_clean_run_prints_only_its_program() {
-         let mut cmd = blaze_cmd(&dir, &home);
-         cmd.arg("run");
-         let output = run_with_deadline(cmd, rung, secs(120));
--        assert_eq!(output.status.code(), Some(0), "{rung}: {}", utf8(&output.stderr));
-+        let err = utf8(&output.stderr);
-+        assert_eq!(output.status.code(), Some(0), "{rung}: {err}");
-         assert_eq!(utf8(&output.stdout), utf8(stdout), "{rung}: standard output");
--        assert_eq!(utf8(&output.stderr), "", "{rung}: a clean run says nothing");
-+        assert!(!err.contains('\x1b'), "{rung}: piped stderr must not emit ANSI escapes: {err:?}");
-+        assert!(err.contains("    Checking "), "{rung}: expected Checking status line: {err:?}");
-+        assert!(err.contains("    Finished "), "{rung}: expected Finished status line: {err:?}");
-+        assert!(err.contains("     Running `"), "{rung}: expected Running status line: {err:?}");
-+
-+        let mut quiet = blaze_cmd(&dir, &home);
-+        quiet.args(["run", "-q"]);
-+        let quiet_out = run_with_deadline(quiet, rung, secs(120));
-+        assert_eq!(quiet_out.status.code(), Some(0), "{rung} -q: {}", utf8(&quiet_out.stderr));
-+        assert_eq!(utf8(&quiet_out.stdout), utf8(stdout), "{rung} -q: standard output");
-+        assert_eq!(utf8(&quiet_out.stderr), "", "{rung} -q: a quiet run says nothing on stderr");
-     }
-     assert_eq!(real_shared_listing(), before, "the owner's ~/.blaze/v2/store changed while the test ran (another blaze of the owner's, or this test writing there)");
-     assert!(home.join(".blaze/v2/store").is_dir(), "the temporary home's shared store: the run kept its records there");
+-/// The ABI of the `extern` block that declares `item` (at `at`, outline entry `idx`) in `names`:
+-/// the block's string unquoted as written, `"C"` for a bare `extern` (the Reference,
+-/// [items.extern.abi.default]); `None` when no `extern` block declares it. The fact of the item
+-/// the names task writes into its row ([`ItemRow::foreign`]), so no reader outlines a text again
+-/// to ask it.
+-///
+-/// Checks `entry`'s direct parent in its own outline first, then — when `entry` is a top-level
+-/// item of a macro expansion (`entry.parent.is_none()`, `At::Expansion(call)`) — walks out
+-/// through enclosing macro calls (`CallSrc::place`) so items emitted by function-like or
+-/// attribute macros inside an `extern` block (e.g. `ring`'s `extern "C" { prefixed_item! { ... } }`,
+-/// arbitrarily nested) inherit their enclosing block's ABI.
+-///
+-/// The one home of the reading (rule 30): the solved names' `extern_abi` (blaze-ladder
+-/// front2/source.rs) calls it too, so in-memory `Names` and serialized `Records` answer alike.
+-pub fn foreign_abi<'t>(names: &CrateNames<'t>, mut at: At, mut idx: ItemIndex
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2673** (2026-11-27): blaze-shell: collapsible Cmd+S workspace/fork sidebar, process icon bundle, centered avatar monogram (@andrewgazelka)
-- **PR #2672** (2026-11-27): perf,fix(cli,ladder,emit): wave 23 — impl-macro coverage, msched loop compaction, dep/toolchain Typed CAS cache, and ripgrep UX (@andrewgazelka)
-- **PR #2671** (2026-11-27): blaze-shell: parse diagnostic stdout, add [prompt] show_toolchains config, indented directory tree popover (@andrewgazelka)
-- **PR #2670** (2026-11-27): blaze-shell: render stderr & diagnostic cards in monospace with verbatim column alignment (@andrewgazelka)
-- **PR #2669** (2026-11-27): blaze-shell: visual GPU commit graph with +/- diff stats in branch hover popover (@andrewgazelka)
-- **PR #2668** (2026-11-27): perf,fix,feat(emit,cli,engine,screen): wave 22 — mra global liveness pruning, reach-root/tool-base consistency, and blaze run status lines (@andrewgazelka)
+- **PR #2845** (2026-11-28): fix(ladder,cli): honor wasm64 proc-macro shim export overrides for getenv (@mteacher360)
+- **PR #2844** (2026-11-28): test(ladder): forward input token origin for match_ref_mut in transparent_mark_edition (@mteacher360)
+- **PR #2843** (2026-11-28): fix(expand,scope,lower): carry local hygiene hash on TextMark for recursive macro_rules! (@mteacher360)
+- **PR #2842** (2026-11-28): fix(build): propagate niche-scalar Rust ABI through transparent wrappers (@mteacher360)
+- **PR #2841** (2026-11-27): Merge shell-pane-zoom-1127: reword AGENTS.md intro and 14 core rule lines for exact terms (@andrewgazelka)
+- **PR #2840** (2026-11-27): fix(expand,scope,lower): thread CallSite.ctx hygiene from call path into macro expansions (@mteacher360)
 
 ---
 
@@ -3438,49 +3445,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build-script): hermetic pinned clang-23 compiler probes with per-probe CAS cache
+## X. cli): thread c_probes and facts-only spawn_setting into wasm64 dep build scripts
 
 **RULE**:
-When implementing operations in `crates/blaze-build-script/src/c_tasks_probe.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in indexable-inc/blaze. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/blaze-cli/src/engine_check.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in indexable-inc/blaze. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `314c5390`: build-script): hermetic pinned clang-23 compiler probes with per-probe CAS cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4b2cbc1f`: cli): thread c_probes and facts-only spawn_setting into wasm64 dep build scripts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/blaze-build-script/src/c_tasks_probe.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/blaze-cli/src/engine_check.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Domain for canonical [`ProbeKey`] hashing (answerer id, clang sha256, sdk/sysroot id, program,
-/// canonical args, canonical `CLANG_ENV`, sorted input file sha256s).
-pub const PROBE_KEY_DOMAIN: &str = "blaze-build-script c probe 1";
-/// Domain for [`canonical_reply_digest`] (matches `spawn_route::reply_digest` so `fact_now` and
-/// `spawn_probe` agree).
-const REPLY_DOMAIN: &str = "blaze build-script spawn reply 1";
-/// Magic bytes of an encoded binary probe cache record (`bzcp` v1).
-const ANSWER_MAGIC: [u8; 4] = *b"bzcp";
-const ANSWER_VERSION: u32 = 1;
-/// The script's root mount / package directory spelling in a row (`/package`, `/workspace/...`).
-pub const MOUNT: &str = "$MOUNT";
-/// `TMPDIR` is intentionally excluded: host ambient temp dirs (e.g. `/private/var/folders/...`)
-/// must never pollute content-addressed probe keys; hermetic execution supplies the probe's own
-/// private confined output directory as `TMPDIR`.
-pub const CLANG_ENV: [&str; 10] = [
-/// Normalizes a path under `out_dir`, collapsing `.` and repeated `/` separators and rejecting
-/// `..` traversal or trailing directory slashes, so `-o /out/./flag_check /out/./flag_check.c`
-/// resolves to the exact same `
+        let checked = check_live(cx, fs, host, rng, Some(args), net, root, check_opts, &mut shown, phases, out, err, None, Some(&lazy_sdk), None, None, crate::store::StoreTeardown::Drop)?;
+                        let res = check_live(cx, fs, host, rng, Some(args), net, root, opts(), &mut shown, phases, out, err, live, Some(&lazy_sdk), None, None, crate::store::StoreTeardown::ForgetForExit);
+                    let mut ask = |mut shown| check_live(cx, fs, host, rng, Some(args), net, root, opts(), &mut shown, phases, out, err, None, Some(&lazy_sdk), None, None, crate::store::StoreTeardown::Drop).map(|checked| (checked, shown));
+    /// Check-time command probes (`SharedCommandProbes`) carried into start-time proc-macro
+    /// runners (`RunProcs`) so `run`/`test`/`export` reuse the exact probe/pin snapshot that
+    /// keyed and produced the `MacroModule` records.
+    probes: &'r crate::scripts::SharedCommandProbes,
+}
+
+/// Borrowed lazy macOS SDK handle handed to start-time proc-macro runners (`RunProcs`) so
+/// `run`/`test`/`export` resolve the exact same SDK identity snapshot as `check` on first
+/// proc-macro demand (0 ms cost on pure-Rust starts) without borrowing `Standing::stor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-pub const CLANG_ENV: [&str; 11] = [
-    "TMPDIR",
+        let checked = check_live(cx, fs, host, rng, Some(args), net, root, check_opts, &mut shown, phases, out, err, None, Some(&lazy_sdk), None, crate::store::StoreTeardown::Drop)?;
+                        let res = check_live(cx, fs, host, rng, Some(args), net, root, opts(), &mut shown, phases, out, err, live, Some(&lazy_sdk), None, crate::store::StoreTeardown::ForgetForExit);
+                    let mut ask = |mut shown| check_live(cx, fs, host, rng, Some(args), net, root, opts(), &mut shown, phases, out, err, None, Some(&lazy_sdk), None, crate::store::StoreTeardown::Drop).map(|checked| (checked, shown));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `314c5390` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4b2cbc1f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
