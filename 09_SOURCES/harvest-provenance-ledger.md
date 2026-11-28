@@ -14034,3 +14034,5 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `d4bbe58e` | Multi-dimensional audit evidence | 2026-11-28T06:53:33.992Z |
 | `learn-dom-d-5456c5f2` | `project://tursodatabase-turso` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md` | 2026-11-28T06:54:07.244Z |
 | `learn-github-xevrion-hatchzip` | `https://github.com/xevrion/hatchzip` | `520423b4` | Multi-dimensional audit evidence | 2026-11-28T07:03:37.996Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `3d283ce1` | Multi-dimensional audit evidence | 2026-11-28T07:12:55.143Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `e385dc89` | Multi-dimensional audit evidence | 2026-11-28T07:13:04.881Z |

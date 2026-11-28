@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-EWWN",
-    "timestamp": "2026-11-26T16:49:13.751Z",
-    "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
-    "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
-    "contentHash": "3a7c856e576c15556295caeae206d606e29a2c5648ebea527e92bb15e10a4e42",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-QJJ5",
-    "timestamp": "2026-11-26T16:58:16.289Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "ce67b3b00cd98f3435ec91e9f3a0d5d080a95c14c5a2f315eef7d8febc60dc24",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-QL7N",
     "timestamp": "2026-11-26T16:58:18.467Z",
     "repository": "flox/flox",
@@ -7490,6 +7460,36 @@
     "repository": "xevrion/hatchzip",
     "learningId": "learn-github-xevrion-hatchzip",
     "contentHash": "a3c5c053c6ad886a1a41bac365ba0c409444b3e140ccecbec2783bff1e91680b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-PH7N",
+    "timestamp": "2026-11-28T07:12:55.139Z",
+    "repository": "google/closure-compiler",
+    "learningId": "learn-github-google-closure-compiler",
+    "contentHash": "10602e485d9135740316beeacdd407c466be2507498210d88ed5592cd3575da8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-POQ5",
+    "timestamp": "2026-11-28T07:13:04.877Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "c70cc9038b795863289d681062c20e50dcc10f2e63704c09a7c7338e64f076b7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T18:06:00.878Z",
+  "timestamp": "2026-11-28T07:13:10.830Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-t8y2-dbx-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [t8y2-dbx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T18:06:00.878Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T07:13:10.830Z`  
 > **Learning ID**: `LEARN-EVO-t8y2-dbx-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from t8y2-dbx-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `fba29442`  
+> **Source Version**: `e385dc89`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T18:05:51.700Z  
+> **Timestamp**: 2026-11-28T07:13:03.720Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:05:51.694Z  
+> **Harvest Timestamp**: 2026-11-28T07:13:03.715Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 31536 stars
+- **Stars / Engagement**: 31742 stars
 
 ---
 
@@ -649,84 +649,74 @@ impl TdengineDriver {
             return Ok(Vec::new());
         }
         let database = effective_database(database, &self.current_database)?.to_string();
+        if let Some(parent) = constraints.parent_name.as_deref().map(str::trim).filter(|value| !value.is_empty()) {
+            return self.list_child_tables(&database, parent, &constraints, token).await;
+        }
+        // 无搜索词时侧栏只需要根表：超级表很多子表时，读出全部子表既慢又占内存。
+        // 有搜索词仍走完整快照，子表名也要能被搜到。
+        if constraints.page_table_roots && constraints.filter.trim().is_empty() {
+            let roots = self.root_tables(&database, token).await?;
+            return Ok(filter_tables(roots.as_slice(), &constraints));
+        }
         // 元数据接口的返回顺序没有保证，服务端翻页会让 offset 在两次请求间跳行；
         // 这里始终读取完整列表（进程级快照），在本地排序切片。
         let tables = self.all_tables(&database, token).await?;
         Ok(filter_tables(tables.as_slice(), &constraints))
     }
 
-    pub async fn list_objects(
-        &mut self,
-        database: &str,
-        constraints: MetadataListConstraints,
-        token: &CancellationToken,
-    ) -> Result<Vec<ObjectInfo>> {
-        let database = effective_database(database, &self.current_database)?.to_string();
-        let tables = self.list_tables(&database, constraints, token).await?;
-        Ok(tables
-            .into_iter()
-            .map(|table| ObjectInfo {
-                name: table.name,
-                object_type: table.table_type,
-                schema: database.clone(),
-                comment: table.comment,
-            })
-            .collect())
-    }
-
-    pub async fn get_columns(&self, database: &str, table: &str, token: &CancellationToken) -> Result<Vec<ColumnInfo>> {
-        let database = effective_database(database, &self.current_database)?;
-        let rows = self.query_rows(&format!("DESCRIBE {}", qualified_name(database, table)), token, 0).await?;
-        Ok(parse_describe_columns(rows))
-    }
-
-    pub async fn get_table_comment(&self, _database: &str, _table: &str) -> Result<Option<String>> {
-        Ok(None)
-    }
-
-    pub async fn get_object_source(
+    /// 读取某个超级表的子表（按子表名排序分页）。
+    ///
+    /// 3.x 直接让 `ins_tables` 按 `stable_name` 过滤并在服务端翻页，不触碰其他超级表的
+    /// 子表；`ORDER BY table_name` 保证 offset 翻页稳定。带搜索词时需要本地模糊匹配，
+    /// 此时读出该超级表的全部子表再切片。2.x 的 `SHOW TABLES` 已带所属超级表，沿用快照。
+    async fn list_child_tables(
         &self,
         database: &str,
-        name: &str,
-        object_type: &str,
+        parent: &str,
+        constraints: &MetadataListConstraints,
         token: &CancellationToken,
-    ) -> Result<ObjectSource> {
-        let database = effective_database(database, &self.current_database)?;
-        let mut source = self.get_create_sql(database, name, object_type, token).await?;
-        if source.is_empty() {
-            let columns = self.get_columns(database, name, token).await?;
-            source = build_fallback_table_ddl(database, name, &columns);
+    ) -> Result<Vec<TableInfo>> {
+        if !uses_information_schema_tables(self.server_version.as_deref()) {
+            let tables = self.all_tables(database, token).await?;
+            let children: Vec<TableInfo> = tables
+                .iter()
+                .filter(|table| table.parent_name.as_deref().is_some_and(|name| name.eq_ignore_ascii_case(parent)))
+                .cloned()
+                .collect();
+            return Ok(filter_tables(&children, constraints));
         }
-        Ok(ObjectSource {
-            name: name.to_string(),
-            object_type: object_type.to_string(),
-            schema: database.to_string(),
-            source,
-            editable: true,
-        })
+        let server_paged = constraints.filter.trim().is_empty();
+        let page = if !server_paged || constraints.limit == 0 {
+            String::new()
+        } else {
+            format!(" LIMIT {} OFFSET {}", constraints.limit, constraints.offset)
+        };
+        let sql = format!(
+            "SELECT table_name FROM information_schema.ins_tables WHERE db_name = {} AND stable_name = {} ORDER BY table_name{}",
+            quote_literal(database),
+            quote_literal(parent),
+            page
+        );
+        let rows = self.query_rows_with_retry(&sql, token).await?;
+        let children: Vec<TableInfo> = tables_from_information_schema_rows(
+            rows.into_iter()
+                .map(|row| vec![row.into_iter().next().unwrap_or(Value::Null), Value::String(parent.to_string())])
+                .collect(),
+        );
+        if server_paged && constraints.limit != 0 {
+            // 偏移已在服务端应用，本地只需按类型/搜索词过滤，不能再跳过 offset。
+            let local = MetadataListConstraints { offset: 0, ..constraints.clone() };
+            return Ok(filter_tables(&children, &local));
+        }
+        Ok(filter_tables(&children, constraints))
     }
 
-    pub async fn get_table_ddl(&self, database: &str, table: &str, token: &CancellationToken) -> Result<String> {
-        let stable = self.get_create_sql(database, table, "STABLE", token).await?;
-        if !stable.is_empty() {
-            return Ok(stable);
-        }
-        let table_source = self.get_create_sql(database, table, "TABLE", token).await?;
-        if !table_source.is_empty() {
-            return Ok(table_source);
-        }
-        let columns = self.get_columns(database, table, token).await?;
-        Ok(build_fallback_table_ddl(database, table, &columns))
-    }
-
-    pub async fn completion_assistant_search(
-        &mut self,
-        request: CompletionAssistantRequest,
-        token: &CancellationToken,
-    ) -> Result<CompletionAssistantResponse> {
-        let allowed = request.object_kinds.iter().map(|kind| kind.to_ascii_lowercase()).collect::<HashSet<_>>();
-        let include_databases = allowed.contains("database") || allowed.contains("schema");
-        let include_tables = allowed.is_em
+    /// 根表快照：全部超级表 + 不属于任何超级表的普通表。
+    async fn root_tables(&self, database: &str, token: &CancellationToken) -> Result<Arc<Vec<TableInfo>>> {
+        if !uses_information_schema_tables(self.server_version.as_deref()) {
+            // 2.x 没有按超级表过滤的元数据视图，直接从完整快照里取根表。
+            let tables = self.all_tables(database, token).await?;
+     
 ```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/lib.rs`
@@ -862,6 +852,13 @@ pub struct MetadataListConstraints {
     pub offset: usize,
     #[serde(default)]
     pub object_types: Vec<String>,
+    /// 只返回根表（超级表和不属于任何超级表的普通表），不展开子表。
+    /// 侧栏按「根表 → 展开超级表再取子表」两级加载，避免一次读出所有子表。
+    #[serde(default)]
+    pub page_table_roots: bool,
+    /// 只返回该超级表的子表。
+    #[serde(default)]
+    pub parent_name: Option<String>,
 }
 
 #[derive(Debug, Clone, Default, Deserialize)]
@@ -2056,13 +2053,11 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15782** (2026-11-26): **[Bug] 全局搜索使用中文输入法时，按回车上屏会关闭搜索框**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  全局搜索输入框的键盘交互，与数据库类型和版本无关。  ### 问题描述 / Problem description  1. 打开全局搜索，确保列表中有高亮结果。 2. 切换到中文输入法，在搜索框里输入一串字母，例如 `users`，保留组字状态。 3. 按回车，让输入中的字母原样上屏。  **实际行为**  回车触发打开当前高亮结果，搜索框随即关闭。  **预期行为**  回车确认输入，搜索框保持打开，并根据上屏后的文字更新结果。松开后再按回车时，正常打开当前高亮结果。  ### 支持信息 / Support information  在 DBX 主线源码的全局搜索组件中，用输入法事件序列复现。原始反馈未提供安装版本、操作系统或输入法名称。  ### 优先级（是否紧急） / Priority  🟡 P2 普通 
+- **Issue #15881** (2026-11-27): **[Bug] 在SQL查询编辑器中，Ctrl+X会剪切掉两行**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  SQL编辑器  ### 问题描述 / Problem description  什么都不选的情况下，在编辑框中按Ctrl+X后会消失两行，感觉和隔壁项目的问题相似可以参考，也是我提出的  https://github.com/l0ng-ai/openidea/issues/962  ### 支持信息 / Support information  DBX：0.6.72-beta.20261119.2 系统：CachyOS x86_64 Kernel: Linux 7.3.5-2-cachyos WebKitGTK： webkit2gtk-4.1 2.54.3-1 x86-64  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  <img width="1492" height="371" alt="image" src="https://github.com/user-attachments/assets/8a018de7-bf61-4f1c-b6f7-4d653937ac5a" /> 可能是这个问题
 
-- **Issue #15732** (2026-11-26): **[Compatibility] SQL Server 2005 不支持 OBJECT_SCHEMA_NAME 导致建表失败**
-  *Symptoms*: ### 来源 QQ 群反馈 · **反馈人**：大锅菜麦克风  ### 数据库类型和版本 SQL Server 2005  ### AI 摘要 在 SQL Server 2005 中使用 dbx v0.6.75 创建表时，报错：OBJECT_SCHEMA_NAME 不是可以识别的内置函数名称（错误码 195）。该函数在 SQL Server 2005 中不可用，导致建表操作失败，需要兼容处理。  ### 原始描述 v0.6.75dbx在SQLServer 2005中创建表 会报错 Token error: "OBJECT_SCHEMA_NAME' 不是可以识别的 内置函数名称。'on server xxx executing on line 1(code:195,state:10,class:15)
-  **Post-Mortem & Fix Analysis**:
-  > 编辑SQLserver连接，选择旧版驱动
+- **Issue #15876** (2026-11-27): **[Bug] dbx对iotdb  as命令支持不佳**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  iotdb 1.3.7  ### 问题描述 / Problem description  之前在https://github.com/t8y2/dbx/issues/7831已经对max_by min_by函数返回unix时间戳进行处理，转为标准时间格式。 今天无意中发现查询语句加了as修饰表头后，返回的时间就不再是标准时间格式，而是原始时间戳了 没加as <img width="1131" height="963" alt="截图_选择区域_20261127191938" src="https://github.com/user-attachments/assets/a3cee6b1-3d5b-46a7-a53a-c9f771d35a97" /> 加了as <img width="1541" height="932" alt="截图_选择区域_20261127192026" src="https://github.com/user-attachments/assets/4b68c781-9ea9-4a10-9744-0a3f4f1310f3" />   并且即便已经设置查询和导出都设置为了标准时间格式后，导出的xlsx依然还是原始时间戳 <img width="1661" height="243" alt="截图_选择区域_20261127191331" src="https://github.com/user-attachments/assets/647d12af-9391-4bc4-aea3-ed05891c8900" /> 查询是标准时间导出就是标准时间 <img width="1665" height="482" alt="截图_选择区域_20261127192150" src="https://github.com/user-attachments/assets/2aa571b5-2838-4380-b56d-64bd7a503784" /> 查询是时间戳，导出就是时间戳  <img width="1013" height="492" alt="截图_选择区域_20261127192116" src="https://github.com/user-attachments/assets/d39925db-0c45-4f13-96e7-cbdf01c18ac1" />  ### 支持信息 / Support information  DBX 版本: v0.6.75 (0.6.75-beta.20261125.2) 运行环境: 桌面端 操作系统: Deepin 25 25 系统架构: x86_64 User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/60.5 Safari/605.1.15 数据库类型: cassandra, iotdb, mysql, postgres, redis 本地驱动版本: cassandra 0.1.55, iotdb 0.1.48  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No respo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2079,704 +2074,604 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fba29442` (2026-11-26)
-**Commit Message**: fix(oracle): upgrade godror to prevent stale OCI call timeout leak
+### Incident Patch 1: `22d4cbb3` (2026-11-28)
+**Commit Message**: fix(oracle): run SQL*Plus EXEC/EXECUTE as an anonymous block
 
-**File**: `.github/scripts/ci-workflow.test.mjs` (modified, +25/-0)
+**File**: `agents/drivers/oracle-go/main.go` (modified, +3/-0)
 ```diff
-@@ -197,6 +197,31 @@ test("Neo4j Windows x64 release and CI use the Windows-compatible build", () =>
-   assert.ok(compatibilitySteps.includes('build-windows-legacy.sh "$RUNNER_TEMP/dbx-agent-neo4j-windows-x64.exe"'));
- });
- 
-+test("Oracle thin Go 1.20 build and OCI modfile split stay covered in release and CI", () => {
-+  const release = readFileSync(new URL("../workflows/agents-release.yml", import.meta.url), "utf8").replaceAll("\r\n", "\n");
-+  const thin = job("build-oracle-native", release);
-+  assert.match(thin, /go-version: "1\.20\.14"/);
-+  assert.ok(thin.includes("cache-dependency-path: agents/drivers/oracle-go/go.sum"));
-+
-+  const oci = job("build-oracle-oci-native", release);
-+  assert.ok(oci.includes("cache-dependency-path: agents/drivers/oracle-go/go.oci.sum"));
-+  assert.ok(oci.includes("go test -mod=readonly -modfile=go.oci.mod -tags oci ./..."));
-+  assert.ok(oci.includes("go build -mod=readonly -modfile=go.oci.mod -tags oci"));
-+
-+  const ci = job("agent-go");
-+  const oracleSteps = ci.slice(ci.indexOf("- name: Setup Oracle Windows-compatible Go"));
-+  assert.equal((oracleSteps.match(/if: matrix\.driver == 'oracle-go'/g) ?? []).length, 2);
-+  assert.match(oracleSteps, /go-version: "1\.20\.14"/);
-+  assert.ok(oracleSteps.includes("go test -mod=readonly ./..."));
-+  assert.ok(oracleSteps.includes("grep -q ': go1\\.20\\.14$'"));
-+
-+  const thinMod = readFileSync(new URL("../../agents/drivers/oracle-go/go.mod", import.meta.url), "utf8").replaceAll("\r\n", "\n");
-+  assert.match(thinMod, /^go 1\.20$/m);
-+  assert.doesNotMatch(thinMod, /github\.com\/godror\/godror/);
-+  const ociMod = readFileSync(new URL("../../agents/drivers/oracle-go/go.oci.mod", import.meta.url), "utf8").replaceAll("\r\n", "\n");
-+  assert.match(ociMod, /github\.com\/godror\/godror/);
-+});
-+
- test("shared Rust caches publish only complete builds outside the old cache namespace", () => {
-   for (const name of ["packages", "rust-fmt-clippy", "rust-test", "agent-rust", "agent-integration"]) {
-     const content = job(name);
-```
-
-**File**: `.github/workflows/agents-release.yml` (modified, +5/-6)
-```diff
-@@ -225,9 +225,9 @@ jobs:
-       - uses: actions/checkout@v7
-       - uses: actions/setup-go@v7
-         with:
--          # godror 需要 Go >= 1.21；thin 的 Windows 7 兼容线仍由 build-oracle-native 用 Go 1.20 构建。
-+          # godror 需要 Go >= 1.25；thin 的 Windows 7 兼容线使用 go.mod（Go 1.20），OCI 变体使用独立的 go.oci.mod。
-           go-version: "1.27.x"
--          cache-dependency-path: agents/drivers/oracle-go/go.sum
-+          cache-dependency-path: agents/drivers/oracle-go/go.oci.sum
-       - name: Prepare MinGW-w64 and the Oracle Instant Client
-         shell: bash
-         run: |
-@@ -283,16 +283,15 @@ jobs:
-       - name: Test Oracle agent with the OCI build tag
-         shell: bash
-         working-directory: agents/drivers/oracle-go
--        run: go test -mod=mod -tags oci ./...
-+        run: go test -mod=readonly -modfile=go.oci.mod -tags oci ./...
-       - name: Build Oracle OCI agent (Windows x64)
-         shell: bash
-         working-directory: agents/drivers/oracle-go
-         run: |
-           mkdir -p ../../../release-native
-           output="../../../release-native/dbx-agent-oracle-oci-windows-x64.exe"
--          # go.mod 的 go 指令保持 1.20（thin 的 Windows 7 兼容线）；OCI 变体要求更高，
--          # 因此允许就地更新 go.mod —— 只影响本任务的检出目录，不会被提交。
--          go build -mod=mod -tags oci -trimpath -ldflags="-s -w" -o "$output" .
-+          # OCI 变体使用独立的 go.oci.mod / go.oci.sum，避免将高版本 godror 引入 Go 1.20 的 thin 依赖图。
-+          go build -mod=readonly -modfile=go.oci.mod -tags oci -trimpath -ldflags="-s -w" -o "$output" .
-           ls -lh ../../../release-native
-       - uses: actions/upload-artifact@v4
-         with:
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +16/-0)
-```diff
-@@ -1640,6 +1640,22 @@ jobs:
-       - name: Test Neo4j Windows-compatible build
-         if: matrix.driver == 'neo4j-go'
-         run: bash drivers/neo4j-go/build-windows-legacy.sh "$RUNNER_TEMP/dbx-agent-neo4j-windows-x64.exe"
-+      - name: Setup Oracle Windows-compatible Go
-+        if: matrix.driver == 'oracle-go'
-+        uses: actions/setup-go@v7
-+        with:
-+          go-version: "1.20.14"
-+          cache-dependency-path: agents/drivers/oracle-go/go.sum
-+      - name: Test Oracle Windows-compatible thin build
-+        if: matrix.driver == 'oracle-go'
-+        run: |
-+          cd drivers/oracle-go
-+          export GOTOOLCHAIN=local
-+          go test -mod=readonly ./...
-+          output="$RUNNER_TEMP/dbx-agent-oracle-windows-x64.exe"
-+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -mod=readonly -trimpath -ldflags="-s -w" -o "$output" .
-+          go version -m "$output" | tee "$RUNNER_TEMP/oracle-windows-x64-build-info.txt"
-+          grep -q ': go1\.20\.14$' "$RUNNER_TEMP/oracle-windows-x64-build-info.txt"
-     strategy:
-       fail-fast: false
-       max-parallel: 4
-```
-
-**File**: `agents/drivers/oracle-go/README.md` (modified, +3/-3)
-```diff
-@@ -83,9 +83,9 @@ $env:GOOS="windows"; $env:GOARCH="amd64"
- $env:CC="C:/mingw64/bin/gcc.exe"
- $env:CGO_CFLAGS="-IC:/instantclient/sdk/include"
- $env:CGO_LDFLAGS="-LC:/instantclient/sdk/lib/msvc"
--# go.mod keeps `go 1.20` for the Windows 7-compatible thin build; the OCI
--# variant needs Go >= 1.21 (godror), so -mod=mod updates go.mod in place.
--go build -mod=mod -tags oci -trimpath -ldflags="-s -w" -o oracle-oci.exe .
-+# go.mod keeps pure Go 1.20 thin dependencies for Windows 7; the OCI variant
-+# uses its own go.oci.mod / go.oci.sum (Go >= 1.25 for godror).
-+go build -mod=readonly -modfile=go.oci.mod -tags oci -trimpath -ldflags="-s -w" -o oracle-oci.exe .
- ```
- 
- At runtime only `oci.dll` is needed, located through `PATH`.
-```
-
-**File**: `agents/drivers/oracle-go/dbms_output.go` (modified, +4/-4)
-```diff
-@@ -689,10 +689,10 @@ func (s *server) beginStatementTx(ctx context.Context) (*sql.Tx, error) {
- type sqlConnDBMSOutputSession struct {
- 	conn *sql.Conn
- 	// oci selects the OCI (godror) driver, which binds sql.Out directly and sizes
--	// an OUT string itself (32767 bytes, stmt.go:1422-1426 of godror v0.51.5, so
--	// it already holds every line the server can produce). The built-in go-ora
--	// driver needs its own Out type carrying the client-side buffer size the
--	// payload is read back into.
-+	// an OUT string itself (32767 bytes in godror's stmt.go, so it already holds
-+	// every line the server can produce). The built-in go-ora driver needs its
-+	// own Out type carrying the client-side buffer size the payload is read back
-+	// into.
- 	oci bool
- 	// binding carries the register size shared by every connection of this
- 	// server, so a server that rejects the largest one only pays for it once.
-```
-
-**File**: `agents/drivers/oracle-go/dbms_output_test.go` (modified, +64/-1)
-```diff
-@@ -356,6 +356,8 @@ type oracleDBMSOutputDriver struct {
- 	// compileErrors are the ALL_ERRORS rows (OWNER, NAME, TYPE, LINE, POSITION, TEXT)
- 	// served to the compilation-error readback that follows a CREATE.
- 	compileErrors [][]driver.Value
-+	resetContexts []context.Context
-+	queryContexts []context.Context
+@@ -6517,6 +6517,9 @@ func trimStatementSQL(sqlText string) string {
+ 	if isOraclePlSQLBlock(trimmed) {
+ 		return trimmed
+ 	}
++	if block, ok := rewriteSQLPlusExecute(trimmed); ok {
++		return block
++	}
+ 	return strings.TrimRight(trimmed, "; \t\r\n")
  }
  
- func openOracleDBMSOutputTestDB(t *testing.T) (*sql.DB, *oracleDBMSOutputDriver) {
-@@ -477,6 +479,7 @@ func (c *oracleDBMSOutputConn) ExecContext(ctx context.Context, query string, ar
- 	if query == dbmsOutputDisableSQL {
- 		c.driver.disableCount++
- 		c.driver.events = append(c.driver.events, "disable")
-+		c.driver.resetContexts = append(c.driver.resetContexts, ctx)
- 		if c.driver.disableErr != nil {
- 			return nil, c.driver.disableErr
- 		}
-@@ -487,6 +490,7 @@ func (c *oracleDBMSOutputConn) ExecContext(ctx context.Context, query string, ar
- 	if strings.Contains(query, "DBMS_OUTPUT.ENABLE") {
- 		c.driver.enableCount++
- 		c.driver.events = append(c.driver.events, "enable")
-+		c.driver.resetContexts = append(c.driver.resetContexts, ctx)
- 		if c.driver.enableErr != nil {
- 			c.enabled = false
- 			return nil, c.driver.enableErr
-@@ -559,7 +563,7 @@ func (c *oracleDBMSOutputConn) ExecContext(ctx context.Context, query string, ar
- // QueryContext serves the SELECT a paged query starts. It is the same statement path as
- // ExecContext: the scripted lines enter the session buffer, so a capture around the
- // query reads exactly what the statement wrote before its first page.
--func (c *oracleDBMSOutputConn) QueryContext(_ context.Context, query string, _ []driver.NamedValue) (driver.Rows, error) {
-+func (c *oracleDBMSOutputConn) QueryContext(ctx context.Context, query string, _ []driver.NamedValue) (driver.Rows, error) {
- 	c.driver.mu.Lock()
- 	defer c.driver.mu.Unlock()
- 	c.driver.statements = append(c.driver.statements, query)
-@@ -570,6 +574,7 @@ func (c *oracleDBMSOutputConn) QueryContext(_ context.Context, query string, _ [
- 			values:  append([][]driver.Value(nil), c.driver.compileErrors...),
- 		}, nil
- 	}
-+	c.driver.queryContexts = append(c.driver.queryContexts, ctx)
- 	lines := c.driver.takeStatementLines()
- 	if c.enabled {
- 		c.buffer = append(c.buffer, lines...)
-@@ -1862,3 +1867,61 @@ func TestDBMSOutputBindFailureDetection(t *testing.T) {
- 		t.Fatal("a nil error must not downgrade the register")
- 	}
- }
-+
-+// Regression for issue #15520: ensureDBMSOutput resets DBMS_OUTPUT with a 2s
-+// deadline context, while subsequent SELECTs (desktop 60s, paged 60s, MCP 0s)
-+// run on the same pinned physical connection with a cancel-only context so open
-+// cursors survive paging. The short reset context must stay scoped to the
-+// DBMS_OUTPUT reset calls and never bleed into the query's own context.
-+func TestDBMSOutputResetContextDoesNotBleedIntoSubsequentQueries(t *testing.T) {
-+	db, drv := openOracleDBMSOutputTestDB(t)
-+	s := newServer()
-+	s.db = db
-+	s.params = connectParams{DriverProfile: "oci"}
-+
-+	// Desktop executeQuery (60s timeout)
-+	if _, err := s.executeQuery(queryOptions{SQL: "SELECT 1 FROM DUAL", TimeoutSecs: 60}); err != nil {
-+		t.Fatalf("executeQuery (60s) failed: %v", err)
-+	}
-+	// MCP executeQuery (0 = unlimited)
-+	if _, err := s.executeQuery(queryOptions{SQL: "SELECT 1 FROM DUAL", TimeoutSecs: 0}); err != nil {
-+		t.Fatalf("executeQuery (0s) failed: %v", err)
-+	}
-+	// Desktop paged executeQueryPage (60s timeout)
-+	page, err := s.executeQueryPage(queryOptions{SQL: "SELECT N FROM T", TimeoutSecs: 60}, 2)
-+	if err != nil {
-+		t.Fatalf("executeQueryPage (60s) failed: %v", err)
-+	}
-+	if page.SessionID != nil {
-+		s.closeQuerySession(*page.SessionID)
-+	}
-+
-+	drv.mu.Lock()
-+	resetContexts := append([]context.Context(nil), drv.resetContexts...)
-+	queryContexts := append([]context.Context(nil), drv.queryContexts...)
-+	openCount := drv.openCount
-+	drv.mu.Unlock()
-+
-+	if openCount != 1 {
-+		t.Fatalf("opened %d physical connections, want 1", openCount)
-+	}
-+	if len(resetContexts) < 2 {
-+		t.Fatalf("recorded %d DBMS_OUTPUT reset contexts, want at least 2 (DISABLE + ENABLE)", len(resetContexts))
-+	}
-+	for index, ctx := range resetContexts {
-+		if _, ok := ctx.Deadline(); !ok {
-+			t.Fatalf("reset context %d had no deadline, want the 2s reset timeout", index)
-+		}
-+		if !errors.Is(ctx.Err(), context.Canceled) {
-+			t.Fatalf("reset context %d err = %v, want context.Canceled after reset returns", index, ctx.Err())
-+		}
-+	}
-+	if len(queryContexts) != 3 {
-+		t.Fatalf("recorded %d query contexts, want 3", len(queryContexts))
-+	}
-+	for index, ctx := range queryContexts {
-+		if _, hasDeadline := ctx.Deadline(); hasDeadline {
-+			t.Fatalf("query context %d unexpectedly inherited a deadline", index)
-+		}
-+	}
-+}
 ```
 
-**File**: `agents/drivers/oracle-go/go.mod` (modified, +1/-11)
+**File**: `agents/drivers/oracle-go/sqlplus_execute.go` (added, +36/-0)
 ```diff
-@@ -2,17 +2,7 @@ module github.com/t8y2/dbx/agents/drivers/oracle-go
- 
- go 1.20
- 
--require github.com/sijms/go-ora/v2 v2.9.0
--
- require (
--	github.com/godror/godror v0.51.5
-+	github.com/sijms/go-ora/v2 v2.9.0
- 	golang.org/x/text v0.22.0
- )
--
--require (
--	github.com/VictoriaMetrics/easyproto v0.1.4 // indirect
--	github.com/go-logfmt/logfmt v0.6.0 // indirect
--	github.com/godror/knownpb v0.3.0 // indirect
--	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
--	google.golang.org/protobuf v1.36.6 // indirect
--)
-```
-
-**File**: `agents/drivers/oracle-go/go.oci.mod` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+module github.com/t8y2/dbx/agents/drivers/oracle-go
+@@ -0,0 +1,36 @@
++package main
 +
-+go 1.25.0
-+
-+require (
-+	github.com/godror/godror v0.52.1-0.20261120194600-bc8b643b56ac
-+	github.com/sijms/go-ora/v2 v2.9.0
-+	golang.org/x/text v0.22.0
++import (
++	"regexp"
++	"strings"
 +)
 +
-+require (
-+	github.com/VictoriaMetrics/easyproto v0.1.4 // indirect
-+	github.com/go-logfmt/logfmt v0.6.0 // indirect
-+	github.com/godror/knownpb v0.3.0 // indirect
-+	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
-+	google.golang.org/protobuf v1.36.6 // indirect
-+)
-```
-
----
-
-### Incident Patch 2: `53061e38` (2026-11-26)
-**Commit Message**: fix(structure): preserve schema in Kingbase table structure changes
-
-**File**: `apps/desktop/src/components/structure/TableStructureEditor.kingbaseSchemaQualifier.spec.ts` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+// @vitest-environment happy-dom
++// sqlPlusExecuteRegexp matches the SQL*Plus EXECUTE command: EXEC or EXECUTE
++// followed by whitespace and a PL/SQL statement.
++var sqlPlusExecuteRegexp = regexp.MustCompile(`(?is)^exec(?:ute)?\s+(.+)$`)
 +
-+/**
-+ * #15579 — Kingbase table structure changes lost their schema qualifier, so an
-+ * ALTER could resolve to a same-named system table. The apply-side gate lives in
-+ * `applyDdlGenerationPreferences`; the DDL tab runs through
-+ * `formatStructureDdl` → `applyDdlDisplayPreferences` → the same
-+ * `applyDdlDatabaseQualifier`, whose `includeDatabaseName === false` branch
-+ * strips the schema again. The stripping/insertion semantics themselves are
-+ * covered by `lib/__tests__/table/tableSelectSql` and
-+ * `lib/sql/__tests__/ddlDisplay`; this pins both gates' wiring so the editable,
-+ * executable DDL tab cannot regress to a bare table name.
-+ */
-+
-+import { describe, expect, it } from "vitest";
-+import editorSource from "./TableStructureEditor.vue?raw";
-+
-+function functionSource(name: string): string {
-+  const start = editorSource.indexOf(`function ${name}(`);
-+  const end = editorSource.indexOf("\n}\n", start);
-+  expect(start).toBeGreaterThan(-1);
-+  expect(end).toBeGreaterThan(start);
-+  return editorSource.slice(start, end);
-+}
-+
-+describe("table structure editor kingbase schema qualifier (#15579)", () => {
-+  it("keeps the backend's schema qualifier when applying generated DDL", () => {
-+    expect(functionSource("applyDdlGenerationPreferences")).toContain('databaseType.value === "kingbase" ? sql : applyDdlDatabaseQualifier(');
-+  });
-+
-+  it("does not strip the schema from the DDL tab's display pipeline", () => {
-+    const source = functionSource("formatStructureDdl");
-+    expect(source).toContain('includeDatabaseName: databaseType.value === "kingbase" ? true : settingsStore.editorSettings.generateSqlIncludeDatabaseName');
-+  });
-+});
-```
-
-**File**: `apps/desktop/src/components/structure/TableStructureEditor.vue` (modified, +10/-4)
-```diff
-@@ -397,7 +397,12 @@ function formatStructureDdl(ddl: string): Promise<string> {
-       databaseType: databaseType.value,
-       database: props.database,
-       catalog: props.catalog,
--      includeDatabaseName: settingsStore.editorSettings.generateSqlIncludeDatabaseName,
-+      // Kingbase can resolve an unqualified DDL target to a system table with
-+      // the same name (#15579), so the editable DDL tab must keep the backend's
-+      // schema qualifier. `ddlQualifiedPartCount` has no kingbase entry, so
-+      // forcing the flag on only skips the stripping pass — no database segment
-+      // is ever inserted.
-+      includeDatabaseName: databaseType.value === "kingbase" ? true : settingsStore.editorSettings.generateSqlIncludeDatabaseName,
-       quoteIdentifiers: settingsStore.editorSettings.generateSqlQuoteIdentifiers,
-     },
-     settingsStore.editorSettings.sqlFormatter,
-@@ -555,9 +560,10 @@ function scheduleDdlEditorInit() {
-  * quoted names are uppercased before their quotes are removed.
-  */
- function applyDdlGenerationPreferences(sql: string, dialect: SqlFormatDialect): string {
--  const unqualified = applyDdlDatabaseQualifier(sql, dialect, databaseType.value, settingsStore.editorSettings.generateSqlIncludeDatabaseName, props.database, props.catalog);
--  if (settingsStore.editorSettings.generateSqlQuoteIdentifiers) return unqualified;
--  return formatGeneratedDdlIdentifierQuotes(unqualified, dialect, false, { preserveCaseSensitiveIdentifiers: tableStoresCaseSensitiveIdentifiers.value });
-+  // Kingbase can resolve an unqualified DDL target to a system table with the same name.
-+  const targetSql = databaseType.value === "kingbase" ? sql : applyDdlDatabaseQualifier(sql, dialect, databaseType.value, settingsStore.editorSettings.generateSqlIncludeDatabaseName, props.database, props.catalog);
-+  if (settingsStore.editorSettings.generateSqlQuoteIdentifiers) return targetSql;
-+  return formatGeneratedDdlIdentifierQuotes(targetSql, dialect, false, { preserveCaseSensitiveIdentifiers: tableStoresCaseSensitiveIdentifiers.value });
- }
- 
- type StructureDdlRequest = {
-```
-
----
-
-### Incident Patch 3: `a787625e` (2026-11-26)
-**Commit Message**: fix(kingbase): render bit columns as bit strings
-
-**File**: `agents/drivers/kingbase-go/main.go` (modified, +128/-0)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"database/sql"
- 	"database/sql/driver"
- 	"encoding/base64"
-+	"encoding/binary"
- 	"encoding/json"
- 	"errors"
- 	"fmt"
-@@ -1903,6 +1904,14 @@ func normalizeValue(value any, columnTypeName string) any {
- 	case nil:
- 		return nil
- 	case []byte:
-+		// bit / bit varying 是位串，数据库自带工具和 DBX 内置驱动都按 `0`/`1`/`10101010`
-+		// 展示。gokb 在文本协议下给出 `'0'`/`'1'` 文本，但 MySQL 兼容模式以及部分集群版本
-+		// 会把位字段当裸字节返回，落到通用分支就成了 `$binary`（网格里表现为 `0x00`/`0x01`）。
-+		if isKingbaseBitType(columnTypeName) {
-+			if bits, ok := decodeKingbaseBitString(typed, kingbaseBitTypeWidth(columnTypeName)); ok {
-+				return bits
-+			}
-+		}
- 		if isTextBytes(typed) {
- 			return string(typed)
- 		}
-@@ -1959,6 +1968,125 @@ func normalizedKingbaseColumnType(columnTypeName string) string {
- 	return strings.ToUpper(strings.ReplaceAll(strings.TrimSpace(columnTypeName), " ", ""))
- }
- 
-+// isKingbaseBitType matches the type names a bit column can carry: the driver's
-+// own name (`DatabaseTypeName` -> bit / varbit) as well as the catalog spelling
-+// (`bit(1)`, `bit varying(8)`).
-+func isKingbaseBitType(columnTypeName string) bool {
-+	normalized := normalizedKingbaseColumnType(columnTypeName)
-+	if strings.HasSuffix(normalized, "[]") {
-+		// 位串数组的元素由 gokb 解成文本数组，不走这里的字节解码。
-+		return false
-+	}
-+	switch normalized {
-+	case "BIT", "VARBIT", "BITVARYING":
-+		return true
-+	}
-+	return strings.HasPrefix(normalized, "BIT(") || strings.HasPrefix(normalized, "VARBIT(") || strings.HasPrefix(normalized, "BITVARYING(")
-+}
-+
-+// kingbaseBitTypeWidth reads the declared width out of `bit(n)` / `varbit(n)`;
-+// 0 means the type name carries no width.
-+func kingbaseBitTypeWidth(columnTypeName string) int {
-+	normalized := normalizedKingbaseColumnType(columnTypeName)
-+	open := strings.IndexByte(normalized, '(')
-+	if open < 0 || !strings.HasSuffix(normalized, ")") {
-+		return 0
-+	}
-+	width, err := strconv.Atoi(normalized[open+1 : len(normalized)-1])
-+	if err != nil || width < 0 {
-+		return 0
-+	}
-+	return width
-+}
-+
-+// decodeKingbaseBitString turns a bit column payload into its bit-string text and
-+// mirrors DbxJdbcPlugin#bitStringFromPayload so the native agent and the JDBC path
-+// render the same value for the same column:
++// rewriteSQLPlusExecute turns the SQL*Plus client command
 +//
-+//   - PostgreSQL binary payload (int32 bit length + packed bits) is expanded from the
-+//     most significant bit of the first byte;
-+//   - `'0'`/`'1'` text is what the text protocol already delivers, keep it verbatim;
-+//   - anything else is a raw bit field (MySQL-compatible bit(1) -> 0x00/0x01), expanded
-+//     right-aligned over the declared width, or the significant width when the catalog
-+//     reported none.
++//	EXEC[UTE] statement
 +//
-+// ok=false means the payload cannot be a value of that width; callers keep the
-+// generic `$binary` encoding instead of silently truncating data.
-+func decodeKingbaseBitString(raw []byte, declaredWidth int) (string, bool) {
-+	if len(raw) == 0 {
-+		return "", true
-+	}
-+	if len(raw) >= 4 {
-+		bitLen := int(int32(binary.BigEndian.Uint32(raw[:4])))
-+		payload := raw[4:]
-+		if bitLen >= 0 && len(payload) == (bitLen+7)/8 {
-+			return expandKingbaseBitsMSB(payload, bitLen), true
-+		}
-+	}
-+	// Mirror the JDBC rule (DbxJdbcPlugin#bitStringFromPayload): an ASCII '0'/'1'
-+	// payload is text only when it matches the declared width; otherwise a raw
-+	// MySQL-compat bit(n>1) value of 0x30/0x31 must expand LSB over the full width
-+	// instead of rendering a single '0'/'1'.
-+	if isKingbaseBitText(raw) && (declaredWidth <= 0 || len(raw) == declaredWidth) {
-+		return string(raw), true
-+	}
-+	width := declaredWidth
-+	if width <= 0 {
-+		width = kingbaseSignificantBitWidth(raw)
-+	}
-+	if width > len(raw)*8 {
++// into the anonymous block the command is defined as: `BEGIN statement; END;`.
++// EXEC is not SQL, so the server rejects it with ORA-00900, yet it is how most
++// Oracle users run a stored procedure (SQL*Plus, SQL Developer and PL/SQL
++// Developer all accept it; the trailing semicolon is optional there as well).
++//
++// EXECUTE IMMEDIATE is a PL/SQL statement, not this command, and stays untouched
++// so the server keeps reporting what it always did for it. The terminator sits on
++// its own line so a trailing line comment in the call cannot swallow it.
++func rewriteSQLPlusExecute(sqlText string) (string, bool) {
++	start := trimLeadingSQLComments(sqlText)
++	matches := sqlPlusExecuteRegexp.FindStringSubmatch(start)
++	if matches == nil {
 +		return "", false
 +	}
-+	return expandKingbaseBitsLSB(raw, width), true
-+}
-+
-+// expandKingbaseBitsMSB reads the PostgreSQL binary bit layout: bit 0 is the most
-+// significant bit of the first byte, trailing bits of the last byte are padding.
-+func expandKingbaseBitsMSB(payload []byte, width int) string {
-+	var bits strings.Builder
-+	bits.Grow(width)
-+	for index := 0; index < width; index++ {
-+		bits.WriteByte('0' + ((payload[index/8] >> (7 - index%8)) & 1))
++	body := strings.TrimSpace(matches[1])
++	body = strings.TrimSpace(strings.TrimSuffix(body, ";"))
++	if body == "" || startsWithSQLKeyword(body, "immediate") {
++		return "", false
 +	}
-+	return bits.String()
++	return "BEGIN\n  " + body + "\n;\nEND;", true
 +}
-+
-+// expandKingbaseBitsLSB reads a raw bit field the way MySQL stores it: bit 0 is the
-+// least significant bit of the last byte (`0x01` for bit(1) is `1`, `0xaa` for
-+// bit(8) is `10101010`).
-+func expandKingbaseBitsLSB(payload []byte, width int) string {
-+	var bits strings.Builder
-+	bits.Grow(width)
-+	for bit := width - 1; bit >= 0; bit-- {
-+		bits.WriteByte('0' + ((payload[len(payload)-1-bit/8] >> (bit % 8)) & 1))
-+	}
-+	return bits.String()
-+}
-+
-+func isKingbaseBitText(payload []byte) bool {
-+	for _, char := range payload {
-+		if char != '0' && char != '1' {
-+			return false
-+		}
-+	}
-+	return true
-+}
-+
-+// kingbaseSignificantBitWidth is the shortest width that still represents the
-+// payload (`0x00` -> 1, `0xaa` -> 8).
-+func kingbaseSignificantBitWidth(payload []byte) int {
-+	for index, char := range payload {
-+		if char != 0 {
-+			width := 
 ```
 
-**File**: `agents/drivers/kingbase-go/main_test.go` (modified, +65/-0)
+**File**: `agents/drivers/oracle-go/sqlplus_execute_test.go` (added, +48/-0)
 ```diff
-@@ -5177,6 +5177,71 @@ func TestNormalizeValueKingbaseTimeColumnKeepsTimeOfDay(t *testing.T) {
- 	}
+@@ -0,0 +1,48 @@
++package main
++
++import "testing"
++
++func TestRewriteSQLPlusExecute(t *testing.T) {
++	cases := map[string]string{
++		"EXEC p_noargs":                     "BEGIN\n  p_noargs\n;\nEND;",
++		"exec p_noargs;":                    "BEGIN\n  p_noargs\n;\nEND;",
++		"EXECUTE app.pkg.run(1, 'a;b');":    "BEGIN\n  app.pkg.run(1, 'a;b')\n;\nEND;",
++		"  EXEC\tp_x(\n    1\n  )  ;  ":     "BEGIN\n  p_x(\n    1\n  )\n;\nEND;",
++		"-- run it\nEXEC p_noargs":          "BEGIN\n  p_noargs\n;\nEND;",
++		"/* c */ EXEC p_noargs -- trailing": "BEGIN\n  p_noargs -- trailing\n;\nEND;",
++	}
++	for input, want := range cases {
++		got, ok := rewriteSQLPlusExecute(input)
++		if !ok || got != want {
++			t.Errorf("rewriteSQLPlusExecute(%q) = %q, %v; want %q", input, got, ok, want)
++		}
++	}
++}
++
++func TestRewriteSQLPlusExecuteLeavesOtherStatementsAlone(t *testing.T) {
++	for _, input := range []string{
++		"",
++		"EXEC",
++		"EXEC   ;",
++		"EXECUTE IMMEDIATE 'DROP TABLE t'",
++		"exec immediate 'x'",
++		"EXECUTOR_RUN(1)",
++		"EXECUTE_PROC",
++		"SELECT * FROM exec",
++		"BEGIN p; END;",
++		"CALL p()",
++	} {
++		if got, ok := rewriteSQLPlusExecute(input); ok {
++			t.Errorf("rewriteSQLPlusExecute(%q) rewrote to %q; want it untouched", input, got)
++		}
++	}
++}
++
++func TestTrimStatementSQLRewritesSQLPlusExecute(t *testing.T) {
++	if got, want := trimStatementSQL("EXEC p_noargs;"), "BEGIN\n  p_noargs\n;\nEND;"; got != want {
++		t.Fatalf("trimStatementSQL = %q, want %q", got, want)
++	}
++	if got, want := trimStatementSQL("EXECUTE IMMEDIATE 'x';"), "EXECUTE IMMEDIATE 'x'"; got != want {
++		t.Fatalf("trimStatementSQL = %q, want %q", got, want)
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `e385dc89` (2026-11-28)
+**Commit Message**: fix(export): keep backup snapshot alive during database export
+
+**File**: `apps/desktop/src/lib/export/__tests__/databaseExportCompletion.spec.ts` (modified, +12/-0)
+```diff
+@@ -108,6 +108,18 @@ describe("native queued database export completion", () => {
+       }),
+     ).rejects.toMatchObject({ status: "unknown", message: "rollback reply lost" });
+   });
++  it("keeps the export failure when the backend already discarded the snapshot session", async () => {
++    mocks.rollback.mockRejectedValueOnce(new Error("Transaction session not found"));
++    await expect(
++      runWithDatabaseBackupSnapshot({ connectionId: "mysql-1", database: "app", enabled: true, reportCompletion: true }, async () => {
++        throw new SnapshotCompletionError("failed", "Query timed out after 60 seconds. Transaction was auto-rolled back.");
++      }),
++    ).rejects.toMatchObject({ status: "failed", message: "Query timed out after 60 seconds. Transaction was auto-rolled back." });
++  });
++  it("keeps a successful export when the snapshot session is already gone at cleanup", async () => {
++    mocks.rollback.mockRejectedValueOnce(new Error("Transaction session not found"));
++    await expect(runWithDatabaseBackupSnapshot({ connectionId: "mysql-1", database: "app", enabled: true, reportCompletion: true }, async () => done)).resolves.toEqual(done);
++  });
+   it("preserves an earlier unknown even if snapshot cleanup also fails", async () => {
+     mocks.rollback.mockRejectedValueOnce(new Error("rollback reply lost"));
+     const unknown = new SnapshotCompletionError("unknown", "export reply lost");
+```
+
+**File**: `apps/desktop/src/lib/export/databaseExport.ts` (modified, +10/-0)
+```diff
+@@ -6,6 +6,7 @@ import { SINGLE_DATABASE_TYPES } from "@/lib/database/databaseCapabilitySets";
+ import { isXuguSyntheticScope } from "@/lib/sidebar/xuguPublicSynonyms";
+ import type { SqlInsertDialect } from "@/lib/export/sqlInsertMode";
+ import { SnapshotCompletionError } from "@/lib/export/snapshotCompletion";
++import { isManualTransactionSessionExpired } from "@/lib/backend/errorUtils.ts";
+ 
+ export const DATABASE_EXPORT_ROW_LIMIT = 10_000;
+ export const DATABASE_EXPORT_PAGE_SIZE = 500;
+@@ -198,6 +199,15 @@ export async function runWithDatabaseBackupSnapshot<T>(options: DatabaseBackupSn
+     try {
+       await api.rollbackManualTransaction(sessionId);
+     } catch (error) {
++      // A failed export stream already rolled the snapshot back on the
++      // backend, so "session not found" confirms cleanup instead of leaving
++      // it unknown. Keep the export's own outcome rather than masking its
++      // real error (timeout, dropped connection) behind the cleanup reply.
++      const message = error instanceof Error ? error.message : typeof error === "string" ? error : "";
++      if (message === "Transaction session not found" || isManualTransactionSessionExpired(error)) {
++        if (failed) throw operationError;
++        return result as T;
++      }
+       if (operationError instanceof SnapshotCompletionError && operationError.status === "unknown") throw operationError;
+       throw new SnapshotCompletionError("unknown", error instanceof Error ? error.message : String(error));
+     }
+```
+
+**File**: `crates/dbx-core/src/query/mod.rs` (modified, +104/-14)
+```diff
+@@ -7633,59 +7633,111 @@ async fn begin_transaction_session(
  }
  
-+// Kingbase/PostgreSQL 的 bit / bit varying 列按位串展示。原始字节载荷（MySQL 兼容模式的
-+// bit(1) 返回 0x00/0x01，或 PostgreSQL 二进制的「int32 位长 + 位数据」）此前落到通用
-+// $binary 分支，网格里显示成 0x00 / 0x01 而不是 0 / 1。
-+func TestNormalizeValueDecodesBitColumnPayloads(t *testing.T) {
-+	tests := []struct {
-+		name       string
-+		payload    []byte
-+		columnType string
-+		want       string
-+	}{
-+		{name: "text protocol bit(1) zero", payload: []byte("0"), columnType: "BIT", want: "0"},
-+		{name: "text protocol bit(1) one", payload: []byte("1"), columnType: "BIT", want: "1"},
-+		{name: "text protocol bit(8)", payload: []byte("10101010"), columnType: "bit(8)", want: "10101010"},
-+		{name: "raw bit(1) zero", payload: []byte{0x00}, columnType: "bit(1)", want: "0"},
-+		{name: "raw bit(1) one", payload: []byte{0x01}, columnType: "bit(1)", want: "1"},
-+		{name: "raw bit(8)", payload: []byte{0xaa}, columnType: "bit(8)", want: "10101010"},
-+		{name: "raw varbit uses declared width", payload: []byte{0x05}, columnType: "varbit(4)", want: "0101"},
-+		{name: "binary bit(5)", payload: []byte{0, 0, 0, 5, 0xa8}, columnType: "bit(5)", want: "10101"},
-+		{name: "binary bit(1) zero", payload: []byte{0, 0, 0, 1, 0x00}, columnType: "bit(1)", want: "0"},
-+		{name: "binary bit(1) one is msb aligned", payload: []byte{0, 0, 0, 1, 0x80}, columnType: "bit(1)", want: "1"},
-+		{name: "binary bit(8) one", payload: []byte{0, 0, 0, 8, 0x01}, columnType: "bit(8)", want: "00000001"},
-+		{name: "raw bit field without declared width", payload: []byte{0x0a}, columnType: "bit", want: "1010"},
-+		// Mirror of the JDBC width guard: a raw MySQL-compat bit(n>1) value of
-+		// 0x30/0x31 is NOT single-char text — it must expand LSB over the full width.
-+		{name: "raw bit(8) ascii-looking byte expands", payload: []byte{0x30}, columnType: "bit(8)", want: "00110000"},
-+		{name: "raw bit(8) ascii-looking one expands", payload: []byte{0x31}, columnType: "bit(8)", want: "00110001"},
-+	}
-+
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			got := normalizeValue(test.payload, test.columnType)
-+			gotStr, ok := got.(string)
-+			if !ok {
-+				t.Fatalf("expected bit string, got %#v", got)
-+			}
-+			if gotStr != test.want {
-+				t.Fatalf("got %q, want %q", gotStr, test.want)
-+			}
-+		})
-+	}
-+}
-+
-+// 位宽超出载荷容量时不能静默截断，保持原来的 $binary 编码。
-+func TestNormalizeValueKeepsBinaryForUndecodableBitPayload(t *testing.T) {
-+	got := normalizeValue([]byte{0x00}, "bit(9)")
-+	binary, ok := got.(map[string]string)
-+	if !ok || binary["$binary"] != "AA==" {
-+		t.Fatalf("expected $binary fallback, got %#v", got)
-+	}
-+}
-+
-+// 非位串列不能走位串解码：bytea / 文本列的原有行为必须保持不变。
-+func TestNormalizeValueLeavesNonBitColumnsUntouched(t *testing.T) {
-+	for _, columnType := range []string{"bytea", "BLOB", "text", "tinyint(1)", "bit(1)[]", ""} {
-+		got := normalizeValue([]byte{0x00}, columnType)
-+		binary, ok := got.(map[string]string)
-+		if !ok || binary["$binary"] != "AA==" {
-+			t.Fatalf("columnType=%q: expected untouched $binary payload, got %#v", columnType, got)
-+		}
-+	}
-+	if got := normalizeValue([]byte("abc"), "text"); got != "abc" {
-+		t.Fatalf("text column: got %#v, want abc", got)
-+	}
-+}
-+
- func TestCatalogColumnsPreservesJsonAndJsonbTypes(t *testing.T) {
- 	state := &metadataDriverState{query: func(query string) (driver.Rows, error) {
- 		if !strings.Contains(query, "WHEN t.typname = 'json' THEN 'json'") ||
-```
-
-**File**: `plugins/jdbc/src/main/java/app/dbx/jdbc/DbxJdbcPlugin.java` (modified, +29/-9)
-```diff
-@@ -6529,6 +6529,15 @@ private static Object readValue(
-             if (columnType == Types.BIT && bytes.length == 1 && (bytes[0] == 't' || bytes[0] == 'f')) {
-                 return bytes[0] == 't';
-             }
-+            // 位串列即使没命中 BIT_STRING_JDBC_URL_PREFIXES（自定义/代理 URL、按驱动类推断的连接），
-+            // 也不能落到 binaryToHex 变成 0x00/0x01；这里复用同一套位串解码。类型名缺失时保持
-+            // 原来的 0x.. 展示：Types.BIT 在部分驱动上也用于数值列，没有位宽就无法安全展开。
-+            if (isNamedBitStringColumn(meta, index)) {
-+                Object bitValue = bitStringColumnValue(bytes, bitColumnPrecision(meta, index));
-+                if (bitValue != BIT_COLUMN_UNSUPPORTED) {
-+                    return bitValue;
-+                }
-+            }
-             return binaryToHex(bytes);
-         }
-         if (value instanceof Clob clob) {
-@@ -6687,17 +6696,21 @@ private static String quotePhoenixIdentifier(String identifier) {
-     private static final Object BIT_COLUMN_UNSUPPORTED = new Object();
+ pub struct ManualTransactionKeepAlive {
+-    task: tokio::task::JoinHandle<()>,
++    /// Asks the keep-alive task to stop. The task is never aborted: aborting it
++    /// while a ping is in flight would cancel a request/response exchange half
++    /// way and leave the held connection out of sync with the server.
++    stop: Arc<tokio::sync::Notify>,
+     sessions: Arc<tokio::sync::RwLock<std::collections::HashMap<String, TransactionSession>>>,
+     txn_session_id: String,
+ }
  
-     private static boolean isBitStringColumn(ResultSetMetaData meta, int index, int columnType) {
--        String typeName = columnTypeName(meta, index);
--        String normalized = typeName.trim().toLowerCase(Locale.ROOT);
-+        if (isNamedBitStringColumn(meta, index)) {
-+            return true;
+ impl Drop for ManualTransactionKeepAlive {
+     fn drop(&mut self) {
+-        self.task.abort();
++        // `notify_one` stores a permit when the task is not waiting yet, so the
++        // stop request is not lost while a ping is still running.
++        self.stop.notify_one();
+         spawn_txn_idle_watcher_for_sessions(Arc::clone(&self.sessions), self.txn_session_id.clone());
+     }
+ }
+ 
++/// Refresh cadence for a kept-alive session. It must stay well inside the
++/// session's own idle window for every configurable timeout: the minimum
++/// window is 30s, so a fixed 30s tick races the idle watcher and the session
++/// can expire while the guard is held.
++fn manual_transaction_keepalive_interval(idle_timeout: Duration) -> Duration {
++    (idle_timeout / 3).clamp(Duration::from_millis(10), Duration::from_secs(30))
++}
++
++/// Best-effort warm-up for a kept-alive session's held connection. Refreshing
++/// `last_activity` only convinces DBX's own idle watcher; a remote server or
++/// middlebox can still drop the idle physical connection while an export
++/// spends minutes on metadata, and the next stream then fails on a dead
++/// connection. A ping keeps the connection warm without touching the
++/// transaction snapshot. Failures are ignored: the next real operation
++/// surfaces the connection error itself.
++///
++/// The ping must run to completion. Dropping it half way (for example behind a
++/// timeout) abandons a request/response exchange on the held connection: the
++/// MySQL driver then marks the connection disconnected and a late reply could be
++/// read as the answer to the next command. A connection that never answers is
++/// already unusable for the export itself, so there is nothing to gain by
++/// cancelling.
++async fn ping_manual_txn_connection(conn: &mut TxnConnection) {
++    match conn {
++        TxnConnection::Mysql(Some(conn)) => {
++            let _ = conn.ping().await;
 +        }
-+        return columnType == Types.BIT;
++        TxnConnection::Postgres(conn) => {
++            let _ = conn.execute_typed("SELECT 1", &[]).await;
++        }
++        _ => {}
 +    }
++}
 +
-+    /** 类型名（而不是 JDBC 类型码）明确是位串列。`bool`/`boolean` 列同样上报 Types.BIT，必须排除。 */
-+    private static boolean isNamedBitStringColumn(ResultSetMetaData meta, int index) {
-+        String normalized = columnTypeName(meta, index).trim().toLowerCase(Locale.ROOT);
-         if (normalized.equals("bool") || normalized.equals("boolean")) {
-             // 金仓/PostgreSQL 的布尔列走 Types.BIT 上报，它们继续保持布尔值。
-             return false;
+ /// Keep an existing transaction session alive while a caller prepares work for
+ /// that session. The caller must retain the returned guard for the full period;
+ /// dropping it restores the normal five-minute idle rollback behavior.
+ pub async fn keep_manual_transaction_alive(
+     state: &AppState,
+     txn_session_id: &str,
+ ) -> Result<ManualTransactionKeepAlive, String> {
+-    {
++    let idle_timeout = {
+         let mut sessions = state.transaction_sessions.write().await;
+         let session =
+             sessions.get_mut(txn_session_id).ok_or_else(|| MANUAL_TRANSACTION_SESSION_NOT_FOUND_ERROR.to_string())?;
+         if !session.busy {
+             session.last_activity = std::time::Instant::now();
          }
--        if (normalized.equals("bit") || normalized.equals("varbit") || normalized.startsWith("bit ")
--            || normalized.startsWith("bit(") || normalized.startsWith("bit varying")) {
--            return true;
--        }
--        return columnType == Types.BIT;
-+        return normalized.equals("bit") || normalized.equals("varbit") || normalized.startsWith("bit ")
-+            || normalized.startsWith("bit(") || normalized.startsWith("bit varying");
-     }
+-    }
++        session.idle_timeout
++    };
  
-     private static String columnTypeName(ResultSetMetaData meta, int index) {
-@@ -6720,7 +6733,15 @@ private static Object readBitStringColumnValue(ResultSet rs, ResultSetMetaData m
-             // wasNull() 区分 SQL NULL 与「驱动不支持按字节读取」。
-             return rs.wasNull() ? null : BIT_COLUMN_UNSUPPORTED;
-         }
--        int precision = bitColumnPrecision(meta, index);
-+        return bitStringColumnValue(payload, bitColumnPrecision(meta, index));
-+    }
-+
-+    /**
-+     * 位串列载荷的取值规则（readBitStringColumnValue 与 readValue 的通用 byte[] 分支共用）：
-+     * 布尔位串保持布尔、数值型 tinyint(1) 保持数值、其余还原成位串文本；
-+     * 位宽不可信时返回 BIT_COLUMN_UNSUPPORTED，由调用方保持原来的 `0x..` 展示。
-+     */
-+    private static Object bitStringColumnValue(byte[] payload, int precision) {
-         if (payload.length == 1 && precision <= 1 && (payload[0] == 't' || payload[0] == 'f')) {
-             // GaussDB/金仓的布尔位串按 't'/'f' 返回，保持布尔语义；位宽大于 1 的列是位字段而不是布尔。
-             return payload[0] == 't';
-@@ -6732,7 +6753,6 @@ private static Object readBitStringColumnValue(ResultSet rs, ResultSetMetaData m
-             return payload[0];
-         }
-         String bitString = bitStringFromPayload(payload, precision);
--        // 位宽不可信时 bitStringFromPayload 返回 null（不是 SQL NULL），交给通用分支保持 `0x..` 展示。
-         return bitString == null ? BIT_COLUMN_UNSUPPORTED : bitString;
-     }
- 
+     let sessions = Arc::clone(&state.transaction_sessions);
+     let keep_alive_sessions = Arc::clone(&sessions);
+     let txn_session_id = txn_session_id.to_string();
+     let keep_alive_txn_session_id = txn_session_id.clone();
+-    let task = tokio::spawn(async move {
+-        const KEEPALIVE_INTERVAL: Duration = Duration::from_secs(30);
++    let interval = manual_transaction_keepalive_interval(idle_timeout);
++    let stop = Arc::new(tokio::sync::Notify::new());
++    let task_stop = Arc::clone(&stop);
++    tokio::spawn(async move {
+         loop {
+-            tokio::time::sleep(KEEPALIVE_INTERVAL).await;
+-            let should_continue = {
++            tokio::select! {
++                _ = tokio::time::sleep(interval) => {}
++                _ = task_stop.notified() => break,
++            }
++            let ping_connection = {
+                 let mut guard = sessions.write().await;
+                 if let Some(session) = guard.get_mut(&keep_alive_txn_session_id) {
+-                    if !session.busy {
++                    if session.busy {
++                        None
++                    } else {
+                         session.last_activity = std::time::Instant::now();
++                        Some(Arc::clone(&session.connection))
+                     }
+-                    true
+                 } else {
+-                    false
++                    break;
+                 }
+             };
+-            if !should_continue {
+-                break;
++            if let Some(connection) = ping_connection {
++                // `try_lock`: a stream that claimed
 ```
 
-**File**: `plugins/jdbc/src/test/java/app/dbx/jdbc/DbxJdbcPluginTest.java` (modified, +16/-0)
+---
+
+### Incident Patch 3: `5e155d65` (2026-11-28)
+**Commit Message**: fix(i18n): clarify filter group toggle labels
+
+* Add switchable filter groups and bulk rule toggles
+
+* chore(i18n): autofill new translations
+
+* fix(grid): drop stale structured filter apply results
+
+* fix(i18n): clarify filter group toggle labels
+
+---------
+
+Co-authored-by: wangqiurongbj <[REDACTED_EMAIL]>
+Co-authored-by: dbx-i18n-bot <github-actions[bot]@users.noreply.github.com>
+Co-authored-by: ThugKd <[REDACTED_EMAIL]>
+Co-authored-by: t8y2 <[REDACTED_EMAIL]>
+Co-authored-by: 二丫讲梵 <[REDACTED_EMAIL]>
+
+**File**: `apps/desktop/src/components/grid/DataGrid.vue` (modified, +123/-46)
 ```diff
-@@ -1188,6 +1188,22 @@ void readValueRendersTextBitPayloadsAsBitStrings() throws Exception {
-         assertEquals("100000010", method.invoke(null, bytesResultSet(new byte[] { 0x01, 0x02 }), columnMeta(Types.BIT, "BIT", 0), 1, false, null, true));
-     }
+@@ -99,6 +99,7 @@ import { formatDataGridColumnMetadataForCopy } from "@/lib/dataGrid/dataGridColu
+ import DataGridQueryControls from "@/components/grid/DataGridQueryControls.vue";
+ import DataGridFilterBuilder from "@/components/grid/DataGridFilterBuilder.vue";
+ import DataGridFilterModeOrderDialog from "@/components/grid/DataGridFilterModeOrderDialog.vue";
++import DataGridFilterGroupControls from "@/components/grid/DataGridFilterGroupControls.vue";
+ import DataGridFilterWorkbench from "@/components/grid/DataGridFilterWorkbench.vue";
+ import DataGridTextFilterWorkbench from "@/components/grid/DataGridTextFilterWorkbench.vue";
+ import DataGridSortWorkbench from "@/components/grid/DataGridSortWorkbench.vue";
+@@ -428,7 +429,16 @@ import type { PluginDecodeRequest } from "@/lib/dataGrid/sqlPluginCodec";
+ import { createDataGridFilterConditionCache, useDataGridFilterBuilder, type DataGridStructuredFilterRule } from "@/composables/useDataGridFilterBuilder";
+ import { DATA_GRID_DISTINCT_VALUE_DEFAULT_LIMIT, useDataGridDistinctValueLoader } from "@/composables/useDataGridDistinctValueLoader";
+ import { dataGridDistinctValueKey, dataGridNullSuggestionFilterMode, toggleAllDataGridDistinctValueOptions, type DataGridDistinctValueSource, type DataGridDistinctValueSuggestionState, type DataGridDistinctValueSuggestionTarget } from "@/lib/dataGrid/dataGridDistinctValueSuggestions";
+-import { cloneDataGridStructuredFilterRules, loadDataGridStructuredFilterState, removeDataGridStructuredFilterColumnsForTab, saveDataGridStructuredFilterState, type DataGridCachedServerColumnFilter, type DataGridStructuredFilterCacheState } from "@/lib/dataGrid/dataGridFilterBuilderPersistence";
++import { resolveSqlDialectId } from "@/lib/sql/semantic/dialect";
++import {
++  cloneDataGridStructuredFilterRules,
++  loadDataGridStructuredFilterState,
++  removeDataGridAppliedFilterColumns,
++  removeDataGridStructuredFilterColumnsForTab,
++  saveDataGridStructuredFilterState,
++  type DataGridCachedServerColumnFilter,
++  type DataGridStructuredFilterCacheState,
++} from "@/lib/dataGrid/dataGridFilterBuilderPersistence";
+ import { createDataGridSearchScopeKey } from "@/lib/dataGrid/dataGridSearchStatePersistence";
+ import { useTabUiState } from "@/lib/tabs/tabUiState";
+ import { useSqlHighlighter } from "@/composables/useSqlHighlighter";
+@@ -1559,11 +1569,30 @@ function invalidateConditionalBulkEditMatchCountPreview() {
+ watch([conditionalBulkEditConditionSource, conditionalBulkEditCurrentWhereInput, conditionalBulkEditWhereInput, conditionalBulkEditRules], invalidateConditionalBulkEditMatchCountPreview, { deep: true });
  
-+    @Test
-+    void readValueDecodesBitColumnsWithoutBitStringDialects() throws Exception {
-+        Method method = bitStringReadValue();
+ const structuredFilterRules = filterBuilder.rules;
++// Group drafts belong to this filter scope. The applied SQL stays independent
++// so inspecting or editing another group does not silently change the result.
++const activeFilterGroupNumber = ref(1);
++const inactiveFilterGroupRules = shallowRef(new Map<number, StructuredFilterRule[]>());
++const filterGroupNumbers = computed(() => [activeFilterGroupNumber.value, ...inactiveFilterGroupRules.value.keys()].sort((a, b) => a - b));
++const allFilterRulesDisabled = computed(() => structuredFilterRules.value.every((rule) => rule.disabled));
++const filterGroupControlBindings = computed(() => ({
++  groupNumbers: filterGroupNumbers.value,
++  activeGroup: activeFilterGroupNumber.value,
++  hasRules: structuredFilterRules.value.some((rule) => !!rule.columnName),
++  allDisabled: allFilterRulesDisabled.value,
++  disabled: applyingOnlyStructuredFilter.value || isApplyingWhere.value,
++  onAddGroup: addStructuredFilterGroup,
++  onSelectGroup: selectStructuredFilterGroup,
++  onDeleteGroup: deleteStructuredFilterGroup,
++  onToggleAll: toggleAllStructuredFilterRules,
++}));
+ const filterBuilderOpen = filterBuilder.open;
+ const filterWorkbenchRef = ref<{ focusRuleValue: (ruleId: string) => void }>();
+ const filterBuilderColumnSearch = filterBuilder.columnSearch;
+ const filteredFilterBuilderColumnOptions = filterBuilder.filteredColumns;
+-const appliedStructuredWhereInput = filterBuilder.appliedWhereInput;
++// Keep the applied WHERE independent from edits to the active draft.
++const appliedStructuredWhereInput = ref("");
++const appliedStructuredRules = shallowRef<StructuredFilterRule[]>();
+ const filterValueSuggestionRuleId = ref<string>();
+ const filterValueSuggestionTarget = ref<DataGridDistinctValueSuggestionTarget>();
+ const filterValueSuggestionSearch = ref("");
+@@ -1642,11 +1671,6 @@ const filterValueSuggestionState = computed<DataGridDistinctValueSuggestionState
+     canUseServerFilter: canUseServerColumnFilter.value,
+   };
+ });
+-// Structured filter rules are restored asynchronously. A tab-switch snapshot's
+-// probe includes the applied condition, so restoring before this hydration
+-// settles would reject an otherwise valid snapshot and never retry it.
+-const structuredFilterHydrationReady = ref(true);
+-let structuredFilterHydrationRequestId = 0;
+ const draftStructuredWhereInput = ref("");
+ const fi
+```
+
+**File**: `apps/desktop/src/components/grid/DataGridFilterGroupControls.vue` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++<script setup lang="ts">
++import { useI18n } from "vue-i18n";
++import { Eye, EyeOff, Plus, Trash2 } from "@lucide/vue";
++import { Button } from "@/components/ui/button";
++import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 +
-+        // 自定义/代理 JDBC URL 不会命中 BIT_STRING_JDBC_URL_PREFIXES。此时 bit 列仍必须按位串展示，
-+        // 否则 getObject() 的裸字节会渲染成 0x00/0x01（金仓 MySQL 兼容模式的 bit(1) 就是这么报的）。
-+        assertEquals("0", method.invoke(null, objectResultSet(new byte[] { 0x00 }), columnMeta(Types.BIT, "bit", 1), 1, false, null, false));
-+        assertEquals("1", method.invoke(null, objectResultSet(new byte[] { 0x01 }), columnMeta(Types.BIT, "bit", 1), 1, false, null, false));
-+        assertEquals("10101010", method.invoke(null, objectResultSet(new byte[] { (byte) 0xaa }), columnMeta(Types.BIT, "bit(8)", 8), 1, false, null, false));
-+        assertEquals("0", method.invoke(null, objectResultSet(new byte[] { '0' }), columnMeta(Types.OTHER, "varbit", 1), 1, false, null, false));
-+        // 位宽不可信时保持原来的 0x.. 展示，不静默截断。
-+        assertEquals("0x0102", method.invoke(null, objectResultSet(new byte[] { 0x01, 0x02 }), columnMeta(Types.BIT, "bit(24)", 24), 1, false, null, false));
-+        // 非位串列的裸字节不受影响。
-+        assertEquals("0x00", method.invoke(null, objectResultSet(new byte[] { 0x00 }), columnMeta(Types.BINARY, "bytea", 1), 1, false, null, false));
-+    }
++defineProps<{
++  groupNumbers: number[];
++  activeGroup: number;
++  hasRules: boolean;
++  allDisabled: boolean;
++  disabled: boolean;
++}>();
 +
-     @Test
-     void readValueRendersTinyInt1BitColumnsAsNumbers() throws Exception {
-         Method method = bitStringReadValue();
++const emit = defineEmits<{
++  addGroup: [];
++  selectGroup: [groupNumber: number];
++  deleteGroup: [];
++  toggleAll: [];
++}>();
++const { t } = useI18n();
++</script>
++
++<template>
++  <div data-filter-group-controls class="flex shrink-0 flex-wrap items-center gap-1.5 px-2 py-1">
++    <Select :model-value="String(activeGroup)" :disabled="disabled || groupNumbers.length < 2" @update:model-value="emit('selectGroup', Number($event))">
++      <SelectTrigger size="sm" class="h-7 min-w-24 gap-2 text-xs" :aria-label="t('grid.filterGroup')">
++        <SelectValue>{{ t("grid.filterGroupNumber", { number: activeGroup }) }}</SelectValue>
++      </SelectTrigger>
++      <SelectContent>
++        <SelectItem v-for="groupNumber in groupNumbers" :key="groupNumber" :value="String(groupNumber)">{{ t("grid.filterGroupNumber", { number: groupNumber }) }}</SelectItem>
++      </SelectContent>
++    </Select>
++    <Button type="button" size="icon" variant="ghost" class="h-7 w-7" :disabled="disabled" :aria-label="t('grid.addFilterGroup')" :title="t('grid.addFilterGroup')" @click="emit('addGroup')"><Plus class="h-3.5 w-3.5" /></Button>
++    <Button v-if="groupNumbers.length > 1" type="button" size="icon" variant="ghost" class="h-7 w-7" :disabled="disabled" :aria-label="t('grid.deleteFilterGroup')" :title="t('grid.deleteFilterGroup')" @click="emit('deleteGroup')"><Trash2 class="h-3.5 w-3.5" /></Button>
++    <Button type="button" size="sm" variant="ghost" class="h-7 gap-1.5 px-2 text-xs" :disabled="disabled || !hasRules" @click="emit('toggleAll')">
++      <Eye v-if="allDisabled" class="h-3.5 w-3.5" />
++      <EyeOff v-else class="h-3.5 w-3.5" />
++      {{ t(allDisabled ? "grid.enableAllFilterRules" : "grid.disableAllFilterRules") }}
++    </Button>
++  </div>
++</template>
+```
+
+**File**: `apps/desktop/src/components/grid/DataGridFilterWorkbench.vue` (modified, +1/-0)
+```diff
+@@ -78,6 +78,7 @@ watch(
+ 
+ <template>
+   <section data-grid-filter-workbench class="shrink-0 border-b bg-muted/10 text-foreground">
++    <slot name="filter-group-controls" />
+     <div ref="rulesScrollerRef" data-filter-rules-scroll class="filter-rules-scroll min-h-11 overflow-auto px-3 py-2">
+       <DataGridLocalFilterSummary v-if="hasLocalColumnFilters" class="mb-1.5" :count="localFilterCount ?? 0" :summaries="localFilterSummaries ?? []" @clear-all="emit('clearLocalFilter')" @clear-column="(columnIndex) => emit('clearLocalFilter', columnIndex)" />
+       <DataGridFilterBuilder
+```
+
+**File**: `apps/desktop/src/components/grid/DataGridQueryControls.vue` (modified, +2/-0)
+```diff
+@@ -282,6 +282,8 @@ onUnmounted(onResizeEnd);
+               <Button variant="ghost" size="sm" class="h-6 px-2 text-xs" @click="emit('clearFilters')"><Trash2 class="mr-1 h-3.5 w-3.5" />{{ t("grid.clearFilter") }}</Button>
+             </div>
+ 
++            <slot name="filter-group-controls" />
++
+             <div v-if="structuredFilterSummaries.length" class="space-y-1.5 rounded-md border border-sky-500/30 bg-sky-500/5 px-2 py-1.5">
+               <div class="flex items-center gap-2 text-xs font-medium text-sky-600 dark:text-sky-400">
+                 <Filter class="h-3.5 w-3.5 shrink-0" /><span class="truncate">{{ t("grid.structuredFiltersActive", { count: structuredFilterSummaries.length }) }}</span>
+```
+
+**File**: `apps/desktop/src/components/grid/DataGridTextFilterWorkbench.vue` (modified, +1/-0)
+```diff
+@@ -153,6 +153,7 @@ watch(
+ 
+ <template>
+   <section data-grid-text-filter-workbench class="relative flex shrink-0 flex-col border-b bg-muted/10 text-foreground" :style="panelStyle">
++    <slot name="filter-group-controls" />
+     <div
+       ref="rulesScrollerRef"
+       data-filter-rules-scroll
+```
+
+**File**: `apps/desktop/src/components/grid/__tests__/DataGridFilterEditorState.spec.ts` (modified, +84/-0)
+```diff
+@@ -364,6 +364,90 @@ describe("DataGrid custom filter menu", () => {
+   });
+ });
+ 
++describe("DataGrid structured filter apply ordering", () => {
++  // Conditions resolve only when the test releases them, keyed by the rule value.
++  function deferConditionsByValue() {
++    const pending = new Map<string, { promise: Promise<string>; resolve: (value: string) => void }>();
++    const entry = (value: string) => {
++      let item = pending.get(value);
++      if (!item) {
++        let resolve!: (condition: string) => void;
++        const promise = new Promise<string>((done) => (resolve = done));
++        item = { promise, resolve };
++        pending.set(value, item);
++      }
++      return item;
++    };
++    backendMocks.buildDataGridContextFilterCondition.mockImplementation(({ columnName, value }: { columnName: string; value: unknown }) => entry(String(value)).promise.then(() => `\`${columnName}\` = ${String(value)}`));
++    return { release: (value: string) => entry(value).resolve(value) };
++  }
++
++  async function seedRule(host: HTMLElement) {
++    await openCellCustomFilter(host);
++    const editor = [...host.querySelectorAll<HTMLInputElement>("[data-filter-value-editor]")].find((input) => input.value === "1");
++    if (!editor) throw new Error("Seeded value editor not found");
++    return editor;
++  }
++
++  // Lets any stale continuation run to completion before asserting nothing happened.
++  const flushPendingWork = () => new Promise<void>((resolve) => setTimeout(resolve, 30));
++
++  function setValue(input: HTMLInputElement, value: string) {
++    input.value = value;
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++  }
++
++  function workbenchButton(host: HTMLElement, label: string): HTMLButtonElement {
++    const button = [...(host.querySelector("[data-grid-filter-workbench]")?.querySelectorAll<HTMLButtonElement>("button") ?? [])].find((candidate) => candidate.textContent?.trim() === label);
++    if (!button) throw new Error(`Filter workbench button not found: ${label}`);
++    return button;
++  }
++
++  afterEach(() => {
++    backendMocks.buildDataGridContextFilterCondition.mockImplementation(async ({ columnName, value }: { columnName: string; value: unknown }) => `\`${columnName}\` = ${String(value)}`);
++  });
++
++  it("keeps the newest apply when an older apply resolves last", async () => {
++    const { host, onExecuteSql } = mountGrid("conditions", false);
++    await settle();
++    const conditions = deferConditionsByValue();
++    const editor = await seedRule(host);
++
++    workbenchButton(host, "Apply Filter").click();
++    await settle();
++    setValue(editor, "2");
++    await settle();
++    workbenchButton(host, "Apply Filter").click();
++    await settle();
++
++    conditions.release("2");
++    await vi.waitFor(() => expect(onExecuteSql).toHaveBeenCalledOnce());
++    conditions.release("1");
++    await flushPendingWork();
++
++    expect(onExecuteSql).toHaveBeenCalledOnce();
++    expect(onExecuteSql.mock.calls[0][0]).toContain("`id` = 2");
++  });
++
++  it("does not restore a cleared filter when an earlier apply resolves afterwards", async () => {
++    const { host, onExecuteSql } = mountGrid("conditions", false);
++    await settle();
++    const conditions = deferConditionsByValue();
++    await seedRule(host);
++
++    workbenchButton(host, "Apply Filter").click();
++    await settle();
++    workbenchButton(host, "Clear Filter").click();
++    await vi.waitFor(() => expect(onExecuteSql).toHaveBeenCalledOnce());
++    expect(onExecuteSql.mock.calls[0][0]).not.toContain("WHERE");
++
++    conditions.release("1");
++    await flushPendingWork();
++
++    expect(onExecuteSql).toHaveBeenCalledOnce();
++  });
++});
++
+ describe("DataGrid quick filter editor state", () => {
+   it("continues to close its popover after apply", async () => {
+     const { host, onExecuteSql } = mountGrid("quick", true);
+```
+
+**File**: `apps/desktop/src/i18n/locales/en.ts` (modified, +6/-0)
+```diff
+@@ -3534,6 +3534,12 @@ export default {
+     resultColumnCopied: "Copied {column}",
+     filterBuilderSummary: "{count} rules",
+     filterBuilderAddRule: "Add rule",
++    filterGroup: "Filter group",
++    filterGroupNumber: "Group {number}",
++    addFilterGroup: "Add filter group",
++    deleteFilterGroup: "Delete filter group",
++    enableAllFilterRules: "Enable this group's rules",
++    disableAllFilterRules: "Disable this group's rules",
+     filterBuilderApplyOnly: "Filter only this rule",
+     filterBuilderCompleteRuleFirst: "Complete this filter rule first",
+     filterBuilderEnableRule: "Enable rule",
+```
+
+**File**: `apps/desktop/src/i18n/locales/es.ts` (modified, +6/-0)
+```diff
+@@ -3942,6 +3942,12 @@ export default withEnglishFallback({
+     pasteRowsTruncated: "Se pegaron {applied} filas y {dropped} filas no se pegaron: el resultado actual no admite agregar filas o no hay suficientes filas disponibles para agregar.",
+     pasteCellText: "Pegar texto en esta celda",
+     pasteCellTextFailed: "No se puede pegar texto en la celda: {message}",
++    filterGroup: "Grupo de condiciones",
++    filterGroupNumber: "Grupo {number}",
++    addFilterGroup: "Añadir grupo de condiciones",
++    deleteFilterGroup: "Eliminar grupo de condiciones",
++    enableAllFilterRules: "Activar las reglas de este grupo",
++    disableAllFilterRules: "Desactivar las reglas de este grupo",
+     copyExtractorSingleColumnFormat: "Formato de una sola columna de copia inteligente",
+     copyExtractorUseSmartDefaults: "Usar el formato predeterminado de copia inteligente",
+     tableQueryDefaults: "Filtro y orden predeterminados de esta tabla",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15786** (2026-11-26): fix(i18n): bring Brazilian Portuguese locale back to parity with en.ts (@saskuati-dev)
-- **PR #15785** (2026-11-26): fix(editor): 不再把裸 END + 下一行 IF 误判为 END IF，修复 BEGIN…END 无折叠箭头/无配对高亮 (#15561) (@zipg)
-- **PR #15783** (2026-11-26): fix(search): 保留全局搜索输入法回车上屏 (@zipg)
-- **PR #15780** (2026-11-26): feat(connection): 支持按连接自定义环境水印 (@jiejie1133)
-- **PR #15777** (closed): feat(grid): add transposed Markdown (wide table) export for selected rows (@qinqoushui)
-- **PR #15776** (2026-11-26): perf(oracle): skip DBMS_OUTPUT and schema switches for DBX's own reads (@ZHAOGS0217)
+- **PR #15888** (2026-11-28): fix(export): keep backup snapshot alive during database export (@sx4im)
+- **PR #15887** (2026-11-28): fix(editor): show full SQL parameter names on hover when truncated (@parade0393)
+- **PR #15885** (2026-11-28): fix(oracle): share dictionary-cased column cache with qualified references (@sx4im)
+- **PR #15884** (2026-11-27): fix(editor): stop WebKitGTK from cutting two lines per Ctrl+X (@sx4im)
+- **PR #15879** (closed): fix(iotdb): 识别 AS 别名指向的时间聚合列 (@HighBigSky)
+- **PR #15864** (2026-11-28): fix(mysql): avoid overriding session time_zone for client-side JDBC/G… (@Acd-kk)
 
 ---
 
@@ -2796,39 +2691,23 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. oracle): upgrade godror to prevent stale OCI call timeout leak
+## X. oracle): run SQL*Plus EXEC/EXECUTE as an anonymous block
 
 **RULE**:
-When implementing operations in `.github/scripts/ci-workflow.test.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agents/drivers/oracle-go/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fba29442`: oracle): upgrade godror to prevent stale OCI call timeout leak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22d4cbb3`: oracle): run SQL*Plus EXEC/EXECUTE as an anonymous block. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/ci-workflow.test.mjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `agents/drivers/oracle-go/main.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-test("Oracle thin Go 1.20 build and OCI modfile split stay covered in release and CI", () => {
-  const release = readFileSync(new URL("../workflows/agents-release.yml", import.meta.url), "utf8").replaceAll("\r\n", "\n");
-  const thin = job("build-oracle-native", release);
-  assert.match(thin, /go-version: "1\.20\.14"/);
-  assert.ok(thin.includes("cache-dependency-path: agents/drivers/oracle-go/go.sum"));
-
-  const oci = job("build-oracle-oci-native", release);
-  assert.ok(oci.includes("cache-dependency-path: agents/drivers/oracle-go/go.oci.sum"));
-  assert.ok(oci.includes("go test -mod=readonly -modfile=go.oci.mod -tags oci ./..."));
-  assert.ok(oci.includes("go build -mod=readonly -modfile=go.oci.mod -tags oci"));
-
-  const ci = job("agent-go");
-  const oracleSteps = ci.slice(ci.indexOf("- name: Setup Oracle Windows-compatible Go"));
-  assert.equal((oracleSteps.match(/if: matrix\.driver == 'oracle-go'/g) ?? []).length, 2);
-  assert.match(oracleSteps, /go-version: "1\.20\.14"/);
-  assert.ok(oracleSteps.includes("go test -mod=readonly ./..."));
-  assert.ok(oracleSteps.includes("grep -q ': go1\\.20\\.14$'"));
-
-  const thinMod = readFileSync(new URL("../../agents/drivers/oracle-go/go.mo
+	if block, ok := rewriteSQLPlusExecute(trimmed); ok {
+		return block
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2838,7 +2717,7 @@ test("Oracle thin Go 1.20 build and OCI modfile split stay covered in release an
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fba29442` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22d4cbb3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T07:03:52.338Z",
+  "last_updated": "2026-11-28T07:13:12.744Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-28T07:03:48.905Z",
+      "processed_at": "2026-11-28T07:13:11.586Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1063,7 +1063,7 @@
       "staged_for_review": 1
     },
     "google-closure-compiler-learnings.md": {
-      "processed_at": "2026-11-24T22:42:42.207Z",
+      "processed_at": "2026-11-28T07:13:08.564Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1213,7 +1213,7 @@
       "staged_for_review": 0
     },
     "t8y2-dbx-learnings.md": {
-      "processed_at": "2026-11-26T18:06:00.692Z",
+      "processed_at": "2026-11-28T07:13:10.066Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4068,7 +4068,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5292,
+  "total_dossiers_evaluated": 5295,
   "total_canonical_promoted": 594,
-  "total_staged_for_review": 4019
+  "total_staged_for_review": 4022
 }

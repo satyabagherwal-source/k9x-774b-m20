@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T07:03:51.555Z",
+  "last_updated": "2026-11-28T07:13:12.333Z",
   "total_records": 2880,
   "domains": {
     "A": {
@@ -10921,8 +10921,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "9b511f65c5d93071582d9d9eeb5846f6504b0e3309fcf7c9be2ccfe56e516fc2",
-      "created_at": "2026-11-27T12:41:45.078Z"
+      "content_hash": "4cfa921100197b6c7efcfcd160cb0d77439668c4951cac4c00e01957c583ddff",
+      "created_at": "2026-11-28T07:13:05.464Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -20967,8 +20967,8 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-learnings-technical-construction-intelligence-t8y2-dbx-learnings-core-i.md",
       "repository": "t8y2-dbx-learnings",
-      "content_hash": "61bac226c3aaad3d9f9decd169d0b8c78eff0487496fae724e908a979a68b45e",
-      "created_at": "2026-11-26T18:06:01.235Z"
+      "content_hash": "689146313db5a60ed6c6de3ffc5d8b8202251e3a1feaa45aad0beb794b07b272",
+      "created_at": "2026-11-28T07:13:11.142Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants",
@@ -26373,8 +26373,8 @@
       "title": "Technical Construction Intelligence: google/closure-compiler Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-closure-compiler-technical-construction-intelligence-google-closure-compi.md",
       "repository": "google/closure-compiler",
-      "content_hash": "cf7b3029393439cb068ae0555e3d3da32909b10371197da72ef064400081e7f3",
-      "created_at": "2026-11-24T22:42:28.341Z"
+      "content_hash": "f8bf2319da235047d60eda38533709540011d80c1aa4a51ba0a9b91f1752c1af",
+      "created_at": "2026-11-28T07:12:55.571Z"
     },
     "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar",
@@ -26382,8 +26382,8 @@
       "title": "Technical Construction Intelligence: google-closure-compiler-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-closure-compiler-learnings-technical-construction-intelligence-google-clo.md",
       "repository": "google-closure-compiler-learnings",
-      "content_hash": "bfe1a6138ac1bf5657f5e658fc1a1412c46ec846c311c1e71eee1f9300666efc",
-      "created_at": "2026-11-24T22:42:43.433Z"
+      "content_hash": "3a74d55fd59bb81ae519f2bcfaedf19b0298ed1ea4cf09ded091e9539f5fffde",
+      "created_at": "2026-11-28T07:13:09.654Z"
     },
     "DOM-H-7AD63040": {
       "record_id": "DOM-H-7AD63040",
@@ -46827,8 +46827,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "61162944f1f7507e08336efb25185df25f71bfa9f724da1b733d453c53c99960",
-      "created_at": "2026-11-28T07:03:49.897Z"
+      "content_hash": "5905f88d25c7d365515faf8d8fdfa3a1fe3bdf406e13e7f69a0c561d92b0b02c",
+      "created_at": "2026-11-28T07:13:12.333Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

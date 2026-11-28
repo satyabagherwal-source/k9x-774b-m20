@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "e9e79bc6",
+    "sourceVersion": "e385dc89",
     "license": "Apache-2.0",
-    "contentHash": "09a9da363227380a8f38396290267bc38e4445fb0b433886e8a1908ab8f768db",
-    "lastHarvestedAt": "2026-11-27T12:41:44.629Z",
+    "contentHash": "c70cc9038b795863289d681062c20e50dcc10f2e63704c09a7c7338e64f076b7",
+    "lastHarvestedAt": "2026-11-28T07:13:04.881Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -9933,10 +9933,10 @@
     "repository": "google/closure-compiler",
     "platform": "github",
     "sourceUrl": "https://github.com/google/closure-compiler",
-    "sourceVersion": "1b85768e",
+    "sourceVersion": "3d283ce1",
     "license": "Apache-2.0",
-    "contentHash": "4742c193603251845fb519ecb2813de753c13b56d065a7e091d4b6c141081b34",
-    "lastHarvestedAt": "2026-11-24T22:42:27.740Z",
+    "contentHash": "10602e485d9135740316beeacdd407c466be2507498210d88ed5592cd3575da8",
+    "lastHarvestedAt": "2026-11-28T07:12:55.143Z",
     "learningId": "learn-github-google-closure-compiler"
   },
   "shpigford-chops": {

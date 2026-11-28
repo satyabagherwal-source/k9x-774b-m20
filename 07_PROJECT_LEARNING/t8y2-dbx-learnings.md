@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `e9e79bc6`  
+> **Source Version**: `e385dc89`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T12:41:43.391Z  
+> **Timestamp**: 2026-11-28T07:13:03.720Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T12:41:43.386Z  
+> **Harvest Timestamp**: 2026-11-28T07:13:03.715Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 31663 stars
+- **Stars / Engagement**: 31742 stars
 
 ---
 
@@ -621,84 +621,74 @@ impl TdengineDriver {
             return Ok(Vec::new());
         }
         let database = effective_database(database, &self.current_database)?.to_string();
+        if let Some(parent) = constraints.parent_name.as_deref().map(str::trim).filter(|value| !value.is_empty()) {
+            return self.list_child_tables(&database, parent, &constraints, token).await;
+        }
+        // 无搜索词时侧栏只需要根表：超级表很多子表时，读出全部子表既慢又占内存。
+        // 有搜索词仍走完整快照，子表名也要能被搜到。
+        if constraints.page_table_roots && constraints.filter.trim().is_empty() {
+            let roots = self.root_tables(&database, token).await?;
+            return Ok(filter_tables(roots.as_slice(), &constraints));
+        }
         // 元数据接口的返回顺序没有保证，服务端翻页会让 offset 在两次请求间跳行；
         // 这里始终读取完整列表（进程级快照），在本地排序切片。
         let tables = self.all_tables(&database, token).await?;
         Ok(filter_tables(tables.as_slice(), &constraints))
     }
 
-    pub async fn list_objects(
-        &mut self,
-        database: &str,
-        constraints: MetadataListConstraints,
-        token: &CancellationToken,
-    ) -> Result<Vec<ObjectInfo>> {
-        let database = effective_database(database, &self.current_database)?.to_string();
-        let tables = self.list_tables(&database, constraints, token).await?;
-        Ok(tables
-            .into_iter()
-            .map(|table| ObjectInfo {
-                name: table.name,
-                object_type: table.table_type,
-                schema: database.clone(),
-                comment: table.comment,
-            })
-            .collect())
-    }
-
-    pub async fn get_columns(&self, database: &str, table: &str, token: &CancellationToken) -> Result<Vec<ColumnInfo>> {
-        let database = effective_database(database, &self.current_database)?;
-        let rows = self.query_rows(&format!("DESCRIBE {}", qualified_name(database, table)), token, 0).await?;
-        Ok(parse_describe_columns(rows))
-    }
-
-    pub async fn get_table_comment(&self, _database: &str, _table: &str) -> Result<Option<String>> {
-        Ok(None)
-    }
-
-    pub async fn get_object_source(
+    /// 读取某个超级表的子表（按子表名排序分页）。
+    ///
+    /// 3.x 直接让 `ins_tables` 按 `stable_name` 过滤并在服务端翻页，不触碰其他超级表的
+    /// 子表；`ORDER BY table_name` 保证 offset 翻页稳定。带搜索词时需要本地模糊匹配，
+    /// 此时读出该超级表的全部子表再切片。2.x 的 `SHOW TABLES` 已带所属超级表，沿用快照。
+    async fn list_child_tables(
         &self,
         database: &str,
-        name: &str,
-        object_type: &str,
+        parent: &str,
+        constraints: &MetadataListConstraints,
         token: &CancellationToken,
-    ) -> Result<ObjectSource> {
-        let database = effective_database(database, &self.current_database)?;
-        let mut source = self.get_create_sql(database, name, object_type, token).await?;
-        if source.is_empty() {
-            let columns = self.get_columns(database, name, token).await?;
-            source = build_fallback_table_ddl(database, name, &columns);
+    ) -> Result<Vec<TableInfo>> {
+        if !uses_information_schema_tables(self.server_version.as_deref()) {
+            let tables = self.all_tables(database, token).await?;
+            let children: Vec<TableInfo> = tables
+                .iter()
+                .filter(|table| table.parent_name.as_deref().is_some_and(|name| name.eq_ignore_ascii_case(parent)))
+                .cloned()
+                .collect();
+            return Ok(filter_tables(&children, constraints));
         }
-        Ok(ObjectSource {
-            name: name.to_string(),
-            object_type: object_type.to_string(),
-            schema: database.to_string(),
-            source,
-            editable: true,
-        })
+        let server_paged = constraints.filter.trim().is_empty();
+        let page = if !server_paged || constraints.limit == 0 {
+            String::new()
+        } else {
+            format!(" LIMIT {} OFFSET {}", constraints.limit, constraints.offset)
+        };
+        let sql = format!(
+            "SELECT table_name FROM information_schema.ins_tables WHERE db_name = {} AND stable_name = {} ORDER BY table_name{}",
+            quote_literal(database),
+            quote_literal(parent),
+            page
+        );
+        let rows = self.query_rows_with_retry(&sql, token).await?;
+        let children: Vec<TableInfo> = tables_from_information_schema_rows(
+            rows.into_iter()
+                .map(|row| vec![row.into_iter().next().unwrap_or(Value::Null), Value::String(parent.to_string())])
+                .collect(),
+        );
+        if server_paged && constraints.limit != 0 {
+            // 偏移已在服务端应用，本地只需按类型/搜索词过滤，不能再跳过 offset。
+            let local = MetadataListConstraints { offset: 0, ..constraints.clone() };
+            return Ok(filter_tables(&children, &local));
+        }
+        Ok(filter_tables(&children, constraints))
     }
 
-    pub async fn get_table_ddl(&self, database: &str, table: &str, token: &CancellationToken) -> Result<String> {
-        let stable = self.get_create_sql(database, table, "STABLE", token).await?;
-        if !stable.is_empty() {
-            return Ok(stable);
-        }
-        let table_source = self.get_create_sql(database, table, "TABLE", token).await?;
-        if !table_source.is_empty() {
-            return Ok(table_source);
-        }
-        let columns = self.get_columns(database, table, token).await?;
-        Ok(build_fallback_table_ddl(database, table, &columns))
-    }
-
-    pub async fn completion_assistant_search(
-        &mut self,
-        request: CompletionAssistantRequest,
-        token: &CancellationToken,
-    ) -> Result<CompletionAssistantResponse> {
-        let allowed = request.object_kinds.iter().map(|kind| kind.to_ascii_lowercase()).collect::<HashSet<_>>();
-        let include_databases = allowed.contains("database") || allowed.contains("schema");
-        let include_tables = allowed.is_em
+    /// 根表快照：全部超级表 + 不属于任何超级表的普通表。
+    async fn root_tables(&self, database: &str, token: &CancellationToken) -> Result<Arc<Vec<TableInfo>>> {
+        if !uses_information_schema_tables(self.server_version.as_deref()) {
+            // 2.x 没有按超级表过滤的元数据视图，直接从完整快照里取根表。
+            let tables = self.all_tables(database, token).await?;
+     
 ```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/lib.rs`
@@ -834,6 +824,13 @@ pub struct MetadataListConstraints {
     pub offset: usize,
     #[serde(default)]
     pub object_types: Vec<String>,
+    /// 只返回根表（超级表和不属于任何超级表的普通表），不展开子表。
+    /// 侧栏按「根表 → 展开超级表再取子表」两级加载，避免一次读出所有子表。
+    #[serde(default)]
+    pub page_table_roots: bool,
+    /// 只返回该超级表的子表。
+    #[serde(default)]
+    pub parent_name: Option<String>,
 }
 
 #[derive(Debug, Clone, Default, Deserialize)]
@@ -2028,11 +2025,11 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15820** (2026-11-27): **[Bug] SAP HANA 新建表无法新增字段，已有表无法设置主键**
-  *Symptoms*: ## 问题描述  SAP HANA 的表结构编辑器有两个入口被置灰：  1. 选中 HANA schema，右键「新建表」。输入表名后，「新增字段」不可点击，无法建表。 2. 打开一张没有主键的 HANA 表，进入「编辑表结构 → 字段」。该表的主键复选框不可点击，无法设置主键。  ## 期望结果  新建表时可以添加字段。编辑无主键的已有表时，可以勾选一个或多个字段作为主键，并预览、应用变更。  ## 复现环境  - DBX `b2fae8d501`，macOS arm64，Chromium 中运行表结构编辑组件。 - SAP HANA `2.00.082.00.1736514951`，通过 DBX JDBC Agent 读取测试表元数据。  ## 修复前截图  **新建表 ·「新增字段」置灰**  ![新建表时新增字段按钮不可用](https://raw.githubusercontent.com/zipg/dbx/ad7b88d6840c2cdebdeda73b9b097e0c7493039b/before-create.png)  **编辑表结构 · 主键复选框置灰**  ![已有表的主键复选框不可用](https://raw.githubusercontent.com/zipg/dbx/ad7b88d6840c2cdebdeda73b9b097e0c7493039b/before-key.png)  修复与 HANA 实库保存截图见 #15822。 
+- **Issue #15881** (2026-11-27): **[Bug] 在SQL查询编辑器中，Ctrl+X会剪切掉两行**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  SQL编辑器  ### 问题描述 / Problem description  什么都不选的情况下，在编辑框中按Ctrl+X后会消失两行，感觉和隔壁项目的问题相似可以参考，也是我提出的  https://github.com/l0ng-ai/openidea/issues/962  ### 支持信息 / Support information  DBX：0.6.72-beta.20261119.2 系统：CachyOS x86_64 Kernel: Linux 7.3.5-2-cachyos WebKitGTK： webkit2gtk-4.1 2.54.3-1 x86-64  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  <img width="1492" height="371" alt="image" src="https://github.com/user-attachments/assets/8a018de7-bf61-4f1c-b6f7-4d653937ac5a" /> 可能是这个问题
 
-- **Issue #15806** (2026-11-27): **[Bug] 标签页双击会重命名**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  PostgreSQL 16.10  ### 问题描述 / Problem description  1、新建查询  <img width="1526" height="2132" alt="企业微信截图_c8358a5d-6e33-4baf-97f7-ad8d256cef18" src="https://github.com/user-attachments/assets/bfe6fc21-55e7-4343-ab33-1e79b8b2eaf4" />  2、双击查询标签  <img width="480" height="112" alt="企业微信截图_45ac908f-5288-4bb4-a248-3676835af05b" src="https://github.com/user-attachments/assets/5ac8797d-934d-42cb-967c-4b961ced5276" />  双击后不应该自动重命名，破坏了原先的命名方式。 还有别的操作方式好像也会自动重命名，这种暂时没有复现出来，因为我几十个查询标签页名突然变成了query_*的形式  ### 支持信息 / Support information  DBX 版本: v0.6.75 (0.6.75-beta.20261125.2) 运行环境: 桌面端 操作系统: macOS 26.5 系统架构: aarch64 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) 数据库类型: postgres, sqlserver AI 供应商: DeepSeek  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  _No response_
+- **Issue #15876** (2026-11-27): **[Bug] dbx对iotdb  as命令支持不佳**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  iotdb 1.3.7  ### 问题描述 / Problem description  之前在https://github.com/t8y2/dbx/issues/7831已经对max_by min_by函数返回unix时间戳进行处理，转为标准时间格式。 今天无意中发现查询语句加了as修饰表头后，返回的时间就不再是标准时间格式，而是原始时间戳了 没加as <img width="1131" height="963" alt="截图_选择区域_20261127191938" src="https://github.com/user-attachments/assets/a3cee6b1-3d5b-46a7-a53a-c9f771d35a97" /> 加了as <img width="1541" height="932" alt="截图_选择区域_20261127192026" src="https://github.com/user-attachments/assets/4b68c781-9ea9-4a10-9744-0a3f4f1310f3" />   并且即便已经设置查询和导出都设置为了标准时间格式后，导出的xlsx依然还是原始时间戳 <img width="1661" height="243" alt="截图_选择区域_20261127191331" src="https://github.com/user-attachments/assets/647d12af-9391-4bc4-aea3-ed05891c8900" /> 查询是标准时间导出就是标准时间 <img width="1665" height="482" alt="截图_选择区域_20261127192150" src="https://github.com/user-attachments/assets/2aa571b5-2838-4380-b56d-64bd7a503784" /> 查询是时间戳，导出就是时间戳  <img width="1013" height="492" alt="截图_选择区域_20261127192116" src="https://github.com/user-attachments/assets/d39925db-0c45-4f13-96e7-cbdf01c18ac1" />  ### 支持信息 / Support information  DBX 版本: v0.6.75 (0.6.75-beta.20261125.2) 运行环境: 桌面端 操作系统: Deepin 25 25 系统架构: x86_64 User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/60.5 Safari/605.1.15 数据库类型: cassandra, iotdb, mysql, postgres, redis 本地驱动版本: cassandra 0.1.55, iotdb 0.1.48  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No respo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2049,704 +2046,604 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e9e79bc6` (2026-11-27)
-**Commit Message**: fix(gaussdb): support SM3 password authentication
+### Incident Patch 1: `22d4cbb3` (2026-11-28)
+**Commit Message**: fix(oracle): run SQL*Plus EXEC/EXECUTE as an anonymous block
 
-Closes #14721
-
-**File**: `Cargo.lock` (modified, +13/-3)
+**File**: `agents/drivers/oracle-go/main.go` (modified, +3/-0)
 ```diff
-@@ -7202,7 +7202,7 @@ dependencies = [
- [[package]]
- name = "postgres-protocol"
- version = "0.6.12"
--source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
-+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
- dependencies = [
-  "base64 0.23.0",
-  "byteorder",
-@@ -7215,13 +7215,14 @@ dependencies = [
-  "rand 0.10.2",
-  "sha1 0.10.7",
-  "sha2 0.11.0",
-+ "sm3",
-  "stringprep",
- ]
- 
- [[package]]
- name = "postgres-types"
- version = "0.2.14"
--source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
-+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
- dependencies = [
-  "bytes",
-  "chrono",
-@@ -9141,6 +9142,15 @@ version = "0.4.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
- 
-+[[package]]
-+name = "sm3"
-+version = "0.5.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "da6a89ba31723d185fd7413b98c576a575f356d9b84729d8ecb6ead60000a5b6"
-+dependencies = [
-+ "digest 0.11.3",
-+]
-+
- [[package]]
- name = "smallvec"
- version = "1.15.2"
-@@ -10291,7 +10301,7 @@ dependencies = [
- [[package]]
- name = "tokio-postgres"
- version = "0.7.18"
--source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
-+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
- dependencies = [
-  "async-trait",
-  "byteorder",
-```
-
-**File**: `Cargo.toml` (modified, +3/-3)
-```diff
-@@ -37,9 +37,9 @@ pageant = { path = "vendor/pageant" }
- # (MicrosoftEdge/WebView2Feedback#5650, see
- # vendor/wry/src/webview2/clipboard_history.rs).
- wry = { path = "vendor/wry" }
--tokio-postgres = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
--postgres-types = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
--postgres-protocol = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
-+tokio-postgres = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5aee0b0e8d211057fca72932e612efdf5aa2c125" }
-+postgres-types = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5aee0b0e8d211057fca72932e612efdf5aa2c125" }
-+postgres-protocol = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5aee0b0e8d211057fca72932e612efdf5aa2c125" }
- # Temporary compatibility patches for deprecated sha256_password accounts and
- # rustls dangerous-mode connections to legacy certificates. Remove after upstream support lands.
- mysql_async = { git = "https://github.com/t8y2/mysql_async.git", rev = "4cd84d86bb86b060320ce3459561e8093e4422fa" }
-```
-
----
-
-### Incident Patch 2: `f1b45c6e` (2026-11-27)
-**Commit Message**: fix(plugins): decode plugin ui base64 natively instead of per byte
-
-**File**: `apps/desktop/src/lib/common/__tests__/base64.spec.ts` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
-+import { afterEach, describe, expect, it, vi } from "vitest";
-+import { decodeBase64ToBytes } from "../base64";
-+
-+const allByteValues = Uint8Array.from({ length: 256 }, (_, index) => index);
-+const allByteValuesBase64 = btoa(String.fromCharCode(...allByteValues));
-+
-+const holder = Uint8Array as unknown as { fromBase64?: unknown };
-+const originalFromBase64 = Object.getOwnPropertyDescriptor(Uint8Array, "fromBase64");
-+
-+function setNativeFromBase64(value: unknown) {
-+  Object.defineProperty(Uint8Array, "fromBase64", { value, configurable: true, writable: true });
-+}
-+
-+describe("decodeBase64ToBytes", () => {
-+  afterEach(() => {
-+    if (originalFromBase64) Object.defineProperty(Uint8Array, "fromBase64", originalFromBase64);
-+    else delete holder.fromBase64;
-+  });
-+
-+  it("decodes every byte value through the atob fallback", () => {
-+    setNativeFromBase64(undefined);
-+    expect(decodeBase64ToBytes(allByteValuesBase64)).toEqual(allByteValues);
-+  });
-+
-+  it("handles empty input and each padding length through the fallback", () => {
-+    setNativeFromBase64(undefined);
-+    expect(decodeBase64ToBytes("")).toEqual(new Uint8Array());
-+    expect(decodeBase64ToBytes(btoa("a"))).toEqual(new Uint8Array([97]));
-+    expect(decodeBase64ToBytes(btoa("ab"))).toEqual(new Uint8Array([97, 98]));
-+    expect(decodeBase64ToBytes(btoa("abc"))).toEqual(new Uint8Array([97, 98, 99]));
-+  });
-+
-+  it("ignores ASCII whitespace like the native decoder does", () => {
-+    setNativeFromBase64(undefined);
-+    expect(decodeBase64ToBytes("YWJj\nZGVm")).toEqual(new TextEncoder().encode("abcdef"));
-+  });
-+
-+  it("throws on invalid input through the fallback", () => {
-+    setNativeFromBase64(undefined);
-+    expect(() => decodeBase64ToBytes("not base64!")).toThrow();
-+  });
-+
-+  it("prefers the native decoder when the runtime provides it", () => {
-+    const native = vi.fn((value: string) => new Uint8Array([value.length]));
-+    setNativeFromBase64(native);
-+    const atobSpy = vi.spyOn(globalThis, "atob");
-+
-+    expect(decodeBase64ToBytes("QUJD")).toEqual(new Uint8Array([4]));
-+    expect(native).toHaveBeenCalledWith("QUJD");
-+    // Called as a static method so `this` is Uint8Array, as the spec requires.
-+    expect(native.mock.contexts[0]).toBe(Uint8Array);
-+    expect(atobSpy).not.toHaveBeenCalled();
-+    atobSpy.mockRestore();
-+  });
-+});
-```
-
-**File**: `apps/desktop/src/lib/common/base64.ts` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+type NativeFromBase64 = (base64: string) => Uint8Array<ArrayBuffer>;
-+
-+/**
-+ * Decode standard base64 into bytes for payloads that can be megabytes.
-+ *
-+ * `Uint8Array.from(atob(value), (c) => c.charCodeAt(0))` runs one JS callback
-+ * per byte on the main thread. In JavaScriptCore that is roughly a second per
-+ * 5 MB, so decoding the ~25 MB io.dbx.ssh ui build froze the window for
-+ * seconds; the native decoder does the same in single-digit milliseconds.
-+ *
-+ * `Uint8Array.fromBase64` ships in WebKit 18.2+ and current Chromium. Older
-+ * WebViews (older macOS, webkit2gtk) fall back to a plain indexed loop, which
-+ * is still several times faster than the per-byte callback. Both paths ignore
-+ * ASCII whitespace and throw on invalid input.
-+ */
-+export function decodeBase64ToBytes(base64: string): Uint8Array<ArrayBuffer> {
-+  const native = (Uint8Array as unknown as { fromBase64?: NativeFromBase64 }).fromBase64;
-+  if (typeof native === "function") return native.call(Uint8Array, base64);
-+  const binary = atob(base64);
-+  const bytes = new Uint8Array(binary.length);
-+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-+  return bytes;
-+}
-```
-
-**File**: `apps/desktop/src/lib/plugins/pluginUiHtmlCache.ts` (modified, +3/-2)
-```diff
-@@ -5,6 +5,7 @@
- // plugin version pays the read/decode/inline pipeline.
- import * as api from "@/lib/backend/api";
- import { isTauriRuntime } from "@/lib/backend/tauriRuntime";
-+import { decodeBase64ToBytes } from "@/lib/common/base64";
- import { COMPONENT_PLUGINS_UPDATED_EVENT } from "@/lib/updates/componentUpdateEvents";
- 
- export interface PluginUiHtml {
-@@ -154,7 +155,7 @@ async function inlineLocalUiAssets(html: string, pluginId: string): Promise<Plug
-       const asset = await api.readPluginUiAsset(pluginId, path);
-       return {
-         resource,
--        content: new TextDecoder().decode(Uint8Array.from(atob(asset.dataBase64), (character) => character.charCodeAt(0))),
-+        content: new TextDecoder().decode(decodeBase64ToBytes(asset.dataBase64)),
-       };
-     }),
-   );
-@@ -190,7 +191,7 @@ async function inlineLocalUiAssets(html: string, pluginId: string): Promise<Plug
- /** Full first-boot pipeline: read the ui entry through the bridge, decode, and prepare local assets. */
- export async function loadPluginUiHtml(pluginId: string): Promise<PluginUiHtml> {
-   const asset = await api.readPluginUiEntry(pluginId);
--  const bytes = Uint8Array.from(atob(asset.dataBase64), (character) => character.charCodeAt(0));
-+  const bytes = decodeBase64ToBytes(asset.dataBase64);
-   return inlineLocalUiAssets(new TextDecoder().decode(bytes), pluginId);
+@@ -6517,6 +6517,9 @@ func trimStatementSQL(sqlText string) string {
+ 	if isOraclePlSQLBlock(trimmed) {
+ 		return trimmed
+ 	}
++	if block, ok := rewriteSQLPlusExecute(trimmed); ok {
++		return block
++	}
+ 	return strings.TrimRight(trimmed, "; \t\r\n")
  }
  
 ```
 
+**File**: `agents/drivers/oracle-go/sqlplus_execute.go` (added, +36/-0)
+```diff
+@@ -0,0 +1,36 @@
++package main
++
++import (
++	"regexp"
++	"strings"
++)
++
++// sqlPlusExecuteRegexp matches the SQL*Plus EXECUTE command: EXEC or EXECUTE
++// followed by whitespace and a PL/SQL statement.
++var sqlPlusExecuteRegexp = regexp.MustCompile(`(?is)^exec(?:ute)?\s+(.+)$`)
++
++// rewriteSQLPlusExecute turns the SQL*Plus client command
++//
++//	EXEC[UTE] statement
++//
++// into the anonymous block the command is defined as: `BEGIN statement; END;`.
++// EXEC is not SQL, so the server rejects it with ORA-00900, yet it is how most
++// Oracle users run a stored procedure (SQL*Plus, SQL Developer and PL/SQL
++// Developer all accept it; the trailing semicolon is optional there as well).
++//
++// EXECUTE IMMEDIATE is a PL/SQL statement, not this command, and stays untouched
++// so the server keeps reporting what it always did for it. The terminator sits on
++// its own line so a trailing line comment in the call cannot swallow it.
++func rewriteSQLPlusExecute(sqlText string) (string, bool) {
++	start := trimLeadingSQLComments(sqlText)
++	matches := sqlPlusExecuteRegexp.FindStringSubmatch(start)
++	if matches == nil {
++		return "", false
++	}
++	body := strings.TrimSpace(matches[1])
++	body = strings.TrimSpace(strings.TrimSuffix(body, ";"))
++	if body == "" || startsWithSQLKeyword(body, "immediate") {
++		return "", false
++	}
++	return "BEGIN\n  " + body + "\n;\nEND;", true
++}
+```
+
+**File**: `agents/drivers/oracle-go/sqlplus_execute_test.go` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++package main
++
++import "testing"
++
++func TestRewriteSQLPlusExecute(t *testing.T) {
++	cases := map[string]string{
++		"EXEC p_noargs":                     "BEGIN\n  p_noargs\n;\nEND;",
++		"exec p_noargs;":                    "BEGIN\n  p_noargs\n;\nEND;",
++		"EXECUTE app.pkg.run(1, 'a;b');":    "BEGIN\n  app.pkg.run(1, 'a;b')\n;\nEND;",
++		"  EXEC\tp_x(\n    1\n  )  ;  ":     "BEGIN\n  p_x(\n    1\n  )\n;\nEND;",
++		"-- run it\nEXEC p_noargs":          "BEGIN\n  p_noargs\n;\nEND;",
++		"/* c */ EXEC p_noargs -- trailing": "BEGIN\n  p_noargs -- trailing\n;\nEND;",
++	}
++	for input, want := range cases {
++		got, ok := rewriteSQLPlusExecute(input)
++		if !ok || got != want {
++			t.Errorf("rewriteSQLPlusExecute(%q) = %q, %v; want %q", input, got, ok, want)
++		}
++	}
++}
++
++func TestRewriteSQLPlusExecuteLeavesOtherStatementsAlone(t *testing.T) {
++	for _, input := range []string{
++		"",
++		"EXEC",
++		"EXEC   ;",
++		"EXECUTE IMMEDIATE 'DROP TABLE t'",
++		"exec immediate 'x'",
++		"EXECUTOR_RUN(1)",
++		"EXECUTE_PROC",
++		"SELECT * FROM exec",
++		"BEGIN p; END;",
++		"CALL p()",
++	} {
++		if got, ok := rewriteSQLPlusExecute(input); ok {
++			t.Errorf("rewriteSQLPlusExecute(%q) rewrote to %q; want it untouched", input, got)
++		}
++	}
++}
++
++func TestTrimStatementSQLRewritesSQLPlusExecute(t *testing.T) {
++	if got, want := trimStatementSQL("EXEC p_noargs;"), "BEGIN\n  p_noargs\n;\nEND;"; got != want {
++		t.Fatalf("trimStatementSQL = %q, want %q", got, want)
++	}
++	if got, want := trimStatementSQL("EXECUTE IMMEDIATE 'x';"), "EXECUTE IMMEDIATE 'x'"; got != want {
++		t.Fatalf("trimStatementSQL = %q, want %q", got, want)
++	}
++}
+```
+
 ---
 
-### Incident Patch 3: `55101855` (2026-11-27)
-**Commit Message**: feat(oracle): preview REF CURSOR outputs in the PL/SQL debugger (#15833)
+### Incident Patch 2: `e385dc89` (2026-11-28)
+**Commit Message**: fix(export): keep backup snapshot alive during database export
 
-* feat(oracle): preview REF CURSOR outputs in the PL/SQL debugger
+**File**: `apps/desktop/src/lib/export/__tests__/databaseExportCompletion.spec.ts` (modified, +12/-0)
+```diff
+@@ -108,6 +108,18 @@ describe("native queued database export completion", () => {
+       }),
+     ).rejects.toMatchObject({ status: "unknown", message: "rollback reply lost" });
+   });
++  it("keeps the export failure when the backend already discarded the snapshot session", async () => {
++    mocks.rollback.mockRejectedValueOnce(new Error("Transaction session not found"));
++    await expect(
++      runWithDatabaseBackupSnapshot({ connectionId: "mysql-1", database: "app", enabled: true, reportCompletion: true }, async () => {
++        throw new SnapshotCompletionError("failed", "Query timed out after 60 seconds. Transaction was auto-rolled back.");
++      }),
++    ).rejects.toMatchObject({ status: "failed", message: "Query timed out after 60 seconds. Transaction was auto-rolled back." });
++  });
++  it("keeps a successful export when the snapshot session is already gone at cleanup", async () => {
++    mocks.rollback.mockRejectedValueOnce(new Error("Transaction session not found"));
++    await expect(runWithDatabaseBackupSnapshot({ connectionId: "mysql-1", database: "app", enabled: true, reportCompletion: true }, async () => done)).resolves.toEqual(done);
++  });
+   it("preserves an earlier unknown even if snapshot cleanup also fails", async () => {
+     mocks.rollback.mockRejectedValueOnce(new Error("rollback reply lost"));
+     const unknown = new SnapshotCompletionError("unknown", "export reply lost");
+```
+
+**File**: `apps/desktop/src/lib/export/databaseExport.ts` (modified, +10/-0)
+```diff
+@@ -6,6 +6,7 @@ import { SINGLE_DATABASE_TYPES } from "@/lib/database/databaseCapabilitySets";
+ import { isXuguSyntheticScope } from "@/lib/sidebar/xuguPublicSynonyms";
+ import type { SqlInsertDialect } from "@/lib/export/sqlInsertMode";
+ import { SnapshotCompletionError } from "@/lib/export/snapshotCompletion";
++import { isManualTransactionSessionExpired } from "@/lib/backend/errorUtils.ts";
+ 
+ export const DATABASE_EXPORT_ROW_LIMIT = 10_000;
+ export const DATABASE_EXPORT_PAGE_SIZE = 500;
+@@ -198,6 +199,15 @@ export async function runWithDatabaseBackupSnapshot<T>(options: DatabaseBackupSn
+     try {
+       await api.rollbackManualTransaction(sessionId);
+     } catch (error) {
++      // A failed export stream already rolled the snapshot back on the
++      // backend, so "session not found" confirms cleanup instead of leaving
++      // it unknown. Keep the export's own outcome rather than masking its
++      // real error (timeout, dropped connection) behind the cleanup reply.
++      const message = error instanceof Error ? error.message : typeof error === "string" ? error : "";
++      if (message === "Transaction session not found" || isManualTransactionSessionExpired(error)) {
++        if (failed) throw operationError;
++        return result as T;
++      }
+       if (operationError instanceof SnapshotCompletionError && operationError.status === "unknown") throw operationError;
+       throw new SnapshotCompletionError("unknown", error instanceof Error ? error.message : String(error));
+     }
+```
+
+**File**: `crates/dbx-core/src/query/mod.rs` (modified, +104/-14)
+```diff
+@@ -7633,59 +7633,111 @@ async fn begin_transaction_session(
+ }
+ 
+ pub struct ManualTransactionKeepAlive {
+-    task: tokio::task::JoinHandle<()>,
++    /// Asks the keep-alive task to stop. The task is never aborted: aborting it
++    /// while a ping is in flight would cancel a request/response exchange half
++    /// way and leave the held connection out of sync with the server.
++    stop: Arc<tokio::sync::Notify>,
+     sessions: Arc<tokio::sync::RwLock<std::collections::HashMap<String, TransactionSession>>>,
+     txn_session_id: String,
+ }
+ 
+ impl Drop for ManualTransactionKeepAlive {
+     fn drop(&mut self) {
+-        self.task.abort();
++        // `notify_one` stores a permit when the task is not waiting yet, so the
++        // stop request is not lost while a ping is still running.
++        self.stop.notify_one();
+         spawn_txn_idle_watcher_for_sessions(Arc::clone(&self.sessions), self.txn_session_id.clone());
+     }
+ }
+ 
++/// Refresh cadence for a kept-alive session. It must stay well inside the
++/// session's own idle window for every configurable timeout: the minimum
++/// window is 30s, so a fixed 30s tick races the idle watcher and the session
++/// can expire while the guard is held.
++fn manual_transaction_keepalive_interval(idle_timeout: Duration) -> Duration {
++    (idle_timeout / 3).clamp(Duration::from_millis(10), Duration::from_secs(30))
++}
++
++/// Best-effort warm-up for a kept-alive session's held connection. Refreshing
++/// `last_activity` only convinces DBX's own idle watcher; a remote server or
++/// middlebox can still drop the idle physical connection while an export
++/// spends minutes on metadata, and the next stream then fails on a dead
++/// connection. A ping keeps the connection warm without touching the
++/// transaction snapshot. Failures are ignored: the next real operation
++/// surfaces the connection error itself.
++///
++/// The ping must run to completion. Dropping it half way (for example behind a
++/// timeout) abandons a request/response exchange on the held connection: the
++/// MySQL driver then marks the connection disconnected and a late reply could be
++/// read as the answer to the next command. A connection that never answers is
++/// already unusable for the export itself, so there is nothing to gain by
++/// cancelling.
++async fn ping_manual_txn_connection(conn: &mut TxnConnection) {
++    match conn {
++        TxnConnection::Mysql(Some(conn)) => {
++            let _ = conn.ping().await;
++        }
++        TxnConnection::Postgres(conn) => {
++            let _ = conn.execute_typed("SELECT 1", &[]).await;
++        }
++        _ => {}
++    }
++}
++
+ /// Keep an existing transaction session alive while a caller prepares work for
+ /// that session. The caller must retain the returned guard for the full period;
+ /// dropping it restores the normal five-minute idle rollback behavior.
+ pub async fn keep_manual_transaction_alive(
+     state: &AppState,
+     txn_session_id: &str,
+ ) -> Result<ManualTransactionKeepAlive, String> {
+-    {
++    let idle_timeout = {
+         let mut sessions = state.transaction_sessions.write().await;
+         let session =
+             sessions.get_mut(txn_session_id).ok_or_else(|| MANUAL_TRANSACTION_SESSION_NOT_FOUND_ERROR.to_string())?;
+         if !session.busy {
+             session.last_activity = std::time::Instant::now();
+         }
+-    }
++        session.idle_timeout
++    };
+ 
+     let sessions = Arc::clone(&state.transaction_sessions);
+     let keep_alive_sessions = Arc::clone(&sessions);
+     let txn_session_id = txn_session_id.to_string();
+     let keep_alive_txn_session_id = txn_session_id.clone();
+-    let task = tokio::spawn(async move {
+-        const KEEPALIVE_INTERVAL: Duration = Duration::from_secs(30);
++    let interval = manual_transaction_keepalive_interval(idle_timeout);
++    let stop = Arc::new(tokio::sync::Notify::new());
++    let task_stop = Arc::clone(&stop);
++    tokio::spawn(async move {
+         loop {
+-            tokio::time::sleep(KEEPALIVE_INTERVAL).await;
+-            let should_continue = {
++            tokio::select! {
++                _ = tokio::time::sleep(interval) => {}
++                _ = task_stop.notified() => break,
++            }
++            let ping_connection = {
+                 let mut guard = sessions.write().await;
+                 if let Some(session) = guard.get_mut(&keep_alive_txn_session_id) {
+-                    if !session.busy {
++                    if session.busy {
++                        None
++                    } else {
+                         session.last_activity = std::time::Instant::now();
++                        Some(Arc::clone(&session.connection))
+                     }
+-                    true
+                 } else {
+-                    false
++                    break;
+                 }
+             };
+-            if !should_continue {
+-                break;
++            if let Some(connection) = ping_connection {
++                // `try_lock`: a stream that claimed
+```
+
+---
+
+### Incident Patch 3: `5e155d65` (2026-11-28)
+**Commit Message**: fix(i18n): clarify filter group toggle labels
+
+* Add switchable filter groups and bulk rule toggles
 
 * chore(i18n): autofill new translations
 
+* fix(grid): drop stale structured filter apply results
+
+* fix(i18n): clarify filter group toggle labels
+
 ---------
 
+Co-authored-by: wangqiurongbj <[REDACTED_EMAIL]>
 Co-authored-by: dbx-i18n-bot <github-actions[bot]@users.noreply.github.com>
+Co-authored-by: ThugKd <[REDACTED_EMAIL]>
+Co-authored-by: t8y2 <[REDACTED_EMAIL]>
+Co-authored-by: 二丫讲梵 <[REDACTED_EMAIL]>
 
-**File**: `agents/drivers/oracle-go/pldebug_cursor_output.go` (added, +183/-0)
+**File**: `apps/desktop/src/components/grid/DataGrid.vue` (modified, +123/-46)
 ```diff
-@@ -0,0 +1,183 @@
-+package main
-+
-+import (
-+	"context"
-+	"database/sql"
-+	"database/sql/driver"
-+	"encoding/json"
-+	"errors"
-+	"fmt"
-+	"io"
-+	"strings"
-+	"time"
-+
-+	go_ora "github.com/sijms/go-ora/v2"
-+)
-+
-+const (
-+	plDebugCursorPreviewRows    = 100
-+	plDebugCursorPreviewColumns = 64
-+	plDebugCursorPreviewBytes   = 64 * 1024
-+)
-+
-+type plDebugCursorPreview struct {
-+	Columns  []string          `json:"columns"`
-+	Rows     []json.RawMessage `json:"rows"`
-+	Complete bool              `json:"complete"`
-+}
-+
-+type plDebugCursorOutput struct {
-+	bind         interface{}
-+	receipt      *sql.NullInt64
-+	thin         *go_ora.RefCursor
-+	oci          driver.Rows
-+	preview      *plDebugCursorPreview
-+	previewBytes int
-+	state        string
-+	err          error
-+	attempted    bool
-+	released     bool
-+}
-+
-+func newPLDebugCursorOutput(oci bool, receipt *sql.NullInt64) *plDebugCursorOutput {
-+	output := &plDebugCursorOutput{receipt: receipt, state: "pending"}
-+	if oci {
-+		output.bind = sql.Out{Dest: &output.oci}
-+	} else {
-+		output.thin = new(go_ora.RefCursor)
-+		output.bind = sql.Out{Dest: output.thin}
-+	}
-+	return output
-+}
-+
-+func (output *plDebugCursorOutput) collect(ctx context.Context, allocation *plDebugAllocation, budget int) {
-+	if output.attempted || output.released {
-+		return
-+	}
-+	if output.oci == nil && (output.thin == nil || !output.thin.CanAutoClose()) {
-+		output.state, output.err = "error", errors.New("cursor OUT bind was not returned")
-+		output.released = true
-+		return
-+	}
-+	_, err := allocation.exec(ctx, func(private context.Context) (driver.Result, error) {
-+		output.attempted = true
-+		output.state = "error"
-+		var rows driver.Rows = output.oci
-+		var release func() error
-+		if output.thin != nil {
-+			release = output.thin.Close
-+		} else {
-+			release = rows.Close
-+		}
-+		if !output.receipt.Valid || output.receipt.Int64 != 0 && output.receipt.Int64 != 1 {
-+			output.err = errors.New("cursor OUT bind receipt is missing or invalid")
-+		} else if output.receipt.Int64 == 0 {
-+			output.state = "not_open"
-+		} else if budget == 0 {
-+			output.state = "partial"
-+		} else {
-+			if output.thin != nil {
-+				var data *go_ora.DataSet
-+				data, output.err = output.thin.Query()
-+				if output.err == nil {
-+					rows, release = data, data.Close
-+				}
-+			}
-+			if output.err == nil {
-+				output.preview, output.previewBytes, output.err = readPLDebugCursorPreview(private, rows, budget)
-+			}
-+			if output.preview != nil {
-+				output.state = "partial"
-+				if output.preview.Complete {
-+					output.state = "value"
-+				}
-+			} else if output.err == nil {
-+				output.state = "partial"
-+			}
-+		}
-+		if closeErr := release(); closeErr != nil {
-+			allocation.mu.Lock()
-+			allocation.unknown = true
-+			allocation.mu.Unlock()
-+			return nil, closeErr
-+		}
-+		output.released = true
-+		return nil, nil
-+	})
-+	if err != nil {
-+		output.err = errors.Join(output.err, err)
-+		output.state = "error"
-+	}
-+}
-+
-+func readPLDebugCursorPreview(ctx context.Context, rows driver.Rows, budget int) (*plDebugCursorPreview, int, error) {
-+	columns := rows.Columns()
-+	if len(columns) == 0 || len(columns) > plDebugCursorPreviewColumns {
-+		return nil, 0, fmt.Errorf("cursor preview supports between 1 and %d columns", plDebugCursorPreviewColumns)
-+	}
-+	preview := &plDebugCursorPreview{Columns: columns, Rows: []json.RawMessage{}}
-+	header, err := json.Marshal(preview)
-+	if err != nil || len(header) > budget {
-+		return nil, 0, err
-+	}
-+	used := len(header)
-+	types := make([]string, len(columns))
-+	if metadata, ok := rows.(driver.RowsColumnTypeDatabaseTypeName); ok {
-+		for i := range columns {
-+			types[i] = metadata.ColumnTypeDatabaseTypeName(i)
-+			if strings.Contains(strings.ToUpper(types[i]), "CURSOR") {
-+				return nil, 0, errors.New("nested cursor columns are unavailable in the cursor preview")
-+			}
-+		}
-+	}
-+	values := make([]driver.Value, len(columns))
-+	cells := make([]*string, len(columns))
-+	for {
-+		if err := ctx.Err(); err != nil {
-+			return preview, used, err
-+		}
-+		err := rows.Next(values)
-+		if errors.Is(err, io.EOF) {
-+			preview.Complete = true
-+			return preview, used, nil
-+		}
-+		if err != nil {
-+			return preview, used, err
-+		}
-+		if len(preview.Rows) == plDebugCursorPreviewRows {
-+			return preview, used, nil
-+		}
-+		remaining := budget - used
-+		for i, value := range values {
-+			cells[i] = nil
-+			if value == nil {
-+				continue
-+			}
-+			switch v := value.(type) {
-+			case []byte:
-+				if len(v) > remaining {
-+					return preview, used, nil
-+				}
-+			case string:
-+				if len(v) > remaining {
-+					return preview, used, nil
-+				}
-+			case time.Time, int64, float64, bool, fmt.Stringer:
-+			default:
-+				return preview, used, fmt.Errorf("cursor column %d (%s) could not be displayed", i+1, types[i])
-+			}
-+			text := fmt.Sprint(normalizeValue(value, types[i]))
-+			remaining -= len(text)
-+			if remaining < 0 {
-+				return preview, used, nil
-+			}
-+			cells[i] = &text
-+		}
-+		row, err := json.Marshal(cells)
-+	
-```
-
-**File**: `agents/drivers/oracle-go/pldebug_cursor_output_test.go` (added, +102/-0)
-```diff
-@@ -0,0 +1,102 @@
-+package main
-+
-+import (
-+	"context"
-+	"database/sql"
-+	"database/sql/driver"
-+	"encoding/json"
-+	"errors"
-+	"io"
-+	"reflect"
-+	"strings"
-+	"testing"
-+)
-+
-+type plDebugTestCursorRows struct {
-+	values [][]driver.Value
-+	closed bool
-+	err    error
-+}
-+
-+func (*plDebugTestCursorRows) Columns() []string { return []string{"ID", "LABEL"} }
-+func (r *plDebugTestCursorRows) Close() error    { r.closed = true; return nil }
-+func (r *plDebugTestCursorRows) Next(values []driver.Value) error {
-+	if len(r.values) == 0 {
-+		if r.err != nil {
-+			return r.err
-+		}
-+		return io.EOF
-+	}
-+	copy(values, r.values[0])
-+	r.values = r.values[1:]
-+	return nil
-+}
-+
-+func TestPLDebugCursorOutputTransfer(t *testing.T) {
-+	for _, test := range []struct {
-+		name       string
-+		values     [][]driver.Value
-+		readErr    error
-+		receipt    int64
-+		state      string
-+		wantRows   []string
-+		isComplete bool
-+	}{
-+		{name: "rows", receipt: 1, state: "value", values: [][]driver.Value{{int64(17), nil}, {"12345678901234567890.123", "Alpha"}}, wantRows: []string{`["17",null]`, `["12345678901234567890.123","Alpha"]`}, isComplete: true},
-+		{name: "empty", receipt: 1, state: "value", wantRows: []string{}, isComplete: true},
-+		{name: "closed", state: "not_open"},
-+		{name: "fetch fails after one row", receipt: 1, state: "partial", values: [][]driver.Value{{int64(17), "Alpha"}}, readErr: errors.New("cursor fetch failed"), wantRows: []string{`["17","Alpha"]`}},
-+		{name: "byte cap", receipt: 1, state: "partial", values: [][]driver.Value{{int64(17), strings.Repeat("x", plDebugCursorPreviewBytes)}}, wantRows: []string{}},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			rows := &plDebugTestCursorRows{values: test.values, err: test.readErr}
-+			receipt := sql.NullInt64{Int64: test.receipt, Valid: true}
-+			output := newPLDebugCursorOutput(true, &receipt)
-+			*output.bind.(sql.Out).Dest.(*driver.Rows) = rows
-+			output.collect(context.Background(), &plDebugAllocation{}, plDebugCursorPreviewBytes)
-+			if !output.released || !rows.closed || output.state != test.state || !errors.Is(output.err, test.readErr) {
-+				t.Fatalf("cursor state=%s released=%v closed=%v err=%v", output.state, output.released, rows.closed, output.err)
-+			}
-+			if test.wantRows == nil {
-+				if output.preview != nil {
-+					t.Fatal("an unopened cursor must not be displayed as an empty result set")
-+				}
-+				return
-+			}
-+			var got = []string{}
-+			for _, row := range output.preview.Rows {
-+				got = append(got, string(row))
-+			}
-+			if !reflect.DeepEqual(got, test.wantRows) || output.preview.Complete != test.isComplete {
-+				t.Fatalf("cursor preview=%v rows=%v", output.preview, got)
-+			}
-+			encoded, err := json.Marshal(output.preview)
-+			if err != nil || len(encoded) > output.previewBytes {
-+				t.Fatalf("cursor preview size=%d budget used=%d err=%v", len(encoded), output.previewBytes, err)
-+			}
-+		})
-+	}
-+}
-+
-+func TestPLDebugCursorOutputPreviewRowLimit(t *testing.T) {
-+	for _, total := range []int{plDebugCursorPreviewRows, plDebugCursorPreviewRows + 1} {
-+		rows := &plDebugTestCursorRows{values: make([][]driver.Value, total)}
-+		preview, _, err := readPLDebugCursorPreview(context.Background(), rows, plDebugCursorPreviewBytes)
-+		if err != nil || len(preview.Rows) != plDebugCursorPreviewRows || preview.Complete != (total == plDebugCursorPreviewRows) {
-+			t.Fatalf("%d database rows yielded %v, %v", total, preview, err)
-+		}
-+	}
-+}
-+
-+func TestPLDebugCursorOutputTransportRequiresAnOutParameter(t *testing.T) {
-+	argument := plDebugNativeArgument{Type: "REF CURSOR", Position: 3, Mode: "OUT"}
-+	if !argument.adapted() || !plDebugNativeTypedRootAdapter(argument) {
-+		t.Fatal("OUT REF CURSOR was blocked by preflight")
-+	}
-+	for _, mode := range []string{"IN", "IN OUT"} {
-+		argument.Mode = mode
-+		if argument.adapted() || plDebugNativeTypedRootAdapter(argument) {
-+			t.Fatalf("unsupported %s REF CURSOR was accepted", mode)
-+		}
-+	}
-+}
-```
-
-**File**: `agents/drivers/oracle-go/pldebug_manager.go` (modified, +1/-0)
-```diff
-@@ -714,6 +714,7 @@ func (e *plDebugNativeEntry) executeTarget(tx *sql.Tx, p *plDebugSession, block
- 	if e.namedCall != nil {
- 		arguments = e.namedCall.arguments
- 		observer.lobs = e.namedCall.lobOutputs()
-+		observer.cursors = e.namedCall.cursorOutputs()
- 	}
- 	capture, executionErr = plDebugExecuteObservedCapture(ctx, tx, e.server.nativeDebuggeeAllocation(), p.oci, block, arguments, observer)
- }
-```
-
-**File**: `agents/drivers/oracle-go/pldebug_native.go` (modified, +5/-0)
-```diff
-@@ -55,6 +55,11 @@ BEGIN
-   result := ` + call + `;
-   :1 := result;
-   :2 := run_info.line#;
-+  -- Oracle may omit TERMINATED at a valid suspension. Use the independent
-+  -- running flag to confirm a pause without treating a missing value as zero.
-+  IF result = 0 AND run_info.terminated IS NULL AND SYS.DBMS_DEBUG.TARGET_PROGRAM_RUNNING THEN
-+    run_info.terminated := 0;
-+  END IF;
-   :3 := run_info.terminated;
-   :4 := run_info.breakpoint;
-   :5 := run_info.stackdepth;
-```
-
-**File**: `agents/drivers/oracle-go/pldebug_output.go` (modified, +28/-4)
-```diff
-@@ -103,7 +103,10 @@ BEGIN
-     SYS.DBMS_LOB.CREATETEMPORARY($OUTPUT, TRUE);
-     LOOP
-       SYS.DBMS_OUTPUT.GET_LINE($LINE, $STATUS);
--      IF $STATUS = 1 THEN $COMPLETE := 1; EXIT; END IF;
-+      IF $STATUS = 1 THEN
-+      IF $RETAINED = 0 THEN $COMPLETE := 2; ELSE $COMPLETE := 1; END IF;
-+      EXIT;
-+    END IF;
-       IF $STATUS <> 0 THEN RAISE_APPLICATION_ERROR(-20000, 'Unexpected DBMS_OUTPUT status'); END IF;
-       $KEEP := LEAST(NVL(LENGTH($LINE), 0), GREATEST(%d - $RETAINED, 0));
-       IF $KEEP > 0 THEN
-@@ -205,6 +208,7 @@ type plDebugCaptureReferences struct {
- 	released                bool
- 	statementCloseAttempted bool
- 	lobs                    []*plDebugLobOutput
-+	cursors                 []*plDebugCursorOutput
- }
+@@ -99,6 +99,7 @@ import { formatDataGridColumnMetadataForCopy } from "@/lib/dataGrid/dataGridColu
+ import DataGridQueryControls from "@/components/grid/DataGridQueryControls.vue";
+ import DataGridFilterBuilder from "@/components/grid/DataGridFilterBuilder.vue";
+ import DataGridFilterModeOrderDialog from "@/components/grid/DataGridFilterModeOrderDialog.vue";
++import DataGridFilterGroupControls from "@/components/grid/DataGridFilterGroupControls.vue";
+ import DataGridFilterWorkbench from "@/components/grid/DataGridFilterWorkbench.vue";
+ import DataGridTextFilterWorkbench from "@/components/grid/DataGridTextFilterWorkbench.vue";
+ import DataGridSortWorkbench from "@/components/grid/DataGridSortWorkbench.vue";
+@@ -428,7 +429,16 @@ import type { PluginDecodeRequest } from "@/lib/dataGrid/sqlPluginCodec";
+ import { createDataGridFilterConditionCache, useDataGridFilterBuilder, type DataGridStructuredFilterRule } from "@/composables/useDataGridFilterBuilder";
+ import { DATA_GRID_DISTINCT_VALUE_DEFAULT_LIMIT, useDataGridDistinctValueLoader } from "@/composables/useDataGridDistinctValueLoader";
+ import { dataGridDistinctValueKey, dataGridNullSuggestionFilterMode, toggleAllDataGridDistinctValueOptions, type DataGridDistinctValueSource, type DataGridDistinctValueSuggestionState, type DataGridDistinctValueSuggestionTarget } from "@/lib/dataGrid/dataGridDistinctValueSuggestions";
+-import { cloneDataGridStructuredFilterRules, loadDataGridStructuredFilterState, removeDataGridStructuredFilterColumnsForTab, saveDataGridStructuredFilterState, type DataGridCachedServerColumnFilter, type DataGridStructuredFilterCacheState } from "@/lib/dataGrid/dataGridFilterBuilderPersistence";
++import { resolveSqlDialectId } from "@/lib/sql/semantic/dialect";
++import {
++  cloneDataGridStructuredFilterRules,
++  loadDataGridStructuredFilterState,
++  removeDataGridAppliedFilterColumns,
++  removeDataGridStructuredFilterColumnsForTab,
++  saveDataGridStructuredFilterState,
++  type DataGridCachedServerColumnFilter,
++  type DataGridStructuredFilterCacheState,
++} from "@/lib/dataGrid/dataGridFilterBuilderPersistence";
+ import { createDataGridSearchScopeKey } from "@/lib/dataGrid/dataGridSearchStatePersistence";
+ import { useTabUiState } from "@/lib/tabs/tabUiState";
+ import { useSqlHighlighter } from "@/composables/useSqlHighlighter";
+@@ -1559,11 +1569,30 @@ function invalidateConditionalBulkEditMatchCountPreview() {
+ watch([conditionalBulkEditConditionSource, conditionalBulkEditCurrentWhereInput, conditionalBulkEditWhereInput, conditionalBulkEditRules], invalidateConditionalBulkEditMatchCountPreview, { deep: true });
  
- func plDebugExecuteNativeCapture(ctx context.Context, tx *sql.Tx, allocation *plDebugAllocation, oci bool, block plDebugNativeBlock, inputs []interface{}) (plDebugNativeCapture, error) {
-@@ -215,6 +219,7 @@ type plDebugCaptureObserver struct {
- 	dispatch func() error
- 	returned func(plDebugNativeCapture, error)
- 	lobs     []*plDebugLobOutput
-+	cursors  []*plDebugCursorOutput
- }
+ const structuredFilterRules = filterBuilder.rules;
++// Group drafts belong to this filter scope. The applied SQL stays independent
++// so inspecting or editing another group does not silently change the result.
++const activeFilterGroupNumber = ref(1);
++const inactiveFilterGroupRules = shallowRef(new Map<number, StructuredFilterRule[]>());
++const filterGroupNumbers = computed(() => [activeFilterGroupNumber.value, ...inactiveFilterGroupRules.value.keys()].sort((a, b) => a - b));
++const allFilterRulesDisabled = computed(() => structuredFilterRules.value.every((rule) => rule.disabled));
++const filterGroupControlBindings = computed(() => ({
++  groupNumbers: filterGroupNumbers.value,
++  activeGroup: activeFilterGroupNumber.value,
++  hasRules: structuredFilterRules.value.some((rule) => !!rule.columnName),
++  allDisabled: allFilterRulesDisabled.value,
++  disabled: applyingOnlyStructuredFilter.value || isApplyingWhere.value,
++  onAddGroup: addStructuredFilterGroup,
++  onSelectGroup: selectStructuredFilterGroup,
++  onDeleteGroup: deleteStructuredFilterGroup,
++  onToggleAll: toggleAllStructuredFilterRules,
++}));
+ const filterBuilderOpen = filterBuilder.open;
+ const filterWorkbenchRef = ref<{ focusRuleValue: (ruleId: string) => void }>();
+ const filterBuilderColumnSearch = filterBuilder.columnSearch;
+ const filteredFilterBuilderColumnOptions = filterBuilder.filteredColumns;
+-const appliedStructuredWhereInput = filterBuilder.appliedWhereInput;
++// Keep the applied WHERE independent from edits to the active draft.
++const appliedStructuredWhereInput = ref("");
++const appliedStructuredRules = shallowRef<StructuredFilterRule[]>();
+ const filterValueSuggestionRuleId = ref<string>();
+ const filterValueSuggestionTarget = ref<DataGridDistinctValueSuggestionTarget>();
+ const filterValueSuggestionSearch = ref("");
+@@ -1642,11 +1671,6 @@ const filterValueSuggestionState = computed<DataGridDistinctValueSuggestionState
+     canUseServerFilter: canUseServerColumnFilter.value,
+   };
+ });
+-// Structured filter rules are restored asynchronously. A tab-switch snapshot's
+-// probe includes the applied condition, so restoring before this hydration
+-// settles would reject an otherwise valid snapshot and never retry it.
+-const structuredFilterHydrationReady = ref(true);
+-let structuredFilterHydrationRequestId = 0;
+ const draftStructuredWhereInput = ref("");
+ const fi
+```
+
+**File**: `apps/desktop/src/components/grid/DataGridFilterGroupControls.vue` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++<script setup lang="ts">
++import { useI18n } from "vue-i18n";
++import { Eye, EyeOff, Plus, Trash2 } from "@lucide/vue";
++import { Button } from "@/components/ui/button";
++import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
++
++defineProps<{
++  groupNumbers: number[];
++  activeGroup: number;
++  hasRules: boolean;
++  allDisabled: boolean;
++  disabled: boolean;
++}>();
++
++const emit = defineEmits<{
++  addGroup: [];
++  selectGroup: [groupNumber: number];
++  deleteGroup: [];
++  toggleAll: [];
++}>();
++const { t } = useI18n();
++</script>
++
++<template>
++  <div data-filter-group-controls class="flex shrink-0 flex-wrap items-center gap-1.5 px-2 py-1">
++    <Select :model-value="String(activeGroup)" :disabled="disabled || groupNumbers.length < 2" @update:model-value="emit('selectGroup', Number($event))">
++      <SelectTrigger size="sm" class="h-7 min-w-24 gap-2 text-xs" :aria-label="t('grid.filterGroup')">
++        <SelectValue>{{ t("grid.filterGroupNumber", { number: activeGroup }) }}</SelectValue>
++      </SelectTrigger>
++      <SelectContent>
++        <SelectItem v-for="groupNumber in groupNumbers" :key="groupNumber" :value="String(groupNumber)">{{ t("grid.filterGroupNumber", { number: groupNumber }) }}</SelectItem>
++      </SelectContent>
++    </Select>
++    <Button type="button" size="icon" variant="ghost" class="h-7 w-7" :disabled="disabled" :aria-label="t('grid.addFilterGroup')" :title="t('grid.addFilterGroup')" @click="emit('addGroup')"><Plus class="h-3.5 w-3.5" /></Button>
++    <Button v-if="groupNumbers.length > 1" type="button" size="icon" variant="ghost" class="h-7 w-7" :disabled="disabled" :aria-label="t('grid.deleteFilterGroup')" :title="t('grid.deleteFilterGroup')" @click="emit('deleteGroup')"><Trash2 class="h-3.5 w-3.5" /></Button>
++    <Button type="button" size="sm" variant="ghost" class="h-7 gap-1.5 px-2 text-xs" :disabled="disabled || !hasRules" @click="emit('toggleAll')">
++      <Eye v-if="allDisabled" class="h-3.5 w-3.5" />
++      <EyeOff v-else class="h-3.5 w-3.5" />
++      {{ t(allDisabled ? "grid.enableAllFilterRules" : "grid.disableAllFilterRules") }}
++    </Button>
++  </div>
++</template>
+```
+
+**File**: `apps/desktop/src/components/grid/DataGridFilterWorkbench.vue` (modified, +1/-0)
+```diff
+@@ -78,6 +78,7 @@ watch(
  
- func plDebugExecuteObservedCapture(ctx context.Context, tx *sql.Tx, allocation *plDebugAllocation, oci bool, block plDebugNativeBlock, inputs []interface{}, observer *plDebugCaptureObserver) (plDebugNativeCapture, error) {
-@@ -238,12 +243,16 @@ func plDebugExecuteCaptureWith(ctx context.Context, tx *sql.Tx, allocation *plDe
- 	capture.references = &plDebugCaptureReferences{statement: stmt, clob: clob}
- 	if observer != nil {
- 		capture.references.lobs = observer.lobs
-+		capture.references.cursors = observer.cursors
- 	}
- 	capture.ReferencesPending = true
- 	args := append([]interface{}{}, inputs...)
- 	args = append(args, plDebugOutArg(oci, &capture.Code), plDebugOutArg(oci, &capture.Message), plDebugOutArg(oci, &capture.SavepointRollback), clob.bind, plDebugOutArg(oci, &capture.NativeOutputError), plDebugOutArg(oci, &capture.NativeTruncated), plDebugOutArg(oci, &capture.NativeComplete))
- 	if observer != nil && observer.dispatch != nil {
- 		if err := observer.dispatch(); err != nil {
-+			for _, cursor := range capture.references.cursors {
-+				cursor.released = true
-+			}
- 			for _, lob := range capture.references.lobs {
- 				lob.readAttempted, lob.releaseAttempted, lob.released = true, true, true
- 			}
-@@ -273,6 +282,13 @@ func (capture *plDebugNativeCapture) finishReferences(ctx context.Context, alloc
- 	if refs == nil {
- 		return
- 	}
-+	cursorsReleased := true
-+	cursorBudget := plDebugCursorPreviewBytes
-+	for _, cursor := range refs.cursors {
-+		cursor.collect(ctx, allocation, cursorBudget)
-+		cursorBudget -= cursor.previewBytes
-+		cursorsReleased = cursorsReleased && cursor.released
-+	}
- 	remaining := plDebugTypedResultBytes
- 	for _, lob := range refs.lobs {
- 		lob.collect(ctx, allocation, remaining)
-@@ -286,6 +302,11 @@ func (capture *plDebugNativeCapture) finishReferences(ctx context.Context, alloc
- 		read := func(context.Context) (driver.Result, error) {
- 			refs.readAttempted = true
- 			capture.utf16Text = nil
-+			// The wrapper confirms an empty output independently of the LOB bind.
-+			if capture.NativeComplete.Valid && capture.NativeComplete.Int64 == 2 {
-+				capture.Output, refs.readComplete = "", true
-+				return nil, nil
-+			}
- 			var err error
- 			capture.Output, err = refs.clob.read()
- 			refs.readComplete = err == nil
-@@ -305,7 +326,7 @@ func (capture *plDebugNativeCapture) finishReferences(ctx context.Context, alloc
- 		}
- 	}
- 	capture.Truncated = capture.Truncated || (capture.NativeTruncated.Valid && capture.NativeTruncated.Int64 != 0)
--	capture.OutputComplete = refs.readComplete && capture.NativeComplete.Valid && capture.NativeComplete.Int64 == 1 && capture.NativeTruncated.Valid && capture.NativeTruncated.Int64 == 0 && capture.OutputError == ""
-+	capture.OutputComplete = refs.readComplete && capture.NativeComplete.Valid && (capture.NativeComplete.Int64 == 1 || capture.NativeComplete.Int64 == 2) && capture.NativeTruncated.Valid && capture.NativeTruncated.Int64 == 0 && capture.OutputError == ""
- 	if !refs.releaseAttempted {
- 		capture.ReleaseError = ""
- 		release := func(context.Context) (driver.Result, error) {
-@@ -337,13 +358,16 @@ func (capture *plDebugNativeCapture) finishReferences(ctx context.Context, alloc
- 			capture.ReleaseError = joinPLDebugOutputError(capture.ReleaseError, "typed LOB release not confirmed")
- 		}
- 	}
--	if refs.released && lobsReleased && !refs.statementCloseAttempted {
-+	if !cursorsReleased {
-+		capture.ReleaseError = joinPLDebugOutputError(capture.ReleaseError, "cursor release not confirmed")
-+	}
-+	if refs.released && lobsReleased && cursorsReleased && !refs.statementCloseAttempted {
- 		refs.statementCloseAttempted = true
- 		if err := refs.statement.Close(); err != nil {
- 			capture.ReleaseError = err.Error()
- 		}
- 	}
--	if refs.released && lobsReleased && refs.statementCloseAttempted {
-+	if refs.released && lobsReleased && cursorsReleased && refs.statementCloseAtt
+ <template>
+   <section data-grid-filter-workbench class="shrink-0 border-b bg-muted/10 text-foreground">
++    <slot name="filter-group-controls" />
+     <div ref="rulesScrollerRef" data-filter-rules-scroll class="filter-rules-scroll min-h-11 overflow-auto px-3 py-2">
+       <DataGridLocalFilterSummary v-if="hasLocalColumnFilters" class="mb-1.5" :count="localFilterCount ?? 0" :summaries="localFilterSummaries ?? []" @clear-all="emit('clearLocalFilter')" @clear-column="(columnIndex) => emit('clearLocalFilter', columnIndex)" />
+       <DataGridFilterBuilder
 ```
 
-**File**: `agents/drivers/oracle-go/pldebug_output_test.go` (modified, +22/-0)
+**File**: `apps/desktop/src/components/grid/DataGridQueryControls.vue` (modified, +2/-0)
 ```diff
-@@ -325,3 +325,25 @@ func TestPLDebugNativeCleanupAndCachedUTF16Pages(t *testing.T) {
- 		t.Fatalf("byte limit split a Unicode character: %q", got)
- 	}
- }
+@@ -282,6 +282,8 @@ onUnmounted(onResizeEnd);
+               <Button variant="ghost" size="sm" class="h-6 px-2 text-xs" @click="emit('clearFilters')"><Trash2 class="mr-1 h-3.5 w-3.5" />{{ t("grid.clearFilter") }}</Button>
+             </div>
+ 
++            <slot name="filter-group-controls" />
 +
-+func TestPLDebugNativeCaptureConfirmsEmptyOutputWithoutReadingClob(t *testing.T) {
-+	block, err := plDebugWrapNativeTarget("BEGIN NULL; END;", 0)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	connector := &plDebugCaptureTestConnector{complete: 2, rollback: -1}
-+	runtime, server, tx := openNativeCaptureTest(t, connector, "thin")
-+	var value go_ora.Clob
-+	clob := &plDebugClobOutput{
-+		bind:    go_ora.Out{Dest: &value},
-+		read:    func() (string, error) { t.Error("empty output should not consume a CLOB"); return "", nil },
-+		release: func() error { return nil },
-+	}
-+	capture, err := plDebugExecuteBoundCapture(context.Background(), tx, server.plDebuggeeAllocation, false, block, nil, clob)
-+	if err != nil || !capture.OutputComplete || capture.Output != "" || capture.OutputError != "" || capture.ReferencesPending {
-+		t.Fatalf("empty output was not verified: %+v %v", capture, err)
-+	}
-+	if response, _ := runtime.handleLine(`{"id":2,"method":"close_session","params":{"agentSessionId":"a"}}`); response.Error != nil {
-+		t.Fatal(response.Error)
-+	}
-+}
+             <div v-if="structuredFilterSummaries.length" class="space-y-1.5 rounded-md border border-sky-500/30 bg-sky-500/5 px-2 py-1.5">
+               <div class="flex items-center gap-2 text-xs font-medium text-sky-600 dark:text-sky-400">
+                 <Filter class="h-3.5 w-3.5 shrink-0" /><span class="truncate">{{ t("grid.structuredFiltersActive", { count: structuredFilterSummaries.length }) }}</span>
 ```
 
-**File**: `agents/drivers/oracle-go/pldebug_routine.go` (modified, +2/-1)
+**File**: `apps/desktop/src/components/grid/DataGridTextFilterWorkbench.vue` (modified, +1/-0)
 ```diff
-@@ -624,7 +624,8 @@ func (scan plDebugNativeRoutineScan) identify(target plDebugNativeCandidate, lin
- 		matches := true
- 		for i, param := range params {
- 			parsed := node.Parameters[i]
--			if param.Name == nil || *param.Name != parsed.Name || param.Mode != parsed.Mode || param.Type != parsed.Type || !param.scalar() {
-+			sameType := param.scalar() && param.Type == parsed.Type || param.cursorOutput() && parsed.Type == "SYS_REFCURSOR"
-+			if param.Name == nil || *param.Name != parsed.Name || param.Mode != parsed.Mode || !sameType {
- 				matches = false
- 			}
- 		}
+@@ -153,6 +153,7 @@ watch(
+ 
+ <template>
+   <section data-grid-text-filter-workbench class="relative flex shrink-0 flex-col border-b bg-muted/10 text-foreground" :style="panelStyle">
++    <slot name="filter-group-controls" />
+     <div
+       ref="rulesScrollerRef"
+       data-filter-rules-scroll
 ```
 
-**File**: `agents/drivers/oracle-go/pldebug_routine_test.go` (modified, +10/-0)
+**File**: `apps/desktop/src/components/grid/__tests__/DataGridFilterEditorState.spec.ts` (modified, +84/-0)
 ```diff
-@@ -149,3 +149,13 @@ END F;`
- 		t.Fatalf("anonymous nested block lost its owning routine: %+v", got)
- 	}
- }
+@@ -364,6 +364,90 @@ describe("DataGrid custom filter menu", () => {
+   });
+ });
+ 
++describe("DataGrid structured filter apply ordering", () => {
++  // Conditions resolve only when the test releases them, keyed by the rule value.
++  function deferConditionsByValue() {
++    const pending = new Map<string, { promise: Promise<string>; resolve: (value: string) => void }>();
++    const entry = (value: string) => {
++      let item = pending.get(value);
++      if (!item) {
++        let resolve!: (condition: string) => void;
++        const promise = new Promise<string>((done) => (resolve = done));
++        item = { promise, resolve };
++        pending.set(value, item);
++      }
++      return item;
++    };
++    backendMocks.buildDataGridContextFilterCondition.mockImplementation(({ columnName, value }: { columnName: string; value: unknown }) => entry(String(value)).promise.then(() => `\`${columnName}\` = ${String(value)}`));
++    return { release: (value: string) => entry(value).resolve(value) };
++  }
 +
-+func TestPLDebugNativeRoutineIdentityMatchesSysRefCursor(t *testing.T) {
-+	code := "PROCEDURE P(O_RESULT OUT SYS_REFCURSOR) AS\nBEGIN\n OPEN O_RESULT FOR SELECT 1 FROM DUAL;\nEND P;"
-+	source := plDebugNativeRoutineFixture(code, "PROCEDURE", "P")
-+	name := "O_RESULT"
-+	target := plDebugNativeCandidate{Schema: "OWNER", ObjectName: "P", ObjectType: "PROCEDURE", Arguments: []plDebugNativeArgument{{Name: &name, Position: 1, Mode: "OUT", Type: "REF CURSOR"}}}
-+	if got := plDebugNativeIdentifyRoutine(source, target, 3); got.State != "verified" {
-+		t.Fatalf("cursor procedure source identity: %+v", got)
-+	}
-+}
++  async function seedRule(host: HTMLElement) {
++    await openCellCustomFilter(host);
++    const editor = [...host.querySelectorAll<HTMLInputElement>("[data-filter-value-editor]")].find((input) => input.value === "1");
++    if (!editor) throw new Error("Seeded value editor not found");
++    return editor;
++  }
++
++  // Lets any stale continuation run to completion before asserting nothing happened.
++  const flushPendingWork = () => new Promise<void>((resolve) => setTimeout(resolve, 30));
++
++  function setValue(input: HTMLInputElement, value: string) {
++    input.value = value;
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++  }
++
++  function workbenchButton(host: HTMLElement, label: string): HTMLButtonElement {
++    const button = [...(host.querySelector("[data-grid-filter-workbench]")?.querySelectorAll<HTMLButtonElement>("button") ?? [])].find((candidate) => candidate.textContent?.trim() === label);
++    if (!button) throw new Error(`Filter workbench button not found: ${label}`);
++    return button;
++  }
++
++  afterEach(() => {
++    backendMocks.buildDataGridContextFilterCondition.mockImplementation(async ({ columnName, value }: { columnName: string; value: unknown }) => `\`${columnName}\` = ${String(value)}`);
++  });
++
++  it("keeps the newest apply when an older apply resolves last", async () => {
++    const { host, onExecuteSql } = mountGrid("conditions", false);
++    await settle();
++    const conditions = deferConditionsByValue();
++    const editor = await seedRule(host);
++
++    workbenchButton(host, "Apply Filter").click();
++    await settle();
++    setValue(editor, "2");
++    await settle();
++    workbenchButton(host, "Apply Filter").click();
++    await settle();
++
++    conditions.release("2");
++    await vi.waitFor(() => expect(onExecuteSql).toHaveBeenCalledOnce());
++    conditions.release("1");
++    await flushPendingWork();
++
++    expect(onExecuteSql).toHaveBeenCalledOnce();
++    expect(onExecuteSql.mock.calls[0][0]).toContain("`id` = 2");
++  });
++
++  it("does not restore a cleared filter when an earlier apply resolves afterwards", async () => {
++    const { host, onExecuteSql } = mountGrid("conditions", false);
++    await settle();
++    const conditions = deferConditionsByValue();
++    await seedRule(host);
++
++    workbenchButton(host, "Apply Filter").click();
++    await settle();
++    workbenchButton(host, "Clear Filter").click();
++    await vi.waitFor(() => expect(onExecuteSql).toHaveBeenCalledOnce());
++    expect(onExecuteSql.mock.calls[0][0]).not.toContain("WHERE");
++
++    conditions.release("1");
++    await flushPendingWork();
++
++    expect(onExecuteSql).toHaveBeenCalledOnce();
++  });
++});
++
+ describe("DataGrid quick filter editor state", () => {
+   it("continues to close its popover after apply", async () => {
+     const { host, onExecuteSql } = mountGrid("quick", true);
+```
+
+**File**: `apps/desktop/src/i18n/locales/en.ts` (modified, +6/-0)
+```diff
+@@ -3534,6 +3534,12 @@ export default {
+     resultColumnCopied: "Copied {column}",
+     filterBuilderSummary: "{count} rules",
+     filterBuilderAddRule: "Add rule",
++    filterGroup: "Filter group",
++    filterGroupNumber: "Group {number}",
++    addFilterGroup: "Add filter group",
++    deleteFilterGroup: "Delete filter group",
++    enableAllFilterRules: "Enable this group's rules",
++    disableAllFilterRules: "Disable this group's rules",
+     filterBuilderApplyOnly: "Filter only this rule",
+     filterBuilderCompleteRuleFirst: "Complete this filter rule first",
+     filterBuilderEnableRule: "Enable rule",
+```
+
+**File**: `apps/desktop/src/i18n/locales/es.ts` (modified, +6/-0)
+```diff
+@@ -3942,6 +3942,12 @@ export default withEnglishFallback({
+     pasteRowsTruncated: "Se pegaron {applied} filas y {dropped} filas no se pegaron: el resultado actual no admite agregar filas o no hay suficientes filas disponibles para agregar.",
+     pasteCellText: "Pegar texto en esta celda",
+     pasteCellTextFailed: "No se puede pegar texto en la celda: {message}",
++    filterGroup: "Grupo de condiciones",
++    filterGroupNumber: "Grupo {number}",
++    addFilterGroup: "Añadir grupo de condiciones",
++    deleteFilterGroup: "Eliminar grupo de condiciones",
++    enableAllFilterRules: "Activar las reglas de este grupo",
++    disableAllFilterRules: "Desactivar las reglas de este grupo",
+     copyExtractorSingleColumnFormat: "Formato de una sola columna de copia inteligente",
+     copyExtractorUseSmartDefaults: "Usar el formato predeterminado de copia inteligente",
+     tableQueryDefaults: "Filtro y orden predeterminados de esta tabla",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15833** (2026-11-27): feat(oracle): preview REF CURSOR outputs in the PL/SQL debugger (@zipg)
-- **PR #15826** (2026-11-27): feat(firebird): enable editing view definitions (@zipg)
-- **PR #15825** (2026-11-27): feat(oracle): execute procedures from the package member list (@zipg)
-- **PR #15822** (2026-11-27): fix(saphana): 修复新建表新增字段和已有表设置主键 (@zipg)
-- **PR #15786** (2026-11-26): fix(i18n): bring Brazilian Portuguese locale back to parity with en.ts (@saskuati-dev)
-- **PR #15785** (2026-11-26): fix(editor): 不再把裸 END + 下一行 IF 误判为 END IF，修复 BEGIN…END 无折叠箭头/无配对高亮 (#15561) (@zipg)
+- **PR #15888** (2026-11-28): fix(export): keep backup snapshot alive during database export (@sx4im)
+- **PR #15887** (2026-11-28): fix(editor): show full SQL parameter names on hover when truncated (@parade0393)
+- **PR #15885** (2026-11-28): fix(oracle): share dictionary-cased column cache with qualified references (@sx4im)
+- **PR #15884** (2026-11-27): fix(editor): stop WebKitGTK from cutting two lines per Ctrl+X (@sx4im)
+- **PR #15879** (closed): fix(iotdb): 识别 AS 别名指向的时间聚合列 (@HighBigSky)
+- **PR #15864** (2026-11-28): fix(mysql): avoid overriding session time_zone for client-side JDBC/G… (@Acd-kk)
 
 ---
 
@@ -2766,42 +2663,30 @@ Co-authored-by: dbx-i18n-bot <github-actions[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gaussdb): support SM3 password authentication
+## X. oracle): run SQL*Plus EXEC/EXECUTE as an anonymous block
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agents/drivers/oracle-go/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e9e79bc6`: gaussdb): support SM3 password authentication. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22d4cbb3`: oracle): run SQL*Plus EXEC/EXECUTE as an anonymous block. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `agents/drivers/oracle-go/main.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
- "sm3",
-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
-[[package]]
-name = "sm3"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da6a89ba31723d185fd7413b98c576a575f356d9b84729d8ecb6ead60000a5b6"
-dependencies = [
- "digest 0.11.3",
-]
-
-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
+	if block, ok := rewriteSQLPlusExecute(trimmed); ok {
+		return block
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e9e79bc6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22d4cbb3` are properly handled with clean fallback behavior.

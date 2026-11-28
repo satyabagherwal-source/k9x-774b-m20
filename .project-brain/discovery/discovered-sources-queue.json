@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T06:53:37.258Z",
+  "updated_at": "2026-11-28T07:13:10.684Z",
   "stats": {
-    "total_discovered": 10826,
-    "approved_pending_harvest": 10278,
+    "total_discovered": 10834,
+    "approved_pending_harvest": 10286,
     "harvested_count": 0,
     "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10288,
+      "COMMUNITY_AND_EXPERT": 10296,
       "OFFICIAL_DOCUMENTATION": 296,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
@@ -234363,6 +234363,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/miso-belica-justext-learnings.md",
         "fileName": "miso-belica-justext-learnings.md"
+      }
+    },
+    "SRC-1640ACAB075B": {
+      "id": "SRC-1640ACAB075B",
+      "url": "https://github.com/l0ng-ai/openidea/issues/962",
+      "title": "https://github.com/l0ng-ai/openidea/issues/962",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:13:10.159Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-3B617EB3C53A": {
+      "id": "SRC-3B617EB3C53A",
+      "url": "https://github.com/user-attachments/assets/8a018de7-bf61-4f1c-b6f7-4d653937ac5a",
+      "title": "https://github.com/user-attachments/assets/8a018de7-bf61-4f1c-b6f7-4d653937ac5a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:13:10.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-5E94D047E37A": {
+      "id": "SRC-5E94D047E37A",
+      "url": "https://github.com/t8y2/dbx/issues/7831%E5%B7%B2%E7%BB%8F%E5%AF%B9max_by",
+      "title": "https://github.com/t8y2/dbx/issues/7831%E5%B7%B2%E7%BB%8F%E5%AF%B9max_by",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:13:10.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-BE0AD5F6E9B0": {
+      "id": "SRC-BE0AD5F6E9B0",
+      "url": "https://github.com/user-attachments/assets/a3cee6b1-3d5b-46a7-a53a-c9f771d35a97",
+      "title": "https://github.com/user-attachments/assets/a3cee6b1-3d5b-46a7-a53a-c9f771d35a97",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:13:10.375Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-D42216AD1A5C": {
+      "id": "SRC-D42216AD1A5C",
+      "url": "https://github.com/user-attachments/assets/4b68c781-9ea9-4a10-9744-0a3f4f1310f3",
+      "title": "https://github.com/user-attachments/assets/4b68c781-9ea9-4a10-9744-0a3f4f1310f3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:13:10.441Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-BE1E11D2AF60": {
+      "id": "SRC-BE1E11D2AF60",
+      "url": "https://github.com/user-attachments/assets/647d12af-9391-4bc4-aea3-ed05891c8900",
+      "title": "https://github.com/user-attachments/assets/647d12af-9391-4bc4-aea3-ed05891c8900",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:13:10.522Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-B8CF5D3AFDF2": {
+      "id": "SRC-B8CF5D3AFDF2",
+      "url": "https://github.com/user-attachments/assets/2aa571b5-2838-4380-b56d-64bd7a503784",
+      "title": "https://github.com/user-attachments/assets/2aa571b5-2838-4380-b56d-64bd7a503784",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:13:10.608Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-0B8A1C4E6FC6": {
+      "id": "SRC-0B8A1C4E6FC6",
+      "url": "https://github.com/user-attachments/assets/d39925db-0c45-4f13-96e7-cbdf01c18ac1",
+      "title": "https://github.com/user-attachments/assets/d39925db-0c45-4f13-96e7-cbdf01c18ac1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:13:10.684Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
       }
     }
   }

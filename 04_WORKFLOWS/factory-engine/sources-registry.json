@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T07:03:47.385Z",
-    "lastVerified": "2026-11-28T07:03:47.385Z",
+    "lastChecked": "2026-11-28T07:13:08.404Z",
+    "lastVerified": "2026-11-28T07:13:08.404Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-28T06:30:54.933Z",
+    "lastChecked": "2026-11-28T07:13:01.698Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-28T06:30:54.933Z"
+    "lastVerified": "2026-11-28T07:13:01.698Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -480,8 +480,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-28T02:59:05.785Z",
-    "lastVerified": "2026-11-28T02:59:05.785Z",
+    "lastChecked": "2026-11-28T07:12:56.898Z",
+    "lastVerified": "2026-11-28T07:12:56.898Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -1477,14 +1477,14 @@
     "officialUrl": "https://github.com/t8y2/dbx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T12:41:43.386Z",
-    "lastVerified": "2026-11-27T12:41:43.386Z",
+    "lastChecked": "2026-11-28T07:13:03.715Z",
+    "lastVerified": "2026-11-28T07:13:03.715Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "09a9da363227380a8f38396290267bc38e4445fb0b433886e8a1908ab8f768db",
+    "contentHash": "c70cc9038b795863289d681062c20e50dcc10f2e63704c09a7c7338e64f076b7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5964,9 +5964,9 @@
   "goss-org-goss": {
     "name": "goss",
     "officialUrl": "https://github.com/goss-org/goss",
-    "lastChecked": "2026-11-27T14:16:55.569Z",
+    "lastChecked": "2026-11-28T07:12:54.234Z",
     "revisionIdentifier": "dcd065d9",
-    "lastVerified": "2026-11-27T14:16:55.569Z"
+    "lastVerified": "2026-11-28T07:12:54.234Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -8384,8 +8384,8 @@
     "officialUrl": "https://github.com/zenbu-labs/terminal-browser",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T07:30:26.226Z",
-    "lastVerified": "2026-11-27T07:30:26.226Z",
+    "lastChecked": "2026-11-28T07:12:46.721Z",
+    "lastVerified": "2026-11-28T07:12:46.721Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zenbu-labs-terminal-browser",
@@ -11556,9 +11556,9 @@
   "sdwebimage-sdwebimageswiftui": {
     "name": "SDWebImageSwiftUI",
     "officialUrl": "https://github.com/SDWebImage/SDWebImageSwiftUI",
-    "lastChecked": "2026-11-26T05:05:11.038Z",
+    "lastChecked": "2026-11-28T07:12:51.706Z",
     "revisionIdentifier": "d1f7b2b4",
-    "lastVerified": "2026-11-26T05:05:11.038Z"
+    "lastVerified": "2026-11-28T07:12:51.706Z"
   },
   "urllib3-urllib3": {
     "name": "urllib3/urllib3",
@@ -11933,14 +11933,14 @@
     "officialUrl": "https://github.com/google/closure-compiler",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-24T22:42:26.066Z",
-    "lastVerified": "2026-11-24T22:42:26.066Z",
+    "lastChecked": "2026-11-28T07:12:53.855Z",
+    "lastVerified": "2026-11-28T07:12:53.855Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-google-closure-compiler",
-    "contentHash": "4742c193603251845fb519ecb2813de753c13b56d065a7e091d4b6c141081b34",
+    "contentHash": "10602e485d9135740316beeacdd407c466be2507498210d88ed5592cd3575da8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

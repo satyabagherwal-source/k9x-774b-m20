@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T07:03:38.003Z",
-  "total_cycles_completed": 13285,
-  "total_learnings_persisted": 13285,
-  "total_rules_promoted": 11977,
+  "last_updated": "2026-11-28T07:13:04.886Z",
+  "total_cycles_completed": 13287,
+  "total_learnings_persisted": 13287,
+  "total_rules_promoted": 11979,
   "history": [
-    {
-      "timestamp": "2026-11-27T12:41:31.451Z",
-      "repository": "Folkbench/folkbench",
-      "learningId": "learn-github-folkbench-folkbench",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T12:41:37.610Z",
-      "repository": "meshtastic/Meshtastic-Android",
-      "learningId": "learn-github-meshtastic-meshtastic-android",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T12:41:39.642Z",
       "repository": "infracost/infracost",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T07:03:38.003Z",
       "repository": "xevrion/hatchzip",
       "learningId": "learn-github-xevrion-hatchzip",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T07:12:55.148Z",
+      "repository": "google/closure-compiler",
+      "learningId": "learn-github-google-closure-compiler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T07:13:04.886Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

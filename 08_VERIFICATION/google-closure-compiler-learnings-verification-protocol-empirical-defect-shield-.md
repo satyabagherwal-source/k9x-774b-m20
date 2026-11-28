@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T22:42:43.015Z",
+  "timestamp": "2026-11-28T07:13:09.263Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-google-closure-compiler-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [google-closure-compiler-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T22:42:43.015Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T07:13:09.263Z`  
 > **Learning ID**: `LEARN-EVO-google-closure-compiler-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source**: github ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
-> **Source Version**: `1b85768e`  
+> **Source Version**: `3d283ce1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T22:42:26.074Z  
+> **Timestamp**: 2026-11-28T07:12:54.006Z  
 > **Learning ID**: `learn-github-google-closure-compiler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:42:26.066Z  
+> **Harvest Timestamp**: 2026-11-28T07:12:53.855Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A JavaScript checker and optimizer.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7707 stars
+- **Stars / Engagement**: 7708 stars
 
 ---
 
@@ -2486,398 +2486,189 @@ $jscomp.arrayIterator = function(array) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cb49bb8a` (2026-11-20)
-**Commit Message**: Accept `continue` targeting outer labels of multiply-labeled loops.
+### Incident Patch 1: `32f69cd1` (2026-11-25)
+**Commit Message**: Keep labels attached to instrumented `for await` loops.
 
-The parser now accepts `continue <label>` when `<label>` names an outer label
-on a multiply-labeled loop (`for`, `for..in`, `for..of`, `for await..of`,
-`while`, or `do..while`), matching ECMA-262 `ContainsUndefinedContinueTarget`.
-Previously, on input such as
-`async function f(xs) { a: b: for await (const x of xs) { continue a; } }`,
-the parser checked only the immediate statement child of the outer label. It
-saw the inner label instead of the loop and rejected valid code with
-`continue can only use labels of iteration statements`.
+InstrumentAsyncContext inserts a `ᵃᶜresume()` statement after each
+`for await...of` loop. For a labeled loop it inserted the statement (and, if
+needed, a wrapping block) inside the `LABEL` node, producing a 3-child
+`LABEL`: an invalid AST that crashed AstValidator / CodeGenerator, and that
+would have detached the label from the loop. The resume statement is now
+inserted after the outermost enclosing label instead, so labels stay directly
+attached to the loop and `break label;` still reaches the resume call.
 
-`IRFactory.validateBreakContinue()` now unwraps consecutive `Token.LABEL` nodes
-from `parent.getLastChild()` before calling `isContinueTarget()`. The parser
-still rejects `continue` statements that target labels wrapping non-iteration
-statements (such as blocks, `switch`, `if`, `try`, or `with`) or that cross
-function or class static-block boundaries.
+PiperOrigin-RevId: 1029674210
 
-PiperOrigin-RevId: 1026793930
-
-**File**: `src/com/google/javascript/jscomp/parsing/IRFactory.java` (modified, +13/-4)
+**File**: `src/com/google/javascript/jscomp/InstrumentAsyncContext.java` (modified, +6/-1)
 ```diff
-@@ -621,10 +621,19 @@ private void validateBreakContinue(Node n) {
-       }
+@@ -279,7 +279,12 @@ void instrumentForAwaitOf(NodeTraversal t, Node n, Node parent, FunctionContext
+                 body, //
+                 IR.block(IR.exprResult(functionContext.suspend().srcrefTreeIfMissing(arg))))));
  
-       if (parent.isLabel() && labelsMatch(parent, labelName)) {
--        if (n.isContinue() && !isContinueTarget(parent.getLastChild())) {
--          // report invalid continue target
--          errorReporter.error(
--              UNEXPECTED_LABELLED_CONTINUE, sourceName, n.getLineno(), n.getCharno());
-+        if (n.isContinue()) {
-+          // Consecutive labels (e.g. `a: b: for (...) {}`) share the same label set for the
-+          // labeled statement per ECMA-262 ContainsUndefinedContinueTarget. Unwrap nested LABEL
-+          // nodes to inspect the underlying statement.
-+          Node target = parent.getLastChild();
-+          while (target.isLabel()) {
-+            target = target.getLastChild();
-+          }
-+          if (!isContinueTarget(target)) {
-+            // report invalid continue target
-+            errorReporter.error(
-+                UNEXPECTED_LABELLED_CONTINUE, sourceName, n.getLineno(), n.getCharno());
-+          }
-         }
-       }
-     } else if (n.isContinue()) {
+-    // Add resume call after for-await-of
++    // Add resume call after for-await-of, including any labels: the labels must stay directly
++    // attached to the loop, and `break label;` must still reach the resume call.
++    while (parent.isLabel()) {
++      n = parent;
++      parent = n.getParent();
++    }
+     if (!parent.isBlock()) {
+       // NOTE: if the for-await-of is _not_ the child of a block, we could be in trouble.
+       Node block = IR.block();
 ```
 
-**File**: `test/com/google/javascript/jscomp/ControlFlowAnalysisTest.java` (modified, +37/-0)
+**File**: `test/com/google/javascript/jscomp/InstrumentAsyncContextTest.java` (modified, +79/-0)
 ```diff
-@@ -271,6 +271,18 @@ private ControlFlowGraph<Node> createCfg(String input) {
-     return createCfg(input, false);
+@@ -260,6 +260,85 @@ async function f() {
    }
  
-+  private ControlFlowGraph<Node> createCfgWithNoErrors(String input) {
-+    Compiler compiler = new Compiler();
-+    Node root = compiler.parseSyntheticCode("cfgtest", input);
-+    assertThat(compiler.getErrors()).isEmpty();
-+    return ControlFlowAnalysis.builder()
-+        .setCompiler(compiler)
-+        .setCfgRoot(root)
-+        .setTraverseFunctions(true)
-+        .setIncludeEdgeAnnotations(true)
-+        .computeCfg();
-+  }
-+
-   @Test
-   public void testSimpleStatementsInScript() {
-     String src = "var a; a = a; a = a";
-@@ -335,6 +347,31 @@ public void testBreakWithMultipleLabels() throws IOException {
-     assertReturnEdge(cfg, Token.BREAK);
-   }
- 
+   // Await nodes within the for-await should also be instrumented appropriately.
++  // Labels stay attached to the loop, and the resume call goes after the labeled statement.
 +  @Test
-+  public void testContinueWithMultipleLabels_while() {
-+    String src = "La: Lb: while (true) { continue La; }";
-+    ControlFlowGraph<Node> cfg = createCfgWithNoErrors(src);
-+    assertEdge(cfg, Token.CONTINUE, Token.WHILE, Branch.UNCOND);
-+  }
-+
-+  @Test
-+  public void testContinueWithMultipleLabels_for() {
-+    String src = "La: Lb: for (var i = 0; i < 10; i++) { while (x) { continue La; } }";
-+    ControlFlowGraph<Node> cfg = createCfgWithNoErrors(src);
-+    assertCrossEdge(cfg, Token.CONTINUE, Token.INC, Branch.UNCOND);
-+    assertNoEdge(cfg, Token.CONTINUE, Token.WHILE);
-+  }
-+
-+  @Test
-+  public void testContinueWithMultipleLabels_forAwaitOf() {
-+    String src =
-+        "async function f(xs) { La: Lb: for await (const x of xs) { if (x) continue La; break Lb;"
-+            + " } return 0; }";
-+    ControlFlowGraph<Node> cfg = createCfgWithNoErrors(src);
-+    assertEdge(cfg, Token.CONTINUE, Token.FOR_AWAIT_OF, Branch.UNCOND);
-+    assertCrossEdge(cfg, Token.BREAK, Token.RETURN, Branch.UNCOND);
-+  }
-+
-   @Test
-   public void testBreakingWhile() {
-     String src = "var x; while(true) { break; } x();";
-```
-
-**File**: `test/com/google/javascript/jscomp/Es6ForOfConverterTest.java` (modified, +36/-0)
-```diff
-@@ -393,6 +393,26 @@ public void testLabelForOf() {
-           $jscomp.iteratorClose(ITER$0, KEY$1$x);
-         }
-         """);
++  public void testLabeledForAwait() {
 +    test(
-+        "a: b: for (var x of [1, 2]) { if (x) continue a; break b; }",
 +        """
-+        var x;
-+        var ITER$0 = (0, $jscomp.makeIterator)([1, 2]);
-+        var KEY$1$x = ITER$0.next();
-+        try {
-+          a: b: for (; !KEY$1$x.done; KEY$1$x = ITER$0.next()) {
-+            x = KEY$1$x.value;
-+            {
-+              if (x) {
-+                continue a;
++        const v = new AsyncContext.Variable();
++        v.run(100, () => {});
++        async function f() {
++          loop: for await (const x of gen()) {
++            if (x) break loop;
++          }
++        }
++        """,
++        """
++        const v = new AsyncContext.Variable();
++        v.run(100, () => {});
++        async function f() {
++          var ᵃᶜfactory$0 = $jscomp.asyncContextStart();
++          var ᵃᶜsuspend$0 = ᵃᶜfactory$0();
++          var ᵃᶜresume$0 = ᵃᶜfactory$0(1);
++          try {
++            loop: for await (const x of ᵃᶜsuspend$0(gen())) {
++              ᵃᶜresume$0();
++              try {
++                if (x) {
++                  break loop;
++                }
++              } finally {
++                ᵃᶜsuspend$0();
 +              }
-+              break b;
 +            }
++            ᵃᶜresume$0();
++          } finally {
++            ᵃᶜsuspend$0();
 +          }
-+        } finally {
-+          $jscomp.iteratorClose(ITER$0, KEY$1$x);
 +        }
 +        """);
-   }
- 
-   @Test
-@@ -430,6 +450,22 @@ public void testLabelForOf_assumeIteratorCloseIsNotNeeded() {
-           }
-         }
-         """);
++  }
++
++  // Same, with multiple labels and a labeled statement that is not a direct child of a block.
++  @Test
++  public void testMultiplyLabeledForAwaitNotInBlock() {
 +    test(
-+        "a: b: for (var x of [1, 2]) { if (x) continue a; break b; }",
 +        """
-+        var x;
-+        var ITER$0 = (0, $jscomp.makeIterator)([1, 2]);
-+        var KEY$1$x = ITER$0.next();
-+        a: b: for (; !KEY$1$x.done; KEY$1$x = ITER$0.next()) {
-+          x = KEY$1$x.value;
-+          {
-+            if (x) {
-+              continue a;
++        const v = new AsyncContext.Variable();
++        v.run(100, () => {});
++        async function f() {
++          if (1) a: b: for await (const x of gen()) { if (x) continue b; break a; }
++        }
++        """,
++        """
++        const v = new AsyncContext.Variable();
++        v.run(100, () => {});
++        async function f() {
++          var ᵃᶜfactory$0 = $jscomp.asyncContextStart();
++          var ᵃᶜsuspend$0 = ᵃᶜfactory$0();
++          var ᵃᶜresume$0 = ᵃᶜfactory$0(1);
++          try {
++            if (1) {
++              a: b: for await (const x of ᵃᶜsuspend$0(gen())) {
++                ᵃᶜresume$0();
++                try {
++                  if (x) {
++                    continue b;
++                  }
++                  break a;
++                } finally {
++                  ᵃᶜsuspend$0();
++                }
++              }
++              ᵃᶜresume$0();
 +            }
-+            break b;
++          } finally {
++            ᵃᶜsuspend$0();
 +          }
 +        }
 +        """);
-   }
- 
++  }
++
    @Test
-```
-
-**File**: `test/com/google/javascript/jscomp/RenameLabelsTest.java` (modified, +9/-0)
-```diff
-@@ -110,6 +110,15 @@ public void testRenameGlobals() {
+   public void testForAwaitMixedWithAwait() {
      test(
-         "Foo:Goo:while(1){a(); continue Goo; break Foo;}",
-         "a:b:while(1){a(); continue b;break a;}");
-+    test(
-+        "Foo:Goo:while(1){a(); continue Foo; break Goo;}",
-+        "a:b:while(1){a(); continue a;break b;}");
-+    test("Foo:Goo:while(1){a(); continue Foo;}", "a:while(1){a(); continue a;}");
-+    test(
-+        "async function f(xs) { Foo: Goo: for await (const x of xs) { if (x) continue Foo; break"
-+            + " Goo; } }",
-+        "async function f(xs) { a: b: for await (const x of xs) { if (x) continue a; break b; }"
-+            + " }");
- 
-     test("Foo:Bar:X:{ break Bar; }", "b:{ break b; }");
-     test("Foo:Bar:X:{ break Bar; break X; }", "b:c:{ break b; break c;}");
 ```
 
-**File**: `test/com/google/javascript/jscomp/integration/IntegrationTest.java` (modified, +94/-0)
-```diff
-@@ -6462,5 +6462,99 @@ function h(fn) {
-         b.out = [c, d];
-         """);
-   }
-+
-+  @Test
-+  public void testContinueOuterLabelOfDoublyLabeledForAwait_whitespaceOnly() {
-+    CompilerOptions options = createCompilerOptions();
-+    CompilationLevel.WHITESPACE_ONLY.setOptionsForCompilationLevel(options);
-+    options.setLanguageIn(LanguageMode.UNSTABLE);
-+    // Stay on ECMASCRIPT_NEXT; RewriteAsyncIteration multi-label support is b/572973112.
-+    options.setLanguageOut(LanguageMode.ECMASCRIPT_NEXT);
-+
-+    testSame(
-+        options,
-+        "async function f(xs) { a: b: for await (const x of xs) { if (x) continue a; break b; } }");
-+  }
-+
-+  @Test
-+  public void testContinueOuterLabelOfDoublyLabeledForAwait_simple() {
-+    CompilerOptions options = createCompilerOptions();
-+    CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
-+    options.setLanguageIn(LanguageMode.UNSTABLE);
-+    // Stay on ECMASCRIPT_NEXT; RewriteAsyncIteration multi-label support is b/572973112.
-+    options.setLanguageOut(LanguageMode.ECMASCRIPT_NEXT);
-+    externs =
-+        ImmutableList.of(
-+            SourceFile.fromCode(
-+                "testExterns.js",
-+                new TestExternsBuilder().addConsole().addExtra("var window;").build()));
-+
-+    test(
-+        options,
-+        """
-+        async function f(xs, cond) {
-+          outer: inner: for await (const x of xs) {
-+            for (let i = 0; i < 2; i++) {
-+              if (cond(x, i)) continue outer;
-+              if (x) break inner;
-+            }
-+            console.log(x);
-+          }
-+        }
-+        window['f'] = f;
-+        """,
-+        """
-+        async function f(a, c) {
-+          a: b: for await (let b of a) {
-+            for (a = 0; a < 2; a++) {
-+              if (c(b, a)) continue a;
-+              if (b) break b;
-+            }
-+            console.log(b);
-+          }
-+        }
-+        window.f = f;
-+        """);
-+  }
-+
-+  @Test
-+  public void testContinueOuterLabelOfDoublyLabeledForAwait_advanced() {
-+    CompilerOptions options = createCompilerOptions();
-+    CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
-+    options.setLanguageIn(LanguageMode.UNSTABLE);
-+    // Stay on ECMASCRIPT_NEXT; RewriteAsyncIteration multi-label support is b/572973112.
-+    options.setLanguageOut(LanguageMode.ECMASCRIPT_NEXT);
-+    externs =
-+        ImmutableList.of(
-+            SourceFile.fromCode(
-+                "testExterns.js",
-+                new TestExternsBuilder().addConsole().addExtra("var window;").build()));
-+
-+    test(
-+        options,
-+        """
-+        async function f(xs, cond) {
-+          outer: inner: for await (const x of xs) {
-+            for (let i = 0; i < 2; i++) {
-+              if (cond(x, i)) continue outer;
-+              if (x) break inner;
-+            }
-+            console.log(x);
-+          }
-+        }
-+        window['f'] = f;
-+        """,
-+        """
-+        window.f = async function(a, c) {
-+          a: b: for await (let b of a) {
-+            for (a = 0; a < 2; a++) {
-+              if (c(b, a)) continue a;
-+              if (b) break b;
-+            }
-+            console.log(b);
-+          }
-+        };
-+        """);
-+  }
- }
- 
-```
+---
 
-**File**: `test/com/google/javascript/jscomp/parsing/ParserTest.java` (modified, +93/-0)
+### Incident Patch 2: `2ab2188f` (2026-11-25)
+**Commit Message**: Pin crash on `super` in a nested class field initializer inside a generator.
+
+Test-only. InstrumentAsyncContext attributes `super` in a class field initializer to the enclosing generator function, so a non-method generator is split as if it were a method, producing an invalid AST. Adds a regression test that asserts the current, incorrect behavior, with a TODO describing the correct behavior, so that the fix's diff shows the behavior change.
+
+PiperOrigin-RevId: 1029657140
+
+**File**: `test/com/google/javascript/jscomp/InstrumentAsyncContextTest.java` (modified, +28/-0)
 ```diff
-@@ -470,6 +470,99 @@ public void testContinueInForOf() {
+@@ -15,6 +15,9 @@
+  */
+ package com.google.javascript.jscomp;
+ 
++import static com.google.common.truth.Truth.assertThat;
++import static org.junit.Assert.assertThrows;
++
+ import com.google.common.collect.ImmutableMap;
+ import org.junit.Before;
+ import org.junit.Test;
+@@ -2241,6 +2244,31 @@ async function h() {
          """);
    }
  
 +  @Test
-+  public void testContinueToOuterLabelOfStackedLabeledLoops() {
-+    parse("a: b: for (;;) { continue a; continue b; }");
-+    parse("a: b: for (;;) continue a;");
-+    parse("a: b: for (var k in o) { continue a; continue b; }");
-+    parse("a: b: while (1) { continue a; continue b; }");
-+    parse("a: b: while (1) continue a;");
-+    parse("a: b: do { continue a; continue b; } while (1);");
-+    parse("a: b: c: while (1) { continue a; continue b; continue c; }");
-+    parse("a: b: for (;;) { c: for (;;) { continue a; continue b; continue c; } }");
-+    parse("a: { b: c: while (1) { continue b; continue c; } }");
-+    parse("class C { static { a: b: while (true) { continue a; } } }");
++  public void testSuperInFieldInitializerInsideGeneratorFunction_knownBug() {
++    setLanguageOut(CompilerOptions.LanguageMode.ECMASCRIPT_2022);
++    // TODO(b/571957977): This should compile, moving the generator body into a generator IIFE.
++    // Instead, the `super` in the nested class's field initializer is attributed to the enclosing
++    // generator function, so the generator is split as if it were a method. That inserts a
++    // MEMBER_FUNCTION_DEF under the CONST declaration and the AST is invalid.
++    IllegalStateException e =
++        assertThrows(
++            IllegalStateException.class,
++            () ->
++                testSame(
++                    """
++                    const v = new AsyncContext.Variable();
++                    v.run(100, () => {});
++                    const f = function*() {
++                      class D extends B {
++                        x = super.prop;
++                      }
++                      yield new D().x;
++                    };
++                    """));
++    assertThat(e).hasMessageThat().contains("Invalid child for CONST node");
 +  }
 +
-+  @Test
-+  public void testContinueToOuterLabelOfStackedLabeledForOf() {
-+    expectFeatures(Feature.FOR_OF);
-+    parse("a: b: for (const x of xs) { if (x) continue a; break b; }");
-+  }
-+
-+  @Test
-+  public void testContinueToOuterLabelOfStackedLabeledForAwaitOf() {
-+    expectFeatures(Feature.FOR_AWAIT_OF);
-+    parse(
-+        """
-+        async function f(xs) {
-+          a: b: for await (const x of xs) {
-+            if (x) continue a;
-+            break b;
-+          }
-+        }
-+        """);
-+    parse(
-+        """
-+        async function f(xs) {
-+          a: b: c: for await (const x of xs) {
-+            continue a;
-+            continue b;
-+            continue c;
-+          }
-+        }
-+        """);
-+  }
-+
-+  @Test
-+  public void testContinueToOuterLabelOfStackedLabeledNonLoops_error() {
-+    parseError("a: b: { while (1) { continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
-+    parseError("a: b: { while (1) { continue b; } }", UNEXPECTED_LABELLED_CONTINUE);
-+    parseError("a: b: c: { while (1) { continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
-+    parseError("a: { b: while (1) { continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
-+    parseError(
-+        "while (1) { a: b: switch (1) { case 1: continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
-+    parseError("a: b: if (x) { while (1) { continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
-+    parseError("a: b: try { while (1) { continue a; } } finally {}", UNEXPECTED_LABELLED_CONTINUE);
-+    parseError("while (1) { a: b: continue a; }", UNEXPECTED_LABELLED_CONTINUE);
-+    parseError(
-+        "class C { static { a: b: { while (true) { continue a; } } } }",
-+        UNEXPECTED_LABELLED_CONTINUE);
-+  }
-+
-+  @Test
-+  public void testContinueToOuterLabelOfStackedLabeledWith_error() {
-+    strictMode = SLOPPY;
-+    parseError("a: b: with (o) { while (1) { continue a; } }", UNEXPECTED_LABELLED_CONTINUE);
-+  }
-+
-+  @Test
-+  public void testContinueToStackedLabel_duplicateLabels_error() {
-+    parseError("a: a: while (1) { continue a; }", "Duplicate label \"a\"");
-+    parseError("a: { a: b: while (1) { continue a; } }", "Duplicate label \"a\"");
-+    parseError(
-+        "a: while (1) { a: b: { continue a; } }",
-+        "Duplicate label \"a\"",
-+        UNEXPECTED_LABELLED_CONTINUE);
-+  }
-+
-+  @Test
-+  public void testContinueToStackedLabel_ideModeErrorRecovery() {
-+    isIdeMode = true;
-+    parseError("a: b:", "primary expression expected");
-+    parseError("a: b: continue a;", UNEXPECTED_LABELLED_CONTINUE);
-+    parseError("a: b: for (;;) { continue a;", "'}' expected");
-+  }
-+
-+  @Test
-+  public void testContinueToStackedLabelCrossingBoundary_error() {
-+    parseError(
-+        "a: b: while (1) { var f = function() { continue a; }; }", UNDEFINED_LABEL + " \"a\"");
-+    parseError("a: b: while (1) { () => { continue a; }; }", UNDEFINED_LABEL + " \"a\"");
-+    parseError(
-+        "a: b: while (1) { class C { static { continue a; } } }", UNDEFINED_LABEL + " \"a\"");
-+  }
-+
-   /**
-    * @bug 19100575
-    */
+   @Test
+   public void testClassFieldInitializers() {
+     test(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4405** (2026-11-26): Bump actions/setup-java from 6.1.0 to 6.2.0 (@dependabot[bot])
 - **PR #4398** (2026-11-21): Move Element.children from Gecko to W3C extern (@zbynek)
 - **PR #4397** (2026-11-19): don't overflow start + length when folding String.prototype.substr (@rajath201)
+- **PR #4395** (2026-11-25): fold [10] < '9' as a string comparison, not a numeric one (@rajath201)
 - **PR #4394** (2026-11-19): Await the delegate result in async generator yield* (@Mwrnk)
 - **PR #4392** (2026-11-13): Move Event.isTrusted from Gecko to W3C extern (@zbynek)
-- **PR #4391** (2026-11-16): Add externs for Intl.DurationFormat. (@avelad)
-- **PR #4389** (2026-11-19): Name the current renaming report flags in their conflict errors (@ZainnQureshii)
 
 ---
 
@@ -2897,46 +2688,36 @@ PiperOrigin-RevId: 1026793930
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Accept `continue` targeting outer labels of multiply-labeled loops.
+## X. Keep labels attached to instrumented `for await` loops.
 
 **RULE**:
-When implementing operations in `src/com/google/javascript/jscomp/parsing/IRFactory.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/com/google/javascript/jscomp/InstrumentAsyncContext.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cb49bb8a`: Accept `continue` targeting outer labels of multiply-labeled loops.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `32f69cd1`: Keep labels attached to instrumented `for await` loops.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/parsing/IRFactory.java`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/InstrumentAsyncContext.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-        if (n.isContinue()) {
-          // Consecutive labels (e.g. `a: b: for (...) {}`) share the same label set for the
-          // labeled statement per ECMA-262 ContainsUndefinedContinueTarget. Unwrap nested LABEL
-          // nodes to inspect the underlying statement.
-          Node target = parent.getLastChild();
-          while (target.isLabel()) {
-            target = target.getLastChild();
-          }
-          if (!isContinueTarget(target)) {
-            // report invalid continue target
-            errorReporter.error(
-                UNEXPECTED_LABELLED_CONTINUE, sourceName, n.getLineno(), n.getCharno());
-          }
+    // Add resume call after for-await-of, including any labels: the labels must stay directly
+    // attached to the loop, and `break label;` must still reach the resume call.
+    while (parent.isLabel()) {
+      n = parent;
+      parent = n.getParent();
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-        if (n.isContinue() && !isContinueTarget(parent.getLastChild())) {
-          // report invalid continue target
-          errorReporter.error(
-              UNEXPECTED_LABELLED_CONTINUE, sourceName, n.getLineno(), n.getCharno());
+    // Add resume call after for-await-of
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cb49bb8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `32f69cd1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
