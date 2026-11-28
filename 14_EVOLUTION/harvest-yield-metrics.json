@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T13:55:57.609Z",
-  "total_cycles_completed": 13334,
-  "total_learnings_persisted": 13334,
-  "total_rules_promoted": 12032,
+  "last_updated": "2026-11-28T14:29:36.485Z",
+  "total_cycles_completed": 13337,
+  "total_learnings_persisted": 13337,
+  "total_rules_promoted": 12035,
   "history": [
-    {
-      "timestamp": "2026-11-27T18:08:29.855Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T18:08:31.351Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T18:26:01.267Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T18:26:15.314Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T13:55:57.609Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T14:29:24.840Z",
+      "repository": "dubzzz/fast-check",
+      "learningId": "learn-github-dubzzz-fast-check",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T14:29:27.214Z",
+      "repository": "rafsoh/dimeApp",
+      "learningId": "learn-github-rafsoh-dimeapp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T14:29:36.485Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

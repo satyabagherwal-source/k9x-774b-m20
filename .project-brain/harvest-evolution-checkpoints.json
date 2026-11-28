@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T14:06:06.674Z",
+  "last_updated": "2026-11-28T14:29:45.915Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T13:18:25.502Z",
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-28T13:18:22.902Z",
+      "processed_at": "2026-11-28T14:29:44.227Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1278,7 +1278,7 @@
       "staged_for_review": 1
     },
     "dubzzz-fast-check-learnings.md": {
-      "processed_at": "2026-11-25T02:02:11.773Z",
+      "processed_at": "2026-11-28T14:29:39.959Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3643,7 +3643,7 @@
       "staged_for_review": 1
     },
     "rafsoh-dimeapp-learnings.md": {
-      "processed_at": "2026-11-26T08:57:41.010Z",
+      "processed_at": "2026-11-28T14:29:43.300Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4078,7 +4078,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5361,
+  "total_dossiers_evaluated": 5364,
   "total_canonical_promoted": 604,
-  "total_staged_for_review": 4083
+  "total_staged_for_review": 4086
 }

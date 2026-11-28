@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T14:06:05.861Z",
+  "last_updated": "2026-11-28T14:29:45.382Z",
   "directives": [
     {
       "id": "CD-001",
@@ -76389,6 +76389,68 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-355F39-bump-version-number.md",
       "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-B74M",
+      "directive_title": "📝(vitest) Update compatibility requirements and README links",
+      "source_repo": "dubzzz-fast-check-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-B74M-vitest-update-compatibility-requirements-and-readme-links.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-B7UN",
+      "directive_title": "Size the icon keyboard like the name's keyboard, and fix its edge cases",
+      "source_repo": "rafsoh-dimeapp-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-B7UN-size-the-icon-keyboard-like-the-name-s-keyboard-and-fix-its-edge-cases.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-B2HF",
+      "directive_title": "read an index mixing dates and datetimes, dates as midnight",
+      "source_repo": "dathere/qsv",
+      "source_commit": "ca34987a",
+      "staged_file": "11_INBOX/candidate-directives/CD-B2HF-read-an-index-mixing-dates-and-datetimes-dates-as-midnight.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-B0DD32",
+      "directive_title": "📝(vitest) Update compatibility requirements and README links",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dubzzz-fast-check",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B0DD32--vitest-update-compatibility-requirement.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-FE9807",
+      "directive_title": "Size the icon keyboard like the name's keyboard, and fix its edge cases",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rafsoh-dimeapp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FE9807-size-the-icon-keyboard-like-the-name-s-k.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-B95V",
+      "directive_title": "timebucketp): read an index mixing dates and datetimes, dates as midnight",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-B95V-timebucketp-read-an-index-mixing-dates-and-datetimes-dates-as-midnight.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
     }
   ]
 }

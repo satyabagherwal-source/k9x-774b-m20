@@ -4,24 +4,24 @@
 {
   "source_repository": "rafsoh/dimeApp",
   "source_url": "https://github.com/rafsoh/dimeApp",
-  "source_version": "67b0c7d3",
+  "source_version": "700ce940",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-26T08:57:29.449Z",
+  "timestamp": "2026-11-28T14:29:27.471Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rafsoh-dimeapp",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rafsoh/dimeApp](https://github.com/rafsoh/dimeApp) (Revision: `67b0c7d3`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-26T08:57:29.449Z`  
+> **Provenance**: Harvested from [rafsoh/dimeApp](https://github.com/rafsoh/dimeApp) (Revision: `700ce940`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-28T14:29:27.471Z`  
 > **Learning ID**: `learn-github-rafsoh-dimeapp`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain F (Design Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 85%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 86%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rafsoh/dimeApp:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rafsoh/dimeApp](https://github.com/rafsoh/dimeApp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T08:57:28.513Z  
+> **Harvest Timestamp**: 2026-11-28T14:29:26.046Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Dime is a beautiful expense tracker built with iOS design guidelines in mind.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1927 stars
+- **Stars / Engagement**: 1931 stars
 
 ---
 
@@ -50,6 +50,230 @@ The following architectural invariants have been empirically discovered and reco
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `app/dime/Data/AutoCategoryQueue.swift`
+```
+//
+//  AutoCategoryQueue.swift
+//  dime
+//
+//  Feature Lab's Auto-Categorise, as far as everything that saves transactions needs it: the app, its
+//  widgets and Shortcuts. Apple Intelligence itself only runs in the app (see AutoCategorizer).
+//
+
+import CoreData
+import Foundation
+
+/// Transactions waiting for Apple Intelligence to pick their category, and the ones the user wants left
+/// without one. Kept in the app group, so a transaction logged from a widget is categorised the next time
+/// Dime opens.
+struct AutoCategoryQueue {
+    /// The Feature Lab switch.
+    static let enabledKey = "autoCategorise"
+
+    /// Posted when transactions are queued, so the app can start on them straight away.
+    static let didQueueNotification = Notification.Name("DimeAutoCategoryDidQueue")
+
+    private static let queueKey = "autoCategoriseQueue"
+    private static let keptKey = "autoCategoriseKeptUncategorised"
+
+    /// How many transactions the user left without a category are remembered.
+    static let keptLimit = 2000
+
+    /// A queued transaction that doesn't turn up for this long, deleted or never synced, is forgotten.
+    static let lifetime: TimeInterval = 7 * 24 * 60 * 60
+
+    /// Tries before a transaction the model keeps failing on is left as it is.
+    static let maximumAttempts = 3
+
+    struct Entry: Codable, Equatable {
+        var queuedAt: Date
+        var attempts: Int
+    }
+
+    let defaults: UserDefaults?
+
+    init(defaults: UserDefaults? = UserDefaults(suiteName: "group.com.rafaelsoh.dime")) {
+        self.defaults = defaults
+    }
+
+    var isEnabled: Bool {
+        defaults?.bool(forKey: Self.enabledKey) == true
+    }
+
+    // MARK: Which transactions
+
+    /// Whether the transaction is one to categorise: it has no category, isn't a transfer, has a note with
+    /// words or emoji in it, and isn't one the user chose to leave without a category.
+    func wantsCategory(_ transaction: Transaction) -> Bool {
+        guard !transaction.isGone, transaction.category == nil, !transaction.isTransfer,
+              Self.hasMeaningfulText(transaction.wrappedNote)
+        else {
+            return false
+        }
+
+        return !isKeptUncategorised(transaction)
+    }
+
+    /// A note of only numbers and punctuation can't say what something was, so it isn't worth asking about.
+    static func hasMeaningfulText(_ note: String) -> Bool {
+        note.unicodeScalars.contains { CharacterSet.letters.contains($0) || $0.properties.isEmojiPresentation }
+    }
+
+    // MARK: Left without a category
+
+    /// Remembers that the user took the transaction's category away, so it's never given one again.
+    func keepUncategorised(_ transaction: Transaction) {
+        guard let id = transaction.id?.uuidString else {
+            return
+        }
+
+        var kept = defaults?.stringArray(forKey: Self.keptKey) ?? []
+        kept.removeAll { $0 == id }
+        kept.append(id)
+        defaults?.set(Array(kept.suffix(Self.keptLimit)), forKey: Self.keptKey)
+
+        remove([transaction])
+    }
+
+    func isKeptUncategorised(_ transaction: Transaction) -> Bool {
+        guard let id = transaction.id?.uuidString else {
+            return false
+        }
+
+        return defaults?.stringArray(forKey: Self.keptKey)?.contains(id) == true
+    }
+
+    // MARK: Queue
+
+    var entries: [UUID: Entry] {
+        guard let data = defaults?.data(forKey: Self.queueKey),
+              let stored = try? JSONDecoder().decode([String: Entry].self, from: data)
+        else {
+            return [:]
+        }
+
+        var entries: [UUID: Entry] = [:]
+
+        for (key, entry) in stored {
+            if let id = UUID(uuidString: key) {
+                entries[id] = entry
+            }
+        }
+
+        return entries
+    }
+
+    private func store(_ entries: [UUID: Entry]) {
+        guard !entries.isEmpty else {
+            defaults?.removeObject(forKey: Self.queueKey)
+            return
+        }
+
+        var stored: [String: Entry] = [:]
+
+        for (id, entry) in entries {
+            stored[id.uuidString] = entry
+        }
+
+        if let data = try? JSONEncoder().encode(stored) {
+            defaults?.set(data, forKey: Self.queueKey)
+        }
+    }
+
+    /// Queues the transactions that want a category, when the Feature Lab switch is on. Call it once
+    /// they're saved.
+    ///
+    /// - Parameter announce: Whether to post `didQueueNotification`, so the app starts on them.
+    /// - Returns: Whether any were queued.
+    @discardableResult
+    func add(_ transactions: [Transaction], announce: Bool = true) -> Bool {
+        guard isEnabled else {
+            return false
+        }
+
+        let ids = transactions.filter { wantsCategory($0) }.compactMap(\.id)
+
+        guard !ids.isEmpty else {
+            return false
+        }
+
+        var current = entries
+
+        for id in ids where current[id] == nil {
+            current[id] = Entry(queuedAt: .now, attempts: 0)
+        }
+
+        store(current)
+
+        if announce {
+            NotificationCenter.default.post(name: Self.didQueueNotification, object: nil)
+        }
+
+        return true
+    }
+
+    /// Queues a new occurrence of a recurring transaction, unless the user left the recurring transaction
+    /// without a category: then the occurrence is left without one too.
+    func addOccurrence(_ occurrence: Transaction, of recurring: Transaction) {
+        if isKeptUncategorised(recurring) {
+            keepUncategorised(occurrence)
+        } else {
+            add([occurrence])
+        }
+    }
+
+    func remove(_ transactions: [Transaction]) {
+        remove(ids: transactions.compactMap(\.id))
+    }
+
+    func remove(ids: [UUID]) {
+        var current = entries
+
+        guard ids.contains(where: { current[$0] != nil }) else {
+            return
+        }
+
+        for id in ids {
+            current[id] = nil
+        }
+
+        store(current)
+    }
+
+    /// Counts a try that failed, say because the model was busy. After `maximumAttempts` the transaction is
+    /// forgotten and stays as the user logged it.
+    func recordFailedAttempt(ids: [UUID]) {
+        var current = entries
+
+        for id in ids {
+            guard var entry = current[id] else {
+                continue
+            }
+
+            entry.attempts += 1
+            current[id] = entry.attempts >= Self.maximumAttempts ? nil : entry
+        }
+
+        store(current)
+    }
+
+    /// Forgets transactions queued so long ago that they're never going to turn up.
+    func removeExpired(now: Date = .now) {
+        let current = entries
+        let kept = current.filter { now.timeIntervalSince($0.value.queuedAt) < Self.lifetime }
+
+        if kept.count != current.count {
+            store(kept)
+        }
+    }
+
+    func clear() {
+        defaults?.removeObject(forKey: Self.queueKey)
+    }
+}
+
+```
 
 ### Core Architecture Module: `app/dime/Utilities/AlertToast.swift`
 ```
@@ -707,8 +931,13 @@ extension View {
 import Foundation
 
 enum CSVExport {
-    // Currency was added last, so the earlier columns stay where older exports had them.
-    static let header = "Date,Note,Amount,Category,Type,Currency\n"
+    // Columns added later go last, so the earlier ones stay where older exports had them.
+    static let header = "Date,Note,Amount,Category,Type,Currency,Account\n"
+
+    /// A transfer's legs have their own types, so importing an export recreates the transfer rather than
+    /// counting it as an expense and an income.
+    static let transferOutType = "Transfer Out"
+    static let transferInType = "Transfer In"
 
     /// Two decimals as before, or three for currencies like KWD so no digit is lost.
     static func amount(_ amount: Double, currencyCode: String) -> String {
@@ -837,7 +1066,7 @@ struct CSVTable {
 }
 
 enum ImportField: CaseIterable, Hashable {
-    case date, amount, category, note, type, currency
+    case date, amount, category, note, type, currency, account
 
     var title: String {
         switch self {
@@ -847,6 +1076,7 @@ enum ImportField: CaseIterable, Hashable {
         case .note: return "Note"
         case .type: return "Type"
         case .currency: return "Currency"
+        case .account: return "Account"
         }
     }
 
@@ -858,13 +1088,14 @@ enum ImportField: CaseIterable, Hashable {
         case .note: return "doc.plaintext.fill"
         case .type: return "plusminus"
         case .currency: return "coloncurrencysign.circle.fill"
+        case .account: return AccountSymbol.filled
         }
     }
 
     var isRequired: Bool {
         switch self {
         case .date, .amount: return true
-        case .category, .note, .type, .currency: return false
+        case .category, .note, .type, .currency, .account: return false
         }
     }
 
@@ -876,6 +1107,7 @@ enum ImportField: CaseIterable, Hashable {
         case .note: return ["note", "description", "memo", "title", "name", "payee", "merchant", "details", "subtitle"]
         case .type: return ["type", "kind", "direction", "income/expense", "flow"]
         case .currency: return ["currency", "ccy", "currency code", "iso currency"]
+        case .account: return ["account", "wallet", "account name"]
         }
     }
 }
@@ -944,16 +1176,7 @@ enum ImportParsing {
         guard !values.isEmpty else { return [] }
 
         let localTemplate = DateFormatter.dateFormat(fromTemplate: "ddMMyyyy", options: 0, locale: .current) ?? ""
-        let regionIsDayFirst = (localTemplate.firstIndex(of: "d") ?? localTemplate.endIndex) < (localTemplate.firstIndex(of: "M") ?? localTemplate.endIndex)
-
-        let fitting = dateFormats.enumerated().compactMap { offset, format -> (format: String, count: Int, offset: Int)? in
-            let count = values.filter { date($0, format: format) != nil }.count
-            return Double(count) >= Double(values.count) * threshold ? (format, count, offset) : nil
-        }
-
-        let ranked = fitting.sorted { lhs, rhs in
-            if lhs.count != rhs.count {
-                retu
+        let regionIsDayFirst = (localTemplate.firstIndex(of: "d") ?? localTemplate.endIndex) < (localTemplate.firstIndex(of: "M") ?? localTemplate.
 ```
 
 ### Core Architecture Module: `app/dime/Utilities/Color.swift`
@@ -1535,133 +1758,6 @@ extension Font {
 
 ```
 
-### Core Architecture Module: `app/dime/Utilities/KeyboardHeightHelper.swift`
-```
-//
-//  KeyboardHeightHelper.swift
-//  xpenz
-//
-//  Created by Rafael Soh on 16/5/22.
-//
-
-import Combine
-import Foundation
-import SwiftUI
-import UIKit
-
-class KeyboardHeightHelper: ObservableObject {
-    @Published var keyboardHeight: CGFloat = 0
-
-    private func listenForKeyboardNotifications() {
-        NotificationCenter.default.addObserver(forName: UIResponder.keyboardDidShowNotification,
-                                               object: nil,
-                                               queue: .main) { notification in
-            guard let userInfo = notification.userInfo,
-                  let keyboardRect = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-
-            self.keyboardHeight = keyboardRect.height
-        }
-
-//        NotificationCenter.default.addObserver(forName: UIResponder.keyboardDidHideNotification,
-//                                               object: nil,
-//                                               queue: .main) { (notification) in
-//                                                self.keyboardHeight = 0
-//        }
-    }
-
-    init() {
-        listenForKeyboardNotifications()
-    }
-}
-
-extension Publishers {
-    // 1.
-    static var keyboardHeight: AnyPublisher<CGFloat, Never> {
-        // 2.
-        let willShow = NotificationCenter.default.publisher(for: UIApplication.keyboardWillShowNotification)
-            .map { $0.keyboardHeight }
-
-        let willHide = NotificationCenter.default.publisher(for: UIApplication.keyboardWillHideNotification)
-            .map { _ in CGFloat(0) }
-
-        // 3.
-        return MergeMany(willShow, willHide)
-            .eraseToAnyPublisher()
-    }
-}
-
-extension Notification {
-    var keyboardHeight: CGFloat {
-        return (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect)?.height ?? 0
-    }
-
-    var keyboardEndFrame: CGRect {
-        (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect) ?? .null
-    }
-}
-
-extension View {
-    func placeholder<Content: View>(
-        when shouldShow: Bool,
-        alignment: Alignment = .leading,
-        @ViewBuilder placeholder: () -> Content
-    ) -> some View {
-        ZStack(alignment: alignment) {
-            placeholder().opacity(shouldShow ? 1 : 0)
-            self
-        }
-    }
-}
-
-extension UIApplication {
-    func endEditing() {
-        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
-}
-
-final class KeyboardHeightCache {
-    static let shared = KeyboardHeightCache()
-
-    private var observer: NSObjectProtocol?
-    private var frameObserver: NSObjectProtocol?
-
-    /// Where the keyboard is or is heading, in screen coordinates. Off screen or `.null` while hidden.
-    private(set) var screenFrame: CGRect = .null
-
-    func start() {
-        guard observer == nil else { return }
-
-        observer = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notification in
-            let height = notification.keyboardHeight
-            if height > 200 {
-                UserDefaults(suiteName: "group.com.rafaelsoh.dime")?.set(Double(height - 20), forKey: "keyboard")
-            }
-        }
-
-        frameObserver = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillChangeFrameNotification, object: nil, queue: .main) { [weak self] notification in
-            self?.screenFrame = notification.keyboardEndFrame
-        }
-    }
-}
-
-struct KeyboardAwareModifier: ViewModifier {
-    @AppStorage("keyboard", store: UserDefaults(suiteName: "group.com.rafaelsoh.dime")) var savedKeyboardHeight: Double = .init(UIScreen.main.bounds.height / 2.5)
-    var showToolbar: Bool
-
-    func body(content: Content) -> some View {
-        content
-            .frame(height: savedKeyboardHeight)
-    }
-}
-
-extension View {
-    func keyboardAwareHeight(showToolbar: Bool) -> some View {
-        ModifiedContent(content: self, modifier: KeyboardAwareModifier(showToolbar: showToolbar))
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1695,699 +1791,339 @@ extension View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8066e75` (2026-11-26)
-**Commit Message**: Add privacy-safe Sentry crash and data-integrity reporting.
+### Incident Patch 1: `470eba78` (2026-11-28)
+**Commit Message**: Size the icon keyboard like the name's keyboard, and fix its edge cases
 
-Report store migration, CloudKit sync, backup, import, and bulk-delete outcomes as counts and error codes so a silent data loss can be diagnosed, without sending notes, amounts, or names.
+From review of the icon keyboard:
+- It was a fixed 270 points, so the sheet above still moved by the
+  difference from the name's keyboard. It now takes the name's
+  keyboard's height, learning once what the system adds below it.
+- If it failed to take focus, the tile stayed focused and tapping it
+  again did nothing. A failed attempt now unfocuses the tile.
+- The keyboard's window doesn't follow the app's appearance setting,
+  so the icons now take the editor's colour scheme.
+- It no longer starts from the deprecated main screen's width.
 
-Co-authored-by: Rafael Soh <[REDACTED_EMAIL]>
+Also removes the account picker's unused unavailable parameter, and
+gives the default transfer destination and the swap one helper.
 
-**File**: `.gitignore` (modified, +3/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LmsC7Q9EP9mPakT4tat7gi
+
+**File**: `app/dime/Views/AccountsView.swift` (modified, +88/-16)
 ```diff
-@@ -7,3 +7,6 @@ xcuserdata/
+@@ -101,12 +101,34 @@ struct AccountIconKeyboard: UIViewRepresentable {
+     let selection: String
+     let onPick: (String) -> Void
  
- ## MacOS
- .DS_Store
++    /// Used until the name's keyboard has been seen, such as with a hardware keyboard.
++    static let fallbackHeight: CGFloat = 270
++    /// Four rows of icons.
++    static let minimumHeight: CGFloat = 240
 +
-+## Sentry auth. The public DSN is committed; the upload token is not.
-+.sentryclirc
-```
-
-**File**: `README.md` (modified, +1/-0)
-```diff
-@@ -60,6 +60,7 @@ Dime is a 100% free, open-source personal finance tracker built with iOS design
- ## Third party dependencies
+     final class Coordinator {
+         var isActive: Binding<Bool>
+         var hosting: UIHostingController<AccountIconKeyboardContent>?
++        weak var host: AccountIconKeyboardHost?
++        /// How tall the name's keyboard is, so the icons can be as tall and the sheet above them stays put.
++        private var textKeyboardHeight: CGFloat?
++        /// What the system adds below a custom keyboard, such as room for the home indicator. Measured the first
++        /// time the icons show.
++        private static var systemPadding: CGFloat?
++        private var observer: NSObjectProtocol?
  
- - [Alamofire](https://github.com/Alamofire/Alamofire)
-+- [Sentry](https://github.com/getsentry/sentry-cocoa) (crash and diagnostic reporting; see [SENTRY.md](SENTRY.md))
- - [CloudKitSyncMonitor](https://github.com/ggruen/CloudKitSyncMonitor)
- - [ConfettiSwiftUI](https://github.com/simibac/ConfettiSwiftUI)
- - [CrookedText](https://github.com/duemunk/CrookedText)
-```
-
-**File**: `SENTRY.md` (added, +80/-0)
-```diff
-@@ -0,0 +1,80 @@
-+# Sentry
-+
-+Dime reports crashes, app hangs, and a small set of data-integrity events to the Sentry project `dime-ios` in the org `dime-1x` (US region). The goal is to explain reports of all data disappearing after an update, without sending the contents of anyone's books.
-+
-+## Setup
-+
-+The app links the official [sentry-cocoa](https://github.com/getsentry/sentry-cocoa) SDK 9.35.0 (the current stable release) through Swift Package Manager. The product is the prebuilt `Sentry` binary, on the `dime` app target only.
-+
-+`SentryBootstrap.start()` runs at the top of `dimeApp.init`, before `DataController` opens the store. Release builds use the environment `production` and a release name of `bundle-id@version+build`. Debug builds set the environment to `debug` and `enabled = false`, so Xcode runs do not spend the free Developer plan quota. Unit tests do not start the SDK.
-+
-+Crash reporting and app hang tracking (2 second threshold) are on. Tracing is sampled at `tracesSampleRate = 0.1`. Session replay is off (`sessionSampleRate` and `onErrorSampleRate` are 0), and screenshots and view hierarchies are not attached.
-+
-+### Extensions
-+
-+The widget and the intent extensions compile the same store-loading code, but they do not link Sentry. The SDK is a static binary of several megabytes, and each extension would embed its own copy. Those processes instead write a short, privacy-safe record into the app-group defaults. The app forwards that queue the next time it launches. Extension crash stacks are not reported.
-+
-+## What is sent
-+
-+- Crash reports, watchdog terminations, and app hangs: stack traces, OS and device model, app version, and the in-memory breadcrumb trail.
-+- One sampled performance trace in about ten launches (app start and view-controller class names). No Core Data, file, or network spans.
-+- Data-integrity breadcrumbs and captured events. Values are counts, booleans, file sizes, and short tokens such as `import` or `NSCocoaErrorDomain`. See the list below.
-+
-+No Sentry user is set. `sendDefaultPii` is false, and scope persistence is off. `beforeSend` removes the user, the HTTP request, the device name, and identifier-like context fields. `beforeBreadcrumb` drops automatic breadcrumbs other than app, device, and view-controller lifecycle, and it drops those too when the message is not a class or lifecycle name.
-+
-+In the Sentry project settings, turn on **Prevent Storing of IP Addresses** (Security & Privacy). The Cocoa SDK has historically left IP inference to the server even when the client sends no PII.
-+
-+## What is not sent
-+
-+- Transaction amounts, notes, dates, or currency codes
-+- Category names, emoji, or colours
-+- Merchant or payee text, budget names, or any other text the user typed
-+- Account identifiers, Apple ID, device name, IDFV, or a Sentry user id
-+- Screenshots, view hierarchies, or session replay
-+- Core Data predicates, SQL, or the contents of a backup file
-+- The full store path (it contains the app-container id)
-+
-+Error objects are reduced to a domain and code chain before they are captured. CloudKit partial failures often embed the record that failed; that record is not included. Network failures during sync are breadcrumbs only, because an offline device would otherwise create an event on every retry.
-+
-+## Events that diagnose missing data
-+
-+These are the captured messages, in addition to ordinary crashes:
-+
-+| Situation | Message |
-+| --- | --- |
-+| Migration finishes with fewer transactions, categories, budgets, or templates than before | Store migration reduced record counts |
-+| The store opens with zero transactions, the file or a pre-migration snapshot is non-trivial, and the user did not use Erase Data | Store loaded with no transactions |
-+| After iCloud is current, the store has fewer than half the transactions of the newest backup (and at least 10 were in the backup) | Transaction count is far below the newest backup |
-+| A CloudKit import or export ends with that same kind of drop, and it was not a bulk delete in the same moment | CloudKit sync reduced the transaction count |
-+| Store load, the pre-migration snapshot, a context save, a backup, a restore, or a non-network CloudKit event fails | The caught error, domain and code only |
-+
-+Breadcrumbs (not their own issues) also cover: migration start and the pre-migration snapshot from the store copy kept before migrating, store load counts, iCloud sync preference changes, the legacy iCloud setting being carried over, CloudKit event start and finish, CSV import counts, backup written or skipped, restore started and finished, erase-all, and a bulk delete (a category, or 10 or more transactions). The pre-migration count is an integer read from the old store with migration disabled.
-+
-+The empty-store and below-backup issues are sent once per app version so a launch loop cannot drain the quota. Erase Data suppresses the empty-store issue.
-+
-+## Uploading dSYMs
-+
-+Release builds of the `dime` targ
-```
-
-**File**: `app/dime.xcodeproj/project.pbxproj` (modified, +61/-0)
-```diff
-@@ -66,6 +66,14 @@
- 		5327D2DE287C6B5F00F76ADF /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5327D2D5287C6B5E00F76ADF /* CustomTabBar.swift */; };
- 		5327D2E0287C6B7D00F76ADF /* DeviceModels.json in Resources */ = {isa = PBXBuildFile; fileRef = 5327D2DF287C6B7C00F76ADF /* DeviceModels.json */; };
- 		5327D2E6287C6CC300F76ADF /* Popovers in Frameworks */ = {isa = PBXBuildFile; productRef = 5327D2E5287C6CC300F76ADF /* Popovers */; };
-+		E6BEA1032D26000100A1B2C1 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = E6BEA1022D26000100A1B2C1 /* Sentry */; };
-+		E6BEA1052D26000100A1B2C1 /* DataIntegrityLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA1042D26000100A1B2C1 /* DataIntegrityLog.swift */; };
-+		E6BEA1062D26000100A1B2C1 /* DataIntegrityLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA1042D26000100A1B2C1 /* DataIntegrityLog.swift */; };
-+		E6BEA1072D26000100A1B2C1 /* DataIntegrityLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA1042D26000100A1B2C1 /* DataIntegrityLog.swift */; };
-+		E6BEA1082D26000100A1B2C1 /* DataIntegrityLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA1042D26000100A1B2C1 /* DataIntegrityLog.swift */; };
-+		E6BEA10A2D26000100A1B2C1 /* SentryBootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA1092D26000100A1B2C1 /* SentryBootstrap.swift */; };
-+		E6BEA10C2D26000100A1B2C1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E6BEA10B2D26000100A1B2C1 /* PrivacyInfo.xcprivacy */; };
-+		E6BEA10F2D26000100A1B2C1 /* DataIntegrityLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BEA10E2D26000100A1B2C1 /* DataIntegrityLogTests.swift */; };
- 		532C58BC2A629C3900DA2C81 /* NewBudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532C58BB2A629C3900DA2C81 /* NewBudgetView.swift */; };
- 		533182D328A0D61D00DEBFA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5327D294287C698900F76ADF /* Assets.xcassets */; };
- 		53326B2C2ADC3C8D0027C693 /* TestDragToAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53326B2B2ADC3C8D0027C693 /* TestDragToAdd.swift */; };
-@@ -288,6 +296,10 @@
- 		5324985428A64DA7007B34D1 /* RecentTransactionsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTransactionsWidget.swift; sourceTree = "<group>"; };
- 		5327D283287C697400F76ADF /* dime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dime.app; sourceTree = BUILT_PRODUCTS_DIR; };
- 		5327D286287C697400F76ADF /* dimeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dimeApp.swift; sourceTree = "<group>"; };
-+		E6BEA1042D26000100A1B2C1 /* DataIntegrityLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataIntegrityLog.swift; sourceTree = "<group>"; };
-+		E6BEA1092D26000100A1B2C1 /* SentryBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentryBootstrap.swift; sourceTree = "<group>"; };
-+		E6BEA10B2D26000100A1B2C1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-+		E6BEA10E2D26000100A1B2C1 /* DataIntegrityLogTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DataIntegrityLogTests.swift; sourceTree = "<group>"; };
- 		5327D28D287C697C00F76ADF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
- 		5327D294287C698900F76ADF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
- 		5327D2AC287C6AD200F76ADF /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
-@@ -470,6 +482,7 @@
- 			isa = PBXFrameworksBuildPhase;
- 			buildActionMask = 2147483647;
- 			files = (
-+				E6BEA1032D26000100A1B2C1 /* Sentry in Frameworks */,
- 				D6A4DE242D61744400F7F751 /* SwiftUIIntrospect-Static in Frameworks */,
- 				D6A4DE202D61744400F7F751 /* SwiftUIIntrospect in Frameworks */,
- 				53A4148028B7DA4C008C30E7 /* ConfettiSwiftUI in Frameworks */,
-@@ -571,6 +584,8 @@
- 				53A4147828B6625D008C30E7 /* AppDelegate.swift */,
- 				53A4147A28B66265008C30E7 /* SceneDelegate.swift */,
- 				5327D286287C697400F76ADF /* dimeApp.swift */,
-+				E6BEA1092D26000100A1B2C1 /* SentryBootstrap.swift */,
-+				E6BEA10B2D26000100A1B2C1 /* PrivacyInfo.xcprivacy */,
- 				5327D2DF287C6B7C00F76ADF /* DeviceModels.json */,
- 				5327D2CA287C6B4700F76ADF /* ContentView.swift */,
- 				5327D294287C698900F76ADF /* Assets.xcassets */,
-@@ -627,6 +642,7 @@
- 				53BC2A3F2A8B21920019E4A8 /* MainModel.xcdatamodeld */,
- 				53980E5B28A77B62009CC4E2 /* Helper.swift */,
- 				5327D2AC287C6
-```
-
-**File**: `app/dime.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +9/-0)
-```diff
-@@ -55,6 +55,15 @@
-         "version" : "1.3.2"
-       }
-     },
-+    {
-+      "identity" : "sentry-cocoa",
-+      "kind" : "remoteSourceControl",
-+      "location" : "https://github.com/getsentry/sentry-cocoa.git",
-+      "state" : {
-+        "revision" : "485e0622e00d60d71eb6b519822188e2eb7c29e3",
-+        "version" : "9.35.0"
-+      }
-+    },
-     {
-       "identity" : "swiftui-introspect",
-       "kind" : "remoteSourceControl",
-```
-
-**File**: `app/dime/Data/Backups.swift` (modified, +60/-3)
-```diff
-@@ -435,6 +435,15 @@ final class BackupManager: ObservableObject {
-         let currentCount = dataController.transactionCount()
- 
-         if BackupStore.looksLikeDataLoss(currentTransactionCount: currentCount, backupTransactionCount: backup.transactionCount) {
-+            DataIntegrityLog.captureOnce(
-+                key: "below-backup",
-+                message: "Transaction count is far below the newest backup",
-+                numbers: [
-+                    "transactions": currentCount,
-+                    "backupTransactions": backup.transactionCount
-+                ],
-+                flags: ["cloudKit": dataController.isCloudKitSyncEnabled]
-+            )
-             suggestedRestore = SuggestedRestore(backup: backup, currentTransactionCount: currentCount)
-         }
-     }
-@@ -480,11 +489,28 @@ final class BackupManager: ObservableObject {
-                 } ?? false
- 
-                 if !automatic || (!isEmpty && !looksLost) {
--                    try store.write(from: context)
-+                    let summary = try store.write(from: context)
-                     succeeded = true
-+                    DataIntegrityLog.breadcrumb(
-+                        "backup written",
-+                        numbers: ["transactions": summary.transactionCount],
-+                        flags: ["automatic": automatic]
-+                    )
-+                } else {
-+                    DataIntegrityLog.breadcrumb(
-+                        "backup skipped",
-+                        numbers: ["transactions": transactionCount],
-+                        flags: ["automatic": automatic, "empty": isEmpty, "looksLost": looksLost]
-+                    )
-                 }
-             } catch {
--                logger.error("Backing up failed: \(String(describing: error), privacy: .public)")
-+                let nsError = error as NSError
-+                logger.error("Backing up failed: \(nsError.domain, privacy: .public) \(nsError.code, privacy: .public)")
-+                DataIntegrityLog.capture(
-+                    error,
-+                    message: "Backup failed",
-+                    flags: ["automatic": automatic]
-+                )
-             }
- 
-             DispatchQueue.main.async {
-@@ -499,16 +525,30 @@ final class BackupManager: ObservableObject {
-     func restore(_ backup: BackupSummary, completion: @escaping (Result<RestoreResult, Error>) -> Void) {
-         // Restoring before iCloud has caught up would re-add items that are about to be downloaded again.
-         guard dataController.isDataCurrentWithICloud else {
-+            DataIntegrityLog.breadcrumb(
-+                "restore skipped",
-+                numbers: ["backupTransactions": backup.transactionCount],
-+                tokens: ["reason": "waitingForICloud"]
-+            )
-             completion(.failure(RestoreError.waitingForICloud))
-             return
-         }
- 
-         // Rows restored mid-change could miss it and be read in the wrong currency.
-         guard defaults?.data(forKey: MainCurrencyChangeManager.pendingPlanKey) == nil else {
-+            DataIntegrityLog.breadcrumb(
-+                "restore skipped",
-+                numbers: ["backupTransactions": backup.transactionCount],
-+                tokens: ["reason": "currencyChange"]
-+            )
-             completion(.failure(RestoreError.currencyChangeInProgress))
-             return
-         }
- 
-+        DataIntegrityLog.breadcrumb(
-+            "restore started",
-+            numbers: ["backupTransactions": backup.transactionCount]
-+        )
-         isWorking = true
-         let context = dataController.container.newBackgroundContext()
-         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-@@ -527,10 +567,27 @@ final class BackupManager: ObservableObject {
-             DispatchQueue.main.async {
-                 self.isWorking = false
- 
--                if case .success = result {
-+                switch result {
-+                case let .success(restored):
-                     self.defaults?.set(backup.url.lastPathComponent, forKey: Self.handledBackupKey)
-                     self.suggestedRestore = nil
-                     WidgetCenter.shared.reloadAllTimelines()
-+                    DataIntegrityLog.breadcrumb(
-+                        "restore finished",
-+                        numbers: [
-+                            "transactions": restored.transactions,
-+                            "categories": restored.categories,
-+                            "budgets": restored.budgets,
-+                            "templates": restored.templates,
-+                            "backupTransactions": backup.transactionCount
-+                        ]
-+                    )
-+                case let .failure(error):
-+                    DataIntegrityLog.capture(
-+                        error,
-+                        message: "Restore failed",
-+                        numbers: ["backupTransactions": backup.transactionCount]
-+                    )
-```
-
-**File**: `app/dime/Data/DataController.swift` (modified, +336/-12)
-```diff
-@@ -268,6 +268,7 @@ class DataController: ObservableObject {
- 
-     static let iCloudSyncEnabledKey = "iCloudSyncEnabled"
-     static let lastBulkDeletionKey = "lastBulkDeletion"
-+    static let didEraseAllDataKey = "didEraseAllData"
-     static let dataIsCurrentNotification = Notification.Name("DimeDataIsCurrentWithICloud")
-     private static let cloudKitContainerIdentifier = "iCloud.com.rafaelsoh.dime"
- 
-@@ -285,6 +286,10 @@ class DataController: ObservableObject {
-         }
- 
-         defaults.set(legacyValue, forKey: iCloudSyncEnabledKey)
-+        DataIntegrityLog.breadcrumb(
-+            "legacy iCloud sync setting carried over",
-+            flags: ["enabled": legacyValue]
-+        )
-     }
- 
-     var container = NSPersistentCloudKitContainer(name: "MainModel")
-@@ -296,6 +301,7 @@ class DataController: ObservableObject {
- 
-     // Main thread only.
-     private var recurringGate: RecurringGenerationGate
-+    private var transactionCountAtCloudKitEventStart: [UUID: Int] = [:]
-     private var recurringFallback: DispatchWorkItem?
-     private var pathMonitor: NWPathMonitor?
- 
-@@ -346,20 +352,93 @@ class DataController: ObservableObject {
- 
-         container.persistentStoreDescriptions = [description]
- 
--        if !usesDemoData, let storeURL = description.url {
-+        let storeURL = description.url
-+        let migrationNeeded = !usesDemoData && storeURL.map {
-+            StoreSnapshot.needsMigration(storeAt: $0, to: container.managedObjectModel)
-+        } ?? false
-+        var countsBeforeMigration: [String: Int]?
-+
-+        if migrationNeeded, let storeURL {
-+            let sourceModel = StoreSnapshot.sourceModel(forStoreAt: storeURL)
-+            if let sourceModel {
-+                countsBeforeMigration = StoreSnapshot.recordCounts(storeAt: storeURL, model: sourceModel)
+         init(isActive: Binding<Bool>) {
+             self.isActive = isActive
++            observer = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillChangeFrameNotification, object: nil, queue: .main) { [weak self] notification in
++                guard let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
++                self?.keyboardWillChange(to: frame.height)
 +            }
++        }
 +
-+            var startingNumbers = countsBeforeMigration ?? [:]
-+            let facts = Self.storeFileFacts(storeURL)
-+            startingNumbers["fileBytes"] = facts.bytes
-+            startingNumbers["walBytes"] = facts.walBytes
-+            DataIntegrityLog.breadcrumb(
-+                "migration starting",
-+                numbers: startingNumbers,
-+                flags: [
-+                    "sourceModelFound": sourceModel != nil,
-+                    "counted": countsBeforeMigration != nil,
-+                    "cloudKit": isCloudKitSyncEnabled
-+                ],
-+                persist: true
-+            )
-+
-             do {
-                 if let snapshot = try StoreSnapshot.snapshotIfMigrationNeeded(storeAt: storeURL, to: container.managedObjectModel, in: StoreSnapshot.directory(forStoreAt: storeURL)) {
--                    logger.notice("Saved the store before migrating it to \(snapshot.path, privacy: .public)")
-+                    logger.notice("Saved the store before migrating it")
-+                    let bytes = (try? snapshot.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0
-+                    DataIntegrityLog.breadcrumb(
-+                        "pre-migration snapshot saved",
-+                        numbers: ["bytes": bytes],
-+                        flags: ["cloudKit": isCloudKitSyncEnabled],
-+                        persist: true
-+                    )
-                 }
-             } catch {
--                logger.error("Saving the store before migrating it failed: \(String(describing: error), privacy: .public)")
-+                let nsError = error as NSError
-+                logger.error("Saving the store before migrating it failed: \(nsError.domain, privacy: .public) \(nsError.code, privacy: .public)")
-+                DataIntegrityLog.capture(
-+                    error,
-+                    message: "Pre-migration snapshot failed",
-+                    numbers: countsBeforeMigration ?? [:],
-+                    flags: ["cloudKit": isCloudKitSyncEnabled]
-+                )
++        deinit {
++            if let observer {
++                NotificationCenter.default.removeObserver(observer)
++            }
+         }
+ 
+         func focusChanged(_ focused: Bool) {
+@@ -115,6 +137,43 @@ struct AccountIconKeyboard: UIViewRepresentable {
+                 self.isActive.wrappedValue = focused
              }
          }
++
++        /// Makes the icons as tall as the name's keyboard, before they show.
++        func sizeIcons() {
++            guard let host, let keyboard = host.iconKeyboard else { return }
++            let padding = Self.systemPadding ?? host.window?.safeAreaInsets.bottom ?? 0
++            let height = iconsHeight(padding: padding)
++
++            if keyboard.frame.height != height {
++                keyboard.frame.size.height = height
++            }
++        }
++
++        private func iconsHeight(padding: CGFloat) -> CGFloat {
++            // A hardware keyboard leaves only a short bar, which the icons can't fit in.
++            guard let textKeyboardHeight, textKeyboardHeight >= 200 else {
++                return AccountIconKeyboard.fallbackHeight
++            }
++            return max(AccountIconKeyboard.minimumHeight, (textKeyboardHeight - padding).rounded())
++        }
++
++        private func keyboardWillChange(to height: CGFloat) {
++            guard height > 0, let host, let keyboard = host.iconKeyboard else { return }
++
++            guard host.isFirstResponder else {
++                textKeyboardHeight = height
++                return
++            }
++
++            // The icons are showing: learn what the system added below them, and if the guess was off, correct it once.
++            Self.systemPadding = height - keyboard.frame.height
++            let corrected = iconsHeight(padding: height - keyboard.frame.height)
++
++            if abs(corrected - keyboard.frame.height) > 1 {
++                keyboard.frame.size.height = corrected
++                host.reloadInputViews()
++            }
++        }
+     }
  
--        container.loadPersistentStores { description, error in
-+        let shouldReportIntegrity = !usesDemoData
-+        let countsBeforeMigrationForLoad = countsBeforeMigration
+     func makeCoordinator() -> Coordinator {
+@@ -123,12 +182,13 @@ struct AccountIconKeyboard: UIViewRepresentable {
  
-+        container.loadPersistentStores { description, error in
-             if let error = error as NSError? {
--                fatalError("Unresolved error \(error), \(error.userInfo) for \(description)")
-+                if shouldReportIntegrity {
-+                    var numbers = countsBeforeMigrationForLoad ?? [:]
-+                    let facts = Self.storeFileFacts(description.url)
-+                    numbers["fileBytes"] = facts.bytes
-+                    numbers["walBytes"] = facts.walBytes
-+                    numbers["snapshotCount"] = facts.snapshotCount
-+                    DataIntegrityLog.capture(
-+                        error,
-+                        message: "Persistent store failed to load",
-+                        numbers: numbers,
-+                        flags: [
-+                            "migrationNeeded": migrationNeeded,
-+                            "cloudKit
+     func makeUIView(context: Context) -> AccountIconKeyboardHost {
+         let host = AccountIconKeyboardHost()
+-        let hosting = UIHostingController(rootView: AccountIconKeyboardContent(selection: selection, onPick: onPick))
++        let hosting = UIHostingController(rootView: AccountIconKeyboardContent(selection: selection, colorScheme: context.environment.colorScheme, onPick: onPick))
+         hosting.view.backgroundColor = .clear
+         hosting.view.translatesAutoresizingMaskIntoConstraints = false
+ 
+         // Drawn on the keyboard's own background, like the emoji keyboard.
+-        let keyboard = UIInputView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 270), inputViewStyle: .keyboard)
++        // The system sets the width; the height is the name's keyboard's, once that's known (see Coordinator).
++        let keyboard = UIInputView(frame: CGRect(x: 0, y: 0, width: 320, height: Self.fallbackHeight), inputViewStyle: .keyboard)
+         keyboard.allowsSelfSizing = false
+         keyboard.addSubview(hosting.view)
+         NSLayoutConstraint.activate([
+@@ -143,16 +203,30 @@ struct AccountIconKeyboard: UIViewRepresentable {
+             coordinator?.focusChanged(focused)
+         }
+         context.coordinator.hosting = hosting
++        context.coordinator.host = host
+         return host
+     }
+ 
+     func updateUIView(_ host: AccountIconKeyboardHost, context: Context) {
+-        context.coordinator.isActive = $isActive
+-    
 ```
 
-**File**: `app/dime/Data/DataIntegrityLog.swift` (added, +294/-0)
+**File**: `app/dime/Views/TransactionView.swift` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,294 @@
-+//
-+//  DataIntegrityLog.swift
-+//  dime
-+//
-+//  Privacy-safe diagnostics for store loading, migration, sync, backup, and bulk deletion.
-+//  Callers may pass counts, booleans, and short tokens (error domains, event types).
-+//  They must not pass notes, amounts, names, or any other user-entered text.
-+//
-+
-+import CloudKit
-+import Foundation
-+import os
-+
-+#if canImport(Sentry)
-+import Sentry
-+#endif
-+
-+enum DataIntegrityLog {
-+    struct FailureSummary: Equatable {
-+        var domain: String
-+        var code: Int
-+        /// Domains and codes only, never `userInfo` values or localized text.
-+        var chain: String
-+    }
-+
-+    private static let logger = Logger(subsystem: "com.rafaelsoh.dime", category: "DataIntegrity")
-+    private static let lock = NSLock()
-+    private static let pendingKey = "dime.dataIntegrity.pending"
-+    private static let maximumPending = 40
-+    private static let suiteName = "group.com.rafaelsoh.dime"
-+    private static let allowedTokenCharacters = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._:-")
-+
-+    /// A breadcrumb. `persist` keeps it for the app to forward when this process has no Sentry SDK
-+    /// (widgets and intents). Routine breadcrumbs stay in memory only.
-+    static func breadcrumb(
-+        _ message: String,
-+        numbers: [String: Int] = [:],
-+        flags: [String: Bool] = [:],
-+        tokens: [String: String] = [:],
-+        persist: Bool = false
-+    ) {
-+        deliver(message: message, capture: false, error: nil, numbers: numbers, flags: flags, tokens: tokens, persist: persist)
-+    }
-+
-+    static func capture(
-+        _ message: String,
-+        numbers: [String: Int] = [:],
-+        flags: [String: Bool] = [:],
-+        tokens: [String: String] = [:]
-+    ) {
-+        deliver(message: message, capture: true, error: nil, numbers: numbers, flags: flags, tokens: tokens, persist: true)
-+    }
-+
-+    static func capture(
-+        _ error: Error,
-+        message: String,
-+        numbers: [String: Int] = [:],
-+        flags: [String: Bool] = [:],
-+        tokens: [String: String] = [:]
-+    ) {
-+        deliver(message: message, capture: true, error: error, numbers: numbers, flags: flags, tokens: tokens, persist: true)
-+    }
-+
-+    /// One captured event per app version for this key, shared across the app and its extensions.
-+    static func captureOnce(
-+        key: String,
-+        message: String,
-+        numbers: [String: Int] = [:],
-+        flags: [String: Bool] = [:],
-+        tokens: [String: String] = [:]
-+    ) {
-+        let storageKey = onceStorageKey(key)
-+        guard markOnce(storageKey) else {
-+            return
-+        }
-+
-+        deliver(message: message, capture: true, error: nil, numbers: numbers, flags: flags, tokens: tokens, persist: true)
-+    }
-+
-+    static func failureSummary(for error: Error) -> FailureSummary {
-+        var parts: [String] = []
-+        var pending: [NSError] = [error as NSError]
-+        var seen = 0
-+
-+        while let next = pending.popLast(), seen < 8 {
-+            seen += 1
-+            parts.append("\(safeToken(next.domain)):\(next.code)")
-+
-+            if let underlying = next.userInfo[NSUnderlyingErrorKey] as? Error {
-+                pending.append(underlying as NSError)
-+            }
-+
-+            if let multiple = next.userInfo[NSMultipleUnderlyingErrorsKey] as? [Any] {
-+                pending.append(contentsOf: multiple.prefix(4).compactMap { $0 as? Error }.map { $0 as NSError })
-+            }
-+
-+            // Partial CloudKit failures can carry the record itself. Keep the error code only.
-+            if let partial = next.userInfo[CKPartialErrorsByItemIDKey] as? [AnyHashable: Any] {
-+                let partialErrors = partial.values.compactMap { $0 as? Error }.prefix(3)
-+                pending.append(contentsOf: partialErrors.map { $0 as NSError })
-+            }
-+        }
-+
-+        let primary = error as NSError
-+        let chain = parts.joined(separator: " | ")
-+        return FailureSummary(domain: safeToken(primary.domain), code: primary.code, chain: String(chain.prefix(300)))
-+    }
-+
-+    /// Sends diagnostics an extension stored in the app group. No-op until the app starts Sentry.
-+    static func flushPending() {
-+        #if canImport(Sentry)
-+        for record in dequeueAll() {
-+            send(record)
-+        }
-+        #endif
-+    }
-+
-+    // MARK: - Delivery
-+
-+    private struct PendingRecord: Codable {
-+        var message: String
-+        var capture: Bool
-+        var numbers: [String: Int]
-+        var flags: [String: Bool]
-+        var tokens: [String: String]
-+        var failureDomain: String?
-+        var failureCode: Int?
-+        var failureChain: String?
-+    }
-+
-+    private static func deliver(
-+        message: String,
-+        capture: Bool,
-+        error: Error?,
-+        numbers: [String: Int],
-+        flags: [String: Bool],
-+        tokens: [String: String],
-+   
+@@ -101,7 +101,7 @@ struct TransactionView: View {
+ 
+     /// The first account that isn't where the transfer comes from.
+     var defaultTransferDestination: AccountChoice? {
+-        ([.main] + accountObjects.map(AccountChoice.account)).first { $0 != account }
++        firstAccount(otherThan: account)
+     }
+ 
+     @AppStorage("currency", store: UserDefaults(suiteName: "group.com.rafaelsoh.dime")) var currency: String = Locale.current.currencyCode ?? "USD"
+@@ -807,7 +807,7 @@ struct TransactionView: View {
+         case .to:
+             AccountPickerSheet(title: "To", selection: Binding(get: { transferTo }, set: { picked in
+                 if let picked, picked == account {
+-                    account = transferTo ?? firstAccount(otherThan: picked)
++                    account = transferTo ?? firstAccount(otherThan: picked) ?? .main
+                 }
+                 transferTo = picked
+             }))
+@@ -826,8 +826,8 @@ struct TransactionView: View {
+     }
+ 
+     /// Main or an account, whichever comes first that isn't `choice`.
+-    func firstAccount(otherThan choice: AccountChoice) -> AccountChoice {
+-        ([.main] + accountObjects.map(AccountChoice.account)).first { $0 != choice } ?? .main
++    func firstAccount(otherThan choice: AccountChoice) -> AccountChoice? {
++        ([.main] + accountObjects.map(AccountChoice.account)).first { $0 != choice }
+     }
+ 
+     /// The date, or on a template, which has no date, a label saying it's a Quick Add template.
 ```
 
 ---
 
-### Incident Patch 2: `67b0c7d3` (2026-11-26)
-**Commit Message**: Merge pull request #178 from rafsoh/build/3.0.2-6
+### Incident Patch 2: `6519124e` (2026-11-28)
+**Commit Message**: Merge pull request #201 from rafsoh/build/3.1-4
 
-Bump 3.0.2 to build 6
+Bump 3.1 to build 4
 
 **File**: `app/dime.xcodeproj/project.pbxproj` (modified, +8/-8)
 ```diff
-@@ -1544,7 +1544,7 @@
+@@ -1727,7 +1727,7 @@
  				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
  				CODE_SIGN_ENTITLEMENTS = BudgetIntent/BudgetIntent.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
  				INFOPLIST_FILE = BudgetIntent/Info.plist;
-@@ -1576,7 +1576,7 @@
+@@ -1759,7 +1759,7 @@
  				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
  				CODE_SIGN_ENTITLEMENTS = BudgetIntent/BudgetIntent.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
- 				INFOPLIST_FILE = BudgetIntent/Info.plist;
-@@ -1607,7 +1607,7 @@
+@@ -1791,7 +1791,7 @@
  			buildSettings = {
  				CODE_SIGN_ENTITLEMENTS = BudgetIntentUI/BudgetIntentUI.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
  				INFOPLIST_FILE = BudgetIntentUI/Info.plist;
-@@ -1634,7 +1634,7 @@
+@@ -1818,7 +1818,7 @@
  			buildSettings = {
  				CODE_SIGN_ENTITLEMENTS = BudgetIntentUI/BudgetIntentUI.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
- 				INFOPLIST_FILE = BudgetIntentUI/Info.plist;
-@@ -1782,7 +1782,7 @@
+@@ -1969,7 +1969,7 @@
  				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
  				CODE_SIGN_ENTITLEMENTS = dime/dime.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
  				DEVELOPMENT_ASSET_PATHS = "\"dime/Preview Content\"";
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				ENABLE_PREVIEWS = YES;
-@@ -1823,7 +1823,7 @@
+@@ -2015,7 +2015,7 @@
  				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
  				CODE_SIGN_ENTITLEMENTS = dime/dime.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				DEVELOPMENT_ASSET_PATHS = "\"dime/Preview Content\"";
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
- 				ENABLE_PREVIEWS = YES;
-@@ -1863,7 +1863,7 @@
+@@ -2061,7 +2061,7 @@
  				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
  				CODE_SIGN_ENTITLEMENTS = ExpenditureWidgetExtension.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
  				INFOPLIST_FILE = ExpenditureWidget/Info.plist;
-@@ -1894,7 +1894,7 @@
+@@ -2092,7 +2092,7 @@
  				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
  				CODE_SIGN_ENTITLEMENTS = ExpenditureWidgetExtension.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
- 				INFOPLIST_FILE = ExpenditureWidget/Info.plist;
 ```
 
 ---
 
-### Incident Patch 3: `6f4b0aad` (2026-11-26)
-**Commit Message**: Bump 3.0.2 to build 6
+### Incident Patch 3: `de79aa2b` (2026-11-28)
+**Commit Message**: Bump 3.1 to build 4
 
 **File**: `app/dime.xcodeproj/project.pbxproj` (modified, +8/-8)
 ```diff
-@@ -1544,7 +1544,7 @@
+@@ -1727,7 +1727,7 @@
  				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
  				CODE_SIGN_ENTITLEMENTS = BudgetIntent/BudgetIntent.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
  				INFOPLIST_FILE = BudgetIntent/Info.plist;
-@@ -1576,7 +1576,7 @@
+@@ -1759,7 +1759,7 @@
  				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
  				CODE_SIGN_ENTITLEMENTS = BudgetIntent/BudgetIntent.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
- 				INFOPLIST_FILE = BudgetIntent/Info.plist;
-@@ -1607,7 +1607,7 @@
+@@ -1791,7 +1791,7 @@
  			buildSettings = {
  				CODE_SIGN_ENTITLEMENTS = BudgetIntentUI/BudgetIntentUI.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
  				INFOPLIST_FILE = BudgetIntentUI/Info.plist;
-@@ -1634,7 +1634,7 @@
+@@ -1818,7 +1818,7 @@
  			buildSettings = {
  				CODE_SIGN_ENTITLEMENTS = BudgetIntentUI/BudgetIntentUI.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
- 				INFOPLIST_FILE = BudgetIntentUI/Info.plist;
-@@ -1782,7 +1782,7 @@
+@@ -1969,7 +1969,7 @@
  				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
  				CODE_SIGN_ENTITLEMENTS = dime/dime.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
  				DEVELOPMENT_ASSET_PATHS = "\"dime/Preview Content\"";
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				ENABLE_PREVIEWS = YES;
-@@ -1823,7 +1823,7 @@
+@@ -2015,7 +2015,7 @@
  				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
  				CODE_SIGN_ENTITLEMENTS = dime/dime.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				DEVELOPMENT_ASSET_PATHS = "\"dime/Preview Content\"";
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
- 				ENABLE_PREVIEWS = YES;
-@@ -1863,7 +1863,7 @@
+@@ -2061,7 +2061,7 @@
  				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
  				CODE_SIGN_ENTITLEMENTS = ExpenditureWidgetExtension.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
  				INFOPLIST_FILE = ExpenditureWidget/Info.plist;
-@@ -1894,7 +1894,7 @@
+@@ -2092,7 +2092,7 @@
  				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
  				CODE_SIGN_ENTITLEMENTS = ExpenditureWidgetExtension.entitlements;
  				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 5;
-+				CURRENT_PROJECT_VERSION = 6;
+-				CURRENT_PROJECT_VERSION = 3;
++				CURRENT_PROJECT_VERSION = 4;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
  				DEVELOPMENT_TEAM = 5UNNTHMF44;
  				GENERATE_INFOPLIST_FILE = YES;
- 				INFOPLIST_FILE = ExpenditureWidget/Info.plist;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #178** (2026-11-26): Bump 3.0.2 to build 6 (@rafsoh)
-- **PR #177** (2026-11-26): 3.0.2 release notes and Sentry privacy policy (@rafsoh)
-- **PR #176** (2026-11-26): Bump 3.0.2 to build 5 (@rafsoh)
-- **PR #175** (2026-11-26): Add SF Pro, Atkinson Hyperlegible Next, Fraunces and Geist Pixel fonts (@rafsoh)
-- **PR #174** (2026-11-26): Remove temporary screenshot launch argument from the Allo font PR (@rafsoh)
-- **PR #173** (2026-11-26): Bump 3.0.2 to build 4 (@rafsoh)
+- **PR #202** (2026-11-28): Translate accounts everywhere, and pick accounts in Shortcuts (@rafsoh)
+- **PR #201** (2026-11-28): Bump 3.1 to build 4 (@rafsoh)
+- **PR #200** (2026-11-28): Pick a budget's accounts in place, and give the bottom bar top room (@rafsoh)
+- **PR #199** (2026-11-28): Keep the add page still under the keyboard on the Duo, and leave whole totals whole (@rafsoh)
+- **PR #198** (2026-11-28): Bump 3.1 to build 3 (@rafsoh)
+- **PR #197** (2026-11-28): Calculator: size the keypad and operator row to the keyboard, smaller operators, no total preview (@rafsoh)
 
 ---
 
@@ -2407,33 +2143,57 @@ Bump 3.0.2 to build 6
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add privacy-safe Sentry crash and data-integrity reporting.
+## X. Size the icon keyboard like the name's keyboard, and fix its edge cases
 
 **RULE**:
-When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rafsoh/dimeApp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/dime/Views/AccountsView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rafsoh/dimeApp. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8066e75`: Add privacy-safe Sentry crash and data-integrity reporting.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `470eba78`: Size the icon keyboard like the name's keyboard, and fix its edge cases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/dime/Views/AccountsView.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
+    /// Used until the name's keyboard has been seen, such as with a hardware keyboard.
+    static let fallbackHeight: CGFloat = 270
+    /// Four rows of icons.
+    static let minimumHeight: CGFloat = 240
 
-## Sentry auth. The public DSN is committed; the upload token is not.
-.sentryclirc
+        weak var host: AccountIconKeyboardHost?
+        /// How tall the name's keyboard is, so the icons can be as tall and the sheet above them stays put.
+        private var textKeyboardHeight: CGFloat?
+        /// What the system adds below a custom keyboard, such as room for the home indicator. Measured the first
+        /// time the icons show.
+        private static var systemPadding: CGFloat?
+        private var observer: NSObjectProtocol?
+            observer = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillChangeFrameNotification, object: nil, queue: .main) { [weak self] notification in
+                guard let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+                self?.keyboardWillChange(to: frame.height)
+            }
+        }
+
+        deinit {
+            if let observer {
+                NotificationCenter.default.removeObserver(observer)
+            }
+
+        /// Makes the icon
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        let hosting = UIHostingController(rootView: AccountIconKeyboardContent(selection: selection, onPick: onPick))
+        let keyboard = UIInputView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 270), inputViewStyle: .keyboard)
+        context.coordinator.isActive = $isActive
+    
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8066e75` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `470eba78` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

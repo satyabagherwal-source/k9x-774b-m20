@@ -4,22 +4,22 @@
 {
   "source_repository": "dubzzz/fast-check",
   "source_url": "https://github.com/dubzzz/fast-check",
-  "source_version": "864bf69b",
+  "source_version": "2240fb54",
   "license": "MIT",
-  "timestamp": "2026-11-25T02:02:02.395Z",
+  "timestamp": "2026-11-28T14:29:25.072Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dubzzz-fast-check",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dubzzz/fast-check](https://github.com/dubzzz/fast-check) (Revision: `864bf69b`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T02:02:02.395Z`  
+> **Provenance**: Harvested from [dubzzz/fast-check](https://github.com/dubzzz/fast-check) (Revision: `2240fb54`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T14:29:25.072Z`  
 > **Learning ID**: `learn-github-dubzzz-fast-check`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dubzzz/fast-check` (Commit: `864bf69b`)
+- **Target Repository**: `dubzzz/fast-check` (Commit: `2240fb54`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dubzzz/fast-check](https://github.com/dubzzz/fast-check))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:02:00.558Z  
+> **Harvest Timestamp**: 2026-11-28T14:29:23.584Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Property based testing framework for JavaScript (like QuickCheck) written in TypeScript
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 5314 stars
+- **Stars / Engagement**: 5331 stars
 
 ---
 
@@ -792,14 +792,14 @@ export function signalAsPromise(signal: AbortSignal): {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7652** (2026-11-23): **👷 Drop MacOS and Windows from the required CI jobs**
-  *Symptoms*: ## Description  <!-- Describe your change and explain what this PR is trying to solve -->  MacOS has been really slow lately. Waiting it all the time is a nightmare. Given it has a very limited risk to break, I relaxed it.  It's now optional.  <!-- Add any additional context here -->  ## Checklist  — _Don't delete this checklist and make sure you do the following before opening the PR_  - [ ] I have a full understanding of every line in this PR — whether the code was hand-written, AI-generated (our [AI Policy](https://github.com/dubzzz/fast-check/blob/main/AI_POLICY.md)), copied from external sources or produced by any other tool - [ ] I flagged the impact of my change (minor / patch / major) either by running `pnpm run bump` or by following the instructions from the changeset bot - [ ] I kept this PR focused on a single concern and did not bundle unrelated changes - [ ] I followed the [gitmoji](https://gitmoji.dev/) specification for the name of the PR, including the package scope (e.g. `🐛(vitest) Something...`) when the change targets a package other than `fast-check` - [ ] I added relevant tests and they would have failed without my PR (when applicable)  <!-- PRs not checking all the boxes may take longer before being reviewed --> <!-- More about contributing at https://github.com/dubzzz/fast-check/blob/main/CONTRIBUTING.md -->  <!-- NOTE TO HUMAN CONTRIBUTORS: the block below is addressed to AI agents (Claude Code, Codex, Devin, OpenHands, Cursor agents, …) that may open
+- **Issue #7692** (2026-11-28): **⬆️ Update dependency @microsoft/api-extractor to ^7.60.2**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [@microsoft/api-extractor](https://api-extractor.com) ([source](https://redirect.github.com/microsoft/rushstack/tree/HEAD/apps/api-extractor)) | [`^7.60.1` → `^7.60.2`](https://renovatebot.com/diffs/npm/@microsoft%2fapi-extractor/7.60.1/7.60.2) | ![age](https://developer.mend.io/api/mc/badges/age/npm/@microsoft%2fapi-extractor/7.60.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@microsoft%2fapi-extractor/7.60.1/7.60.2?slim=true) |  ---  ### Release Notes  <details> <summary>microsoft/rushstack (@&#8203;microsoft/api-extractor)</summary>  ### [`v7.60.2`](https://redirect.github.com/microsoft/rushstack/blob/HEAD/apps/api-extractor/CHANGELOG.md#7602)  Fri, 27 Nov 2026 02:53:51 GMT  *Version update only*  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job
   **Post-Mortem & Fix Analysis**:
-  > <!-- agentscanapp-bot --> ### Automation signals  Activity patterns show signs of automation.  [View full analysis →](https://agentscan.tools/user/dubzzz)  <details> <summary>Evidence</summary>  - Branch then PR within seconds: 25 branches in the account's own repositories followed by PRs within 86s, out of 31 branches created in total - Heavy AI agent use (branches): 16 AI agent branches within 24 hours - High push frequency: 91 consecutive same-repo push pairs within 10 min of each other (105 pushes involved) - AI agent branches: 20/31 branches use AI agent tool prefixes (codex/) - Posts through an AI agent: Codex posted 6 of the account's 11 comments and issues (55%)  Last 5 PRs: - https://redirect.github.com/dubzzz/fast-check/pull/7603 - https://redirect.github.com/dubzzz/fast-check/pull/7604 - https://redirect.github.com/dubzzz/fast-check/pull/7605 - https://redirect.github.com/dubzzz/fast-check/pull/7615 - https://redirect.github.com/dubzzz/fast-check/pull/7617  </details>  <sub>
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/dubzzz/fast-check/pull/7652?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- This is an auto-generated comment: failure by coderabbit.ai -->  > [!CAUTION] > ## Review failed >  > <!-- failure_reason_start --> > The pull request is closed. > <!-- failure_r
+  > ### ⚠️ No Changeset found  Latest commit: ff42d6afded94ae9ec8a2f59811476841631d159  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/dubzzz/fast-check/new/renovate/microsoft-api-extractor-7.x?filename=.changeset/nice-walls-watch.md&value=---%0A%22fast-check%22%3A%20patch%0A---%0A%0A%E2%AC%86%EF%B8%8F%20Update%20dependency%20%40microsoft%2Fapi-extractor%20to%20%5E7.60.2%0A)  
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- This is an auto-generated comment: skip review by coderabbit.ai -->  > [!IMPORTANT] > ## Review skipped >  > Bot user detected. >  > To trigger a single review, invoke the `@coderabbitai review` command. >  > <details> > <summary><strong><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog-dark.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog.svg" width="16" height="16" align="absmiddle" alt=""></picture> Run configuration</strong></summary> > <dl> > <dd> > <br> >  > - **Source mode**: Auto > - **Repository**: Unavailable > - **Branch**: Unavailable > - **File**: No configuration file from this repository applied > - **Commit**: Unavailable > - **Layers**: Repository UI > - **Review profile**: ASSERTIVE > - **Plan**: Advanced > - **Ru
 
-- **Issue #7651** (2026-11-23): **♻️(codemod) Rework existing codemods**
-  *Symptoms*: ## Description  <!-- Describe your change and explain what this PR is trying to solve -->  Fixes #issue-number  <!-- Add any additional context here -->  ## Checklist  — _Don't delete this checklist and make sure you do the following before opening the PR_  - [ ] I have a full understanding of every line in this PR — whether the code was hand-written, AI-generated (our [AI Policy](https://github.com/dubzzz/fast-check/blob/main/AI_POLICY.md)), copied from external sources or produced by any other tool - [ ] I flagged the impact of my change (minor / patch / major) either by running `pnpm run bump` or by following the instructions from the changeset bot - [ ] I kept this PR focused on a single concern and did not bundle unrelated changes - [ ] I followed the [gitmoji](https://gitmoji.dev/) specification for the name of the PR, including the package scope (e.g. `🐛(vitest) Something...`) when the change targets a package other than `fast-check` - [ ] I added relevant tests and they would have failed without my PR (when applicable)  <!-- PRs not checking all the boxes may take longer before being reviewed --> <!-- More about contributing at https://github.com/dubzzz/fast-check/blob/main/CONTRIBUTING.md -->  <!-- NOTE TO HUMAN CONTRIBUTORS: the block below is addressed to AI agents (Claude Code, Codex, Devin, OpenHands, Cursor agents, …) that may open this PR on your behalf. If you are a human author writing or reviewing this PR yourself, you can ignore it entirely — it does not a
+- **Issue #7691** (2026-11-27): **⬆️ Update dependency rolldown to ^1.3.4**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [rolldown](https://rolldown.rs/) ([source](https://redirect.github.com/rolldown/rolldown/tree/HEAD/packages/rolldown)) | [`^1.3.3` → `^1.3.4`](https://renovatebot.com/diffs/npm/rolldown/1.3.3/1.3.4) | ![age](https://developer.mend.io/api/mc/badges/age/npm/rolldown/1.3.4?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/rolldown/1.3.3/1.3.4?slim=true) |  ---  ### Release Notes  <details> <summary>rolldown/rolldown (rolldown)</summary>  ### [`v1.3.4`](https://redirect.github.com/rolldown/rolldown/blob/HEAD/CHANGELOG.md#134---2026-11-26)  [Compare Source](https://redirect.github.com/rolldown/rolldown/compare/v1.3.3...v1.3.4)  ##### 🚀 Features  - add builtin `injectPlugin` with `include`/`exclude` ([#&#8203;11290](https://redirect.github.com/rolldown/rolldown/issues/11290)) by [@&#8203;onmax](https://redirect.github.com/onmax) - magic-string: support explicit sourcemap locations ([#&#8203;11884](https://redirect.github.com/rolldown/rolldown/issues/11884)) by [@&#8203;IWANABETHATGUY](https://redirect.github.com/IWANABETHATGUY) - introduce `declaredModuleSize` to allow plugins to declare a module's real size ([#&#8203;11844](https://redirect.github.com/rolldown/rolldown/issues/11844)) by [@&#8203;hyfdev](https://redirect.github.com/hyfdev) - binding: a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -816,18 +816,18 @@ export function signalAsPromise(signal: AbortSignal): {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a5a6667` (2026-11-23)
-**Commit Message**: 👷 Drop MacOS and Windows from the required CI jobs (#7652)
+### Incident Patch 1: `21385a1e` (2026-11-26)
+**Commit Message**: 📝(vitest) Update compatibility requirements and README links (#7671)
 
 ## Description
 
 <!-- Describe your change and explain what this PR is trying to solve
 -->
 
-MacOS has been really slow lately. Waiting it all the time is a
-nightmare. Given it has a very limited risk to break, I relaxed it.
-
-It's now optional.
+- Document requirements for versions 0.5 and 0.6 and correct the 0.4
+entry
+- Clarify Node.js requirements and fast-check v5 prerelease support
+- Fix license and runner documentation links
 
 <!-- Add any additional context here -->
 
@@ -848,166 +848,219 @@ unrelated changes
 - [ ] I followed the [gitmoji](https://gitmoji.dev/) specification for
 the name of the PR, including the package scope (e.g. `🐛(vitest)
 Something...`) when the change targets a package other than `fast-check`
-- [ ] I added relevant tests and they would have fa
+- [ ]
 
-**File**: `.github/workflows/build-status.yml` (modified, +7/-9)
+**File**: `.changeset/loose-suits-shout.md` (added, +5/-0)
 ```diff
-@@ -159,7 +159,7 @@ jobs:
-         shard-id: ['1', '2']
-         shard-count: ['2']
-     env: &test_env
--      ENABLE_COVERAGE: ${{ matrix.os == 'macos-latest' }}
-+      ENABLE_COVERAGE: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == '26.x' }}
-       SKIP_DOCUMENTATION: ${{ matrix.node-version != '26.x' || matrix.os == 'windows-latest' }}
-     steps: &test_steps
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -252,10 +252,7 @@ jobs:
-     steps: *test_steps
-   publish_test_coverage:
-     name: 'Publish test coverage'
--    needs:
--      - test
--      - test_macos
--      - test_windows
-+    needs: test
-     runs-on: 'ubuntu-latest'
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -558,7 +555,7 @@ jobs:
-               await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
-             }
+@@ -0,0 +1,5 @@
++---
++"@fast-check/vitest": patch
++---
++
++📝(vitest) Update compatibility requirements and README links
+```
+
+**File**: `packages/vitest/README.md` (modified, +17/-14)
+```diff
+@@ -7,7 +7,7 @@ Bring the power of property based testing framework `fast-check` into Vitest.
  
--  # Job to confirm every required job passed
-+  # Job to confirm every required job passed, macOS and Windows are advisory
-   all_checks_passed:
-     name: 'All checks passed'
-     if: always()
-@@ -567,8 +564,6 @@ jobs:
-       - documentation
-       - sanity_checks
-       - test
--      - test_macos
--      - test_windows
-       - test_bundle
-       - test_types
-     runs-on: ubuntu-latest
-@@ -613,7 +608,10 @@ jobs:
-           https://api.netlify.com/api/v1/sites/${{secrets.NETLIFY_SITE_ID}}/deploys?draft=$DRAFT_BUILD_VALUE
-   check_any_package:
-     name: 'Check publish any package'
--    needs: all_checks_passed
-+    needs:
-+      - all_checks_passed
-+      - test_macos
-+      - test_windows
-     if: github.event_name == 'push'
-     runs-on: ubuntu-latest
-     outputs:
+ <a href="https://npmx.dev/package/@fast-check/vitest"><img src="https://badge.fury.io/js/@fast-check%2Fvitest.svg" alt="npm version" /></a>
+ <a href="https://npmx.dev/package/@fast-check/vitest"><img src="https://img.shields.io/npm/dm/@fast-check%2Fvitest" alt="monthly downloads" /></a>
+-<a href="https://github.com/dubzzz/fast-check/blob/main/packages/jest/LICENSE"><img src="https://img.shields.io/npm/l/@fast-check%2Fvitest.svg" alt="License" /></a>
++<a href="https://github.com/dubzzz/fast-check/blob/main/packages/vitest/LICENSE"><img src="https://img.shields.io/npm/l/@fast-check%2Fvitest.svg" alt="License" /></a>
+ 
+ ---
+ 
+@@ -90,7 +90,7 @@ Vitest's `beforeEach` and `afterEach` hooks are natively integrated into predica
+ 
+ ### Advanced
+ 
+-If you want to forward custom parameters to fast-check, `test.prop` accepts an optional `fc.Parameters` ([more](https://github.com/dubzzz/fast-check/blob/main/documentation/1-Guides/Runners.md#runners)).
++If you want to forward custom parameters to fast-check, `test.prop` accepts an optional `fc.Parameters` ([more](https://fast-check.dev/docs/core-blocks/runners/#assert)).
+ 
+ `@fast-check/vitest` also comes with `.only`, `.skip`, `.todo` and `.concurrent` from vitest. It also accepts more complex ones such as `.concurrent.skip`.
+ 
+@@ -114,22 +114,25 @@ describe('with it', () => {
+ 
+ ## Minimal requirements
+ 
+-| @fast-check/vitest | vitest                                                              | fast-check                       | Node                                                                   |
+-| ------------------ | ------------------------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------- |
+-| **0.4**            | ^4.1.0 \|\| ^5.0.0                                                  | ^3.0.0 \|\| ^4.0.0               | ≥20.19.0<sup>(2)</sup> (Vitest 4)<br>≥22.12.0<sup>(2)</sup> (Vitest 5) |
+-| **0.3**            | ^1 \|\| ^2 \|\| ^3 \|\| ^4                                          | ^3.0.0 \|\| ^4.0.0               | ≥20.19.0<sup>(2)</sup>                                                 |
+-| **0.2**            | ^1 \|\| ^2 \|\| ^3 \|\| ^4<sup>(1)</sup>                            | ^3.0.0 \|\| ^4.0.0               | ≥18<sup>(3)</sup>                                                      |
+-| **0.1**            | >=0.28.1 <1.0.0 \|\| ^1 \|\| ^2<sup>(4)</sup> \|\| ^3<sup>(5)</sup> | ^3.0.0 \|\| ^4.0.0<sup>(6)</sup> | ≥14.16.0<sup>(3)</sup>                                                 |
+-| **0.0**            | >=0.28.1 <1.0.0 \|\| ^1                                             | ^3.0.0                           | ≥14.16.0<sup>(3)</sup>                                                 |
++| @fast-check/vitest | vitest                                                              | fast-check                        | Node                                                                                       |
++| ------------------ | ------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------ |
++| **0.6**            | ^4.1.0 \|\| ^5.0.0                                                  | ^4.10.3 \|\| ^5.0.0<sup>(1)</sup> | ≥20.19.0<sup>(2)</sup> (Vitest 4 with fast-check 4)<br>≥22.12.0 (Vitest 5 or fast-check 5) |
++| **0.5**            | ^4.1.0 \|\| ^5.0.0                                                  | ^3.0.0 \|\| ^4.0.0                | ≥20.19.0<sup>(2)</sup> (Vitest 4)<br>≥22.12.0 (Vitest 5)                                   |
++| **0.4**            | ^4.1.0                                                              | ^3.0.0 \|\| ^4.0.0                | ≥20.19.0<sup>(2)</sup>                                                                     |
++| **0.3**            | ^1 \|\| ^2 \|\| ^3 \|\| ^4                                          | ^3.0.0 \|\| ^4.0.0                | ≥20.19.0<sup>(2)</sup>                                                                     |
++| **0.2**            | ^1 \|\| ^2 \|\| ^3 \|\| ^4<sup>(3)</sup>                            | ^3.0.0 \|\| ^4.0.0                | ≥18<sup>(4)</sup>                                                                          |
++| **0.1**            | >=0.28.1 <1.0.0 \|\| ^1 \|\| ^2<sup>(5)</sup> \|\| ^3<sup>(6)</sup> | ^3.0.0 \|\| ^4.0.0<sup>(7)</sup>  | ≥14.16.0<sup>(4)</sup>                                                                     |
++| **0.0**            | >=0.28.1 <1.0.0 \|\| ^1                                             | ^3.0.0                            | ≥14.16.0<sup>(4)</sup>                                                                     |
+ 
+ <details>
+ <summary>More details...</summary>
+ 
+-1. Official support for version 4.x of vitest starts at 0.2.3.
++1
 ```
 
 ---
 
-### Incident Patch 2: `24d09ef7` (2026-11-21)
-**Commit Message**: 📝(codemod) Order transforms and classify fixtures (#7631)
+### Incident Patch 2: `40923e55` (2026-11-26)
+**Commit Message**: 🐛(packaged) Align Node.js requirements with dependencies (#7672)
 
-List transforms by minimum fast-check version, then alphabetically
-within each version.
+## Description
 
-Fixture names distinguish `basic-` and `advanced-` migrations,
-`unsupported-` cases that need manual work, and `no-migrate-` cases that
-should stay as written. The optional `Random` call and the spread in
-`stringUnit` now explain why an automatic edit would be unsafe.
+<!-- Describe your change and explain what this PR is trying to solve
+-->
 
-All 40 fixture and second-run checks pass.
+- Require Node.js ^22.22.2 || ^24.15.0 || >=26.0.0 for
+`@fast-check/packaged`
+- Document Node.js requirements for `@fast-check/packaged` 0.7.x
 
-**File**: `packages/codemod/README.md` (modified, +10/-10)
+<!-- Add any additional context here -->
+
+## Checklist
+
+— _Don't delete this checklist and make sure you do the following before
+opening the PR_
+
+- [ ] I have a full understanding of every line in this PR — whether the
+code was hand-written, AI-generated (our [AI
+Policy](https://github.com/dubzzz/fast-check/blob/main/AI_POLICY.md)),
+copied from external sources or produced by any other tool
+- [ ] I flagged the impact of my change (minor / patch / major) either
+by running `pnpm run bump` or by following the instructions from the
+changeset bot
+- [ ] I kept this PR focused on a single concern and did not bundle
+unrelated changes
+- [ ] I followed the [gitmoji](https://gitmoji.dev/) specification for
+the name of the PR, including the package scope (e.g. `🐛(vitest)
+Something...`) when the change targets a package other than `fast-check`
+- [ ] I added relevant tests and they would have faile
+
+**File**: `.changeset/five-animals-reply.md` (added, +5/-0)
 ```diff
-@@ -18,26 +18,26 @@ Add `--dry --print` to preview changes without writing files. Commit your work b
- 
- ### Migrate to v5
- 
--<details><summary><code>v5/randomMethods</code> (≥1.0.0) — Migrates removed Random methods to bounded nextInt calls</summary>
-+<details><summary><code>v5/defaultImport</code> (≥1.0.0)<sup><a href="#minimum-fast-check-version">(1)</a></sup> — Replaces default imports with namespace imports. Also handles `import type`</summary>
+@@ -0,0 +1,5 @@
++---
++"@fast-check/packaged": patch
++---
 +
-+Example:
++🐛(packaged) Align Node.js requirements with dependencies
+```
+
+**File**: `packages/packaged/README.md` (modified, +5/-3)
+```diff
+@@ -55,13 +55,15 @@ const { kept, removed } = await removeNonPublishedFiles('.', { dryRun: false, ke
  
- ```diff
---rng.nextBoolean();
--+rng.nextInt(0, 1) === 1;
-+-import fc from 'fast-check';
-++import * as fc from 'fast-check';
- ```
+ ## Minimal requirements
  
--Applies to direct calls on a variable or parameter annotated as fast-check’s `Random`. Handles `next(bits)`, `nextInt()`, `nextBoolean()` and `nextDouble()`. The double uses the same two draws in the same order.
--
+-| @fast-check/packaged | node                   |
+-| -------------------- | ---------------------- |
+-| **0.6.x**            | ≥20.19.0<sup>(1)</sup> |
++| @fast-check/packaged | node                                                             |
++| -------------------- | ---------------------------------------------------------------- |
++| **0.7.x**            | ^22.22.2 \|\| ^24.15.0 \|\| >=26.0.0<sup>(1)</sup><sup>(2)</sup> |
++| **0.6.x**            | ≥20.19.0<sup>(1)</sup>                                           |
+ 
+ <details>
+ <summary>More details...</summary>
+ 
+ 1. Requires support for `require(esm)`.
++2. Our dependencies `@npmcli/arborist` ([see compatibilty on npmx.dev](https://npmx.dev/package/@npmcli/arborist/v/%5E10.0.0#compatibility)) and `npm-packlist` ([see compatibilty on npmx.dev](https://npmx.dev/package/npm-packlist/v/%5E10.0.0||%5E11.0.0)) require a newer Node release.
+ 
  </details>
- 
--<details><summary><code>v5/defaultImport</code> (≥1.0.0)<sup><a href="#minimum-fast-check-version">(1)</a></sup> — Replaces default imports with namespace imports. Also handles `import type`</summary>
--
--Example:
-+<details><summary><code>v5/randomMethods</code> (≥1.0.0) — Migrates removed Random methods to bounded nextInt calls</summary>
- 
- ```diff
---import fc from 'fast-check';
--+import * as fc from 'fast-check';
-+-rng.nextBoolean();
-++rng.nextInt(0, 1) === 1;
- ```
- 
-+Applies to direct calls on a variable or parameter annotated as fast-check’s `Random`. Handles `next(bits)`, `nextInt()`, `nextBoolean()` and `nextDouble()`. The double uses the same two draws in the same order.
+```
+
+**File**: `packages/packaged/package.json` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@
+   },
+   "homepage": "https://github.com/dubzzz/fast-check/tree/main/packages/packaged#readme",
+   "engines": {
+-    "node": ">=20.19.0"
++    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+   },
+   "dependencies": {
+     "@npmcli/arborist": "^10.0.0",
+```
+
+---
+
+### Incident Patch 3: `bd1c460d` (2026-11-26)
+**Commit Message**: 🐛(worker) Preserve v4 property hook requirements (#7679)
+
+## Description
+
+> AI-agent disclosure: this PR was authored by an automated agent
+(Codex) and has not been line-by-line reviewed by a human before
+submission.
+
+With fast-check 4.x and TypeScript `strict: true`, passing a property
+created by `propertyFor` to the worker's `assert` fails with TS2345.
+With `skipLibCheck: false`, the worker declaration also fails with
+TS2430, including when consumed through `@fast-check/jest/worker`.
+
+`LegacyPropertyWithHooks` now intersects `Property<Ts>` with the
+optional legacy hooks. This preserves the required
+`runBeforeEach`/`runAfterEach` contract from v4 while allowing those
+hooks to be absent in v5. This is a type-only patch.
+
+The issue predates #7673: #7643 (`ac84a6d4`, November 23) made the
+inherited hooks optional, and the affected declarations shipped in
+`@fast-check/worker@0.7.0`.
+
+## Validation
+
+- Existing worker source/public type fixtures pass with fast-check
+4.10.3, 4.11.0 and the current 5.x source.
+- Built worker declarations pass the existing public type fixture with
+`strict: true`, both with and without `skipLibCheck`; the Jest worker
+consumer also passes against 4.10.3 and
+
+**File**: `.changeset/tidy-workers-check.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"@fast-check/worker": patch
++---
 +
- </details>
- 
- <details><summary><code>v5/stringUnit</code> (≥3.23.0) — Migrates Unicode flags on object and JSON arbitraries</summary>
++Fix worker property types with fast-check 4.x by preserving its required lifecycle hooks.
 ```
 
-**File**: `packages/codemod/test/fixture/v5/randomMethods/unsupported-optional-call/actual.ts` (renamed, +1/-0)
+**File**: `packages/worker/src/internals/SharedTypes.ts` (modified, +3/-2)
 ```diff
-@@ -1,5 +1,6 @@
- import type { Random } from 'fast-check';
+@@ -14,14 +14,15 @@ export type LegacyPropertyHookFunction =
+   | ((previousHookFunction: LegacyGlobalPropertyHookFunction) => Promise<unknown>)
+   | ((previousHookFunction: LegacyGlobalPropertyHookFunction) => void);
  
- function draw(rng?: Random) {
-+  // The optional call must still return undefined when rng is absent.
-   return rng?.nextBoolean();
- }
-```
-
-**File**: `packages/codemod/test/fixture/v5/randomMethods/unsupported-optional-call/expected.ts` (renamed, +1/-0)
-```diff
-@@ -1,5 +1,6 @@
- import type { Random } from 'fast-check';
+-export interface LegacyPropertyWithHooks<Ts> extends Property<Ts> {
++// Preserve required hooks from v4's Property while allowing their absence in v5.
++export type LegacyPropertyWithHooks<Ts> = Property<Ts> & {
+   // On Property in v4.x
+   runBeforeEach?: () => Promise<void> | void;
+   runAfterEach?: () => Promise<void> | void;
+   // On PropertyWithHooks in v4.x
+   beforeEach?(hookFunction: LegacyPropertyHookFunction): LegacyPropertyWithHooks<Ts>;
+   afterEach?(hookFunction: LegacyPropertyHookFunction): LegacyPropertyWithHooks<Ts>;
+-}
++};
  
- function draw(rng?: Random) {
-+  // The optional call must still return undefined when rng is absent.
-   return rng?.nextBoolean();
- }
-```
-
-**File**: `packages/codemod/test/fixture/v5/stringUnit/unsupported-spread/actual.ts` (renamed, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
- import * as fc from 'fast-check';
- 
-+// The later spread can override the Unicode flag or supply its own stringUnit.
- fc.json({ noUnicodeString: false, ...options });
-```
-
-**File**: `packages/codemod/test/fixture/v5/stringUnit/unsupported-spread/expected.ts` (renamed, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
- import * as fc from 'fast-check';
- 
-+// The later spread can override the Unicode flag or supply its own stringUnit.
- fc.json({ noUnicodeString: false, ...options });
+ export type PropertyArbitraries<Ts extends unknown[]> = {
+   [K in keyof Ts]: Arbitrary<Ts[K]>;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7652** (2026-11-23): 👷 Drop MacOS and Windows from the required CI jobs (@dubzzz)
-- **PR #7651** (2026-11-23): ♻️(codemod) Rework existing codemods (@dubzzz)
-- **PR #7649** (2026-11-24): ⬆️ Update pnpm to v12.23.0 (@renovate[bot])
-- **PR #7648** (2026-11-23): ✨(codemod) Move from `property` to `asyncProperty` (@dubzzz)
-- **PR #7647** (2026-11-23): 📝 Add a v5 preview banner and resume docs publishing (@dubzzz)
-- **PR #7646** (2026-11-23): ⬆️ Update dependency jimp to ^1.7.0 (@renovate[bot])
+- **PR #7692** (2026-11-28): ⬆️ Update dependency @microsoft/api-extractor to ^7.60.2 (@renovate[bot])
+- **PR #7691** (2026-11-27): ⬆️ Update dependency rolldown to ^1.3.4 (@renovate[bot])
+- **PR #7690** (2026-11-27): ⬆️ Update dependency oxlint-tsgolint to ^7.0.2009 (@renovate[bot])
+- **PR #7689** (2026-11-27): ⬆️ Update dependency vite to ^8.4.0 (@renovate[bot])
+- **PR #7687** (2026-11-27): ⬆️ Update dependency jimp to ^2.2.0 (@renovate[bot])
+- **PR #7686** (closed): ⬆️ Update dependency @types/node to v26.6.11 - autoclosed (@renovate[bot])
 
 ---
 
@@ -1027,45 +1080,35 @@ All 40 fixture and second-run checks pass.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 👷 Drop MacOS and Windows from the required CI jobs
+## X. 📝(vitest) Update compatibility requirements and README links
 
 **RULE**:
-When implementing operations in `.github/workflows/build-status.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/loose-suits-shout.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a5a6667`: 👷 Drop MacOS and Windows from the required CI jobs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21385a1e`: 📝(vitest) Update compatibility requirements and README links. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-status.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/loose-suits-shout.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      ENABLE_COVERAGE: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == '26.x' }}
-    needs: test
-  # Job to confirm every required job passed, macOS and Windows are advisory
-    needs:
-      - all_checks_passed
-      - test_macos
-      - test_windows
+---
+"@fast-check/vitest": patch
+---
+
+📝(vitest) Update compatibility requirements and README links
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-      ENABLE_COVERAGE: ${{ matrix.os == 'macos-latest' }}
-    needs:
-      - test
-      - test_macos
-      - test_windows
-  # Job to confirm every required job passed
-      - test_macos
-      - test_windows
-    needs: all_checks_passed
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a5a6667` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21385a1e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

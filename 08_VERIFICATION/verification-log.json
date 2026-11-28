@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-1QH9",
-    "timestamp": "2026-11-26T18:58:56.973Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "0426bd1bff7b6a10e96a69748a2bd7764c117dd2b3de48ca926599c2973e4253",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-1V1W",
-    "timestamp": "2026-11-26T18:59:02.900Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "fdc815221989b9cdf2283017cbb2796ad2637d286a83189b1ef91ecb2b8608e8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-CU9I",
-    "timestamp": "2026-11-26T19:07:35.094Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-    "contentHash": "eb0eceee45dab69903d845f55f44f4885bd01a81780d8938f60d539f8054aff8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-CW6G",
     "timestamp": "2026-11-26T19:07:37.576Z",
     "repository": "GitoxideLabs/gitoxide",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "67f6933b032a67b3abe1738c97bf77515c61c72bb303c0b4f196bf0d343f70e5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-ATB3",
+    "timestamp": "2026-11-28T14:29:24.831Z",
+    "repository": "dubzzz/fast-check",
+    "learningId": "learn-github-dubzzz-fast-check",
+    "contentHash": "c2727bdd2d91afb6736151b6694790b49c8eea503c9ffb9e2536d974a7c9b89c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-AV50",
+    "timestamp": "2026-11-28T14:29:27.204Z",
+    "repository": "rafsoh/dimeApp",
+    "learningId": "learn-github-rafsoh-dimeapp",
+    "contentHash": "91f76c07d48cd0f99d907ab766b541d8a51c2b85be13bea25901f2a4933ea0ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-B2AK",
+    "timestamp": "2026-11-28T14:29:36.476Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "605727ce53f4f6a599cefdedcc0de4bf1533895756f8235a26b89edc9024a028",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

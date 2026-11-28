@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T14:06:06.157Z",
-  "total_records": 2902,
+  "last_updated": "2026-11-28T14:29:45.572Z",
+  "total_records": 2904,
   "domains": {
     "A": {
       "total": 27,
@@ -1280,7 +1280,7 @@
       ]
     },
     "G": {
-      "total": 494,
+      "total": 496,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1775,7 +1775,9 @@
         "domain_intelligence-architecture-intelligence-chroma-core-chroma-core-invariants",
         "domain_intelligence-architecture-intelligence-chroma-core-chroma-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-core-invariants",
-        "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-learnings-core-inv"
+        "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-learnings-core-inv",
+        "domain_intelligence-architecture-intelligence-dubzzz-fast-check-core-invariants",
+        "domain_intelligence-architecture-intelligence-dubzzz-fast-check-learnings-core-invariants"
       ]
     },
     "H": {
@@ -12959,8 +12961,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "1e47e95d1def823fe1f72e1a6ea3b3be16c23475d486f9c823cd24fd9b4acd65",
-      "created_at": "2026-11-28T13:17:57.638Z"
+      "content_hash": "07c1c684776fe14760afc524c80c416ba3b0017c1bab848683ab9e947db93309",
+      "created_at": "2026-11-28T14:29:36.926Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -13028,8 +13030,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "4c87efcd06969e7a5d150a3fcdd2946692892126c254f26e50fec8db287013ef",
-      "created_at": "2026-11-28T13:18:24.973Z"
+      "content_hash": "b7ae5d3f0e7962dc64a43fd724bbfe91039cc96b5e234a7abf66e1bfe4856d63",
+      "created_at": "2026-11-28T14:29:45.572Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -41682,8 +41684,8 @@
       "title": "Design Intelligence: rafsoh/dimeApp Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-rafsoh-dimeapp-design-intelligence-rafsoh-dimeapp-core-invariants.md",
       "repository": "rafsoh/dimeApp",
-      "content_hash": "6a5353138fb2d653f60fefadf4032853aacf575a95100cf0e97154a62ad375f0",
-      "created_at": "2026-11-26T08:57:29.676Z"
+      "content_hash": "2da161ea62d76d3bc8978def0ab3e3be4d6f3fdae7884c079a6560b57778d278",
+      "created_at": "2026-11-28T14:29:27.668Z"
     },
     "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants",
@@ -41691,8 +41693,8 @@
       "title": "Design Intelligence: rafsoh-dimeapp-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-rafsoh-dimeapp-learnings-design-intelligence-rafsoh-dimeapp-learnings-core-invar.md",
       "repository": "rafsoh-dimeapp-learnings",
-      "content_hash": "62f15efd019ef19641a0fd149437fde6e38ac9bee3f3b746953c9033c6b0e068",
-      "created_at": "2026-11-26T08:57:41.958Z"
+      "content_hash": "1dc613b828fee9f0f91345bd20bd696977227c51291f86c05ab21fcf13f9df5b",
+      "created_at": "2026-11-28T14:29:43.872Z"
     },
     "domain_intelligence-content-information-intelligence-biomejs-biome-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-biomejs-biome-core-invariants",
@@ -49287,6 +49289,24 @@
       "repository": "gitroomhq-postiz-app-learnings",
       "content_hash": "394613810e7f3bfa101ec116147d3246cdd422253c9770343426390875136c3b",
       "created_at": "2026-11-28T13:18:22.427Z"
+    },
+    "domain_intelligence-architecture-intelligence-dubzzz-fast-check-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-dubzzz-fast-check-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: dubzzz/fast-check Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dubzzz-fast-check-architecture-intelligence-dubzzz-fast-check-core-invariants.md",
+      "repository": "dubzzz/fast-check",
+      "content_hash": "9ccab3bdda5a227be725fa4357df27e76430704b3b9d2c188c1adf358d1b6bc2",
+      "created_at": "2026-11-28T14:29:25.264Z"
+    },
+    "domain_intelligence-architecture-intelligence-dubzzz-fast-check-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-dubzzz-fast-check-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: dubzzz-fast-check-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dubzzz-fast-check-learnings-architecture-intelligence-dubzzz-fast-check-learning.md",
+      "repository": "dubzzz-fast-check-learnings",
+      "content_hash": "993900a89f35a1f78a5e1e29140154f834fce8e8e00a4b34d44e11173bb45a84",
+      "created_at": "2026-11-28T14:29:42.938Z"
     }
   }
 }

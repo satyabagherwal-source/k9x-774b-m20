@@ -14060,3 +14060,6 @@
 | `CYCLE-20261128-3IA8` | `2026-11-28T13:55:44.336Z` | `avajs/ava` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7973` | Yes (`0bd27cc8...`) |
 | `CYCLE-20261128-3MS2` | `2026-11-28T13:55:50.162Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11105` | Yes (`014f791d...`) |
 | `CYCLE-20261128-3SIM` | `2026-11-28T13:55:57.598Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11106` | Yes (`67f6933b...`) |
+| `CYCLE-20261128-ATB3` | `2026-11-28T14:29:24.831Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11107` | Yes (`c2727bdd...`) |
+| `CYCLE-20261128-AV50` | `2026-11-28T14:29:27.204Z` | `rafsoh/dimeApp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11108` | Yes (`91f76c07...`) |
+| `CYCLE-20261128-B2AK` | `2026-11-28T14:29:36.476Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11109` | Yes (`605727ce...`) |

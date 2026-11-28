@@ -14093,3 +14093,6 @@ Every entry in this ledger must capture:
 | `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `8988a729` | Multi-dimensional audit evidence | 2026-11-28T13:55:44.341Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `e4fa4448` | Multi-dimensional audit evidence | 2026-11-28T13:55:50.167Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `1772058f` | Multi-dimensional audit evidence | 2026-11-28T13:55:57.603Z |
+| `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `2240fb54` | Multi-dimensional audit evidence | 2026-11-28T14:29:24.835Z |
+| `learn-github-rafsoh-dimeapp` | `https://github.com/rafsoh/dimeApp` | `700ce940` | Multi-dimensional audit evidence | 2026-11-28T14:29:27.209Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ca34987a` | Multi-dimensional audit evidence | 2026-11-28T14:29:36.480Z |

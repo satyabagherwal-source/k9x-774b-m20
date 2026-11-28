@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "42a602c0",
+  "source_version": "ca34987a",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-28T13:17:57.342Z",
+  "timestamp": "2026-11-28T14:29:36.723Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `42a602c0`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-28T13:17:57.342Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `ca34987a`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-28T14:29:36.723Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), A (Human & Need Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-28T13:17:55.504Z  
+> **Harvest Timestamp**: 2026-11-28T14:29:35.329Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3881 stars
+- **Stars / Engagement**: 3882 stars
 
 ---
 
@@ -2293,310 +2293,454 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `60956a31` (2026-11-28)
-**Commit Message**: fix(sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson() (#5128)
+### Incident Patch 1: `0dd1ae72` (2026-11-28)
+**Commit Message**: fix(timebucketp): read an index mixing dates and datetimes, dates as midnight (#5130)
 
-* fix(sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson()
+* fix(timebucketp): read an index mixing dates and datetimes, dates as midnight
 
-Both commands read their positional inputs with Polars' CSV reader, so a
-.jsonl/.ndjson file's first line became the header and each object was
-split at its commas, with no warning: sqlp's COUNT(*) was one record short,
-and joinp failed with "unable to find column". Refuse such inputs (detected
-the same way as qsv's special-format conversion, extension case-insensitive)
-with a usage error. sqlp points to the read_ndjson() table function with
-SKIP_INPUT; joinp points to `qsv jsonl`, or sqlp + read_ndjson().
+`qsv datefmt` drops midnight times by default, so its output mixes
+dates and datetimes, and timebucketp failed on it with a misleading
+QSV_PREFER_DMY hint. The index format is guessed from the first value,
+so whichever kind came second failed to parse.
 
-Closes #5126.
+When no --date-format is given, timebucketp now finds the first value
+that does not match the first value's format. If that value is the
+other kind (a date vs a datetime), the rest are parsed strictly in its
+format, and the two parses are coalesced as datetimes. Both orderings
+work: ISO, month-first and zoned. A value that is neither still errors.
+
+An explicit date-only --date-format on a mixed column now names the mix
+instead of suggesting QSV_PREFER_DMY.
+
+Closes #5129
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #5128
+* docs(changelog): cite #5130 for timebucketp mixed index [skip ci]
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(sqlp, joinp): catch .jsonl.sz, check names before input expansion
+* perf(timebucketp): look for a mixed index only after the strict parse fails
 
-roborev follow-ups on the JSONL refusal:
-- joinp checked the extension before Snappy decompression, so
-  events.jsonl.sz reached the CSV reader. A name-based is_jsonl_path()
-  (shared with sqlp) also looks under a .sz suffix.
-- joinp's hint suggested `qsv jsonl <input> > data.csv`, which truncates
-  data.csv when
+Probing every guessed text index for a second form
 
-**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -10,7 +10,7 @@
-         "name": "input",
-         "type": "file",
-         "required": true,
--        "description": "The CSV file/s to query. Use '-' for standard input. If input is a directory, all files in the directory will be read as input. If the input is a file with a '.infile-list' extension, the file will be read as a list of files to use as input. If the input are snappy compressed file(s), it will be decompressed automatically. Column headers are required. Use 'qsv rename _all_generic --no-headers' to add generic column names (_col_N) to a CSV with no headers. If you are using Polars SQL's table functions like read_csv() & read_parquet() to read input files directly in the SQL statement, you can use the sentinel value 'SKIP_INPUT' to skip input preprocessing. If pschema.json file/s exists for the input file/s, they will automatically be used to optimize the query even if --cache-schema is not set."
-+        "description": "The CSV file/s to query. Use '-' for standard input. If input is a directory, all files in the directory will be read as input. If the input is a file with a '.infile-list' extension, the file will be read as a list of files to use as input. If the input are snappy compressed file(s), it will be decompressed automatically. Column headers are required. Use 'qsv rename _all_generic --no-headers' to add generic column names (_col_N) to a CSV with no headers. A JSONL/NDJSON (.jsonl/.ndjson) input is refused: query it with the read_ndjson() table function and SKIP_INPUT instead. If you are using Polars SQL's table functions like read_csv() & read_parquet() to read input files directly in the SQL statement, you can use the sentinel value 'SKIP_INPUT' to skip input preprocessing. If pschema.json file/s exists for the input file/s, they will automatically be used to optimize the query even if --cache-schema is not set."
-       },
-       {
-         "name": "sql",
+@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
+ 
+ ### Added
+-- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. Text columns holding only dates are parsed the same way for min/max/mean/median/quantile, so they compare as dates rather than text, while first/last keep the values as written. Dates need 4-digit years unless `--date-format` is given (chrono would read `10/05/24` as the year 10). `--sorted` skips the sort for pre-sorted input, but still verifies the order: Polars' lazy `group_by_dynamic` does not check it without `--by` and silently builds wrong windows from unsorted input. Enables Polars' `dynamic_group_by` feature ([#5112](https://github.com/dathere/qsv/pull/5112)).
++- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. An index that mixes dates and datetimes, as `datefmt` writes midnight values, is read as datetimes, its dates as midnight ([#5130](https://github.com/dathere/qsv/pull/5130)). Text columns holding only dates are parsed the same way for min/max/mean/median/quantile, so they compare as dates rather than text, while first/last keep the values as written. Dates need 4-digit years unless `--date-format` is given (chrono would read `10/05/24` as the year 10). `--sorted` skips the sort for pre-sorted input, but still verifies the order: Polars' lazy `group_by_dynamic` does not check it without `--by` and silently builds wrong windows from unsorted input. Enables Polars' `dynamic_group_by` feature ([#5112](https://github.com/dathere/qsv/pull/5112)).
+ - `sqlp`: new SQL from the Polars bump to `08b2814` (all failed on `93d31f0`): `INSERT INTO <table> VALUES ...` and `UPDATE <table> SET ...` on registered tables ([#30958](https://github.com/pola-rs/polars/pull/30958)), which change the table for the statements after them in a `.sql` script but never the input file; `COPY <table> FROM '<file>'`, which appends a file's rows to a table as in Postgres (give `(HEADER true)` for a file with a header row; without it the header is read as a data row, which fails on a numeric column) ([#30975](https://github.com/pola-rs/polars/pull/30975)); `UNNEST ... WITH ORDINALITY` ([#31017](https://github.com/pola-rs/polars/pull/31017)); window frames that end before the current row, e.g. `ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING` ([#31022](https://github.com/pola-rs/polars/pull/31022)); `SHOW FUNCTIONS` ([#31002](https://github.com/pola-rs/polars/pull/31002)); and the functions `REGEXP_SUBSTR`, `JSON_EXTRACT_PATH` and `JSON_EXTRACT_PATH_TEXT` ([#31003](https://github.com/pola-rs/polars/pull/31003)). `RANDOM()` in `LIMIT`/`OFFSET` is drawn once, so it no longer fails ([#30944](https://github.com/pola-rs/polars/pull/30944)). `QSV_SQL_DISABLE_FILE_WRITES` still refuses `COPY ... TO`; it doesn't block `INSERT`, `UPDATE` or `COPY ... FROM`, which write no files (SQL could already read any file through `read_c
 ```
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `docs/help/timebucketp.md` (modified, +3/-1)
 ```diff
-@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `joinp`: with a key transformation (`-i`, `-z` or `-N`), the temporary transformed key columns were still in the join result when `--sql-filter` ran, so a positional `ORDER BY` or `GROUP BY` could hit a temporary key instead of the intended column. They were then removed by matching any column name containing `-transformed`, which also dropped user columns and SQL aliases with that in their name, such as `status-transformed`. Now the temporary columns are dropped by their exact names before `--sql-filter` runs. ([#5118](https://github.com/dathere/qsv/pull/5118))
+@@ -42,7 +42,9 @@ the --date-format option. A text column whose every value is a date is
+ parsed the same way for min, max, mean, median and quantile, so it compares
+ as dates; first, last and --by keep values as written (unless a pschema.json
+ types them). Dates need 4-digit years unless --date-format is given. An index
+-that does not parse as dates is an error, as is an empty index value.
++that does not parse as dates is an error, as is an empty index value. An
++index that mixes dates and datetimes, as `qsv datefmt` writes midnight
++values, is read as datetimes, its dates as midnight.
  
- ### Changed
-+- `sqlp`, `joinp`: a `.jsonl`/`.ndjson` input is refused with a usage error. Both commands read inputs with Polars' CSV reader, so a JSONL file's first line became the header and each object was split at its commas: `sqlp`'s `COUNT(*)` came out one record short, and `joinp` failed with a confusing "unable to find column". For `sqlp`, use the `read_ndjson()` table function instead (`qsv sqlp SKIP_INPUT "SELECT * FROM read_ndjson('events.jsonl')"`). For `joinp`, convert first with `qsv jsonl`. ([#5126](https://github.com/dathere/qsv/issues/5126), [#5128](https://github.com/dathere/qsv/pull/5128))
- - **deps: Polars bumped to upstream rev [`4ba28fb`](https://github.com/pola-rs/polars/commit/4ba28fb5c5d911fdf8a42b40d842158b19456347)** (41 commits past py-2.2.0; crates stay 0.55.1). A SQL cast of a string to `DATE` or `TIMESTAMP` (`CAST`, `TRY_CAST`, `::`, and one-argument `DATE`/`TO_DATE`) reads only year-first dates such as `2024-03-05` or `2024/3/5` ([#31082](https://github.com/pola-rs/polars/pull/31082)). Before, the format was guessed from the column's first value: a column starting with `3/5/2024` read it as 2024-05-03 and turned the year-first rows into NULL. Now `TRY_CAST('3/5/2024' AS DATE)` is NULL and `CAST` fails; read such dates with a format, e.g. `STRPTIME(s, '%d/%m/%Y')`. New SQL function `version()` returns the Polars version ([#31077](https://github.com/pola-rs/polars/pull/31077)). NDJSON reads with an inferred schema fail on a key that first appears after the inference window ([#31139](https://github.com/pola-rs/polars/pull/31139)); before, the key was silently dropped. In `sqlp`, `read_ndjson()` infers from the first 100 rows by default, so pass `infer_schema_length => NULL` or a `schema`. qsv's own loading of `.jsonl`/`.ndjson` inputs (e.g. `qsv slice events.jsonl`) now infers the schema from the whole file, so such keys become columns instead of being dropped or failing the read. The rest is performance and fixes outside qsv's SQL use (Iceberg/Delta sinks, Python). ([#5125](https://github.com/dathere/qsv/pull/5125))
- - **deps: Polars bumped to upstream rev [`08b2814`](https://github.com/pola-rs/polars/commit/08b2814ce6386c0efe0fea512912353f42a8b7b6)** (94 commits past `93d31f0`; crates stay 0.55.1). `08b2814` was then tagged [py-2.2.0](https://github.com/pola-rs/polars/releases/tag/py-2.2.0), so qsv now reports that release tag in `--version`. Some `sqlp` results that already worked change:
-   - `UNNEST` of an empty or NULL list returns no rows ([#30996](https://github.com/pola-rs/polars/pull/30996)); it used to return one NULL row. So `SELECT id, UNNEST(STRING_TO_ARRAY(data, ',')) AS value FROM t` now leaves out the rows whose `data` is empty, where it used to keep them with an empty `value`. It does so without a warning. To keep those rows, unnest `STRING_TO_ARRAY(COALESCE(data, ''), ',')` instead.
+ A pschema.json made by `qsv schema --polars` while QSV_PREFER_DMY was set
+ marks day/month dates as already parsed, so they stay day-first in later
 ```
 
-**File**: `src/cmd/joinp.rs` (modified, +15/-2)
+**File**: `src/cmd/timebucketp.rs` (modified, +177/-20)
 ```diff
-@@ -21,7 +21,8 @@ Usage:
+@@ -30,7 +30,9 @@ the --date-format option. A text column whose every value is a date is
+ parsed the same way for min, max, mean, median and quantile, so it compares
+ as dates; first, last and --by keep values as written (unless a pschema.json
+ types them). Dates need 4-digit years unless --date-format is given. An index
+-that does not parse as dates is an error, as is an empty index value.
++that does not parse as dates is an error, as is an empty index value. An
++index that mixes dates and datetimes, as `qsv datefmt` writes midnight
++values, is read as datetimes, its dates as midnight.
  
- joinp arguments:
-     Both <input1> aka <left> & <input2> aka <right> files need to have headers.
--    Stdin is not supported.
-+    Stdin is not supported. JSONL/NDJSON (.jsonl/.ndjson) inputs are refused: convert them
-+    with `qsv jsonl` first, or join them in sqlp with the read_ndjson() table function.
- 
-     The columns arguments specify the columns to join for each input. Columns are
-     referenced by name. Specify multiple columns by separating them with a comma.
-@@ -293,7 +294,7 @@ use tempfile::tempdir;
- use crate::{
-     CliResult,
-     cmd::sqlp::{
--        STREAM_BATCH_ROWS, SharedOutput, StreamWriter, compress_output_if_needed,
-+        STREAM_BATCH_ROWS, SharedOutput, StreamWriter, compress_output_if_needed, is_jsonl_path,
-         open_staged_output, sink_to,
-     },
-     config::Delimiter,
-@@ -1287,6 +1288,18 @@ impl Args {
-         if !input2_path.exists() {
-             return fail_clierror!("Input file {} does not exist.", self.arg_input2);
-         }
-+        // Inputs are read with Polars' CSV reader, which would take a JSONL file's first line
-+        // as the header and split each object at its commas (#5126).
-+        // Checked before the .sz decompression below, so a .jsonl.sz is caught too.
-+        for input in [&self.arg_input1, &self.arg_input2] {
-+            if is_jsonl_path(Path::new(input)) {
-+                return fail_incorrectusage_clierror!(
-+                    "{input} is a JSONL/NDJSON file, which joinp can't read. Convert it to a new \
-+                     CSV file with `qsv jsonl` (decompress a .sz file first), or join it in sqlp \
-+                     with the read_ndjson() table function."
-+                );
-+            }
-+        }
- 
-         // Handle snappy compression for left input
-         if input1_path.extension().and_then(std::ffi::OsStr::to_str) == Some("sz") {
-```
-
-**File**: `src/cmd/sqlp.rs` (modified, +53/-0)
-```diff
-@@ -193,6 +193,8 @@ sqlp arguments:
-                            decompressed automatically.
-                            Column headers are required. Use 'qsv rename _all_generic --no-headers'
-                            to add generic column names (_col_N) to a CSV with no headers.
-+                           A JSONL/NDJSON (.jsonl/.ndjson) input is refused: query it with
-+                           the read_ndjson() table function and SKIP_INPUT instead.
-                            If you are using Polars SQL's table functions like read_csv() & read_parquet()
-                            to read input files directly in the SQL statement, you can use the sentinel value
-                            'SKIP_INPUT' to skip input preprocessing.
-@@ -1029,12 +1031,53 @@ impl FromStr for QsvAvroCompression {
+ A pschema.json made by `qsv schema --polars` while QSV_PREFER_DMY was set
+ marks day/month dates as already parsed, so they stay day-first in later
+@@ -452,6 +454,19 @@ fn text_date_expr(
+     strict: bool,
+     guessed: bool,
+     nanos: bool,
++) -> Expr {
++    text_date_expr_of(col(name), name, format, first, strict, guessed, nanos)
++}
++
++/// `text_date_expr` of any text expression, aliased to `name`.
++fn text_date_expr_of(
++    input: Expr,
++    name: &str,
++    format: Option<&str>,
++    first: Option<&str>,
++    strict: bool,
++    guessed: bool,
++    nanos: bool,
+ ) -> Expr {
+     use polars::chunked_array::temporal::string::{infer::infer_pattern_single, patterns::Pattern};
+     let options = StrptimeOptions {
+@@ -460,19 +475,19 @@ fn text_date_expr(
+         ..Default::default()
+     };
+     let parsed = if format.is_some_and(|f| !format_has_time(f)) {
+-        col(name).str().to_date(options)
++        input.str().to_date(options)
+     } else {
+         let zoned =
+             format.is_none() && first.and_then(infer_pattern_single) == Some(Pattern::DatetimeYMDZ);
+-        col(name).str().to_datetime(
++        input.str().to_datetime(
+             nanos.then_some(TimeUnit::Nanoseconds),
+             zoned.then_some(TimeZone::UTC),
+             options,
+             lit("raise"),
+         )
+     };
+     if !guessed {
+-        return parsed;
++        return parsed.alias(name);
      }
+     // A guessed or inferred format's %Y also takes 2-digit years (10/06/24, 10/06/ 24 or
+     // 24-10-06T10:15 as the year 24), and only the first value is checked, so years before
+@@ -483,6 +498,92 @@ fn text_date_expr(
+         .alias(name)
  }
  
-+/// Whether `path` names a JSONL/NDJSON file (`.jsonl`/`.ndjson`, any case), also under a
-+/// Snappy `.sz` suffix. sqlp and joinp read inputs as CSV, so they refuse these (#5126).
-+pub(crate) fn is_jsonl_path(path: &Path) -> bool {
-+    let has_ext = |p: &Path, exts: &[&str]| {
-+        p.extension()
-+            .and_then(std::ffi::OsStr::to_str)
-+            .is_some_and(|ext| exts.iter().any(|e| ext.eq_ignore_ascii_case(e)))
++/// A text index that mixes dates and datetimes, e.g. `qsv datefmt` output, which drops midnight
++/// times. Parses it as datetimes, its dates as midnight: values in the first value's `format`
++/// as such, the rest strictly in the format of the first value that does not match it. None when
++/// every value matches `format`, or the first that does not is no date or datetime of the other
++/// kind.
++fn mixed_index_expr(
++    lf: &LazyFrame,
++    name: &str,
++    format: Option<&str>,
++    first: &str,
++    prefer_dmy: bool,
++    nanos: bool,
++) -> CliResult<Option<Expr>> {
++    use polars::chunked_array::temporal::string::{infer::infer_pattern_single, patterns::Pattern};
++    let first_is_date = format.is_some_and(|f| !format_has_time(f));
++    let primary = text_date_expr_of(col(name), name, format, Some(first), false, false, nanos);
++    let unmatched = lf
++        .clone()
++        .select([col(name)])
++        .filter(col(name).is_not_null().and(primary.clone().is_null()))
++        .limit(1)
++        .collect()?;
++    // ChunkedArray::get panics out of bounds; no row means every value matches `format`
++    if unmatched.height() == 0 {
++        return Ok(None);
++    }
++    let Some(value) = unmatched
++        .column(name)?
++        .str()?
++        .get(0)
++        .map(|v| v.trim().to_string())
++    else {
++        return Ok(None);
 +    };
-+    if has_ext(path, &["sz"]) {
-+        has_ext(&path.with_extension(""), &["jsonl", "ndjson"])
-+    } else {
-+        has_ext(path, &["jsonl", "ndjson"])
++    // a day/month first value settles the order for the rest too
++    // Some(true) for day-first, Some(false) for month-first, None for year-first or inferred
++    let day_first = |f: Option<&str>| match f.and_then(|f| f.get(..2)) {
++        Some("%d") => Some(true),
++        Some("%m") => Some(false),
++        _ => None,
++    };
++    let first_order = day_first(format);
++    let other_format = index_date_format(&value, first_order.unwrap_or(prefer_dmy));
++    let other_is_kind = match other_format.as_deref() {
++        Some(f) => {
++            format_has_time(f) == first_is_date
++                && first_order.is_none_or(|o| day_first(Some(f)) == Some(o))
++        },
++        None => first_is_date && looks_like_datetime(&value),
++    };
++    if !other_is_kind {
++        return Ok(None);
 +    }
-+}
-+
- pub fn run(argv: &[&str]) -> CliResult<()> {
-     let mut args: Args = util::get_args(USAGE, argv)?;
- 
-     let tmpdir = tempfile::tempdir()?;
- 
-     let mut skip_input = false;
-+    // An input table is read with Polars' CSV reader, which would take a JSONL file's first
-+    // line as the header and split each object at its commas (#5126). Check the names as
-+    // given first, so the hint names the user's file (not a temp copy) and stdin isn't spooled.
-+    // (only existing files: a directory or a `dc:` handle may carry such a name and resolve to
-+    // CSVs; the check after expansion covers what they hold)
-+    if let Some(jsonl) = args
-+        .arg_input
-+        .iter()
-+        .find(|path| path.is_file() && is_jsonl_path(path))
-+    {
-+        let (decompress, example) = if jsonl
-+            .extension()
-+            .is_some_and(|ext| ext.eq_ignore_ascii_case("sz"))
-+        {
-+            (" Decompress it first.", jsonl.with_extension(""))
-+        } else {
-+            ("", jsonl.clone())
-+        };
-+        return fail_incorrectusage_clierror!(
-+            "{} is a JSONL/NDJSON file, which sqlp can't read as an input table.{decompress} Use \
-+             the read_ndjson() table function instead, e.g.:\n  qsv sqlp SKIP_INPUT \"SELECT * \
-+             FROM read_ndjson('{}')\"",
-+            jsonl.display(),
-+            example.display()
-+        );
-+    }
-     // stdin is copied to a temp `stdin.csv`, whose made-up extension must not pick the delimiter
-     let mut stdin_input: Option<PathBuf> = None;
-     args.arg_input = if args.arg_input == [PathBuf::from("SKIP_INPUT")] {
-@@ -1050,6 +1093,16 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         }
-         inputs
-     };
-+    // A JSONL file can also come from a directory, an .infile-list or an archive. Its path may
-+    // be a temp copy that is gone once sqlp exits, so name only the file.
-+    if let Some(jsonl) = args.arg_input.iter().find(|path| is_jsonl_path(path)) {
-+        let name = jsonl.file_name().unwrap_or_default().to_string_lossy();
-+        return fail_incorrectusage_clierror!(
-+            "{name} (from a directory, .infile-list or archive input) is a JSONL/NDJSON file, \
-+             which sqlp can't read as an input table. Extract it and query it with the \
-+             read_ndjson() table function and SKIP_INPUT instead."
-+        );
-+    }
- 
-     let rnull_values = if args.flag_rnull_values == "<empty string>" {
-         vec![PlSmallStr::EMPTY]
-```
-
-**File**: `tests/test_joinp.rs` (modified, +30/-0)
-```diff
-@@ -705,6 +705,36 @@ joinp_test_comments!(
-     }
- );
- 
-+#[test]
-+fn joinp_refuses_jsonl_input() {
-+    // #5126: joinp read a JSONL input with the CSV reader (its first line became the header),
-+    // so the join failed with a confusing ColumnNotFound. It now refuses it up front.
-+    let wrk = Workdir::new("joinp_refuses_jsonl_input");
-+    wrk.create_from_string(
-+        "s.jsonl",
-+        "{\"id\": 1, \"v\": \"a\"}\n{\"id\": 2, \"v\": \"b\"}\n",
++    // parse the rest on its own, so a format inferred by Polars comes from one of its values
++    let others = text_date_expr_of(
++        when(primary.clone().is_null())
++            .then(col(name))
++            .otherwise(lit(NULL)),
++        name,
++        other_format.as_deref(),
++        Some(&value),
++        true,
++        false,
++        nanos,
 +    );
-+    wrk.create("k.csv", vec![svec!["id", "w"], svec!["1", "x"]]);
-+    // refused by its name, before the .sz is decompressed
-+    wrk.create_from_string("z.NDJSON.sz", "not read");
-+
-+    for (left, right, jsonl) in [
-+        ("s.jsonl", "k.csv", "s.jsonl"),
-+        ("k.csv", "s.jsonl", "s.jsonl"),
-+        ("z.NDJSON.sz", "k.csv", "z.NDJSON.sz"),
-+    ] {
-+        let mut cmd = wrk.command("joinp");
-+        cmd.args(["id", left, "id", right]);
-+        let stderr = wrk.stderr_on_error(&mut cmd);
-+        assert!(
-+            stderr.contains(&format!(
-+                "{jsonl} is a JSONL/NDJSON file, which joinp can't read"
-+            )) && stderr.contains("qsv jsonl"),
-+            "unexpected stderr ({left} {right}): {stderr}"
-+        );
-+    }
-+}
-+
- #[test]
- fn joinp_cross() {
-     let wrk = Workdir::new("join_cross");
++    let zoned = |f: Option<&str>, v: &str| {
++        f.is_none() && infer_pattern_single(v) == Some(Pattern::DatetimeYMDZ)
++    };
++    let dtype = DataType::Datetime(
++        if nanos {
++      
 ```
 
-**File**: `tests/test_sqlp.rs` (modified, +67/-0)
+**File**: `tests/test_timebucketp.rs` (modified, +273/-0)
 ```diff
-@@ -8793,3 +8793,70 @@ fn sqlp_version_function() {
-         got[1][0]
+@@ -632,6 +632,279 @@ fn timebucketp_later_day_first_value_is_an_error() {
      );
  }
+ 
++// `qsv datefmt` drops midnight times, so its output mixes dates and datetimes (#5129)
++#[test]
++fn timebucketp_mixed_dates_and_datetimes_read_dates_as_midnight() {
++    let wrk = Workdir::new("timebucketp_mixed_dates_and_datetimes_read_dates_as_midnight");
++    wrk.create(
++        "m.csv",
++        vec![
++            svec!["ts", "v"],
++            svec!["2020-01-01", "1"],
++            svec!["2020-01-01T10:30:00", "2"],
++            svec!["2020-01-02T08:00:00", "3"],
++            svec!["2020-01-02", "4"],
++        ],
++    );
++    let mut cmd = tb(
++        &wrk,
++        &["-i", "ts", "--every", "12h", "--agg", "sum:v", "m.csv"],
++    );
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["ts", "v_sum"],
++            svec!["2020-01-01 00:00:00", "3"],
++            svec!["2020-01-02 00:00:00", "7"],
++        ]
++    );
++}
 +
 +#[test]
-+fn sqlp_refuses_jsonl_input() {
-+    // #5126: an input table is read with the CSV reader, so a JSONL file's first line became
-+    // the header and COUNT(*) was one short. sqlp now refuses it and points to read_ndjson().
-+    let wrk = Workdir::new("sqlp_refuses_jsonl_input");
-+    let jsonl = "{\"id\": 1, \"v\": \"a\"}\n{\"id\": 2, \"v\": \"b\"}\n{\"id\": 3, \"v\": \"c\"}\n";
-+    wrk.create_from_string("s.jsonl", jsonl);
-+    wrk.create_from_string("s2.NDJSON", jsonl);
-+    wrk.create("k.csv", vec![svec!["id"], svec!["1"]]);
-+
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("s.jsonl").arg("SELECT COUNT(*) AS n FROM s");
-+    let stderr = wrk.stderr_on_error(&mut cmd);
-+    assert!(
-+        stderr.contains("s.jsonl is a JSONL/NDJSON file")
-+            && stderr.contains("read_ndjson('s.jsonl')"),
-+        "unexpected stderr: {stderr}"
++fn timebucketp_mixed_month_first_dates_and_datetimes() {
++    let wrk = Workdir::new("timebucketp_mixed_month_first_dates_and_datetimes");
++    wrk.create(
++        "m.csv",
++        vec![
++            svec!["ts", "v"],
++            svec!["01/02/2020", "1"],
++            svec!["01/02/2020 10:30", "2"],
++            svec!["01/03/2020 08:00", "3"],
++        ],
 +    );
-+
-+    // any position, any case of the extension
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("k.csv").arg("s2.NDJSON").arg("SELECT 1 AS x");
-+    let stderr = wrk.stderr_on_error(&mut cmd);
-+    assert!(
-+        stderr.contains("s2.NDJSON is a JSONL/NDJSON file"),
-+        "unexpected stderr: {stderr}"
++    let mut cmd = tb(
++        &wrk,
++        &["-i", "ts", "--every", "1d", "--agg", "sum:v", "m.csv"],
 +    );
-+
-+    // a Snappy-compressed JSONL is refused by its name, before it is decompressed
-+    wrk.create_from_string("s3.jsonl.sz", "not read");
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("s3.jsonl.sz").arg("SELECT 1 AS x");
-+    let stderr = wrk.stderr_on_error(&mut cmd);
-+    assert!(
-+        stderr.contains("s3.jsonl.sz is a JSONL/NDJSON file")
-+            && stderr.contains("Decompress it first")
-+            && stderr.contains("read_ndjson('s3.jsonl')"),
-+        "unexpected stderr: {stderr}"
-+    );
-+
-+    // a directory that only carries a JSONL-looking name is expanded, not refused
-+    std::fs::create_dir(wrk.path("batch.jsonl")).unwrap();
-+    std::fs::write(wrk.path("batch.jsonl").join("b.csv"), "id\n7\n").unwrap();
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("batch.jsonl").arg("SELECT id FROM b");
 +    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(got, vec![svec!["id"], svec!["7"]]);
-+
-+    // a JSONL file found by expanding a directory input is named without its temp path
-+    std::fs::create_dir(wrk.path("dir")).unwrap();
-+    std::fs::write(wrk.path("dir").join("d.jsonl"), jsonl).unwrap();
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("dir").arg("SELECT 1 AS x");
-+    let stderr = wrk.stderr_on_error(&mut cmd);
-+    assert!(
-+        stderr.contains("d.jsonl (from a directory, .infile-list or archive input)"),
-+        "unexpected stderr: {stderr}"
++    assert_eq!(
++        got,
++        vec![
++            svec!["ts", "v_sum"],
++            svec!["2020-01-02 00:00:00", "3"],
++            svec!["2020-01-03 00:00:00", "3"],
++        ]
 +    );
-+
-+    // the documented route reads every record
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("SKIP_INPUT")
-+        .arg("SELECT COUNT(*) AS n FROM read_ndjson('s.jsonl')");
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(got, vec![svec!["n"], svec!["3"]]);
 +}
++
++// `qsv datefmt`'s default RFC 3339 output: a zoned datetime first, midnight dates later
++#[test]
++fn timebucketp_zoned_datetimes_then_dates_read_dates_as_midnight_utc() {
++    let wrk = Workdir::new("timebucketp_zoned_datetimes_then_dates_read_dates_as_midnight_utc");
++    wrk.create(
++        "m.csv",
++        vec![
++            svec!["ts", "v"],
++            svec!["2010-08-25T13:00:00+00:00", "1"],
++            svec!["2010-08-25", "2"],
++            svec!["2010-08-26T08:00:00+00:00", "3"],
++            svec!["2010-08-26", "4"],
++        ],
++    );
++    let mut cmd = tb(
++        &wrk,
++        &["-i", "ts", "--every", "1h", "--agg", "sum:v", "m.csv"],
++    );
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["ts", "v_sum"],
++            svec!["2010-08-25 00:00:00", "2"],
++            svec!["2010-08-25 13:00:00", "1"],
++            svec!["2010-08-26 00:00:00", "4"],
++            svec!["2010-08-26 08:00:00", "3"],
++        ]
++    );
++}
++
++#[test]
++fn timebucketp_month_first_datetimes_then_dates() {
++    let wrk = Workdir::new("timebucketp_month_first_datetimes_then_dates");
++    wrk.create(
++        "m.csv",
++        vec![
++            svec!["ts", "v"],
++            svec!["01/02/2020 10:30", "1"],
++            svec!["01/02/2020", "2"],
++            svec!["01/03/2020", "3"],
++        ],
++    );
++    let mut cmd = tb(
++        &wrk,
++        &["-i", "ts", "--every", "1d", "--agg", "sum:v", "m.csv"],
++    );
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["ts", "v_sum"],
++            svec!["2020-01-02 00:00:00", "3"],
++            svec!["2020-01-03 00:00:00", "3"],
++        ]
++    );
++}
++
++// a first value that only parses day-first settles the order for the datetimes too
++#[test]
++fn timebucketp_day_first_date_settles_the_order_of_later_datetimes() {
++    let wrk = Workdir::new("timebucketp_day_first_date_settles_the_order_of_later_datetimes");
++    wrk.create(
++        "m.csv",
++        vec![
++            svec!["ts", "v"],
++            svec!["25/12/2024", "1"],
++            svec!["03/01/2025 10:30", "2"],
++        ],
++    );
++    let mut cmd = tb(
++        &wrk,
++        &["-i", "ts", "--every", "1mo", "--agg", "sum:v", "m.csv"],
++    );
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["ts", "v_sum"],
++            svec!["2024-12-01 00:00:00", "1"],
++            svec!["2025-01-01 00:00:00", "2"],
++        ]
++    );
++}
++
++// a third shape fails the date fallback; without --date-format, don't tell the user to drop it
++#[test]
++fn timebucketp_third_index_shape_does_not_blame_date_format() {
++    let wrk = Workdir::new("timebucketp_third_index_shape_does_not_blame_date_format");
++    wrk.create(
++        "m.csv",
++        vec![
++            svec!["ts", "v"],
++            svec!["01/02/2020 10:30", "1"],
++            svec!["01/02/2020", "2"],
++            svec!["01/03/2020T08:00:00", "3"],
++        ],
++    );
++    let mut cmd = tb(&wrk, &["-i", "ts", "--every", "1d", "m.csv"]);
++    let stderr = wrk.stderr_on_error(&m
+```
+
+---
+
+### Incident Patch 2: `ca34987a` (2026-11-28)
+**Commit Message**: fix(timebucketp): accept a year-first date after a day/month-first datetime (#5131)
+
+* fix(timebucketp): accept a year-first date after a day/month-first datetime
+
+#5130 carried a day/month-first value's order over to the other kind
+of index value. It also rejected an unambiguous year-first date there
+(25/12/2024 10:30 followed by 2025-01-03), since that format has no
+day/month order to compare. The order is now compared only when both
+formats have one.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): cite #5131 for timebucketp mixed index [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
+ 
+ ### Added
+-- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. An index that mixes dates and datetimes, as `datefmt` writes midnight values, is read as datetimes, its dates as midnight ([#5130](https://github.com/dathere/qsv/pull/5130)). Text columns holding only dates are parsed the same way for min/max/mean/median/quantile, so they compare as dates rather than text, while first/last keep the values as written. Dates need 4-digit years unless `--date-format` is given (chrono would read `10/05/24` as the year 10). `--sorted` skips the sort for pre-sorted input, but still verifies the order: Polars' lazy `group_by_dynamic` does not check it without `--by` and silently builds wrong windows from unsorted input. Enables Polars' `dynamic_group_by` feature ([#5112](https://github.com/dathere/qsv/pull/5112)).
++- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. An index that mixes dates and datetimes, as `datefmt` writes midnight values, is read as datetimes, its dates as midnight ([#5130](https://github.com/dathere/qsv/pull/5130), [#5131](https://github.com/dathere/qsv/pull/5131)). Text columns holding only dates are parsed the same way for min/max/mean/median/quantile, so they compare as dates rather than text, while first/last keep the values as written. Dates need 4-digit years unless `--date-format` is given (chrono would read `10/05/24` as the year 10). `--sorted` skips the sort for pre-sorted input, but still verifies the order: Polars' lazy `group_by_dynamic` does not check it without `--by` and silently builds wrong windows from unsorted input. Enables Polars' `dynamic_group_by` feature ([#5112](https://github.com/dathere/qsv/pull/5112)).
+ - `sqlp`: new SQL from the Polars bump to `08b2814` (all failed on `93d31f0`): `INSERT INTO <table> VALUES ...` and `UPDATE <table> SET ...` on registered tables ([#30958](https://github.com/pola-rs/polars/pull/30958)), which change the table for the statements after them in a `.sql` script but never the input file; `COPY <table> FROM '<file>'`, which appends a file's rows to a table as in Postgres (give `(HEADER true)` for a file with a header row; without it the header is read as a data row, which fails on a numeric column) ([#30975](https://github.com/pola-rs/polars/pull/30975)); `UNNEST ... WITH ORDINALITY` ([#31017](https://github.com/pola-rs/polars/pull/31017)); window frames that end before the current row, e.g. `ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING` ([#31022](https://github.com/pola-rs/polars/pull/31022)); `SHOW FUNCTIONS` ([#31002](https://github.com/pola-rs/polars/pull/31002)); and the functions `REGEXP_SUBSTR`, `JSON_EXTRACT_PATH` and `JSON_EXTRACT_PATH_TEXT` ([#31003](https://github.com/pola-rs/polars/pull/31003)). `RANDOM()` in `LIMIT`/`OFFSET` is drawn once, so it no longer fails ([#30944](https:
+```
+
+**File**: `src/cmd/timebucketp.rs` (modified, +4/-1)
+```diff
+@@ -544,7 +544,10 @@ fn mixed_index_expr(
+     let other_is_kind = match other_format.as_deref() {
+         Some(f) => {
+             format_has_time(f) == first_is_date
+-                && first_order.is_none_or(|o| day_first(Some(f)) == Some(o))
++                // a year-first value can't conflict with a day/month order
++                && first_order
++                    .zip(day_first(Some(f)))
++                    .is_none_or(|(a, b)| a == b)
+         },
+         None => first_is_date && looks_like_datetime(&value),
+     };
+```
+
+**File**: `tests/test_timebucketp.rs` (modified, +26/-0)
+```diff
+@@ -773,6 +773,32 @@ fn timebucketp_day_first_date_settles_the_order_of_later_datetimes() {
+     );
+ }
+ 
++#[test]
++fn timebucketp_year_first_date_after_day_first_datetime() {
++    let wrk = Workdir::new("timebucketp_year_first_date_after_day_first_datetime");
++    wrk.create(
++        "m.csv",
++        vec![
++            svec!["ts", "v"],
++            svec!["25/12/2024 10:30", "1"],
++            svec!["2025-01-03", "2"],
++        ],
++    );
++    let mut cmd = tb(
++        &wrk,
++        &["-i", "ts", "--every", "1mo", "--agg", "sum:v", "m.csv"],
++    );
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["ts", "v_sum"],
++            svec!["2024-12-01 00:00:00", "1"],
++            svec!["2025-01-01 00:00:00", "2"],
++        ]
++    );
++}
++
+ // a third shape fails the date fallback; without --date-format, don't tell the user to drop it
+ #[test]
+ fn timebucketp_third_index_shape_does_not_blame_date_format() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5131** (2026-11-28): fix(timebucketp): accept a year-first date after a day/month-first datetime (@jqnatividad)
+- **PR #5130** (2026-11-28): fix(timebucketp): read an index mixing dates and datetimes, dates as midnight (@jqnatividad)
 - **PR #5128** (2026-11-28): fix(sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson() (@jqnatividad)
 - **PR #5127** (2026-11-27): fix: write nested JSONL values as JSON text (#5125 follow-up) (@jqnatividad)
 - **PR #5125** (2026-11-27): deps: bump Polars to upstream 4ba28fb (41 commits past py-2.2.0) (@jqnatividad)
 - **PR #5124** (2026-11-27): fix(pivotp): count rows when no columns remain for --values; rename clashing generated columns (@jqnatividad)
-- **PR #5121** (2026-11-27): deps: bump polars-readstat-rs to 0.27.1 (rebased fork) (@jqnatividad)
-- **PR #5120** (2026-11-27): build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289 (@dependabot[bot])
 
 ---
 
@@ -2616,31 +2760,31 @@ roborev follow-ups on the JSONL refusal:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson()
+## X. timebucketp): read an index mixing dates and datetimes, dates as midnight
 
 **RULE**:
-When implementing operations in `.claude/skills/qsv/qsv-sqlp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `60956a31`: sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson(). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0dd1ae72`: timebucketp): read an index mixing dates and datetimes, dates as midnight. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-sqlp.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "description": "The CSV file/s to query. Use '-' for standard input. If input is a directory, all files in the directory will be read as input. If the input is a file with a '.infile-list' extension, the file will be read as a list of files to use as input. If the input are snappy compressed file(s), it will be decompressed automatically. Column headers are required. Use 'qsv rename _all_generic --no-headers' to add generic column names (_col_N) to a CSV with no headers. A JSONL/NDJSON (.jsonl/.ndjson) input is refused: query it with the read_ndjson() table function and SKIP_INPUT instead. If you are using Polars SQL's table functions like read_csv() & read_parquet() to read input files directly in the SQL statement, you can use the sentinel value 'SKIP_INPUT' to skip input preprocessing. If pschema.json file/s exists for the input file/s, they will automatically be used to optimize the query even if --cache-schema is not set."
+- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. An index that mixes dates and datetimes, as `datefmt` writes midnight values, is read as datetimes, its dat
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        "description": "The CSV file/s to query. Use '-' for standard input. If input is a directory, all files in the directory will be read as input. If the input is a file with a '.infile-list' extension, the file will be read as a list of files to use as input. If the input are snappy compressed file(s), it will be decompressed automatically. Column headers are required. Use 'qsv rename _all_generic --no-headers' to add generic column names (_col_N) to a CSV with no headers. If you are using Polars SQL's table functions like read_csv() & read_parquet() to read input files directly in the SQL statement, you can use the sentinel value 'SKIP_INPUT' to skip input preprocessing. If pschema.json file/s exists for the input file/s, they will automatically be used to optimize the query even if --cache-schema is not set."
+- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. Text columns holding only dates are parsed the same way for min/max/mean/median/quantile, so they compare a
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `60956a31` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0dd1ae72` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

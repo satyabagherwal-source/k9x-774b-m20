@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T13:55:57.612Z",
+  "last_updated": "2026-11-28T14:29:36.488Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "3a9795e0c180718a4016539b3b98eed212e486cdea92bbd233b7caa35e12fc5c",
-      "verified_at": "2026-11-28T13:17:57.055Z",
+      "content_hash": "605727ce53f4f6a599cefdedcc0de4bf1533895756f8235a26b89edc9024a028",
+      "verified_at": "2026-11-28T14:29:36.488Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-28T13:17:57.055Z"
+      "last_updated": "2026-11-28T14:29:36.488Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -15081,14 +15081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rafsoh-dimeapp",
-      "content_hash": "b76afc01e4a9bcb4969ebe64a5f45995022e40cb1e5011b833d4f769052e220f",
-      "verified_at": "2026-11-26T08:57:29.198Z",
+      "content_hash": "91f76c07d48cd0f99d907ab766b541d8a51c2b85be13bea25901f2a4933ea0ea",
+      "verified_at": "2026-11-28T14:29:27.216Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T08:57:29.198Z"
+      "last_updated": "2026-11-28T14:29:27.216Z"
     },
     "exyte/Chat": {
       "repository": "exyte/Chat",
@@ -15411,14 +15411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dubzzz-fast-check",
-      "content_hash": "c066017365b66aa65417da8f88b34c8603807be22e6102ca0c7c055e425be1c8",
-      "verified_at": "2026-11-25T02:02:02.107Z",
+      "content_hash": "c2727bdd2d91afb6736151b6694790b49c8eea503c9ffb9e2536d974a7c9b89c",
+      "verified_at": "2026-11-28T14:29:24.843Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:02:02.107Z"
+      "last_updated": "2026-11-28T14:29:24.843Z"
     },
     "react/react-native": {
       "repository": "react/react-native",
