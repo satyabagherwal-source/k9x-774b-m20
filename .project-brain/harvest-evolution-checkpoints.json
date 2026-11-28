@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T01:45:31.812Z",
+  "last_updated": "2026-11-28T01:55:08.878Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T01:26:58.382Z",
@@ -693,7 +693,7 @@
       "staged_for_review": 1
     },
     "fb55-htmlparser2-learnings.md": {
-      "processed_at": "2026-11-24T17:23:13.982Z",
+      "processed_at": "2026-11-28T01:55:04.712Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -763,7 +763,7 @@
       "staged_for_review": 1
     },
     "peerdb-io-peerdb-learnings.md": {
-      "processed_at": "2026-11-27T07:49:07.228Z",
+      "processed_at": "2026-11-28T01:55:07.209Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1038,7 +1038,7 @@
       "staged_for_review": 1
     },
     "xudong-huang-may-learnings.md": {
-      "processed_at": "2026-11-19T00:49:58.205Z",
+      "processed_at": "2026-11-28T01:55:03.391Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5190,
+  "total_dossiers_evaluated": 5193,
   "total_canonical_promoted": 588,
-  "total_staged_for_review": 3928
+  "total_staged_for_review": 3931
 }

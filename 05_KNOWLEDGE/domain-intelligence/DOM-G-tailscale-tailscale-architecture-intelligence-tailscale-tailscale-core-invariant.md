@@ -4,24 +4,24 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "72a7f415",
+  "source_version": "091ebe85",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-26T18:41:48.770Z",
+  "timestamp": "2026-11-28T01:54:59.836Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `72a7f415`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-26T18:41:48.770Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `091ebe85`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-28T01:54:59.836Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tailscale/tailscale:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:41:47.217Z  
+> **Harvest Timestamp**: 2026-11-28T01:54:57.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39666 stars
+- **Stars / Engagement**: 39744 stars
 
 ---
 
@@ -835,30 +835,245 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ffce79f` (2026-11-26)
-**Commit Message**: wgengine/netstack: fix invocation of ping on illumos/solaris
+### Incident Patch 1: `091ebe85` (2026-11-27)
+**Commit Message**: feature/conn25: only admit protocols the datapath can map to a transit IP (#22697)
 
-**File**: `wgengine/netstack/netstack_userping.go` (modified, +3/-0)
+The connector's ingress filter hook accepts any packet addressed to one
+of its transit IP pools, on the understanding that the datapath will
+take it from there. For most of what it admits, the datapath does not:
+HandlePacketFromWireGuard returns Accept untouched for everything
+isSupportedProtocol excludes, so SCTP, GRE, ESP and friends are handed
+to the host stack addressed to a transit IP, which is not an address
+this node holds.
+
+Nor does the hook ask anything of the sender. A peer holding no conn25
+grant at all, having registered no mapping, can send those to any
+address in a connector's pool and have the filter wave them through.
+
+Split the ingress hook off into ingressAllow and have it require a
+protocol the datapath can map. What is left behind serves only the
+link-local hook, which lifts the filter's blanket drop of link-local
+destinations rather than accepting anything, so rename it to
+linkLocalAllow to match its remaining job and the client's hook of the
+same name. A packet to a transit IP still has to pass ingressAllow
+either way. packetFilterAllowReason loses its reason to be named after
+
+
+**File**: `feature/conn25/client.go` (modified, +1/-1)
 ```diff
-@@ -56,6 +56,9 @@ func (ns *Impl) sendOutboundUserPing(dstIP netip.Addr, timeout time.Duration) er
- 			ping = "/system/bin/ping6"
+@@ -69,7 +69,7 @@ func (c *client) transitIPRoutableLocked(as *addrs) bool {
+ func (c *client) linkLocalAllow(p packet.Parsed) (bool, string) {
+ 	ok := c.isKnownTransitIP(p.Dst.Addr())
+ 	if ok {
+-		return true, packetFilterAllowReason
++		return true, transitIPAllowReason
+ 	}
+ 	return false, ""
+ }
+```
+
+**File**: `feature/conn25/conn25.go` (modified, +5/-4)
+```diff
+@@ -252,16 +252,17 @@ func (e *extension) installHooks(dph *datapathHandler) error {
+ 		if !e.conn25.isConfigured() {
+ 			return false, ""
  		}
- 		err = exec.Command(ping, "-c", "1", "-w", "3", dstIP.String()).Run()
-+	case "illumos", "solaris":
-+		// /usr/sbin/ping host [timeout]
-+		err = exec.Command("/usr/sbin/ping", dstIP.String(), "3").Run()
- 	default:
- 		ping := "ping"
- 		if isSynology {
+-		return e.conn25.connector.packetFilterAllow(p)
++		return e.conn25.connector.linkLocalAllow(p)
+ 	})
+ 
+ 	// Allow the connector to receive packets with Transit IP destinations
+-	// that are not "local" to it, and that it does not advertise.
++	// that are not "local" to it, and that it does not advertise, as long as
++	// the datapath can do something with them.
+ 	e.host.Hooks().Filter.IngressAllowHooks.Add(func(p packet.Parsed) (bool, string) {
+ 		if !e.conn25.isConfigured() {
+ 			return false, ""
+ 		}
+-		return e.conn25.connector.packetFilterAllow(p)
++		return e.conn25.connector.ingressAllow(p)
+ 	})
+ 
+ 	// Route DNS queries for app domains to the connector that serves
+@@ -1437,7 +1438,7 @@ func rewriteHTTPSResponse(hdr dnsmessage.Header, question dnsmessage.Question, p
+ 	return b.Finish()
+ }
+ 
+-const packetFilterAllowReason = "app connector transit IP"
++const transitIPAllowReason = "app connector transit IP"
+ 
+ func (e *extension) getRouteCheckReport() ipnlocal.RouteCheckReport {
+ 	b, ok := e.backend.(*ipnlocal.LocalBackend)
+```
+
+**File**: `feature/conn25/connector.go` (modified, +24/-3)
+```diff
+@@ -149,15 +149,36 @@ func (c *connector) destinationInPools(dst netip.Addr) bool {
+ 	return (magic != nil && magic.Contains(dst)) || (transit != nil && transit.Contains(dst))
+ }
+ 
+-// packetFilterAllow returns true if the provided packet has a Dst that is in
++// linkLocalAllow returns true if the provided packet has a Dst that is in
+ // the configured transit IP range for this connector, false otherwise.
+-func (c *connector) packetFilterAllow(p packet.Parsed) (bool, string) {
++//
++// It only exempts the packet from the filter's blanket drop of link-local
++// destinations; it does not accept it. Acceptance is
++// [connector.ingressAllow]'s decision, which a packet to a transit IP has to
++// get through either way.
++func (c *connector) linkLocalAllow(p packet.Parsed) (bool, string) {
+ 	if c.transitIPInPool(p.Dst.Addr()) {
+-		return true, packetFilterAllowReason
++		return true, transitIPAllowReason
+ 	}
+ 	return false, ""
+ }
+ 
++// ingressAllow reports whether p, a packet arriving from a peer, may be
++// accepted by this connector. It may if it is addressed to an address in a
++// configured transit IP pool and carries a protocol the datapath can map.
++//
++// The protocol check matters because a transit IP is not an address this node
++// holds. Admitting a protocol [isSupportedProtocol] excludes would have
++// [datapathHandler.HandlePacketFromWireGuard] pass it through untouched, which
++// hands the host stack a packet addressed to something it has no route for.
++// Only the protocols the datapath can map have anywhere to go.
++func (c *connector) ingressAllow(p packet.Parsed) (bool, string) {
++	if !c.transitIPInPool(p.Dst.Addr()) || !isSupportedProtocol(p.IPProto) {
++		return false, ""
++	}
++	return true, transitIPAllowReason
++}
++
+ // lookupAddrBySrcIPAndTransitIPLocked returns the real destination IP that the
+ // peer at srcIP registered for transitIP, or (zero, false) if it registered
+ // none. c.mu must be held.
+```
+
+**File**: `feature/conn25/connector_test.go` (modified, +65/-3)
+```diff
+@@ -15,6 +15,7 @@ import (
+ 	"tailscale.com/tailcfg/peercap"
+ 	"tailscale.com/tstest"
+ 	"tailscale.com/types/appctype"
++	"tailscale.com/types/ipproto"
+ 	"tailscale.com/types/logger"
+ 	"tailscale.com/util/must"
+ )
+@@ -283,7 +284,7 @@ func TestConnectorDisallowedDestinations(t *testing.T) {
+ 	}
+ }
+ 
+-func TestConnectorPacketFilterAllow(t *testing.T) {
++func TestConnectorLinkLocalAllow(t *testing.T) {
+ 	src := netip.MustParseAddr("100.64.0.1")
+ 	knownTip := netip.MustParseAddr("192.0.2.1")
+ 	unknownTip := netip.MustParseAddr("100.64.0.42")
+@@ -300,17 +301,78 @@ func TestConnectorPacketFilterAllow(t *testing.T) {
+ 		},
+ 	})
+ 
+-	if allow, _ := c.connector.packetFilterAllow(packet.Parsed{
++	if allow, _ := c.connector.linkLocalAllow(packet.Parsed{
+ 		Src: netip.AddrPortFrom(src, 1234),
+ 		Dst: netip.AddrPortFrom(knownTip, 1234),
+ 	}); !allow {
+ 		t.Fatal("knownTip: should have been allowed")
+ 	}
+ 
+-	if allow, _ := c.connector.packetFilterAllow(packet.Parsed{
++	if allow, _ := c.connector.linkLocalAllow(packet.Parsed{
+ 		Src: netip.AddrPortFrom(src, 1234),
+ 		Dst: netip.AddrPortFrom(unknownTip, 1234),
+ 	}); allow {
+ 		t.Fatal("unknownTip: should not have been allowed")
+ 	}
+ }
++
++// TestConnectorIngressAllow checks that the connector's ingress filter hook
++// admits a packet to a transit IP only when the datapath can map its
++// protocol, and refuses addresses outside the transit pools outright.
++func TestConnectorIngressAllow(t *testing.T) {
++	src := netip.MustParseAddr("100.64.0.1")
++	knownTip := netip.MustParseAddr("192.0.2.1")
++	unknownTip := netip.MustParseAddr("100.64.0.42")
++
++	v4TransitIPsBuilder := netipx.IPSetBuilder{}
++	v4TransitIPsBuilder.AddPrefix(netip.MustParsePrefix("192.0.2.0/24"))
++	v4TransitIPs := must.Get(v4TransitIPsBuilder.IPSet())
++
++	c := newConn25(t.Logf)
++	c.reconfig(&config{
++		isConfigured: true,
++		ipSets: ipSets{
++			v4Transit: v4TransitIPs,
++		},
++	})
++
++	tests := []struct {
++		name  string
++		proto ipproto.Proto
++		dst   netip.Addr
++		want  bool
++	}{
++		// The protocols the datapath maps between a transit IP and a
++		// destination, which is the whole point of admitting these.
++		{"tcp", ipproto.TCP, knownTip, true},
++		{"udp", ipproto.UDP, knownTip, true},
++		{"icmpv4", ipproto.ICMPv4, knownTip, true},
++		{"icmpv6", ipproto.ICMPv6, knownTip, true},
++
++		// The rest the datapath passes through untouched, so admitting them
++		// would only hand the host stack a packet addressed to a transit IP,
++		// which is not an address this node holds.
++		{"sctp", ipproto.SCTP, knownTip, false},
++		{"gre", ipproto.Proto(47), knownTip, false},
++		{"esp", ipproto.Proto(50), knownTip, false},
++		{"tsmp", ipproto.TSMP, knownTip, false},
++
++		// Outside the pool nothing is admitted whatever the protocol.
++		{"tcp-outside-pool", ipproto.TCP, unknownTip, false},
++		{"gre-outside-pool", ipproto.Proto(47), unknownTip, false},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got, why := c.connector.ingressAllow(packet.Parsed{
++				IPVersion: 4,
++				IPProto:   tt.proto,
++				Src:       netip.AddrPortFrom(src, 1234),
++				Dst:       netip.AddrPortFrom(tt.dst, 1234),
++			})
++			if got != tt.want {
++				t.Errorf("ingressAllow(%v -> %v) = (%v, %q), want %v", tt.proto, tt.dst, got, why, tt.want)
++			}
++		})
++	}
++}
+```
+
+**File**: `feature/conn25/datapath.go` (modified, +4/-0)
+```diff
+@@ -132,6 +132,10 @@ func (dh *datapathHandler) StartFlowExpirySweepers(ctx context.Context) {
+ 	go dh.connectorFlowTable.StartExpiredSweeper(ctx)
+ }
+ 
++// isSupportedProtocol reports whether the datapath can map proto between a
++// transit IP and a destination. Anything else it passes through untouched, so
++// [connector.ingressAllow] refuses it rather than admitting a packet nothing
++// downstream will act on.
+ func isSupportedProtocol(proto ipproto.Proto) bool {
+ 	return proto == ipproto.TCP || proto == ipproto.UDP || proto == ipproto.ICMPv4 || proto == ipproto.ICMPv6
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22697** (2026-11-27): feature/conn25: only admit protocols the datapath can map to a transit IP (@mazdakn)
 - **PR #22687** (2026-11-26): tsweb/promvarz, cmd/tailscaled: don't mix other metrics into filtered varz (@bradfitz)
 - **PR #22660** (2026-11-25): feature/conn25: use transitIPInPool in connector.packetFilterAllow (@mazdakn)
 - **PR #22646** (closed): .github/workflows: run go vet checks outside golangci-lint (@sfllaw)
 - **PR #22641** (2026-11-25): wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked (@sfllaw)
 - **PR #22638** (2026-11-25): net/portmapper: add Probe metrics for all PCP result codes (@fmarier)
-- **PR #22636** (2026-11-25): tsweb/varz: add match filters and streaming to /debug/varz (@bradfitz)
 
 ---
 
@@ -878,33 +1093,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wgengine/netstack: fix invocation of ping on illumos/solaris
+## X. feature/conn25: only admit protocols the datapath can map to a transit IP
 
 **RULE**:
-When implementing operations in `wgengine/netstack/netstack_userping.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `feature/conn25/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ffce79f`: wgengine/netstack: fix invocation of ping on illumos/solaris. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `091ebe85`: feature/conn25: only admit protocols the datapath can map to a transit IP. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `wgengine/netstack/netstack_userping.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `feature/conn25/client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	case "illumos", "solaris":
-		// /usr/sbin/ping host [timeout]
-		err = exec.Command("/usr/sbin/ping", dstIP.String(), "3").Run()
+		return true, transitIPAllowReason
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		return true, packetFilterAllowReason
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ffce79f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `091ebe85` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

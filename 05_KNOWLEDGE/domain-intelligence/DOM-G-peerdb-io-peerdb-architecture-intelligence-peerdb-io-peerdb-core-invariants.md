@@ -4,24 +4,24 @@
 {
   "source_repository": "PeerDB-io/peerdb",
   "source_url": "https://github.com/PeerDB-io/peerdb",
-  "source_version": "1a577e50",
+  "source_version": "4e3fd8c9",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-27T07:48:55.043Z",
+  "timestamp": "2026-11-28T01:54:57.561Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-peerdb-io-peerdb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `1a577e50`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-27T07:48:55.043Z`  
+> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `4e3fd8c9`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-28T01:54:57.561Z`  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from PeerDB-io/peerdb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T07:48:53.132Z  
+> **Harvest Timestamp**: 2026-11-28T01:54:55.589Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3326 stars
+- **Stars / Engagement**: 3327 stars
 
 ---
 
@@ -1893,374 +1893,294 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a577e50` (2026-11-27)
-**Commit Message**: Classify TLS record version mismatch as recoverable (#5130)
+### Incident Patch 1: `4e3fd8c9` (2026-11-27)
+**Commit Message**: fix(delete-tables): Prevent RemoveTableEntriesFromRawTable  from haging due connection inactivity (#5136)
 
-A Postgres CDC sync failed once with `tls: received record with version
-0 when expecting version 303` while reading the publication settings,
-and the error was reported as `OTHER`.
+As seen in the [support
+escalation](https://github.com/ClickHouse/support-escalation/issues/9266#issuecomment-7215209847)
 
-Go's `crypto/tls` returns this `tls.RecordHeaderError` when an
-established TLS connection reads a record header with the wrong version
-([conn.go](https://github.com/golang/go/blob/go1.25.0/src/crypto/tls/conn.go#L658-L663)),
-so the bytes that arrived were not a TLS record. That connection is
-unusable, a new one works, and the pipe resumed within minutes without
-intervention.
+A slow to finish clean-up of deleted tables query in RawTable can
+silently drop the CH connection (due inactivity) leading to
+RemoveTablesFromRawTable activity to wait until activity timeout (1h)
+for a confirmation message from ClickHouse that will never arrive.
 
-This classifies that message as `ErrorRetryRecoverable` (source `net`,
-code `tls.RecordHeaderError`). Other record header errors stay `OTHER`,
-and the SSH tunnel wrappers keep their precedence.
+To prevent that, this PR makes the activity stop using
+`lightweight_deletes_sync=2` to delegate DELETE query active wait on
+completion as the driver might silently drop the connection. This is
+replaced by asynchronous delete followed by polling on the remaining
+rows to be deleted.
 
-What produced the stray bytes is not known; the failing connection went
-through an SSH tunnel. The message only carries the version field, so
-the branch also logs the full five-byte record header. A Postgres
-message type there points at the source side, zeros point at the
-transport. It is the header only, never the record payload.
+:warning: Polling queries are cheap and fast for as long as `condition`
+filters on the raw table's sorting key.
+If that changes, we need a different polling method.
 
-Fixes DBI-1331
+:memo: Checking active mutations was considered but discarded due to the
+imposed need to have access on `system.mutations` table.
+:memo: Pinging the source CH to keep the connection alive was also
+considered (https://github.com/PeerDB-io/peerdb/pull/5135) b
 
-**File**: `flow/alerting/classifier.go` (modified, +14/-0)
+**File**: `flow/connectors/clickhouse/cdc.go` (modified, +46/-4)
 ```diff
-@@ -3,6 +3,7 @@ package alerting
- import (
- 	"context"
- 	"crypto/tls"
-+	"encoding/hex"
- 	"errors"
- 	"fmt"
- 	"io"
-@@ -596,6 +597,19 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 		}
+@@ -8,6 +8,7 @@ import (
+ 	"slices"
+ 	"strconv"
+ 	"strings"
++	"time"
+ 
+ 	chproto "github.com/ClickHouse/ch-go/proto"
+ 	"github.com/ClickHouse/clickhouse-go/v2"
+@@ -40,6 +41,8 @@ const (
+ 	zooPathPrefix = "/clickhouse/tables/{uuid}/{shard}/{database}/"
+ )
+ 
++var rawTableDeletePollIntervals = []time.Duration{5 * time.Second, 30 * time.Second, time.Minute, 2 * time.Minute}
++
+ // GetRawTableName returns the raw table name for the given table identifier.
+ func (c *ClickHouseConnector) GetRawTableName(flowJobName string) string {
+ 	return "_peerdb_raw_" + shared.ReplaceIllegalCharactersWithUnderscores(flowJobName)
+@@ -464,23 +467,62 @@ func (c *ClickHouseConnector) RemoveTableEntriesFromRawTable(
+ 		return nil
  	}
  
-+	// Non-TLS bytes arrived on an established TLS connection; reconnecting recovers.
-+	// https://github.com/golang/go/blob/go1.25.0/src/crypto/tls/conn.go#L658-L663
-+	if tlsErr, ok := errors.AsType[tls.RecordHeaderError](err); ok &&
-+		strings.HasPrefix(tlsErr.Msg, "received record with version") {
-+		// Log the full header to see what arrived instead of TLS.
-+		internal.LoggerFromCtx(ctx).Warn("TLS record header with unexpected version",
-+			slog.String("recordHeader", hex.EncodeToString(tlsErr.RecordHeader[:])))
-+		return ErrorRetryRecoverable, ErrorInfo{
-+			Source: ErrorSourceNet,
-+			Code:   "tls.RecordHeaderError",
-+		}
-+	}
++	rawTableName := c.GetRawTableName(req.FlowJobName)
++	// Return as soon as the mutation is registered
++	deleteSettings := chinternal.NewCHSettingsString(c.chVersion, chinternal.SettingLightweightDeletesSync, "0")
 +
- 	if temporalErr, ok := errors.AsType[*temporal.ApplicationError](err); ok {
- 		switch exceptions.ApplicationErrorType(temporalErr.Type()) {
- 		case exceptions.ApplicationErrorTypeIrrecoverableInvalidSnapshot:
-```
-
-**File**: `flow/alerting/classifier_test.go` (modified, +41/-0)
-```diff
-@@ -1755,6 +1755,47 @@ func TestMySQLExecuteError(t *testing.T) {
- 	}, errInfo)
- }
- 
-+func TestTLSRecordVersionMismatch(t *testing.T) {
-+	t.Parallel()
-+
-+	recordErr := tls.RecordHeaderError{
-+		Msg:          "received record with version 0 when expecting version 303",
-+		RecordHeader: [5]byte{0x45, 0x00, 0x00, 0x00, 0x66},
-+	}
-+	recoverable := ErrorInfo{
-+		Source: ErrorSourceNet,
-+		Code:   "tls.RecordHeaderError",
-+	}
-+
-+	// Postgres CDC source creation, as logged by the SyncFlow activity
-+	cdcErr := fmt.Errorf("error checking publish_via_partition_root for publication %s: %w", "test_publication", recordErr)
-+	errorClass, errInfo := GetErrorClass(t.Context(), cdcErr)
-+	assert.Equal(t, ErrorRetryRecoverable, errorClass)
-+	assert.Equal(t, recoverable, errInfo)
-+
-+	errorClass, errInfo = GetErrorClass(t.Context(), fmt.Errorf("failed in pull records when: %w", cdcErr))
-+	assert.Equal(t, ErrorRetryRecoverable, errorClass)
-+	assert.Equal(t, recoverable, errInfo)
-+
-+	// A tunnel already known to be bad keeps its SSH classification
-+	errorClass, errInfo = GetErrorClass(t.Context(),
-+		exceptions.NewSSHTunnelConnectionError(fmt.Errorf("ReceiveMessage failed: %w", recordErr)))
-+	assert.Equal(t, ErrorNotifyConnectivity, errorClass)
-+	assert.Equal(t, ErrorInfo{
-+		Source: ErrorSourceSSH,
-+		Code:   "TUNNEL_CONNECTION_LOST",
-+	}, errInfo)
-+
-+	// Other record header errors are not covered
-+	errorClass, errInfo = GetErrorClass(t.Context(),
-+		fmt.Errorf("error getting major version: %w", tls.RecordHeaderError{Msg: "oversized record received with length 20527"}))
-+	assert.Equal(t, ErrorOther, errorClass)
-+	assert.Equal(t, ErrorInfo{
-+		Source: ErrorSourceOther,
-+		Code:   "UNKNOWN",
-+	}, errInfo)
-+}
-+
- func TestClickHouseTooManyPartsWithTableName(t *testing.T) {
- 	err := &clickhouse.Exception{
- 		Code: int32(chproto.ErrTooManyParts),
-```
-
----
-
-### Incident Patch 2: `e2ab26ce` (2026-11-27)
-**Commit Message**: compute payload size for table addition from workflow query (#5124)
-
-Alternative proposal for https://github.com/PeerDB-io/peerdb/pull/5116 
-
-CDCFlowWorkflow carries `cfg` and `state` into each new run through
-ContinueAsNew. Temporal rejects a run input over 2MB, and the workflow
-then stops making progress. A table addition grows `state`, so a large
-enough addition leaves the mirror stuck.
-
-`FlowStateChange` now predicts the size of the next run input before it
-signals a table addition. If the size is over 2MB minus 1KB, the API
-rejects the request. Validation works by:
-
-1. read the workflow's real `cfg` and `state` through workflow queries. 
-2. apply the request's table changes to `state`.
-4. encode `cfg` and `state` with Temporal's default data converter.
-
-
-Testing: add e2e to test rejection of table addition
-
-**File**: `flow/cmd/handler.go` (modified, +3/-0)
-```diff
-@@ -477,6 +477,9 @@ func (h *FlowRequestHandler) FlowStateChange(
- 			structured.NormalizeStructuredIngestionTypes(tm.StructuredIngestionConfig, tm.Columns)
+ 	// chunk to bound statement size, one mutation covers many tables instead of one mutation each
+ 	for chunk := range slices.Chunk(req.DestinationTableNames, 100) {
+ 		quoted := make([]string, len(chunk))
+ 		for i, tableName := range chunk {
+ 			quoted[i] = peerdb_clickhouse.QuoteLiteral(tableName)
  		}
- 		if len(cdcUpdate.AdditionalTables) > 0 {
-+			if apiErr := h.checkCDCFlowPayloadSizeForTableAddition(ctx, workflowID, cdcUpdate); apiErr != nil {
-+				return nil, apiErr
++		condition := fmt.Sprintf("_peerdb_destination_table_name IN (%s) AND _peerdb_batch_id > %d AND _peerdb_batch_id <= %d",
++			strings.Join(quoted, ","), req.NormalizeBatchId, req.SyncBatchId)
+ 		// Better to use lightweight deletes here as the main goal is to not have
+ 		// rows in the table be visible by the NormalizeRecords' INSERT INTO SELECT queries
+-		if err := c.execWithLogging(ctx, fmt.Sprintf("DELETE FROM %s WHERE _peerdb_destination_table_name IN (%s)"+
+-			" AND _peerdb_batch_id > %d AND _peerdb_batch_id <= %d",
+-			c.GetRawTableName(req.FlowJobName), strings.Join(quoted, ","), req.NormalizeBatchId, req.SyncBatchId),
+-		); err != nil {
++		if err := c.execWithLogging(ctx, fmt.Sprintf("DELETE FROM %s WHERE %s%s", rawTableName, condition, deleteSettings)); err != nil {
+ 			return fmt.Errorf("unable to remove tables from raw table: %w", err)
+ 		}
+ 
++		// Poll the raw table to ensure all rows matching the condition are removed.
++		// This replaces lightweight_deletes_sync=2 at the lightweight delete level and waiting on the query result
++		// as the connection might drop on long-running queries.
++		//
++		// Check https://linear.app/clickhouse/issue/DBI-1405 for more details
++		probeQuery := fmt.Sprintf("SELECT 1 FROM %s WHERE %s LIMIT 1", rawTableName, condition)
++		pendingRows := true
++		for attempt := 0; pendingRows; attempt++ {
++			interval := rawTableDeletePollIntervals[min(attempt, len(rawTableDeletePollIntervals)-1)]
++			select {
++			case <-ctx.Done():
++				return fmt.Errorf("interrupted while waiting for removal of tables from raw table: %w", context.Cause(ctx))
++			case <-time.After(interval):
 +			}
- 			config, err := h.getFlowConfigFromCatalog(ctx, req.FlowJobName)
- 			if err != nil {
- 				return nil, NewInternalApiError(fmt.Errorf("unable to get flow config: %w", err))
-```
-
-**File**: `flow/cmd/mirror_status.go` (modified, +18/-0)
-```diff
-@@ -573,6 +573,24 @@ func (h *FlowRequestHandler) getCDCWorkflowState(ctx context.Context,
- 	return &state, nil
- }
- 
-+func (h *FlowRequestHandler) getCDCWorkflowCfg(ctx context.Context,
-+	workflowID string,
-+) (*protos.FlowConnectionConfigsCore, error) {
-+	res, err := h.temporalClient.QueryWorkflow(ctx, workflowID, "", shared.CDCFlowConfigQuery)
-+	if err != nil {
-+		slog.ErrorContext(ctx, fmt.Sprintf("failed to get config in workflow with ID %s: %s", workflowID, err.Error()))
-+		return nil,
-+			fmt.Errorf("failed to get config in workflow with ID %s: %w", workflowID, err)
-+	}
-+	var cfg protos.FlowConnectionConfigsCore
-+	if err := res.Get(&cfg); err != nil {
-+		slog.ErrorContext(ctx, fmt.Sprintf("failed to get config in workflow with ID %s: %s", workflowID, err.Error()))
-+		return nil,
-+			fmt.Errorf("failed to get config in workflow with ID %s: %w", workflowID, err)
-+	}
-+	return &cfg, nil
-+}
++			// HEADS UP!
++			// This query is cheap and fast for as long as `condition` filters on the raw table's sorting key.
++			// If that changes, we need a different polling method.
++			// Checking active mutations was considered but discarded due to the imposed need to have access
++			// on `system.mutations` table.
++			var err error
++			pendingRows, err = c.rawTableHasRows(ctx, probeQuery)
++			if err != nil {
++				return fmt.Errorf("unable to check removal of tables from raw table: %w", err)
++			}
++		}
 +
- func (h *FlowRequestHandler) getMirrorCreatedAt(ctx context.Context, flowJobName string) (*time.Time, error) {
- 	var createdAt pgtype.Timestamp
- 	err := h.pool.QueryRow(ctx, "SELECT created_at FROM flows WHERE name=$1", flowJobName).Scan(&createdAt)
-```
-
-**File**: `flow/cmd/validate_mirror.go` (modified, +57/-0)
-```diff
-@@ -5,8 +5,11 @@ import (
- 	"errors"
- 	"fmt"
- 	"log/slog"
-+	"maps"
-+	"math"
- 	"slices"
+ 		c.logger.Info("successfully removed entries for tables from raw table", slog.Any("tables", chunk))
+ 	}
  
-+	"go.temporal.io/sdk/converter"
- 	"google.golang.org/protobuf/proto"
- 
- 	"github.com/PeerDB-io/peerdb/flow/connectors"
-@@ -250,6 +253,60 @@ func (h *FlowRequestHandler) checkAdditionalTables(ctx context.Context, cfg *pro
  	return nil
  }
- 
-+// Temporal's default payload size limit, less a small buffer
-+const maxPayloadBytes = 2*1024*1024 - 1024
 +
-+// checkCDCFlowPayloadSizeForTableAddition rejects a table addition when CDCFlowWorkflow's
-+// next run input would exceed Temporal's 2MB payload size limit
-+func (h *FlowRequestHandler) checkCDCFlowPayloadSizeForTableAddition(
-+	ctx context.Context, workflowID string, update *protos.CDCFlowConfigUpdate,
-+) APIError {
-+	cfg, err := h.getCDCWorkflowCfg(ctx, workflowID)
++func (c *ClickHouseConnector) rawTableHasRows(ctx context.Context, probeQuery string) (bool, error) {
++	rows, err := c.query(ctx, probeQuery)
 +	if err != nil {
-+		return NewInternalApiError(err)
++		return false, err
 +	}
-+	state, err := h.getCDCWorkflowState(ctx, workflowID)
-+	if err != nil {
-+		return NewInternalApiError(err)
-+	}
++	defer rows.Close()
++	hasRows := rows.Next()
++	return hasRows, rows.Err()
++}
+```
+
+**File**: `flow/connectors/clickhouse/cdc_remove_tables_test.go` (added, +175/-0)
+```diff
+@@ -0,0 +1,175 @@
++package connclickhouse
 +
-+	// process added tables
-+	state.SyncFlowOptions.TableMappings = append(state.SyncFlowOptions.TableMappings, update.AdditionalTables...)
-+	if len(state.SyncFlowOptions.SrcTableIdNameMapping) > 0 {
-+		id := uint32(math.MaxUint32)
-+		for _, table := range update.AdditionalTables {
-+			state.SyncFlowOptions.SrcTableIdNameMapping[id] = table.SourceTableIdentifier
-+			id--
-+		}
-+	}
++import (
++	"context"
++	"errors"
++	"fmt"
++	"log/slog"
++	"strings"
++	"testing"
++	"testing/synctest"
++	"time"
 +
-+	// process removed tables
-+	if len(update.RemovedTables) > 0 {
-+		removedTablesMap := make(map[string]struct{}, len(update.RemovedTables))
-+		for _, table := range update.RemovedTables {
-+			removedTablesMap[table.SourceTableIdentifier] = struct{}{}
-+		}
-+		state.SyncFlowOptions.TableMappings = slices.DeleteFunc(state.SyncFlowOptions.TableMappings, func(table *protos.TableMapping) bool {
-+			_, removed := removedTablesMap[table.SourceTableIdentifier]
-+			return removed
-+		})
-+		maps.DeleteFunc(state.SyncFlowOptions.SrcTableIdNameMapping, func(_ uint32, source string) bool {
-+			_, removed := removedTablesMap[source]
-+			return removed
-+		})
-+	}
++	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
++	chproto "github.com/ClickHouse/clickhouse-go/v2/lib/proto"
++	"github.com/stretchr/testify/require"
++	"go.temporal.io/sdk/log"
 +
-+	payloads, err := converter.GetDefaultDataConverter().ToPayloads(cfg, state)
-+	if err != nil {
-+		return NewInternalApiError(fmt.Errorf("failed to encode workflow input: %w", err))
-+	}
-+	if proto.Size(payloads) > maxPayloadBytes {
-+		return NewInvalidArgumentApiError(fmt.Errorf(
-+			"payload limit exceeded; please create a new mirror for the added tables"))
-+	}
++	"github.com/PeerDB-io/peerdb/flow/generated/protos"
++)
++
++// probeRows is the result of a "SELECT 1 ... LIMIT 1" probe: one row or none.
++type probeRows struct {
++	driver.Rows
++	hasRow bool
++}
++
++func (r *probeRows) Next() bool {
++	hasRow := r.hasRow
++	r.hasRow = false
++	return hasRow
++}
++func (*probeRows) Close() error { return nil }
++func (*probeRows) Err() error   { return nil }
++
++// rawDeleteConn records the DELETEs it receives and answers each probe through remaining,
++// which reports whether the probed condition still matches rows.
++type rawDeleteConn struct {
++	driver.Conn
++	remaining func(probe string, probeCount int) bool
++	probeErr  error
++	deletes   []string
++	probes    []string
++	probedAt  []time.Duration
++	start     time.Time
++}
++
++func (c *rawDeleteConn) Exec(_ context.Context, query string, _ ...any) error {
++	c.deletes = append(c.deletes, query)
 +	return nil
 +}
 +
- // checkSourceTableConfig validates one table's columns.
- // If maybeStructuredIngestionConfig is non-nil, column types are validated too.
- func checkSourceTableConfig(
-```
-
-**File**: `flow/e2e/api_suite.go` (modified, +69/-0)
-```diff
-@@ -3953,6 +3953,75 @@ func (s APITestSuite) TestTableAdditionWithoutInitialLoad() {
- 	RequireEnvCanceled(s.t, env)
- }
- 
-+func (s APITestSuite) TestTableAdditionOverPayloadLimit() {
-+	switch s.source.(type) {
-+	case *PostgresSource, *MySqlSource:
-+		require.NoError(s.t, s.source.Exec(s.t.Context(),
-+			fmt.Sprintf("CREATE TABLE %s(id int primary key, val text)", AttachSchema(s, "payload_limit"))))
-+	case *MongoSource:
-+		res, err := s.Source().(*MongoSource).AdminClient().
-+			Database(Schema(s)).Collection("payload_limit").
-+			InsertOne(s.t.Context(), bson.D{bson.E{Key: "id", Value: 1}}, options.InsertOne())
-+		require.NoError(s.t, err)
-+		require.True(s.t, res.Acknowledged)
-+	default:
-+		require.Fail(s.t, fmt.Sprintf("unknown source type %T", s.source))
++func (c *rawDeleteConn) Query(_ context.Context, query string, _ ...any) (driver.Rows, error) {
++	c.probes = append(c.probes, query)
++	c.probedAt = append(c.probedAt, time.Since(c.start))
++	if c.probeErr != nil {
++		return nil, c.probeErr
 +	}
-+
-+	connectionGen := FlowConnectionGenerationConfig{
-+		FlowJobName:      "added_tables_payload_limit_" + s.suffix,
-+		TableNameMapping: map[string]string{AttachSchema(s, "payload_limit"): "payload_limit"},
-+		Destination:      s.ch.Peer().Name,
-+	}
-+	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
-+	response, err := s.CreateCDCFlow(s.t.Context(), &protos.CreateCDCFlowRequest{ConnectionConfigs: flowConnConfig})
-+	require.NoError(s.t, err)
-+	require.NotNil(s.t, response)
-+	tc := NewTemporalClient(s.t)
-+	env, err := GetPeerflow(s.t.Context(), s.catalog, tc, flowConnConfig.FlowJobName)
-+	require.NoError(s.t, err)
-+	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
-+	EnvWaitFor(s.t, env, 3*time.Minute, "wait for mirror to run", func() bool {
-+		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_RUNNING
-+	})
-+	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
-+		FlowJobName:        flowConnConfig.FlowJobName,
-+		RequestedFlowState: protos.FlowStatus_STATUS_PAUSED,
-+	})
-+	require.NoError(s.t, err)
-+	EnvWaitFor(s.t, env, 3*time.Minute, "wait for pause for add table", func() bool {
-+		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_PAUSED
-+	})
-+
-+	// enough tables to push the next run's workflow input over Temporal's 2MB payload limit;
-+	// the size check runs before the tables are validated, so they don't need to exist in db
-+	tablesToAdd := make([]*protos.TableMapping, 0, 20_000)
-+	for i := range 20_000 {
-+		tablesToAdd = append(tablesToAdd, &protos.TableMapping{
-+			SourceTableIdentifier:      AttachSchema(s, fmt.Sprintf("oversized_%05d", i)),
-+			DestinationTableIdentifier: fmt.Sprintf("oversized_%05d", i),
-+		})
-+	}
-+	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
-+		FlowJobName:        flowConnConfig.FlowJobName,
-+		RequestedFlowState: protos.FlowStatus_STATUS_RUNNING,
-+		FlowConfigUpdate: &protos.FlowConfigUpdate{
-+			Update: &protos.FlowConfigUpdate_CdcFlowConfigUpdate{
-+				CdcFlowConfigUpdate: &protos.CDCFlowConfigUpdate{
-+					AdditionalTables:                     tablesToAdd,
-+					SkipInitialSnapshotForTableAdditions: true,
-+				},
-+			},
-+		},
-+	})
-+	require.Equal(s.t, codes.InvalidArgument, status.Code(err))
-+	require.ErrorContains(s.t, err, "payload limit exceeded")
-+	require.Equal(s.t, protos.FlowStatus_STATUS_PAUSED, env.GetFlowStatus(s.t))
-+
-+	env.Cancel(s.t.Context())
-+	RequireEnvCanceled(s.t, env)
++	return &probeRows{hasRow: c.remaining(query, len(c.probes))}, nil
 +}
 +
- // Simulate a mirror whose Temporal workflow no longer exists (e.g. completed or failed
- // over 30 days ago and was already cleaned up).
- func (s APITestSuite) TestDropMissing() {
++func newRawDeleteConnector(conn *rawDeleteConn, version *chproto.Version) *ClickHouseConnector {
++	conn.start = time.Now()
++	return &ClickHouseConnector{
++		database:  conn,
++		logger:    log.NewStructuredLogger(slog.New(slog.DiscardHandler)),
++		Config:    &protos.ClickhouseConfig{},
++		chVersion: version,
++	}
++}
++
++func removeTablesInput(tables ...string) *protos.RemoveTablesFromRawTableInput {
++	return &protos.RemoveTablesFromRawTableInput{
++		FlowJobName:           "test_flow",
++		DestinationTableNames: tables,
++		NormalizeBatchId:      1,
++		SyncBatchId:           2,
++	}
++}
++
++const rawDeleteCondition = "_peerdb_destination_table_name IN ('t1') AND _peerdb_batch_id > 1 AND _peerdb_batch_id <= 2"
++
++func TestRemoveTableEntriesFromRawTableReturnsWhenNoRowsRemain(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		conn := &rawDeleteConn{remaining: func(string, int) bool { return false }}
++		c := newRawDeleteConnector(conn, &chproto.Version{Major: 25, Minor: 8})
++
++		require.NoError(t, c.RemoveTableEntriesFromRawTable(t.Context(), removeTablesInput("t1")))
++
++		require.Equal(t, []string{
++			"DELETE FROM _peerdb_raw_test_flow WHERE " + rawDeleteCondition + " SETTINGS lightweight_deletes_sync=0",
++		}, conn.deletes)
++		require.Equal(t, []string{"SELECT 1 FROM _peerdb_raw_test_flow WHERE " + rawDeleteCondition + " LIMIT 1"}, conn.probes)
++		require.Equal(t, []time.Duration{5 * time.Second}, conn.probedAt, "first check comes after the first interval")
++	})
++}
++
++func TestRemoveTableEntriesFromRawTablePollsWithIncreasingIntervals(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		// rows remain for the first five checks
++		conn := &rawDeleteConn{remaining: func(_ string, probeCount int) bool { return probeCount <= 5 }}
++		c := newRawDeleteConnector(conn, &chproto.Version{Major: 25, Minor: 8})
++
++		require.NoError(t, c.RemoveTableEntriesFromRawTable(t.Context(), removeTablesInput("t1")))
++
++		require.Len(t, conn.deletes, 1, "the DELETE must not be reissued while waiting")
++		require.Equal(t, []time.Duration{
++			5 * time.Second,
++			35 * time.Second,
++			95 * time.Second,
++			215 * time.Second,
++			335 * time.Second,
++			455 * time.Second,
++		}, conn.probedAt)
++	})
++}
++
++func TestRemoveTableEntriesFromRawTableFinishesEachChunkBeforeTheNext(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		tables := make([]string, 150)
++		for i := range tables {
++			tables[i] = fmt.Sprintf("t%03d", i)
++		}
++		// the first chunk (t000..t099) needs two waits, the second (t100..t149) is finished on its first check
++		conn := &rawDeleteConn{}
++		conn.remaining = func(probe string, probeCount int) bool {
++			require.Len(t, conn.deletes, 1+strings.Count(probe, "'t100'"), "a chunk's DELETE must wait for the previous chunk")
++			return strings.Contains(probe, "'t000'") && probeCount <= 2
++		}
++		c := newRawDeleteConnector(conn, &chproto.Version{Major: 25, Minor: 8})
++
++		require.NoError(t, c.RemoveTableEntriesFromRawTable(t.Context(), removeTablesInput(tables...)))
++
++		require.Len(t, conn.deletes, 2)
++		// the second chunk's polling starts over from the first interval
++		require.Equal(t, []time.Duration{5 * time.Second, 35 * time.Second, 95 * time.Second, 100 * time.Second}, conn.probedAt)
++		require.Contains(t, conn.probes[3], "'t100'")
++	})
++}
++
++func TestRemoveTableEntriesFromRawTableStopsOnContextCancel(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		conn := &rawDeleteConn{re
 ```
 
-**File**: `flow/shared/constants.go` (modified, +1/-0)
+**File**: `flow/internal/clickhouse/settings.go` (modified, +2/-0)
 ```diff
-@@ -78,6 +78,7 @@ const (
- 
- 	// Queries
- 	CDCFlowStateQuery  = "q-cdc-flow-state"
-+	CDCFlowConfigQuery = "q-cdc-flow-config"
- 	QRepFlowStateQuery = "q-qrep-flow-state"
+@@ -25,6 +25,7 @@ const (
+ 	SettingThrowOnMaxPartitionsPerInsertBlock         CHSetting = "throw_on_max_partitions_per_insert_block"
+ 	SettingParallelDistributedInsertSelect            CHSetting = "parallel_distributed_insert_select"
+ 	SettingMaxTableSizeToDrop                         CHSetting = "max_table_size_to_drop"
++	SettingLightweightDeletesSync                     CHSetting = "lightweight_deletes_sync"
  )
  
-```
-
-**File**: `flow/workflows/cdc_flow.go` (modified, +5/-0)
-```diff
-@@ -1265,6 +1265,11 @@ func CDCFlowWorkflow(
- 	}); err != nil {
- 		return state, fmt.Errorf("failed to set `%s` query handler: %w", shared.CDCFlowStateQuery, err)
- 	}
-+	if err := workflow.SetQueryHandler(ctx, shared.CDCFlowConfigQuery, func() (*protos.FlowConnectionConfigsCore, error) {
-+		return cfg, nil
-+	}); err != nil {
-+		return state, fmt.Errorf("failed to set `%s` query handler: %w", shared.CDCFlowConfigQuery, err)
-+	}
+ // CHSettingMinVersions maps setting names to their minimum required ClickHouse versions that PeerDB supports.
+@@ -36,6 +37,7 @@ var CHSettingMinVersions = map[CHSetting]chproto.Version{
+ 	SettingJsonTypeEscapeDotsInKeys:                   {Major: 25, Minor: 8, Patch: 0},
+ 	SettingTypeJsonSkipDuplicatedPaths:                {Major: 24, Minor: 8, Patch: 0},
+ 	SettingMaxTableSizeToDrop:                         {Major: 23, Minor: 12, Patch: 0},
++	SettingLightweightDeletesSync:                     {Major: 24, Minor: 4, Patch: 0},
+ }
  
- 	// completion from a snapshot-only mirror, we are done
- 	if state.CurrentFlowStatus == protos.FlowStatus_STATUS_COMPLETED {
+ type CHSetting string
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5137** (closed): Tag source connection failures in slot and stat info APIs (@gheorghepucea)
+- **PR #5136** (2026-11-27): fix(delete-tables): Prevent RemoveTableEntriesFromRawTable  from haging due connection inactivity (@pfcoperez)
+- **PR #5135** (closed): fix(delete-tables): RemoveTableEntriesFromRawTable now starts a ticket pinging CH each minute to prevent silent connection drops in long query executions (@pfcoperez)
+- **PR #5134** (2026-11-27): Allow the Tilt environment to use an external Temporal (@jkaflik)
 - **PR #5130** (2026-11-27): Classify TLS record version mismatch as recoverable (@gheorghepucea)
 - **PR #5128** (closed): Classify Postgres 'logical decoding requires wal_level' slot error (@dtunikov)
-- **PR #5124** (2026-11-27): compute payload size for table addition from workflow query (@jgao54)
-- **PR #5122** (2026-11-25): Remove unreachable functions found by deadcode (@gheorghepucea)
-- **PR #5120** (2026-11-24): fix(pg-pg): unblock and skip and report on error for pgdump (@Amogh-Bharadwaj)
-- **PR #5119** (2026-11-25): Renovate config: Comments link to tracking issue (@pfcoperez)
 
 ---
 
@@ -2280,44 +2200,52 @@ Testing: add e2e to test rejection of table addition
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Classify TLS record version mismatch as recoverable
+## X. delete-tables): Prevent RemoveTableEntriesFromRawTable  from haging due connecti
 
 **RULE**:
-When implementing operations in `flow/alerting/classifier.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/clickhouse/cdc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a577e50`: Classify TLS record version mismatch as recoverable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e3fd8c9`: delete-tables): Prevent RemoveTableEntriesFromRawTable  from haging due connection inactivity. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/alerting/classifier.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/clickhouse/cdc.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"encoding/hex"
-	// Non-TLS bytes arrived on an established TLS connection; reconnecting recovers.
-	// https://github.com/golang/go/blob/go1.25.0/src/crypto/tls/conn.go#L658-L663
-	if tlsErr, ok := errors.AsType[tls.RecordHeaderError](err); ok &&
-		strings.HasPrefix(tlsErr.Msg, "received record with version") {
-		// Log the full header to see what arrived instead of TLS.
-		internal.LoggerFromCtx(ctx).Warn("TLS record header with unexpected version",
-			slog.String("recordHeader", hex.EncodeToString(tlsErr.RecordHeader[:])))
-		return ErrorRetryRecoverable, ErrorInfo{
-			Source: ErrorSourceNet,
-			Code:   "tls.RecordHeaderError",
-		}
-	}
+	"time"
+var rawTableDeletePollIntervals = []time.Duration{5 * time.Second, 30 * time.Second, time.Minute, 2 * time.Minute}
 
+	rawTableName := c.GetRawTableName(req.FlowJobName)
+	// Return as soon as the mutation is registered
+	deleteSettings := chinternal.NewCHSettingsString(c.chVersion, chinternal.SettingLightweightDeletesSync, "0")
+
+		condition := fmt.Sprintf("_peerdb_destination_table_name IN (%s) AND _peerdb_batch_id > %d AND _peerdb_batch_id <= %d",
+			strings.Join(quoted, ","), req.NormalizeBatchId, req.SyncBatchId)
+		if err := c.execWithLogging(ctx, fmt.Sprintf("DELETE FROM %s WHERE %s%s", rawTableName, condition, deleteSettings)); err != nil {
+		// Poll the raw table to ensure all rows matching the condition are removed.
+		// This replaces lightweight_deletes_sync=2 at the lightweight delete level and waiting on the query result
+		// as the connection might drop on long-running queries.
+		//
+		// Check https://linear.app/clickhouse/issue/DBI-1405 for more details
+		probeQuery := fmt.Sprintf("SELECT 1 FROM %s WHERE %s LIMIT 1", rawTableName, condition)
+		pendingRows := true
+		for attempt := 0; pendingRows; attempt++ {
+			interval := rawTableDeletePollIntervals[min(attempt, le
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		if err := c.execWithLogging(ctx, fmt.Sprintf("DELETE FROM %s WHERE _peerdb_destination_table_name IN (%s)"+
+			" AND _peerdb_batch_id > %d AND _peerdb_batch_id <= %d",
+			c.GetRawTableName(req.FlowJobName), strings.Join(quoted, ","), req.NormalizeBatchId, req.SyncBatchId),
+		); err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a577e50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e3fd8c9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

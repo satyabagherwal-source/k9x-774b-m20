@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T01:45:30.968Z",
+  "last_updated": "2026-11-28T01:55:08.042Z",
   "directives": [
     {
       "id": "CD-001",
@@ -73821,6 +73821,79 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-778854-bump-version-number.md",
       "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-CPO7",
+      "directive_title": "add JoinHandle::is_finished and deprecate is_done",
+      "source_repo": "xudong-huang-may-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CPO7-add-joinhandle-is_finished-and-deprecate-is_done.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-CRM3",
+      "directive_title": "build(deps-dev): Bump typescript-eslint from 8.73.0 to 8.74.0",
+      "source_repo": "fb55-htmlparser2-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CRM3-build-deps-dev-bump-typescript-eslint-from-8-73-0-to-8-74-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-CKUX",
+      "directive_title": "Prevent RemoveTableEntriesFromRawTable  from haging due connecti",
+      "source_repo": "PeerDB-io/peerdb",
+      "source_commit": "4e3fd8c9",
+      "staged_file": "11_INBOX/candidate-directives/CD-CKUX-prevent-removetableentriesfromrawtable-from-haging-due-connecti.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-CMM3",
+      "directive_title": "feature/conn25: only admit protocols the datapath can map to a transit IP",
+      "source_repo": "tailscale/tailscale",
+      "source_commit": "091ebe85",
+      "staged_file": "11_INBOX/candidate-directives/CD-CMM3-feature-conn25-only-admit-protocols-the-datapath-can-map-to-a-transit-ip.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-F9E11D",
+      "directive_title": "add JoinHandle::is_finished and deprecate is_done",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "xudong-huang-may",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F9E11D-add-joinhandle-is-finished-and-deprecate.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-AB26F6",
+      "directive_title": "build(deps-dev): Bump typescript-eslint from 8.73.0 to 8.74.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fb55-htmlparser2",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AB26F6-build-deps-dev-bump-typescript-eslint-fr.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-CSXW",
+      "directive_title": "delete-tables): Prevent RemoveTableEntriesFromRawTable  from haging due connecti",
+      "source_repo": "peerdb-io-peerdb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CSXW-delete-tables-prevent-removetableentriesfromrawtable-from-haging-due-connecti.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
     }
   ]
 }

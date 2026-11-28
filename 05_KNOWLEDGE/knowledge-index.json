@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T01:45:31.561Z",
+  "last_updated": "2026-11-28T01:55:08.630Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26886,
+  "total_items": 26895,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112413,10 +112413,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "72a7f415",
-      "content_hash": "1dc35ef0b0cf84092ee59ab8b3d156f052ec9f81a1cd1d368bd971e37e0f6a3b",
+      "source_version": "091ebe85",
+      "content_hash": "3eb6ba52e58611ef35d64096c35b59a3dbf4bda2261f496eb3458deaac41b281",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T18:41:49.008Z"
+      "persisted_at": "2026-11-28T01:55:00.113Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "72a7f415",
-      "content_hash": "4ef7a5eae262e4026332db0941bc3915b9bef80853fc855c95647c6191ac2032",
+      "source_version": "091ebe85",
+      "content_hash": "1ed226c1e097410e4da1d9d2c4bf1800153cd0598acfe214fdb018ab57446c12",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:41:49.269Z"
+      "persisted_at": "2026-11-28T01:55:00.395Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -218473,8 +218473,8 @@
       "slug": "xudong-huang-may",
       "platform": "github",
       "source_url": "https://github.com/Xudong-Huang/may",
-      "source_version": "7f6b896d",
-      "content_hash": "cb9590db2667dbccdf987e8cc652e493e5be9a8891ce815aea1d70a2f5a05de5",
+      "source_version": "cc8fdfa5",
+      "content_hash": "29c58831e793ca5b7b7f623f1f25d8e7d58881ecc8cb0c87b61e9781470c9e51",
       "dossier_path": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xudong-huang-may-learnings.md",
       "promoted_rules": [
@@ -218497,6 +218497,11 @@
           "number": 9310,
           "title": "make condvar forwarding tests schedule-independent",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11011,
+          "title": "add JoinHandle::is_finished and deprecate is_done",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218504,7 +218509,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:49:41.115Z",
+      "verified_at": "2026-11-28T01:54:48.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218546,10 +218551,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-architecture-intelligence-xudong-huang-may-core-invariants.md",
       "title": "Architecture Intelligence: Xudong-Huang/may Core Invariants",
       "repository": "Xudong-Huang/may",
-      "source_version": "7f6b896d",
-      "content_hash": "8cfd24a393022be99fa41b80ebbc28bc79b5ee46306954f954663c59e6c3dcfa",
+      "source_version": "cc8fdfa5",
+      "content_hash": "21648323a5c620033e3aaa1a40d27ecc36f1099eeb085bc161441c9eeb1c169d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T00:49:41.665Z"
+      "persisted_at": "2026-11-28T01:54:49.890Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may",
@@ -218558,10 +218563,10 @@
       "relative_path": "08_VERIFICATION/xudong-huang-may-verification-protocol-empirical-defect-shield-for-xudong-huang-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Xudong-Huang/may",
       "repository": "Xudong-Huang/may",
-      "source_version": "7f6b896d",
-      "content_hash": "31459fe57e9c63f915c9bfe38dcc80940713d1265b8d3b99680d379f3825057b",
+      "source_version": "cc8fdfa5",
+      "content_hash": "3b85a17e5fcf8ad33f795c779e750223ce5f4d6a55096a9a2254726a513894a2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:49:41.821Z"
+      "persisted_at": "2026-11-28T01:54:50.191Z"
     },
     "learn-github-faridsafi-react-native-gifted-chat": {
       "learning_id": "learn-github-faridsafi-react-native-gifted-chat",
@@ -218812,9 +218817,9 @@
       "title": "Architecture Intelligence: xudong-huang-may-learnings Core Invariants",
       "repository": "xudong-huang-may-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b7e20e697730c2fc84217f03c33cc7022eaace4378e3bdd42093077bbfbf4e0",
+      "content_hash": "ccfbe18251464077ed14e4476d132d7034323970dce6b60b8b3c34aa2d966474",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T00:49:58.554Z"
+      "persisted_at": "2026-11-28T01:55:04.107Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xudong-huang-may-learnings",
@@ -218824,9 +218829,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for xudong-huang-may-learnings",
       "repository": "xudong-huang-may-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab98dc7e672652fb4333aeba5976532f1c45d2405a715c1cc9a3966e46758210",
+      "content_hash": "0b01b4bbfda8da9ecfcfc11a95343eb2509f9e4b1f1d9332908ec1a06195f2b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:49:58.712Z"
+      "persisted_at": "2026-11-28T01:55:04.412Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-amazon-chronos-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-amazon-chronos-2-learnings-core-invariants",
@@ -224750,8 +224755,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "72a7f415",
-      "content_hash": "1ae857f5f82da40b62945d7b3b2ade301c210d03f15d227fbc4ce64e82d1b2a4",
+      "source_version": "091ebe85",
+      "content_hash": "ab60099cd56555a50b990d75755a46181e365cec8e160b658282279b2a219f56",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -224919,6 +224924,11 @@
           "number": 10756,
           "title": "wgengine/netstack: fix invocation of ping on illumos/solaris",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11014,
+          "title": "feature/conn25: only admit protocols the datapath can map to a transit IP",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224926,7 +224936,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T18:41:48.206Z",
+      "verified_at": "2026-11-28T01:54:59.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232298,8 +232308,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "1a577e50",
-      "content_hash": "8d12bc4e5083d11bd2745ba2f56552c0823678a1f99bc77b03c1c5c3dc8c1e4d",
+      "source_version": "4e3fd8c9",
+      "content_hash": "185ffc08f8a0887ab082734baedb72e8133d54b45b6fda81a0b8a851e69e19de",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -232357,6 +232367,11 @@
           "number": 10854,
           "title": "Classify TLS record version mismatch as recoverable",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11013,
+          "title": "Prevent RemoveTableEntriesFromRawTable  from haging due connecti",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232364,7 +232379,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T07:48:54.316Z",
+      "verified_at": "2026-11-28T01:54:56.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232418,10 +232433,10 @@
       "relative_path": "08_VERIFICATION/peerdb-io-peerdb-verification-protocol-empirical-defect-shield-for-peerdb-io-pee.md",
       "title": "Verification Protocol: Empirical Defect Shield for PeerDB-io/peerdb",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "1a577e50",
-      "content_hash": "573ece66599b0e5473f3fd8d99ff117c1a04643eef5f15c24f6e29ede0186bcd",
+      "source_version": "4e3fd8c9",
+      "content_hash": "53b475f6ac219fb2c4eb5aa109c53e5d44891392ed645e6a1791da1c11274c45",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T07:48:55.674Z"
+      "persisted_at": "2026-11-28T01:54:58.211Z"
     },
     "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
       "item_id": "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
@@ -265200,8 +265215,8 @@
       "slug": "fb55-htmlparser2",
       "platform": "github",
       "source_url": "https://github.com/fb55/htmlparser2",
-      "source_version": "2134b2f1",
-      "content_hash": "ce39d9c9429da77159f539a91ecd9025786e4d202699cad5466a07a5c0b2c597",
+      "source_version": "bb3a487b",
+      "content_hash": "1f16faa8a661dfa30bd20e263ed17c9616e46ee8918ea5abf9a8379be3a1b492",
       "dossier_path": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "promoted_rules": [
@@ -265219,6 +265234,11 @@
           "number": 10315,
           "title": "build(deps-dev): Bump vitest from 5.1.0 to 5.1.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11012,
+          "title": "build(deps-dev): Bump typescript-eslint from 8.73.0 to 8.74.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -265226,7 +265246,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T17:22:59.460Z",
+      "verified_at": "2026-11-28T01:54:50.824Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -265280,10 +265300,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-htmlparser2-technical-construction-intelligence-fb55-htmlparser2-core-invar.md",
       "title": "Technical Construction Intelligence: fb55/htmlparser2 Core Invariants",
       "repository": "fb55/htmlparser2",
-      "source_version": "2134b2f1",
-      "content_hash": "1a6cc5b43032ce4fb0bddf9535827521c1cdb13f00dce0d2fd0957230df3fa62",
+      "source_version": "bb3a487b",
+      "content_hash": "60673819cb14154ab60ab2db590c7209a0ba156f38bf4d1b7219a65f5cf240ce",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T17:23:00.114Z"
+      "persisted_at": "2026-11-28T01:54:51.851Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-htmlparser2": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-htmlparser2",
@@ -265292,10 +265312,10 @@
       "relative_path": "08_VERIFICATION/fb55-htmlparser2-verification-protocol-empirical-defect-shield-for-fb55-htmlpars.md",
       "title": "Verification Protocol: Empirical Defect Shield for fb55/htmlparser2",
       "repository": "fb55/htmlparser2",
-      "source_version": "2134b2f1",
-      "content_hash": "c2ec6cdd71659afca661d8eec3c95d8b1d40909e720284699831cd83f0efcd31",
+      "source_version": "bb3a487b",
+      "content_hash": "3cb6232bfc7c303521d56d4057b8bfa3f30c4279fc651aed9f4a6b4ac29ba2f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:23:00.297Z"
+      "persisted_at": "2026-11-28T01:54:52.147Z"
     },
     "learn-github-openziti-zrok": {
       "learning_id": "learn-github-openziti-zrok",
@@ -265431,9 +265451,9 @@
       "title": "Technical Construction Intelligence: fb55-htmlparser2-learnings Core Invariants",
       "repository": "fb55-htmlparser2-learnings",
       "source_version": "HEAD",
-      "content_hash": "62719f153af184ff920e7e9d5cbf892d8b86ac6e571993622c5f4b087f8e1a55",
+      "content_hash": "b3ccf894e6f52015f298a18805d10bfb46a5ee947f3071bf77385252540777d4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T17:23:15.160Z"
+      "persisted_at": "2026-11-28T01:55:06.622Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-htmlparser2-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-htmlparser2-learnings",
@@ -265443,9 +265463,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fb55-htmlparser2-learnings",
       "repository": "fb55-htmlparser2-learnings",
       "source_version": "HEAD",
-      "content_hash": "9ad7addd7b02d4f20e8ec9aca885b5ee0fdc7975210c666506112adc8af06d2e",
+      "content_hash": "3f48d5e8018fcffc70c43693dca65f48a59393e2e577cc77dc52bef074457991",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:23:15.338Z"
+      "persisted_at": "2026-11-28T01:55:06.917Z"
     },
     "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants",
@@ -288615,10 +288635,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "1a577e50",
-      "content_hash": "bec690800fbd386ce0524f49077c0e312fa501916a44bbaa25bce51c3ec8b2b9",
+      "source_version": "4e3fd8c9",
+      "content_hash": "2af6288d6919a0b84e1d8022850293972f9cf87444a6ae15404770efdb7b899f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T07:48:55.344Z"
+      "persisted_at": "2026-11-28T01:54:57.861Z"
     },
     "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla": {
       "item_id": "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla",
@@ -288640,9 +288660,9 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "865f5ed1af76cf63961cfc84678b4abf6852bb5fefa9e055354b070afb3d7ef7",
+      "content_hash": "e129385ccc4e331bbd0f33b1371f9b09f2dddc392ced1d1869793bffb8e95df1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T07:49:08.104Z"
+      "persisted_at": "2026-11-28T01:55:08.331Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings",
@@ -288652,9 +288672,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for peerdb-io-peerdb-learnings",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1bbd5385bfc65b0daa8fd87247bc2135ff2c5b4623334575f307e3e52fa4fd5",
+      "content_hash": "e0f75bc157d9621b5e2b0b739e5f99617296b97650891b249bc8541ad68acedd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T07:49:08.389Z"
+      "persisted_at": "2026-11-28T01:55:08.630Z"
     },
     "learn-huggingface-comfy-org-wan-2-2": {
       "learning_id": "learn-huggingface-comfy-org-wan-2-2",
@@ -369366,6 +369386,122 @@
       "content_hash": "039457fec3686403b52b849ac6aeddf38cc461ff63a85a19c6fc9d2c467ef44d",
       "domain_letter": "I",
       "persisted_at": "2026-11-28T01:35:46.486Z"
+    },
+    "rule-11011": {
+      "learning_id": "rule-11011",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11011,
+      "title": "add JoinHandle::is_finished and deprecate is_done",
+      "source_url": "https://github.com/Xudong-Huang/may",
+      "source_version": "cc8fdfa5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T01:54:48.851Z"
+    },
+    "candidate_directive-add-joinhandle-is_finished-and-deprecate-is_done": {
+      "item_id": "candidate_directive-add-joinhandle-is_finished-and-deprecate-is_done",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CPO7-add-joinhandle-is_finished-and-deprecate-is_done.md",
+      "title": "add JoinHandle::is_finished and deprecate is_done",
+      "repository": "xudong-huang-may-learnings",
+      "source_version": "HEAD",
+      "content_hash": "66eba8715d16d8c864803f2b4c28d4bff2b06c163254141353cf41105774ea9c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T01:55:03.801Z"
+    },
+    "rule-11012": {
+      "learning_id": "rule-11012",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11012,
+      "title": "build(deps-dev): Bump typescript-eslint from 8.73.0 to 8.74.0",
+      "source_url": "https://github.com/fb55/htmlparser2",
+      "source_version": "bb3a487b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T01:54:50.824Z"
+    },
+    "candidate_directive-build-deps-dev-bump-typescript-eslint-from-8-73-0-to-8-74-0": {
+      "item_id": "candidate_directive-build-deps-dev-bump-typescript-eslint-from-8-73-0-to-8-74-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CRM3-build-deps-dev-bump-typescript-eslint-from-8-73-0-to-8-74-0.md",
+      "title": "build(deps-dev): Bump typescript-eslint from 8.73.0 to 8.74.0",
+      "repository": "fb55-htmlparser2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bd22c397eb6addf5f3c3e7dd39209c8d41e29eda7a0baef3cc3e6c668827a27c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T01:55:06.315Z"
+    },
+    "rule-11013": {
+      "learning_id": "rule-11013",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11013,
+      "title": "Prevent RemoveTableEntriesFromRawTable  from haging due connecti",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "4e3fd8c9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T01:54:56.844Z"
+    },
+    "candidate_directive-prevent-removetableentriesfromrawtable-from-haging-due-connecti": {
+      "item_id": "candidate_directive-prevent-removetableentriesfromrawtable-from-haging-due-connecti",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CKUX-prevent-removetableentriesfromrawtable-from-haging-due-connecti.md",
+      "title": "Prevent RemoveTableEntriesFromRawTable  from haging due connecti",
+      "repository": "PeerDB-io/peerdb",
+      "source_version": "4e3fd8c9",
+      "content_hash": "a4fb8a41d8bc025e63d843632ddcf65260557b3bf76bf937f2bc2ab8c60d374d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T01:54:57.568Z"
+    },
+    "rule-11014": {
+      "learning_id": "rule-11014",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11014,
+      "title": "feature/conn25: only admit protocols the datapath can map to a transit IP",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "091ebe85",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T01:54:59.091Z"
+    },
+    "candidate_directive-feature-conn25-only-admit-protocols-the-datapath-can-map-to-a-transit-ip": {
+      "item_id": "candidate_directive-feature-conn25-only-admit-protocols-the-datapath-can-map-to-a-transit-ip",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CMM3-feature-conn25-only-admit-protocols-the-datapath-can-map-to-a-transit-ip.md",
+      "title": "feature/conn25: only admit protocols the datapath can map to a transit IP",
+      "repository": "tailscale/tailscale",
+      "source_version": "091ebe85",
+      "content_hash": "b795e3be42dafc2678433f1594bcbffc3bf877fe26533307d313f775c7177a08",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-28T01:54:59.836Z"
+    },
+    "candidate_directive-delete-tables-prevent-removetableentriesfromrawtable-from-haging-due-connecti": {
+      "item_id": "candidate_directive-delete-tables-prevent-removetableentriesfromrawtable-from-haging-due-connecti",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CSXW-delete-tables-prevent-removetableentriesfromrawtable-from-haging-due-connecti.md",
+      "title": "delete-tables): Prevent RemoveTableEntriesFromRawTable  from haging due connecti",
+      "repository": "peerdb-io-peerdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2a4522aa63ffaa7a3c528b3fbfddb5c881857a3a7829a53a8b33c156c1e51b2e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T01:55:08.042Z"
     }
   },
   "ai-builder-brain": {

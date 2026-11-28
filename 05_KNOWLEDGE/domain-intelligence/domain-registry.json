@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T01:45:31.285Z",
+  "last_updated": "2026-11-28T01:55:08.331Z",
   "total_records": 2868,
   "domains": {
     "A": {
@@ -8755,8 +8755,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "1dc35ef0b0cf84092ee59ab8b3d156f052ec9f81a1cd1d368bd971e37e0f6a3b",
-      "created_at": "2026-11-26T18:41:49.008Z"
+      "content_hash": "3eb6ba52e58611ef35d64096c35b59a3dbf4bda2261f496eb3458deaac41b281",
+      "created_at": "2026-11-28T01:55:00.113Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -11944,8 +11944,8 @@
       "title": "Architecture Intelligence: Xudong-Huang/may Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-architecture-intelligence-xudong-huang-may-core-invariants.md",
       "repository": "Xudong-Huang/may",
-      "content_hash": "8cfd24a393022be99fa41b80ebbc28bc79b5ee46306954f954663c59e6c3dcfa",
-      "created_at": "2026-11-19T00:49:41.665Z"
+      "content_hash": "21648323a5c620033e3aaa1a40d27ecc36f1099eeb085bc161441c9eeb1c169d",
+      "created_at": "2026-11-28T01:54:49.890Z"
     },
     "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva",
@@ -11980,8 +11980,8 @@
       "title": "Architecture Intelligence: xudong-huang-may-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-learnings-architecture-intelligence-xudong-huang-may-learnings-.md",
       "repository": "xudong-huang-may-learnings",
-      "content_hash": "8b7e20e697730c2fc84217f03c33cc7022eaace4378e3bdd42093077bbfbf4e0",
-      "created_at": "2026-11-19T00:49:58.554Z"
+      "content_hash": "ccfbe18251464077ed14e4476d132d7034323970dce6b60b8b3c34aa2d966474",
+      "created_at": "2026-11-28T01:55:04.107Z"
     },
     "DOM-D-6F87F39B": {
       "record_id": "DOM-D-6F87F39B",
@@ -25225,8 +25225,8 @@
       "title": "Technical Construction Intelligence: fb55/htmlparser2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-htmlparser2-technical-construction-intelligence-fb55-htmlparser2-core-invar.md",
       "repository": "fb55/htmlparser2",
-      "content_hash": "1a6cc5b43032ce4fb0bddf9535827521c1cdb13f00dce0d2fd0957230df3fa62",
-      "created_at": "2026-11-24T17:23:00.114Z"
+      "content_hash": "60673819cb14154ab60ab2db590c7209a0ba156f38bf4d1b7219a65f5cf240ce",
+      "created_at": "2026-11-28T01:54:51.851Z"
     },
     "domain_intelligence-architecture-intelligence-openziti-zrok-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-openziti-zrok-core-invariants",
@@ -25252,8 +25252,8 @@
       "title": "Technical Construction Intelligence: fb55-htmlparser2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-htmlparser2-learnings-technical-construction-intelligence-fb55-htmlparser2-.md",
       "repository": "fb55-htmlparser2-learnings",
-      "content_hash": "62719f153af184ff920e7e9d5cbf892d8b86ac6e571993622c5f4b087f8e1a55",
-      "created_at": "2026-11-24T17:23:15.160Z"
+      "content_hash": "b3ccf894e6f52015f298a18805d10bfb46a5ee947f3071bf77385252540777d4",
+      "created_at": "2026-11-28T01:55:06.622Z"
     },
     "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants",
@@ -30406,8 +30406,8 @@
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "repository": "PeerDB-io/peerdb",
-      "content_hash": "bec690800fbd386ce0524f49077c0e312fa501916a44bbaa25bce51c3ec8b2b9",
-      "created_at": "2026-11-27T07:48:55.344Z"
+      "content_hash": "2af6288d6919a0b84e1d8022850293972f9cf87444a6ae15404770efdb7b899f",
+      "created_at": "2026-11-28T01:54:57.861Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
@@ -30415,8 +30415,8 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-learnings-architecture-intelligence-peerdb-io-peerdb-learnings-.md",
       "repository": "peerdb-io-peerdb-learnings",
-      "content_hash": "865f5ed1af76cf63961cfc84678b4abf6852bb5fefa9e055354b070afb3d7ef7",
-      "created_at": "2026-11-27T07:49:08.104Z"
+      "content_hash": "e129385ccc4e331bbd0f33b1371f9b09f2dddc392ced1d1869793bffb8e95df1",
+      "created_at": "2026-11-28T01:55:08.331Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",

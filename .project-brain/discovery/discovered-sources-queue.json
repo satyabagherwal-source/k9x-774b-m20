@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T01:35:46.214Z",
+  "updated_at": "2026-11-28T01:55:07.657Z",
   "stats": {
-    "total_discovered": 10672,
-    "approved_pending_harvest": 10131,
+    "total_discovered": 10681,
+    "approved_pending_harvest": 10140,
     "harvested_count": 0,
     "rejected_count": 541,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10140,
+      "COMMUNITY_AND_EXPERT": 10149,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -231024,6 +231024,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
         "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-56DD76766D75": {
+      "id": "SRC-56DD76766D75",
+      "url": "https://github.com/typescript-eslint/typescript-eslint/commits/v8.74.0/packages/typescript-eslint",
+      "title": "https://github.com/typescript-eslint/typescript-eslint/commits/v8.74.0/packages/typescript-eslint",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:55:05.143Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-1EAD4A3AD1BC": {
+      "id": "SRC-1EAD4A3AD1BC",
+      "url": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.74.0.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.74.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:55:05.302Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-4090E25073AC": {
+      "id": "SRC-4090E25073AC",
+      "url": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.74.0.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.74.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:55:05.508Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-47B45F99EED6": {
+      "id": "SRC-47B45F99EED6",
+      "url": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.74.0.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.74.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:55:05.688Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-E48BA483CB4D": {
+      "id": "SRC-E48BA483CB4D",
+      "url": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.73.0.tgz",
+      "title": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.73.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:55:05.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-580420D1FE13": {
+      "id": "SRC-580420D1FE13",
+      "url": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.74.0",
+      "title": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.74.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:55:05.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-B39FCAA85C6F": {
+      "id": "SRC-B39FCAA85C6F",
+      "url": "https://github.com/ClickHouse/support-escalation/issues/9266",
+      "title": "https://github.com/ClickHouse/support-escalation/issues/9266",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:55:07.438Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-B0ED751741CC": {
+      "id": "SRC-B0ED751741CC",
+      "url": "https://github.com/PeerDB-io/peerdb/pull/5135",
+      "title": "https://github.com/PeerDB-io/peerdb/pull/5135",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:55:07.549Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-15E72B751181": {
+      "id": "SRC-15E72B751181",
+      "url": "https://linear.app/clickhouse/issue/DBI-1405",
+      "title": "https://linear.app/clickhouse/issue/DBI-1405",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:55:07.657Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
       }
     }
   }

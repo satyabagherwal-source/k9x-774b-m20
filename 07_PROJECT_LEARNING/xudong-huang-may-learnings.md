@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source**: github ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
-> **Source Version**: `7f6b896d`  
+> **Source Version**: `cc8fdfa5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T00:49:40.315Z  
+> **Timestamp**: 2026-11-28T01:54:47.581Z  
 > **Learning ID**: `learn-github-xudong-huang-may`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:49:40.309Z  
+> **Harvest Timestamp**: 2026-11-28T01:54:47.287Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: rust stackful coroutine library
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2448 stars
+- **Stars / Engagement**: 2450 stars
 
 ---
 
@@ -2065,139 +2065,167 @@ impl<T> Queue<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f6b896d` (2026-11-18)
-**Commit Message**: fix(sync): make condvar forwarding tests schedule-independent
+### Incident Patch 1: `cc8fdfa5` (2026-11-27)
+**Commit Message**: feat: add JoinHandle::is_finished and deprecate is_done
 
-The waiter-ordering sleeps in the release-forwarding tests were racy:
-W2 could enqueue before W1 if W1 had not been scheduled yet, leaving the
-forwarding path unexercised. The timed-out test additionally raced W1's
-100ms timeout against the notifier's fixed hold; under the full test
-suite, timer latency reaches ~500ms, so W1's wait could be claimed by
-the notify before it ever timed out.
-
-Order the queue with the mutex itself: W1 signals while holding the
-guard, and W2 is only spawned after that, so its lock can only succeed
-once W1's blocker is queued. The timeout test now waits for W1's real
-timeout completion and leaves its released blocker in front of the live
-waiter, and the release-chain test spawns its live waiter after all
-timed-out waiters have exited, since released blockers stay queued.
+Mirror std::thread::JoinHandle::is_finished so the join handle exposes the
+standard name. Keep is_done as a deprecated alias for backwards
+compatibility and migrate the internal callers. Add a schedule-independent
+test for the new API.
 
 Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
-**File**: `src/sync/condvar.rs` (modified, +47/-27)
+**File**: `src/cqueue.rs` (modified, +1/-1)
 ```diff
-@@ -528,10 +528,9 @@ mod tests {
-         drop(g);
+@@ -402,7 +402,7 @@ impl Drop for Cqueue {
+ 
+         // first cancel all the select coroutines if they are running
+         for join in self.selectors.lock().unwrap().iter().flatten() {
+-            if !join.is_done() {
++            if !join.is_finished() {
+                 unsafe { join.coroutine().cancel() };
+             }
+         }
+```
+
+**File**: `src/join.rs` (modified, +15/-1)
+```diff
+@@ -92,9 +92,23 @@ impl<T> JoinHandle<T> {
+         &self.co
      }
  
--    // regression: a waiter that timed out while the notifier holds the
--    // mutex must not consume the signal meant for the live waiter behind
--    // it in the queue — the release action is registered before the
--    // blocking mutex re-lock
-+    // regression: a waiter that timed out before the notify must not
-+    // consume the signal meant for the live waiter queued behind it — its
-+    // released blocker stays in the queue and notify_one has to skip it
-     #[test]
-     fn test_timed_out_waiter_forwards_notify() {
-         let m = Arc::new(Mutex::new(()));
-@@ -542,41 +541,50 @@ mod tests {
-         let c1 = c.clone();
-         let c2 = c.clone();
-         let c3 = c.clone();
--        let (tx, rx) = channel();
-+        let (tx1, rx1) = channel(); // W1 timed out and left the wait
-+        let (tx2, rx2) = channel(); // W2 holds the mutex, about to park
- 
--        // W1: first in the condvar queue, times out quickly
-+        // W1: first in the condvar queue, times out before any notify
-+        // shows up, so its blocker stays queued in the released state
-         let h1 = go!(move || {
-             let g = m1.lock().unwrap();
--            let (g, to) = c1.wait_timeout(g, Duration::from_millis(100)).unwrap();
-+            let (g, to) = c1.wait_timeout(g, Duration::from_millis(10)).unwrap();
-             assert!(to.timed_out());
-             drop(g);
-+            // the wait is over and the release action is registered: a
-+            // later notify must be forwarded past this blocker
-+            tx1.send(()).unwrap();
-         });
- 
-+        // wait until W1 has left: its released blocker is queued before W2
-+        // exists, so the queue order does not depend on how the two waiters
-+        // get scheduled
-+        rx1.recv().unwrap();
++    /// Returns `true` if the coroutine has finished running its main function.
++    ///
++    /// This is `true` when the coroutine has finished or has been terminated.
++    /// It returns `false` while the coroutine is still running.
++    ///
++    /// This may return `true` even if the handle has not been
++    /// [joined](JoinHandle::join); joining will not block in that case.
++    pub fn is_finished(&self) -> bool {
++        !self.join.state.load(Ordering::Acquire)
++    }
 +
-         // W2: second in the queue, must receive the forwarded signal
-         let h2 = go!(move || {
--            sleep(Duration::from_millis(20)); // let W1 enqueue first
-             let g = m2.lock().unwrap();
--            tx.send(()).unwrap(); // parked in the condvar wait below
-+            tx2.send(()).unwrap(); // holds the mutex, about to park below
-             let (g, to) = c2.wait_timeout(g, Duration::from_secs(2)).unwrap();
-             assert!(!to.timed_out());
-             drop(g);
-         });
- 
--        // W2 holds the mutex, about to park: this lock blocks until W2's
--        // wait unlocks the mutex. W1's 100ms timeout fires while we hold
--        // it, so W1 blocks in its mutex re-lock.
--        rx.recv().unwrap();
-+        // this lock blocks until W2's wait unlocks the mutex, so W2's
-+        // blocker is queued when the notify below pops it
-+        rx2.recv().unwrap();
-         let g = m3.lock().unwrap();
--        sleep(Duration::from_millis(200));
--        // pops W1's blocker: the signal must be forwarded to W2
-+        // pops W1's released blocker first: it must forward to W2
-         c3.notify_one();
-         drop(g);
-         h1.join().unwrap();
-         h2.join().unwrap();
+     /// return true if the coroutine is finished
++    ///
++    /// Equivalent to `is_finished`.
++    #[deprecated(since = "0.3.53", note = "use `is_finished` instead")]
+     pub fn is_done(&self) -> bool {
+-        !self.join.state.load(Ordering::Acquire)
++        self.is_finished()
      }
  
--    // regression: same as above but with a canceled waiter instead of a
--    // timed out one
-+    // regression: a waiter that was canceled while the notifier holds the
-+    // mutex must not consume the signal meant for the live waiter behind it
-+    // in the queue — the release action is registered before the blocking
-+    // mutex re-lock
-     #[test]
-     fn test_canceled_waiter_forwards_notify() {
-         let m = Arc::new(Mutex::new(()));
-@@ -587,20 +595,27 @@ mod tests {
-         let c1 = c.clone();
-         let c2 = c.clone();
-         let c3 = c.clone();
--        let (tx, rx) = channel();
-+        let (tx1, rx1) = channel();
-+        let (tx2, rx2) = channel();
+     /// block until the coroutine is done
+```
+
+**File**: `src/scoped.rs` (modified, +1/-1)
+```diff
+@@ -296,7 +296,7 @@ impl<T> ScopedJoinHandle<'_, T> {
+     /// Checks if the associated coroutine has finished.
+     pub fn is_finished(&self) -> bool {
+         match &*self.inner.lock() {
+-            JoinState::Running(handle) => handle.is_done(),
++            JoinState::Running(handle) => handle.is_finished(),
+             JoinState::Joined => true,
+         }
+     }
+```
+
+**File**: `src/sync/mpmc.rs` (modified, +2/-2)
+```diff
+@@ -475,11 +475,11 @@ mod tests {
+         unsafe { h.coroutine().cancel() };
  
-         // W1: first in the condvar queue, will be canceled
-         let h1 = go!(move || {
-             let g = m1.lock().unwrap();
-+            // signal while holding the mutex: W2's lock below can only
-+            // succeed after W1's wait has queued its blocker and released
-+            // the mutex, so no scheduling delay can move W1 behind W2
-+            tx1.send(()).unwrap();
-             let _ = c1.wait(g).unwrap(); // cancel panic propagates
-             unreachable!();
-         });
+         let start = Instant::now();
+-        while !h.is_done() && start.elapsed() < Duration::from_secs(2) {
++        while !h.is_finished() && start.elapsed() < Duration::from_secs(2) {
+             thread::sleep(Duration::from_millis(1));
+         }
+         assert!(
+-            h.is_done(),
++            h.is_finished(),
+             "cancel did not wake a coroutine blocked in recv()"
+         );
+         assert!(h.join().is_err());
+```
+
+**File**: `src/sync/spsc.rs` (modified, +6/-6)
+```diff
+@@ -971,11 +971,11 @@ mod tests {
  
-+        // W1 holds the mutex and is about to enqueue: only now let W2 in
-+        rx1.recv().unwrap();
+         // bounded wait: without cancellation support join() would block
+         let start = Instant::now();
+-        while !h.is_done() && start.elapsed() < Duration::from_secs(2) {
++        while !h.is_finished() && start.elapsed() < Duration::from_secs(2) {
+             thread::sleep(Duration::from_millis(1));
+         }
+         assert!(
+-            h.is_done(),
++            h.is_finished(),
+             "cancel did not wake a coroutine blocked in recv()"
+         );
+         drop(tx);
+@@ -1000,10 +1000,10 @@ mod tests {
+         running.store(false, Ordering::Release);
+ 
+         let start = Instant::now();
+-        while !h.is_done() && start.elapsed() < Duration::from_secs(2) {
++        while !h.is_finished() && start.elapsed() < Duration::from_secs(2) {
+             thread::sleep(Duration::from_millis(1));
+         }
+-        assert!(h.is_done(), "cancel before parking hung");
++        assert!(h.is_finished(), "cancel before parking hung");
+         drop(tx);
+         assert!(h.join().is_err());
+     }
+@@ -1025,10 +1025,10 @@ mod tests {
+             drop(tx);
+ 
+             let start = Instant::now();
+-            while !h.is_done() && start.elapsed() < Duration::from_secs(2) {
++            while !h.is_finished() && start.elapsed() < Duration::from_secs(2) {
+                 thread::sleep(Duration::from_millis(1));
+             }
+-            assert!(h.is_done(), "recv() did not observe the disconnect");
++            assert!(h.is_finished(), "recv() did not observe the disconnect");
+             assert!(h.join().unwrap().is_err());
+         }
+     }
+```
+
+**File**: `tests/lib.rs` (modified, +25/-0)
+```diff
+@@ -50,6 +50,31 @@ fn cancel_coroutine() {
+     }
+ }
+ 
++#[test]
++fn join_handle_is_finished() {
++    use std::sync::atomic::{AtomicBool, Ordering};
++    use std::sync::Arc;
 +
-         // W2: second in the queue, must receive the forwarded signal
-         let h2 = go!(move || {
--            sleep(Duration::from_millis(20)); // let W1 enqueue first
--            let g = m2.lock().unwrap();
--            tx.send(()).unwrap(); // parked in the condvar wait below
-+            let g = m2.lock().unwrap(); // blocks until W1's wait unlocks
-+            tx2.send(()).unwrap(); // holds the mutex, about to park below
-             let (g, to) = c2.wait_timeout(g, Duration::from_secs(2)).unwrap();
-             assert!(!to.timed_out());
-             drop(g);
-@@ -609,9 +624,12 @@ mod tests {
-         /
++    let done = Arc::new(AtomicBool::new(false));
++    let d = done.clone();
++    let j = go!(move || {
++        while !d.load(Ordering::SeqCst) {
++            yield_now();
++        }
++        42
++    });
++
++    // the coroutine cannot finish until `done` is set
++    assert!(!j.is_finished());
++    done.store(true, Ordering::SeqCst);
++
++    while !j.is_finished() {
++        yield_now();
++    }
++    // a finished handle can still be joined and yields the result
++    assert_eq!(j.join().unwrap(), 42);
++}
++
+ #[test]
+ #[cfg(feature = "io_cancel")]
+ fn cancel_io_coroutine() {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2226,68 +2254,28 @@ Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sync): make condvar forwarding tests schedule-independent
+## X. add JoinHandle::is_finished and deprecate is_done
 
 **RULE**:
-When implementing operations in `src/sync/condvar.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cqueue.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f6b896d`: sync): make condvar forwarding tests schedule-independent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc8fdfa5`: add JoinHandle::is_finished and deprecate is_done. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/sync/condvar.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cqueue.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // regression: a waiter that timed out before the notify must not
-    // consume the signal meant for the live waiter queued behind it — its
-    // released blocker stays in the queue and notify_one has to skip it
-        let (tx1, rx1) = channel(); // W1 timed out and left the wait
-        let (tx2, rx2) = channel(); // W2 holds the mutex, about to park
-        // W1: first in the condvar queue, times out before any notify
-        // shows up, so its blocker stays queued in the released state
-            let (g, to) = c1.wait_timeout(g, Duration::from_millis(10)).unwrap();
-            // the wait is over and the release action is registered: a
-            // later notify must be forwarded past this blocker
-            tx1.send(()).unwrap();
-        // wait until W1 has left: its released blocker is queued before W2
-        // exists, so the queue order does not depend on how the two waiters
-        // get scheduled
-        rx1.recv().unwrap();
-
-            tx2.send(()).unwrap(); // holds the mutex, about to park below
-        // this lock blocks until W2's wait unlocks the mutex, so W2's
-        // blocker is queued when the notify below pops it
-        rx2.recv().unwrap();
-  
+            if !join.is_finished() {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    // regression: a waiter that timed out while the notifier holds the
-    // mutex must not consume the signal meant for the live waiter behind
-    // it in the queue — the release action is registered before the
-    // blocking mutex re-lock
-        let (tx, rx) = channel();
-        // W1: first in the condvar queue, times out quickly
-            let (g, to) = c1.wait_timeout(g, Duration::from_millis(100)).unwrap();
-            sleep(Duration::from_millis(20)); // let W1 enqueue first
-            tx.send(()).unwrap(); // parked in the condvar wait below
-        // W2 holds the mutex, about to park: this lock blocks until W2's
-        // wait unlocks the mutex. W1's 100ms timeout fires while we hold
-        // it, so W1 blocks in its mutex re-lock.
-        rx.recv().unwrap();
-        sleep(Duration::from_millis(200));
-        // pops W1's blocker: the signal must be forwarded to W2
-    // regression: same as above but with a canceled waiter instead of a
-    // timed out one
-        let (tx, rx) = channel();
-            sleep(Duration::from_millis(20)); // let W1 enqueue first
-            let g = m2.lock().unwrap();
-            tx.send(()).unwrap(); // parked in the condvar wait b
+            if !join.is_done() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f6b896d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc8fdfa5` are properly handled with clean fallback behavior.

@@ -13965,3 +13965,7 @@ Every entry in this ledger must capture:
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `a0a5c188` | Multi-dimensional audit evidence | 2026-11-28T01:35:40.035Z |
 | `learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b` | `https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B` | `hf-ovhaill` | Multi-dimensional audit evidence | 2026-11-28T01:45:16.881Z |
 | `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `436166f7` | Multi-dimensional audit evidence | 2026-11-28T01:45:24.080Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `cc8fdfa5` | Multi-dimensional audit evidence | 2026-11-28T01:54:49.215Z |
+| `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `bb3a487b` | Multi-dimensional audit evidence | 2026-11-28T01:54:51.189Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `4e3fd8c9` | Multi-dimensional audit evidence | 2026-11-28T01:54:57.211Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `091ebe85` | Multi-dimensional audit evidence | 2026-11-28T01:54:59.469Z |

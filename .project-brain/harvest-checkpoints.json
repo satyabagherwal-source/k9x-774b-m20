@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T01:45:24.092Z",
+  "last_updated": "2026-11-28T01:54:59.480Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "8d12bc4e5083d11bd2745ba2f56552c0823678a1f99bc77b03c1c5c3dc8c1e4d",
-      "verified_at": "2026-11-27T07:48:54.687Z",
+      "content_hash": "185ffc08f8a0887ab082734baedb72e8133d54b45b6fda81a0b8a851e69e19de",
+      "verified_at": "2026-11-28T01:54:57.223Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T07:48:54.687Z"
+      "last_updated": "2026-11-28T01:54:57.223Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "1ae857f5f82da40b62945d7b3b2ade301c210d03f15d227fbc4ce64e82d1b2a4",
-      "verified_at": "2026-11-26T18:41:48.510Z",
+      "content_hash": "ab60099cd56555a50b990d75755a46181e365cec8e160b658282279b2a219f56",
+      "verified_at": "2026-11-28T01:54:59.479Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T18:41:48.510Z"
+      "last_updated": "2026-11-28T01:54:59.479Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -8961,14 +8961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xudong-huang-may",
-      "content_hash": "cb9590db2667dbccdf987e8cc652e493e5be9a8891ce815aea1d70a2f5a05de5",
-      "verified_at": "2026-11-19T00:49:41.311Z",
+      "content_hash": "29c58831e793ca5b7b7f623f1f25d8e7d58881ecc8cb0c87b61e9781470c9e51",
+      "verified_at": "2026-11-28T01:54:49.227Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:49:41.311Z"
+      "last_updated": "2026-11-28T01:54:49.227Z"
     },
     "rcbyr/keen-slider": {
       "repository": "rcbyr/keen-slider",
@@ -14091,14 +14091,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-htmlparser2",
-      "content_hash": "ce39d9c9429da77159f539a91ecd9025786e4d202699cad5466a07a5c0b2c597",
-      "verified_at": "2026-11-24T17:22:59.704Z",
+      "content_hash": "1f16faa8a661dfa30bd20e263ed17c9616e46ee8918ea5abf9a8379be3a1b492",
+      "verified_at": "2026-11-28T01:54:51.200Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:22:59.704Z"
+      "last_updated": "2026-11-28T01:54:51.200Z"
     },
     "inikulin/parse5": {
       "repository": "inikulin/parse5",

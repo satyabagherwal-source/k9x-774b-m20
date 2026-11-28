@@ -13932,3 +13932,7 @@
 | `CYCLE-20261128-NRP2` | `2026-11-28T01:35:40.022Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11010` | Yes (`4adbf022...`) |
 | `CYCLE-20261128-04SK` | `2026-11-28T01:45:16.868Z` | `OVHaiLLM/Olala-v1.0-mini-7A1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md` | Yes (`7abfe4c9...`) |
 | `CYCLE-20261128-0ACI` | `2026-11-28T01:45:24.066Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2780` | Yes (`9361a6f1...`) |
+| `CYCLE-20261128-CEEP` | `2026-11-28T01:54:49.201Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11011` | Yes (`29c58831...`) |
+| `CYCLE-20261128-CFXJ` | `2026-11-28T01:54:51.175Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11012` | Yes (`1f16faa8...`) |
+| `CYCLE-20261128-CKKT` | `2026-11-28T01:54:57.197Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11013` | Yes (`185ffc08...`) |
+| `CYCLE-20261128-CMBG` | `2026-11-28T01:54:59.452Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11014` | Yes (`ab60099c...`) |
