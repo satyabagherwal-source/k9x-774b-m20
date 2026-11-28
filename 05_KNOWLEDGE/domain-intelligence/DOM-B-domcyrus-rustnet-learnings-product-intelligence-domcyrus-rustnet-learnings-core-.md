@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T05:21:43.612Z",
+  "timestamp": "2026-11-28T05:07:09.414Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-domcyrus-rustnet-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [domcyrus-rustnet-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T05:21:43.612Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T05:07:09.414Z`  
 > **Learning ID**: `LEARN-EVO-domcyrus-rustnet-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from domcyrus-rustnet-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `515ddfaa`  
+> **Source Version**: `695a517d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T05:21:23.949Z  
+> **Timestamp**: 2026-11-28T05:06:58.399Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T05:21:23.943Z  
+> **Harvest Timestamp**: 2026-11-28T05:06:58.196Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5268 stars
+- **Stars / Engagement**: 5271 stars
 
 ---
 
@@ -353,6 +353,31 @@ use std::sync::{Arc, Condvar, Mutex};
 use std::thread::{self, JoinHandle};
 use std::time::{Duration, Instant};
 
+/// Returns `true` for addresses that must never be looked up via `/etc/hosts`
+/// or reverse DNS (PTR).
+///
+/// Unspecified addresses (`0.0.0.0`, `::`) are commonly used as sinkhole targets
+/// in `/etc/hosts` ad/tracker blocklists, which would otherwise cause legitimate
+/// traffic such as DHCP client packets (`0.0.0.0:68`) to resolve to an arbitrary
+/// blocked domain. IPv4-mapped IPv6 addresses (`::ffff:0:0/96`) inherit the
+/// rules of their embedded IPv4 address.
+fn should_skip_reverse_lookup(ip: IpAddr) -> bool {
+    let effective = match ip {
+        IpAddr::V6(v6) => v6.to_ipv4_mapped().map_or(ip, IpAddr::V4),
+        IpAddr::V4(_) => ip,
+    };
+
+    matches!(
+        classify(effective),
+        Scope::Unspecified
+            | Scope::Loopback
+            | Scope::LinkLocal
+            | Scope::Broadcast
+            | Scope::Multicast
+            | Scope::Discard
+    )
+}
+
 /// Resolution state for a cached entry
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ResolutionState {
@@ -551,7 +576,15 @@ impl DnsResolver {
 
     fn start_with_spawner(
         &self,
+        spawn: impl FnMut(String, Worker) -> std::io::Result<JoinHandle<()>>,
+    ) -> anyhow::Result<()> {
+        self.start_with_spawner_and_lookup(spawn, |ip| Ok(lookup_addr(&ip)?))
+    }
+
+    fn start_with_spawner_and_lookup(
+        &self,
         mut spawn: impl FnMut(String, Worker) -> std::io::Result<JoinHandle<()>>,
+        lookup: impl Fn(IpAddr) -> std::io::Result<String> + Send + Sync + 'static,
     ) -> anyhow::Result<()> {
         let mut lifecycle = self
             .lifecycle
@@ -566,12 +599,14 @@ impl DnsResolver {
         // all be joined without starting a potentially blocking resolver call.
         let startup_gate = Arc::new((Mutex::new(None), Condvar::new()));
         let mut handles = Vec::with_capacity(self.config.resolver_threads + 1);
+        let lookup = Arc::new(lookup);
 
         for index in 0..self.config.resolver_threads {
             let rx = self.request_rx.clone();
             let cache = Arc::clone(&self.cache);
             let should_stop = Arc::clone(&self.should_stop);
             let worker_gate = Arc::clone(&startup_gate);
+            let lookup = Arc::clone(&lookup);
 
             let worker: Worker = Box::new(move || {
                 if !wait_for_startup(&worker_gate) {
@@ -584,30 +619,7 @@ impl DnsResolver {
                     match rx.recv_timeout(Duration::from_millis(100)) {
                         Ok(request) => {
                             let reservation_is_current =
-                                cache.get(&request.ip).is_some_and(|entry| {
-                                    entry.state == ResolutionState::Pending
-                                        && entry.resolved_at == request.reserved_at
-                                });
-                            if !reservation_is_current {
-                                continue;
-                            }
-
-                            let result = match lookup_addr(&request.ip) {
-                                Ok(hostname) => {
-                                    debug!("Resolved {} -> {}", request.ip, hostname);
-                                    CachedHostname::resolved(hostname)
-                                }
-                                Err(error) => {
-                                    debug!("Failed to resolve {}: {}", request.ip, error);
-                                    CachedHostname::failed()
-                                }
-                            };
-
-                            // A timed-out reservation may have been superseded
-                            // while the system resolver was blocked. Never let
-                            // its late result overwrite the newer generation.
-                            if let Entry::Occupied(mut entry) = cache.entry(request.ip)
-                               
+                                c
 ```
 
 ### Core Architecture Module: `crates/rustnet-core/src/network/dns_analytics.rs`
@@ -2529,114 +2541,874 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `515ddfaa` (2026-11-26)
-**Commit Message**: fix(dpi): preserve STUN SOFTWARE at the UTF-8 byte cap (#753)
+### Incident Patch 1: `695a517d` (2026-11-27)
+**Commit Message**: fix(dns): skip reverse lookups for unspecified and special-purpose IPs (#757)
 
-Validate the character crossing the 128-byte cap and retain the complete prefix.
+* fix(dns): skip reverse lookups for unspecified and special-purpose IPs
+
+Skip /etc/hosts and reverse-DNS PTR lookups for unspecified (0.0.0.0, ::), broadcast, multicast, discard, loopback, link-local, and their IPv4-mapped IPv6 equivalents so /etc/hosts blocklist sinkholes do not resolve DHCP (0.0.0.0:68) or other special-purpose traffic to blocked domains. Also align Details, JSON logging, and headless schema callers with connection_table by skipping ARP and non-unicast endpoints (including subnet-directed broadcasts).
+
+* chore: add changelog entry and drop redundant UI test
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
  
  ### Fixed
-+- Keep a STUN `SOFTWARE` value longer than 128 bytes when the 128-byte cap splits a multi-byte UTF-8 character, instead of dropping it
++- Skip reverse DNS and `/etc/hosts` lookups for unspecified (`0.0.0.0`, `::`) and other special-purpose addresses so DHCP traffic from `0.0.0.0` does not display sinkholed blocklist domains (#757)
+ - Keep a STUN `SOFTWARE` value longer than 128 bytes when the 128-byte cap splits a multi-byte UTF-8 character, instead of dropping it
  - Allow pressing `t` directly in `5 Health & Host > Findings` to toggle historic connections immediately (matching the `press t for history` prompt on closed TCP attempts) and show `t history` in the Findings status bar and help overlay
  - Link Windows synchronization APIs explicitly to prevent x86 startup failures and x64 test crashes caused by enclave DLL imports (#731)
- - Remove redundant homepage metadata to prevent Cargo manifest warnings when building from source (#731)
 ```
 
-**File**: `crates/rustnet-core/src/network/dpi/stun.rs` (modified, +62/-4)
+**File**: `crates/rustnet-core/src/network/dns.rs` (modified, +148/-4)
 ```diff
-@@ -113,10 +113,26 @@ fn parse_software_attribute(payload: &[u8], message_length: usize) -> Option<Str
+@@ -15,6 +15,31 @@ use std::sync::{Arc, Condvar, Mutex};
+ use std::thread::{self, JoinHandle};
+ use std::time::{Duration, Instant};
+ 
++/// Returns `true` for addresses that must never be looked up via `/etc/hosts`
++/// or reverse DNS (PTR).
++///
++/// Unspecified addresses (`0.0.0.0`, `::`) are commonly used as sinkhole targets
++/// in `/etc/hosts` ad/tracker blocklists, which would otherwise cause legitimate
++/// traffic such as DHCP client packets (`0.0.0.0:68`) to resolve to an arbitrary
++/// blocked domain. IPv4-mapped IPv6 addresses (`::ffff:0:0/96`) inherit the
++/// rules of their embedded IPv4 address.
++fn should_skip_reverse_lookup(ip: IpAddr) -> bool {
++    let effective = match ip {
++        IpAddr::V6(v6) => v6.to_ipv4_mapped().map_or(ip, IpAddr::V4),
++        IpAddr::V4(_) => ip,
++    };
++
++    matches!(
++        classify(effective),
++        Scope::Unspecified
++            | Scope::Loopback
++            | Scope::LinkLocal
++            | Scope::Broadcast
++            | Scope::Multicast
++            | Scope::Discard
++    )
++}
++
+ /// Resolution state for a cached entry
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub(crate) enum ResolutionState {
+@@ -212,8 +237,16 @@ impl DnsResolver {
+     }
+ 
+     fn start_with_spawner(
++        &self,
++        spawn: impl FnMut(String, Worker) -> std::io::Result<JoinHandle<()>>,
++    ) -> anyhow::Result<()> {
++        self.start_with_spawner_and_lookup(spawn, |ip| Ok(lookup_addr(&ip)?))
++    }
++
++    fn start_with_spawner_and_lookup(
+         &self,
+         mut spawn: impl FnMut(String, Worker) -> std::io::Result<JoinHandle<()>>,
++        lookup: impl Fn(IpAddr) -> std::io::Result<String> + Send + Sync + 'static,
+     ) -> anyhow::Result<()> {
+         let mut lifecycle = self
+             .lifecycle
+@@ -228,12 +261,14 @@ impl DnsResolver {
+         // all be joined without starting a potentially blocking resolver call.
+         let startup_gate = Arc::new((Mutex::new(None), Condvar::new()));
+         let mut handles = Vec::with_capacity(self.config.resolver_threads + 1);
++        let lookup = Arc::new(lookup);
+ 
+         for index in 0..self.config.resolver_threads {
+             let rx = self.request_rx.clone();
+             let cache = Arc::clone(&self.cache);
+             let should_stop = Arc::clone(&self.should_stop);
+             let worker_gate = Arc::clone(&startup_gate);
++            let lookup = Arc::clone(&lookup);
+ 
+             let worker: Worker = Box::new(move || {
+                 if !wait_for_startup(&worker_gate) {
+@@ -254,7 +289,7 @@ impl DnsResolver {
+                                 continue;
+                             }
+ 
+-                            let result = match lookup_addr(&request.ip) {
++                            let result = match lookup(request.ip) {
+                                 Ok(hostname) => {
+                                     debug!("Resolved {} -> {}", request.ip, hostname);
+                                     CachedHostname::resolved(hostname)
+@@ -369,9 +404,7 @@ impl DnsResolver {
+ 
+     /// Request resolution for an IP address (non-blocking)
+     pub fn request_resolution(&self, ip: IpAddr) {
+-        if self.should_stop.load(Ordering::Acquire)
+-            || matches!(classify(ip), Scope::Loopback | Scope::LinkLocal)
+-        {
++        if self.should_stop.load(Ordering::Acquire) || should_skip_reverse_lookup(ip) {
+             return;
          }
  
-         if attr_type == ATTR_SOFTWARE {
--            let effective_len = attr_length.min(MAX_SOFTWARE_LEN);
--            return std::str::from_utf8(&payload[offset..offset + effective_len])
--                .ok()
--                .map(|s| s.trim_end_matches('\0').to_string());
-+            let full = &payload[offset..offset + attr_length];
-+            let value = &full[..attr_length.min(MAX_SOFTWARE_LEN)];
-+            let text = match std::str::from_utf8(value) {
-+                Ok(s) => s,
-+                // The cap counts bytes, but SOFTWARE may hold up to 127
-+                // characters (763 bytes, RFC 8489 §14.14), so the cut can
-+                // split a multi-byte character: keep the complete ones, but
-+                // only if the split character is valid in the full value.
-+                Err(e) if attr_length > MAX_SOFTWARE_LEN && e.error_len().is_none() => {
-+                    let cut = e.valid_up_to();
-+                    // A UTF-8 character takes at most four bytes from its start.
-+                    let end = attr_length.min(cut + 4);
-+                    match full[..end].utf8_chunks().next() {
-+                        Some(chunk) if chunk.valid().len() > cut => &chunk.valid()[..cut],
-+                        _ => return None,
-+                    }
-+                }
-+                Err(_) => return None,
-+            };
-+            return Some(text.trim_end_matches('\0').to_string());
-         }
+@@ -407,6 +440,10 @@ impl DnsResolver {
  
-         // Advance to next attribute, padding to 4-byte boundary
-@@ -228,6 +244,48 @@ mod tests {
-         assert_eq!(info.software, Some("TestAgent/1.0".to_string()));
+     /// Get hostname for IP if resolved, otherwise return None
+     pub fn get_hostname(&self, ip: &IpAddr) -> Option<String> {
++        if should_skip_reverse_lookup(*ip) {
++            return None;
++        }
++
+         self.request_resolution(*ip);
+ 
+         self.cache.get(ip).and_then(|entry| {
+@@ -818,4 +855,111 @@ mod tests {
+         assert_eq!(config.resolver_threads, 4);
+         assert_eq!(config.shutdown_timeout, Duration::from_secs(1));
+     }
++
++    #[test]
++    fn special_purpose_ips_are_not_queued_for_reverse_lookup() {
++        let resolver = DnsResolver::new_deferred(DnsResolverConfig {
++            resolver_threads: 0,
++            ..Default::default()
++        });
++
++        for addr in [
++            "0.0.0.0",
++            "::",
++            "::ffff:0.0.0.0",
++            "127.0.0.1",
++            "::1",
++            "::ffff:127.0.0.1",
++            "169.254.1.1",
++            "fe80::1",
++            "::ffff:169.254.1.1",
++            "255.255.255.255",
++            "::ffff:255.255.255.255",
++            "224.0.0.251",
++            "ff02::1",
++            "::ffff:224.0.0.251",
++            "100::1",
++        ] {
++            let ip: IpAddr = addr.parse().unwrap();
++            assert!(resolver.get_hostname(&ip).is_none(), "{addr} skipped");
++        }
++
++        assert!(resolver.request_rx.is_empty());
++        assert!(resolver.cache.is_empty());
++    }
++
++    #[test]
++    fn unspecified_ips_are_never_resolved_while_normal_ips_resolve() {
++        let resolver = DnsResolver::new_deferred(DnsResolv
+```
+
+**File**: `src/app/logging.rs` (modified, +8/-3)
+```diff
+@@ -286,12 +286,17 @@ pub(super) fn log_connection_event(
+     );
+ 
+     // ARP connections are skipped: DNS lookups generate ARP traffic, so
+-    // resolving them would feed back on itself.
++    // resolving them would feed back on itself. Broadcast and multicast
++    // endpoints (including subnet-directed broadcasts) never name a host.
+     if let Some(resolver) = dns_resolver.filter(|_| conn.protocol != Protocol::Arp) {
+-        if let Some(hostname) = resolver.get_hostname(&conn.remote_addr.ip()) {
++        if conn.remote_addr_kind == AddrKind::Unicast
++            && let Some(hostname) = resolver.get_hostname(&conn.remote_addr.ip())
++        {
+             event["destination_hostname"] = json!(hostname);
+         }
+-        if let Some(hostname) = resolver.get_hostname(&conn.local_addr.ip()) {
++        if conn.local_addr_kind == AddrKind::Unicast
++            && let Some(hostname) = resolver.get_hostname(&conn.local_addr.ip())
++        {
+             event["source_hostname"] = json!(hostname);
+         }
+     }
+```
+
+**File**: `src/headless/schema.rs` (modified, +9/-1)
+```diff
+@@ -11,7 +11,7 @@ use serde_json::value::RawValue;
+ use crate::app::{App, AppStats, StopReport};
+ use crate::network::findings::FindingsReport;
+ use crate::network::time_window::TimeWindow;
+-use crate::network::types::{AttributionSource, Connection, ConnectionKey};
++use crate::network::types::{AddrKind, AttributionSource, Connection, ConnectionKey, Protocol};
+ 
+ use super::{SCHEMA_VERSION, TerminationReason};
+ 
+@@ -85,9 +85,17 @@ impl SnapshotEnvelope {
+                     snapshot.details.network_context = NetworkContextSnapshot {
+                         local_hostname: resolver
+                             .as_ref()
++                            .filter(|_| {
++                                connection.protocol != Protocol::Arp
++                                    && connection.local_addr_kind == AddrKind::Unicast
++                            })
+                             .and_then(|r| r.get_hostname(&connection.local_addr.ip())),
+                         remote_hostname: resolver
+                             .as_ref()
++                            .filter(|_| {
++                                connection.protocol != Protocol::Arp
++                                    && connection.remote_addr_kind == AddrKind::Unicast
++                            })
+                             .and_then(|r| r.get_hostname(&connection.remote_addr.ip())),
+                         local_mac: app
+                             .lookup_neighbor(connection.local_addr.ip())
+```
+
+**File**: `src/ui/tabs/details.rs` (modified, +9/-2)
+```diff
+@@ -1050,11 +1050,18 @@ pub(in crate::ui) fn draw_connection_details(
+     // Network enrichment is a fixed card. Fields remain in the same rows even
+     // while asynchronous DNS and GeoIP data arrives, which prevents the lower
+     // dashboard and traffic section from jumping during connection navigation.
++    // Skip ARP (DNS lookups generate ARP traffic) and broadcast/multicast
++    // endpoints (including subnet-directed broadcasts).
+     let (local_hostname, remote_hostname) = dns_resolver
++        .filter(|_| conn.protocol != Protocol::Arp)
+         .map(|resolver| {
+             (
+-                resolver.get_hostname(&conn.local_addr.ip()),
+-                resolver.get_hostname(&conn.remote_addr.ip()),
++                (conn.local_addr_kind == AddrKind::Unicast)
++                    .then(|| resolver.get_hostname(&conn.local_addr.ip()))
++                    .flatten(),
++                (conn.remote_addr_kind == AddrKind::Unicast)
++                    .then(|| resolver.get_hostname(&conn.remote_addr.ip()))
++                    .flatten(),
+             )
+         })
+         .unwrap_or((None, None));
+```
+
+---
+
+### Incident Patch 2: `a5ffae88` (2026-11-27)
+**Commit Message**: docs: clarify release DEB and RPM capability setup in INSTALL guides (#758)
+
+**File**: `INSTALL.md` (modified, +15/-16)
+```diff
+@@ -171,20 +171,18 @@ across the time64 library transition. These fixes do not apply to v1.6.0 assets.
+ # - Rustnet_LinuxDEB_arm64.deb (ARM64)
+ # - Rustnet_LinuxDEB_armhf.deb (ARMv7)
+ 
+-# Install the package (post-install script attempts to set capabilities)
+-sudo dpkg -i Rustnet_LinuxDEB_amd64.deb
++# Install the package
++sudo apt install ./Rustnet_LinuxDEB_amd64.deb
+ 
+-# Install dependencies if needed
+-sudo apt-get install -f
+-
+-# Verify capabilities
+-getcap /usr/bin/rustnet
++# Run with sudo (RustNet drops root privileges after initialization)
++sudo rustnet
+ 
+-# Run without sudo if CAP_NET_RAW is present; otherwise use sudo
++# Or grant capabilities to run as a regular user (modern kernel 5.8+)
++sudo setcap 'cap_net_raw,cap_bpf,cap_perfmon+eip' /usr/bin/rustnet
+ rustnet
+ ```
+ 
+-**Note:** The .deb post-install script attempts to set Linux capabilities when `setcap` is available. Check with `getcap /usr/bin/rustnet`; if `CAP_NET_RAW` is absent, configure capabilities manually or run with `sudo`.
++**Note:** The GitHub Release `.deb` packages do not include a post-install script and leave `/usr/bin/rustnet` unprivileged by default. Run with `sudo rustnet` or grant capabilities manually (see [Permissions Setup](#permissions-setup)).
+ 
+ #### RedHat/Fedora/CentOS (.rpm packages)
+ 
+@@ -195,19 +193,20 @@ For manual installation or distributions not using COPR:
+ # - Rustnet_LinuxRPM_x86_64.rpm
+ # - Rustnet_LinuxRPM_aarch64.rpm
+ 
+-# Install the package (post-install script attempts to set capabilities)
++# Install the package
++sudo dnf install ./Rustnet_LinuxRPM_x86_64.rpm
++# Or with rpm:
+ sudo rpm -i Rustnet_LinuxRPM_x86_64.rpm
+-# Or with dnf/yum:
+-sudo dnf install Rustnet_LinuxRPM_x86_64.rpm
+ 
+-# Verify capabilities
+-getcap /usr/bin/rustnet
++# Run with sudo (RustNet drops root privileges after initialization)
++sudo rustnet
+ 
+-# Run without sudo if CAP_NET_RAW is present; otherwise use sudo
++# Or grant capabilities to run as a regular user (modern kernel 5.8+)
++sudo setcap 'cap_net_raw,cap_bpf,cap_perfmon+eip' /usr/bin/rustnet
+ rustnet
+ ```
+ 
+-**Note:** The .rpm post-install script attempts to set Linux capabilities when `setcap` is available. Check with `getcap /usr/bin/rustnet`; if `CAP_NET_RAW` is absent, configure capabilities manually or run with `sudo`.
++**Note:** The GitHub Release `.rpm` packages do not include a post-install script and leave `/usr/bin/rustnet` unprivileged by default. Run with `sudo rustnet` or grant capabilities manually (see [Permissions Setup](#permissions-setup)).
+ 
+ #### Alpine Linux
+ 
+```
+
+**File**: `INSTALL.zh-CN.md` (modified, +15/-16)
+```diff
+@@ -171,20 +171,18 @@ ARM64 DEB 支持 Ubuntu 22.04+ 和 Debian 12/13；ARMv7 DEB 支持 Debian 12/13
+ # - Rustnet_LinuxDEB_arm64.deb（ARM64）
+ # - Rustnet_LinuxDEB_armhf.deb（ARMv7）
+ 
+-# 安装包（安装后脚本会尝试设置 Linux capabilities）
+-sudo dpkg -i Rustnet_LinuxDEB_amd64.deb
++# 安装包
++sudo apt install ./Rustnet_LinuxDEB_amd64.deb
+ 
+-# 如有需要安装依赖
+-sudo apt-get install -f
+-
+-# 验证 Linux capabilities
+-getcap /usr/bin/rustnet
++# 使用 sudo 运行（RustNet 会在初始化后自动降权）
++sudo rustnet
+ 
+-# 若存在 CAP_NET_RAW，可无需 sudo 运行；否则使用 sudo
++# 或手动授予 Linux capabilities 以普通用户身份运行（现代内核 5.8+）
++sudo setcap 'cap_net_raw,cap_bpf,cap_perfmon+eip' /usr/bin/rustnet
+ rustnet
+ ```
+ 
+-**注意：** .deb 包的安装后脚本会在 `setcap` 可用时尝试设置 Linux capabilities。请用 `getcap /usr/bin/rustnet` 验证；若缺少 `CAP_NET_RAW`，请手动配置 capabilities 或使用 `sudo`。
++**注意：** GitHub Release 中的 `.deb` 包不包含安装后脚本，默认不会为 `/usr/bin/rustnet` 授予 capabilities。请使用 `sudo rustnet` 运行，或手动配置 capabilities（详见[权限配置](#permissions-setup)）。
+ 
+ #### RedHat/Fedora/CentOS（.rpm 包）<a id="redhatfedoracentos-rpm-packages"></a>
+ 
+@@ -195,19 +193,20 @@ rustnet
+ # - Rustnet_LinuxRPM_x86_64.rpm
+ # - Rustnet_LinuxRPM_aarch64.rpm
+ 
+-# 安装包（安装后脚本会尝试设置 Linux capabilities）
++# 安装包
++sudo dnf install ./Rustnet_LinuxRPM_x86_64.rpm
++# 或使用 rpm：
+ sudo rpm -i Rustnet_LinuxRPM_x86_64.rpm
+-# 或使用 dnf/yum：
+-sudo dnf install Rustnet_LinuxRPM_x86_64.rpm
+ 
+-# 验证 Linux capabilities
+-getcap /usr/bin/rustnet
++# 使用 sudo 运行（RustNet 会在初始化后自动降权）
++sudo rustnet
+ 
+-# 若存在 CAP_NET_RAW，可无需 sudo 运行；否则使用 sudo
++# 或手动授予 Linux capabilities 以普通用户身份运行（现代内核 5.8+）
++sudo setcap 'cap_net_raw,cap_bpf,cap_perfmon+eip' /usr/bin/rustnet
+ rustnet
+ ```
+ 
+-**注意：** .rpm 包的安装后脚本会在 `setcap` 可用时尝试设置 Linux capabilities。请用 `getcap /usr/bin/rustnet` 验证；若缺少 `CAP_NET_RAW`，请手动配置 capabilities 或使用 `sudo`。
++**注意：** GitHub Release 中的 `.rpm` 包不包含安装后脚本，默认不会为 `/usr/bin/rustnet` 授予 capabilities。请使用 `sudo rustnet` 运行，或手动配置 capabilities（详见[权限配置](#permissions-setup)）。
+ 
+ #### Alpine Linux
+ 
+```
+
+---
+
+### Incident Patch 3: `2699d07f` (2026-11-27)
+**Commit Message**: Add configurable TUI traffic rate units (#755)
+
+Support displaying live TUI traffic rates in decimal SI bits (bits) in addition to the default binary IEC bytes (bytes) via --rate-unit and [view] rate_unit in config.toml. Cumulative byte totals and headless JSON output remain in bytes.
+
+Assisted-By: Gemini 4
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Avoid allocating static Overview titles and expanded process-group connectors on each render (#412)
+ 
+ ### Added
++- Add `--rate-unit <bytes|bits>` and `[view] rate_unit` in `config.toml` to display live TUI traffic rates in decimal SI bits (`bps`, `kbps`, `Mbps`, `Gbps`) instead of the default binary IEC bytes (`B/s`, `KiB/s`, `MiB/s`, `GiB/s`)
+ - Go back and forward through visited tabs with `Alt+Left` / `Alt+Right`
+ - Mirror the Graph tab's RX/TX traffic waves around a shared center time horizon (RX up, TX down), with `m` to toggle back to the split view and `[view] mirrored_traffic_graph` in `config.toml`
+ - Sort findings by severity while preserving the selected finding and evidence position (#734)
+```
+
+**File**: `USAGE.md` (modified, +27/-4)
+```diff
+@@ -115,6 +115,9 @@ Options:
+       --theme <PRESET>                   Color theme: muted (default), vivid, catppuccin-mocha,
+                                          tokyo-night, gruvbox, nord. Overrides the theme set in the
+                                          config file (~/.config/rustnet/config.toml)
++      --rate-unit <UNIT>                 Traffic rate display units: bytes (default: B/s, KiB/s, MiB/s)
++                                         or bits (SI: bps, kbps, Mbps, Gbps). Overrides [view]
++                                         rate_unit in the config file (~/.config/rustnet/config.toml)
+       --geoip-country <PATH>             Path to GeoLite2-Country.mmdb (auto-discovered if not specified)
+       --geoip-asn <PATH>                 Path to GeoLite2-ASN.mmdb (auto-discovered if not specified)
+       --geoip-city <PATH>                Path to GeoLite2-City.mmdb (auto-discovered if not specified)
+@@ -416,15 +419,33 @@ group_by_process = true
+ 
+ **Unreleased.** To start Graph with separate RX and TX plots, set
+ `mirrored_traffic_graph = false` under `[view]` in `config.toml`. The default is
+-`true`. Pressing `r` in Overview resets view settings, including the graph layout,
+-to their configured values.
++`true`. To set the startup rate display unit (`bytes` or `bits`), set
++`rate_unit = "bits"` under `[view]` in `config.toml`. Pressing `r` in Overview
++resets view settings, including the graph layout, to their configured values.
+ 
+ For an optional Help shadow, add `[ui]` with `popup_shadow = true` to the same
+ config file (default: `false`). `NO_COLOR` or `--no-color` disables the shadow.
+ 
+ Related: `--no-color` disables all colors entirely (also honors the `NO_COLOR`
+ environment variable).
+ 
++#### `--rate-unit <UNIT>`
++
++**Unreleased.** Choose the unit scale used for live traffic rates in the
++interactive TUI:
++
++- **`bytes`** (default): Binary IEC bytes per second (`B/s`, `KiB/s`, `MiB/s`, `GiB/s`)
++- **`bits`**: Decimal SI bits per second (`bps`, `kbps`, `Mbps`, `Gbps`)
++
++```bash
++# Display live traffic rates in Mbps / kbps
++rustnet --rate-unit bits
++```
++
++Precedence: `--rate-unit` on the command line overrides `[view] rate_unit` in
++`config.toml`, which overrides the `bytes` default. Cumulative byte totals and
++headless JSON output always remain in bytes.
++
+ #### `-f, --bpf-filter <FILTER>`
+ 
+ Apply a BPF (Berkeley Packet Filter) expression to filter packets at capture time. This is more efficient than application-level filtering as packets are filtered in the kernel before reaching RustNet.
+@@ -560,9 +581,11 @@ shared time axis and TX extends below it. While Traffic is visible, press `m`
+ to switch between mirrored and split layouts for the current session.
+ 
+ Graph and Details preserve sampled bursts on independent automatic linear RX/TX
+-scales in bytes per second (KiB/MiB/GiB are binary units). Compare numeric readings
++scales in the active rate unit (defaulting to binary bytes per second: `B/s`,
++`KiB/s`, `MiB/s`, `GiB/s`; pass `--rate-unit bits` or set `[view] rate_unit = "bits"`
++for SI `bps`/`Mbps`). Compare numeric readings
+ across directions. Headers show current rate, window peak, and `2s avg` when space
+-permits. `0 B/s` means observed idle traffic; a placeholder means unavailable data.
++permits. `0 B/s` (or `0 bps`) means observed idle traffic; a placeholder means unavailable data.
+ Details and Top Processes use smoothed connection rates; Graph uses interface rates.
+ 
+ In Activity, `s` selects `2s Avg TX/RX` sorting and `d` switches TX/RX. Share bars
+```
+
+**File**: `src/bootstrap.rs` (modified, +14/-0)
+```diff
+@@ -162,6 +162,20 @@ pub fn run() -> Result<()> {
+             spec.adapt_to_light_background();
+         }
+         ui::set_theme(ui::Theme::resolve(&spec, ui::detect_truecolor()));
++
++        // Rate display units: CLI --rate-unit > config file > bytes default.
++        let rate_unit_name = matches
++            .get_one::<String>("rate-unit")
++            .map(String::as_str)
++            .or(user_config.rate_unit.as_deref())
++            .unwrap_or("bytes");
++        let rate_unit = ui::RateUnit::from_name(rate_unit_name).unwrap_or_else(|| {
++            // Only reachable via the config file; clap validates the CLI value.
++            eprintln!("rustnet: unknown rate_unit {rate_unit_name:?} in config, using \"bytes\"");
++            ui::RateUnit::Bytes
++        });
++        user_config.rate_unit = Some(rate_unit.as_str().to_string());
++        info!("Using {rate_unit:?} rate units");
+     }
+ 
+     if matches.get_flag("no-geoip") {
+```
+
+**File**: `src/cli.rs` (modified, +41/-0)
+```diff
+@@ -13,6 +13,11 @@ pub const THEME_PRESETS: [&str; 6] = [
+     "nord",
+ ];
+ 
++/// Supported rate display unit names. Spelled out as literals because build.rs
++/// `include!`s this file and cannot reach `crate::ui`; a unit test in
++/// `ui::format` asserts the list stays in sync with `RateUnit::ALL`.
++pub const RATE_UNITS: [&str; 2] = ["bytes", "bits"];
++
+ #[cfg(target_os = "linux")]
+ const INTERFACE_HELP: &str = "Network interface to monitor (use \"any\" to capture all interfaces)";
+ 
+@@ -200,6 +205,14 @@ pub fn build_cli() -> Command {
+                 .value_parser(THEME_PRESETS)
+                 .required(false),
+         )
++        .arg(
++            Arg::new("rate-unit")
++                .long("rate-unit")
++                .value_name("UNIT")
++                .help("Traffic rate display units: bytes (default: B/s, KiB/s, MiB/s) or bits (SI: bps, kbps, Mbps, Gbps). Overrides [view] rate_unit in the config file (~/.config/rustnet/config.toml)")
++                .value_parser(RATE_UNITS)
++                .required(false),
++        )
+         .arg(
+             Arg::new("geoip-country")
+                 .long("geoip-country")
+@@ -345,6 +358,34 @@ mod tests {
+         );
      }
  
 +    #[test]
-+    fn test_software_cap_splitting_a_character_keeps_the_prefix() {
-+        let prefix = format!("{}é", "a".repeat(125));
-+        // Only the first byte of the last character fits under the cap.
-+        for last in ['é', '🙂'] {
-+            let attr = build_software_attr(&format!("{prefix}{last}"));
-+            let packet = build_stun_packet(2, 0x0001, &attr);
-+            let info = analyze_stun(&packet).expect("should parse");
-+            assert_eq!(info.software.as_deref(), Some(prefix.as_str()));
-+        }
-+    }
++    fn rate_unit_has_no_default_and_accepts_all_modes() {
++        // No default: an absent --rate-unit must defer to the config file.
++        let matches = build_cli()
++            .try_get_matches_from(["rustnet"])
++            .expect("no --rate-unit should parse");
++        assert_eq!(matches.get_one::<String>("rate-unit"), None);
 +
-+    #[test]
-+    fn test_software_cap_splitting_an_invalid_character_is_rejected() {
-+        // The byte after the cap is not a continuation byte, so the lead
-+        // byte at the cut does not start a valid character.
-+        let mut attr = build_software_attr(&format!("{}éé", "a".repeat(125)));
-+        attr[4 + 128] = b'a';
-+        let packet = build_stun_packet(2, 0x0001, &attr);
-+        let info = analyze_stun(&packet).expect("should parse");
-+        assert!(info.software.is_none());
-+    }
-+
-+    #[test]
-+    fn test_software_invalid_utf8_is_rejected() {
-+        // Short value, and one longer than the cap: neither is a cut character.
-+        for software in ["TestAgent".to_string(), "a".repeat(200)] {
-+            let mut attr = build_software_attr(&software);
-+            attr[4] = 0xFF;
-+            let packet = build_stun_packet(2, 0x0001, &attr);
-+            let info = analyze_stun(&packet).expect("should parse");
-+            assert!(info.software.is_none());
++        for name in RATE_UNITS {
++            let matches = build_cli()
++                .try_get_matches_from(["rustnet", "--rate-unit", name])
++                .unwrap_or_else(|e| panic!("--rate-unit {name} should parse: {e}"));
++            assert_eq!(
++                matches.get_one::<String>("rate-unit").map(String::as_str),
++                Some(name)
++            );
 +        }
 +
-+        // A value under the cap that itself ends mid-character is not a cut.
-+        let mut attr = build_software_attr("TestAgenté");
-+        attr[3] = 10; // drop the last byte of 'é', leaving a lone 0xC3
-+        let packet = build_stun_packet(2, 0x0001, &attr);
-+        let info = analyze_stun(&packet).expect("should parse");
-+        assert!(info.software.is_none());
++        for invalid in ["iec-bits", "bogus"] {
++            assert!(
++                build_cli()
++                    .try_get_matches_from(["rustnet", "--rate-unit", invalid])
++                    .is_err(),
++                "--rate-unit {invalid} should be rejected"
++            );
++        }
 +    }
 +
      #[test]
-     fn test_wrong_magic_cookie() {
-         let mut packet = build_stun_packet(0, 0x0001, &[]);
+     fn headless_controls_are_absent_by_default() {
+         let matches = build_cli()
+```
+
+**File**: `src/config.rs` (modified, +18/-0)
+```diff
+@@ -16,6 +16,7 @@
+ //! [view]
+ //! group_by_process = true
+ //! mirrored_traffic_graph = true
++//! rate_unit = "bits"
+ //! ```
+ //!
+ //! Loading never fails: a missing file yields the defaults silently, and an
+@@ -44,13 +45,15 @@ struct RawConfig {
+ struct RawView {
+     group_by_process: bool,
+     mirrored_traffic_graph: bool,
++    rate_unit: Option<String>,
+ }
+ 
+ impl Default for RawView {
+     fn default() -> Self {
+         Self {
+             group_by_process: false,
+             mirrored_traffic_graph: true,
++            rate_unit: None,
+         }
+     }
+ }
+@@ -78,6 +81,7 @@ pub struct UserConfig {
+     pub overrides: Vec<(String, String)>,
+     pub group_by_process: bool,
+     pub mirrored_traffic_graph: bool,
++    pub rate_unit: Option<String>,
+ }
+ 
+ impl Default for UserConfig {
+@@ -88,6 +92,7 @@ impl Default for UserConfig {
+             overrides: Vec::new(),
+             group_by_process: false,
+             mirrored_traffic_graph: true,
++            rate_unit: None,
+         }
+     }
+ }
+@@ -165,6 +170,7 @@ fn parse(contents: &str) -> Result<UserConfig, String> {
+         overrides: raw.theme.overrides.into_iter().collect(),
+         group_by_process: raw.view.group_by_process,
+         mirrored_traffic_graph: raw.view.mirrored_traffic_graph,
++        rate_unit: raw.view.rate_unit,
+     })
+ }
+ 
+@@ -335,6 +341,18 @@ selection_bg = "#3b4261"
+         assert!(parse("[view]\nmirrored_traffic_graph = \"no\"").is_err());
+     }
+ 
++    #[test]
++    fn rate_unit_defaults_to_none_and_accepts_strings() {
++        for input in ["", "[view]"] {
++            assert_eq!(parse(input).unwrap().rate_unit, None);
++        }
++        for unit in ["bytes", "bits"] {
++            let config = parse(&format!("[view]\nrate_unit = \"{unit}\"")).unwrap();
++            assert_eq!(config.rate_unit.as_deref(), Some(unit));
++        }
++        assert!(parse("[view]\nrate_unit = 123").is_err());
++    }
++
+     #[test]
+     fn theme_name_without_overrides() {
+         let config = parse("[theme]\nname = \"nord\"\n").unwrap();
+```
+
+**File**: `src/ui/connection_table.rs` (modified, +44/-7)
+```diff
+@@ -30,7 +30,7 @@ use std::net::SocketAddr;
+ use crate::network::dns::DnsResolver;
+ use crate::network::types::{AddrKind, ApplicationProtocol, Connection, Protocol};
+ use crate::ui::{
+-    ClickAction, ClickableRegions, NONE_PLACEHOLDER, SortColumn, UiState, dpi_color,
++    ClickAction, ClickableRegions, NONE_PLACEHOLDER, RateUnit, SortColumn, UiState, dpi_color,
+     format::{format_countdown, format_rate_compact, format_rtt_compact, truncate_with_ellipsis},
+     state_color, theme,
+     widgets::scrollbar::draw_scrollbar,
+@@ -574,7 +574,9 @@ pub(in crate::ui) fn connection_row<'a>(
+             }
+             ColumnId::Rtt => rtt_cell(conn, paint.signal()),
+             ColumnId::Health => health_cell(conn, paint.signal()),
+-            ColumnId::Bandwidth => connection_bandwidth_cell(conn, paint.signal()),
++            ColumnId::Bandwidth => {
++                connection_bandwidth_cell(conn, paint.signal(), ui_state.rate_unit)
++            }
+         })
+         .collect();
+ 
+@@ -590,7 +592,11 @@ pub(in crate::ui) fn connection_row<'a>(
+ /// otherwise the live rates. The countdown carries the row's urgency
+ /// color, yellow through orange to red as removal nears; the rest of the
+ /// row only softens, so the hue stays on the one cell that explains it.
+-fn connection_bandwidth_cell<'a>(conn: &Connection, paint: CellPaint) -> Cell<'a> {
++fn connection_bandwidth_cell<'a>(
++    conn: &Connection,
++    paint: CellPaint,
++    rate_unit: RateUnit,
++) -> Cell<'a> {
+     if conn.is_historic {
+         return Cell::from(Line::from("n/a").right_aligned());
+     }
+@@ -602,6 +608,7 @@ fn connection_bandwidth_cell<'a>(conn: &Connection, paint: CellPaint) -> Cell<'a
+         conn.current_incoming_rate_bps,
+         conn.current_outgoing_rate_bps,
+         paint,
++        rate_unit,
+     )
+ }
+ 
+@@ -833,9 +840,14 @@ fn health_count_text(count: u64) -> String {
+ /// ↓/↑ arrows live in the column header, not on every row. Takes raw
+ /// rates so the grouped view can feed per-group aggregates through the
+ /// same formatting.
+-pub(in crate::ui) fn bandwidth_cell<'a>(rx_bps: f64, tx_bps: f64, paint: CellPaint) -> Cell<'a> {
+-    let rx = format_rate_compact(rx_bps, NONE_PLACEHOLDER);
+-    let tx = format_rate_compact(tx_bps, NONE_PLACEHOLDER);
++pub(in crate::ui) fn bandwidth_cell<'a>(
++    rx_bps: f64,
++    tx_bps: f64,
++    paint: CellPaint,
++    rate_unit: RateUnit,
++) -> Cell<'a> {
++    let rx = format_rate_compact(rx_bps, NONE_PLACEHOLDER, rate_unit);
++    let tx = format_rate_compact(tx_bps, NONE_PLACEHOLDER, rate_unit);
+     let active = rx_bps > 0.0 || tx_bps > 0.0;
+ 
+     let line = if !paint.colored() {
+@@ -970,7 +982,12 @@ mod tests {
+                 let area = Rect::new(0, 0, BANDWIDTH_WIDTH, 1);
+                 let mut buffer = Buffer::empty(area);
+                 Table::new(
+-                    [Row::new([bandwidth_cell(rate, rate, paint)])],
++                    [Row::new([bandwidth_cell(
++                        rate,
++                        rate,
++                        paint,
++                        RateUnit::Bytes,
++                    )])],
+                     [Constraint::Length(BANDWIDTH_WIDTH)],
+                 )
+                 .render(area, &mut buffer);
+@@ -980,6 +997,26 @@ mod tests {
+                 assert_eq!(actual.trim(), format!("{expected}/{expected}"));
+             }
+         }
++        for (unit, rate, expected) in [
++            (RateUnit::Bits, 12_500_000.0, "100Mb/100Mb"),
++            (RateUnit::Bits, 125_000.0, "1.0Mb/1.0Mb"),
++        ] {
++            let width = u16::try_from(expected.len()).unwrap().max(BANDWIDTH_WIDTH);
++            let area = Rect::new(0, 0, width, 1);
++            let mut buffer = Buffer::empty(area);
++            Table::new(
++                [Row::new([bandwidth_cell(
++                    rate,
++                    rate,
++                    CellPaint::FRESH,
++                    unit,
++                )])],
++                [Constraint::Length(width)],
++            )
++            .render(area, &mut buffer);
++            let actual: String = (0..width).map(|x| buffer[(x, 0)].symbol()).collect();
++            assert_eq!(actual.trim(), expected);
++        }
+     }
+ 
+     fn used(columns: &[Column]) -> u16 {
+```
+
+**File**: `src/ui/format.rs` (modified, +195/-37)
+```diff
+@@ -1,49 +1,145 @@
+ //! Human-readable formatters for byte counts, per-second rates, and
+ //! ellipsis truncation, shared across the connection list, stats
+-//! panel, interface table, activity tab, and graph tab. Binary units use
+-//! IEC labels. Observed idle rates render as zero; callers handle missing data.
++//! panel, interface table, activity tab, and graph tab. Binary byte units
++//! use IEC labels (`B/s`, `KiB/s`, ...); bit rates use SI decimal (`bps`,
++//! `kbps`, `Mbps`, `Gbps`) labels. Observed idle rates render as zero; callers
++//! handle missing data.
+ 
+ use std::borrow::Cow;
+ 
+-pub(super) fn format_rate(bytes_per_second: f64) -> Cow<'static, str> {
+-    const KIB_PER_SEC: f64 = 1024.0;
+-    const MIB_PER_SEC: f64 = KIB_PER_SEC * 1024.0;
+-    const GIB_PER_SEC: f64 = MIB_PER_SEC * 1024.0;
+-
+-    if bytes_per_second >= GIB_PER_SEC {
+-        Cow::Owned(format!("{:.2} GiB/s", bytes_per_second / GIB_PER_SEC))
+-    } else if bytes_per_second >= MIB_PER_SEC {
+-        Cow::Owned(format!("{:.2} MiB/s", bytes_per_second / MIB_PER_SEC))
+-    } else if bytes_per_second >= KIB_PER_SEC {
+-        Cow::Owned(format!("{:.2} KiB/s", bytes_per_second / KIB_PER_SEC))
+-    } else if bytes_per_second > 0.0 {
+-        Cow::Owned(format!("{:.0} B/s", bytes_per_second))
+-    } else {
+-        Cow::Borrowed("0 B/s")
++/// Display unit scale for live traffic rates in the TUI.
++/// Cumulative byte totals and headless JSON outputs always stay in bytes.
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
++pub enum RateUnit {
++    #[default]
++    Bytes,
++    Bits,
++}
++
++impl RateUnit {
++    pub const ALL: [Self; 2] = [Self::Bytes, Self::Bits];
++
++    pub const fn as_str(self) -> &'static str {
++        match self {
++            Self::Bytes => "bytes",
++            Self::Bits => "bits",
++        }
++    }
++
++    pub fn from_name(name: &str) -> Option<Self> {
++        match name {
++            "bytes" => Some(Self::Bytes),
++            "bits" => Some(Self::Bits),
++            _ => None,
++        }
++    }
++
++    pub const fn axis_unit_label(self) -> &'static str {
++        match self {
++            Self::Bytes => "B/s",
++            Self::Bits => "bps",
++        }
++    }
++
++    pub const fn compact_zero(self) -> &'static str {
++        match self {
++            Self::Bytes => "0B",
++            Self::Bits => "0b",
++        }
++    }
++
++    pub(super) fn giga_value(self, bytes_per_second: f64) -> f64 {
++        match self {
++            Self::Bytes => bytes_per_second / 1024.0_f64.powi(3),
++            // Divide before multiplying by 8 so f64::MAX stays finite.
++            Self::Bits => (bytes_per_second / 1_000_000_000.0) * 8.0,
++        }
++    }
++}
++
++pub(super) fn format_rate(bytes_per_second: f64, unit: RateUnit) -> Cow<'static, str> {
++    if bytes_per_second <= 0.0 || bytes_per_second.is_nan() {
++        return Cow::Borrowed(match unit {
++            RateUnit::Bytes => "0 B/s",
++            RateUnit::Bits => "0 bps",
++        });
++    }
++
++    match unit {
++        RateUnit::Bytes => {
++            const KIB_PER_SEC: f64 = 1024.0;
++            const MIB_PER_SEC: f64 = KIB_PER_SEC * 1024.0;
++            const GIB_PER_SEC: f64 = MIB_PER_SEC * 1024.0;
++
++            if bytes_per_second >= GIB_PER_SEC {
++                Cow::Owned(format!("{:.2} GiB/s", bytes_per_second / GIB_PER_SEC))
++            } else if bytes_per_second >= MIB_PER_SEC {
++                Cow::Owned(format!("{:.2} MiB/s", bytes_per_second / MIB_PER_SEC))
++            } else if bytes_per_second >= KIB_PER_SEC {
++                Cow::Owned(format!("{:.2} KiB/s", bytes_per_second / KIB_PER_SEC))
++            } else {
++                Cow::Owned(format!("{:.0} B/s", bytes_per_second))
++            }
++        }
++        RateUnit::Bits => {
++            const KBPS_BYTES: f64 = 125.0; // 1,000 bps / 8
++            const MBPS_BYTES: f64 = 125_000.0; // 1,000,000 bps / 8
++            const GBPS_BYTES: f64 = 125_000_000.0; // 1,000,000,000 bps / 8
++
++            if bytes_per_second >= GBPS_BYTES {
++                // Divide before multiplying by 8 so f64::MAX stays finite.
++                Cow::Owned(format!(
++                    "{:.2} Gbps",
++                    (bytes_per_second / 1_000_000_000.0) * 8.0
++                ))
++            } else if bytes_per_second >= MBPS_BYTES {
++                Cow::Owned(format!("{:.2} Mbps", bytes_per_second * 8.0 / 1_000_000.0))
++            } else if bytes_per_second >= KBPS_BYTES {
++                Cow::Owned(format!("{:.2} kbps", bytes_per_second * 8.0 / 1_000.0))
++            } else {
++                Cow::Owned(format!("{:.0} bps", bytes_per_second * 8.0))
++            }
++        }
+     }
+ }
+ 
+ /// Format rate to compact form for tight spaces. `zero` is what a
+-/// zero/absent rate renders as: the "-" placeholder in tables, "0B"
+-/// in the activity bars.
+-pub(super) fn format_rate_compact(bytes_per_second: f64, zero: &str) -> Cow<'_, str> {
++/// zero/absent rate renders as: the "-" placeholder in tables, "0B" or "0b
+```
+
+**File**: `src/ui/mod.rs` (modified, +1/-0)
+```diff
+@@ -508,6 +508,7 @@ pub fn draw(
+ }
+ 
+ mod format;
++pub use format::RateUnit;
+ 
+ #[cfg(test)]
+ pub(crate) mod test_support;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #758** (2026-11-27): docs: clarify release DEB and RPM capability setup in INSTALL guides (@domcyrus)
+- **PR #757** (2026-11-27): fix(dns): skip reverse lookups for unspecified and special-purpose IPs (@domcyrus)
+- **PR #756** (closed): Prompt for capture permissions during DEB installation (@domcyrus)
+- **PR #755** (2026-11-27): feat(ui): add configurable TUI traffic rate units (@l1a)
 - **PR #754** (2026-11-26): chore(deps): bump anyhow from 1.0.104 to 1.0.105 in the rust-dependencies group (@dependabot[bot])
 - **PR #753** (2026-11-26): fix(dpi): keep STUN SOFTWARE when the byte cap splits a character (@JROtto5)
-- **PR #752** (2026-11-25): feat(ui): add Alt+Left/Alt+Right tab history (@JROtto5)
-- **PR #751** (2026-11-25): feat: add shared passive diagnostic findings engine for TUI and headless JSON (@domcyrus)
-- **PR #750** (2026-11-25): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
-- **PR #749** (2026-11-23): ci: test-sign the Windows x64 executable (@domcyrus)
 
 ---
 
@@ -2656,13 +3428,13 @@ Validate the character crossing the 128-byte cap and retain the complete prefix.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dpi): preserve STUN SOFTWARE at the UTF-8 byte cap
+## X. dns): skip reverse lookups for unspecified and special-purpose IPs
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `515ddfaa`: dpi): preserve STUN SOFTWARE at the UTF-8 byte cap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `695a517d`: dns): skip reverse lookups for unspecified and special-purpose IPs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2670,7 +3442,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Keep a STUN `SOFTWARE` value longer than 128 bytes when the 128-byte cap splits a multi-byte UTF-8 character, instead of dropping it
+- Skip reverse DNS and `/etc/hosts` lookups for unspecified (`0.0.0.0`, `::`) and other special-purpose addresses so DHCP traffic from `0.0.0.0` does not display sinkholed blocklist domains (#757)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2680,7 +3452,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `515ddfaa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `695a517d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

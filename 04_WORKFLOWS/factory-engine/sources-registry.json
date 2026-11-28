@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T04:57:45.378Z",
-    "lastVerified": "2026-11-28T04:57:45.378Z",
+    "lastChecked": "2026-11-28T05:07:08.332Z",
+    "lastVerified": "2026-11-28T05:07:08.332Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T04:30:03.737Z",
-    "lastVerified": "2026-11-28T04:30:03.737Z",
+    "lastChecked": "2026-11-28T05:07:08.322Z",
+    "lastVerified": "2026-11-28T05:07:08.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -385,8 +385,8 @@
     "officialUrl": "https://github.com/run-llama/llama_index",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-27T10:34:23.580Z",
-    "lastVerified": "2026-11-27T10:34:23.580Z",
+    "lastChecked": "2026-11-28T05:07:05.883Z",
+    "lastVerified": "2026-11-28T05:07:05.883Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-run-llama-llama_index",
@@ -1717,9 +1717,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-28T01:00:34.901Z",
+    "lastChecked": "2026-11-28T05:07:03.466Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-28T01:00:34.901Z"
+    "lastVerified": "2026-11-28T05:07:03.466Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -5081,12 +5081,12 @@
     "revisionIdentifier": "5fbbc77a"
   },
   "hashicorp-terraform": {
-    "name": "hashicorp/terraform",
+    "name": "terraform",
     "officialUrl": "https://github.com/hashicorp/terraform",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T11:54:23.591Z",
-    "lastVerified": "2026-11-27T11:54:23.591Z",
+    "lastChecked": "2026-11-28T05:07:01.369Z",
+    "lastVerified": "2026-11-28T05:07:01.369Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hashicorp-terraform",
@@ -5095,7 +5095,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8fe14014"
   },
   "amrdeveloper-gql": {
     "name": "GQL",
@@ -7619,14 +7620,14 @@
     "officialUrl": "https://github.com/domcyrus/rustnet",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T05:21:23.943Z",
-    "lastVerified": "2026-11-27T05:21:23.943Z",
+    "lastChecked": "2026-11-28T05:06:58.196Z",
+    "lastVerified": "2026-11-28T05:06:58.196Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "de849460e7f2189da2d3b08990f342850259a663af2640a0ade1c284fff3b862",
+    "contentHash": "cc900e836f075cf4a776647a1aff776d2f32d0362232cc0ac6274ff9ad4e0fb0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11266,12 +11267,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "louis-cfm-coucou": {
-    "name": "Louis-CFM/coucou",
+    "name": "coucou",
     "officialUrl": "https://github.com/Louis-CFM/coucou",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-26T03:13:03.360Z",
-    "lastVerified": "2026-11-26T03:13:03.360Z",
+    "lastChecked": "2026-11-28T05:06:58.277Z",
+    "lastVerified": "2026-11-28T05:06:58.277Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-louis-cfm-coucou",
@@ -11280,7 +11281,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "202082ee"
   },
   "inikulin-parse5": {
     "name": "inikulin/parse5",
@@ -11639,9 +11641,9 @@
   "digitalbazaar-jsonld.js": {
     "name": "jsonld.js",
     "officialUrl": "https://github.com/digitalbazaar/jsonld.js",
-    "lastChecked": "2026-11-24T20:04:12.874Z",
+    "lastChecked": "2026-11-28T05:06:55.786Z",
     "revisionIdentifier": "7a93609e",
-    "lastVerified": "2026-11-24T20:04:12.874Z"
+    "lastVerified": "2026-11-28T05:06:55.786Z"
   },
   "williewangwei-swiftui-tutorials": {
     "name": "SwiftUI-Tutorials",

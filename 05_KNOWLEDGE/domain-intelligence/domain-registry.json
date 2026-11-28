@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T04:57:48.137Z",
+  "last_updated": "2026-11-28T05:07:12.403Z",
   "total_records": 2877,
   "domains": {
     "A": {
@@ -9610,8 +9610,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "2ef621985eb244cd82b7221aa45401ac7f29a0ee25f0d51be3de36310fcab25d",
-      "created_at": "2026-11-28T04:39:24.917Z"
+      "content_hash": "4b47cc7f47c99ab2fae74723a6c97b54bb1f4e6ce2bd5fe8cc4d701919283408",
+      "created_at": "2026-11-28T05:07:11.034Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -13998,8 +13998,8 @@
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "repository": "domcyrus/rustnet",
-      "content_hash": "46e2782a2e706e0700460204bae0f392bec1035f84cc95626df78164a908f173",
-      "created_at": "2026-11-27T05:21:25.657Z"
+      "content_hash": "7c982b7b3e22308c33298df922cb237b0788be7727f4921ee954464836db093f",
+      "created_at": "2026-11-28T05:07:00.370Z"
     },
     "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants",
@@ -14016,8 +14016,8 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-learnings-product-intelligence-domcyrus-rustnet-learnings-core-.md",
       "repository": "domcyrus-rustnet-learnings",
-      "content_hash": "2507b10eb8fc8b6ab0538bd62be073035f336f714ac3cb7a718e3de74af1fc63",
-      "created_at": "2026-11-27T05:21:43.979Z"
+      "content_hash": "fe2832ad42c1a5409e7bf35555ac3bf22fe69ba69a74bcc8b7c3a2393b33c418",
+      "created_at": "2026-11-28T05:07:09.880Z"
     },
     "DOM-D-2D29CC33": {
       "record_id": "DOM-D-2D29CC33",
@@ -46824,8 +46824,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "3a6b8bb0b7d6234d1fbd73aa3b093853280c826978aa725bfa484794261ecab0",
-      "created_at": "2026-11-28T03:26:39.362Z"
+      "content_hash": "456df63770d008cc0b2d6182cd1abbc52fb984169754d056b23e0b916d10d61c",
+      "created_at": "2026-11-28T05:07:12.403Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

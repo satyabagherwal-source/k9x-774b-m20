@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-NPAZ",
-    "timestamp": "2026-11-26T16:00:04.571Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "f0f302d50445461f20cdfc23815520e12a5a341e123b216f78fb51fa32e8e45a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-NSPG",
     "timestamp": "2026-11-26T16:00:08.980Z",
     "repository": "FalkorDB/FalkorDB",
@@ -7490,6 +7475,21 @@
     "repository": "0xCUB3/wBlock",
     "learningId": "learn-github-0xcub3-wblock",
     "contentHash": "98b763b94cad1990e449eb6c969cc81bdc0ba7b1d8849c0c6939890d4222cda4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-7JIL",
+    "timestamp": "2026-11-28T05:06:59.853Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "cc900e836f075cf4a776647a1aff776d2f32d0362232cc0ac6274ff9ad4e0fb0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

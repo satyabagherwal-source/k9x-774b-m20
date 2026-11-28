@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T04:57:48.137Z",
+  "last_updated": "2026-11-28T05:07:12.633Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26963,
+  "total_items": 26966,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "5838c3b949c6298f9d05a1bbf2355fc2eb8db233dbe56205c3b2a1b1a348778b",
+      "content_hash": "0511e821592edf15d3b4d45f3ddaa52fb9cdb3b6ad0ef22d6d1b34044e40aa3b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T03:26:39.553Z"
+      "persisted_at": "2026-11-28T05:07:12.633Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ef621985eb244cd82b7221aa45401ac7f29a0ee25f0d51be3de36310fcab25d",
+      "content_hash": "4b47cc7f47c99ab2fae74723a6c97b54bb1f4e6ce2bd5fe8cc4d701919283408",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T04:39:24.917Z"
+      "persisted_at": "2026-11-28T05:07:11.034Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9ecb14f1aacda6c40b322e74c1570bcb2bdfea749534b439526a79c778bd4508",
+      "content_hash": "19ed1829120db5fc9c284f27113a3f188a6322e8f34fbb41c9b31303e7f89759",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T04:39:25.152Z"
+      "persisted_at": "2026-11-28T05:07:11.288Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -225770,8 +225770,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "515ddfaa",
-      "content_hash": "de849460e7f2189da2d3b08990f342850259a663af2640a0ade1c284fff3b862",
+      "source_version": "695a517d",
+      "content_hash": "cc900e836f075cf4a776647a1aff776d2f32d0362232cc0ac6274ff9ad4e0fb0",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -225819,6 +225819,11 @@
           "number": 10833,
           "title": "preserve STUN SOFTWARE at the UTF-8 byte cap",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11040,
+          "title": "skip reverse lookups for unspecified and special-purpose IPs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225826,7 +225831,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T05:21:24.917Z",
+      "verified_at": "2026-11-28T05:06:59.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225868,10 +225873,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "repository": "domcyrus/rustnet",
-      "source_version": "515ddfaa",
-      "content_hash": "46e2782a2e706e0700460204bae0f392bec1035f84cc95626df78164a908f173",
+      "source_version": "695a517d",
+      "content_hash": "7c982b7b3e22308c33298df922cb237b0788be7727f4921ee954464836db093f",
       "domain_letter": "B",
-      "persisted_at": "2026-11-27T05:21:25.657Z"
+      "persisted_at": "2026-11-28T05:07:00.370Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet",
@@ -225880,10 +225885,10 @@
       "relative_path": "08_VERIFICATION/domcyrus-rustnet-verification-protocol-empirical-defect-shield-for-domcyrus-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus/rustnet",
       "repository": "domcyrus/rustnet",
-      "source_version": "515ddfaa",
-      "content_hash": "cec84ed73646873f57282fe0a41f069ce162dde03793634632b1c54ea9469b55",
+      "source_version": "695a517d",
+      "content_hash": "9aaa4d30fc618548a3dc8d74edadb5f5a907e626981cb1b0079d05d9708c1956",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T05:21:25.864Z"
+      "persisted_at": "2026-11-28T05:07:00.623Z"
     },
     "learn-github-aws-amplify-amplify-js": {
       "learning_id": "learn-github-aws-amplify-amplify-js",
@@ -225986,9 +225991,9 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "2507b10eb8fc8b6ab0538bd62be073035f336f714ac3cb7a718e3de74af1fc63",
+      "content_hash": "fe2832ad42c1a5409e7bf35555ac3bf22fe69ba69a74bcc8b7c3a2393b33c418",
       "domain_letter": "B",
-      "persisted_at": "2026-11-27T05:21:43.979Z"
+      "persisted_at": "2026-11-28T05:07:09.880Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings",
@@ -225998,9 +226003,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus-rustnet-learnings",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "528865414edf860135a564152526dc6d00ab0ce9cce48bfdf74ed341a126ba9c",
+      "content_hash": "17b4506ee6d77c7621ee7b9f4d214f50190790ec6ce839d08d60c81e15843979",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T05:21:44.183Z"
+      "persisted_at": "2026-11-28T05:07:10.130Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning",
@@ -358952,13 +358957,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MHXA-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7SZT-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d17f799bfd7ac19bb05c102d49f18872ca07e61dbf89ec221e88d00952bd9ffb",
+      "content_hash": "5e565d2e53a38f4c77135b6a16236ccb679c8692bfa46584e4938e392731cbe7",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T03:26:39.169Z"
+      "persisted_at": "2026-11-28T05:07:12.140Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358968,9 +358973,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a6b8bb0b7d6234d1fbd73aa3b093853280c826978aa725bfa484794261ecab0",
+      "content_hash": "456df63770d008cc0b2d6182cd1abbc52fb984169754d056b23e0b916d10d61c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T03:26:39.362Z"
+      "persisted_at": "2026-11-28T05:07:12.403Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361859,13 +361864,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-82D7-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7RX5-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "72db4498143eddb25352d6044dad594a92fd81418ca5cc927e08fdfa5eec3391",
+      "content_hash": "c5baba48aa228c3090ade1c8cee82e76078cfbdb5731da2935d4cdc7e84b0c07",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T04:39:24.677Z"
+      "persisted_at": "2026-11-28T05:07:10.748Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -370519,6 +370524,44 @@
       "content_hash": "72b527198af8726a1396cd198dfe4bb0a53afdeb5218662438327454e6703c07",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T04:57:46.388Z"
+    },
+    "rule-11040": {
+      "learning_id": "rule-11040",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11040,
+      "title": "skip reverse lookups for unspecified and special-purpose IPs",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "695a517d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T05:06:59.507Z"
+    },
+    "candidate_directive-skip-reverse-lookups-for-unspecified-and-special-purpose-ips": {
+      "item_id": "candidate_directive-skip-reverse-lookups-for-unspecified-and-special-purpose-ips",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7JQL-skip-reverse-lookups-for-unspecified-and-special-purpose-ips.md",
+      "title": "skip reverse lookups for unspecified and special-purpose IPs",
+      "repository": "domcyrus/rustnet",
+      "source_version": "695a517d",
+      "content_hash": "ff08ba43680228a02dc63c8be2906c8e3650f6997478f26636a3691bd7d3fabc",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-28T05:07:00.145Z"
+    },
+    "candidate_directive-dns-skip-reverse-lookups-for-unspecified-and-special-purpose-ips": {
+      "item_id": "candidate_directive-dns-skip-reverse-lookups-for-unspecified-and-special-purpose-ips",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7R0G-dns-skip-reverse-lookups-for-unspecified-and-special-purpose-ips.md",
+      "title": "dns): skip reverse lookups for unspecified and special-purpose IPs",
+      "repository": "domcyrus-rustnet-learnings",
+      "source_version": "HEAD",
+      "content_hash": "88c192ee733f570350873dfef92de943848e6b50e515a69b7f651afadda2c7e6",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-28T05:07:09.572Z"
     }
   },
   "ai-builder-brain": {
