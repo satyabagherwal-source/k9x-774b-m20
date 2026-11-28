@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T11:00:10.835Z",
+  "last_updated": "2026-11-28T11:22:57.960Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T08:40:15.184Z",
@@ -78,7 +78,7 @@
       "staged_for_review": 1
     },
     "oven-sh-bun-learnings.md": {
-      "processed_at": "2026-11-27T10:34:27.360Z",
+      "processed_at": "2026-11-28T11:22:53.725Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1193,7 +1193,7 @@
       "staged_for_review": 1
     },
     "cypress-io-cypress-learnings.md": {
-      "processed_at": "2026-11-25T00:43:46.063Z",
+      "processed_at": "2026-11-28T11:22:55.038Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1718,7 +1718,7 @@
       "staged_for_review": 0
     },
     "wzh4869-appports-learnings.md": {
-      "processed_at": "2026-11-26T07:10:34.409Z",
+      "processed_at": "2026-11-28T11:22:56.817Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4068,7 +4068,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5334,
+  "total_dossiers_evaluated": 5337,
   "total_canonical_promoted": 604,
-  "total_staged_for_review": 4056
+  "total_staged_for_review": 4059
 }

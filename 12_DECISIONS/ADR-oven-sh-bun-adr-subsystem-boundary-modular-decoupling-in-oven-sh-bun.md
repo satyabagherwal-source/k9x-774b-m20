@@ -4,17 +4,17 @@
 {
   "source_repository": "oven-sh/bun",
   "source_url": "https://github.com/oven-sh/bun",
-  "source_version": "d82a8a7b",
+  "source_version": "e3bbc3fc",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-27T10:34:18.087Z",
+  "timestamp": "2026-11-28T11:22:50.183Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-oven-sh-bun",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [oven-sh/bun](https://github.com/oven-sh/bun) (Revision: `d82a8a7b`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-27T10:34:18.087Z`  
+> **Provenance**: Harvested from [oven-sh/bun](https://github.com/oven-sh/bun) (Revision: `e3bbc3fc`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-28T11:22:50.183Z`  
 > **Learning ID**: `learn-github-oven-sh-bun`
 
 
@@ -30,7 +30,7 @@ During deep inspection of oven-sh/bun, modular boundaries, performance character
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T10:34:16.632Z  
+> **Harvest Timestamp**: 2026-11-28T11:17:45.636Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -40,7 +40,7 @@ During deep inspection of oven-sh/bun, modular boundaries, performance character
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 97009 stars
+- **Stars / Engagement**: 96987 stars
 
 ---
 
@@ -1012,479 +1012,789 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `736fe118` (2026-11-27)
-**Commit Message**: build: fix end labels in the trim graph and ldp in the arm64 check (#49590)
+### Incident Patch 1: `e3bbc3fc` (2026-11-28)
+**Commit Message**: Decode, hash, search and tag strings with fewer copies (#49637)
 
 ### What does this PR do?
 
-Fixes two build steps that misread a linked binary.
+Four changes, one commit each, and a follow-up to the hash commit.
 
-**Trimmable link.** On macOS a label without bytes, such as
-`bun_builtin_sources_end`, was taken for a name of whatever the linker
-put behind it. With `__cstring` behind it the link failed with
-`UnresolvedReference`. With a retained constant behind it the archive
-was never trimmed. The object file now says which names end a section or
-an atom (the unit the linker strips), and they stand for the bytes in
-front. ELF had a milder form, also fixed.
+**Decode UTF-8 into an 8-bit string when every code point fits.** One
+`é` made a decoded text a 16-bit string, twice the size. Text without a
+code point above U+00FF now becomes an 8-bit string. This covers
+`Buffer#toString`, `StringDecoder`, `fs.readFile`, `TextDecoder` (also
+the compiled fast path), `Blob`, `Response` and `Bun.file` `text()`, and
+messages of the client WebSocket. A scan for a byte of 0xC4 or more
+starts at the first non-ASCII byte and stops at the first hit. Invalid
+input takes the old path. `BunString__fromUTF8` and `createUTF8ForJS`
+are unchanged.
 
-**`verify-binary.ts`.** The Windows arm64 check missed the second
-register of `ldp`, `ldnp`, `ldpsw`, `ldxp` and `ldaxp`, and reported a
-false weak reference.
+A visible difference: `Bun.inspect` and `console.log` print a nested
+8-bit string a little differently from a 16-bit one, as they already do
+for literals. `Bun.inspect([Buffer.from("é\x1b[").toString()])` prints
+`\^[[` where it printed `\^[[`, and an array can wrap at another place.
 
-To check:
+**node:crypto: hash a non-ASCII string without a Buffer.**
+`hash.update(string)` made a `Buffer` of a string that is not ASCII,
+only to hash it. It now converts 4096 units at a ti
 
-- An existing test counted an `.alt_entry` end label as outside the
-graph. It now expects exact counts.
-- The link now fails if the map has no name for the bytes in front.
-- `sectionNumberAt` is gone: a section relocation uses the section it
-names.
-
-Unchanged: weak end labels still go by address, Windows never trims the
-archive (no COMDAT), and the arm64 scan runs past unconditional jumps.
-
-### How did you verify your 
-
-**File**: `scripts/build/trim/elf-graph.ts` (modified, +14/-5)
+**File**: `docs/project/bindgen.mdx` (modified, +1/-1)
 ```diff
-@@ -26,6 +26,7 @@ interface LinkedSymbols {
- interface InputObjects {
-   objects: Map<string, ElfObjectReferences | undefined>;
-   defined: Map<string, string[]>;
-+  stronglyDefined: Map<string, string>;
-   failures: GraphFailure[];
- }
+@@ -166,7 +166,7 @@ Throwing tells the debugger, which can run code, so after a throw the body retur
+ reading what it borrowed. A `mutates: true` method does not throw: what the debugger runs can call
+ a method of the same object while the `&mut self` is live. It returns the error, which is thrown
+ after the borrow ends. Every `heap.create_*` that returns a `Result` throws at once, except
+-`create_utf16_string_from_vec`, so a `mutates: true` method calls none of the others.
++`create_latin1_string_from_vec` and `create_utf16_string_from_vec`, so a `mutates: true` method calls none of the others.
  
-@@ -125,6 +126,7 @@ function readObjects(liveSections: Map<string, Set<string>>): InputObjects {
-   const archives = new ArchiveCache();
-   const objects = new Map<string, ElfObjectReferences | undefined>();
-   const defined = new Map<string, string[]>();
-+  const stronglyDefined = new Map<string, string>();
-   const failures: GraphFailure[] = [];
-   for (const [object, live] of liveSections) {
-     if (object === "<internal>") continue;
-@@ -135,19 +137,21 @@ function readObjects(liveSections: Map<string, Set<string>>): InputObjects {
-       continue;
-     }
-     objects.set(object, read);
--    for (const [name, section] of read.definitions) {
-+    for (const [name, section, isStrong] of read.definitions) {
-+      if (isStrong) stronglyDefined.set(name, object + "\0" + section);
-       const list = defined.get(name);
-       if (list === undefined) defined.set(name, [object + "\0" + section]);
-       else list.push(object + "\0" + section);
-     }
-   }
--  return { objects, defined, failures };
-+  return { objects, defined, stronglyDefined, failures };
- }
- 
- function readLinkedSymbols(
-   elf: ElfFile,
-   placedNodes: PlacedNodes,
-   emptySections: Set<number>,
-+  findEndedNode: (name: string, address: number) => number | undefined,
-   executable: string,
- ): LinkedSymbols {
-   const symbolTable = elf.sections.find(section => section.type === 2) ?? fail(`${executable} has no symbol table`);
-@@ -165,7 +169,7 @@ function readLinkedSymbols(
-     // An object without bytes, as a static of a type without fields is. What stands at its address may be the neighbour of its section, so only the
-     // file that defines it says where it is.
-     if (type === 1 && symbols.readBigUInt64LE(at + 16) === 0n && emptySections.has(address)) continue;
--    const node = nodeAt(placedNodes, address);
-+    const node = findEndedNode(name, address) ?? nodeAt(placedNodes, address);
-     if (node < 0) continue;
-     if (type === 10) ifuncNodes.push(node);
-     if (name.startsWith("$")) continue;
-@@ -291,15 +295,20 @@ function createReading(
-   };
-   const { nodesBySection, liveSections } = indexSections(entries);
-   const findNode = (key: string) => nodesBySection.get(key)?.[0] ?? nodesBySection.get(folded.get(key) ?? "")?.[0];
--  const { objects, defined, failures: unreadInputs } = readObjects(liveSections);
-+  const { objects, defined, stronglyDefined, failures: unreadInputs } = readObjects(liveSections);
-   const resolveGlobal = (name: string) => {
-     for (const key of defined.get(name) ?? []) {
-       const node = findNode(key);
-       if (node !== undefined) return node;
-     }
-     return undefined;
-   };
--  const symbols = readLinkedSymbols(elf, placedNodes, emptySections, executable);
-+  // A label at the end of its section has the address of the neighbour, which may be what replaced a weak one.
-+  const findEndedNode = (name: string, address: number) =>
-+    nodesBySection
-+      .get(stronglyDefined.get(name) ?? "")
-+      ?.find(node => entries[node]!.address + entries[node]!.size === address);
-+  const symbols = readLinkedSymbols(elf, placedNodes, emptySections, findEndedNode, executable);
-   const { nodesBySymbol, ifuncNodes } = symbols;
-   const connections = connect(entries.length, objects, { nodesBySection, findNode, resolveGlobal }, symbols);
-   const symbolNodes = [...ifuncNodes, ...connections.unwindTableNodes];
+ ```rust
+ // SAFETY: parsing runs no JavaScript. Nor does making the result: its keys are primitives, and its properties are
 ```
 
-**File**: `scripts/build/trim/elf-objects.ts` (modified, +3/-2)
+**File**: `src/CLAUDE.md` (modified, +1/-1)
 ```diff
-@@ -13,6 +13,7 @@ export const mayMove = /^\.(text|rodata|bun_builtins)(\.|$)/;
- export const isOrdinary = (output: string) => isMovable(output) || [".data", ".data.rel.ro", ".bss"].includes(output);
- export const ignoredOutputs = /^\.(debug|gdb_index|symtab|strtab|comment|shstrtab|eh_frame|rela|tbss)/;
+@@ -150,7 +150,7 @@ or bytes that really are Latin-1; `utf16(units)`.
+ `String::to_encoded_slice()` borrows any `String` as one;
+ `EncodedSlice::to_utf8() -> Utf8Bytes<'a>`; `bun_jsc::EncodedSliceJsc` adds
+ `to_js`, `to_error_instance` / `to_syntax_error_instance`, `to_json_object`, and
+-`to_external_value` / `external` (hand a globally-allocated buffer to JSC).
++`try_to_external_value` / `external` (hand a globally-allocated buffer to JSC).
  
-+const STB_GLOBAL = 1;
- const EM_X86_64 = 62;
- const EM_AARCH64 = 183;
- const R_X86_64_64 = 1;
-@@ -24,7 +25,7 @@ const pointerRelocationTypes = new Map([
- 
- export interface ElfObjectReferences {
-   references: Map<string, Set<string>>;
--  definitions: [name: string, section: string][];
-+  definitions: [name: string, section: string, isStrong: boolean][];
-   named: [name: string, section: string][];
-   namedByUnwindTables: Set<string>;
-   recordSections: { bytes: Buffer; references: Map<number, string> }[];
-@@ -99,7 +100,7 @@ function readObjectTables(
-     const isGlobal = info >> 4 !== 0;
-     if (!isGlobal && !mayMove.test(section)) continue;
-     const name = stringAt(strings, symbols.readUInt32LE(index * 24));
--    if (isGlobal) result.definitions.push([name, section]);
-+    if (isGlobal) result.definitions.push([name, section, info >> 4 === STB_GLOBAL]);
-     // AArch64's mapping symbols, $x and $d, mark where code and data begin.
-     if (mayMove.test(section) && !name.startsWith("$")) result.named.push([name, section]);
-   }
+ Bytes → JS string: `bun_string_jsc::create_utf8_for_js(global, bytes)?`
+ (copies; ASCII stays 8-bit). An owned `Vec<u8>` that JS should adopt:
 ```
 
-**File**: `scripts/build/trim/macho-graph.ts` (modified, +18/-0)
+**File**: `src/bun_core/string/immutable.rs` (modified, +27/-9)
 ```diff
-@@ -268,7 +268,12 @@ function indexSymbols(
-   const mergedStringFiles = new Map<number, number[]>();
-   const symbolsWithoutBytes = new Set<string>();
-   const namesWithoutBytes = new Set<string>();
-+  // The map lists an external name of an object compiled from bitcode under the file of the bitcode.
-+  const externalEndLabels = new Set<string>();
-+  for (const read of objects.values())
-+    for (const name of read?.externals ?? []) if (read!.endLabels.has(name)) externalEndLabels.add(name);
-   for (const symbol of zeroSizeSymbols) {
-+    if ((objects.get(symbol.file)?.endLabels ?? externalEndLabels).has(symbol.name)) continue;
-     const node = nodeByAddress.get(symbol.address);
-     if (node === undefined) {
-       symbolsWithoutBytes.add(symbol.file + "\0" + symbol.name);
-@@ -305,6 +310,19 @@ function indexSymbols(
-     }
-   }
-   const lookup = createAtomLookup(nodeInFile, nodeByName, external);
-+  for (const [file, read] of objects) {
-+    for (const [name, atom] of read?.endLabels ?? []) {
-+      if (atom === undefined) {
-+        symbolsWithoutBytes.add(file + "\0" + name);
-+        namesWithoutBytes.add(name);
-+        continue;
-+      }
-+      const node = lookup.findInFile(file, atom);
-+      if (node === undefined) continue;
-+      nodeInFile.set(file + "\0" + name, node);
-+      if (read!.externals.includes(name)) external.set(name, node);
-+    }
-+  }
-   return { ...lookup, external, fileOfNode, aliases, mergedStringFiles, symbolsWithoutBytes, namesWithoutBytes };
- }
+@@ -75,12 +75,13 @@ pub use crate::strings_impl::{
+ // Transcoding helpers from `unicode_draft` — re-exported so downstream
+ // `bun_core::strings::*` callers (e.g. runtime/webcore/encoding.rs) resolve.
+ pub use unicode_draft::{
+-    BOM, UTF16Replacement, allocate_latin1_into_utf8, copy_cp1252_into_utf16,
++    BOM, DecodedUtf8, UTF16Replacement, allocate_latin1_into_utf8, copy_cp1252_into_utf16,
+     copy_latin1_into_ascii, copy_latin1_into_utf8_stop_on_non_ascii, copy_latin1_into_utf16,
+     copy_u8_into_u16, copy_u16_into_u8, copy_utf16_into_utf8_impl,
+-    element_length_cp1252_into_utf16, element_length_utf8_into_utf16, push_codepoint_wtf8,
+-    to_utf8_list_with_type_bun, to_utf16_alloc_maybe_buffered, u16_is_lead, u16_is_trail,
+-    utf8_codepoint_with_fffd, utf16_codepoint, utf16_codepoint_with_fffd, wtf8_sequence,
++    decode_utf8_alloc_maybe_buffered, element_length_cp1252_into_utf16,
++    element_length_utf8_into_utf16, push_codepoint_wtf8, to_utf8_list_with_type_bun, u16_is_lead,
++    u16_is_trail, utf8_codepoint_with_fffd, utf16_codepoint, utf16_codepoint_with_fffd,
++    wtf8_sequence,
+ };
  
-```
-
-**File**: `scripts/build/trim/macho-objects.ts` (modified, +52/-17)
-```diff
-@@ -17,6 +17,7 @@ const N_TYPE = 0x0e;
- const N_SECT = 0x0e;
- const N_EXT = 0x01;
- const N_NO_DEAD_STRIP = 0x0020;
-+const N_WEAK_DEF = 0x0080;
- const N_ALT_ENTRY = 0x0200;
- const SECTION_TYPE = 0xff;
- const S_CSTRING_LITERALS = 2;
-@@ -61,6 +62,8 @@ export interface MachOReferences {
-   /** Of each atom. "L", "G": a local, a global name. "S": a string. "W": a literal. "U": why a literal was not read. */
-   references: Map<string, Set<string>>;
-   externals: string[];
-+  /** The names at the end of a section or of an atom, which have no bytes → the atom in front, if the linker keeps them in it. */
-+  endLabels: Map<string, string | undefined>;
-   retained: string[];
-   liveWithoutReference: string[];
-   unreadStrings: number;
-@@ -85,6 +88,7 @@ interface SymbolEntry {
-   name: string;
-   type: number;
-   section: number;
-+  description: number;
-   value: number;
- }
- 
-@@ -150,11 +154,12 @@ function readSymbols({ entries, strings }: SymbolTable, sections: Section[], res
-       name: stringAt(strings, entries.readUInt32LE(entry)),
-       type: entries[entry + 4]!,
-       section: entries[entry + 5]!,
-+      description: entries.readUInt16LE(entry + 6),
-       value: Number(entries.readBigUInt64LE(entry + 8)),
-     };
-     symbols.push(symbol);
-     if ((symbol.type & N_STAB) !== 0 || (symbol.type & N_TYPE) !== N_SECT) continue;
--    const description = entries.readUInt16LE(entry + 6);
-+    const { description } = symbol;
-     if ((description & N_ALT_ENTRY) === 0) {
-       const names = namesByAddress[symbol.section - 1]!;
-       names.set(symbol.value, names.has(symbol.value) ? names.get(symbol.value) + "\x01" + symbol.name : symbol.name);
-@@ -182,8 +187,6 @@ function createObjectLookup(readFrom: ReadBytes, sections: Section[], atoms: Ato
-     }
-     return low > 0 ? list[low - 1]![1] : undefined;
-   };
--  const sectionNumberAt = (address: number) =>
--    sections.findIndex(other => other.address <= address && address < other.address + other.size) + 1;
-   const sectionType = (section: number) => (sections[section - 1]?.flags ?? 0) & SECTION_TYPE;
-   const isCStringSection = (section: number) => sectionType(section) === S_CSTRING_LITERALS;
-   const literalSize = (section: number) => literalSizes.get(sectionType(section));
-@@ -206,7 +209,7 @@ function createObjectLookup(readFrom: ReadBytes, sections: Section[], atoms: Ato
-     const end = text.indexOf(0, at);
-     return text.toString("latin1", at === 0 ? 0 : text.lastIndexOf(0, at - 1) + 1, end < 0 ? text.length : end);
-   };
--  return { atomAt, sectionNumberAt, isCStringSection, literalSize, literalAt, enclosingString };
-+  return { atomAt, isCStringSection, literalSize, literalAt, enclosingString };
- }
- 
- interface ObjectFile {
-@@ -224,8 +227,38 @@ function addReference(result: MachOReferences, from: string, to: string): void {
-   else set.add(to);
- }
- 
-+// As ObjFile::parseSymbols of ld64.lld: in the order of the symbol table, weak external names last, the first plain name of an address starts an atom.
-+function findEndLabels(
-+  { sections, symbols, lookup: { atomAt } }: ObjectFile,
-+  hasSubsectionsViaSymbols: boolean,
-+): MachOReferences["endLabels"] {
-+  const isWeak = ({ type, description }: SymbolEntry) => (type & N_EXT) !== 0 && (description & N_WEAK_DEF) !== 0;
-+  const defined = symbols.filter(({ type }) => (type & N_STAB) === 0 && (type & N_TYPE) === N_SECT);
-+  const started = sections.map(() => new Set<number>());
-+  const endLabels: MachOReferences["endLabels"] = new Map();
-+  for (const symbol of [...defined.filter(symbol => !isWeak(symbol)), ...defined.filter(isWeak)]) {
-+    const { name, section, description, value } = symbol;
-+    const { address, size } = sections[section - 1]!;
-+    if ((description & N_ALT_ENTRY) === 0) started[section - 1]!.add(value);
-+    const isInAtomInFront = !hasSubsectionsViaSymbols || !started[section - 1]!.has(value);
-+    const endsAtom =
-+      hasSubsectionsViaSymbols &&
-+      isInAtomInFront &&
-+      value > address &&
-+      atomAt(section, value) !== atomAt(section, value - 1);
-+    if (!endsAtom && value !== address + size) continue;
-+    if (!isWeak(symbol)) {
-+      endLabels.set(name, isInAtomInFront ? atomAt(section, value - 1) : undefined);
-+      continue;
-+    }
-+    // The linker moves the names beside a weak one to the definition it selects: only the map says where they are.
-+    for (const other of defined) if (other.section === section && other.value === value) endLabels.delete(other.name);
-+  }
-+  return endLabels;
+ /// `bun.strings.visible` — terminal-visible-width helpers. The implementation
+@@ -2299,7 +2300,7 @@ pub fn to_utf8_list_with_type(mut list: Vec<u8>, utf16: &[u16]) -> Result<Vec<u8
+ /// Errors from `to_utf16_alloc`. `InvalidByteSequence` is only returned when
+ /// `fail_if_invalid = true`; `OutOfMemory` can be returned by any call.
+ ///
+-/// Re-exported from `unicode_draft` so that `to_utf16_alloc_maybe_buffered`
++/// Re-exported from `unicode_draft` so that `decode_utf8_alloc_maybe_buffered`
+ /// (defined there) and `to_utf16_alloc` (defined here) share a single error
+ /// type — callers like `TextDecoder` match on `strings::ToUTF16Error` for both.
+ pub use unicode_draft::ToUTF16Error;
+@@ -2323,10 +2324,27 @@ pub fn to_utf16_alloc(
+     fail_if_invalid: bool,
+     sentinel: bool,
+ ) -> Result<Option<Vec<u16>>, ToUTF16Error> {
+-    let Some(_first) = first_non_ascii(bytes) else {
+-        return Ok(None);
++    first_non_ascii_usize(bytes)
++        .map(|_| non_ascii_to_utf16_alloc(bytes, fail_if_invalid, sentinel))
++        .transpose()
 +}
 +
- function readRecordSection({ readFrom, symbols, lookup }: ObjectFile, section: Section) {
--  const { atomAt, sectionNumberAt } = lookup;
-+  const { atomAt } = lookup;
-   const relocations = readFrom(section.relocations, section.count * 8);
-   const bytes = readFrom(section.offset, section.size);
-   const references = new Map<number, string>();
-@@ -237,7 +270,7 @@ function readRecordSection({ readFrom, symbols, lookup }: ObjectFile, section: S
-     if (!isPointer || field < 0 
-```
-
-**File**: `scripts/build/verify-binary.ts` (modified, +6/-1)
-```diff
-@@ -686,10 +686,15 @@ export function arm64PointerLoads(image: Buffer): { pointerLoads: number; fromCo
-       offset: image.readUInt32LE(section + 20),
-     }));
-   // In the low bits a branch has its condition or offset, and a vector instruction a register of the other file.
--  const writes = (instruction: number, register: number) =>
-+  const writesFirst = (instruction: number, register: number) =>
-     (instruction & 31) === register &&
-     (instruction & 0x1c000000) !== 0x14000000 &&
-     (instruction & 0x0c000000) !== 0x0c000000;
-+  // ldp, ldnp, ldpsw, ldxp, ldaxp. The other exclusive and ordered loads match too, and have 31 there.
-+  const writesSecond = (instruction: number, register: number) =>
-+    (instruction & 0x1e400000) === 0x08400000 && ((instruction >>> 10) & 31) === register;
-+  const writes = (instruction: number, register: number) =>
-+    writesFirst(instruction, register) || writesSecond(instruction, register);
-   const address = (rva: number) => `0x${(imageBase + BigInt(rva)).toString(16)}`;
-   let pointerLoads = 0;
-   const fromCode: string[] = [];
-```
-
-**File**: `test/internal/source-lints/windows-cross-config.test.ts` (modified, +28/-0)
-```diff
-@@ -237,12 +237,40 @@ describe("the check for weak references that LLVM miscompiles on arm64", () => {
-       1,
-       ["0x14000300c loads from 0x140003028"],
-     ],
-+    [
-+      "a function, behind what looks like a load of a pair into the register",
-+      [
-+        adrpX1.thisPage,
-+        0xa9000440 /* stp x0, x1, [x2] */,
-+        0x6d400440 /* ldp d0, d1, [x2] */,
-+        0xa9400c40 /* ldp x0, x3, [x2] */,
-+        0xc8230440 /* stxp w3, x0, x1, [x2] */,
-+        0xf9400440 /* ldr x0, [x2, #8] */,
-+        0x8b430440 /* add x0, x2, x3, lsr #1 */,
-+        ldrX1,
-+      ],
-+      1,
-+      ["0x14000301c loads from 0x140003028"],
-+    ],
-     ["what the register holds next", [adrpX1.thisPage, 0xaa0003e1 /* mov x1, x0 */, ldrX1], 0, []],
-     ["nothing", [adrpX1.thisPage, 0x9100a021 /* add x1, x1, #0x28 */], 0, []],
-   ])("a load from %s", (_, instructions, pointerLoads, fromCode) => {
-     expect(arm64PointerLoads(image(instructions))).toEqual({ pointerLoads, fromCode });
-   });
++/// [`to_utf16_alloc`] for text that becomes a JS string: half the size where no code point is above U+00FF.
++pub fn decode_utf8_alloc(bytes: &[u8], fail_if_invalid: bool) -> Result<DecodedUtf8, ToUTF16Error> {
++    let Some(first) = first_non_ascii_usize(bytes) else {
++        return Ok(DecodedUtf8::Ascii);
+     };
++    match unicode_draft::utf8_to_latin1(bytes, first) {
++        Some(latin1) => Ok(DecodedUtf8::Latin1(latin1)),
++        None => non_ascii_to_utf16_alloc(bytes, fail_if_invalid, false).map(DecodedUtf8::Utf16),
++    }
++}
  
-+  test.each([
-+    ["ldp x0, x1, [x2]", 0xa9400440],
-+    ["ldp x0, x1, [x2, #16]!", 0xa9c10440],
-+    ["ldp x0, x1, [x2], #16", 0xa8c10440],
-+    ["ldp w0, w1, [x2]", 0x29400440],
-+    ["ldnp x0, x1, [x2]", 0xa8400440],
-+    ["ldpsw x0, x1, [x2]", 0x69400440],
-+    ["ldxp x0, x1, [x2]", 0xc87f0440],
-+    ["ldaxp x0, x1, [x2]", 0xc87f8440],
-+  ])("a load from what %s puts in its second register", (_, pair) => {
-+    expect(arm64PointerLoads(image([adrpX1.thisPage, pair, ldrX1]))).toEqual({ pointerLoads: 0, fromCode: [] });
-+  });
-+
-   test.each(["\n", "\r\n"])("a reference to a variable, with lines that end in %j", end => {
-     const references = ["variable", "constant", "func", "native", "missing"].map(
-       name => `C:\\a.lib:a.obj:                  (undefined) weak external ${name}`,
-```
-
-**File**: `test/internal/trim/link-elf-graph.test.ts` (modified, +66/-0)
-```diff
-@@ -154,6 +154,72 @@ describeLink("the graph reader", () => {
-     expect(graph.section.filter((_, node) => reaches(node))).toEqual([]);
-   });
- 
-+  const constants = (name: string, text: string, unique = "") =>
-+    `.section .rodata.${name},"aR",@progbits${unique}\n${text}`;
-+  const weakLabel = constants("weak", ".weak label\nlabel:\n.quad 7\n");
-+  const neighbour = constants("neighbour", ".quad 9\n.addrsig\n");
-+
-+  test.each([
-+    {
-+      title: "at the end of a section to that section",
-+      first: "",
-+      second: constants("ended", ".globl label\n.quad 8\nlabel:\n") + neighbour,
-+      adjacent: ["ended", "neighbour"],
-+      reached: ["ended"],
-+    },
-+    {
-+      title: "at the end of a section to that section where it replaces a weak one",
-+      first: weakLabel,
-+      second: constants("ended", ".globl label\n.quad 8\nlabel:\n") + neighbour,
-+      adjacent: ["ended", "neighbour"],
-+      reached: ["weak", "ended"],
-+    },
-+    {
-+      title: "at the end of the second section of a name to that section",
-+      first: "",
-+      second:
-+        constants("twice", ".quad 6\n", ",unique,1") +
-+        constants("twice", ".globl label\n.quad 8\nlabel:\n", ",unique,2") +
-+        neighbour,
-+      adjacent: ["twice", "neighbour"],
-+      reached: ["twice", "twice"],
-+    },
-+    {
-+      title: "at the start of a section to that section, right behind the section of the weak one that it replaces",
-+      first: weakLabel,
-+      second: constants("started", ".globl label\nlabel:\n.quad 8\n") + neighbour,
-+      adjacent: ["weak", "started"],
-+      reached: ["weak", "started"],
-+    },
-+    {
-+      title: "to the section that its own was folded into, right behind the section of the weak one that it replaces",
-+      first: weakLabel + neighbour,
-+      second: constants("folded", ".globl label\nlabel:\n.quad 9\n.addrsig\n"),
-+      adjacent: ["weak", "neighbour"],
-+      reached: ["weak", "neighbour"],
-+    },
-+  ])("follows a reference to a label without a size $title", async ({ first, second, adjacent, reached }) => {
-+    using dir = tempDir("trim-elf-reader", {
-+      ...files,
-+      "more.c": `extern const char label[]; int more(int x) { return label[x]; }`,
-+      "first.c": `__asm__(${JSON.stringify(first + ".text\n")});`,
-+      "second.c": `__asm__(${JSON.stringify(second + ".text\n")});`,
-+    });
-+    const folder = String(dir);
-+    const linkedObjects = [...objects, "first", "second"];
-+    await compileObjects(folder, linkedObjects);
-+    const link = { name: "second", output: "hand", objects: linkedObjects };
-+    const { executable, map, log } = await linkByHand(folder, link);
-+    const { graph, failures } = readElfGraph(executable, map, log);
-+    expect(failures).toEqual([]);
-+    const nodeOf = (name: string) => graph.section.lastIndexOf(`.rodata.${name}`);
-+    const [front, behind] = adjacent.map(nodeOf) as [number, number];
-+    expect(graph.address[front]! + graph.size[front]!).toBe(graph.address[behind]!);
-+    const more = graph.section.indexOf(".text.more");
-+    const successors = graph.successors.subarray(graph.successorStart[more]!, graph.successorStart[more + 1]!);
-+    expect(Array.from(successors, node => graph.section[node])).toEqual(reached.map(name => `.rodata.${name}`));
-+  });
-+
-   test("reports a reference to a section the map does not list", async () => {
-     using dir = tempDir("trim-elf-reader", files);
-     const folder = String(dir);
-```
-
-**File**: `test/internal/trim/link-macho-support.ts` (modified, +6/-6)
-```diff
-@@ -62,7 +62,7 @@ interface Section {
-   offset: number;
- }
- 
--function readMachO(file: Buffer) {
-+export function readMachO(file: Buffer) {
-   const segments: Section[] = [];
-   const sections: Section[] = [];
-   const readOnlySegments: string[] = [];
-@@ -196,14 +196,14 @@ function lostFixups(whole: Buffer, trimmed: Buffer, removedRanges: { start: numb
-   return lost;
- }
- 
--export function recordRelocationKinds(object: Buffer) {
-+export function relocationKinds(object: Buffer, sectionName: string) {
-   const kinds = new Set<"symbol" | "section">();
-   let at = 32;
-   for (let command = object.readUInt32LE(16); command > 0; command--) {
-     const sectionCount = object.readUInt32LE(at) === 0x19 ? object.readUInt32LE(at + 64) : 0;
-     for (let index = 0; index < sectionCount; index++) {
-       const section = at + 72 + index * 80;
--      if (object.toString("latin1", section, section + 16).replace(/\0.*$/, "") !== "__bun_entries") continue;
-+      if (object.toString("latin1", section, section + 16).replace(/\0.*$/, "") !== sectionName) continue;
-       const relocations = object.readUInt32LE(section + 56);
-       for (let entry = 0; entry < object.readUInt32LE(section + 60); entry++) kinds.add((object.readUInt32LE(relocations + entry * 8 + 4) >>> 27) & 1 ? "symbol" : "section");
++fn non_ascii_to_utf16_alloc(
++    bytes: &[u8],
++    fail_if_invalid: bool,
++    sentinel: bool,
++) -> Result<Vec<u16>, ToUTF16Error> {
+     let input = WithUtf16Len::utf8(bytes);
+     let out_length = input.utf16_len();
+     let cap = out_length + if sentinel { 1 } else { 0 };
+@@ -2345,7 +2363,7 @@ pub fn to_utf16_alloc(
+         if sentinel {
+             out.push(0);
+         }
+-        return Ok(Some(out));
++        return Ok(out);
      }
-@@ -264,11 +264,11 @@ export async function wrapped(machine: Machine, folder: string, program: Program
-   return await run(linkArguments(writeLinkInputs(folder, { minimums, builtins }), command, { demangler: tools["llvm-cxxfilt"]! }), folder);
+     if fail_if_invalid {
+         return Err(ToUTF16Error::InvalidByteSequence);
+@@ -2371,7 +2389,7 @@ pub fn to_utf16_alloc(
+     if sentinel {
+         out.push(0);
+     }
+-    Ok(Some(out))
++    Ok(out)
  }
  
--export async function linkByHand(machine: Machine, folder: string, objects: string[]) {
--  await compileObjects(machine, folder, objects);
-+export async function linkByHand(machine: Machine, folder: string, objects: string[], { compileFlags, linkFlags = [] }: Pick<Program, "compileFlags" | "linkFlags"> = {}) {
-+  await compileObjects(machine, folder, objects, compileFlags);
-   const inputs = objects.map(name => (isSharedObject(name) ? featureCodeObjects.get(machine.name)! : join(folder, `${name}.o`)));
-   const [executable, map] = [join(folder, "hand"), join(folder, "hand.map")];
--  expect((await run([tools.clang!, ...inputs, ...baseLinkFlags(machine, map), "-o", executable], folder)).exitCode).toBe(0);
-+  expect((await run([tools.clang!, ...inputs, ...baseLinkFlags(machine, map), ...linkFlags, "-o", executable], folder)).exitCode).toBe(0);
-   return { executable, map, exportedSymbols: join(folder, "exported.txt") };
+ /// WTF-8 → UTF-16LE iff `bytes` contains any non-ASCII byte; pure-ASCII inputs return `None`.
+```
+
+**File**: `src/bun_core/string/immutable/unicode.rs` (modified, +41/-8)
+```diff
+@@ -657,13 +657,46 @@ pub enum ToUTF16Error {
+ 
+ crate::oom_from_alloc!(ToUTF16Error);
+ 
+-pub fn to_utf16_alloc_maybe_buffered<const FAIL_IF_INVALID: bool, const FLUSH: bool>(
++/// UTF-8 text in the narrowest form a JS string can hold it in.
++pub enum DecodedUtf8 {
++    /// The input is its own Latin-1 form.
++    Ascii,
++    Latin1(Vec<u8>),
++    Utf16(Vec<u16>),
++}
++
++/// `None` unless `bytes` is valid UTF-8 without a code point above U+00FF, and there is memory for the result.
++pub(super) fn utf8_to_latin1(bytes: &[u8], first_non_ascii_idx: usize) -> Option<Vec<u8>> {
++    const FIRST_LEAD_BYTE_ABOVE_LATIN1: u8 = 0xC4;
++    let fits =
++        |chunk: &[u8]| chunk.iter().fold(0u8, |a, &b| a.max(b)) < FIRST_LEAD_BYTE_ABOVE_LATIN1;
++    if !bytes[first_non_ascii_idx..].chunks(256).all(fits) {
++        return None;
++    }
++    let input = WithUtf16Len::utf8(bytes);
++    let mut out = Vec::new();
++    out.try_reserve_exact(input.utf16_len().max(1)).ok()?;
++    crate::vec::append_with(&mut out, usize::MAX, |out| {
++        simdutf::convert::utf8::to::latin1_with_errors(input, out)
++    })
++    .is_successful()
++    .then_some(out)
++}
++
++pub fn decode_utf8_alloc_maybe_buffered<const FAIL_IF_INVALID: bool, const FLUSH: bool>(
+     bytes: &[u8],
+-) -> Result<Option<(Vec<u16>, [u8; 3], u8)>, ToUTF16Error> {
++) -> Result<(DecodedUtf8, [u8; 3], u8), ToUTF16Error> {
+     let Some(first_non_ascii_idx) = first_non_ascii(bytes) else {
+-        return Ok(None);
++        return Ok((DecodedUtf8::Ascii, [0; 3], 0));
+     };
+     let first_non_ascii_idx = first_non_ascii_idx as usize;
++    let (whole, buffered, buffered_len) = match bytes {
++        [whole @ .., lead @ (0xC2 | 0xC3)] if !FLUSH => (whole, [*lead, 0, 0], 1),
++        _ => (bytes, [0; 3], 0),
++    };
++    if let Some(latin1) = utf8_to_latin1(whole, first_non_ascii_idx) {
++        return Ok((DecodedUtf8::Latin1(latin1), buffered, buffered_len));
++    }
+ 
+     let mut output: Vec<u16> = if crate::FeatureFlags::USE_SIMDUTF {
+         'output: {
+@@ -687,7 +720,7 @@ pub fn to_utf16_alloc_maybe_buffered<const FAIL_IF_INVALID: bool, const FLUSH: b
+                     bytes.len(),
+                     out_length
+                 );
+-                return Ok(Some((out, [0; 3], 0)));
++                return Ok((DecodedUtf8::Utf16(out), [0; 3], 0));
+             }
+ 
+             // SAFETY: simdutf converts sequentially and the first error is at or
+@@ -747,11 +780,11 @@ pub fn to_utf16_alloc_maybe_buffered<const FAIL_IF_INVALID: bool, const FLUSH: b
+                     3 => [remaining[0], remaining[1], remaining[2]],
+                     _ => unreachable!(),
+                 };
+-                return Ok(Some((
+-                    output,
++                return Ok((
++                    DecodedUtf8::Utf16(output),
+                     buffered,
+                     u8::try_from(remaining.len()).expect("int cast"),
+-                )));
++                ));
+             }
+         }
+ 
+@@ -780,7 +813,7 @@ pub fn to_utf16_alloc_maybe_buffered<const FAIL_IF_INVALID: bool, const FLUSH: b
+         bytes.len(),
+         output.len()
+     );
+-    Ok(Some((output, [0; 3], 0)))
++    Ok((DecodedUtf8::Utf16(output), [0; 3], 0))
+ }
+ 
+ #[inline]
+```
+
+**File**: `src/bun_core/string/mod.rs` (modified, +8/-4)
+```diff
+@@ -458,13 +458,17 @@ impl String {
+     }
+ 
+     /// UTF-8 `bytes` → external WTF-backed string: adopts the allocation as
+-    /// Latin-1 when all-ASCII, otherwise adopts a UTF-16 transcode of it.
++    /// Latin-1 when all-ASCII, otherwise adopts a transcode of it.
+     /// `DEAD` when longer than [`Self::max_length`], `OUT_OF_MEMORY` when the
+     /// transcode could not allocate.
+     pub fn from_owned_utf8(bytes: Vec<u8>) -> Self {
+-        match strings::to_utf16_alloc(&bytes, false, false) {
+-            Ok(None) => Self::create_external_globally_allocated_latin1(bytes),
+-            Ok(Some(utf16)) => Self::create_external_globally_allocated_utf16(utf16),
++        use strings::DecodedUtf8;
++        match strings::decode_utf8_alloc(&bytes, false) {
++            Ok(DecodedUtf8::Ascii) => Self::create_external_globally_allocated_latin1(bytes),
++            Ok(DecodedUtf8::Latin1(latin1)) => {
++                Self::create_external_globally_allocated_latin1(latin1)
++            }
++            Ok(DecodedUtf8::Utf16(utf16)) => Self::create_external_globally_allocated_utf16(utf16),
+             Err(_) => Self::utf16_transcode_failure(&bytes),
+         }
+     }
+```
+
+**File**: `src/http_jsc/websocket_client.rs` (modified, +8/-8)
+```diff
+@@ -517,11 +517,15 @@ impl<const SSL: bool> WebSocket<SSL> {
+                 out.did_receive_bytes(data, kind as u8);
+             }
+             Opcode::Text => {
+-                // this function encodes to UTF-16 if > 127
+-                // so we don't need to worry about latin1 non-ascii code points
+                 // we avoid trim since we wanna keep the utf8 validation intact
+-                let utf16_bytes = match strings::to_utf16_alloc(data, true, false) {
+-                    Ok(v) => v,
++                let text = match strings::decode_utf8_alloc(data, true) {
++                    Ok(strings::DecodedUtf8::Ascii) => BunString::clone_latin1(data),
++                    Ok(strings::DecodedUtf8::Latin1(latin1)) => {
++                        BunString::create_external_globally_allocated_latin1(latin1)
++                    }
++                    Ok(strings::DecodedUtf8::Utf16(utf16)) => {
++                        BunString::create_external_globally_allocated_utf16(utf16)
++                    }
+                     Err(strings::ToUTF16Error::InvalidByteSequence) => {
+                         self.fail(ErrorCode::InvalidUtf8);
+                         return;
+@@ -531,10 +535,6 @@ impl<const SSL: bool> WebSocket<SSL> {
+                         return;
+                     }
+                 };
+-                let text = match utf16_bytes {
+-                    Some(utf16) => BunString::create_external_globally_allocated_utf16(utf16),
+-                    None => BunString::clone_latin1(data),
+-                };
+                 jsc::mark_binding!();
+                 out.did_receive_text(text);
+             }
+```
+
+**File**: `src/icu/common/uloc.rs` (modified, +13/-0)
+```diff
+@@ -226,6 +226,19 @@ impl<'a> Subtags<'a> {
+         Ok((subtags, variant, rest))
+     }
+ 
++    /// Whether `canonicalize` does to the ID only what `language`, `script` and `region` do.
++    pub(crate) fn is_plain(&self) -> bool {
++        let is_plain_region = match *self.region {
++            [] => true,
++            [a, b] => a.is_ascii_alphabetic() && b.is_ascii_alphabetic(),
++            _ => self.region.iter().all(u8::is_ascii_digit),
++        };
++        self.rest.is_empty()
++            && (2..=3).contains(&self.language.len())
++            && self.language.iter().all(u8::is_ascii_alphabetic)
++            && is_plain_region
++    }
++
+     pub(crate) fn language(&self) -> Language {
+         normalize_language(self.language)
+     }
+```
+
+**File**: `src/icu/common/uloc_tag.rs` (modified, +24/-13)
+```diff
+@@ -226,10 +226,33 @@ fn append_keywords_to_language_tag(
+     Ok(())
+ }
+ 
++fn append_subtags_to_language_tag(parsed: &Subtags, sink: &mut ByteSink) {
++    let (language, script, region) = (parsed.language(), parsed.script(), parsed.region());
++    sink.add_all(if ultag_is_language_subtag(&language) {
++        find_row::<3, _>(DEPRECATEDLANGS, &language).unwrap_or(&language)
++    } else {
++        LANG_UND
++    });
++    if !script.is_empty() {
++        append_subtag(sink, SEP, &script);
++    }
++    if ultag_is_region_subtag(&region) {
++        let current = find_row::<2, _>(DEPRECATEDREGIONS, &region);
++        append_subtag(sink, SEP, current.unwrap_or(&region));
++    }
++}
++
+ pub(crate) fn ulocimp_to_language_tag_to(
+     locale_id: &[u8],
+     sink: &mut ByteSink,
+ ) -> Result<(), UErrorCode> {
++    if let Ok(parsed) = Subtags::parse(locale_id)
++        && parsed.is_plain()
++    {
++        append_subtags_to_language_tag(&parsed, sink);
++        return Ok(());
++    }
++
+     let mut canonical = SmallChars::new();
+     fail_on_oom(|| ulocimp_canonicalize_to(locale_id, &mut canonical))?;
+     if canonical.first() == Some(&b'@')
+@@ -247,19 +270,7 @@ pub(crate) fn ulocimp_to_language_tag_to(
+ 
+     // A canonical ID always parses. Only its variant can be too long, after a POSIX variant (`@euro`) was appended.
+     let parsed = Subtags::parse(&canonical).ok().soft_unwrap();
+-    let (language, script, region) = (parsed.language(), parsed.script(), parsed.region());
+-    sink.add_all(if ultag_is_language_subtag(&language) {
+-        find_row::<3, _>(DEPRECATEDLANGS, &language).unwrap_or(&language)
+-    } else {
+-        LANG_UND
+-    });
+-    if !script.is_empty() {
+-        append_subtag(sink, SEP, &script);
+-    }
+-    if ultag_is_region_subtag(&region) {
+-        let current = find_row::<2, _>(DEPRECATEDREGIONS, &region);
+-        append_subtag(sink, SEP, current.unwrap_or(&region));
+-    }
++    append_subtags_to_language_tag(&parsed, sink);
+ 
+     let mut variant =
+         via_byte_sink(|sink| parsed.variant().map(|(variant, _)| variant.append_to(sink)))?;
+```
+
+---
+
+### Incident Patch 2: `c43e1769` (2026-11-28)
+**Commit Message**: Type the calls between Rust and JavaScriptCore or uWS (#49674)
+
+### What does this PR do?
+
+Calls between Rust and JavaScriptCore or uWS state in their signature
+what a `SAFETY:` comment used to promise. 190 `unsafe` fewer (132
+blocks, 28 functions, 23 function pointer types, 7 extern blocks), about
+1,470 lines fewer.
+
+**JavaScriptCore**
+
+- A `[[ZIG_NONNULL]]` parameter is a reference in the generated wrapper,
+or a slice if a `size_t` follows. Strings, dates, buffer copies and the
+REPL use it.
+- The module record imports take `&Identifier` and `&JSModuleRecord`,
+which only C++ can make, instead of an array and an index.
+- The `FetchHeaders` and `AbortSignal` imports return the owning handle.
+The safe `FetchHeaders::deref` is deleted.
+- `for_each` and the six property walkers pass a typed context to their
+callback. The generator's support for function pointers, which only two
+of them used, is deleted. `console.table` uses `try_for_each` instead of
+a context of its own.
+- `write_u16` takes slices. C strings arrive as `CStrRef`. The tty and
+XXH64 imports take their state by reference.
+- A macro is run by a direct call. `Bun__startMacro`, whose body was
+`ctx()`, and its thread-local are
+
+**File**: `docs/project/bindgen.mdx` (modified, +1/-1)
+```diff
+@@ -821,7 +821,7 @@ Every member takes `&self` (or `self: &RefPtr<Self>` if the class is `refCounted
+ `bun_jsc::JsClass`, so `value.as_class_ref::<Glob>()` works, and `js_Glob::from_js(&value)` is the struct if `value`
+ is an instance. Both return a `WrapperGuard<'_, Glob>`, which borrows `value`, derefs to the struct and keeps the object
+ visible to the GC's stack scan until it is dropped. `JsLocal::as_class_ref` does the same for an argument, with the
+-lifetime of the call. `js_Glob::from_js_direct(&value)` returns `None` for an instance of a subclass or one with own
++lifetime of the call. `wrapper.payload_guard()` does the same for a `JsWrapper`. `js_Glob::from_js_direct(&value)` returns `None` for an instance of a subclass or one with own
+ properties, either of which may override a member. `value.is::<Glob>()` and `value.is_direct::<Glob>()` only test the
+ class. `wrapper.payload_ptr()` is the address of the struct, which never changes, and `payload.wrapper_value()` returns
+ the object that owns the struct.
+```
+
+**File**: `src/bun_core/lib.rs` (modified, +1/-2)
+```diff
+@@ -1327,8 +1327,7 @@ pub(crate) mod strings_impl {
+         if slice.len() <= 32 {
+             return slice.iter().all(|&b| b < 0x80);
+         }
+-        // SAFETY: FFI reads exactly slice.len() bytes.
+-        unsafe { simdutf::simdutf__validate_ascii(slice.as_ptr(), slice.len()) }
++        simdutf::validate::ascii(slice)
+     }
+ 
+     /// Byte index of the first non-ASCII byte, or None if all-ASCII.
+```
+
+**File**: `src/bun_core/string/mod.rs` (modified, +2/-8)
+```diff
+@@ -1339,19 +1339,13 @@ impl<'a> EncodedSlice<'a> {
+         if self.is_16bit() {
+             return crate::strings::element_length_utf16_into_utf8(self.utf16_slice());
+         }
+-        let s = self.slice();
+-        // SAFETY: s describes a valid byte slice.
+-        unsafe { bun_simdutf_sys::simdutf::simdutf__utf8_length_from_latin1(s.as_ptr(), s.len()) }
++        bun_simdutf_sys::simdutf::length::utf8::from::latin1(self.slice())
+     }
+ 
+     /// Number of bytes the UTF-16LE encoding of this string would occupy.
+     pub(crate) fn utf16_byte_length(self) -> usize {
+         if self.is_utf8() {
+-            let s = self.slice();
+-            // SAFETY: s describes a valid byte slice.
+-            return unsafe {
+-                bun_simdutf_sys::simdutf::simdutf__utf16_length_from_utf8(s.as_ptr(), s.len())
+-            } * 2;
++            return crate::strings::element_length_utf8_into_utf16(self.slice()) * 2;
+         }
+         if self.is_16bit() {
+             return self.len * 2;
+```
+
+**File**: `src/bun_core/tty.rs` (modified, +3/-11)
+```diff
+@@ -1,4 +1,4 @@
+-use core::ffi::{c_int, c_void};
++use core::ffi::c_int;
+ 
+ /// Terminal size as reported by the tty (`struct winsize` on POSIX).
+ #[repr(C)]
+@@ -51,15 +51,7 @@ impl State {
+ 
+     #[inline]
+     pub fn set_mode(&mut self, fd: c_int, mode: Mode, when: SetAttrWhen) -> c_int {
+-        // SAFETY: layout matches C++'s `BunTTYState`; `self` outlives the call.
+-        unsafe {
+-            Bun__ttySetMode(
+-                fd,
+-                mode as c_int,
+-                core::ptr::from_mut(self).cast(),
+-                (when == SetAttrWhen::Drain) as c_int,
+-            )
+-        }
++        Bun__ttySetMode(fd, mode, self, (when == SetAttrWhen::Drain) as c_int)
+     }
+ }
+ 
+@@ -89,5 +81,5 @@ impl Drop for RawModeGuard {
+ }
+ 
+ unsafe extern "C" {
+-    unsafe fn Bun__ttySetMode(fd: c_int, mode: c_int, state: *mut c_void, drain: c_int) -> c_int;
++    safe fn Bun__ttySetMode(fd: c_int, mode: Mode, state: &mut State, drain: c_int) -> c_int;
+ }
+```
+
+**File**: `src/bundler/analyze_transpiled_module.rs` (modified, +2/-2)
+```diff
+@@ -424,7 +424,7 @@ impl<'a> ModuleInfoStringTable<'a> {
+ }
+ 
+ /// The executable's module-info string table: `u32 count` then one `u32`
+-/// slot per string, each resolved by `JSC__IdentifierArray__setFromSlot`
++/// slot per string, each resolved by `JSC__Identifier__setFromSlot`
+ /// exactly as the bytecode cache resolves its own string slots — up to three
+ /// Latin-1 characters inline (tag 1), an ordinal into the executable's
+ /// bytecode string table (tag 2), or the empty string (tag 3). Built by
+@@ -526,7 +526,7 @@ impl ModuleInfoExt for ModuleInfo {
+ }
+ 
+ // zig__renderDiff, zig__ModuleInfoDeserialized__toJSModuleRecord, and the
+-// JSModuleRecord/IdentifierArray opaques: see bun_bundler_jsc::analyze_jsc
++// JSModuleRecord/Identifier handles: see bun_bundler_jsc::analyze_jsc
+ 
+ /// C++ gives back the `Box` it took from `ResolvedSource.module_info`, never null.
+ #[unsafe(no_mangle)]
+```
+
+**File**: `src/bundler_jsc/analyze_jsc.rs` (modified, +171/-549)
+```diff
+@@ -9,18 +9,21 @@
+ 
+ use crate::{JSGlobalObject, VM};
+ 
+-use analyze::{ModuleInfoDeserialized, RecordKind, RequestedModuleValue, StringID};
++use analyze::{
++    ModuleInfoDeserialized, ModuleInfoString, RecordKind, RequestedModuleValue, StringID,
++};
+ use bun_bundler::analyze_transpiled_module as analyze;
++use handles::{Identifier, IdentifierSlot, JSModuleRecord};
+ 
+ #[unsafe(no_mangle)]
+-extern "C" fn zig__ModuleInfoDeserialized__toJSModuleRecord(
+-    global_object: &JSGlobalObject,
++extern "C" fn zig__ModuleInfoDeserialized__toJSModuleRecord<'a>(
++    global_object: &'a JSGlobalObject,
+     vm: &VM,
+-    module_loader: *mut JSModuleLoader,
+-    module_key: &IdentifierArray,
++    module_loader: &JSModuleLoader,
++    module_key: &Identifier,
+     source_code: &SourceCode,
+     res: &ModuleInfoDeserialized,
+-) -> *mut JSModuleRecord {
++) -> Option<&'a JSModuleRecord> {
+     // Ownership of `res` stays with the caller; this function only reads it.
+     // The caller (BunAnalyzeTranspiledModule.cpp) decides whether to free
+     // immediately or keep it alive on the SourceProvider for the isolation
+@@ -33,51 +36,55 @@ extern "C" fn zig__ModuleInfoDeserialized__toJSModuleRecord(
+         source_code,
+         res,
+     )
+-    .unwrap_or(core::ptr::null_mut())
++    .ok()
+ }
+ 
+ /// Walks the serialized body in place (layout documented on the printer's
+ /// `ModuleInfoDeserialized::serialize_body`) and feeds JSC's module record.
+ /// Any out-of-range id or truncated region yields `Err` → null → a clean
+ /// "parseFromSourceCode failed" rejection in the caller.
+-fn to_js_module_record(
+-    global_object: &JSGlobalObject,
++fn to_js_module_record<'a>(
++    global_object: &'a JSGlobalObject,
+     vm: &VM,
+-    module_loader: *mut JSModuleLoader,
+-    module_key: &IdentifierArray,
++    module_loader: &JSModuleLoader,
++    module_key: &Identifier,
+     source_code: &SourceCode,
+     res: &ModuleInfoDeserialized,
+-) -> Result<*mut JSModuleRecord, analyze::ModuleInfoError> {
++) -> Result<&'a JSModuleRecord, analyze::ModuleInfoError> {
+     let body = *res.body();
+     let identifier_count = res.strings_count();
+ 
+     // Identifier slots the ids index, filled on first use: the VM-wide slots
+     // for an executable's shared table, else a throwaway array for this record.
+     let mut owned_identifiers: Option<OwnedIdentifierArray> = None;
+-    let identifiers: *mut IdentifierArray = if res.shared() {
+-        IdentifierArray::shared(vm, identifier_count)
++    let identifiers = if res.shared() {
++        Bun__VM__sharedModuleInfoIdentifiers(vm, identifier_count)
+     } else {
+         owned_identifiers
+             .insert(OwnedIdentifierArray::new(identifier_count))
+             .ptr
+     };
+-    // Every id handed to JSC goes through here: in range (or a sentinel, which
++    // SAFETY: either array has `identifier_count` slots and stays where it is until this returns:
++    // only the call above grows the VM's, and nothing below loads another module.
++    let identifiers = unsafe { bun_opaque::ffi::slice(identifiers, identifier_count) };
++    // Every id goes through here: in range (or a sentinel, which
+     // `IdCursor` already vetted) and materialized.
+-    let ready = |id: StringID| -> Result<StringID, analyze::ModuleInfoError> {
+-        if (id.0 as usize) < identifier_count {
+-            // SAFETY: `identifiers` has at least `identifier_count` slots.
+-            if unsafe { IdentifierArray::is_null(identifiers, id.0 as usize) } {
+-                let string = res
+-                    .string(id.0)
+-                    .ok_or(analyze::ModuleInfoError::BadModuleInfo)?;
+-                // SAFETY: as above.
+-                let ok = unsafe { IdentifierArray::set(identifiers, id.0 as usize, vm, string) };
+-                if !ok {
+-                    return Err(analyze::ModuleInfoError::BadModuleInfo);
+-                }
+-            }
++    let ready = |id: StringID| -> Result<&Identifier, analyze::ModuleInfoError> {
++        let Some(target) = identifiers.get(id.0 as usize) else {
++            return Ok(JSC__VM__starPrivateName(vm, id == StringID::STAR_DEFAULT));
++        };
++        if let Some(identifier) = JSC__Identifier__nonNull(target) {
++            return Ok(identifier);
+         }
+-        Ok(id)
++        match res.string(id.0) {
++            // SAFETY: 16-bit `chars` start at an even offset of a heap block, so they are aligned.
++            Some(ModuleInfoString::Chars { chars, is_8bit }) => Some(unsafe {
++                JSC__Identifier__setFromChars(target, vm, chars.as_ptr(), chars.len(), is_8bit)
++            }),
++            Some(ModuleInfoString::Slot(slot)) => JSC__Identifier__setFromSlot(target, vm, slot),
++            None => None,
++        }
++        .ok_or(analyze::ModuleInfoError::BadModuleInfo)
+     };
+ 
+     let import_count = body
+@@ -93,42 +100,46 @@ fn to_js_module_record(
+             )
+         })
+         .count();
+-    let module_record = JSModuleRecord::create(
+-        global_obje
+```
+
+**File**: `src/codegen/cppbind.ts` (modified, +24/-45)
+```diff
+@@ -43,13 +43,13 @@ To run manually:
+ 
+ ### Parameters
+ 
+-- **[[ZIG_NONNULL]]** - Mark pointer parameters as non-nullable:
++- **[[ZIG_NONNULL]]** - Mark a pointer that is never null and is not kept after the call: to one value, or to as many as the `size_t` after it:
+   ```cpp
+-  [[ZIG_EXPORT(nothrow)]] void process([[ZIG_NONNULL]] JSGlobalObject* globalThis,
+-                                        [[ZIG_NONNULL]] JSValue* values,
++  [[ZIG_EXPORT(nothrow)]] void process(JSC::JSGlobalObject* globalThis,
++                                        [[ZIG_NONNULL]] JSC::EncodedJSValue* values,
+                                         size_t count) { ... }
+   ```
+-  Generates: `pub extern fn process(globalThis: *jsc.JSGlobalObject, values: [*]const jsc.JSValue) void;`
++  Generates: `pub fn process(globalThis: &JSGlobalObject, values: &mut [JSValue])`
+ 
+ */
+ 
+@@ -95,12 +95,6 @@ type CppType =
+       type: "named";
+       name: string;
+       position: Srcloc;
+-    }
+-  | {
+-      type: "fn";
+-      parameters: CppParameter[];
+-      returnType: CppType;
+-      position: Srcloc;
+     };
+ 
+ type PositionedError = {
+@@ -291,7 +285,7 @@ function processDeclarator(
+   // Recursively peel off pointers
+   if (declarator?.name === "PointerDeclarator") {
+     if (!rootmostType) throwError(nodePosition(declarator, ctx), "no rootmost type provided to PointerDeclarator");
+-    const isConst = !!declarator.parent?.getChild("const") || rootmostType.type === "fn";
++    const isConst = !!declarator.parent?.getChild("const");
+     const parentAttributes = declarator.parent?.getChildren("Attribute") ?? [];
+     const isNonNull = parentAttributes.some(attr => text(attr.getChild("AttributeName")!, ctx) === "ZIG_NONNULL");
+ 
+@@ -305,27 +299,6 @@ function processDeclarator(
+     });
+   } else if (declarator?.name === "ReferenceDeclarator") {
+     throwError(nodePosition(declarator, ctx), "references are not allowed");
+-  } else if (declarator?.name === "FunctionDeclarator" && !declarator.getChild("Identifier")) {
+-    const lhs = declarator.getChild("ParenthesizedDeclarator");
+-    const rhs = declarator.getChild("ParameterList");
+-    if (!lhs || !rhs) {
+-      throwError(
+-        nodePosition(declarator, ctx),
+-        "FunctionDeclarator has neither Identifier nor ParenthesizedDeclarator:\n" +
+-          prettyPrintLezerNode(declarator, ctx.sourceCode),
+-      );
+-    }
+-    const fnType: CppType = {
+-      type: "fn",
+-      parameters: [],
+-      returnType: rootmostType,
+-      position: nodePosition(declarator, ctx),
+-    };
+-    for (const arg of rhs.getChildren("ParameterDeclaration")) {
+-      const paramDeclarator = processDeclarator(ctx, arg);
+-      fnType.parameters.push({ type: paramDeclarator.type, name: text(paramDeclarator.final, ctx) });
+-    }
+-    return processDeclarator(ctx, lhs, fnType);
+   }
+ 
+   return { type: rootmostType, final: declarator };
+@@ -388,7 +361,7 @@ type ExportTag = "check_slow" | "zero_is_throw" | "false_is_throw" | "null_is_th
+ // `JSGlobalObject__hasException` ctor asserts.
+ //
+ // Parameter and return types are emitted as raw C-ABI Rust types (pointers stay
+-// `*mut`/`*const`, no `&T` upgrade) so the wrappers compose with whatever
++// `*mut`/`*const` unless a handle or `[[ZIG_NONNULL]]`) so the wrappers compose with whatever
+ // newtypes the per-type ergonomic shims (`JSValue::get`, `JSPromise::resolve`,
+ // …) hold; those shims forward into `crate::cpp::*`.
+ 
+@@ -522,11 +495,6 @@ function generateRustType(type: CppType, parent: CppType | null): string {
+     const constKw = type.isConst ? "*const " : "*mut ";
+     return constKw + generateRustType(type.child, type);
+   }
+-  if (type.type === "fn") {
+-    // Function pointers are nullable in C; model as Option<extern "C" fn(...)>.
+-    const params = type.parameters.map(p => generateRustType(p.type, null)).join(", ");
+-    return `Option<unsafe extern "C" fn(${params}) -> ${generateRustType(type.returnType, null)}>`;
+-  }
+   if (type.type === "named" && type.name === "void") {
+     if (parent?.type === "pointer") return "core::ffi::c_void";
+     if (!parent) return "()";
+@@ -594,14 +562,15 @@ function generateRustFn(fn: CppFn, rustRaw: string[], rustWrap: string[]): void
+   const rawParams = fn.parameters.map(p => `${rustIdent(p.name)}: ${generateRustType(p.type, null)}`).join(", ");
+   rustRaw.push(`    pub fn ${fn.name}(${rawParams})${ret === "()" ? "" : ` -> ${ret}`};`);
+ 
+-  // Compute wrapper parameter list: opaque-ZST handle pointers become `&T`;
++  // Compute wrapper parameter list: opaque-ZST handle and `[[ZIG_NONNULL]]` pointers become references;
+   // everything else passes through verbatim. The wrapper is `pub fn` (safe)
+   // iff no raw pointer survives — otherwise the caller is still responsible
+   // for the pointer's validity invariants and the wrapper stays `unsafe fn`.
+   let needsUnsafe = false;
+   const wrapParams: string[] = [];
+   const callArgs: string[] = [];
+-  for (const p of fn.parameters) {
++  for (let i = 0; i <
+```
+
+**File**: `src/highway/lib.rs` (modified, +7/-17)
+```diff
+@@ -157,9 +157,9 @@ unsafe extern "C" {
+ 
+     fn highway_xxhash64(input: *const u8, len: usize, seed: u64) -> u64;
+ 
+-    fn highway_xxhash64_reset(state: *mut u8, seed: u64);
+-    fn highway_xxhash64_update(state: *mut u8, input: *const u8, len: usize);
+-    fn highway_xxhash64_digest(state: *const u8) -> u64;
++    safe fn highway_xxhash64_reset(state: &mut XxHash64State, seed: u64);
++    fn highway_xxhash64_update(state: &mut XxHash64State, input: *const u8, len: usize);
++    safe fn highway_xxhash64_digest(state: &XxHash64State) -> u64;
+ 
+     fn highway_parse_mappings(
+         bytes: *const u8,
+@@ -1352,29 +1352,19 @@ impl XxHash64State {
+     #[inline(always)]
+     pub fn new(seed: u64) -> Self {
+         let mut state = Self { _storage: [0; 10] };
+-        // SAFETY: `state` is exactly `sizeof(XXH64State)` bytes of writable,
+-        // 8-aligned storage; the kernel only writes within it.
+-        unsafe { highway_xxhash64_reset(state._storage.as_mut_ptr().cast(), seed) };
++        highway_xxhash64_reset(&mut state, seed);
+         state
+     }
+ 
+     #[inline(always)]
+     pub fn update(&mut self, bytes: &[u8]) {
+-        // SAFETY: `self._storage` is a valid XXH64State; `bytes.ptr/len` are a
+-        // valid readable range (never dereferenced when empty).
+-        unsafe {
+-            highway_xxhash64_update(
+-                self._storage.as_mut_ptr().cast(),
+-                bytes.as_ptr(),
+-                bytes.len(),
+-            )
+-        };
++        // SAFETY: `bytes.ptr/len` are a valid readable range (never dereferenced when empty).
++        unsafe { highway_xxhash64_update(self, bytes.as_ptr(), bytes.len()) };
+     }
+ 
+     #[inline(always)]
+     pub fn digest(&self) -> u64 {
+-        // SAFETY: `self._storage` is a valid XXH64State; digest only reads it.
+-        unsafe { highway_xxhash64_digest(self._storage.as_ptr().cast()) }
++        highway_xxhash64_digest(self)
+     }
  }
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49636** (2026-11-27): thread pool: notify for a task pushed while the queue had a consumer (@sosukesuzuki)
-- **PR #49590** (2026-11-27): build: fix end labels in the trim graph and ldp in the arm64 check (@dylan-conway)
-- **PR #49587** (closed): node:path: answer from the operands' own code units (@robobun)
-- **PR #49582** (closed): dns: read the system config again after the fallback server refuses (@robobun)
-- **PR #49578** (2026-11-26): Bun.diff: compare a Latin-1 text with a UTF-16 text without a copy (@alii)
-- **PR #49577** (2026-11-25): redis: deprecate getBuffer() (@alii)
+- **PR #49674** (2026-11-28): Type the calls between Rust and JavaScriptCore or uWS (@dylan-conway)
+- **PR #49673** (2026-11-27): Type the BoringSSL handles and the calls that take them (@dylan-conway)
+- **PR #49670** (2026-11-27): Make a queued task own what it carries (@dylan-conway)
+- **PR #49650** (2026-11-27): Replace `unsafe` where a safe form does the same work (@dylan-conway)
+- **PR #49641** (2026-11-27): bundler: bind namespace members in functions the React Compiler rewrites (@sosukesuzuki)
+- **PR #49637** (2026-11-28): Decode, hash, search and tag strings with fewer copies (@sosukesuzuki)
 
 ---
 
@@ -1504,48 +1814,31 @@ archive (no COMDAT), and the arm64 scan runs past unconditional jumps.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: fix end labels in the trim graph and ldp in the arm64 check
+## X. Decode, hash, search and tag strings with fewer copies
 
 **RULE**:
-When implementing operations in `scripts/build/trim/elf-graph.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/project/bindgen.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `736fe118`: build: fix end labels in the trim graph and ldp in the arm64 check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3bbc3fc`: Decode, hash, search and tag strings with fewer copies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/build/trim/elf-graph.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/bindgen.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  stronglyDefined: Map<string, string>;
-  const stronglyDefined = new Map<string, string>();
-    for (const [name, section, isStrong] of read.definitions) {
-      if (isStrong) stronglyDefined.set(name, object + "\0" + section);
-  return { objects, defined, stronglyDefined, failures };
-  findEndedNode: (name: string, address: number) => number | undefined,
-    const node = findEndedNode(name, address) ?? nodeAt(placedNodes, address);
-  const { objects, defined, stronglyDefined, failures: unreadInputs } = readObjects(liveSections);
-  // A label at the end of its section has the address of the neighbour, which may be what replaced a weak one.
-  const findEndedNode = (name: string, address: number) =>
-    nodesBySection
-      .get(stronglyDefined.get(name) ?? "")
-      ?.find(node => entries[node]!.address + entries[node]!.size === address);
-  const symbols = readLinkedSymbols(elf, placedNodes, emptySections, findEndedNode, executable);
+`create_latin1_string_from_vec` and `create_utf16_string_from_vec`, so a `mutates: true` method calls none of the others.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    for (const [name, section] of read.definitions) {
-  return { objects, defined, failures };
-    const node = nodeAt(placedNodes, address);
-  const { objects, defined, failures: unreadInputs } = readObjects(liveSections);
-  const symbols = readLinkedSymbols(elf, placedNodes, emptySections, executable);
+`create_utf16_string_from_vec`, so a `mutates: true` method calls none of the others.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `736fe118` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3bbc3fc` are properly handled with clean fallback behavior.
 
 
 ## Consequences

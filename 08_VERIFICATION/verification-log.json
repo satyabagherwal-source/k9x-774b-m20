@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-GQRF",
-    "timestamp": "2026-11-26T18:14:37.947Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "ad5ea98ee545f58f2aa8bd50e955db6f0449c2aed72986e27c43765ee5d65977",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-T1KY",
-    "timestamp": "2026-11-26T18:24:11.842Z",
-    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-    "contentHash": "1cd4aa796b5befa6755b8e54b344e92fa84b0f673ba0b2a75f19baf556d7fe42",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-T7B2",
-    "timestamp": "2026-11-26T18:24:19.262Z",
-    "repository": "feathersjs/feathers",
-    "learningId": "learn-github-feathersjs-feathers",
-    "contentHash": "3c20016017f8ddcbd203cb80207108e0ae147ea94f54cae086ee5e782eed4b7b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-T8YE",
     "timestamp": "2026-11-26T18:24:21.398Z",
     "repository": "hashicorp/terraform",
@@ -7490,6 +7445,51 @@
     "repository": "vitest-dev/vitest",
     "learningId": "learn-github-vitest-dev-vitest",
     "contentHash": "526ff14958b82c891060bfd9f0b8670658bc38ee6347b9a9592e321e0cd23ae9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-GGWM",
+    "timestamp": "2026-11-28T11:17:51.382Z",
+    "repository": "cypress-io/cypress",
+    "learningId": "learn-github-cypress-io-cypress",
+    "contentHash": "2264c1b562b119daa2b5495ff1167a00e8b776681720dfd5dc3a35af44bea3b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-GHFR",
+    "timestamp": "2026-11-28T11:17:52.071Z",
+    "repository": "wzh4869/AppPorts",
+    "learningId": "learn-github-wzh4869-appports",
+    "contentHash": "c373da087da4cdb06814b8b9ca6faece66426b00f3121cf8558e13d785418faa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-MV9I",
+    "timestamp": "2026-11-28T11:22:49.926Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "6f58170ae2c2c78c2db741a37f9b020838ed7f532d91d7d6957952a23ccedf3d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

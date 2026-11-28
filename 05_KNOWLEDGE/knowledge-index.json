@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T11:00:10.660Z",
+  "last_updated": "2026-11-28T11:22:57.775Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27101,
+  "total_items": 27108,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -236737,8 +236737,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "d82a8a7b",
-      "content_hash": "8d06ab910685b27241f188ff7e2d4f1363a7e345eb5e1b8369b473ae5e686e04",
+      "source_version": "e3bbc3fc",
+      "content_hash": "6f58170ae2c2c78c2db741a37f9b020838ed7f532d91d7d6957952a23ccedf3d",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -236786,6 +236786,11 @@
           "number": 10878,
           "title": "fix end labels in the trim graph and ldp in the arm64 check",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11095,
+          "title": "Decode, hash, search and tag strings with fewer copies",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236793,7 +236798,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T10:34:17.552Z",
+      "verified_at": "2026-11-28T11:22:49.587Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236809,10 +236814,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "repository": "oven-sh/bun",
-      "source_version": "d82a8a7b",
-      "content_hash": "fd8eeb8111f3c4062eab7e59a6497ae89ca57554fd723abea437b29ee373be60",
+      "source_version": "e3bbc3fc",
+      "content_hash": "8c39cc43010fb68b039196087bbf20c421a007eb082d2e85e6953907f723271e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:34:18.262Z"
+      "persisted_at": "2026-11-28T11:22:50.390Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun",
@@ -236821,10 +236826,10 @@
       "relative_path": "12_DECISIONS/ADR-oven-sh-bun-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh/bun",
       "repository": "oven-sh/bun",
-      "source_version": "d82a8a7b",
-      "content_hash": "50bccb4c312e6127d51287d0d49bf0791837232eb586c21f9ff3550d80f78b32",
+      "source_version": "e3bbc3fc",
+      "content_hash": "53e53cecfe10268204c5cbfedc7c74db4d74b2887bdc5e78ffe634773609d0f5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:34:18.437Z"
+      "persisted_at": "2026-11-28T11:22:50.595Z"
     },
     "learn-huggingface-autotrust-gev-26b-decide": {
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
@@ -236873,9 +236878,9 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "a74cda7b8ff3bb0bc4238993fa62f0433edf732b9723a257ce8c3ac1bf368d54",
+      "content_hash": "28af6c8922c8ce07d3c2f9434cfcb071e93ab0cc3c3fd0bdc5a5756e41abecc4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:34:27.899Z"
+      "persisted_at": "2026-11-28T11:22:54.439Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings",
@@ -236885,9 +236890,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh-bun-learnings",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "953edadd14e0943a74cc60f62daf2185a83f942f4dc94cb2363ca229391bb0c3",
+      "content_hash": "140f22661aadc9d14cb0010a50289f86da5f593c89d2f9fb2f235099d12d7b14",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:34:28.069Z"
+      "persisted_at": "2026-11-28T11:22:54.637Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar",
@@ -262037,10 +262042,10 @@
       "relative_path": "08_VERIFICATION/oven-sh-bun-verification-protocol-empirical-defect-shield-for-oven-sh-bun.md",
       "title": "Verification Protocol: Empirical Defect Shield for oven-sh/bun",
       "repository": "oven-sh/bun",
-      "source_version": "d82a8a7b",
-      "content_hash": "94d68d379e073b70d355aca32f7e2b105c489f11413cd0da797b827fe5cfea02",
+      "source_version": "e3bbc3fc",
+      "content_hash": "7f6e19853b80ce3329a942393746e75e8ba27d7dbb173497e9bb14d82d74db3e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:34:18.587Z"
+      "persisted_at": "2026-11-28T11:22:50.821Z"
     },
     "candidate_directive-jsc-event-loop-keep-alives-and-vm-handle-references-have-owners": {
       "item_id": "candidate_directive-jsc-event-loop-keep-alives-and-vm-handle-references-have-owners",
@@ -262062,9 +262067,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oven-sh-bun-learnings",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "2e95970c97d0f9517399c611b1d19524cce8ef3840058420b7239e94cd7071cd",
+      "content_hash": "a825feb488bdc63e3aa7c483ea40eb17bc0e1a6c31f3069bc9b0db65b7f2b36e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:34:28.227Z"
+      "persisted_at": "2026-11-28T11:22:54.820Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria",
@@ -268696,8 +268701,8 @@
       "slug": "wzh4869-appports",
       "platform": "github",
       "source_url": "https://github.com/wzh4869/AppPorts",
-      "source_version": "d9294511",
-      "content_hash": "1f6b5716516535e5626317593ce5c728daa776beb3e37d72b44d97117ec3e061",
+      "source_version": "cc33027a",
+      "content_hash": "c373da087da4cdb06814b8b9ca6faece66426b00f3121cf8558e13d785418faa",
       "dossier_path": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "promoted_rules": [
@@ -268715,6 +268720,11 @@
           "number": 10620,
           "title": "将 AppPorts 2.4.0 构建号更新至 96",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11094,
+          "title": "将 AppPorts 版本号更新为 2.4.1（构建号 115）",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -268722,7 +268732,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T07:10:22.881Z",
+      "verified_at": "2026-11-28T11:17:51.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268764,10 +268774,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-architecture-intelligence-wzh4869-appports-core-invariants.md",
       "title": "Architecture Intelligence: wzh4869/AppPorts Core Invariants",
       "repository": "wzh4869/AppPorts",
-      "source_version": "d9294511",
-      "content_hash": "98fb5d8af6531559f5351c48f4a31cc6f92919c4747dc86aa291aecdeb413d91",
+      "source_version": "cc33027a",
+      "content_hash": "7e1fc7a32bf97e97198cad538e54e1e24ed44d262039b3b8f3a87c8afd511fb8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T07:10:23.856Z"
+      "persisted_at": "2026-11-28T11:17:52.561Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports",
@@ -268776,10 +268786,10 @@
       "relative_path": "08_VERIFICATION/wzh4869-appports-verification-protocol-empirical-defect-shield-for-wzh4869-apppo.md",
       "title": "Verification Protocol: Empirical Defect Shield for wzh4869/AppPorts",
       "repository": "wzh4869/AppPorts",
-      "source_version": "d9294511",
-      "content_hash": "1fec6ae6be8540b5e0733c67d0774e5f6667a2ff0725002f4a0604c60ebabb95",
+      "source_version": "cc33027a",
+      "content_hash": "753d3224ee4ecf51e5f7bef1c88c8211c067a84995e61479b5379eb88b5c9556",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T07:10:24.164Z"
+      "persisted_at": "2026-11-28T11:17:52.768Z"
     },
     "learn-github-kubeedge-kubeedge": {
       "learning_id": "learn-github-kubeedge-kubeedge",
@@ -268990,9 +269000,9 @@
       "title": "Architecture Intelligence: wzh4869-appports-learnings Core Invariants",
       "repository": "wzh4869-appports-learnings",
       "source_version": "HEAD",
-      "content_hash": "ede799fafc8422793753d45028629a8febf2c4e5fdd2ccd8d01a0a83cefbbcab",
+      "content_hash": "48387b1b8a59fc8f14a38d898f9d251bf50b24cd44dc3ef70ebda10e440a212d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T07:10:35.120Z"
+      "persisted_at": "2026-11-28T11:22:57.574Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports-learnings",
@@ -269002,9 +269012,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for wzh4869-appports-learnings",
       "repository": "wzh4869-appports-learnings",
       "source_version": "HEAD",
-      "content_hash": "be9f0e47c81b44ad3262c1adbcfa982087f928f4f7f73aec5018afe320e1352c",
+      "content_hash": "3b7b93f259990fb4b720df5eccc8c76247a80faa6572e61a62e449b932059d10",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T07:10:35.452Z"
+      "persisted_at": "2026-11-28T11:22:57.775Z"
     },
     "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants",
@@ -274503,8 +274513,8 @@
       "slug": "cypress-io-cypress",
       "platform": "github",
       "source_url": "https://github.com/cypress-io/cypress",
-      "source_version": "5a30d970",
-      "content_hash": "ccd359dc8353e7a612a1cf16dfc2721bb93539c503f8147eebf2349140bd36fd",
+      "source_version": "c4799792",
+      "content_hash": "2264c1b562b119daa2b5495ff1167a00e8b776681720dfd5dc3a35af44bea3b2",
       "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "promoted_rules": [
@@ -274522,6 +274532,11 @@
           "number": 10404,
           "title": "add a guide and script for measuring a regex before adding it",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11093,
+          "title": "replay held requestAnimationFrame callbacks with the time they run",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -274529,7 +274544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:43:31.331Z",
+      "verified_at": "2026-11-28T11:17:51.115Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274571,10 +274586,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-cypress-io-cypress-design-intelligence-cypress-io-cypress-core-invariants.md",
       "title": "Design Intelligence: cypress-io/cypress Core Invariants",
       "repository": "cypress-io/cypress",
-      "source_version": "9eacf3a8",
-      "content_hash": "08461f4f74d32c469dc3b56161ea34c17ef79a4f8764002f80a9483b5506b8df",
+      "source_version": "c4799792",
+      "content_hash": "5fafc4059b6ff4f472b6217034e72ff40a226a468169b19649826325161a1672",
       "domain_letter": "F",
-      "persisted_at": "2026-11-21T01:08:23.032Z"
+      "persisted_at": "2026-11-28T11:17:51.990Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress",
@@ -274731,9 +274746,9 @@
       "title": "Design Intelligence: cypress-io-cypress-learnings Core Invariants",
       "repository": "cypress-io-cypress-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b8f2faa1ddff92581b0e10a4d10345694e26455e77c0ac4df75f46d3fba9e1b",
+      "content_hash": "a99df4073f742ae3a8c972a2f606c75616075a642643fa9aba7049b77137faca",
       "domain_letter": "F",
-      "persisted_at": "2026-11-21T01:08:38.012Z"
+      "persisted_at": "2026-11-28T11:22:56.394Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress-learnings",
@@ -274743,9 +274758,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cypress-io-cypress-learnings",
       "repository": "cypress-io-cypress-learnings",
       "source_version": "HEAD",
-      "content_hash": "954144f40e6313ea15b8acfbcf76a84228c296ba3380c5592c7ad882e4533ec4",
+      "content_hash": "a8d98e6173467e81ca29f68c2e64365ad6a8a3eab51a5a0f539394cc34d6b46c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:43:48.330Z"
+      "persisted_at": "2026-11-28T11:22:56.613Z"
     },
     "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants",
@@ -372561,6 +372576,96 @@
       "content_hash": "64dc1b429d73007ee11abcffadc0d9e47f88bdc1e3a835a76864fff8ecad08c8",
       "domain_letter": "K",
       "persisted_at": "2026-11-28T11:00:09.057Z"
+    },
+    "rule-11093": {
+      "learning_id": "rule-11093",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11093,
+      "title": "replay held requestAnimationFrame callbacks with the time they run",
+      "source_url": "https://github.com/cypress-io/cypress",
+      "source_version": "c4799792",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T11:17:51.115Z"
+    },
+    "rule-11094": {
+      "learning_id": "rule-11094",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11094,
+      "title": "将 AppPorts 版本号更新为 2.4.1（构建号 115）",
+      "source_url": "https://github.com/wzh4869/AppPorts",
+      "source_version": "cc33027a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T11:17:51.730Z"
+    },
+    "candidate_directive-appports-2-4-1-115": {
+      "item_id": "candidate_directive-appports-2-4-1-115",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GHN3-appports-2-4-1-115.md",
+      "title": "将 AppPorts 版本号更新为 2.4.1（构建号 115）",
+      "repository": "wzh4869/AppPorts",
+      "source_version": "cc33027a",
+      "content_hash": "e4a2d4b8a1ec930766632d56af57f067fb20f3569733d21834d0e4def6c8931d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T11:17:52.344Z"
+    },
+    "rule-11095": {
+      "learning_id": "rule-11095",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11095,
+      "title": "Decode, hash, search and tag strings with fewer copies",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "e3bbc3fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T11:22:49.587Z"
+    },
+    "candidate_directive-decode-hash-search-and-tag-strings-with-fewer-copies": {
+      "item_id": "candidate_directive-decode-hash-search-and-tag-strings-with-fewer-copies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MYJ5-decode-hash-search-and-tag-strings-with-fewer-copies.md",
+      "title": "Decode, hash, search and tag strings with fewer copies",
+      "repository": "oven-sh-bun-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d1d825e3b6b92d5135c6d0df369d7f15f80853f69cad33652b816dad2ee773fc",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-28T11:22:54.168Z"
+    },
+    "candidate_directive-replay-held-requestanimationframe-callbacks-with-the-time-they-run": {
+      "item_id": "candidate_directive-replay-held-requestanimationframe-callbacks-with-the-time-they-run",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N03F-replay-held-requestanimationframe-callbacks-with-the-time-they-run.md",
+      "title": "replay held requestAnimationFrame callbacks with the time they run",
+      "repository": "cypress-io-cypress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "05cf14599601680da99e9fe4497f120c149a4176a628331eab7dada0e4e418a6",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-28T11:22:56.193Z"
+    },
+    "candidate_directive-build-appports-2-4-1-115": {
+      "item_id": "candidate_directive-build-appports-2-4-1-115",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N0ZS-build-appports-2-4-1-115.md",
+      "title": "build): 将 AppPorts 版本号更新为 2.4.1（构建号 115）",
+      "repository": "wzh4869-appports-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1af1265625d92b42ac06a6e23d313632eb55d629ecb98c2110fb04ca6d2da7da",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T11:22:57.358Z"
     }
   },
   "ai-builder-brain": {

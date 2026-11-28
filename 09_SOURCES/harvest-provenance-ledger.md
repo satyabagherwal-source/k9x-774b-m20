@@ -14077,3 +14077,6 @@ Every entry in this ledger must capture:
 | `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `5b80fdec` | Multi-dimensional audit evidence | 2026-11-28T10:36:10.777Z |
 | `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `0dfdc6ac` | Multi-dimensional audit evidence | 2026-11-28T10:50:02.516Z |
 | `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `c08e4db5` | Multi-dimensional audit evidence | 2026-11-28T11:00:04.049Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `c4799792` | Multi-dimensional audit evidence | 2026-11-28T11:17:51.386Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `cc33027a` | Multi-dimensional audit evidence | 2026-11-28T11:17:52.075Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `e3bbc3fc` | Multi-dimensional audit evidence | 2026-11-28T11:22:49.930Z |

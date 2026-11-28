@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T01:08:37.727Z",
+  "timestamp": "2026-11-28T11:22:56.066Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cypress-io-cypress-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cypress-io-cypress-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T01:08:37.727Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T11:22:56.066Z`  
 > **Learning ID**: `LEARN-EVO-cypress-io-cypress-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain F (Design Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from cypress-io-cypress-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source**: github ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
-> **Source Version**: `9eacf3a8`  
+> **Source Version**: `c4799792`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T01:08:21.667Z  
+> **Timestamp**: 2026-11-28T11:17:50.218Z  
 > **Learning ID**: `learn-github-cypress-io-cypress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T01:08:21.661Z  
+> **Harvest Timestamp**: 2026-11-28T11:17:47.926Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Fast, easy and reliable testing for anything that runs in a browser.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 51035 stars
+- **Stars / Engagement**: 51044 stars
 
 ---
 
@@ -1009,11 +1009,13 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35502** (2026-11-21): **chore: skip unused browser installs in system-tests-webkit**
-  *Symptoms*: - Closes N/A. There's no issue for this one; it came out of a `system-tests-webkit` failure in CI.  ### Additional details  `system-tests-webkit` recently failed at the **Install Firefox** step (`Selected version of Firefox is 160.0`, then exit 100) before running a single test. But the WebKit job never uses Firefox, or Chrome for that matter. Each system test only runs the version that matches `--browser`, and WebKit comes from `playwright-webkit`. So why were we downloading two browsers it doesn't need?  This PR stops installing them in the WebKit job, so a failed browser download can no longer break it. Getting there turned up a few things that only worked because Chrome happened to be installed everywhere:  - **`tap_open_spec`** always opens Chrome, whatever `--browser` the job passes. The WebKit job now leaves it out of its spec list, next to the existing `non_root` skip. It still runs in the Chrome, Electron and Firefox jobs. - **`browser_path_spec`** looked for any Chromium browser before the harness could skip it, so it would have thrown in the WebKit job. Both of its tests were also being skipped in *every* CI job, because the harness filters on `browser`, and a path never matches the job's browser name. They now run again:   - A new `ExecOptions.browserPath` launches a browser from a path, while `browser` still names it for filtering. The installed-path test launches the job's own stable browser by path, and skips under Electron and WebKit, which have no installed p
+- **Issue #35574** (2026-11-28): **chore: cover Chrome for Testing in driver browser-name checks**
+  *Symptoms*: - Closes N/A — part of moving the internal test suites’ default browser from Electron to Chrome for Testing (CfT)  ### Additional details  Chrome for Testing reports `Cypress.browser.name` as `chrome-for-testing`, never `chrome`, and the browser matchers compare names exactly. So any driver spec that checks for `'chrome'` by name quietly skips its Chrome branch under CfT. This PR goes through those checks one by one and asks the same question each time: does the test mean Google Chrome specifically, or any Chrome build?  - **`e2e/testConfigOverrides.cy.ts`:** adds a `browser: 'chrome-for-testing'` case and a matching `ranChromeForTesting` flag in the `after` hook. Before this, the hook expected every flag to be false under CfT, so the spec passed without running a single browser-gated test. The `'chrome'` case stays, since checking exact name matching is the whole point of it. - **`commands/actions/click.cy.ts`** (`no click when element is disabled`): the disabled `<button>` gets `mouseenter`/`mousedown`/`mouseup` in every Blink build I tried (Chrome for Testing 158 and Electron 150, with the assertion temporarily running in every browser). So this is engine behavior, not something only Google Chrome does. The gate is now the spec’s existing `isChromium116OrLater`, the same version split that `handles disabled attr` already uses for disabled-element mouse events. - **`e2e/xhr_abort.cy.ts`:** the `chrome >= 71` block is now gated on `['chrome', 'chrome-for-testing']`, so the t
+  **Post-Mortem & Fix Analysis**:
+  >  <h3>   <a href="https://cloud.cypress.io/projects/ypt4pf?utm_source=github&utm_medium=flaky&utm_campaign=project">cypress</a>&nbsp;   <picture><img src="https://assets.cypress.io/github-pr-comment-icons/chevron.svg" alt="" width="14" height="14" /></picture>&nbsp;   <a href="https://cloud.cypress.io/projects/ypt4pf/runs/75942/overview?utm_source=github&utm_medium=flaky&utm_campaign=run%20number">Run #75942</a> </h3>  <details>   <summary>     <strong>Run Properties:</strong>&nbsp;     <code><picture><img src="https://assets.cypress.io/github-pr-comment-icons/passed.svg" alt="status check passed" width="10" height="10" /></picture>&nbsp;Passed&nbsp;<a href="https://cloud.cypress.io/projects/ypt4pf/runs/75942/overview?utm_source=github&utm_medium=flaky&utm_campaign=run%20number">#75942</a></code> &nbsp;&bull;&nbsp;     <code><picture><img src="https://assets.cypress.io/github-pr-comment-icons/git-commit.svg" alt="git commit" width="10" height="10" /></picture> <a href="https://github.co
 
-- **Issue #35501** (2026-11-20): **docs(puppeteer): lead the README with multi-tab testing**
-  *Symptoms*: - Closes N/A  ### Additional details  The `@cypress/puppeteer` README opened with a description of the Puppeteer API, which didn't say what the plugin is for. This change:  - Opens the README with "Enable [multi-tab testing in Cypress](https://on.cypress.io/multi-tab-testing) with the Puppeteer plugin." - Adds a "Why use this plugin" section that lists the cases it covers: checking a tab or window your app opens, opening an extra tab, and working with several pages in one test. - Leaves the rest of the README unchanged (installation, upgrading, compatibility, API, examples, troubleshooting).  Only `npm/puppeteer/README.md` changes.  ### Steps to test  Read the top of `npm/puppeteer/README.md` and confirm the link to the multi-tab testing guide resolves.  ### How has the user experience changed?  No change to plugin behavior. The README intro is different.  ### PR Tasks  - [na] Is there an associated issue with maintainer approval for PR submission? Documentation-only change. - [na] Have tests been added/updated? - [na] Has a PR for user-facing changes been opened in [`cypress-documentation`](https://github.com/cypress-io/cypress-documentation)? - [na] Have API changes been updated in the [`type definitions`](https://github.com/cypress-io/cypress/blob/develop/cli/types/cypress.d.ts)?  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- CURSOR_SUMMARY --> ---  > [!NOTE] > **Low Risk** > Documentation-only change to `npm/puppeteer/README.md`; no runtime or API 
+- **Issue #35572** (2026-11-28): **chore: emit a loadable ESM build for @packages/https-proxy**
+  *Symptoms*: - Closes N/A. There's no issue for this one. It's a small build fix I found while checking where `@packages/https-proxy`'s `"module"` field pointed. It's related to #34829, which moved lint ignores for build output to one central place.  ### Additional details  `package.json` advertises `"module": "esm/index.js"`, but that file never existed. `tsconfig.esm.json` set `"noEmit": true`, so `build:esm` deleted `esm/` and then wrote nothing back into it. Once I turned emitting on, I found the output still couldn't be loaded by Node's own ESM loader. So this PR goes the whole way:  - **Emit the build:** drop `noEmit` from `tsconfig.esm.json`. - **Make it real ESM:**   - Relative imports in `lib/` now end in `.js`, because Node's ESM loader won't guess an extension. A package-scoped `n/file-extension-in-import` lint rule keeps it that way, and it can auto-fix.   - `build:esm` writes `esm/package.json` containing `{"type":"module"}`. Putting `"type": "module"` on the package itself would break `cjs/`, which `main` still points at.   - `ca.ts` imports `node-forge` by its default export. Node can't read named exports from that CommonJS package, so the named import failed with ``does not provide an export named 'md'``. - **Declare the runtime dependency:** `lib/server.ts` imports `@packages/network` at runtime, but it was only a devDependency and worked because the monorepo hoists it. It's now a dependency. `@packages/server` already depends on both packages, so the binary's contents do
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1030,606 +1032,506 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `141cc595` (2026-11-20)
-**Commit Message**: fix: show git info in the specs list for commits dated in the future or from a non-English git (#35492)
+### Incident Patch 1: `08aeee75` (2026-11-28)
+**Commit Message**: fix: replay held requestAnimationFrame callbacks with the time they run (#35566)
 
-* fix: show git info for specs whose last commit is dated in the future or in a localized git
+* fix: give replayed requestAnimationFrame callbacks the time they run
 
-GitDataSource parsed the relative age from `git log --pretty=%ar`, which
-only matched git's English "N units ago". A commit dated after the local
-clock prints "in the future", and git built with gettext translates the
-age (e.g. "vor 2 Tagen"), so the regex failed and the specs list showed
-no last-modified time or author.
+While the driver pauses timers (cy.screenshot with
+disableTimersAndAnimations), rAF callbacks that come due are held and
+replayed on unpause. They were replayed with the timestamp the browser
+passed when they came due, which is stale by the length of the pause and
+earlier than performance.now() reads in setTimeout callbacks replayed in
+the same flush.
 
-Ask git for the author date as unix seconds (`%at`) and format the age in
-JS, porting git's show_date_relative rounding so ages that rendered
-before render identically (checked against real `%ar` output for 343
-ages from seconds to 10 years). A date past the clock now reads e.g.
-"in 3 hours" via dayjs, like the other relative times in the specs list.
-Author, short hash and subject parsing are unchanged.
+Replay now reads performance.now() once per flush and passes it to every
+held rAF callback, matching how callbacks in one real frame share a
+timestamp. Other timers keep their original arguments.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01WUv8r5LjTJiQN6Si6L26JM
+Claude-Session: https://claude.ai/code/session_01WUv8r3m9LtBn5gLVwYb8xD
 
-* test: keep GitDataSource age cases clear of rounding boundaries
+* chore: lead the rAF replay comment with its effect
 
-The minutes and days cases sat on the old edge of their rounding bucket,
-so a
+Open with what the replay does to a held callback's timestamp, with an
+example, before the reason, per the code comment guidelines.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01WUv8r3m9LtBn5gLVwYb8xD
+
+* test: assert replayed rAF timestamps are current in the d
 
 **File**: `cli/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -35,6 +35,7 @@
- - Fixed an issue where a request for a Cypress-reserved path that Cypress does not serve, such as `/__/does-not-exist` or `/__cypress/does-not-exist`, never received a response. A `fetch()` or `<script>` load for such a path hung until the page's own timeout, and [`cy.request()`](https://on.cypress.io/request) failed after 30 seconds with "No response was received within the timeout." These requests now receive a `404` promptly, so a synchronous `XMLHttpRequest` to one no longer freezes the browser. Fixes [#34810](https://github.com/cypress-io/cypress/issues/34810) and [#35026](https://github.com/cypress-io/cypress/issues/35026).
- - Fixed an issue where, in `cypress run` with the Electron browser and video disabled, the first screenshot in a spec, including the screenshot taken when a test fails, made the application under test render far more slowly for the rest of that spec. Fixes [#35291](https://github.com/cypress-io/cypress/issues/35291).
- - Fixed a regression in [8.4.0](#8-4-0) where `.scrollTo()` on a scrollable element wrapped with [`Cypress.$`](https://on.cypress.io/$), other than the window or `body`, threw `TypeError: Cannot read properties of undefined (reading 'slice')` when given a selector string, a number, or `'max'`, such as `Cypress.$('#list').scrollTo('#item')` or `Cypress.$('#list').scrollTo(120)`. It now scrolls to the matching element or position. Fixed in [#35460](https://github.com/cypress-io/cypress/pull/35460).
-+- Fixed an issue where the specs list in `cypress open` showed no last-modified time or author for a spec whose last commit was dated after the computer's clock, or when git ran in a language other than English. A spec committed 3 hours ahead of the clock now shows `in 3 hours` and its author instead of a blank. Committed specs now word their age like new and modified specs, such as `a day ago` instead of `1 day ago`. Fixed in [#35492](https://github.com/cypress-io/cypress/pull/35492).
- - Fixed an issue where Cypress failed to load your config with `Cannot read properties of undefined (reading 'getFilesByGlob')` when a [`supportFile`](https://on.cypress.io/configuration) pattern with `**`, such as `cypress/support/**/e2e.js`, searched a directory Cypress cannot read. Cypress now skips that directory, finds the support file, and runs your specs. Fixed in [#35486](https://github.com/cypress-io/cypress/pull/35486).
- - In Firefox, error stack traces in the Command Log and in `cypress run` output no longer end the names of nested anonymous functions with a stray `/` or `/</`. For example, a test's callback now shows as `at ./cypress/spec.cy.js` instead of `at ./cypress/spec.cy.js/`. A frame with no name to show now reads `at <unknown>` instead of being blank. Fixed in [#35462](https://github.com/cypress-io/cypress/pull/35462).
- - Requests from your application no longer carry Cypress's internal `__cypress.initial` and `__cypress.unload` cookies to your server or to [`cy.intercept()`](https://on.cypress.io/intercept) request handlers. For example, a request with no cookies of its own could arrive with `Cookie: __cypress.unload=true`, and now arrives without a `Cookie` header. Fixed in [#35470](https://github.com/cypress-io/cypress/pull/35470).
+@@ -7,6 +7,7 @@
+ 
+ **Bugfixes:**
+ 
++- `requestAnimationFrame()` callbacks in your application that come due while [`cy.screenshot()`](https://on.cypress.io/screenshot) takes a screenshot now receive the time they run once the screenshot finishes, as they would in a real frame, instead of the time they came due. Fixed in [#35566](https://github.com/cypress-io/cypress/pull/35566).
+ - Fixed an issue where setting up a testing type wrote `import` and `export default` into an empty `cypress.config.cjs` when your `package.json` has `"type": "module"`, so the configuration file then failed to load. Fixed in [#35543](https://github.com/cypress-io/cypress/pull/35543).
+ - Fixed an issue where the `junit` reporter, and custom reporters that use `mocha-junit-reporter`, printed `Couldn't determine Mocha version` on every run. Fixed in [#35561](https://github.com/cypress-io/cypress/pull/35561).
+ 
 ```
 
-**File**: `packages/data-context/src/sources/GitDataSource.ts` (modified, +9/-7)
+**File**: `packages/driver/cypress/e2e/cy/timers.cy.ts` (modified, +8/-3)
 ```diff
-@@ -17,11 +17,13 @@ dayjs.extend(relativeTime)
- // Spec names are repository content, so they're passed to git as literal pathspec
- // arguments, never through a shell. SimpleGit caps how many `git log` calls run at once.
+@@ -178,21 +178,26 @@ describe('driver/src/cy/timers', () => {
  
--// matches <timestamp> <when> <author>
--// $ git log -1 --pretty=format:%ci %ar %an <file>
--// eg '2021-09-14 13:43:19 +1000 2 days ago Lachlan Miller
--const GIT_LOG_REGEXP = /(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [-+].+?)\s(.+ago)\s([^|]*)\|([^|]*)\|([^|]*)/
--const GIT_LOG_ARGS = ['--literal-pathspecs', 'log', '--max-count=1', '--pretty=format:%ci %ar %an|%h|%s']
-+// matches <committer date> <author date as unix seconds> <author>|<short hash>|<subject>
-+// eg '2021-09-14 13:43:19 +1000 1631504599 Marisol Okafor|1a2b3c4|add spec'
-+// The age is formatted from the unix time with dayjs, like the created and modified
-+// specs, rather than read from `%ar`: git translates that in non-English locales and
-+// replaces it with `in the future` for dates past the clock.
-+const GIT_LOG_REGEXP = /(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [-+]\d{4})\s(\d+)\s([^|]*)\|([^|]*)\|([^|]*)/
-+const GIT_LOG_ARGS = ['--literal-pathspecs', 'log', '--max-count=1', '--pretty=format:%ci %at %an|%h|%s']
- const GIT_ROOT_DIR_COMMAND = '--show-toplevel'
- const SIXTY_SECONDS = 60 * 1000
+         expect(id1).to.eq(1)
  
-@@ -333,14 +335,14 @@ export class GitDataSource {
-           if (file && info && info[1] && info[2] && info[3] && info[4] && info[5]) {
-             toSet = {
-               lastModifiedTimestamp: info[1],
--              lastModifiedHumanReadable: info[2],
-+              lastModifiedHumanReadable: dayjs.unix(Number(info[2])).fromNow(),
-               author: info[3],
-               statusType: 'unmodified',
-               subject: info[5],
-               shortHash: info[4],
-             }
-           } else {
--            debug(`did not get expected git log for ${file}, expected string with format '<timestamp> <time_ago> <author>|<short_hash>|<subject>'. Got: ${data}`)
-+            debug(`did not get expected git log for ${file}, expected string with format '<timestamp> <unix_time> <author>|<short_hash>|<subject>'. Got: ${data}`)
-             toSet = null
-           }
-         }
++        let unpausedAt: number
++
+         cy
+         .wait(100)
+         .log('requestAnimationFrame should NOT have fired when paused')
+         .window().its('bar').should('be.null')
+         .log('requestAnimationFrame should now fire when unpaused')
+         .then(() => {
++          unpausedAt = win.performance.now()
++
+           // now go ahead and run all the queued timers
+           return cy.pauseTimers(false)
+         })
+ 
+         cy.window().its('bar').should('eq', 'bar')
+         .and(() => {
+-          // requestAnimationFrame should have passed through
+-          // its high res timestamp from performance.now()
+-          expect(rafStub).to.be.calledWithMatch(Number)
++          // The callback's frame came due during the wait, so a timestamp from
++          // before unpausing means it was given that frame's stale time
++          expect(rafStub).to.be.calledOnce
++          expect(rafStub.firstCall.args[0]).to.be.at.least(unpausedAt)
+         })
+         .then(() => {
+           win.bar = 'foo'
 ```
 
-**File**: `packages/data-context/test/unit/sources/GitDataSource.spec.ts` (modified, +90/-0)
+**File**: `packages/runner/injection/timers.ts` (modified, +23/-0)
 ```diff
-@@ -204,6 +204,96 @@ describe('GitDataSource', () => {
-     }
-   })
+@@ -18,6 +18,12 @@ export const createTimers = () => {
+   let timerQueue: QueuedTimer[]
+   let canceledTimerIds: Record<number, boolean>
  
-+  describe('reading the last commit of a committed spec', () => {
-+    const HOUR = 60 * 60 * 1000
-+    const DAY = 24 * HOUR
++  // Bound when the timers are created, before any app or test code runs, so
++  // held rAF callbacks keep the clock real frames use even after
++  // `performance.now` is replaced, as `cy.clock(now, ['performance'])` does
++  const { performance } = window
++  const frameClock = performance.now.bind(performance)
 +
-+    const commitSpec = async (filename: string, { author, ageMs, subject }: { author: string, ageMs: number, subject: string }) => {
-+      const spec = toPosix(path.join(e2eFolder, filename))
-+      const date = new Date(Date.now() - ageMs).toISOString()
+   const reset = () => {
+     paused = false
+     flushing = false
+@@ -36,6 +42,13 @@ export const createTimers = () => {
+   const flushTimerQueue = () => {
+     flushing = true
+ 
++    // Held rAF callbacks receive the time the first of them runs: one that came
++    // due at 16 and replays at 5016 is called with 5016, not 16. The replay
++    // runs outside any rendering frame, so the timestamp the browser passed is
++    // stale by the length of the pause. Like callbacks in one real frame, every
++    // rAF callback in this flush shares that timestamp.
++    let frameTimestamp: number | undefined
 +
-+      await fs.createFile(spec)
-+      await git.add([spec])
-+      await git.commit(subject, [spec], { '--author': `${author} <${author.toLowerCase().replace(' ', '.')}@example.com>`, '--date': date })
+     timerQueue.forEach((timer) => {
+       const { timerId, type, fnOrCode, params } = timer
+ 
+@@ -46,6 +59,16 @@ export const createTimers = () => {
+         return
+       }
+ 
++      if (type === 'requestAnimationFrame') {
++        if (frameTimestamp === undefined) {
++          frameTimestamp = frameClock()
++        }
 +
-+      const [timestamp, shortHash] = (await git.raw(['log', '-1', '--pretty=format:%ci|%h', '--', spec])).split('|')
++        invoke(fnOrCode, [frameTimestamp])
 +
-+      return { spec, timestamp, shortHash }
-+    }
++        return
++      }
 +
-+    const loadGitInfo = async (specs: string[]) => {
-+      const dfd = Promise.withResolvers()
+       invoke(fnOrCode, params)
+     })
+ 
+```
+
+**File**: `packages/runner/test/unit/injection/timers.spec.ts` (modified, +59/-0)
+```diff
+@@ -113,6 +113,65 @@ describe('injection/timers', () => {
+       expect(timerWindow.codeRan).toBe(true)
+     })
+ 
++    it('replays a held requestAnimationFrame callback with the time it runs, not the time it came due', () => {
++      const callback = vi.fn()
 +
-+      gitInfo = new GitDataSource({
-+        isRunMode: false,
-+        projectRoot: projectPath,
-+        onBranchChange: jest.fn(),
-+        onGitInfoChange: dfd.resolve,
-+        onError: jest.fn(),
-+      })
++      timers.pause(true)
++      window.requestAnimationFrame(callback)
++      vi.advanceTimersToNextFrame()
++      vi.advanceTimersByTime(5000)
 +
-+      gitInfo.setSpecs(specs)
++      expect(callback).not.toHaveBeenCalled()
 +
-+      await dfd.promise
-+    }
++      timers.pause(false)
 +
-+    it('reads the timestamp, age, author, short hash and subject', async () => {
-+      const { spec, timestamp, shortHash } = await commitSpec('typical.cy.js', { author: 'Marisol Okafor', ageMs: 2 * DAY + HOUR, subject: 'add typical spec' })
-+
-+      await loadGitInfo([spec])
-+
-+      expect(timestamp).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [-+]\d{4}$/)
-+      expect(gitInfo.gitInfoFor(spec)).toEqual({
-+        lastModifiedTimestamp: timestamp,
-+        lastModifiedHumanReadable: '2 days ago',
-+        author: 'Marisol Okafor',
-+        statusType: 'unmodified',
-+        subject: 'add typical spec',
-+        shortHash,
-+      })
++      expect(callback).toHaveBeenCalledExactlyOnceWith(5016)
 +    })
 +
-+    it('reads a commit dated after the local clock, which git words as "in the future"', async () => {
-+      const { spec, timestamp, shortHash } = await commitSpec('future.cy.js', { author: 'Priya Natarajan', ageMs: -3 * HOUR - 60 * 1000, subject: 'add spec from a skewed clock' })
++    it('gives every requestAnimationFrame callback held in one flush the same timestamp', () => {
++      const first = vi.fn(() => vi.advanceTimersByTime(4))
++      const second = vi.fn()
 +
-+      await loadGitInfo([spec])
++      timers.pause(true)
++      window.requestAnimationFrame(first)
++      window.requestAnimationFrame(second)
++      vi.advanceTimersToNextFrame()
++      vi.advanceTimersByTime(5000)
 +
-+      expect(gitInfo.gitInfoFor(spec)).toEqual({
-+        lastModifiedTimestamp: timestamp,
-+        lastModifiedHumanReadable: 'in 3 hours',
-+        author: 'Priya Natarajan',
-+        statusType: 'unmodified',
-+        subject: 'add spec from a skewed clock',
-+        shortHash,
-+      })
++      timers.pause(false)
++
++      expect(first).toHaveBeenCalledExactlyOnceWith(5016)
++      expect(second).toHaveBeenCalledExactlyOnceWith(5016)
 +    })
 +
-+    it('keeps an author whose first name ends in "ago" out of the age', async () => {
-+      const { spec } = await commitSpec('iago.cy.js', { author: 'Iago Smith', ageMs: 2 * DAY + HOUR, subject: 'add iago spec' })
++    it('times a held requestAnimationFrame callback after the held callbacks queued ahead of it run', () => {
++      const frame = vi.fn()
 +
-+      await loadGitInfo([spec])
++      timers.pause(true)
++      window.setTimeout(() => vi.advanceTimersByTime(200), 10)
++      window.requestAnimationFrame(frame)
++      vi.advanceTimersByTime(100)
 +
-+      expect(gitInfo.gitInfoFor(spec)).toMatchObject({
-+        lastModifiedHumanReadable: '2 days ago',
-+        author: 'Iago Smith',
-+        subject: 'add iago spec',
-+      })
++      timers.pause(false)
++
++      expect(frame).toHaveBeenCalledExactlyOnceWith(300)
 +    })
 +
-+    it('reads the subject up to the first "|"', async () => {
-+      const { spec, shortHash } = await commitSpec('pipe.cy.js', { author: 'Test User', ageMs: 2 * DAY + HOUR, subject: 'fix a|b ago c|d' })
++    it('times a held requestAnimationFrame callback by the clock frames use when performance.now is replaced after wrapping', () => {
++      const frame = vi.fn()
++      const replacedNow = vi.spyOn(performance, 'now').mockReturnValue(0)
 +
-+      await loadGitInfo([spec])
++      timers.pause(true)
++      window.requestAnimationFrame(frame)
++      vi.advanceTimersToNextFrame()
++      vi.advanceTimersByTime(5000)
 +
-+      expect(gitInfo.gitInfoFor(spec)).toMatchObject({
-+        lastModifiedHumanReadable: '2 days ago',
-+        author: 'Test User',
-+        shortHash,
-+        subject: 'fix a',
-+      })
++      timers.pause(false)
++      replacedNow.mockRestore()
++
++      expect(frame).toHaveBeenCalledExactlyOnceWith(5016)
 +    })
-+  })
 +
-   it(`watches switching branches on ${os.platform()}`, async () => {
-     const stub = jest.fn()
-     const dfd = Promise.withResolvers()
+     it('holds a timer scheduled before pausing that comes due while paused', () => {
+       const callback = vi.fn()
+ 
 ```
 
 ---
 
-### Incident Patch 2: `6a56250e` (2026-11-20)
-**Commit Message**: fix: detect third-party CT frameworks when the project path has brackets or parentheses (#35493)
+### Incident Patch 2: `2ad20e3e` (2026-11-28)
+**Commit Message**: chore: emit a loadable ESM build for @packages/https-proxy (#35572)
 
-* fix: detect third-party CT frameworks when the project path has brackets or parentheses
+* chore: emit @packages/https-proxy ESM build
 
-Migrate packages/scaffold-config's third-party CT framework detection
-from globby to tinyglobby.
-
-Each directory searched now goes in tinyglobby's `cwd`, with the
-relative `node_modules/cypress-ct-*` and `node_modules/@*?/cypress-ct-*?`
-patterns and `absolute: true`. Previously the directory was joined into
-the pattern itself, so a project path containing `[`, `]`, `(` or `)`
-was read as glob syntax and matched nothing: no third-party framework
-was offered during component testing setup. Results are sorted per
-directory, since neither library orders them.
-
-globby stays in the package's dependencies because detect.ts still
-uses it.
+tsconfig.esm.json set noEmit, so build:esm cleared esm/ and wrote
+nothing, leaving the package.json "module" entry (esm/index.js)
+pointing at a missing file. Dropping noEmit makes tsc emit it.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01WUv8r1vSdjzC36H5Dc1Jnh
+Claude-Session: https://claude.ai/code/session_01WUv8r3qdTZRBzwwYXN6AN2
 
-* chore: tighten the scaffold-config glob comment and changelog entry
+* chore: make @packages/https-proxy ESM build loadable by Node
 
-Name a concrete failing path in the comment on why the project directory
-goes in tinyglobby's `cwd`, drop the changelog entry's "For example"
-sentence, which only restated the 
+The esm/ output used extensionless relative imports and sat in a
+package with no "type", so Node's ESM loader couldn't resolve
+'./proxy' and reparsed every file with a warning.
 
-**File**: `CLAUDE.md` (modified, +1/-1)
+- add .js extensions to relative imports in lib/, enforced by
+  n/file-extension-in-import
+- write esm/package.json with "type": "module" in build:esm
+- import node-forge by its default export; Node can't read its
+  CommonJS named exports from ESM
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01WUv8r3qdTZRBzwwYXN6AN2
+
+* chore: list @packages/network as an https-proxy runtime dependency
+
+lib/server.ts imports @packages/network at runtime, but it was listed
+under devDe
+
+**File**: `packages/https-proxy/AGENTS.md` (modified, +2/-1)
 ```diff
-@@ -49,7 +49,7 @@
- - When a change could reasonably be filed as `fix` or `chore` (for example, removing data the app sends to Cypress Cloud), ask the user which prefix to use before adding a `cli/CHANGELOG.md` entry. A `chore` gets no entry.
- - Give test fixtures realistic made-up data, such as a full name, an `@example.com` email and a token-shaped value, not placeholders like `'foo'`.
- - When a test feeds in output from a browser, tool or service (a stack trace, a CLI message, an API response), take its examples from real captured output, such as a fixture under `__fixtures__`, not names made up to look plausible. Keep inputs that only follow the format's rules in their own clearly labelled cases, and check that changelog examples come from the same real output.
--- Keep a `cli/CHANGELOG.md` entry to the user-facing change, one before-and-after example and the link. Cut any sentence that restates the change in other words.
-+- Keep a `cli/CHANGELOG.md` entry to the user-facing change and the link, plus one before-and-after example only when it shows something the description doesn't. Cut any sentence that restates the change in other words, including a "For example" that only applies the description to one sample path or name.
- - Before committing or pushing, `yarn check-ts`, `yarn lint`, `yarn health-check` (knip), and relevant unit tests must pass locally. CI currently does not block expensive e2e jobs when these fail.
+@@ -37,9 +37,10 @@ lib/
  
- @AGENTS.md
+ - `proxy.spec.ts` and `server.spec.ts` cannot run in parallel because both bind to overlapping ports. The `test-unit` script uses `vitest run` without `--pool=forks`; the `test-debug` script explicitly passes `--no-file-parallelism`.
+ - Test helper certificates live in `test/helpers/certs/`. Regenerate them with `regenerate:certs` (requires OpenSSL in `$PATH`) when they expire or when the CA key needs to rotate.
++- `esm/` is real ESM: `build:esm` writes `esm/package.json` with `"type": "module"`, so relative imports in `lib/` need a `.js` extension (`n/file-extension-in-import` enforces this). Use a default import for a CommonJS dependency whose named exports Node can't read, such as `node-forge`. Named imports from tsc-compiled CommonJS like `@packages/network` work; check an unfamiliar one with `node --input-type=module`.
+ - The `semaphore` package throttles concurrent certificate generation to avoid race conditions under high load.
+ 
+ ## Integration Points
+ 
+ - Consumed by **@packages/proxy** and **@packages/server** which instantiate the HTTPS proxy server as part of the Cypress HTTP interception pipeline.
+-- Depends on **@packages/network** (dev dep) for HTTP agent utilities used in integration tests.
++- Depends on **@packages/network** at runtime: `lib/server.ts` uses its connection and HTTP helpers.
 ```
 
-**File**: `cli/CHANGELOG.md` (modified, +1/-0)
+**File**: `packages/https-proxy/eslint.config.ts` (modified, +7/-0)
 ```diff
-@@ -45,6 +45,7 @@
- - Fixed an issue where the specs list in `cypress open` showed no last-modified time or author for a spec whose last commit was dated after the computer's clock, or when git ran in a language other than English. A spec committed 3 hours ahead of the clock now shows `in 3 hours` and its author instead of a blank. Committed specs now word their age like new and modified specs, such as `a day ago` instead of `1 day ago`. Fixed in [#35492](https://github.com/cypress-io/cypress/pull/35492).
- - Fixed an issue where Cypress failed to load your config with `Cannot read properties of undefined (reading 'getFilesByGlob')` when a [`supportFile`](https://on.cypress.io/configuration) pattern with `**`, such as `cypress/support/**/e2e.js`, searched a directory Cypress cannot read. Cypress now skips that directory, finds the support file, and runs your specs. Fixed in [#35486](https://github.com/cypress-io/cypress/pull/35486).
- - In Firefox, error stack traces in the Command Log and in `cypress run` output no longer end the names of nested anonymous functions with a stray `/` or `/</`. For example, a test's callback now shows as `at ./cypress/spec.cy.js` instead of `at ./cypress/spec.cy.js/`. A frame with no name to show now reads `at <unknown>` instead of being blank. Fixed in [#35462](https://github.com/cypress-io/cypress/pull/35462).
-+- Fixed an issue where component testing setup did not offer installed third-party framework definitions, such as `cypress-ct-solid-js` or `@org/cypress-ct-qwik`, when the project's path contained `[`, `]`, `(` or `)`. Fixed in [#35493](https://github.com/cypress-io/cypress/pull/35493).
- - Requests from your application no longer carry Cypress's internal `__cypress.initial` and `__cypress.unload` cookies to your server or to [`cy.intercept()`](https://on.cypress.io/intercept) request handlers. For example, a request with no cookies of its own could arrive with `Cookie: __cypress.unload=true`, and now arrives without a `Cookie` header. Fixed in [#35470](https://github.com/cypress-io/cypress/pull/35470).
- - Fixed an issue where run mode durations of 24 hours or more dropped the whole days, so a run that took exactly 24 hours was reported as `0ms` and a run of 26 hours as `2:00:00`. Fixes [#34976](https://github.com/cypress-io/cypress/issues/34976).
- 
-```
-
-**File**: `packages/scaffold-config/package.json` (modified, +1/-0)
-```diff
-@@ -34,6 +34,7 @@
-     "globby": "^11.1.0",
-     "resolve-package-path": "^4.0.3",
-     "semver": "^7.7.3",
-+    "tinyglobby": "^0.2.17",
-     "zod": "^3.22.5"
+@@ -14,4 +14,11 @@ export default [
+     },
    },
-   "devDependencies": {
+   noFloatingPromisesConfig(['lib/**/*.ts']),
++  {
++    // Keeps esm/ loadable by anyone importing it through Node's ESM loader, which won't guess a missing extension
++    files: ['lib/**/*.ts'],
++    rules: {
++      'n/file-extension-in-import': ['error', 'always'],
++    },
++  },
+ ]
 ```
 
-**File**: `packages/scaffold-config/src/ct-detect-third-party.ts` (modified, +13/-11)
+**File**: `packages/https-proxy/lib/ca.ts` (modified, +6/-3)
+```diff
+@@ -3,9 +3,12 @@ import { promisify } from 'util'
+ import debugModule from 'debug'
+ import os from 'os'
+ import path from 'path'
+-import { pki, md } from 'node-forge'
++import forge from 'node-forge'
+ import fs from 'fs-extra'
+ 
++// node-forge is CommonJS, so native ESM can't import its members by name
++const { pki, md } = forge
++
+ const debug = debugModule('cypress:https-proxy:ca')
+ 
+ // if this is higher than the user's cached CA version, the Cypress
+@@ -122,8 +125,8 @@ export class CA {
+   baseCAFolder: string
+   certsFolder: string
+   keysFolder: string
+-  CAcert: pki.Certificate
+-  CAkeys: pki.rsa.KeyPair
++  CAcert: forge.pki.Certificate
++  CAkeys: forge.pki.rsa.KeyPair
+ 
+   constructor (caFolder?: string) {
+     if (!caFolder) {
+```
+
+**File**: `packages/https-proxy/lib/index.ts` (modified, +3/-3)
+```diff
+@@ -1,6 +1,6 @@
+-import { create as createProxy, reset as resetProxy } from './proxy'
+-import { CA } from './ca'
++import { create as createProxy, reset as resetProxy } from './proxy.js'
++import { CA } from './ca.js'
+ 
+ export { createProxy, resetProxy, CA }
+ 
+-export type { Server } from './server'
++export type { Server } from './server.js'
+```
+
+**File**: `packages/https-proxy/lib/proxy.ts` (modified, +2/-2)
 ```diff
 @@ -1,5 +1,5 @@
- import path from 'path'
--import globby from 'globby'
-+import { glob } from 'tinyglobby'
- import { z } from 'zod'
- import fs from 'fs-extra'
- import Debug from 'debug'
-@@ -96,8 +96,10 @@ const ThirdPartyComponentFrameworkSchema = z.object({
-   componentIndexHtml: z.optional(z.function()),
- })
+-import { CA } from './ca'
+-import { create as createServer, reset as resetServer } from './server'
++import { CA } from './ca.js'
++import { create as createServer, reset as resetServer } from './server.js'
  
--const CT_FRAMEWORK_GLOBAL_GLOB = path.join('node_modules', 'cypress-ct-*', 'package.json')
--const CT_FRAMEWORK_NAMESPACED_GLOB = path.join('node_modules', '@*?/cypress-ct-*?', 'package.json')
-+const CT_FRAMEWORK_GLOBS = [
-+  'node_modules/cypress-ct-*/package.json',
-+  'node_modules/@*?/cypress-ct-*?/package.json',
-+]
- 
- export interface ErroredFramework {
-   path: string
-@@ -115,14 +117,14 @@ export async function detectThirdPartyCTFrameworks (
-     // Start at the project root and check each directory above it until we see
-     // an indication that the current directory is the root of the repository.
-     for (const directory of directoryAndAncestors(projectRoot)) {
--      const fullPathGlobs = [
--        path.join(directory, CT_FRAMEWORK_GLOBAL_GLOB),
--        path.join(directory, CT_FRAMEWORK_NAMESPACED_GLOB),
--      ].map((x) => x.replaceAll('\\', '/'))
--
--      debug('searching for third-party dependencies with globs %o', fullPathGlobs)
--
--      const newPackagePaths = await globby(fullPathGlobs)
-+      debug('searching for third-party dependencies in %s', directory)
-+
-+      // Keep the directory in `cwd`, not the pattern: glob syntax would read the
-+      // brackets and parentheses in a path like `my-app (v2) [beta]` and match nothing
-+      const newPackagePaths = (await glob(CT_FRAMEWORK_GLOBS, {
-+        cwd: directory,
-+        absolute: true,
-+      })).sort()
- 
-       if (newPackagePaths.length > 0) {
-         debug('found third-party dependencies %o', newPackagePaths)
+ export async function create (dir: string, port: number, options: any) {
+   const ca = await CA.create(dir)
 ```
 
-**File**: `packages/scaffold-config/test/ct-detect-third-party.spec.ts` (modified, +142/-0)
+**File**: `packages/https-proxy/lib/server.ts` (modified, +2/-2)
 ```diff
-@@ -190,6 +190,148 @@ describe('detectThirdPartyCTFrameworks', () => {
-     })
-   })
+@@ -3,10 +3,10 @@ import { allowDestroy, connect, httpUtils } from '@packages/network'
+ import debugModule from 'debug'
+ import https from 'https'
+ import net from 'net'
+-import { hostAndPort } from './util/parse'
++import { hostAndPort } from './util/parse.js'
+ import semaphore from 'semaphore'
+ import url from 'url'
+-import type { CA } from './ca'
++import type { CA } from './ca.js'
+ import type { IncomingMessage, ServerResponse } from 'http'
+ import type { AddressInfo } from 'net'
  
-+  describe('installed package layouts', () => {
-+    const solidDependency: Cypress.CypressComponentDependency = {
-+      type: 'solid-js',
-+      name: 'Solid.js',
-+      package: 'solid-js',
-+      installer: 'solid-js',
-+      description: 'Solid is a declarative JavaScript library for creating user interfaces',
-+      minVersion: '^1.0.0',
-+    }
-+
-+    const qwikDependency: Cypress.CypressComponentDependency = {
-+      type: 'qwik',
-+      name: 'Qwik',
-+      package: '@builder.io/qwik',
-+      installer: '@builder.io/qwik',
-+      description: 'An Open-Source sub-framework designed with a focus on server-side-rendering, lazy-loading, and styling/animation.',
-+      minVersion: '^0.17.5',
-+    }
-+
-+    let tempDir: string
-+
-+    async function createProject (directoryName: string) {
-+      const projectRoot = path.join(tempDir, directoryName)
-+
-+      // Marks the project as the repository root, so the search stops here
-+      // instead of also picking up packages installed above the temp directory
-+      await fs.mkdirp(path.join(projectRoot, '.git'))
-+      await fs.writeJson(path.join(projectRoot, 'package.json'), { name: 'jordan-rivera-storefront' })
-+
-+      return projectRoot
-+    }
-+
-+    async function writeThirdPartyFramework (nodeModules: string, packageName: string, dependency: Cypress.CypressComponentDependency) {
-+      const packageRoot = path.join(nodeModules, packageName)
-+
-+      await fs.outputJson(path.join(packageRoot, 'package.json'), {
-+        name: packageName,
-+        version: '1.4.2',
-+        main: 'definition.cjs',
-+      })
-+
-+      await fs.outputFile(path.join(packageRoot, 'definition.cjs'), `
-+        const dependency = ${JSON.stringify(dependency)}
-+
-+        module.exports = {
-+          type: '${packageName}',
-+          name: '${dependency.name}',
-+          supportedBundlers: ['vite'],
-+          detectors: [dependency],
-+          dependencies: () => [dependency],
-+        }
-+      `)
-+
-+      return path.join(packageRoot, 'definition.cjs')
-+    }
-+
-+    async function detect (projectRoot: string) {
-+      const { frameworks, erroredFrameworks } = await detectThirdPartyCTFrameworks(projectRoot)
-+
-+      const detected = frameworks
-+      .map((framework) => ({ type: framework.type, path: 'path' in framework ? framework.path : undefined }))
-+      .sort((a, b) => a.type.localeCompare(b.type))
-+
-+      return { detected, erroredFrameworks }
-+    }
-+
-+    beforeEach(async () => {
-+      // `require.resolve` reports real paths, and the temp directory can sit
-+      // behind a link, such as `/var` → `/private/var` on macOS
-+      tempDir = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), 'ct-detect-third-party-')))
-+    })
-+
-+    afterEach(async () => {
-+      await fs.rm(tempDir, { recursive: true, force: true })
-+    })
-+
-+    it('detects global and namespaced third party frameworks when the project path has brackets and parentheses', async () => {
-+      const projectRoot = await createProject(`Jordan Rivera's app (v2) [beta]`)
-+      const nodeModules = path.join(projectRoot, 'node_modules')
-+      const solidPath = await writeThirdPartyFramework(nodeModules, 'cypress-ct-solid-js', solidDependency)
-+      const qwikPath = await writeThirdPartyFramework(nodeModules, '@acme/cypress-ct-qwik', qwikDependency)
-+
-+      const { detected, erroredFrameworks } = await detect(projectRoot)
-+
-+      expect(erroredFrameworks).toEqual([])
-+      expect(detected).toEqual([
-+        { type: '@acme/cypress-ct-qwik', path: qwikPath },
-+        { type: 'cypress-ct-solid-js', path: solidPath },
-+      ])
-+    })
-+
-+    it('detects third party frameworks that pnpm symlinks into node_modules', async () => {
-+      const projectRoot = await createProject('jordan-rivera-storefront')
-+      const nodeModules = path.join(projectRoot, 'node_modules')
-+      const solidPath = await writeThirdPartyFramework(
-+        path.join(nodeModules, '.pnpm', 'cypress-ct-solid-js@1.4.2', 'node_modules'),
-+        'cypress-ct-solid-js',
-+        solidDependency,
-+      )
-+      const qwikPath = await writeThirdPartyFramework(
-+        path.join(nodeModules, '.pnpm', '@acme+cypress-ct-qwik@1.4.2', 'node_modules'),
-+        '@acme/cypress-ct-qwik',
-+        qwikDependency,
-+      )
-+
-+      // `junction` lets Windows create these links without admin rights, and
-+      // other platforms ignore it
-+      await fs.symlink(path.dirname(solidPath), path.join(nodeModules, 'cypress-ct-solid-js'), 'junction')
-+      await fs.mkdirp(path.join(nodeModules, '@acme'))
-+      await fs.symlink(path.dirname(qwikPath), path.join(nodeModules, '@acme', 'cypress-ct-qwik'), 'junction')
-+
-+      const { detected, erroredFrameworks } = await detect(projectRoot)
-+
-+      // Node resolves the links, so the definitions load from the store
-+      expect(erroredFrameworks).toEqual([])
-+      expect(detected).toEqual([
-+        { type:
+```
+
+**File**: `packages/https-proxy/package.json` (modified, +2/-2)
+```diff
+@@ -13,7 +13,7 @@
+   "scripts": {
+     "build": "yarn build:esm && yarn build:cjs",
+     "build:cjs": "rimraf cjs && tsc -p tsconfig.cjs.json",
+-    "build:esm": "rimraf esm && tsc -p tsconfig.esm.json",
++    "build:esm": "rimraf esm && tsc -p tsconfig.esm.json && node -e \"require('fs').writeFileSync('esm/package.json', JSON.stringify({ type: 'module' }))\"",
+     "build-prod": "yarn build",
+     "check-ts": "tsc -p tsconfig.cjs.json --noEmit",
+     "clean-deps": "rimraf node_modules",
+@@ -28,6 +28,7 @@
+     "**/*.{js,jsx,ts,tsx,json}": "eslint --fix"
+   },
+   "dependencies": {
++    "@packages/network": "0.0.0-development",
+     "debug": "^4.3.4",
+     "fs-extra": "9.1.0",
+     "lodash": "^4.17.21",
+@@ -39,7 +40,6 @@
+     "@cypress/request": "^4.0.0",
+     "@cypress/request-promise": "^5.0.0",
+     "@packages/eslint-config": "0.0.0-development",
+-    "@packages/network": "0.0.0-development",
+     "@packages/vitest-setup": "0.0.0-development",
+     "@types/node-forge": "1.3.11",
+     "@types/semaphore": "1.1.4",
+```
+
+**File**: `packages/https-proxy/tsconfig.esm.json` (modified, +1/-2)
+```diff
+@@ -6,7 +6,6 @@
+     "target": "ES2022",
+     "module": "ES2022",
+     "moduleResolution": "node",
+-    "declaration": true,
+-    "noEmit": true
++    "declaration": true
+   }
+ }
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 3: `b6ef1c06` (2026-11-20)
-**Commit Message**: fix: keep spec bridges registered between tests so cy.origin blocks don't time out (#35489)
+### Incident Patch 3: `769171c3` (2026-11-27)
+**Commit Message**: fix: let mocha-junit-reporter find Cypress's mocha version in the binary (#35561)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `cli/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -33,6 +33,7 @@
- - [`.type()`](https://on.cypress.io/type) now accepts consecutive `{upArrow}` and `{downArrow}` sequences, such as `{upArrow}{upArrow}`, on `date`, `month`, `week`, `time`, and `datetime-local` inputs, and steps the value once per arrow. Previously, a single arrow worked but more than one in a row failed with an error saying the input required a valid date, month, week, time, or datetime. Fixed in [#35352](https://github.com/cypress-io/cypress/pull/35352).
- - When Chrome or another Chromium-based browser exits right after Cypress launches it, Cypress now reports an error with the browser's exit code instead of repeating "Still waiting to connect" for 50 seconds. Fixes [#35276](https://github.com/cypress-io/cypress/issues/35276).
- - Fixed an issue where, when the application under test was on a different origin than the one the test started on, such as within [`cy.origin()`](https://on.cypress.io/origin), `document.cookie` returned `HttpOnly` cookies and could overwrite or delete them. `document.cookie` now behaves as it does in the browser: it does not return `HttpOnly` cookies, and cannot set, change, or delete them. Fixed in [#35283](https://github.com/cypress-io/cypress/pull/35283).
-+- Fixed a regression in [15.15.0](#15-15-0) where a [`cy.origin()`](https://on.cypress.io/origin) block could fail partway through with ``Timed out after waiting `60000ms` for your remote page to load.`` (with the default [`pageLoadTimeout`](https://on.cypress.io/configuration#Timeouts)) when an earlier test had left a page of that origin without using `cy.origin()`, such as an identity provider page that redirects back to your app. Fixes [#35475](https://github.com/cypress-io/cypress/issues/35475).
- - Fixed an issue where [`cy.request()`](https://on.cypress.io/request) and [`cy.visit()`](https://on.cypress.io/visit) kept sending a cookie while following redirects after a response in the chain had deleted it, which could make a server redirect repeatedly until `maxRedirects` was reached. Each redirect now sends only the cookies the browser has for that URL, so cookies for the first host are no longer sent to a different host. A `Cookie` header passed in `headers` is now kept on redirects to the same host, and is no longer sent on a redirect to a different host. Fixes [#34901](https://github.com/cypress-io/cypress/issues/34901).
- - Fixed an issue where a request for a Cypress-reserved path that Cypress does not serve, such as `/__/does-not-exist` or `/__cypress/does-not-exist`, never received a response. A `fetch()` or `<script>` load for such a path hung until the page's own timeout, and [`cy.request()`](https://on.cypress.io/request) failed after 30 seconds with "No response was received within the timeout." These requests now receive a `404` promptly, so a synchronous `XMLHttpRequest` to one no longer freezes the browser. Fixes [#34810](https://github.com/cypress-io/cypress/issues/34810) and [#35026](https://github.com/cypress-io/cypress/issues/35026).
- - Fixed a regression in [16.0.0](#16-0-0) where, in Chromium-based browsers other than Electron, an intercepted request failed in the Command Log with "Timed out waiting for CDP Fetch response pause" when the server took longer than 30 seconds to start responding, even though the page still received the response. [`cy.wait()`](https://on.cypress.io/wait) on that request yielded no `response`. A [`cy.intercept()`](https://on.cypress.io/intercept) request handler now waits up to [`responseTimeout`](https://on.cypress.io/configuration#Timeouts) for the response, as it does in Electron, and other intercepted requests wait however long the server takes. Fixes [#35055](https://github.com/cypress-io/cypress/issues/35055) and [#35235](https://github.com/cypress-io/cypress/issues/35235).
+@@ -8,6 +8,7 @@
+ **Bugfixes:**
+ 
+ - Fixed an issue where setting up a testing type wrote `import` and `export default` into an empty `cypress.config.cjs` when your `package.json` has `"type": "module"`, so the configuration file then failed to load. Fixed in [#35543](https://github.com/cypress-io/cypress/pull/35543).
++- Fixed an issue where the `junit` reporter, and custom reporters that use `mocha-junit-reporter`, printed `Couldn't determine Mocha version` on every run. Fixed in [#35561](https://github.com/cypress-io/cypress/pull/35561).
+ 
+ ## 16.4.0
+ 
 ```
 
-**File**: `packages/app/src/runner/event-manager.ts` (modified, +4/-4)
+**File**: `packages/server/lib/override_require.ts` (removed, +0/-21)
 ```diff
-@@ -777,8 +777,8 @@ export class EventManager {
-     })
- 
-     // Reflect back to the requesting origin the status of the 'duringUserTestExecution' state.
--    // Prefer `toSource(source)` so replies work even when `crossOriginDriverWindows` was cleared
--    // (e.g. after test isolation); `toSpecBridge(origin)` would no-op without a map entry.
-+    // Prefer `toSource(source)` so replies work even when `crossOriginDriverWindows` has no entry
-+    // for the origin; `toSpecBridge(origin)` would no-op without one.
-     Cypress.primaryOriginCommunicator.on('sync:during:user:test:execution', (_data, { origin, source, responseEvent }) => {
-       const value = cy.state('duringUserTestExecution')
- 
-@@ -1042,8 +1042,8 @@ export class EventManager {
- 
-   notifyCrossOriginBridgeReady (origin) {
-     // Any multi-origin event appends the origin as the third parameter and we do the same here for this short circuit.
--    // When the spec-bridge iframe already exists, the driver may have cleared
--    // `crossOriginDriverWindows` (e.g. after test isolation). Re-run the same
-+    // When the spec-bridge iframe already exists, `crossOriginDriverWindows` may
-+    // have been cleared by `removeAllListeners()`. Re-run the same
-     // path as a real postMessage (`onMessage`) so the map is repopulated before
-     // `bridge:ready` listeners run; emitting alone would leave `toSpecBridge` a no-op.
-     const id = `Spec Bridge: ${origin}`
+@@ -1,21 +0,0 @@
+-const Module = require('module')
+-
+-export const overrideRequire = (requireOverride) => {
+-  const _load = Module._load
+-
+-  Module._load = function (...args: any[]) {
+-    const pkg = args
+-
+-    if (requireOverride) {
+-      const mockedDependency = requireOverride(pkg[0], _load)
+-
+-      if (mockedDependency != null) {
+-        return mockedDependency
+-      }
+-    }
+-
+-    const ret = _load.apply(this, pkg)
+-
+-    return ret
+-  }
+-}
 ```
 
-**File**: `packages/driver/cypress/e2e/e2e/origin/navigation.cy.ts` (modified, +25/-0)
+**File**: `packages/server/lib/override_resolve.ts` (added, +10/-0)
 ```diff
-@@ -519,3 +519,28 @@ describe('errors', { browser: '!webkit' }, () => {
+@@ -0,0 +1,10 @@
++const Module = require('module')
++
++// Hooks resolution rather than loading so `require.resolve` is redirected along with `require`.
++export const overrideResolve = (redirect: (request: string) => string | undefined) => {
++  const _resolveFilename = Module._resolveFilename
++
++  Module._resolveFilename = function (request: string, ...rest: any[]) {
++    return _resolveFilename.call(this, redirect(request) ?? request, ...rest)
++  }
++}
+```
+
+**File**: `packages/server/lib/reporter.ts` (modified, +7/-5)
+```diff
+@@ -8,7 +8,7 @@ import Mocha from 'mocha-7.2.0'
+ import mochaReporters from 'mocha-7.2.0/lib/reporters'
+ import mochaCreateStatsCollector from 'mocha-7.2.0/lib/stats-collector'
+ import Debug from 'debug'
+-import { overrideRequire } from './override_require'
++import { overrideResolve } from './override_resolve'
+ import type {
+   CypressTestStatusInfo,
+   InternalRunnable,
+@@ -30,7 +30,7 @@ const debug = Debug('cypress:server:reporter')
+ const mochaColor = mochaReporters.Base.color
+ const mochaSymbols = mochaReporters.Base.symbols
+ 
+-// override calls to `require('mocha*')` when to always resolve with a mocha we control
++// override `require('mocha*')` and `require.resolve('mocha*')` to always resolve with a mocha we control
+ // otherwise mocha will be resolved from project's node_modules and might not work with our code
+ const customReporterMochaPath = path.dirname(require.resolve('mocha-7.2.0'))
+ 
+@@ -75,10 +75,12 @@ const getIconStatus = (status: RunnableState | undefined): IconStatus => {
+   }
+ }
+ 
+-overrideRequire((depPath, _load) => {
+-  if ((depPath === 'mocha') || depPath.startsWith('mocha/')) {
+-    return _load(depPath.replace('mocha', customReporterMochaPath))
++overrideResolve((request) => {
++  if ((request === 'mocha') || request.startsWith('mocha/')) {
++    return request.replace('mocha', customReporterMochaPath)
+   }
++
++  return undefined
+ })
+ 
+ // if Mocha.Suite.prototype.titlePath
+```
+
+**File**: `packages/server/test/unit/reporter.spec.ts` (modified, +10/-0)
+```diff
+@@ -126,6 +126,16 @@ describe('lib/reporter', () => {
      })
    })
- })
+ 
++  // mocha-junit-reporter reads the version from `require.resolve('mocha')` to pick its mocha 6+ code path
++  it('resolves mocha to mocha-7.2.0 from a reporter', () => {
++    const requireFromJunit = createRequire(requireFromReporter.resolve('mocha-junit-reporter'))
++    const mochaDir = path.dirname(requireFromReporter.resolve('mocha-7.2.0'))
 +
-+// https://github.com/cypress-io/cypress/issues/35475
-+// Each test sets up state for the next, so run them together.
-+describe('spec bridge page load started outside of cy.origin', { browser: '!webkit', pageLoadTimeout: 5000, retries: 0 }, () => {
-+  it('creates the spec bridge', () => {
-+    cy.origin('http://www.foobar.com:3500', () => {})
++    expect(path.dirname(requireFromJunit.resolve('mocha'))).toBe(mochaDir)
++    expect(requireFromJunit.resolve('mocha/lib/stats-collector')).toBe(path.join(mochaDir, 'lib/stats-collector.js'))
++    expect(requireFromJunit('mocha/package.json').version).toBe('7.2.0')
 +  })
 +
-+  it('leaves a page of the spec bridge origin without cy.origin', () => {
-+    cy.visit('/fixtures/primary-origin.html')
-+    cy.get('a[data-cy="cross-origin-secondary-link"]')
-+    .invoke('attr', 'href', 'http://www.foobar.com:3500/fixtures/js-redirect-to-primary-origin.html')
-+    .click()
-+
-+    cy.location('origin').should('equal', 'http://localhost:3500')
-+    cy.get('a[data-cy="cross-origin-secondary-link"]')
-+  })
-+
-+  it('does not time out a later cy.origin block that runs past pageLoadTimeout', () => {
-+    cy.origin('http://www.foobar.com:3500', () => {
-+      // eslint-disable-next-line cypress/no-unnecessary-waiting -- the block has to outlast the 5000ms pageLoadTimeout
-+      cy.wait(6000)
-+    })
-+  })
-+})
-```
-
-**File**: `packages/driver/cypress/fixtures/js-redirect-to-primary-origin.html` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+<!DOCTYPE html>
-+<html>
-+  <head>
-+    <title>Redirect to the primary origin</title>
-+    <script>
-+      window.onload = function () {
-+        setTimeout(function () {
-+          window.location.href = 'http://localhost:3500/fixtures/primary-origin.html'
-+        }, 200)
-+      }
-+    </script>
-+  </head>
-+  <body>
-+    Redirecting to the primary origin.
-+  </body>
-+</html>
-```
-
-**File**: `packages/driver/src/cross-origin/communicator.ts` (modified, +0/-9)
-```diff
-@@ -73,15 +73,6 @@ export class PrimaryOriginCommunicator extends EventEmitter {
-   private crossOriginDriverWindows: { [key: string]: Window } = {}
-   userInvocationStack?: string
- 
--  /**
--   * Clears all cached spec-bridge windows. The runner calls this after
--   * `test:before:after:run:async` (e.g. about:blank) so `window:load` can still
--   * use `toAllSpecBridges('window:load', ...)` before references are dropped.
--   */
--  clearCrossOriginDriverWindows () {
--    this.crossOriginDriverWindows = {}
--  }
--
-   override removeAllListeners (eventName?: string | symbol): this {
-     if (arguments.length === 0) {
-       super.removeAllListeners()
-```
-
-**File**: `packages/driver/src/cypress/runner.ts` (modified, +0/-3)
-```diff
-@@ -548,9 +548,6 @@ const overrideRunnerHook = (Cypress, _runner, getTestById, getTest, setTest, get
- 
-           // This will navigate to about:blank if test isolation is on
-           await testBeforeAfterRunAsync(test, Cypress, { nextTestHasTestIsolationOn })
--          // Clear cached spec-bridge targets after isolation; the runner must serve
--          // a current app build so `notifyCrossOriginBridgeReady` re-binds the iframe.
--          Cypress.primaryOriginCommunicator.clearCrossOriginDriverWindows()
-         }
- 
-         testAfterRun(test, Cypress)
-```
-
-**File**: `packages/driver/test/unit/cross-origin/communicator.spec.ts` (modified, +0/-19)
-```diff
-@@ -14,25 +14,6 @@ describe('PrimaryOriginCommunicator', () => {
-     }
-   }
- 
--  it('clearCrossOriginDriverWindows stops subsequent toAllSpecBridges from messaging', () => {
--    const comm = new PrimaryOriginCommunicator()
--    const { postMessage, asWindow } = fakeBridgeWindow()
--
--    comm.onMessage({
--      data: { event: 'cross:origin:bridge:ready', origin: 'https://clear.example' },
--      source: asWindow,
--    })
--
--    comm.toAllSpecBridges('sync:state', { duringUserTestExecution: false })
--    expect(postMessage).toHaveBeenCalledOnce()
--
--    comm.clearCrossOriginDriverWindows()
--    postMessage.mockClear()
--
--    comm.toAllSpecBridges('sync:state', { duringUserTestExecution: false })
--    expect(postMessage).not.toHaveBeenCalled()
--  })
--
-   it('removeAllListeners() with no event clears cached spec bridge windows', () => {
-     const comm = new PrimaryOriginCommunicator()
-     const { postMessage, asWindow } = fakeBridgeWindow()
-```
-
-**File**: `packages/driver/types/internal-types-lite.d.ts` (modified, +0/-1)
-```diff
-@@ -11,7 +11,6 @@ declare namespace Cypress {
-       toSpecBridge: (origin: string, event: string, data?: any, responseEvent?: string) => void
-       userInvocationStack?: string
-       toSource: (source: string, responseEvent: string, response: any) => void
--      clearCrossOriginDriverWindows: () => void
-     }
-     backendRequestHandler: (backendRequestNamespace: string, emitter: Emitter, eventName: string, ...args: any[]) => Promise<any>
-   }
+   describe('createSuite', () => {
+     it('recursively creates suites for fullTitle', () => {
+       const args = reporter.parseArgs('fail', testObj)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35502** (2026-11-21): chore: skip unused browser installs in system-tests-webkit (@jennifer-shehane)
-- **PR #35501** (2026-11-20): docs(puppeteer): lead the README with multi-tab testing (@emilyrohrbough)
-- **PR #35498** (2026-11-20): test: stop Firefox's stale document.cookie from failing the HttpOnly cookie tests (@mschile)
-- **PR #35496** (2026-11-20): refactor: rename Vue JSX files to .vue.tsx (@jennifer-shehane)
-- **PR #35495** (2026-11-20): chore: make the debug-output stderr matcher linear time (@jennifer-shehane)
-- **PR #35493** (2026-11-20): fix: detect third-party CT frameworks when the project path has brackets or parentheses (@jennifer-shehane)
+- **PR #35574** (2026-11-28): chore: cover Chrome for Testing in driver browser-name checks (@jennifer-shehane)
+- **PR #35572** (2026-11-28): chore: emit a loadable ESM build for @packages/https-proxy (@jennifer-shehane)
+- **PR #35571** (2026-11-28): refactor: convert remaining npm/vue component specs to TypeScript (@jennifer-shehane)
+- **PR #35570** (2026-11-28): docs: document installing and detecting Chrome for Testing (@jennifer-shehane)
+- **PR #35568** (2026-11-28): chore: convert the cross-origin injection to TypeScript and add unit tests (@jennifer-shehane)
+- **PR #35567** (2026-11-28): chore: run unit-tests on PRs for every workspace the root test script covers (@jennifer-shehane)
 
 ---
 
@@ -1649,13 +1551,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. show git info in the specs list for commits dated in the future or from a non-En
+## X. replay held requestAnimationFrame callbacks with the time they run
 
 **RULE**:
 When implementing operations in `cli/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `141cc595`: show git info in the specs list for commits dated in the future or from a non-English git. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08aeee75`: replay held requestAnimationFrame callbacks with the time they run. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/CHANGELOG.md`.
@@ -1663,7 +1565,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- Fixed an issue where the specs list in `cypress open` showed no last-modified time or author for a spec whose last commit was dated after the computer's clock, or when git ran in a language other than English. A spec committed 3 hours ahead of the clock now shows `in 3 hours` and its author instead of a blank. Committed specs now word their age like new and modified specs, such as `a day ago` instead of `1 day ago`. Fixed in [#35492](https://github.com/cypress-io/cypress/pull/35492).
+- `requestAnimationFrame()` callbacks in your application that come due while [`cy.screenshot()`](https://on.cypress.io/screenshot) takes a screenshot now receive the time they run once the screenshot finishes, as they would in a real frame, instead of the time they came due. Fixed in [#35566](https://github.com/cypress-io/cypress/pull/35566).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1673,7 +1575,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `141cc595` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08aeee75` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

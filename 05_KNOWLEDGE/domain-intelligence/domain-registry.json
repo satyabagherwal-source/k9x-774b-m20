@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T11:00:10.660Z",
+  "last_updated": "2026-11-28T11:22:57.574Z",
   "total_records": 2896,
   "domains": {
     "A": {
@@ -17544,8 +17544,8 @@
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "repository": "oven-sh/bun",
-      "content_hash": "fd8eeb8111f3c4062eab7e59a6497ae89ca57554fd723abea437b29ee373be60",
-      "created_at": "2026-11-27T10:34:18.262Z"
+      "content_hash": "8c39cc43010fb68b039196087bbf20c421a007eb082d2e85e6953907f723271e",
+      "created_at": "2026-11-28T11:22:50.390Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants",
@@ -17604,8 +17604,8 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-learnings-technical-construction-intelligence-oven-sh-bun-learnings-.md",
       "repository": "oven-sh-bun-learnings",
-      "content_hash": "a74cda7b8ff3bb0bc4238993fa62f0433edf732b9723a257ce8c3ac1bf368d54",
-      "created_at": "2026-11-27T10:34:27.899Z"
+      "content_hash": "28af6c8922c8ce07d3c2f9434cfcb071e93ab0cc3c3fd0bdc5a5756e41abecc4",
+      "created_at": "2026-11-28T11:22:54.439Z"
     },
     "DOM-D-02DACB51": {
       "record_id": "DOM-D-02DACB51",
@@ -25754,8 +25754,8 @@
       "title": "Architecture Intelligence: wzh4869/AppPorts Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-architecture-intelligence-wzh4869-appports-core-invariants.md",
       "repository": "wzh4869/AppPorts",
-      "content_hash": "98fb5d8af6531559f5351c48f4a31cc6f92919c4747dc86aa291aecdeb413d91",
-      "created_at": "2026-11-26T07:10:23.856Z"
+      "content_hash": "7e1fc7a32bf97e97198cad538e54e1e24ed44d262039b3b8f3a87c8afd511fb8",
+      "created_at": "2026-11-28T11:17:52.561Z"
     },
     "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants",
@@ -25781,8 +25781,8 @@
       "title": "Architecture Intelligence: wzh4869-appports-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-learnings-architecture-intelligence-wzh4869-appports-learnings-.md",
       "repository": "wzh4869-appports-learnings",
-      "content_hash": "ede799fafc8422793753d45028629a8febf2c4e5fdd2ccd8d01a0a83cefbbcab",
-      "created_at": "2026-11-26T07:10:35.120Z"
+      "content_hash": "48387b1b8a59fc8f14a38d898f9d251bf50b24cd44dc3ef70ebda10e440a212d",
+      "created_at": "2026-11-28T11:22:57.574Z"
     },
     "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants",
@@ -26858,8 +26858,8 @@
       "title": "Design Intelligence: cypress-io/cypress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-cypress-io-cypress-design-intelligence-cypress-io-cypress-core-invariants.md",
       "repository": "cypress-io/cypress",
-      "content_hash": "08461f4f74d32c469dc3b56161ea34c17ef79a4f8764002f80a9483b5506b8df",
-      "created_at": "2026-11-21T01:08:23.032Z"
+      "content_hash": "5fafc4059b6ff4f472b6217034e72ff40a226a468169b19649826325161a1672",
+      "created_at": "2026-11-28T11:17:51.990Z"
     },
     "domain_intelligence-architecture-intelligence-gluesql-gluesql-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gluesql-gluesql-core-invariants",
@@ -26876,8 +26876,8 @@
       "title": "Design Intelligence: cypress-io-cypress-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-cypress-io-cypress-learnings-design-intelligence-cypress-io-cypress-learnings-co.md",
       "repository": "cypress-io-cypress-learnings",
-      "content_hash": "4b8f2faa1ddff92581b0e10a4d10345694e26455e77c0ac4df75f46d3fba9e1b",
-      "created_at": "2026-11-21T01:08:38.012Z"
+      "content_hash": "a99df4073f742ae3a8c972a2f606c75616075a642643fa9aba7049b77137faca",
+      "created_at": "2026-11-28T11:22:56.394Z"
     },
     "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants",

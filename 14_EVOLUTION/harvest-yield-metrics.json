@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T11:00:04.053Z",
-  "total_cycles_completed": 13318,
-  "total_learnings_persisted": 13318,
-  "total_rules_promoted": 12016,
+  "last_updated": "2026-11-28T11:22:49.935Z",
+  "total_cycles_completed": 13321,
+  "total_learnings_persisted": 13321,
+  "total_rules_promoted": 12019,
   "history": [
-    {
-      "timestamp": "2026-11-27T16:52:06.824Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T17:01:41.314Z",
-      "repository": "flox/flox",
-      "learningId": "learn-github-flox-flox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T17:01:47.986Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T17:01:53.926Z",
       "repository": "lioensky/VCPToolBox",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T11:00:04.053Z",
       "repository": "vitest-dev/vitest",
       "learningId": "learn-github-vitest-dev-vitest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T11:17:51.394Z",
+      "repository": "cypress-io/cypress",
+      "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T11:17:52.080Z",
+      "repository": "wzh4869/AppPorts",
+      "learningId": "learn-github-wzh4869-appports",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T11:22:49.935Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

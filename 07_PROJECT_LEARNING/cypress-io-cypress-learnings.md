@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source**: github ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
-> **Source Version**: `5a30d970`  
+> **Source Version**: `c4799792`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T00:43:30.468Z  
+> **Timestamp**: 2026-11-28T11:17:50.218Z  
 > **Learning ID**: `learn-github-cypress-io-cypress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:43:30.228Z  
+> **Harvest Timestamp**: 2026-11-28T11:17:47.926Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, easy and reliable testing for anything that runs in a browser.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 51039 stars
+- **Stars / Engagement**: 51044 stars
 
 ---
 
@@ -981,11 +981,13 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35537** (2026-11-24): **chore: fix eslint-plugin-regexp errors in driver specs**
-  *Symptoms*: - Closes N/A (no issue; this fixes `linux-lint` on develop)  ### Additional details  `linux-lint` has been failing on develop since #35514 turned on `eslint-plugin-regexp` across every workspace. Two driver specs changed on develop while that PR was open, in #35512 and #35532, so its CI never linted them. The develop pipeline for #35514 reports 9 `regexp/*` errors in `@packages/driver`, and every develop commit since then carries them.  - `packages/driver/cypress/e2e/e2e/encoding.cy.ts`: `/^[A-Za-z]+$/` becomes `/^[a-z]+$/i` (`regexp/use-ignore-case`). Both match the same strings. - `packages/driver/test/unit/patches/error-stack-parser.spec.ts`: this regex is a word-for-word copy of the one `patches/error-stack-parser+2.0.6.dev.patch` replaces, so the spec can compare against the parser's unpatched behavior. Rewriting it would make that comparison meaningless, so the three rules are turned off for that one line, with a reason, as the [`regexpConfig` guide](https://github.com/cypress-io/cypress/blob/develop/packages/eslint-config/AGENTS.md#regexpconfig) asks for intentional hits.  This also unblocks a real-world check of #35530. Its CDN-reuse path needs a develop commit that builds and uploads its binary before a rerun can reuse it.  ### Steps to test  - `yarn lint --scope @packages/driver` passes. That's the only workspace `linux-lint` failed on. - `yarn workspace @packages/driver test -- test/unit/patches/error-stack-parser.spec.ts` passes (4 of 4). - `yarn check-ts --scope 
+- **Issue #35574** (2026-11-28): **chore: cover Chrome for Testing in driver browser-name checks**
+  *Symptoms*: - Closes N/A — part of moving the internal test suites’ default browser from Electron to Chrome for Testing (CfT)  ### Additional details  Chrome for Testing reports `Cypress.browser.name` as `chrome-for-testing`, never `chrome`, and the browser matchers compare names exactly. So any driver spec that checks for `'chrome'` by name quietly skips its Chrome branch under CfT. This PR goes through those checks one by one and asks the same question each time: does the test mean Google Chrome specifically, or any Chrome build?  - **`e2e/testConfigOverrides.cy.ts`:** adds a `browser: 'chrome-for-testing'` case and a matching `ranChromeForTesting` flag in the `after` hook. Before this, the hook expected every flag to be false under CfT, so the spec passed without running a single browser-gated test. The `'chrome'` case stays, since checking exact name matching is the whole point of it. - **`commands/actions/click.cy.ts`** (`no click when element is disabled`): the disabled `<button>` gets `mouseenter`/`mousedown`/`mouseup` in every Blink build I tried (Chrome for Testing 158 and Electron 150, with the assertion temporarily running in every browser). So this is engine behavior, not something only Google Chrome does. The gate is now the spec’s existing `isChromium116OrLater`, the same version split that `handles disabled attr` already uses for disabled-element mouse events. - **`e2e/xhr_abort.cy.ts`:** the `chrome >= 71` block is now gated on `['chrome', 'chrome-for-testing']`, so the t
+  **Post-Mortem & Fix Analysis**:
+  >  <h3>   <a href="https://cloud.cypress.io/projects/ypt4pf?utm_source=github&utm_medium=flaky&utm_campaign=project">cypress</a>&nbsp;   <picture><img src="https://assets.cypress.io/github-pr-comment-icons/chevron.svg" alt="" width="14" height="14" /></picture>&nbsp;   <a href="https://cloud.cypress.io/projects/ypt4pf/runs/75942/overview?utm_source=github&utm_medium=flaky&utm_campaign=run%20number">Run #75942</a> </h3>  <details>   <summary>     <strong>Run Properties:</strong>&nbsp;     <code><picture><img src="https://assets.cypress.io/github-pr-comment-icons/passed.svg" alt="status check passed" width="10" height="10" /></picture>&nbsp;Passed&nbsp;<a href="https://cloud.cypress.io/projects/ypt4pf/runs/75942/overview?utm_source=github&utm_medium=flaky&utm_campaign=run%20number">#75942</a></code> &nbsp;&bull;&nbsp;     <code><picture><img src="https://assets.cypress.io/github-pr-comment-icons/git-commit.svg" alt="git commit" width="10" height="10" /></picture> <a href="https://github.co
 
-- **Issue #35536** (2026-11-24): **chore: fix type error in angular-21 default specPattern fixture config**
-  *Symptoms*: - Closes N/A — fixes a CI failure on `develop` introduced by #35531; no issue filed.  ### Additional details  The `npm-cypress-schematic` job fails 3 of its 16 tests on `develop`, all three on the angular-21 project:  - `ct.spec.ts` › angular-21 › should install ct files with option and no component specs - `ct.spec.ts` › angular-21 › should generate component alongside component spec - `e2e.spec.ts` › only e2e › should install e2e files by default  The Angular build stops with:  ``` TS2322: Type '{ devServer: ... } | {}' is not assignable to type 'ComponentConfigOptions<any> | undefined'.   Property 'devServer' is missing in type '{}'     cypress-default-spec-pattern.config.ts:8:2 ```  #35531 added `system-tests/projects/angular-21/cypress-default-spec-pattern.config.ts` for the "v21 with the default specPattern" system test. Its `baseConfig.component ?? {}` fallback widens the component config to a union with `{}`, which has no `devServer`. The system test never type-checks the file, so that PR passed. The schematic tests do: they copy angular-21 and run `ng e2e` / `ng run angular:ct`, and its `tsconfig.app.json` includes `**/*.ts` under `strict`, so the Angular compiler checks every `.ts` file in the project.  This replaces the fallback with a guard that narrows the type. The real `cypress.config.ts` always defines `component`, so the system test's config is unchanged.  A note for later: any new root-level `.ts` file in `angular-21` gets compiled by the schematic tests' st
+- **Issue #35572** (2026-11-28): **chore: emit a loadable ESM build for @packages/https-proxy**
+  *Symptoms*: - Closes N/A. There's no issue for this one. It's a small build fix I found while checking where `@packages/https-proxy`'s `"module"` field pointed. It's related to #34829, which moved lint ignores for build output to one central place.  ### Additional details  `package.json` advertises `"module": "esm/index.js"`, but that file never existed. `tsconfig.esm.json` set `"noEmit": true`, so `build:esm` deleted `esm/` and then wrote nothing back into it. Once I turned emitting on, I found the output still couldn't be loaded by Node's own ESM loader. So this PR goes the whole way:  - **Emit the build:** drop `noEmit` from `tsconfig.esm.json`. - **Make it real ESM:**   - Relative imports in `lib/` now end in `.js`, because Node's ESM loader won't guess an extension. A package-scoped `n/file-extension-in-import` lint rule keeps it that way, and it can auto-fix.   - `build:esm` writes `esm/package.json` containing `{"type":"module"}`. Putting `"type": "module"` on the package itself would break `cjs/`, which `main` still points at.   - `ca.ts` imports `node-forge` by its default export. Node can't read named exports from that CommonJS package, so the named import failed with ``does not provide an export named 'md'``. - **Declare the runtime dependency:** `lib/server.ts` imports `@packages/network` at runtime, but it was only a devDependency and worked because the monorepo hoists it. It's now a dependency. `@packages/server` already depends on both packages, so the binary's contents do
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1002,1118 +1004,506 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b176208c` (2026-11-21)
-**Commit Message**: chore: add a guide and script for measuring a regex before adding it (#35505)
+### Incident Patch 1: `08aeee75` (2026-11-28)
+**Commit Message**: fix: replay held requestAnimationFrame callbacks with the time they run (#35566)
 
-* chore: add a guide and script for measuring a regex before adding it
+* fix: give replayed requestAnimationFrame callbacks the time they run
 
-Lint rules catch the regex shapes a static checker knows, but they can't
-tell how large a regex's input gets or how hot its path is. The new guide,
-guides/writing-performant-regular-expressions.md, writes down the procedure
-used for the recent ReDoS fixes: name the input's source, size and call
-rate, run recheck, time the pattern against real input and against
-recheck's attack string at 1,000, 10,000 and 50,000 characters, prefer
-linear shapes, and pin the fix with a 50,000-character regression test.
-Its worked examples are the merged fixes in #35343, #35360, #35368, #35372
-and #35495, each measured with the new script.
+While the driver pauses timers (cy.screenshot with
+disableTimersAndAnimations), rAF callbacks that come due are held and
+replayed on unpause. They were replayed with the timestamp the browser
+passed when they came due, which is stale by the length of the pause and
+earlier than performance.now() reads in setTimeout callbacks replayed in
+the same flush.
 
-`yarn check-regex` takes a pattern or a file:line, runs recheck, and
-prints a timing table. Each run happens in a worker that the main thread
-stops at a time cap, because a backtracking regex blocks its own thread
-and a same-thread timer would wait for it. `--attack-from` times a
-rewrite against the attack string of the pattern it replaces.
-
-recheck stays out of the repo's dependencies, because it downloads a
-native 
-
-**File**: `AGENTS.md` (modified, +1/-0)
-```diff
-@@ -218,6 +218,7 @@ Orientation, not a registry — the directories under `packages/` and `npm/` are
- - **`.skip` requires a comment** — Must include `NOTE:`, `TODO:`, or `FIXME:` comment explaining why. In a workspace that spreads `vitestConfig`, a skip that has to stay also needs `eslint-disable-next-line vitest/no-disabled-tests` below that comment.
- - **Blank line before `return`** — Enforced via `padding-line-between-statements`.
- - **Sync FS calls** — Flagged with a warning (except `existsSync`); prefer async variants.
-+- **Regex performance** — Before adding or changing a regex, follow [Writing performant regular expressions](./guides/writing-performant-regular-expressions.md) and measure it with `yarn check-regex`.
- 
- ### Code Comments
- 
-```
-
-**File**: `CONTRIBUTING.md` (modified, +1/-0)
-```diff
-@@ -685,6 +685,7 @@ Below are guidelines to help during code review. If any of the following require
- 
- - [ ] The code works and performs its intended function with the correct logic.
- - [ ] Performance has been factored in (for example, the code cleans up after itself to not cause memory leaks).
-+- [ ] Every new or changed regex has been measured as described in [Writing performant regular expressions](./guides/writing-performant-regular-expressions.md), and the PR states where its input comes from and how large it gets.
- - [ ] The code guards against edge cases and invalid input and has tests to cover it.
- 
- #### Maintainability
-```
-
-**File**: `guides/README.md` (modified, +1/-0)
-```diff
-@@ -28,5 +28,6 @@ For general contributor information, check out [`CONTRIBUTING.md`](../CONTRIBUTI
- * [Testing other projects](./testing-other-projects.md)
- * [Testing strategy and style guide (draft)](./testing-strategy-and-styleguide.md)
- * [Writing cross-platform JavaScript](./writing-cross-platform-javascript.md)
-+* [Writing performant regular expressions](./writing-performant-regular-expressions.md)
- * [Writing the Cypress Changelog](./writing-the-cypress-changelog.md)
- * [Writing and Migrating To TypeScript](./typescript.md)
-```
-
-**File**: `guides/writing-performant-regular-expressions.md` (added, +111/-0)
-```diff
-@@ -0,0 +1,111 @@
-+# Writing performant regular expressions
-+
-+A regex that looks harmless on a 60-character stack line can stall the process on a 50,000-character one. JavaScript's regex engine backtracks, so a pattern with overlapping quantifiers can take quadratic or exponential time on input that *almost* matches. When that code runs in the server or the driver, a test run hangs. Lint rules catch some of these shapes, but they can't know how big the input really gets or how often the line runs.
-+
-+So before you add or change a regex, measure it. This guide walks through the steps, and [`scripts/check-regex.js`](../scripts/check-regex.js) runs the measuring part for you.
-+
-+- [1. Know your input](#1-know-your-input)
-+- [2. Run a static check](#2-run-a-static-check)
-+- [3. Time it](#3-time-it)
-+- [4. Prefer safe shapes](#4-prefer-safe-shapes)
-+- [5. Add a regression test](#5-add-a-regression-test)
-+- [Worked examples](#worked-examples)
-+
-+## 1. Know your input
-+
-+Write down three things before you look at the pattern. They belong in the PR description too, so a reviewer can follow your reasoning.
-+
-+- **Where the input comes from.** Is it untrusted traffic from the application under test (response bodies, headers, cookies), user test data (assertion values, fixtures, spec source), or trusted tool output (`ps`, `git`, a browser's stack trace)? Every one of these can get large, and only trusted tool output has a shape you can count on.
-+- **Its realistic maximum size.** Stack lines carry long paths and bundled URLs, `ps eww` lines in CI carry the whole environment and run to tens of KB, and stubbed bodies are as big as the user's fixture.
-+- **How often the code runs.** Once per run, once per command, once per stderr line or once per proxied request? A hot path makes a slow regex expensive even when it never blows up.
-+
-+## 2. Run a static check
-+
-+[`recheck`](https://makenowjust-labs.github.io/recheck/) analyses a pattern and reports `safe`, `vulnerable` or `unknown`, along with its complexity and a worst-case input (which `recheck` calls an attack string). It's a root devDependency, so a root `yarn` install is all you need. Pass the script the regex literal, in single quotes so the shell leaves it alone:
-+
-+```bash
-+yarn check-regex '/^\s+\S[^\s:]*:/u'
-+```
-+
-+The result should be `safe`. If `recheck` says `vulnerable` and you're keeping the pattern, the PR has to say why that's acceptable. Two justifications hold up:
-+
-+- The input is bounded before it gets here, and you can point to the bound, such as a `slice` or a length check just above, or a format that can't exceed a known size.
-+- The timings in step 3 stay flat up to that bound.
-+
-+"The input is usually short" isn't a justification. Most of the fixes listed below began as exactly that assumption.
-+
-+If `recheck` reports `unknown` (for example, its analysis timed out), treat it like `vulnerable`: rely on the step 3 timings and explain them.
-+
-+## 3. Time it
-+
-+Static analysis says whether a pattern *can* blow up. Timing tells you whether it does at the sizes your input really reaches. The script handles both halves:
-+
-+- **Real inputs at realistic size.** Pass captured output with `--samples <file>` (one input per line, or a JSON array in a `.json` file for inputs that span lines). Capture it from the real tool or browser. Don't hand-write lines that only look plausible.
-+- **The worst case.** When `recheck` finds a worst-case input, the script grows it to 1,000, 10,000 and 50,000 characters. To time a rewrite against the pattern it replaces, pass the old pattern with `--worst-case-from`.
-+
-+Each run happens in a worker thread that the main thread stops after 2,000 milliseconds. That matters: a runaway regex blocks the thread it runs on, so a `setTimeout` in the same thread doesn't fire until the regex returns. A row whose time reads `> 2000` means the regex was still running when the cap hit.
-+
-+Read the timings as relative, not absolute. They come from one machine, so compare rows against each other rather than with numbers measured somewhere else. The thing to look for is growth. Each run has a fixed overhead of a fraction of a millisecond, so judge growth once the times are well above that. Going from 1,000 to 10,000 characters, a linear regex takes roughly ten times as long, a quadratic one roughly a hundred times, and an exponential one never comes back.
-+
-+The script exits `1` when `recheck` doesn't rate a pattern `safe` or a run hits the cap.
-+
-+## 4. Prefer safe shapes
-+
-+Most fixes come from a short list of rewrites:
-+
-+- **Use a negated class instead of `.*?` before a literal.** `[^)]*\)` can't run past the `)` it's looking for, but `.*?\)` can.
-+- **Anchor where you can.** An unanchored pattern is retried from every start position, which turns a linear scan into a quadratic one when the match fails.
-+- **Avoid nested or overlapping quantifiers.** `(\S+:)+`, `(a|a)*`, and adjacent runs that can match the same characters, such as `\s*.*`
-```
-
-**File**: `package.json` (modified, +2/-0)
-```diff
-@@ -64,6 +64,7 @@
-     "check-lockfile": "yarn dedupe-lockfile --list --fail",
-     "check-lockfile-drift": "./scripts/check-lockfile-drift.sh",
-     "check-node-version": "node scripts/check-node-version.js",
-+    "check-regex": "node scripts/check-regex.js",
-     "check-terminal": "node scripts/check-terminal.js",
-     "check-ts": "yarn lerna run check-ts",
-     "clean": "lerna run clean --no-bail || echo 'ok, errors while cleaning'",
-@@ -256,6 +257,7 @@
-     "proxyquire": "2.1.3",
-     "react": "18.3.1",
-     "react-dom": "18.3.1",
-+    "recheck": "4.6.2",
-     "rimraf": "6.1.1",
-     "semantic-release": "25.0.8",
-     "semantic-release-monorepo": "8.0.2",
-```
-
-**File**: `scripts/AGENTS.md` (modified, +1/-0)
-```diff
-@@ -9,6 +9,7 @@ This workspace (`internal-scripts`) contains the monorepo's build tooling, relea
- - `node scripts/npm-release.js` — orchestrate an npm package release
- - `node scripts/prepare-release-artifacts.js` — prepare binary artifacts for a release
- - `node scripts/binary.js` — entry point for binary build/upload/smoke-test operations
-+- `yarn check-regex '/<source>/<flags>'` — static ReDoS check and timing table for a regex; see [Writing performant regular expressions](../guides/writing-performant-regular-expressions.md)
- 
- **Architecture**
- 
-```
-
-**File**: `scripts/check-regex.js` (added, +172/-0)
-```diff
-@@ -0,0 +1,172 @@
-+// @ts-check
-+// The procedure this runs is in guides/writing-performant-regular-expressions.md
-+const fs = require('fs')
-+const { parseArgs } = require('util')
-+const { Worker } = require('worker_threads')
-+const recheck = require('recheck')
-+
-+const WORST_CASE_LENGTHS = [1_000, 10_000, 50_000]
-+const RUN_TIMEOUT_MS = 2_000
-+
-+const USAGE = `Usage: yarn check-regex '/<source>/<flags>' [--samples <file>] [--worst-case-from '/<source>/<flags>']
-+
-+  --samples          Real inputs, one per line, or a JSON array of strings in a .json file
-+  --worst-case-from  Also time against another regex's worst-case input, such as the one this replaces
-+
-+Exits 1 when recheck does not rate the regex safe or a run takes longer than ${RUN_TIMEOUT_MS} ms.`
-+
-+/**
-+ * `'/a+b/gi'` becomes `{ source: 'a+b', flags: 'gi' }`. Anything else is
-+ * treated as a source with no flags.
-+ * @param {string} arg
-+ */
-+const parseRegexArg = (arg) => {
-+  const literal = /^\/([\s\S]+)\/([a-z]*)$/.exec(arg)
-+
-+  return literal ? { source: literal[1], flags: literal[2] } : { source: arg, flags: '' }
-+}
-+
-+/**
-+ * Builds a worst-case input of about `length` characters from recheck's recipe
-+ * for it: at length 10, `{ pumps: [{ prefix: 'x', pump: 'ab', bias: 1 }], suffix: '!' }`
-+ * becomes `'xabababab!'`. Each pump contributes `prefix + pump.repeat(repeats + bias)`
-+ * and the suffix follows, which is how recheck builds its own `attack.string`
-+ * from `base`.
-+ * @param {{ pumps: { prefix: string, pump: string, bias: number }[], suffix: string }} recipe
-+ * @param {number} length
-+ */
-+const buildWorstCaseInput = (recipe, length) => {
-+  const lengthAtZeroRepeats = recipe.pumps.reduce((sum, { prefix, pump, bias }) => sum + prefix.length + pump.length * bias, recipe.suffix.length)
-+  const lengthPerRepeat = recipe.pumps.reduce((sum, { pump }) => sum + pump.length, 0)
-+  const repeats = Math.max(1, Math.floor((length - lengthAtZeroRepeats) / lengthPerRepeat))
-+
-+  return recipe.pumps.map(({ prefix, pump, bias }) => prefix + pump.repeat(repeats + bias)).join('') + recipe.suffix
-+}
-+
-+// Runs in a worker so the main thread can stop it: a catastrophically
-+// backtracking regex blocks its own thread, so a timer there would not fire
-+// until the regex returned.
-+const TIMING_WORKER_CODE = `
-+const { parentPort, workerData: { source, flags, input } } = require('worker_threads')
-+const regex = new RegExp(source, flags)
-+const start = performance.now()
-+const matched = (regex.global ? input.match(regex) : regex.exec(input)) !== null
-+parentPort.postMessage({ durationMs: performance.now() - start, matched })
-+`
-+
-+/**
-+ * @param {{ source: string, flags: string }} regex
-+ * @param {string} input
-+ * @returns {Promise<{ durationMs: number, matched: boolean } | null>} null when the run hit the time cap
-+ */
-+const timeRegex = ({ source, flags }, input) => {
-+  return new Promise((resolve, reject) => {
-+    const worker = new Worker(TIMING_WORKER_CODE, { eval: true, workerData: { source, flags, input } })
-+    const timer = setTimeout(() => worker.terminate().then(() => resolve(null), reject), RUN_TIMEOUT_MS)
-+
-+    worker.once('message', (result) => {
-+      clearTimeout(timer)
-+      worker.terminate().then(() => resolve(result), reject)
-+    })
-+
-+    worker.once('error', (err) => {
-+      clearTimeout(timer)
-+      reject(err)
-+    })
-+  })
-+}
-+
-+/**
-+ * @param {string} file
-+ * @returns {Promise<string[]>}
-+ */
-+const readSamples = async (file) => {
-+  const text = await fs.promises.readFile(file, 'utf8')
-+
-+  return file.endsWith('.json') ? JSON.parse(text) : text.split(/\r?\n/).filter(Boolean)
-+}
-+
-+const main = async () => {
-+  const { values: options, positionals } = parseArgs({
-+    allowPositionals: true,
-+    options: {
-+      'samples': { type: 'string' },
-+      'worst-case-from': { type: 'string' },
-+      'help': { type: 'boolean', short: 'h' },
-+    },
-+  })
-+
-+  if (options.help || positionals.length !== 1) {
-+    console.log(USAGE)
-+
-+    return options.help ? 0 : 2
-+  }
-+
-+  const regex = parseRegexArg(positionals[0])
-+
-+  // Throws the engine's own syntax error, which says more than recheck's `unknown`
-+  new RegExp(regex.source, regex.flags)
-+
-+  const recheckResult = await recheck.check(regex.source, regex.flags)
-+
-+  console.log(`/${regex.source}/${regex.flags}`)
-+  console.log(`  recheck:    ${recheckResult.status}`)
-+
-+  if (recheckResult.status === 'unknown') {
-+    console.log(`  error:      ${recheckResult.error.kind}`)
-+  } else {
-+    console.log(`  complexity: ${recheckResult.complexity.summary}`)
-+  }
-+
-+  const worstCaseRecipes = []
-+
-+  if (recheckResult.status === 'vulnerable') {
-+    console.log(`  worst case: ${recheckResult.attack.pattern}`)
-+    worstCaseRecipes.push({ label: 'worst case', recipe: recheckResult.attack })
-+  }
-+
-+  if (options['worst-case-from']) {
-+    const otherRegex = parseRegexArg(options['worst-case-from'])
-+    const otherRecheckResult = await recheck.check(otherRegex.sour
-```
-
-**File**: `scripts/unit/check-regex-spec.ts` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+import { expect } from 'chai'
-+
-+const { buildWorstCaseInput, parseRegexArg } = require('../check-regex')
-+
-+describe('check-regex', () => {
-+  describe('parseRegexArg', () => {
-+    it('splits a regex literal into source and flags', () => {
-+      expect(parseRegexArg('/^\\s+\\S[^\\s:]*:/u')).to.deep.equal({ source: '^\\s+\\S[^\\s:]*:', flags: 'u' })
-+    })
-+
-+    it('keeps slashes inside the source', () => {
-+      expect(parseRegexArg('/^https?:\\/\\/[^/]+/i')).to.deep.equal({ source: '^https?:\\/\\/[^/]+', flags: 'i' })
-+    })
-+
-+    it('treats anything else as a bare source', () => {
-+      expect(parseRegexArg(':(\\d+):(\\d+)\\)?$')).to.deep.equal({ source: ':(\\d+):(\\d+)\\)?$', flags: '' })
-+    })
-+  })
-+
-+  describe('buildWorstCaseInput', () => {
-+    // recheck 4.6.2's worst-case input for /^\s*(?:at )?.*@?\((.*?):(\d+):(\d+)\)?$/
-+    const recipe = {
-+      pumps: [{ prefix: '', pump: ' ', bias: 0 }, { prefix: '', pump: '(', bias: 0 }],
-+      suffix: ' ',
-+      base: 1651,
-+    }
-+
-+    it('rebuilds recheck\'s own string at its base length', () => {
-+      expect(buildWorstCaseInput(recipe, 3303)).to.equal(`${' '.repeat(1651)}${'('.repeat(1651)} `)
-+    })
-+
-+    it('scales to the requested length', () => {
-+      const str = buildWorstCaseInput(recipe, 50_000)
-+
-+      expect(str.length).to.be.within(49_998, 50_000)
-+      expect(str.startsWith(' '.repeat(24_999))).to.be.true
-+    })
-+
-+    it('honours prefixes and bias', () => {
-+      expect(buildWorstCaseInput({ pumps: [{ prefix: 'x', pump: 'ab', bias: 1 }], suffix: '!' }, 10)).to.equal('xabababab!')
-+    })
-+  })
-+})
-```
-
----
-
-### Incident Patch 2: `24523b12` (2026-11-21)
-**Commit Message**: chore: skip install, build and lint jobs on docs-only PRs (#35511)
-
-* chore: skip install, build and lint jobs on docs-only PRs
-
-A README-only PR still ran node_modules_install, build, check-ts, lint,
-lint-types, Knip, check-lockfile and test-kitchensink, none of which read
-Markdown or images.
-
-- generate-pipeline-parameters.sh sets a new docs-only parameter when every
-  file a PR changes is Markdown, under assets/ or guides/, or LICENSE.
-  Markdown under src/, test/, fixtures or templates still counts as code.
-  Branch pushes and all-true runs never set it.
-- pull-request.yml filters those jobs on docs-only == false.
-- A new docs-check job runs yarn check-markdown-links on every PR with no
-  install, so all-jobs-passed always has a job to wait for. On fork PRs it
-  waits for contributor approval, since it runs the checked-out script.
-- check-markdown-links fails on an added link to a missing repo path, or on
-  any Markdown link to a file the change deletes. It ignores links already
-  in the repo, so the ~30 broken links on develop don't fail unrelated PRs.
-- CLAUDE.md lets agents skip check-ts, lint, health-check and unit tests
-  for docs-only changes and run the link check instea
-
-**File**: `.circleci/AGENTS.md` (modified, +2/-0)
-```diff
-@@ -50,6 +50,8 @@ The `run-*` guards live in the shared job definitions in `@pipeline.yml` (via `h
- - **`linux-x64`**: `build`, lint, and type checks always run, as do the binary/packaging chain and release gating (`create-build-artifacts`, `test-binary-*`, `verify-release-readiness`, `ready-to-release`, `npm-release`). Per-package integration/unit jobs and system tests are guarded, so a webhook push to `develop` or a `vN` maintenance branch runs only the ones its changed paths select.
- - **`windows` / `linux-arm64` / `darwin-*`**: none of these four run on a plain `develop`, `release/*`, or `vN` push — see "Scheduled platform CI" below for when they do. Inside them, `driver-integration-memory-tests` and (Windows) selected integration/unit jobs are still guarded by `run-*` parameters, but a scheduled run gets all-true from `generate-pipeline-parameters.sh`'s trigger-source check, so nothing inside these workflows is actually path-filtered once one runs.
- 
-+- **`pull-request`**: on a PR that changes only docs (`docs-only`, set by `generate-pipeline-parameters.sh`), install, build, lint, type checks, Knip and `test-kitchensink` are filtered out, and `docs-check` (`yarn check-markdown-links`, with only the pinned `markdown-link-check` installed) is what `all-jobs-passed` waits for. `docs-check` runs on every PR. When adding an always-run job, give it the `*codeJobs` filter unless it reads Markdown or images.
-+
- `linux-x64` runs on any `&full-workflow-filters` branch directly. The other four need more than that. On `develop`, `release/*`, and `vN` they run only from a scheduled pipeline or a manual trigger. On `electron/*` or an allowlisted branch, `&full-workflow-filters` alone is enough.
- 
- `npm-release` still runs only on `develop`, not on allowlisted feature branches.
-```
-
-**File**: `.circleci/scripts/generate-pipeline-parameters.sh` (modified, +27/-1)
-```diff
-@@ -39,6 +39,10 @@ npm_vite_plugin_esm_tests=false
- npm_mount_utils_tests=false
- npm_grep_tests=false
- npm_schematic_tests=false
-+# True when a PR changes only docs, so the pull-request workflow can skip the
-+# install, build, lint, type-check and Knip jobs, none of which read them. Never
-+# set on a branch push or an all-true run, which keep the full sweep.
-+docs_only=false
- 
- # run-force-http1-tests and percy-enabled are NOT forwarded here: each is
- # already a pipeline parameter declared in both the setup config and
-@@ -59,7 +63,7 @@ echo "Pushed by '${CIRCLE_USERNAME:-<unset>}' (trigger source '${TRIGGER_SOURCE:
- 
- emit_json() {
-   cat <<EOF
--{"bot-approval-required": $bot_approval_required, "run-driver-tests": $driver_tests, "run-server-tests": $server_tests, "run-app-ui-tests": $app_ui_tests, "run-launchpad-tests": $launchpad_tests, "run-reporter-tests": $reporter_tests, "run-frontend-shared-tests": $frontend_shared_tests, "run-system-tests": $system_tests, "run-cli-tests": $cli_tests, "run-unit-tests": $unit_tests, "run-npm-webpack-dev-server-tests": $npm_webpack_dev_server_tests, "run-npm-vite-dev-server-tests": $npm_vite_dev_server_tests, "run-npm-webpack-preprocessor-tests": $npm_webpack_preprocessor_tests, "run-npm-webpack-batteries-tests": $npm_webpack_batteries_tests, "run-npm-vue-tests": $npm_vue_tests, "run-npm-react-tests": $npm_react_tests, "run-npm-angular-tests": $npm_angular_tests, "run-npm-puppeteer-tests": $npm_puppeteer_tests, "run-npm-vite-plugin-esm-tests": $npm_vite_plugin_esm_tests, "run-npm-mount-utils-tests": $npm_mount_utils_tests, "run-npm-grep-tests": $npm_grep_tests, "run-npm-schematic-tests": $npm_schematic_tests}
-+{"bot-approval-required": $bot_approval_required, "run-driver-tests": $driver_tests, "run-server-tests": $server_tests, "run-app-ui-tests": $app_ui_tests, "run-launchpad-tests": $launchpad_tests, "run-reporter-tests": $reporter_tests, "run-frontend-shared-tests": $frontend_shared_tests, "run-system-tests": $system_tests, "run-cli-tests": $cli_tests, "run-unit-tests": $unit_tests, "run-npm-webpack-dev-server-tests": $npm_webpack_dev_server_tests, "run-npm-vite-dev-server-tests": $npm_vite_dev_server_tests, "run-npm-webpack-preprocessor-tests": $npm_webpack_preprocessor_tests, "run-npm-webpack-batteries-tests": $npm_webpack_batteries_tests, "run-npm-vue-tests": $npm_vue_tests, "run-npm-react-tests": $npm_react_tests, "run-npm-angular-tests": $npm_angular_tests, "run-npm-puppeteer-tests": $npm_puppeteer_tests, "run-npm-vite-plugin-esm-tests": $npm_vite_plugin_esm_tests, "run-npm-mount-utils-tests": $npm_mount_utils_tests, "run-npm-grep-tests": $npm_grep_tests, "run-npm-schematic-tests": $npm_schematic_tests, "docs-only": $docs_only}
- EOF
- }
- 
-@@ -451,6 +455,28 @@ while IFS= read -r file; do
-   esac
- done <<< "$CHANGED"
- 
-+# ----- docs-only detection ----------------------------------------------------
-+# Narrower than the documentation case above, which also covers config files
-+# that lint and Knip do read (eslint.config.ts, knip.json). Markdown under a
-+# src/, test/, fixtures or templates directory can be read by code, such as a
-+# codegen template, so it doesn't count.
-+if [[ "$filtering_branch_push" == "false" ]]; then
-+  docs_only=true
-+  while IFS= read -r file; do
-+    case "$file" in
-+      */src/*|src/*|*/test/*|test/*|*/__fixtures__/*|*/fixtures/*|*/templates/*)
-+        docs_only=false
-+        ;;
-+      *.md|*.mdx|assets/*|guides/*|LICENSE)
-+        ;;
-+      *)
-+        docs_only=false
-+        ;;
-+    esac
-+  done <<< "$CHANGED"
-+  echo "docs-only=$docs_only" >&2
-+fi
-+
- # ----- emit result ------------------------------------------------------------
- echo "Emitting pipeline parameters" >&2
- emit_json
-```
-
-**File**: `.circleci/src/pipeline/@pipeline.yml` (modified, +20/-0)
-```diff
-@@ -116,6 +116,11 @@ parameters:
-   run-npm-schematic-tests:
-     type: boolean
-     default: true
-+  # Set by generate-pipeline-parameters.sh when a PR changes only docs. Defaults
-+  # to false so that a continuation that omits it runs everything.
-+  docs-only:
-+    type: boolean
-+    default: false
- 
- orbs:
-   browser-tools: circleci/browser-tools@2.4.1
-@@ -3451,6 +3456,21 @@ jobs:
-           name: All jobs passed
-           command: echo "✅ All required jobs passed"
- 
-+  docs-check:
-+    executor: node-slim
-+    resource_class: small
-+    working_directory: ~/cypress
-+    steps:
-+      - checkout
-+      # Installs only the pinned checker, not the monorepo, so a docs-only PR
-+      # skips the full install.
-+      - run:
-+          name: Install markdown-link-check
-+          command: npm install --global "markdown-link-check@$(node -p "require('./package.json').devDependencies['markdown-link-check']")"
-+      - run:
-+          name: Check Markdown links 🔗
-+          command: yarn check-markdown-links
-+
-   # Fan-in gate: build complete and contributor PR approved (when applicable).
-   ready-to-test:
-     docker:
-```
-
-**File**: `.circleci/src/pipeline/workflows/pull-request.yml` (modified, +30/-12)
-```diff
-@@ -23,32 +23,44 @@ when:
-         equal: [ 'bill/server-vitest-foundation', << pipeline.git.branch >> ]
- 
- jobs:
-+  # A docs-only PR (pipeline.parameters.docs-only) skips every job from install
-+  # through test-kitchensink, since none of them read Markdown or images. Each
-+  # carries its own filter rather than relying on CircleCI dropping a job whose
-+  # upstreams are all filtered out. docs-check runs on every PR so
-+  # all-jobs-passed always has a job to wait for.
-+  - docs-check:
-+      filters: not (pipeline.git.branch matches /^pull\/[0-9]+/)
-+  # A fork PR can change the command docs-check runs, so it waits for approval.
-+  - docs-check:
-+      name: contributor-docs-check
-+      requires:
-+        - approve-contributor-pr
-+      filters: pipeline.git.branch matches /^pull\/[0-9]+/
-+
-   # Internal PRs — install and build run immediately, unless a bot pushed.
-   # Bots can't join the GitHub teams that restrict our contexts, and jobs after
-   # an approval run as the approver. The install runs the bot's dependency changes.
-   # The install has one variant per case because CircleCI drops a job whose
-   # requires are all filtered out.
-   - node_modules_install:
-       build-better-sqlite3: true
--      filters: pipeline.parameters.bot-approval-required == false and not (pipeline.git.branch matches /^pull\/[0-9]+/)
-+      filters: pipeline.parameters.docs-only == false and pipeline.parameters.bot-approval-required == false and not (pipeline.git.branch matches /^pull\/[0-9]+/)
-   - approve-bot-pr:
-       type: approval
--      filters: pipeline.parameters.bot-approval-required == true
-+      filters: pipeline.parameters.docs-only == false and pipeline.parameters.bot-approval-required == true
-   - node_modules_install:
-       name: bot-node-modules-install
-       build-better-sqlite3: true
-       requires:
-         - approve-bot-pr
--      filters: pipeline.parameters.bot-approval-required == true
-+      filters: pipeline.parameters.docs-only == false and pipeline.parameters.bot-approval-required == true
-   - build:
-       name: internal-pr-build
-       context: test-runner:env-canary
-       requires:
-         - node_modules_install
-         - bot-node-modules-install
--      filters:
--        branches:
--          ignore: /^pull\/[0-9]+/
-+      filters: pipeline.parameters.docs-only == false and not (pipeline.git.branch matches /^pull\/[0-9]+/)
- 
-   # External (contributor) PRs — everything gates behind manual approval
-   - approve-contributor-pr:
-@@ -61,39 +73,41 @@ jobs:
-       build-better-sqlite3: true
-       requires:
-         - approve-contributor-pr
--      filters:
--        branches:
--          only: /^pull\/[0-9]+/
-+      filters: &contributorCodeJobs pipeline.parameters.docs-only == false and pipeline.git.branch matches /^pull\/[0-9]+/
-   - build:
-       name: external-pr-build
-       requires:
-         - contributor-node-modules-install
--      filters:
--        branches:
--          only: /^pull\/[0-9]+/
-+      filters: *contributorCodeJobs
-   - ready-to-test:
-+      filters: &codeJobs pipeline.parameters.docs-only == false
-       requires:
-         - internal-pr-build
-         - external-pr-build
-         - approve-contributor-pr
-   - check-lockfile:
-+      filters: *codeJobs
-       requires:
-         - internal-pr-build
-         - external-pr-build
-   - check-ts:
-+      filters: *codeJobs
-       requires:
-         - internal-pr-build
-         - external-pr-build
-   - health-check:
-+      filters: *codeJobs
-       requires:
-         - internal-pr-build
-         - external-pr-build
-   - lint:
-       name: linux-lint
-+      filters: *codeJobs
-       requires:
-         - internal-pr-build
-         - external-pr-build
-   - lint-types:
-+      filters: *codeJobs
-       requires:
-         - internal-pr-build
-         - external-pr-build
-@@ -420,6 +434,7 @@ jobs:
-         - ready-to-test
- 
-   - test-kitchensink:
-+      filters: *codeJobs
-       requires:
-         - ready-to-test
- 
-@@ -446,6 +461,9 @@ jobs:
-   - all-jobs-passed:
-       requires:
-         # Always-run jobs
-+        - docs-check
-+        - contributor-docs-check
-+        # Skipped on docs-only PRs
-         - linux-lint
-         - check-lockfile
-         - check-ts
-```
-
-**File**: `CLAUDE.md` (modified, +2/-0)
-```diff
-@@ -42,6 +42,7 @@
- ## Working Constraints
- 
- - Worktrees must use a full `yarn` install in the worktree. Do not symlink `node_modules` or packages back to another checkout.
-+- Never run `git config user.name` or `git config user.email` in this repo or any of its worktrees. A linked worktree shares the main checkout's `.git/config`, so an identity set there for throwaway test commits authors every real commit too, and the CLA check rejects them. For a scratch commit, pass the identity to that one command (`git -c user.name=… -c user.email=… commit`), or set it inside a separate repo created with `git init`. Before pushing, check that `git log --format='%an <%ae>' origin/develop..HEAD` shows only the expected author.
- - Packaged-binary integration tests (`system-tests/test-binary`) need Docker and a built binary, so they do not run in the sandbox. When they are needed, provide the exact commands and ask the user to run them.
- - System tests under `system-tests/test` do run in cloud containers once the monorepo is built. Run them yourself rather than handing them off; see [Running system tests](./AGENTS.md#running-system-tests).
- - Keep follow-up work from the same task, such as review fixes and related instruction updates, on that task's branch. Create a separate branch only when the user asks for one.
-@@ -51,5 +52,6 @@
- - When a test feeds in output from a browser, tool or service (a stack trace, a CLI message, an API response), take its examples from real captured output, such as a fixture under `__fixtures__`, not names made up to look plausible. Keep inputs that only follow the format's rules in their own clearly labelled cases, and check that changelog examples come from the same real output.
- - Keep a `cli/CHANGELOG.md` entry to the user-facing change and the link, plus one before-and-after example only when it shows something the description doesn't. Cut any sentence that restates the change in other words, including a "For example" that only applies the description to one sample path or name.
- - Before committing or pushing, `yarn check-ts`, `yarn lint`, `yarn health-check` (knip), and relevant unit tests must pass locally. CI currently does not block expensive e2e jobs when these fail.
-+- When every changed file is Markdown (`*.md`, `*.mdx`), something under `assets/` or `guides/`, or `LICENSE`, skip the checks above and the install and build they need: none of them read those files. Run `yarn check-markdown-links` instead. It needs the root `yarn` install but no build, and it runs `markdown-link-check` over every Markdown file in the repo, failing on any link to a repo path that doesn't exist, including one the change deletes. URLs and `#` anchors aren't checked. Markdown under a `src/`, `test/`, `fixtures/` or `templates/` directory is code input, so it gets the full set. CI's `docs-only` parameter in `.circleci/scripts/generate-pipeline-parameters.sh` uses the same rule, and the two must stay in sync.
- 
- @AGENTS.md
-```
-
-**File**: `package.json` (modified, +2/-0)
-```diff
-@@ -63,6 +63,7 @@
-     "check-binary-on-cdn": "node ./scripts/binary/check-binary-on-cdn.js",
-     "check-lockfile": "yarn dedupe-lockfile --list --fail",
-     "check-lockfile-drift": "./scripts/check-lockfile-drift.sh",
-+    "check-markdown-links": "markdown-link-check --quiet --config scripts/markdown-link-check.json $(git ls-files '*.md' '*.mdx')",
-     "check-node-version": "node scripts/check-node-version.js",
-     "check-regex": "node scripts/check-regex.js",
-     "check-terminal": "node scripts/check-terminal.js",
-@@ -242,6 +243,7 @@
-     "lint-staged": "^16",
-     "listr2": "^9.0.5",
-     "lodash": "^4.17.21",
-+    "markdown-link-check": "3.15.0",
-     "minimist": "1.2.8",
-     "mobx": "6.13.6",
-     "mocha": "3.5.3",
-```
-
-**File**: `scripts/markdown-link-check.json` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+{
-+  "ignorePatterns": [
-+    {
-+      "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:"
-+    },
-+    {
-+      "pattern": "^//"
-+    },
-+    {
-+      "pattern": "^#"
-+    }
-+  ],
-+  "replacementPatterns": [
-+    {
-+      "pattern": "^/",
-+      "replacement": "{{BASEURL}}/"
-+    }
-+  ]
-+}
-```
-
-**File**: `yarn.lock` (modified, +314/-41)
-```diff
-@@ -6493,6 +6493,35 @@
-   resolved "https://registry.npmjs.org/@one-ini/wasm/-/wasm-0.1.1.tgz#6013659736c9dbfccc96e8a9c2b3de317df39323"
-   integrity sha512-XuySG1E38YScSJoMlqovLru4KTUNSjgVTIjyh7qMX6aNN5HY5Ct5LhRJdxO79JtTzKfzV/bnWpz+zquYrISsvw==
- 
-+"@oozcitak/dom@^2.0.2":
-+  version "2.0.2"
-+  resolved "https://registry.yarnpkg.com/@oozcitak/dom/-/dom-2.0.2.tgz#0f447f0b736aa6f36c5556ba811a44e56c71c26c"
-+  integrity sha512-GjpKhkSYC3Mj4+lfwEyI1dqnsKTgwGy48ytZEhm4A/xnH/8z9M3ZVXKr/YGQi3uCLs1AEBS+x5T2JPiueEDW8w==
-+  dependencies:
-+    "@oozcitak/infra" "^2.0.2"
-+    "@oozcitak/url" "^3.0.0"
-+    "@oozcitak/util" "^10.0.0"
-+
-+"@oozcitak/infra@^2.0.2":
-+  version "2.0.2"
-+  resolved "https://registry.yarnpkg.com/@oozcitak/infra/-/infra-2.0.2.tgz#e2f1cc0eeca3ac5cd551f0326a5f66f00cf1138b"
-+  integrity sha512-2g+E7hoE2dgCz/APPOEK5s3rMhJvNxSMBrP+U+j1OWsIbtSpWxxlUjq1lU8RIsFJNYv7NMlnVsCuHcUzJW+8vA==
-+  dependencies:
-+    "@oozcitak/util" "^10.0.0"
-+
-+"@oozcitak/url@^3.0.0":
-+  version "3.0.0"
-+  resolved "https://registry.yarnpkg.com/@oozcitak/url/-/url-3.0.0.tgz#a03c959c67e28aba9e29b2d35cd50d26cb5f2cc4"
-+  integrity sha512-ZKfET8Ak1wsLAiLWNfFkZc/BraDccuTJKR6svTYc7sVjbR+Iu0vtXdiDMY4o6jaFl5TW2TlS7jbLl4VovtAJWQ==
-+  dependencies:
-+    "@oozcitak/infra" "^2.0.2"
-+    "@oozcitak/util" "^10.0.0"
-+
-+"@oozcitak/util@^10.0.0":
-+  version "10.0.0"
-+  resolved "https://registry.yarnpkg.com/@oozcitak/util/-/util-10.0.0.tgz#f6b40472d96c210094a556ee5ccb8e77f1bd30af"
-+  integrity sha512-hAX0pT/73190NLqBPPWSdBVGtbY6VOhWYK3qqHqtXQ1gK7kS2yz4+ivsN07hpJ6I3aeMtKP6J6npsEKOAzuTLA==
-+
- "@opentelemetry/api@1.4.1":
-   version "1.4.1"
-   resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-1.4.1.tgz#ff22eb2e5d476fbc2450a196e40dd243cc20c28f"
-@@ -12106,10 +12135,10 @@ async-settle@^1.0.0:
-   dependencies:
-     async-done "^1.2.2"
- 
--async@>=0.2.9, async@^3.2.3, async@^3.2.4:
--  version "3.2.4"
--  resolved "https://registry.yarnpkg.com/async/-/async-3.2.4.tgz#2d22e00f8cddeb5fde5dd33522b56d1cf569a81c"
--  integrity sha512-iAB+JbDEGXhyIUavoDl9WP/Jj106Kz9DEn1DPgYw5ruDn0e3Wgi3sKFm55sASdGBNOQB8F59d9qQ7deqrHA8wQ==
-+async@>=0.2.9, async@^3.2.3, async@^3.2.4, async@^3.2.6:
-+  version "3.2.6"
-+  resolved "https://registry.yarnpkg.com/async/-/async-3.2.6.tgz#1b0728e14929d51b85b449b7f06e27c1145e38ce"
-+  integrity sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==
- 
- async@^2.6.4:
-   version "2.6.4"
-@@ -12491,6 +12520,11 @@ basic-ftp@^5.0.2:
-   resolved "https://registry.yarnpkg.com/basic-ftp/-/basic-ftp-5.2.2.tgz#4cb2422deddf432896bdb3c9b8f13b944ad4842c"
-   integrity sha512-1tDrzKsdCg70WGvbFss/ulVAxupNauGnOlgpyjKzeQxzyllBLS0CGLV7tjIXTK3ZQA9/FBEm9qyFFN1bciA6pw==
- 
-+basic-ftp@^6.2.4:
-+  version "6.2.6"
-+  resolved "https://registry.yarnpkg.com/basic-ftp/-/basic-ftp-6.2.6.tgz#84905c94db0e10415c9ba4ce61b30bc38875905a"
-+  integrity sha512-0EjZCaodOz6yiokv2JA1VyKGNdGxULZ+GGlPgG9tm4d+T/bHtX1hUch8CumDneBfpIbiSdn7TaCGwpM+gwsOlw==
-+
- batch@0.6.1:
-   version "0.6.1"
-   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
-@@ -13430,6 +13464,11 @@ chalk@^5.0.1, chalk@^5.1.2, chalk@^5.4.1, chalk@^5.6.0, chalk@^5.6.2:
-   resolved "https://registry.yarnpkg.com/chalk/-/chalk-5.6.2.tgz#b1238b6e23ea337af71c7f8a295db5af0c158aea"
-   integrity sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==
- 
-+chalk@^6.0.0:
-+  version "6.0.1"
-+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-6.0.1.tgz#077d4667ad6e608c9687782caed3d534d7f9abc3"
-+  integrity sha512-/Ce6KNm3vIbWdMlNna6RVIZ/ICQxnJxCicet5LBKK9ZffBkqzDw0xh9EiKSljdRtiIQ1S1z4YgcscUUGzNCWrA==
-+
- change-case-all@1.0.14:
-   version "1.0.14"
-   resolved "https://registry.yarnpkg.com/change-case-all/-/change-case-all-1.0.14.tgz#bac04da08ad143278d0ac3dda7eccd39280bfba1"
-@@ -13542,6 +13581,35 @@ check-more-types@2.24.0:
-   resolved "https://registry.yarnpkg.com/check-more-types/-/check-more-types-2.24.0.tgz#1420ffb10fd444dcfc79b43891bbfffd32a84600"
-   integrity sha1-FCD/sQ/URNz8ebQ4kbv//TKoRgA=
- 
-+cheerio-select@^2.1.0:
-+  version "2.1.0"
-+  resolved "https://registry.yarnpkg.com/cheerio-select/-/cheerio-select-2.1.0.tgz#4d8673286b8126ca2a8e42740d5e3c4884ae21b4"
-+  integrity sha512-9v9kG0LvzrlcungtnJtpGNxY+fzECQKhK4EGJX2vByejiMX84MFNQw4UxPJl3bFbTMw+Dfs37XaIkCwTZfLh4g==
-+  dependencies:
-+    boolbase "^1.0.0"
-+    css-select "^5.1.0"
-+    css-what "^6.1.0"
-+    domelementtype "^2.3.0"
-+    domhandler "^5.0.3"
-+    domutils "^3.0.1"
-+
-+cheerio@^1.0.0-rc.10:
-+  version "1.2.0"
-+  resolved "https://registry.yarnpkg.com/cheerio/-/cheerio-1.2.0.tgz#f23b777c49021ead7475dcf3390d3535a7f896d6"
-+  integrity sha512-WDrybc/gKFpTYQutKIK6UvfcuxijIZfMfXaYm8NMsPQxSYvf+13fXUJ4rztGGbJcBQ/GF55gvrZ0Bc0bj/mqvg==
-+  dependencies:
-+    cheerio-select "^2.1.0"
-+    dom-serializer "^2.0.0"
-+    domhandler "^5.0.3"
-+    domutils "^3.2.2"
-+    encoding-sniffer "^0.2.1"
-+    htmlparser2 "^10.1.0"
-+    parse5 "^7.3.0"
-```
-
----
-
-### Incident Patch 3: `640c4423` (2026-11-24)
-**Commit Message**: fix: do not hang on Windows when a test sends a large file to a Chromium-based browser (#35506)
-
-* fix(server): limit how much a CDP connection queues for writing
-
-Node joins every chunk waiting on a socket into one write. A ~70 MB
-Runtime.evaluate, such as a 50 MB fixture sent to the driver, became a
-single write that Windows failed with ENOBUFS, closing the page's CDP
-connection and leaving the run hanging.
-
-Messages longer than 1M characters are now always sent as fragments, and
-frames are held back while 4 MiB are waiting on the socket, so no write
-grows past a few MiB.
+Replay now reads performance.now() once per flush and passes it to every
+held rAF callback, matching how callbacks in one real frame share a
+timestamp. Other timers keep their original arguments.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01WUv8r3m9LtBn5gLVwYb8xD
 
-* chore: add changelog entry
+* chore: lead the rAF replay comment with its effect
+
+Open with what the replay does to a held callback's timestamp, with an
+example, before the reason, per the code comment guidelines.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01WUv8r3m9LtBn5gLVwYb8xD
 
-* fix(server): count each frame toward the CDP write limit and fail held messages on close
-
-- Hold a frame back if sending it would leave more than MAX_QUEUED_BYTES
-  waiting, not only while that much is already waiting
-- Send a frame regardless while the socket is under its high water mark,
-  since Node only emits drain after a write fills it
-- Fail a message whose held frame throws instead of throwing from the
-  drain listener, and keep sending the next one
-- On close, fail eac
+* test: assert replayed rAF timestamps are current in the d
 
 **File**: `cli/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -36,6 +36,7 @@
- - Fixed a regression in [16.0.0](#16-0-0) where, in Chromium-based browsers, a registered service worker was replaced by a new version every time the browser checked it for updates, even when its script had not changed. A service worker that calls `skipWaiting()` and `clients.claim()`, such as the one Mock Service Worker (MSW) uses, then took over the page in the middle of a test without the previous worker's state, so mocked requests reached the network. A service worker that kept a request open, such as a server-sent events stream, could also make [`cy.visit()`](https://on.cypress.io/visit) fail with a `pageLoadTimeout` error while the new version waited to take over. Setting `forceHttp1: true` worked around the issue. Fixes [#34943](https://github.com/cypress-io/cypress/issues/34943) and [#35204](https://github.com/cypress-io/cypress/issues/35204).
- - [`.type()`](https://on.cypress.io/type) now moves the caret of a `url` input as it types, and starts typing at a caret position your app set with `setSelectionRange()`. For example, after `.type('{leftArrow}{leftArrow}{leftArrow}')` on a `url` input holding `https://www.example.com`, the input's `selectionStart` is now `20` instead of staying at `23`. Fixed in [#35465](https://github.com/cypress-io/cypress/pull/35465).
- - [`.type()`](https://on.cypress.io/type) now accepts consecutive `{upArrow}` and `{downArrow}` sequences, such as `{upArrow}{upArrow}`, on `date`, `month`, `week`, `time`, and `datetime-local` inputs, and steps the value once per arrow. Previously, a single arrow worked but more than one in a row failed with an error saying the input required a valid date, month, week, time, or datetime. Fixed in [#35352](https://github.com/cypress-io/cypress/pull/35352).
-+- Fixed an issue on Windows where a test that sent a large file to Chrome, another Chromium-based browser, or Electron, such as a 50 MB video passed to [`.selectFile()`](https://on.cypress.io/selectfile) or loaded with [`cy.fixture()`](https://on.cypress.io/fixture), could stop responding, and `cypress run` waited until it was stopped. Fixed in [#35506](https://github.com/cypress-io/cypress/pull/35506).
- - When Chrome or another Chromium-based browser exits right after Cypress launches it, Cypress now reports an error with the browser's exit code instead of repeating "Still waiting to connect" for 50 seconds. Fixes [#35276](https://github.com/cypress-io/cypress/issues/35276).
- - Fixed an issue where, when the application under test was on a different origin than the one the test started on, such as within [`cy.origin()`](https://on.cypress.io/origin), `document.cookie` returned `HttpOnly` cookies and could overwrite or delete them. `document.cookie` now behaves as it does in the browser: it does not return `HttpOnly` cookies, and cannot set, change, or delete them. Fixed in [#35283](https://github.com/cypress-io/cypress/pull/35283).
- - Fixed a regression in [15.15.0](#15-15-0) where a [`cy.origin()`](https://on.cypress.io/origin) block could fail partway through with ``Timed out after waiting `60000ms` for your remote page to load.`` (with the default [`pageLoadTimeout`](https://on.cypress.io/configuration#Timeouts)) when an earlier test had left a page of that origin without using `cy.origin()`, such as an identity provider page that redirects back to your app. Fixes [#35475](https://github.com/cypress-io/cypress/issues/35475).
+@@ -7,6 +7,7 @@
+ 
+ **Bugfixes:**
+ 
++- `requestAnimationFrame()` callbacks in your application that come due while [`cy.screenshot()`](https://on.cypress.io/screenshot) takes a screenshot now receive the time they run once the screenshot finishes, as they would in a real frame, instead of the time they came due. Fixed in [#35566](https://github.com/cypress-io/cypress/pull/35566).
+ - Fixed an issue where setting up a testing type wrote `import` and `export default` into an empty `cypress.config.cjs` when your `package.json` has `"type": "module"`, so the configuration file then failed to load. Fixed in [#35543](https://github.com/cypress-io/cypress/pull/35543).
+ - Fixed an issue where the `junit` reporter, and custom reporters that use `mocha-junit-reporter`, printed `Couldn't determine Mocha version` on every run. Fixed in [#35561](https://github.com/cypress-io/cypress/pull/35561).
+ 
 ```
 
-**File**: `packages/server/lib/browsers/cdp-protocol/send-large-messages-in-fragments.ts` (modified, +87/-19)
+**File**: `packages/driver/cypress/e2e/cy/timers.cy.ts` (modified, +8/-3)
 ```diff
-@@ -1,55 +1,120 @@
- import Debug from 'debug'
-+import type { Socket } from 'net'
- import type WebSocket from 'ws'
+@@ -178,21 +178,26 @@ describe('driver/src/cy/timers', () => {
  
- const debug = Debug('cypress:server:browsers:cdp-protocol:send-large-messages-in-fragments')
+         expect(id1).to.eq(1)
  
--// Chrome closes a DevTools websocket, and everything on it, when its 100 MiB
--// read buffer overflows, but it reassembles fragmented messages. That buffer
--// can also hold bytes that arrived after the frame being read, so the threshold
--// leaves room under the cap. Smaller messages are sent as a single frame.
--export const FRAGMENT_MESSAGES_OVER_BYTES = 64 * 1024 * 1024
--
--// In UTF-16 code units, so a fragment is at most 3 MiB of UTF-8. Chrome takes
--// in small fragments faster than a few large ones.
-+// In UTF-16 code units, so a fragment is at most 3 MiB of UTF-8. Chrome closes
-+// a DevTools websocket when one frame overflows its 100 MiB read buffer, and
-+// takes in small fragments faster than a few large ones.
- export const FRAGMENT_CHARS = 1024 * 1024
- 
-+// Node joins every chunk waiting on a socket into one write, and Windows can
-+// fail a write of tens of MB with ENOBUFS, which closes the connection. A frame
-+// is held back while sending it would leave more than this waiting.
-+export const MAX_QUEUED_BYTES = 4 * 1024 * 1024
++        let unpausedAt: number
 +
- type SendCallback = (err?: Error) => void
- 
-+// Typed like the `ws.send` override's own parameters, which take either call shape.
-+interface Frame {
-+  data: any
-+  options: any
-+  callback?: SendCallback
-+  bytes: number
-+  // Shared by every fragment of one message.
-+  message: { done?: SendCallback }
-+}
+         cy
+         .wait(100)
+         .log('requestAnimationFrame should NOT have fired when paused')
+         .window().its('bar').should('be.null')
+         .log('requestAnimationFrame should now fire when unpaused')
+         .then(() => {
++          unpausedAt = win.performance.now()
 +
- // A string stores a character above U+FFFF, such as most emoji, as two UTF-16
- // units, and this range is always the first of them. ws encodes each fragment
- // to UTF-8 on its own, so a fragment ending on this unit would split the pair,
- // and each half would encode as U+FFFD.
- const isHighSurrogate = (charCode: number) => charCode >= 0xd800 && charCode <= 0xdbff
+           // now go ahead and run all the queued timers
+           return cy.pauseTimers(false)
+         })
  
-+const byteLength = (data: unknown) => typeof data === 'string' ? Buffer.byteLength(data) : 0
+         cy.window().its('bar').should('eq', 'bar')
+         .and(() => {
+-          // requestAnimationFrame should have passed through
+-          // its high res timestamp from performance.now()
+-          expect(rafStub).to.be.calledWithMatch(Number)
++          // The callback's frame came due during the wait, so a timestamp from
++          // before unpausing means it was given that frame's stale time
++          expect(rafStub).to.be.calledOnce
++          expect(rafStub.firstCall.args[0]).to.be.at.least(unpausedAt)
+         })
+         .then(() => {
+           win.bar = 'foo'
+```
+
+**File**: `packages/runner/injection/timers.ts` (modified, +23/-0)
+```diff
+@@ -18,6 +18,12 @@ export const createTimers = () => {
+   let timerQueue: QueuedTimer[]
+   let canceledTimerIds: Record<number, boolean>
+ 
++  // Bound when the timers are created, before any app or test code runs, so
++  // held rAF callbacks keep the clock real frames use even after
++  // `performance.now` is replaced, as `cy.clock(now, ['performance'])` does
++  const { performance } = window
++  const frameClock = performance.now.bind(performance)
 +
- /**
-- * Patches a chrome-remote-interface client to send messages larger than
-- * FRAGMENT_MESSAGES_OVER_BYTES as fragments. Call once, right after connecting.
-+ * Patches a chrome-remote-interface client to send messages longer than
-+ * FRAGMENT_CHARS as fragments, and to hold frames back so no more than
-+ * MAX_QUEUED_BYTES wait to be written. Call once, right after connecting.
-  */
- export function sendLargeMessagesInFragments (client: object): void {
-   // Safe because chrome-remote-interface keeps its socket on the undeclared
--  // `_ws` field. A client without one, such as a test double, is left as is.
--  const ws = (client as { _ws?: WebSocket })._ws
-+  // `_ws` field, and ws keeps the TCP socket on `_socket`. A client without
-+  // one, such as a test double, is left as is.
-+  const ws = (client as { _ws?: WebSocket & { _socket?: Socket } })._ws
+   const reset = () => {
+     paused = false
+     flushing = false
+@@ -36,6 +42,13 @@ export const createTimers = () => {
+   const flushTimerQueue = () => {
+     flushing = true
  
-   if (!ws) {
--    debug('client has no socket, so messages over %d bytes will not be fragmented', FRAGMENT_MESSAGES_OVER_BYTES)
-+    debug('client has no socket, so messages longer than %d characters will not be fragmented', FRAGMENT_CHARS)
++    // Held rAF callbacks receive the time the first of them runs: one that came
++    // due at 16 and replays at 5016 is called with 5016, not 16. The replay
++    // runs outside any rendering frame, so the timestamp the browser passed is
++    // stale by the length of the pause. Like callbacks in one real frame, every
++    // rAF callback in this flush shares that timestamp.
++    let frameTimestamp: number | undefined
++
+     timerQueue.forEach((timer) => {
+       const { timerId, type, fnOrCode, params } = timer
  
-     return
+@@ -46,6 +59,16 @@ export const createTimers = () => {
+         return
+       }
+ 
++      if (type === 'requestAnimationFrame') {
++        if (frameTimestamp === undefined) {
++          frameTimestamp = frameClock()
++        }
++
++        invoke(fnOrCode, [frameTimestamp])
++
++        return
++      }
++
+       invoke(fnOrCode, params)
+     })
+ 
+```
+
+**File**: `packages/runner/test/unit/injection/timers.spec.ts` (modified, +59/-0)
+```diff
+@@ -113,6 +113,65 @@ describe('injection/timers', () => {
+       expect(timerWindow.codeRan).toBe(true)
+     })
+ 
++    it('replays a held requestAnimationFrame callback with the time it runs, not the time it came due', () => {
++      const callback = vi.fn()
++
++      timers.pause(true)
++      window.requestAnimationFrame(callback)
++      vi.advanceTimersToNextFrame()
++      vi.advanceTimersByTime(5000)
++
++      expect(callback).not.toHaveBeenCalled()
++
++      timers.pause(false)
++
++      expect(callback).toHaveBeenCalledExactlyOnceWith(5016)
++    })
++
++    it('gives every requestAnimationFrame callback held in one flush the same timestamp', () => {
++      const first = vi.fn(() => vi.advanceTimersByTime(4))
++      const second = vi.fn()
++
++      timers.pause(true)
++      window.requestAnimationFrame(first)
++      window.requestAnimationFrame(second)
++      vi.advanceTimersToNextFrame()
++      vi.advanceTimersByTime(5000)
++
++      timers.pause(false)
++
++      expect(first).toHaveBeenCalledExactlyOnceWith(5016)
++      expect(second).toHaveBeenCalledExactlyOnceWith(5016)
++    })
++
++    it('times a held requestAnimationFrame callback after the held callbacks queued ahead of it run', () => {
++      const frame = vi.fn()
++
++      timers.pause(true)
++      window.setTimeout(() => vi.advanceTimersByTime(200), 10)
++      window.requestAnimationFrame(frame)
++      vi.advanceTimersByTime(100)
++
++      timers.pause(false)
++
++      expect(frame).toHaveBeenCalledExactlyOnceWith(300)
++    })
++
++    it('times a held requestAnimationFrame callback by the clock frames use when performance.now is replaced after wrapping', () => {
++      const frame = vi.fn()
++      const replacedNow = vi.spyOn(performance, 'now').mockReturnValue(0)
++
++      timers.pause(true)
++      window.requestAnimationFrame(frame)
++      vi.advanceTimersToNextFrame()
++      vi.advanceTimersByTime(5000)
++
++      timers.pause(false)
++      replacedNow.mockRestore()
++
++      expect(frame).toHaveBeenCalledExactlyOnceWith(5016)
++    })
++
+     it('holds a timer scheduled before pausing that comes due while paused', () => {
+       const callback = vi.fn()
+ 
+```
+
+---
+
+### Incident Patch 2: `2ad20e3e` (2026-11-28)
+**Commit Message**: chore: emit a loadable ESM build for @packages/https-proxy (#35572)
+
+* chore: emit @packages/https-proxy ESM build
+
+tsconfig.esm.json set noEmit, so build:esm cleared esm/ and wrote
+nothing, leaving the package.json "module" entry (esm/index.js)
+pointing at a missing file. Dropping noEmit makes tsc emit it.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01WUv8r3qdTZRBzwwYXN6AN2
+
+* chore: make @packages/https-proxy ESM build loadable by Node
+
+The esm/ output used extensionless relative imports and sat in a
+package with no "type", so Node's ESM loader couldn't resolve
+'./proxy' and reparsed every file with a warning.
+
+- add .js extensions to relative imports in lib/, enforced by
+  n/file-extension-in-import
+- write esm/package.json with "type": "module" in build:esm
+- import node-forge by its default export; Node can't read its
+  CommonJS named exports from ESM
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01WUv8r3qdTZRBzwwYXN6AN2
+
+* chore: list @packages/network as an https-proxy runtime dependency
+
+lib/server.ts imports @packages/network at runtime, but it was listed
+under devDe
+
+**File**: `packages/https-proxy/AGENTS.md` (modified, +2/-1)
+```diff
+@@ -37,9 +37,10 @@ lib/
+ 
+ - `proxy.spec.ts` and `server.spec.ts` cannot run in parallel because both bind to overlapping ports. The `test-unit` script uses `vitest run` without `--pool=forks`; the `test-debug` script explicitly passes `--no-file-parallelism`.
+ - Test helper certificates live in `test/helpers/certs/`. Regenerate them with `regenerate:certs` (requires OpenSSL in `$PATH`) when they expire or when the CA key needs to rotate.
++- `esm/` is real ESM: `build:esm` writes `esm/package.json` with `"type": "module"`, so relative imports in `lib/` need a `.js` extension (`n/file-extension-in-import` enforces this). Use a default import for a CommonJS dependency whose named exports Node can't read, such as `node-forge`. Named imports from tsc-compiled CommonJS like `@packages/network` work; check an unfamiliar one with `node --input-type=module`.
+ - The `semaphore` package throttles concurrent certificate generation to avoid race conditions under high load.
+ 
+ ## Integration Points
+ 
+ - Consumed by **@packages/proxy** and **@packages/server** which instantiate the HTTPS proxy server as part of the Cypress HTTP interception pipeline.
+-- Depends on **@packages/network** (dev dep) for HTTP agent utilities used in integration tests.
++- Depends on **@packages/network** at runtime: `lib/server.ts` uses its connection and HTTP helpers.
+```
+
+**File**: `packages/https-proxy/eslint.config.ts` (modified, +7/-0)
+```diff
+@@ -14,4 +14,11 @@ export default [
+     },
+   },
+   noFloatingPromisesConfig(['lib/**/*.ts']),
++  {
++    // Keeps esm/ loadable by anyone importing it through Node's ESM loader, which won't guess a missing extension
++    files: ['lib/**/*.ts'],
++    rules: {
++      'n/file-extension-in-import': ['error', 'always'],
++    },
++  },
+ ]
+```
+
+**File**: `packages/https-proxy/lib/ca.ts` (modified, +6/-3)
+```diff
+@@ -3,9 +3,12 @@ import { promisify } from 'util'
+ import debugModule from 'debug'
+ import os from 'os'
+ import path from 'path'
+-import { pki, md } from 'node-forge'
++import forge from 'node-forge'
+ import fs from 'fs-extra'
+ 
++// node-forge is CommonJS, so native ESM can't import its members by name
++const { pki, md } = forge
++
+ const debug = debugModule('cypress:https-proxy:ca')
+ 
+ // if this is higher than the user's cached CA version, the Cypress
+@@ -122,8 +125,8 @@ export class CA {
+   baseCAFolder: string
+   certsFolder: string
+   keysFolder: string
+-  CAcert: pki.Certificate
+-  CAkeys: pki.rsa.KeyPair
++  CAcert: forge.pki.Certificate
++  CAkeys: forge.pki.rsa.KeyPair
+ 
+   constructor (caFolder?: string) {
+     if (!caFolder) {
+```
+
+**File**: `packages/https-proxy/lib/index.ts` (modified, +3/-3)
+```diff
+@@ -1,6 +1,6 @@
+-import { create as createProxy, reset as resetProxy } from './proxy'
+-import { CA } from './ca'
++import { create as createProxy, reset as resetProxy } from './proxy.js'
++import { CA } from './ca.js'
+ 
+ export { createProxy, resetProxy, CA }
+ 
+-export type { Server } from './server'
++export type { Server } from './server.js'
+```
+
+**File**: `packages/https-proxy/lib/proxy.ts` (modified, +2/-2)
+```diff
+@@ -1,5 +1,5 @@
+-import { CA } from './ca'
+-import { create as createServer, reset as resetServer } from './server'
++import { CA } from './ca.js'
++import { create as createServer, reset as resetServer } from './server.js'
+ 
+ export async function create (dir: string, port: number, options: any) {
+   const ca = await CA.create(dir)
+```
+
+**File**: `packages/https-proxy/lib/server.ts` (modified, +2/-2)
+```diff
+@@ -3,10 +3,10 @@ import { allowDestroy, connect, httpUtils } from '@packages/network'
+ import debugModule from 'debug'
+ import https from 'https'
+ import net from 'net'
+-import { hostAndPort } from './util/parse'
++import { hostAndPort } from './util/parse.js'
+ import semaphore from 'semaphore'
+ import url from 'url'
+-import type { CA } from './ca'
++import type { CA } from './ca.js'
+ import type { IncomingMessage, ServerResponse } from 'http'
+ import type { AddressInfo } from 'net'
+ 
+```
+
+**File**: `packages/https-proxy/package.json` (modified, +2/-2)
+```diff
+@@ -13,7 +13,7 @@
+   "scripts": {
+     "build": "yarn build:esm && yarn build:cjs",
+     "build:cjs": "rimraf cjs && tsc -p tsconfig.cjs.json",
+-    "build:esm": "rimraf esm && tsc -p tsconfig.esm.json",
++    "build:esm": "rimraf esm && tsc -p tsconfig.esm.json && node -e \"require('fs').writeFileSync('esm/package.json', JSON.stringify({ type: 'module' }))\"",
+     "build-prod": "yarn build",
+     "check-ts": "tsc -p tsconfig.cjs.json --noEmit",
+     "clean-deps": "rimraf node_modules",
+@@ -28,6 +28,7 @@
+     "**/*.{js,jsx,ts,tsx,json}": "eslint --fix"
+   },
+   "dependencies": {
++    "@packages/network": "0.0.0-development",
+     "debug": "^4.3.4",
+     "fs-extra": "9.1.0",
+     "lodash": "^4.17.21",
+@@ -39,7 +40,6 @@
+     "@cypress/request": "^4.0.0",
+     "@cypress/request-promise": "^5.0.0",
+     "@packages/eslint-config": "0.0.0-development",
+-    "@packages/network": "0.0.0-development",
+     "@packages/vitest-setup": "0.0.0-development",
+     "@types/node-forge": "1.3.11",
+     "@types/semaphore": "1.1.4",
+```
+
+**File**: `packages/https-proxy/tsconfig.esm.json` (modified, +1/-2)
+```diff
+@@ -6,7 +6,6 @@
+     "target": "ES2022",
+     "module": "ES2022",
+     "moduleResolution": "node",
+-    "declaration": true,
+-    "noEmit": true
++    "declaration": true
    }
- 
-   // Bound copy of the original, so the override can write without calling itself.
-   const send = ws.send.bind(ws)
-+  const socket = ws._socket
-+
-+  if (!socket) {
-+    debug('websocket has no TCP socket, so frames will not be held back')
-+  }
-+
-+  let frames: Frame[] = []
-+
-+  // Below the high water mark, Node emits `drain` only if a later write fills
-+  // it, so a frame larger than the limit is sent then rather than held forever.
-+  const fits = (bytes: number) => {
-+    return !socket || socket.writableLength < socket.writableHighWaterMark || socket.writableLength + bytes <= MAX_QUEUED_BYTES
-+  }
-+
-+  const failQueued = () => {
-+    const messages = new Set(frames.map(({ message }) => message))
-+
-+    frames = []
-+    messages.forEach(({ done }) => done?.(new Error('The CDP websocket closed before the message was sent')))
-+  }
-+
-+  const flush = () => {
-+    if (socket?.destroyed) {
-+      return failQueued()
-+    }
-+
-+    while (frames.length && fits(frames[0].bytes)) {
-+      const frame = frames.shift()!
-+
-+      try {
-+        send(frame.data, frame.options, frame.callback)
-+      } catch (err: any) {
-+        frames = frames.filter(({ message }) => message !== frame.message)
-+        frame.message.done?.(err)
-+      }
-+    }
-+  }
-+
-+  socket?.on('drain', flush)
-+  socket?.on('close', flush)
- 
-   // `ws.send` takes `(data, callback)` or `(data, options, callback)`.
-   ws.send = (data: any, optionsOrCallback?: any, callback?: SendCallback) => {
--    if (typeof data !== 'string' || Buffer.byteLength(data) <= FRAGMENT_MESSAGES_OVER_BYTES) {
--      return send(data, optionsOrCallback, callback)
-+    const done: SendCallback | undefined = typeof optionsOrCallback === 'function' ? optionsOrCallback : callback
-+
-+    if (typeof data !== 'string' || data.length <= FRAGMENT_CHARS) {
-+
+ }
+\ No newline at end of file
 ```
 
-**File**: `packages/server/test/unit/browsers/browser-cri-client.spec.ts` (modified, +3/-3)
+---
+
+### Incident Patch 3: `769171c3` (2026-11-27)
+**Commit Message**: fix: let mocha-junit-reporter find Cypress's mocha version in the binary (#35561)
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `cli/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -8,7 +8,7 @@ import type { Protocol } from 'devtools-protocol'
- import { serviceWorkerClientEventHandlerName } from '@packages/proxy/lib/http/util/service-worker-manager'
- import { BrowserCriClient } from '../../../lib/browsers/browser-cri-client'
- import { CriClient } from '../../../lib/browsers/cdp-protocol/cri-client'
--import { FRAGMENT_MESSAGES_OVER_BYTES } from '../../../lib/browsers/cdp-protocol/send-large-messages-in-fragments'
-+import { FRAGMENT_CHARS } from '../../../lib/browsers/cdp-protocol/send-large-messages-in-fragments'
- import * as protocol from '../../../lib/browsers/protocol'
- import { cypressSessions } from '../../../lib/cypress-sessions'
- import { getMetadataHeaderValue } from '../../../lib/browsers/constants'
-@@ -564,7 +564,7 @@ describe('lib/browsers/browser-cri-client', function () {
-       expectCalledWith(options.browserClient.send, 'Runtime.runIfWaitingForDebugger', undefined, 'session-id')
-     })
+@@ -8,6 +8,7 @@
+ **Bugfixes:**
  
--    it('sends messages over the fragmenting threshold to the extra target as fragments', async () => {
-+    it('sends messages longer than FRAGMENT_CHARS to the extra target as fragments', async () => {
-       const originalSend = vi.fn()
-       const criClient = {
-         send: stub(),
-@@ -577,7 +577,7 @@ describe('lib/browsers/browser-cri-client', function () {
+ - Fixed an issue where setting up a testing type wrote `import` and `export default` into an empty `cypress.config.cjs` when your `package.json` has `"type": "module"`, so the configuration file then failed to load. Fixed in [#35543](https://github.com/cypress-io/cypress/pull/35543).
++- Fixed an issue where the `junit` reporter, and custom reporters that use `mocha-junit-reporter`, printed `Couldn't determine Mocha version` on every run. Fixed in [#35561](https://github.com/cypress-io/cypress/pull/35561).
  
-       await BrowserCriClient._onAttachToTarget(options as any)
+ ## 16.4.0
  
--      criClient._ws.send('a'.repeat(FRAGMENT_MESSAGES_OVER_BYTES + 1))
-+      criClient._ws.send('a'.repeat(FRAGMENT_CHARS + 1))
- 
-       expect(originalSend.mock.calls.length).toBeGreaterThan(1)
-     })
 ```
 
-**File**: `packages/server/test/unit/browsers/cdp-connection.spec.ts` (modified, +3/-3)
+**File**: `packages/server/lib/override_require.ts` (removed, +0/-21)
 ```diff
-@@ -5,7 +5,7 @@ import type { CdpEvent, CdpCommand } from '../../../lib/browsers/cdp-protocol/cd
- import type ProtocolMapping from 'devtools-protocol/types/protocol-mapping'
- import { CDPConnection } from '../../../lib/browsers/cdp-protocol/cdp-connection'
- import { CDPTerminatedError, CDPAlreadyConnectedError, CDPDisconnectedError } from '../../../lib/browsers/cdp-protocol/cri-errors'
--import { FRAGMENT_MESSAGES_OVER_BYTES } from '../../../lib/browsers/cdp-protocol/send-large-messages-in-fragments'
-+import { FRAGMENT_CHARS } from '../../../lib/browsers/cdp-protocol/send-large-messages-in-fragments'
- import { fireDisconnect as fireDisconnectListeners } from '../../support/helpers/cdp-disconnect'
- import WebSocket from 'ws'
- 
-@@ -178,12 +178,12 @@ describe('CDPConnection', () => {
-         await expect(cdpConnection.connect()).resolves.toBeUndefined()
-       })
- 
--      it('sends messages over the fragmenting threshold as fragments', async () => {
-+      it('sends messages longer than FRAGMENT_CHARS as fragments', async () => {
-         const originalSend = stubbedWebSocket.send
- 
-         await cdpConnection.connect()
- 
--        stubbedWebSocket.send('a'.repeat(FRAGMENT_MESSAGES_OVER_BYTES + 1))
-+        stubbedWebSocket.send('a'.repeat(FRAGMENT_CHARS + 1))
- 
-         expect(vi.mocked(originalSend).mock.calls.length).toBeGreaterThan(1)
-       })
+@@ -1,21 +0,0 @@
+-const Module = require('module')
+-
+-export const overrideRequire = (requireOverride) => {
+-  const _load = Module._load
+-
+-  Module._load = function (...args: any[]) {
+-    const pkg = args
+-
+-    if (requireOverride) {
+-      const mockedDependency = requireOverride(pkg[0], _load)
+-
+-      if (mockedDependency != null) {
+-        return mockedDependency
+-      }
+-    }
+-
+-    const ret = _load.apply(this, pkg)
+-
+-    return ret
+-  }
+-}
 ```
 
-**File**: `packages/server/test/unit/browsers/send-large-messages-in-fragments.spec.ts` (modified, +162/-16)
+**File**: `packages/server/lib/override_resolve.ts` (added, +10/-0)
 ```diff
-@@ -1,27 +1,44 @@
- import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
- import type { Mock } from 'vitest'
--import { once } from 'events'
--import type { AddressInfo } from 'net'
-+import { EventEmitter, once } from 'events'
-+import type { AddressInfo, Socket } from 'net'
- import CDP from 'chrome-remote-interface'
- import WebSocket from 'ws'
--import { FRAGMENT_CHARS, FRAGMENT_MESSAGES_OVER_BYTES, sendLargeMessagesInFragments } from '../../../lib/browsers/cdp-protocol/send-large-messages-in-fragments'
-+import { FRAGMENT_CHARS, MAX_QUEUED_BYTES, sendLargeMessagesInFragments } from '../../../lib/browsers/cdp-protocol/send-large-messages-in-fragments'
- 
- describe('sendLargeMessagesInFragments', () => {
-   describe('with a stub socket', () => {
-     let originalSend: Mock
-+    let tcpSocket: EventEmitter & { writableLength: number, writableHighWaterMark: number, destroyed: boolean }
-     let client: { _ws: WebSocket }
- 
-     beforeEach(() => {
--      originalSend = vi.fn()
--      // Safe because only `send` is exercised.
--      client = { _ws: { send: originalSend } as unknown as WebSocket }
-+      tcpSocket = Object.assign(new EventEmitter(), { writableLength: 0, writableHighWaterMark: 16 * 1024, destroyed: false })
-+      // Each frame waits on the socket until the test drains it.
-+      originalSend = vi.fn((chunk: string | Buffer) => {
-+        tcpSocket.writableLength += Buffer.byteLength(chunk)
-+      })
+@@ -0,0 +1,10 @@
++const Module = require('module')
 +
-+      // Safe because only `send` and the TCP socket's queue state are exercised.
-+      client = { _ws: { send: originalSend, _socket: tcpSocket } as unknown as WebSocket }
++// Hooks resolution rather than loading so `require.resolve` is redirected along with `require`.
++export const overrideResolve = (redirect: (request: string) => string | undefined) => {
++  const _resolveFilename = Module._resolveFilename
++
++  Module._resolveFilename = function (request: string, ...rest: any[]) {
++    return _resolveFilename.call(this, redirect(request) ?? request, ...rest)
++  }
++}
+```
+
+**File**: `packages/server/lib/reporter.ts` (modified, +7/-5)
+```diff
+@@ -8,7 +8,7 @@ import Mocha from 'mocha-7.2.0'
+ import mochaReporters from 'mocha-7.2.0/lib/reporters'
+ import mochaCreateStatsCollector from 'mocha-7.2.0/lib/stats-collector'
+ import Debug from 'debug'
+-import { overrideRequire } from './override_require'
++import { overrideResolve } from './override_resolve'
+ import type {
+   CypressTestStatusInfo,
+   InternalRunnable,
+@@ -30,7 +30,7 @@ const debug = Debug('cypress:server:reporter')
+ const mochaColor = mochaReporters.Base.color
+ const mochaSymbols = mochaReporters.Base.symbols
  
-       sendLargeMessagesInFragments(client)
+-// override calls to `require('mocha*')` when to always resolve with a mocha we control
++// override `require('mocha*')` and `require.resolve('mocha*')` to always resolve with a mocha we control
+ // otherwise mocha will be resolved from project's node_modules and might not work with our code
+ const customReporterMochaPath = path.dirname(require.resolve('mocha-7.2.0'))
+ 
+@@ -75,10 +75,12 @@ const getIconStatus = (status: RunnableState | undefined): IconStatus => {
+   }
+ }
+ 
+-overrideRequire((depPath, _load) => {
+-  if ((depPath === 'mocha') || depPath.startsWith('mocha/')) {
+-    return _load(depPath.replace('mocha', customReporterMochaPath))
++overrideResolve((request) => {
++  if ((request === 'mocha') || request.startsWith('mocha/')) {
++    return request.replace('mocha', customReporterMochaPath)
+   }
++
++  return undefined
+ })
+ 
+ // if Mocha.Suite.prototype.titlePath
+```
+
+**File**: `packages/server/test/unit/reporter.spec.ts` (modified, +10/-0)
+```diff
+@@ -126,6 +126,16 @@ describe('lib/reporter', () => {
      })
+   })
  
--    it('sends a message up to the fragmenting threshold unchanged', () => {
-+    const drain = () => {
-+      tcpSocket.writableLength = 0
-+      tcpSocket.emit('drain')
-+    }
++  // mocha-junit-reporter reads the version from `require.resolve('mocha')` to pick its mocha 6+ code path
++  it('resolves mocha to mocha-7.2.0 from a reporter', () => {
++    const requireFromJunit = createRequire(requireFromReporter.resolve('mocha-junit-reporter'))
++    const mochaDir = path.dirname(requireFromReporter.resolve('mocha-7.2.0'))
 +
-+    const drainAll = () => {
-+      while (tcpSocket.writableLength) {
-+        drain()
-+      }
-+    }
++    expect(path.dirname(requireFromJunit.resolve('mocha'))).toBe(mochaDir)
++    expect(requireFromJunit.resolve('mocha/lib/stats-collector')).toBe(path.join(mochaDir, 'lib/stats-collector.js'))
++    expect(requireFromJunit('mocha/package.json').version).toBe('7.2.0')
++  })
 +
-+    it('sends a message of up to FRAGMENT_CHARS characters as one frame', () => {
-       const callback = vi.fn()
--      const message = 'a'.repeat(FRAGMENT_MESSAGES_OVER_BYTES)
-+      const message = 'a'.repeat(FRAGMENT_CHARS)
- 
-       client._ws.send(message, callback)
- 
-@@ -34,11 +51,11 @@ describe('sendLargeMessagesInFragments', () => {
-       ['(data, options, callback)', (message: string, callback: () => void) => client._ws.send(message, {}, callback)],
-     ])('sends a larger message as text fragments that reassemble to it, calling back once after the last, when called as %s', (_, send) => {
-       const callback = vi.fn()
--      // Its byte length is over the threshold but its string length is not, and
--      // the first cut would fall between the two halves of the surrogate pair.
--      const message = `${'a'.repeat(FRAGMENT_CHARS - 1)}😀${'é'.repeat(FRAGMENT_MESSAGES_OVER_BYTES / 2)}`
-+      // The first cut would fall between the two halves of the surrogate pair.
-+      const message = `${'a'.repeat(FRAGMENT_CHARS - 1)}😀${'é'.repeat(FRAGMENT_CHARS * 4)}`
- 
-       send(message, callback)
-+      drainAll()
- 
-       const calls = originalSend.mock.calls
-       const chunks: string[] = calls.map(([chunk]) => chunk)
-@@ -63,25 +80,129 @@ describe('sendLargeMessagesInFragments', () => {
-       // Nothing is lost, duplicated or reordered.
-       expect(chunks.join('')).toBe(message)
-     })
-+
-+    it('holds frames back while MAX_QUEUED_BYTES are waiting, then sends them in order as the socket drains', () => {
-+      const large = 'a'.repeat(FRAGMENT_CHARS * 16)
-+      const small = '{"id":2}'
-+
-+      client._ws.send(large, vi.fn())
-+      client._ws.send(small, vi.fn())
-+
-+      // Stops at the first frame that takes the queue to the limit.
-+      expect(originalSend).toHaveBeenCalledTimes(MAX_QUEUED_BYTES / FRAGMENT_CHARS)
-+
-+      let peak = tcpSocket.writableLength
-+
-+      while (tcpSocket.writableLength) {
-+        drain()
-+        peak = Math.max(peak, tcpSocket.writableLength)
-+      }
-+
-+      expect(peak).toBeLessThanOrEqual(MAX_QUEUED_BYTES)
-+
-+      const chunks: string[] = originalSend.mock.calls.map(([chunk]) => chunk)
-+
-+      expect(chunks.at(-1)).toBe(small)
-+      expect(chunks.slice(0, -1).join('')).toBe(large)
-+    })
-+
-+    it('counts the next frame toward MAX_QUEUED_BYTES before sending it', () => {
-+      // 3 bytes of UTF-8 each, so every fragment is 3 MiB.
-+      client._ws.send('€'.repeat(FRAGMENT_CHARS * 3))
-+
-+      expect(originalSend).toHaveBeenCalledOnce()
-+
-+      let peak = tcpSocket.writableLength
-+
-+      while (tcpSocket.writableLength) {
-+        drain()
-+        peak = Math.max(peak, tcpSocket.writableLength)
-+      }
-+
-+      expect(originalSend).toHaveBeenCalledTimes(3)
-+      expect(peak).toBeLessThanOrEqual(MAX_QUEUED_BYTES)
-+    })
-+
-+    it('sends a frame larger than MAX_QUEUED_BYTES while the socket is under its high water mark, since no drain would follow', () => {
-+      const frame = Buffer.alloc(MAX_QUEUED_BYTES + 1)
-+
-+   
+   describe('createSuite', () => {
+     it('recursively creates suites for fullTitle', () => {
+       const args = reporter.parseArgs('fail', testObj)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35537** (2026-11-24): chore: fix eslint-plugin-regexp errors in driver specs (@jennifer-shehane)
-- **PR #35536** (2026-11-24): chore: fix type error in angular-21 default specPattern fixture config (@jennifer-shehane)
-- **PR #35535** (2026-11-24): dependency: update simple-git to 4.1.0 (@jennifer-shehane)
-- **PR #35534** (2026-11-24): test: de-flake browser_reset IndexedDB steps and cover open connections (@jennifer-shehane)
-- **PR #35533** (2026-11-24): misc: explain blocked install scripts when the Cypress binary is missing (@jennifer-shehane)
-- **PR #35532** (2026-11-24): test: pin the interception.error message in the proxy-off brotli e2e (@jennifer-shehane)
+- **PR #35574** (2026-11-28): chore: cover Chrome for Testing in driver browser-name checks (@jennifer-shehane)
+- **PR #35572** (2026-11-28): chore: emit a loadable ESM build for @packages/https-proxy (@jennifer-shehane)
+- **PR #35571** (2026-11-28): refactor: convert remaining npm/vue component specs to TypeScript (@jennifer-shehane)
+- **PR #35570** (2026-11-28): docs: document installing and detecting Chrome for Testing (@jennifer-shehane)
+- **PR #35568** (2026-11-28): chore: convert the cross-origin injection to TypeScript and add unit tests (@jennifer-shehane)
+- **PR #35567** (2026-11-28): chore: run unit-tests on PRs for every workspace the root test script covers (@jennifer-shehane)
 
 ---
 
@@ -2133,21 +1523,21 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add a guide and script for measuring a regex before adding it
+## X. replay held requestAnimationFrame callbacks with the time they run
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b176208c`: add a guide and script for measuring a regex before adding it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08aeee75`: replay held requestAnimationFrame callbacks with the time they run. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- **Regex performance** — Before adding or changing a regex, follow [Writing performant regular expressions](./guides/writing-performant-regular-expressions.md) and measure it with `yarn check-regex`.
+- `requestAnimationFrame()` callbacks in your application that come due while [`cy.screenshot()`](https://on.cypress.io/screenshot) takes a screenshot now receive the time they run once the screenshot finishes, as they would in a real frame, instead of the time they came due. Fixed in [#35566](https://github.com/cypress-io/cypress/pull/35566).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2157,4 +1547,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b176208c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08aeee75` are properly handled with clean fallback behavior.

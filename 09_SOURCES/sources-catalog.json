@@ -1923,10 +1923,10 @@
     "repository": "cypress-io/cypress",
     "platform": "github",
     "sourceUrl": "https://github.com/cypress-io/cypress",
-    "sourceVersion": "5a30d970",
+    "sourceVersion": "c4799792",
     "license": "MIT",
-    "contentHash": "ccd359dc8353e7a612a1cf16dfc2721bb93539c503f8147eebf2349140bd36fd",
-    "lastHarvestedAt": "2026-11-25T00:43:31.543Z",
+    "contentHash": "2264c1b562b119daa2b5495ff1167a00e8b776681720dfd5dc3a35af44bea3b2",
+    "lastHarvestedAt": "2026-11-28T11:17:51.386Z",
     "learningId": "learn-github-cypress-io-cypress"
   },
   "syntax-tree-unist": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "d82a8a7b",
+    "sourceVersion": "e3bbc3fc",
     "license": "NOASSERTION",
-    "contentHash": "8d06ab910685b27241f188ff7e2d4f1363a7e345eb5e1b8369b473ae5e686e04",
-    "lastHarvestedAt": "2026-11-27T10:34:17.797Z",
+    "contentHash": "6f58170ae2c2c78c2db741a37f9b020838ed7f532d91d7d6957952a23ccedf3d",
+    "lastHarvestedAt": "2026-11-28T11:22:49.930Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {
@@ -9823,10 +9823,10 @@
     "repository": "wzh4869/AppPorts",
     "platform": "github",
     "sourceUrl": "https://github.com/wzh4869/AppPorts",
-    "sourceVersion": "d9294511",
+    "sourceVersion": "cc33027a",
     "license": "Apache-2.0",
-    "contentHash": "1f6b5716516535e5626317593ce5c728daa776beb3e37d72b44d97117ec3e061",
-    "lastHarvestedAt": "2026-11-26T07:10:23.232Z",
+    "contentHash": "c373da087da4cdb06814b8b9ca6faece66426b00f3121cf8558e13d785418faa",
+    "lastHarvestedAt": "2026-11-28T11:17:52.075Z",
     "learningId": "learn-github-wzh4869-appports"
   },
   "andythefactory-newspaper4k": {

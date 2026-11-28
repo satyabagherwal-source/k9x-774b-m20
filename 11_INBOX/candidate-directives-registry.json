@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T11:00:09.669Z",
+  "last_updated": "2026-11-28T11:22:57.358Z",
   "directives": [
     {
       "id": "CD-001",
@@ -75984,6 +75984,68 @@
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8C1712-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-N03F",
+      "directive_title": "replay held requestAnimationFrame callbacks with the time they run",
+      "source_repo": "cypress-io-cypress-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-N03F-replay-held-requestanimationframe-callbacks-with-the-time-they-run.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-GHN3",
+      "directive_title": "将 AppPorts 版本号更新为 2.4.1（构建号 115）",
+      "source_repo": "wzh4869/AppPorts",
+      "source_commit": "cc33027a",
+      "staged_file": "11_INBOX/candidate-directives/CD-GHN3-appports-2-4-1-115.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-MYJ5",
+      "directive_title": "Decode, hash, search and tag strings with fewer copies",
+      "source_repo": "oven-sh-bun-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MYJ5-decode-hash-search-and-tag-strings-with-fewer-copies.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-REV-E9CCB4",
+      "directive_title": "Decode, hash, search and tag strings with fewer copies",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "oven-sh-bun",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E9CCB4-decode-hash-search-and-tag-strings-with-.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-003FA5",
+      "directive_title": "replay held requestAnimationFrame callbacks with the time they run",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cypress-io-cypress",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-003FA5-replay-held-requestanimationframe-callba.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-N0ZS",
+      "directive_title": "build): 将 AppPorts 版本号更新为 2.4.1（构建号 115）",
+      "source_repo": "wzh4869-appports-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-N0ZS-build-appports-2-4-1-115.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
     }
   ]
 }

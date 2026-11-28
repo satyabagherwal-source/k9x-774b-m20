@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T11:00:08.815Z",
+  "updated_at": "2026-11-28T11:22:57.091Z",
   "stats": {
-    "total_discovered": 10890,
-    "approved_pending_harvest": 10342,
+    "total_discovered": 10905,
+    "approved_pending_harvest": 10357,
     "harvested_count": 0,
     "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10349,
+      "COMMUNITY_AND_EXPERT": 10364,
       "OFFICIAL_DOCUMENTATION": 299,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
@@ -235771,6 +235771,336 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
         "fileName": "vitest-dev-vitest-learnings.md"
+      }
+    },
+    "SRC-A0FBA130D710": {
+      "id": "SRC-A0FBA130D710",
+      "url": "https://cloud.cypress.io/projects/ypt4pf",
+      "title": "https://cloud.cypress.io/projects/ypt4pf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:55.101Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-2A6409BD42E8": {
+      "id": "SRC-2A6409BD42E8",
+      "url": "https://assets.cypress.io/github-pr-comment-icons/chevron.svg",
+      "title": "https://assets.cypress.io/github-pr-comment-icons/chevron.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:55.175Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-C740F732047E": {
+      "id": "SRC-C740F732047E",
+      "url": "https://cloud.cypress.io/projects/ypt4pf/runs/75942/overview",
+      "title": "https://cloud.cypress.io/projects/ypt4pf/runs/75942/overview",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:55.247Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-0E37D0D6A2F8": {
+      "id": "SRC-0E37D0D6A2F8",
+      "url": "https://assets.cypress.io/github-pr-comment-icons/passed.svg",
+      "title": "https://assets.cypress.io/github-pr-comment-icons/passed.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:55.333Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-F2B1C150EFB6": {
+      "id": "SRC-F2B1C150EFB6",
+      "url": "https://assets.cypress.io/github-pr-comment-icons/git-commit.svg",
+      "title": "https://assets.cypress.io/github-pr-comment-icons/git-commit.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:55.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-3E2DF7C4685D": {
+      "id": "SRC-3E2DF7C4685D",
+      "url": "https://claude.ai/code/session_01WUv8r3m9LtBn5gLVwYb8xD",
+      "title": "https://claude.ai/code/session_01WUv8r3m9LtBn5gLVwYb8xD",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:55.543Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-5F0E2E1E0974": {
+      "id": "SRC-5F0E2E1E0974",
+      "url": "https://on.cypress.io/screenshot",
+      "title": "https://on.cypress.io/screenshot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:55.616Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-647BE22D6E4A": {
+      "id": "SRC-647BE22D6E4A",
+      "url": "https://github.com/cypress-io/cypress/pull/35566",
+      "title": "https://github.com/cypress-io/cypress/pull/35566",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:55.687Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-9D2C80471026": {
+      "id": "SRC-9D2C80471026",
+      "url": "https://github.com/cypress-io/cypress/pull/35543",
+      "title": "https://github.com/cypress-io/cypress/pull/35543",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:55.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-7DF6B6A07A2A": {
+      "id": "SRC-7DF6B6A07A2A",
+      "url": "https://github.com/cypress-io/cypress/pull/35561",
+      "title": "https://github.com/cypress-io/cypress/pull/35561",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:55.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-F8D31210C2E4": {
+      "id": "SRC-F8D31210C2E4",
+      "url": "https://claude.ai/code/session_01WUv8r3qdTZRBzwwYXN6AN2",
+      "title": "https://claude.ai/code/session_01WUv8r3qdTZRBzwwYXN6AN2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:55.916Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-5643D96BAEE0": {
+      "id": "SRC-5643D96BAEE0",
+      "url": "https://github.com/user-attachments/assets/a83de5d9-3b25-493b-a976-822018b6f58e",
+      "title": "https://github.com/user-attachments/assets/a83de5d9-3b25-493b-a976-822018b6f58e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:56.879Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+        "fileName": "wzh4869-appports-learnings.md"
+      }
+    },
+    "SRC-C8B06D008D28": {
+      "id": "SRC-C8B06D008D28",
+      "url": "https://github.com/user-attachments/assets/9b334231-0494-4eaf-a73f-d2c5b2662ecb",
+      "title": "https://github.com/user-attachments/assets/9b334231-0494-4eaf-a73f-d2c5b2662ecb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:56.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+        "fileName": "wzh4869-appports-learnings.md"
+      }
+    },
+    "SRC-A117F7F43DB6": {
+      "id": "SRC-A117F7F43DB6",
+      "url": "https://github.com/user-attachments/files/35418261/AppPorts-Diagnostic-20261125-225211.zip",
+      "title": "https://github.com/user-attachments/files/35418261/AppPorts-Diagnostic-20261125-225211.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:57.021Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+        "fileName": "wzh4869-appports-learnings.md"
+      }
+    },
+    "SRC-4ABD6EBB6D84": {
+      "id": "SRC-4ABD6EBB6D84",
+      "url": "https://github.com/user-attachments/assets/bcce3d43-156a-4a79-8861-041abf985044",
+      "title": "https://github.com/user-attachments/assets/bcce3d43-156a-4a79-8861-041abf985044",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T11:22:57.091Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+        "fileName": "wzh4869-appports-learnings.md"
       }
     }
   }

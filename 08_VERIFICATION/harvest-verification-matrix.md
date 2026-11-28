@@ -14044,3 +14044,6 @@
 | `CYCLE-20261128-YVF8` | `2026-11-28T10:36:10.772Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7973` | Yes (`42ccd6ab...`) |
 | `CYCLE-20261128-GP75` | `2026-11-28T10:50:02.513Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11091` | Yes (`12fe2a3c...`) |
 | `CYCLE-20261128-TLCD` | `2026-11-28T11:00:04.045Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11092` | Yes (`526ff149...`) |
+| `CYCLE-20261128-GGWM` | `2026-11-28T11:17:51.382Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11093` | Yes (`2264c1b5...`) |
+| `CYCLE-20261128-GHFR` | `2026-11-28T11:17:52.071Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11094` | Yes (`c373da08...`) |
+| `CYCLE-20261128-MV9I` | `2026-11-28T11:22:49.926Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11095` | Yes (`6f58170a...`) |
