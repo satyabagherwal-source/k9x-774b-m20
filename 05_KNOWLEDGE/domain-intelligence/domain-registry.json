@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T14:47:36.023Z",
-  "total_records": 2905,
+  "last_updated": "2026-11-28T14:57:10.391Z",
+  "total_records": 2908,
   "domains": {
     "A": {
       "total": 27,
@@ -77,7 +77,7 @@
       ]
     },
     "D": {
-      "total": 1061,
+      "total": 1062,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1139,7 +1139,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-37b-a4b-learnings-core-inva",
         "DOM-D-5456C5F2",
         "DOM-D-095C01F1",
-        "DOM-D-3BCEAD45"
+        "DOM-D-3BCEAD45",
+        "DOM-D-EA0B2006"
       ]
     },
     "E": {
@@ -1280,7 +1281,7 @@
       ]
     },
     "G": {
-      "total": 496,
+      "total": 498,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1777,7 +1778,9 @@
         "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-core-invariants",
         "domain_intelligence-architecture-intelligence-mikelikesdesign-swiftui-experiments-learnings-core-inv",
         "domain_intelligence-architecture-intelligence-dubzzz-fast-check-core-invariants",
-        "domain_intelligence-architecture-intelligence-dubzzz-fast-check-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-dubzzz-fast-check-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-exyte-chat-core-invariants",
+        "domain_intelligence-architecture-intelligence-exyte-chat-learnings-core-invariants"
       ]
     },
     "H": {
@@ -15696,8 +15699,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "c4efdc7fa0ac5fd793f1fefed57759ee09f6e5b24ccc67c70ddbe82c7cef88a0",
-      "created_at": "2026-11-28T14:06:04.794Z"
+      "content_hash": "c0a343e8ccca50482041d57222492d8348a75071fcb034a21e958d38378ba8a1",
+      "created_at": "2026-11-28T14:57:10.391Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -44233,8 +44236,8 @@
       "title": "Architecture Intelligence: rmax/scrapy-redis Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rmax-scrapy-redis-architecture-intelligence-rmax-scrapy-redis-core-invariants.md",
       "repository": "rmax/scrapy-redis",
-      "content_hash": "a334fc1e62bac1738c98eeb11f305c46ba4dbfa5736dba4a2a23d1b42d026a35",
-      "created_at": "2026-11-25T02:20:18.514Z"
+      "content_hash": "281ca4078c1b61ca0731b2389047615e3f2d7cbce85756f29632a2d019565db2",
+      "created_at": "2026-11-28T14:56:26.993Z"
     },
     "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-learnings-core-invariants",
@@ -44242,8 +44245,8 @@
       "title": "Architecture Intelligence: rmax-scrapy-redis-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rmax-scrapy-redis-learnings-architecture-intelligence-rmax-scrapy-redis-learning.md",
       "repository": "rmax-scrapy-redis-learnings",
-      "content_hash": "35af1e178d4c6a29cefdc48fdb8713d75a350f229ccf5e2534c2ea112031e76b",
-      "created_at": "2026-11-25T02:20:33.791Z"
+      "content_hash": "37aafd086c1b4f1e67ab981e957b935287adecab8ca403697d69f23d6c48c441",
+      "created_at": "2026-11-28T14:57:08.003Z"
     },
     "domain_intelligence-research-knowledge-intelligence-memtensor-memt-1-0-pro-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-memtensor-memt-1-0-pro-core-invariants",
@@ -49350,6 +49353,66 @@
       "confidence": 0.7,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-28T14:47:32.565Z"
+    },
+    "domain_intelligence-architecture-intelligence-exyte-chat-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-exyte-chat-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: exyte/Chat Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-exyte-chat-architecture-intelligence-exyte-chat-core-invariants.md",
+      "repository": "exyte/Chat",
+      "content_hash": "3ec5a321c51d3a3006f91c1a0b1368df6fbbf2329a6c6fd78c5ae7c299b9c96a",
+      "created_at": "2026-11-28T14:56:30.810Z"
+    },
+    "DOM-D-EA0B2006": {
+      "record_id": "DOM-D-EA0B2006",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): rmax/scrapy-redis",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md`  \n> **Source**: github ([https://github.com/rmax/scrapy-redis](https://github.com/rmax/scrapy-redis))  \n> **Source Version**: `affd8d54`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synthesi",
+      "content_hash": "e3588a3f71ad7be41ef0a1ddf952ed484e752fb75e77ad603cf7edd1fd5e1d15",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md`  \n> **Source**: github ([https://github.com/rmax/scr -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md`  \n> **Source**: github ([https://github.com/rmax/scr",
+      "provenance": {
+        "source_uri": "project://rmax-scrapy-redis/rmax-scrapy-redis-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T14:56:34.625Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rmax-scrapy-redis)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of rmax-scrapy-redis"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T14:57:07.146Z"
+    },
+    "domain_intelligence-architecture-intelligence-exyte-chat-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-exyte-chat-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: exyte-chat-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-exyte-chat-learnings-architecture-intelligence-exyte-chat-learnings-core-invaria.md",
+      "repository": "exyte-chat-learnings",
+      "content_hash": "d46aa120a6a36699335287ad0f167e69bcda84433bf5dc9b16f420af022cb02a",
+      "created_at": "2026-11-28T14:57:09.001Z"
     }
   }
 }

@@ -14100,3 +14100,6 @@ Every entry in this ledger must capture:
 | `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `56242050` | Multi-dimensional audit evidence | 2026-11-28T14:46:42.534Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `1ee3f4cb` | Multi-dimensional audit evidence | 2026-11-28T14:46:51.835Z |
 | `learn-dom-k-f963465a` | `project://faker-js-faker` | `56242050` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md` | 2026-11-28T14:47:32.613Z |
+| `learn-github-rmax-scrapy-redis` | `https://github.com/rmax/scrapy-redis` | `affd8d54` | Multi-dimensional audit evidence | 2026-11-28T14:56:26.735Z |
+| `learn-github-exyte-chat` | `https://github.com/exyte/Chat` | `a1191692` | Multi-dimensional audit evidence | 2026-11-28T14:56:30.336Z |
+| `learn-dom-d-ea0b2006` | `project://rmax-scrapy-redis` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md` | 2026-11-28T14:57:07.184Z |

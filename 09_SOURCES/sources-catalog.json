@@ -1913,10 +1913,10 @@
     "repository": "rmax/scrapy-redis",
     "platform": "github",
     "sourceUrl": "https://github.com/rmax/scrapy-redis",
-    "sourceVersion": "5f5ca5b0",
+    "sourceVersion": "affd8d54",
     "license": "MIT",
-    "contentHash": "7bcbf77849d82e66b874546cff4be189cfdbbc79d11d5e68c11a6fbc73a35b0c",
-    "lastHarvestedAt": "2026-11-25T02:20:17.963Z",
+    "contentHash": "31bbb8659ab2091e3b92e61c913a36dc9bbd4dc51fa28a7ec7b90ec41e83a556",
+    "lastHarvestedAt": "2026-11-28T14:56:26.735Z",
     "learningId": "learn-github-rmax-scrapy-redis"
   },
   "cypress-io-cypress": {
@@ -10033,10 +10033,10 @@
     "repository": "exyte/Chat",
     "platform": "github",
     "sourceUrl": "https://github.com/exyte/Chat",
-    "sourceVersion": "f382a147",
+    "sourceVersion": "a1191692",
     "license": "MIT",
-    "contentHash": "d26fe1de0cd1a6e4eb44347a09a97551050cae66dbd03797396fd0f8b8f545bf",
-    "lastHarvestedAt": "2026-11-09T02:34:42.260Z",
+    "contentHash": "a98c9a9d1e5c47e90429955deb5cc22421b64442b369bdf61dff93b1aa7277eb",
+    "lastHarvestedAt": "2026-11-28T14:56:30.336Z",
     "learningId": "learn-github-exyte-chat"
   },
   "parcel-bundler-parcel": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T14:47:36.332Z",
-  "total_verified_learnings": 9152,
+  "last_updated": "2026-11-28T14:57:10.660Z",
+  "total_verified_learnings": 9153,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27164,
+  "total_items": 27171,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230611,9 +230611,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c4efdc7fa0ac5fd793f1fefed57759ee09f6e5b24ccc67c70ddbe82c7cef88a0",
+      "content_hash": "c0a343e8ccca50482041d57222492d8348a75071fcb034a21e958d38378ba8a1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T14:06:04.794Z"
+      "persisted_at": "2026-11-28T14:57:10.391Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230623,9 +230623,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "a3dd3d5f45caa2a9102feb5ebf06fe103cfd1d27f1cb8e6c8df5f03a192973d6",
+      "content_hash": "5b104d12040b9c2df52d3667e2d055395a32cccd2c70948e8041247fa063ed90",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T14:06:05.097Z"
+      "persisted_at": "2026-11-28T14:57:10.660Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -347115,8 +347115,8 @@
       "slug": "rmax-scrapy-redis",
       "platform": "github",
       "source_url": "https://github.com/rmax/scrapy-redis",
-      "source_version": "5f5ca5b0",
-      "content_hash": "7bcbf77849d82e66b874546cff4be189cfdbbc79d11d5e68c11a6fbc73a35b0c",
+      "source_version": "affd8d54",
+      "content_hash": "31bbb8659ab2091e3b92e61c913a36dc9bbd4dc51fa28a7ec7b90ec41e83a556",
       "dossier_path": "07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
       "promoted_rules": [
@@ -347131,7 +347131,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T02:20:17.671Z",
+      "verified_at": "2026-11-28T14:56:26.442Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -347173,10 +347173,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rmax-scrapy-redis-architecture-intelligence-rmax-scrapy-redis-core-invariants.md",
       "title": "Architecture Intelligence: rmax/scrapy-redis Core Invariants",
       "repository": "rmax/scrapy-redis",
-      "source_version": "5f5ca5b0",
-      "content_hash": "a334fc1e62bac1738c98eeb11f305c46ba4dbfa5736dba4a2a23d1b42d026a35",
+      "source_version": "affd8d54",
+      "content_hash": "281ca4078c1b61ca0731b2389047615e3f2d7cbce85756f29632a2d019565db2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T02:20:18.514Z"
+      "persisted_at": "2026-11-28T14:56:26.993Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rmax-scrapy-redis": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rmax-scrapy-redis",
@@ -347222,9 +347222,9 @@
       "title": "Architecture Intelligence: rmax-scrapy-redis-learnings Core Invariants",
       "repository": "rmax-scrapy-redis-learnings",
       "source_version": "HEAD",
-      "content_hash": "35af1e178d4c6a29cefdc48fdb8713d75a350f229ccf5e2534c2ea112031e76b",
+      "content_hash": "37aafd086c1b4f1e67ab981e957b935287adecab8ca403697d69f23d6c48c441",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T02:20:33.791Z"
+      "persisted_at": "2026-11-28T14:57:08.003Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rmax-scrapy-redis-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rmax-scrapy-redis-learnings",
@@ -351303,13 +351303,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GTUT-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AI94-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c2240e47644a0c76757a91d37e87c7ef14785a4783f2d7a3b355b308f195784",
+      "content_hash": "2dbe96f19f045b847188f833f5862c6a0514ed7ac4fa8d8c0d8b1692f22e9812",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T14:06:05.861Z"
+      "persisted_at": "2026-11-28T14:57:10.120Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -373510,6 +373510,113 @@
       "content_hash": "a258316f4e19c5886cdc9926baaae4803278c24cb8be3508e8661a7b99329df4",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T14:47:35.721Z"
+    },
+    "learn-github-exyte-chat": {
+      "learning_id": "learn-github-exyte-chat",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "exyte/Chat",
+      "repository": "exyte/Chat",
+      "slug": "exyte-chat",
+      "platform": "github",
+      "source_url": "https://github.com/exyte/Chat",
+      "source_version": "a1191692",
+      "content_hash": "a98c9a9d1e5c47e90429955deb5cc22421b64442b369bdf61dff93b1aa7277eb",
+      "dossier_path": "07_PROJECT_LEARNING/exyte-chat-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/exyte-chat-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 11113,
+          "title": "Empirical Invariant Guard in InputView.swift",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-28T14:56:30.061Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-11113": {
+      "learning_id": "rule-11113",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11113,
+      "title": "Empirical Invariant Guard in InputView.swift",
+      "source_url": "https://github.com/exyte/Chat",
+      "source_version": "a1191692",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T14:56:30.062Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-inputview-swift": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-inputview-swift",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AH6N-empirical-invariant-guard-in-inputview-swift.md",
+      "title": "Empirical Invariant Guard in InputView.swift",
+      "repository": "exyte-chat-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2e4d2432dbdd4a5efc549c9ba94e0efce3fa30133097072b4044519a8e2f5b4c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T14:57:08.735Z"
+    },
+    "domain_intelligence-architecture-intelligence-exyte-chat-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-exyte-chat-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-exyte-chat-architecture-intelligence-exyte-chat-core-invariants.md",
+      "title": "Architecture Intelligence: exyte/Chat Core Invariants",
+      "repository": "exyte/Chat",
+      "source_version": "a1191692",
+      "content_hash": "3ec5a321c51d3a3006f91c1a0b1368df6fbbf2329a6c6fd78c5ae7c299b9c96a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T14:56:30.810Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-exyte-chat": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-exyte-chat",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/exyte-chat-verification-protocol-empirical-defect-shield-for-exyte-chat.md",
+      "title": "Verification Protocol: Empirical Defect Shield for exyte/Chat",
+      "repository": "exyte/Chat",
+      "source_version": "a1191692",
+      "content_hash": "b499dc686a6287941afde78fef6edfa03880d543be7c405953b48f9cdc47a46d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T14:56:31.033Z"
+    },
+    "domain_intelligence-architecture-intelligence-exyte-chat-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-exyte-chat-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-exyte-chat-learnings-architecture-intelligence-exyte-chat-learnings-core-invaria.md",
+      "title": "Architecture Intelligence: exyte-chat-learnings Core Invariants",
+      "repository": "exyte-chat-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d46aa120a6a36699335287ad0f167e69bcda84433bf5dc9b16f420af022cb02a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T14:57:09.001Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-exyte-chat-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-exyte-chat-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/exyte-chat-learnings-verification-protocol-empirical-defect-shield-for-exyte-cha.md",
+      "title": "Verification Protocol: Empirical Defect Shield for exyte-chat-learnings",
+      "repository": "exyte-chat-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e2a83cf6643fe6761e4b3562f3e74b6578dbb692d426b7f8f1e4288d633c8051",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T14:57:09.266Z"
     }
   },
   "ai-builder-brain": {

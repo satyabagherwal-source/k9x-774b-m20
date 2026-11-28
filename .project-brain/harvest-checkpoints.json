@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T14:46:51.846Z",
+  "last_updated": "2026-11-28T14:56:30.345Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3006,14 +3006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rmax-scrapy-redis",
-      "content_hash": "7bcbf77849d82e66b874546cff4be189cfdbbc79d11d5e68c11a6fbc73a35b0c",
-      "verified_at": "2026-11-25T02:20:17.982Z",
+      "content_hash": "31bbb8659ab2091e3b92e61c913a36dc9bbd4dc51fa28a7ec7b90ec41e83a556",
+      "verified_at": "2026-11-28T14:56:26.744Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:20:17.982Z"
+      "last_updated": "2026-11-28T14:56:26.744Z"
     },
     "cypress-io/cypress": {
       "repository": "cypress-io/cypress",
@@ -15096,14 +15096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-exyte-chat",
-      "content_hash": "d26fe1de0cd1a6e4eb44347a09a97551050cae66dbd03797396fd0f8b8f545bf",
-      "verified_at": "2026-11-09T02:34:42.275Z",
+      "content_hash": "a98c9a9d1e5c47e90429955deb5cc22421b64442b369bdf61dff93b1aa7277eb",
+      "verified_at": "2026-11-28T14:56:30.345Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:34:42.275Z"
+      "last_updated": "2026-11-28T14:56:30.345Z"
     },
     "parcel-bundler/parcel": {
       "repository": "parcel-bundler/parcel",

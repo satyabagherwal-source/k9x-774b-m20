@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T14:46:51.842Z",
-  "total_cycles_completed": 13340,
-  "total_learnings_persisted": 13340,
-  "total_rules_promoted": 12038,
+  "last_updated": "2026-11-28T14:56:30.342Z",
+  "total_cycles_completed": 13342,
+  "total_learnings_persisted": 13342,
+  "total_rules_promoted": 12039,
   "history": [
-    {
-      "timestamp": "2026-11-27T18:35:04.930Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T18:43:48.100Z",
-      "repository": "modelcontextprotocol/kotlin-sdk",
-      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T18:43:58.334Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T14:46:51.842Z",
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T14:56:26.741Z",
+      "repository": "rmax/scrapy-redis",
+      "learningId": "learn-github-rmax-scrapy-redis",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T14:56:30.342Z",
+      "repository": "exyte/Chat",
+      "learningId": "learn-github-exyte-chat",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -4,24 +4,24 @@
 {
   "source_repository": "rmax/scrapy-redis",
   "source_url": "https://github.com/rmax/scrapy-redis",
-  "source_version": "5f5ca5b0",
+  "source_version": "affd8d54",
   "license": "MIT",
-  "timestamp": "2026-11-25T02:20:18.276Z",
+  "timestamp": "2026-11-28T14:56:26.992Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rmax-scrapy-redis",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rmax/scrapy-redis](https://github.com/rmax/scrapy-redis) (Revision: `5f5ca5b0`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T02:20:18.276Z`  
+> **Provenance**: Harvested from [rmax/scrapy-redis](https://github.com/rmax/scrapy-redis) (Revision: `affd8d54`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T14:56:26.992Z`  
 > **Learning ID**: `learn-github-rmax-scrapy-redis`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 70%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rmax/scrapy-redis:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rmax/scrapy-redis](https://github.com/rmax/scrapy-redis))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:20:16.390Z  
+> **Harvest Timestamp**: 2026-11-28T14:56:25.912Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Redis-based components for Scrapy.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Dockerfile
-- **Stars / Engagement**: 5648 stars
+- **Stars / Engagement**: 5651 stars
 
 ---
 
@@ -471,129 +471,45 @@ class MySpider(RedisSpider):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f5ca5b0` (2026-11-21)
-**Commit Message**: setup: deprecate setup.py and use pyproject.toml instead (#333)
+### Incident Patch 1: `affd8d54` (2026-11-28)
+**Commit Message**: Fix pre-commit and Sphinx CI failures (#344)
 
-**File**: `.github/workflows/tests.yml` (modified, +3/-0)
+**File**: `AUTHORS.rst` (modified, +0/-1)
 ```diff
-@@ -33,6 +33,9 @@ jobs:
-       with:
-         python-version: ${{ matrix.python-version }}
+@@ -11,4 +11,3 @@ Contributors
+ ------------
  
-+    - name: Mark workspace as safe for git
-+      run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-+
-     - name: Run pytest
-       env:
-         REDIS_HOST: redis
+ * Jeremy Chou (LuckyPigeon) <lucky90322@gmail.com>
+-
 ```
 
-**File**: `pyproject.toml` (added, +30/-0)
+**File**: `src/scrapy_redis/spiders.py` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,30 @@
-+[build-system]
-+requires = ["setuptools>=77", "setuptools-scm>=8"]
-+build-backend = "setuptools.build_meta"
-+
-+[project]
-+name = "scrapy-redis"
-+dynamic = ["version", "readme", "dependencies"]
-+description = "Redis-based components for Scrapy."
-+license = "MIT"
-+authors = [
-+    { name = "R Max Espinoza", email = "hey@rmax.dev" },
-+    { name = "Jeremy Chou"   , email = "lucky90322@gmail.com" },
-+]
-+requires-python = ">=3.10"
-+classifiers = [
-+    "Programming Language :: Python :: 3",
-+    "Programming Language :: Python :: 3.10",
-+    "Programming Language :: Python :: 3.11",
-+    "Programming Language :: Python :: 3.12",
-+    "Programming Language :: Python :: 3.13",
-+    "Framework :: Scrapy",
-+]
-+
-+[project.urls]
-+Homepage = "https://github.com/rmax/scrapy-redis"
-+
-+[tool.setuptools.dynamic]
-+version = { file = "VERSION" }
-+readme = { file = ["README.rst", "HISTORY.rst"], content-type = "text/x-rst" }
-+dependencies = { file = ["requirements.txt"] }
-```
-
-**File**: `setup.py` (removed, +0/-59)
-```diff
-@@ -1,59 +0,0 @@
--#!/usr/bin/env python
--import io
--from pkgutil import walk_packages
--
--from setuptools import setup
--
--
--def find_packages(path):
--    # This method returns packages and subpackages as well.
--    return [name for _, name, is_pkg in walk_packages([path]) if is_pkg]
--
--
--def read_file(filename):
--    with open(filename) as fp:
--        return fp.read().strip()
--
--
--def read_rst(filename):
--    # Ignore unsupported directives by pypi.
--    content = read_file(filename)
--    return "".join(
--        line for line in io.StringIO(content) if not line.startswith(".. comment::")
--    )
--
--
--def read_requirements(filename):
--    return [
--        line.strip()
--        for line in read_file(filename).splitlines()
--        if not line.startswith("#")
--    ]
--
--
--setup(
--    name="scrapy-redis",
--    version=read_file("VERSION"),
--    description="Redis-based components for Scrapy.",
--    long_description=read_rst("README.rst") + "\n\n" + read_rst("HISTORY.rst"),
--    author="R Max Espinoza",
--    author_email="hey@rmax.dev",
--    url="https://github.com/rmax/scrapy-redis",
--    packages=list(find_packages("src")),
--    package_dir={"": "src"},
--    install_requires=read_requirements("requirements.txt"),
--    include_package_data=True,
--    license="MIT",
--    keywords="scrapy-redis",
--    classifiers=[
--        "Development Status :: 4 - Beta",
--        "Intended Audience :: Developers",
--        "License :: OSI Approved :: MIT License",
--        "Natural Language :: English",
--        "Programming Language :: Python :: 3",
--        "Programming Language :: Python :: 3.7",
--        "Programming Language :: Python :: 3.8",
--        "Programming Language :: Python :: 3.9",
--        "Programming Language :: Python :: 3.10",
--    ],
--)
+@@ -484,6 +484,7 @@ class RedisSpider(RedisMixin, Spider):
+ 
+     @classmethod
+     def from_crawler(cls, crawler, *args, **kwargs):
++        """Create a spider and initialize its Redis queue and idle backoff."""
+         obj = super().from_crawler(crawler, *args, **kwargs)
+         obj._setup_idle_backoff(crawler)
+         obj.setup_redis(crawler)
+@@ -517,6 +518,7 @@ class RedisCrawlSpider(RedisMixin, CrawlSpider):
+ 
+     @classmethod
+     def from_crawler(cls, crawler, *args, **kwargs):
++        """Create a spider and initialize its Redis queue and idle backoff."""
+         obj = super().from_crawler(crawler, *args, **kwargs)
+         obj._setup_idle_backoff(crawler)
+         obj.setup_redis(crawler)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #344** (2026-11-28): Fix pre-commit and Sphinx CI failures (@rmax)
 - **PR #336** (2026-10-28): AUTHOR: add name to contributor list (@LuckyPigeon)
 - **PR #335** (2026-10-29): [dev] connection: Redis password support (@LuckyPigeon)
 - **PR #334** (2026-10-28): spider: assert_called_with only check last call, so fill_requests_que… (@LuckyPigeon)
 - **PR #333** (2026-11-21): setup: deprecate setup.py and use pyproject.toml instead (@LuckyPigeon)
 - **PR #326** (2026-10-25): Test: Resolve get_reactor_settings() called without an installed reac… (@LuckyPigeon)
-- **PR #324** (2026-09-17): feat: opt-in REDIS_PROTOCOL setting + RESP3 connection-setup guidance (#321) (@rmax)
 
 ---
 
@@ -607,39 +523,6 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. setup: deprecate setup.py and use pyproject.toml instead
-
-**RULE**:
-When implementing operations in `.github/workflows/tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rmax/scrapy-redis. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `5f5ca5b0`: setup: deprecate setup.py and use pyproject.toml instead. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tests.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-    - name: Mark workspace as safe for git
-      run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f5ca5b0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

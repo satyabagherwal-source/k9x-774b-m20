@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-NVPG",
-    "timestamp": "2026-11-26T19:16:10.180Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "8ddfb6611c45fb3509a8bfef5370e8884269266a743d83eb5c1345e61d7b9549",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-ZMSQ",
-    "timestamp": "2026-11-26T19:25:18.506Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "a48ee5fd684c647faf0d72b71a6ef6513e9a0888856d034b6fb1ed05dd7ec137",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-ZT5G",
     "timestamp": "2026-11-26T19:25:26.740Z",
     "repository": "openreplay/openreplay",
@@ -7490,6 +7460,36 @@
     "repository": "lioensky/VCPToolBox",
     "learningId": "learn-github-lioensky-vcptoolbox",
     "contentHash": "ba6875d2d9123bd29ac884092c11efeb1ed1e76700e2d5756a000c9571b5043a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-9KRU",
+    "timestamp": "2026-11-28T14:56:26.730Z",
+    "repository": "rmax/scrapy-redis",
+    "learningId": "learn-github-rmax-scrapy-redis",
+    "contentHash": "31bbb8659ab2091e3b92e61c913a36dc9bbd4dc51fa28a7ec7b90ec41e83a556",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-9NJV",
+    "timestamp": "2026-11-28T14:56:30.331Z",
+    "repository": "exyte/Chat",
+    "learningId": "learn-github-exyte-chat",
+    "contentHash": "a98c9a9d1e5c47e90429955deb5cc22421b64442b369bdf61dff93b1aa7277eb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

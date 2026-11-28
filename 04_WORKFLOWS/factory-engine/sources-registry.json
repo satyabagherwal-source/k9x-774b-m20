@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T14:46:55.571Z",
-    "lastVerified": "2026-11-28T14:46:55.571Z",
+    "lastChecked": "2026-11-28T14:56:34.468Z",
+    "lastVerified": "2026-11-28T14:56:34.468Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -264,8 +264,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-28T06:53:26.861Z",
-    "lastVerified": "2026-11-28T06:53:26.861Z",
+    "lastChecked": "2026-11-28T14:56:29.752Z",
+    "lastVerified": "2026-11-28T14:56:29.752Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -398,12 +398,12 @@
     "revisionIdentifier": "40d4f79e"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T13:55:56.277Z",
-    "lastVerified": "2026-11-28T13:55:56.277Z",
+    "lastChecked": "2026-11-28T14:56:34.459Z",
+    "lastVerified": "2026-11-28T14:56:34.459Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -412,7 +412,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1772058f"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -3369,9 +3370,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-11-27T17:10:40.055Z",
+    "lastChecked": "2026-11-28T14:56:32.039Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-11-27T17:10:40.055Z"
+    "lastVerified": "2026-11-28T14:56:32.039Z"
   },
   "hf-briaai-rmbg-3.0": {
     "name": "briaai/RMBG-3.0",
@@ -7666,9 +7667,9 @@
   "aquasecurity-trivy-operator": {
     "name": "trivy-operator",
     "officialUrl": "https://github.com/aquasecurity/trivy-operator",
-    "lastChecked": "2026-11-27T18:26:01.837Z",
+    "lastChecked": "2026-11-28T14:56:26.976Z",
     "revisionIdentifier": "689215dd",
-    "lastVerified": "2026-11-27T18:26:01.837Z"
+    "lastVerified": "2026-11-28T14:56:26.976Z"
   },
   "tursodatabase-limbo": {
     "name": "tursodatabase/turso",
@@ -9391,8 +9392,8 @@
     "officialUrl": "https://github.com/matthart1983/netwatch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T12:12:17.328Z",
-    "lastVerified": "2026-11-27T12:12:17.328Z",
+    "lastChecked": "2026-11-28T14:56:19.371Z",
+    "lastVerified": "2026-11-28T14:56:19.371Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matthart1983-netwatch",
@@ -12166,11 +12167,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "exyte-chat": {
-    "name": "Chat",
+    "name": "exyte/Chat",
     "officialUrl": "https://github.com/exyte/Chat",
-    "lastChecked": "2026-11-26T09:21:59.726Z",
-    "revisionIdentifier": "f382a147",
-    "lastVerified": "2026-11-26T09:21:59.726Z"
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-28T14:56:28.942Z",
+    "lastVerified": "2026-11-28T14:56:28.942Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-exyte-chat",
+    "contentHash": "a98c9a9d1e5c47e90429955deb5cc22421b64442b369bdf61dff93b1aa7277eb",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tanstack-query": {
     "name": "TanStack/query",
@@ -12625,14 +12636,14 @@
     "officialUrl": "https://github.com/rmax/scrapy-redis",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-25T02:20:16.390Z",
-    "lastVerified": "2026-11-25T02:20:16.390Z",
+    "lastChecked": "2026-11-28T14:56:25.912Z",
+    "lastVerified": "2026-11-28T14:56:25.912Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rmax-scrapy-redis",
-    "contentHash": "7bcbf77849d82e66b874546cff4be189cfdbbc79d11d5e68c11a6fbc73a35b0c",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "31bbb8659ab2091e3b92e61c913a36dc9bbd4dc51fa28a7ec7b90ec41e83a556",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

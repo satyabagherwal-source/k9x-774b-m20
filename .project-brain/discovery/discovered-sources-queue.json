@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T14:47:35.315Z",
+  "updated_at": "2026-11-28T14:57:08.350Z",
   "stats": {
-    "total_discovered": 10988,
-    "approved_pending_harvest": 10436,
+    "total_discovered": 10989,
+    "approved_pending_harvest": 10437,
     "harvested_count": 0,
     "rejected_count": 552,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10446,
+      "COMMUNITY_AND_EXPERT": 10447,
       "OFFICIAL_DOCUMENTATION": 299,
       "STANDARDS_AND_SPECIFICATIONS": 166,
       "ENGINEERING_BLOGS": 7,
@@ -237899,6 +237899,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
         "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-E383B3F443F6": {
+      "id": "SRC-E383B3F443F6",
+      "url": "https://github.com/exyte/Chat",
+      "title": "https://github.com/exyte/Chat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T14:57:08.350Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/exyte-chat-learnings.md",
+        "fileName": "exyte-chat-learnings.md"
       }
     }
   }

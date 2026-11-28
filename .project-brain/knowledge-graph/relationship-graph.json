@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T14:47:32.610Z",
+  "updated_at": "2026-11-28T14:57:07.181Z",
   "statistics": {
-    "total_nodes": 605,
+    "total_nodes": 606,
     "total_edges": 241,
     "domain_distribution": {
-      "D": 358,
+      "D": 359,
       "M": 1,
       "H": 120,
       "J": 23,
@@ -13497,6 +13497,28 @@
       ],
       "created_at": "2026-11-28T14:47:32.609Z",
       "updated_at": "2026-11-28T14:47:32.609Z"
+    },
+    "DOM-D-EA0B2006": {
+      "id": "DOM-D-EA0B2006",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): rmax/scrapy-redis",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md`  \n> **Source**: github ([https://github.com/rmax/scr -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md`  \n> **Source**: github ([https://github.com/rmax/scr",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://rmax-scrapy-redis/rmax-scrapy-redis-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T14:56:34.625Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rmax-scrapy-redis)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-28T14:57:07.180Z",
+      "updated_at": "2026-11-28T14:57:07.180Z"
     }
   },
   "edges": [

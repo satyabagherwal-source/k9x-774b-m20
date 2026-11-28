@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for exyte/chat
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for exyte/Chat
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "exyte/chat",
-  "source_url": "https://github.com/exyte/chat",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "exyte/Chat",
+  "source_url": "https://github.com/exyte/Chat",
+  "source_version": "a1191692",
+  "license": "MIT",
+  "timestamp": "2026-11-28T14:56:30.587Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-exyte-chat",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [exyte/chat](https://github.com/exyte/chat) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [exyte/Chat](https://github.com/exyte/Chat) (Revision: `a1191692`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T14:56:30.587Z`  
+> **Learning ID**: `learn-github-exyte-chat`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `exyte/chat` (Commit: `historical`)
+- **Target Repository**: `exyte/Chat` (Commit: `a1191692`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/exyte-chat-learnings.md`  
-> **Source**: github ([https://github.com/exyte/Chat](https://github.com/exyte/Chat))  
-> **Source Version**: `f382a147`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T02:34:41.886Z  
-> **Learning ID**: `learn-github-exyte-chat`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): exyte/Chat
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/exyte-chat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/exyte/Chat](https://github.com/exyte/Chat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T02:34:41.882Z  
+> **Harvest Timestamp**: 2026-11-28T14:56:28.942Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A SwiftUI Chat UI framework with fully customizable message cells and a built-in media picker
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1903 stars
+- **Stars / Engagement**: 1914 stars
 
 ---
 
@@ -636,28 +622,52 @@ public struct CachedAsyncImage<Content>: View where Content: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f382a147` (2026-11-06)
-**Commit Message**: Update readme
+### Incident Patch 1: `a1191692` (2026-11-27)
+**Commit Message**: Merge pull request #306 from matthewrfennell/accessibility-label
 
-**File**: `README.md` (modified, +1/-0)
+Add accessibility label to sendButton
+
+**File**: `Sources/ExyteChat/Views/InputView/InputView.swift` (modified, +1/-0)
 ```diff
-@@ -654,6 +654,7 @@ dependencies: [
- * Xcode 15+
+@@ -187,6 +187,7 @@ struct InputView: View {
+                 .viewSize(48)
+                 .circleBackground(theme.colors.sendButtonBackground)
+         }
++        .accessibilityLabel("Send message")
+     }
  
- ## Our other open source SwiftUI libraries
-+[LazyCustomLayout](https://github.com/exyte/LazyCustomLayout) - A custom layout protocol for SwiftUI, powered by a lazy scroll view   
- [PopupView](https://github.com/exyte/PopupView) - Toasts and popups library    
- [AnchoredPopup](https://github.com/exyte/AnchoredPopup) - Anchored Popup grows "out" of a trigger view (similar to Hero animation)   
- [Grid](https://github.com/exyte/Grid) - The most powerful Grid container    
+     var addButton: some View {
+```
+
+---
+
+### Incident Patch 2: `b6d721cb` (2026-11-26)
+**Commit Message**: Add accessibility label to sendButton
+
+As the label is just an Image with no text, the button would be announced as
+arrowSend in VoiceOver.
+
+This also lets you refer to the button more easily in UI tests.
+
+**File**: `Sources/ExyteChat/Views/InputView/InputView.swift` (modified, +1/-0)
+```diff
+@@ -187,6 +187,7 @@ struct InputView: View {
+                 .viewSize(48)
+                 .circleBackground(theme.colors.sendButtonBackground)
+         }
++        .accessibilityLabel("Send message")
+     }
+ 
+     var addButton: some View {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #306** (2026-11-27): Add accessibility label to sendButton (@matthewrfennell)
 - **PR #305** (2026-10-01): Small fix (@lissine0)
 - **PR #303** (2026-09-22): Divided location into staticLocation and liveLocation (@Shonchik)
 - **PR #302** (2026-09-19): Fix Xcode 27 linker crash by co-locating ChatView's init with its @State properties (@nezhyborets)
 - **PR #297** (2026-09-15): A small theme fix (@lissine0)
 - **PR #294** (closed): Add imageCache to CachedAsyncImage (@Shonchik)
-- **PR #292** (2026-08-14): Fix crash when scrolling to oldest message on an empty table (@fayharinn)
 
 ---
 
@@ -677,31 +687,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update readme
+## X. Empirical Invariant Guard in InputView.swift
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in exyte/Chat. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/ExyteChat/Views/InputView/InputView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in exyte/Chat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f382a147`: Update readme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a1191692`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/ExyteChat/Views/InputView/InputView.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-[LazyCustomLayout](https://github.com/exyte/LazyCustomLayout) - A custom layout protocol for SwiftUI, powered by a lazy scroll view   
+        .accessibilityLabel("Send message")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f382a147` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a1191692` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

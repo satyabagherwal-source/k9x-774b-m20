@@ -14067,3 +14067,6 @@
 | `CYCLE-20261128-X201` | `2026-11-28T14:46:42.529Z` | `faker-js/faker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11111` | Yes (`89d57ba8...`) |
 | `CYCLE-20261128-X96E` | `2026-11-28T14:46:51.830Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11112` | Yes (`ba6875d2...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T14:47:32.613Z` | `faker-js-faker` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-F963465A` [Domain K] | Yes (`0b4024cc...`) |
+| `CYCLE-20261128-9KRU` | `2026-11-28T14:56:26.730Z` | `rmax/scrapy-redis` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md` | Yes (`31bbb865...`) |
+| `CYCLE-20261128-9NJV` | `2026-11-28T14:56:30.331Z` | `exyte/Chat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11113` | Yes (`a98c9a9d...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T14:57:07.184Z` | `rmax-scrapy-redis` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-EA0B2006` [Domain D] | Yes (`e3588a3f...`) |
