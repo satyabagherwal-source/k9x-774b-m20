@@ -9573,10 +9573,10 @@
     "repository": "nodejs/undici",
     "platform": "github",
     "sourceUrl": "https://github.com/nodejs/undici",
-    "sourceVersion": "34151bf8",
+    "sourceVersion": "f7a6f8f8",
     "license": "MIT",
-    "contentHash": "3dc0640601d8e0e5e750707316f8d9d4e12ca6e0a0c7782850b8f70852093617",
-    "lastHarvestedAt": "2026-11-24T19:00:31.670Z",
+    "contentHash": "53b3562e3a65a24784b73c99fc7b7514f3e6e5a325b934bd4f23a20c47969882",
+    "lastHarvestedAt": "2026-11-28T03:54:00.618Z",
     "learningId": "learn-github-nodejs-undici"
   },
   "jordansinger-swiftui-kit": {
@@ -13123,10 +13123,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/deeporg",
-    "sourceVersion": "91c1df80",
+    "sourceVersion": "7ada323a",
     "license": "Apache-2.0",
-    "contentHash": "4a8d177911fab45e6b97fe22ac3a4f6a9eb0a3dbf7679ae4648752d6abfb04b9",
-    "lastHarvestedAt": "2026-11-27T10:34:23.853Z",
+    "contentHash": "cbe2c0fccc9d0c910458d3542fd4329e82b54f2a24c95ba1273ee98e906926c3",
+    "lastHarvestedAt": "2026-11-28T03:54:03.114Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "hf-openai-clip-vit-large-patch14": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-A20V",
-    "timestamp": "2026-11-26T14:53:28.639Z",
-    "repository": "MetrolistGroup/Metrolist",
-    "learningId": "learn-github-metrolistgroup-metrolist",
-    "contentHash": "eb0de6e690ae358ea2840e9e186249d1755bb54a8efe84783943b6ec866f6793",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-L88W",
-    "timestamp": "2026-11-26T15:02:09.920Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "79765fe6b3baca1d15e155c407c3294e36780859a082c043810007244eac050d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-LB0S",
     "timestamp": "2026-11-26T15:02:13.516Z",
     "repository": "ajeetdsouza/zoxide",
@@ -7492,6 +7462,36 @@
     "contentHash": "5b42b4b815fa1111aab6f55f3fd4d41ea73f2e688e05a5f43f33995495bb8aa9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-LOGU",
+    "timestamp": "2026-11-28T03:54:00.606Z",
+    "repository": "nodejs/undici",
+    "learningId": "learn-github-nodejs-undici",
+    "contentHash": "53b3562e3a65a24784b73c99fc7b7514f3e6e5a325b934bd4f23a20c47969882",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-LQE7",
+    "timestamp": "2026-11-28T03:54:03.103Z",
+    "repository": "dosco/deeporg",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "cbe2c0fccc9d0c910458d3542fd4329e82b54f2a24c95ba1273ee98e906926c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

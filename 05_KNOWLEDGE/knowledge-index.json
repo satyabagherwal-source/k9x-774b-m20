@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T03:45:08.490Z",
+  "last_updated": "2026-11-28T03:54:10.749Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26930,
+  "total_items": 26932,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0bb302d73e74e92565b3055fe2b464e00e233561660e3197e39ff8f50a3e232f",
+      "content_hash": "0eb4e4b1a862dd69ccdebadd1137bfc0025413e6e87ddd10ea9026172d4f0e65",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T03:45:08.292Z"
+      "persisted_at": "2026-11-28T03:54:10.503Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a834a6460b950f1ca10bd4628cddceda1eaba1ca3f5c8f85651a47da4602e29d",
+      "content_hash": "4f6f78045f424477514d19e47d92202e17a90073d303278e83a39e36661925fb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T03:45:08.490Z"
+      "persisted_at": "2026-11-28T03:54:10.749Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -267213,8 +267213,8 @@
       "slug": "nodejs-undici",
       "platform": "github",
       "source_url": "https://github.com/nodejs/undici",
-      "source_version": "34151bf8",
-      "content_hash": "3dc0640601d8e0e5e750707316f8d9d4e12ca6e0a0c7782850b8f70852093617",
+      "source_version": "f7a6f8f8",
+      "content_hash": "53b3562e3a65a24784b73c99fc7b7514f3e6e5a325b934bd4f23a20c47969882",
       "dossier_path": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "promoted_rules": [
@@ -267226,7 +267226,7 @@
         {
           "number": 9628,
           "title": "enforce cache-after-redirect composition order",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 10337,
@@ -267239,7 +267239,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T19:00:31.371Z",
+      "verified_at": "2026-11-28T03:54:00.320Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267281,10 +267281,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nodejs-undici-technical-construction-intelligence-nodejs-undici-core-invariants.md",
       "title": "Technical Construction Intelligence: nodejs/undici Core Invariants",
       "repository": "nodejs/undici",
-      "source_version": "34151bf8",
-      "content_hash": "5fd988270de5cd7d5bbd68f67ca0e9d5d9bc107c8c5dac3a48d984fecd0d0792",
+      "source_version": "f7a6f8f8",
+      "content_hash": "bd4d20e43b6979c7e9c4e9e2ee7eab674ff07b9d1af6136af9a8a468b10526b5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:00:32.125Z"
+      "persisted_at": "2026-11-28T03:54:01.169Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici",
@@ -267293,10 +267293,10 @@
       "relative_path": "08_VERIFICATION/nodejs-undici-verification-protocol-empirical-defect-shield-for-nodejs-undici.md",
       "title": "Verification Protocol: Empirical Defect Shield for nodejs/undici",
       "repository": "nodejs/undici",
-      "source_version": "34151bf8",
-      "content_hash": "89c1b0f6a4415a66f7001b90e93f3d4190f608a3fecfce7fc0d699b2fe7d2922",
+      "source_version": "f7a6f8f8",
+      "content_hash": "198147744c933e363e390ae3ee7978429e6b139bd6290550797926c0972174df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:00:32.355Z"
+      "persisted_at": "2026-11-28T03:54:01.411Z"
     },
     "candidate_directive-h1-do-not-reuse-idle-sockets-whose-keep-alive-timeout-expired": {
       "item_id": "candidate_directive-h1-do-not-reuse-idle-sockets-whose-keep-alive-timeout-expired",
@@ -267318,9 +267318,9 @@
       "title": "Technical Construction Intelligence: nodejs-undici-learnings Core Invariants",
       "repository": "nodejs-undici-learnings",
       "source_version": "HEAD",
-      "content_hash": "dd2ce180560d775512f19247c7e57c080fe9ac4ba91cbcd6b5302a27ccf22122",
+      "content_hash": "b441f37735c751ed17fc598e74892f76432c1a22b64381ba1a56063124728199",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:00:45.856Z"
+      "persisted_at": "2026-11-28T03:54:08.114Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nodejs-undici-learnings",
@@ -267330,9 +267330,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nodejs-undici-learnings",
       "repository": "nodejs-undici-learnings",
       "source_version": "HEAD",
-      "content_hash": "17b273918475addc414db9cf49bd348747f1014cb8a04a785ae5875129359674",
+      "content_hash": "2a2db8294973574bf511b9f9f48e18e68fb0f693b2fe1c68502a7c7beac36be2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:00:46.047Z"
+      "persisted_at": "2026-11-28T03:54:08.352Z"
     },
     "rule-8803": {
       "learning_id": "rule-8803",
@@ -313257,25 +313257,25 @@
       "rule_number": 9628,
       "title": "enforce cache-after-redirect composition order",
       "source_url": "https://github.com/nodejs/undici",
-      "source_version": "322a7eed",
+      "source_version": "f7a6f8f8",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-20T19:44:35.020Z"
+      "verified_at": "2026-11-28T03:54:00.321Z"
     },
     "candidate_directive-enforce-cache-after-redirect-composition-order": {
       "item_id": "candidate_directive-enforce-cache-after-redirect-composition-order",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-1BH7-enforce-cache-after-redirect-composition-order.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-LOOZ-enforce-cache-after-redirect-composition-order.md",
       "title": "enforce cache-after-redirect composition order",
       "repository": "nodejs/undici",
-      "source_version": "322a7eed",
-      "content_hash": "ab3da3a6f0360921a45fa59f5cd7492027338cb4f92472f8ea4309464f38dfe8",
+      "source_version": "f7a6f8f8",
+      "content_hash": "3d759ac61c4b622e4757840541bba22f1dc82a23b255a0b994c703dbe460f2d8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T19:44:35.420Z"
+      "persisted_at": "2026-11-28T03:54:00.900Z"
     },
     "rule-9629": {
       "learning_id": "rule-9629",
@@ -313371,13 +313371,13 @@
       "item_id": "candidate_directive-interceptors-enforce-cache-after-redirect-composition-order",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-1M9Z-interceptors-enforce-cache-after-redirect-composition-order.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-LU2S-interceptors-enforce-cache-after-redirect-composition-order.md",
       "title": "interceptors): enforce cache-after-redirect composition order",
       "repository": "nodejs-undici-learnings",
       "source_version": "HEAD",
-      "content_hash": "9422d6528f197ac85403e87ece1702ab83802c9b43edfc5366e336a944e78722",
+      "content_hash": "c6322b81d48a4647951c0d7d4c197647946ed1d9f124e8182c35515a44025cbc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T19:44:49.419Z"
+      "persisted_at": "2026-11-28T03:54:07.877Z"
     },
     "candidate_directive-watch-emit-schema-watch-events-from-the-unified-stored-schema-in-read-new-mode": {
       "item_id": "candidate_directive-watch-emit-schema-watch-events-from-the-unified-stored-schema-in-read-new-mode",
@@ -315889,13 +315889,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-graphjin",
+      "slug": "dosco-deeporg",
       "platform": "github",
-      "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "d721e1f9",
-      "content_hash": "214cd4b63e2b24fc810854bbdd4980306a298141582706d7f0e693fa23f3c331",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "source_url": "https://github.com/dosco/deeporg",
+      "source_version": "7ada323a",
+      "content_hash": "cbe2c0fccc9d0c910458d3542fd4329e82b54f2a24c95ba1273ee98e906926c3",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
@@ -315941,6 +315941,11 @@
           "number": 11016,
           "title": "bump version to v3.27.0 [skip-release] [skip ci]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11028,
+          "title": "Claude Code can sign in to a server set up in the browser",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -315948,7 +315953,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T02:13:23.106Z",
+      "verified_at": "2026-11-28T03:54:02.764Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -315973,13 +315978,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "d721e1f9",
-      "content_hash": "d2bd924f0b028f126e47070840e37121e32d1310409ee9d344572ad18f44a36e",
+      "source_version": "7ada323a",
+      "content_hash": "de820b68c37d29248b9e47e704223f5920bdfc125f76a8bf0a8d559d682a5757",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T02:13:24.479Z"
+      "persisted_at": "2026-11-28T03:54:03.984Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -316053,9 +316058,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-deeporg-learnings",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "438e863c8e0c92c15f2a2e2fdcd4966082d20f1cc92b503a4c5361ada4674d9b",
+      "content_hash": "2c18652c1a4eb03b4ec781320068c7501937ec8b7c9482ee6c2c0efb897fda35",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:34:29.426Z"
+      "persisted_at": "2026-11-28T03:54:09.592Z"
     },
     "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo": {
       "item_id": "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo",
@@ -323834,13 +323839,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
       "repository": "dosco/deeporg",
-      "source_version": "d721e1f9",
-      "content_hash": "7c8581b1a92ca246e130f3e4405b64e99181ce4ffe58bc567e2df6a63c04ea62",
+      "source_version": "7ada323a",
+      "content_hash": "273015c78fb0f322f962498f6cf79f5aebf0b174612aefaea1afd48701a95afc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-28T02:13:24.144Z"
+      "persisted_at": "2026-11-28T03:54:03.693Z"
     },
     "rule-9885": {
       "learning_id": "rule-9885",
@@ -324589,9 +324594,9 @@
       "title": "Research & Knowledge Intelligence: dosco-deeporg-learnings Core Invariants",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "59d9cbefa722ee26d5dd5a96d0962a873f0b01f7d8764d0486a38a050e67d8ee",
+      "content_hash": "7fb2f0ecc12ee69509f5928e9f2cc95fa089712dc54b8682d91288bf951eeeda",
       "domain_letter": "D",
-      "persisted_at": "2026-11-27T10:34:29.257Z"
+      "persisted_at": "2026-11-28T03:54:09.302Z"
     },
     "candidate_directive-resolve-670-regressions-and-clippy-lints-plus-652-665-669-skip-ci": {
       "item_id": "candidate_directive-resolve-670-regressions-and-clippy-lints-plus-652-665-669-skip-ci",
@@ -361798,13 +361803,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-A9KV-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-LVVS-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9ee87c66c5f3424fb337ecc46304467124a1897a8015daae8f54481b744dd57",
+      "content_hash": "c064825faca7a1bf97a31b65aa1d3d78a2ab44699b967c57a44977043f40a85e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T03:45:08.098Z"
+      "persisted_at": "2026-11-28T03:54:10.221Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -370023,6 +370028,32 @@
       "content_hash": "b02565309b87cd5309459ffb41b94978748afad9c6be4ce097cf5ff59f5ca060",
       "domain_letter": "L",
       "persisted_at": "2026-11-28T03:45:06.234Z"
+    },
+    "rule-11028": {
+      "learning_id": "rule-11028",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11028,
+      "title": "Claude Code can sign in to a server set up in the browser",
+      "source_url": "https://github.com/dosco/deeporg",
+      "source_version": "7ada323a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T03:54:02.764Z"
+    },
+    "candidate_directive-claude-code-can-sign-in-to-a-server-set-up-in-the-browser": {
+      "item_id": "candidate_directive-claude-code-can-sign-in-to-a-server-set-up-in-the-browser",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LUZS-claude-code-can-sign-in-to-a-server-set-up-in-the-browser.md",
+      "title": "Claude Code can sign in to a server set up in the browser",
+      "repository": "dosco-deeporg-learnings",
+      "source_version": "HEAD",
+      "content_hash": "28380525089ee0a6cb4d6cb7c362b36cd8bbb98686d777487d743cf275926273",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T03:54:09.069Z"
     }
   },
   "ai-builder-brain": {

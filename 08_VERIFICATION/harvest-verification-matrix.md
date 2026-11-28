@@ -13961,3 +13961,5 @@
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T03:36:08.575Z` | `tursodatabase-limbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-089D64F0` [Domain D] | Yes (`21feb61a...`) |
 | `CYCLE-20261128-9VE9` | `2026-11-28T03:44:49.713Z` | `graphprotocol/graph-node` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11027` | Yes (`fde91503...`) |
 | `CYCLE-20261128-A57G` | `2026-11-28T03:45:02.428Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md` | Yes (`5b42b4b8...`) |
+| `CYCLE-20261128-LOGU` | `2026-11-28T03:54:00.606Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9628` | Yes (`53b3562e...`) |
+| `CYCLE-20261128-LQE7` | `2026-11-28T03:54:03.103Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11028` | Yes (`cbe2c0fc...`) |

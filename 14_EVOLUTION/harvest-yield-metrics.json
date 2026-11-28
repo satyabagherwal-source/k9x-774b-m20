@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T03:45:02.481Z",
-  "total_cycles_completed": 13248,
-  "total_learnings_persisted": 13248,
-  "total_rules_promoted": 11946,
+  "last_updated": "2026-11-28T03:54:03.121Z",
+  "total_cycles_completed": 13250,
+  "total_learnings_persisted": 13250,
+  "total_rules_promoted": 11948,
   "history": [
-    {
-      "timestamp": "2026-11-27T09:44:40.438Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T09:44:45.922Z",
-      "repository": "tw93/Mole",
-      "learningId": "learn-github-tw93-mole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T09:44:54.980Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1389,20 @@
       "repository": "Open-Source-Legal/OpenContracts",
       "learningId": "learn-github-open-source-legal-opencontracts",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T03:54:00.624Z",
+      "repository": "nodejs/undici",
+      "learningId": "learn-github-nodejs-undici",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T03:54:03.121Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
