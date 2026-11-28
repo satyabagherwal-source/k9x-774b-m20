@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T02:31:13.007Z",
-    "lastVerified": "2026-11-28T02:31:13.007Z",
+    "lastChecked": "2026-11-28T02:41:29.204Z",
+    "lastVerified": "2026-11-28T02:41:29.204Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T02:03:47.079Z",
-    "lastVerified": "2026-11-28T02:03:47.079Z",
+    "lastChecked": "2026-11-28T02:41:23.814Z",
+    "lastVerified": "2026-11-28T02:41:23.814Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -265,8 +265,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-27T22:22:51.986Z",
-    "lastVerified": "2026-11-27T22:22:51.986Z",
+    "lastChecked": "2026-11-28T02:41:18.752Z",
+    "lastVerified": "2026-11-28T02:41:18.752Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -4133,9 +4133,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-27T08:58:18.709Z",
+    "lastChecked": "2026-11-28T02:41:16.349Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-27T08:58:18.709Z"
+    "lastVerified": "2026-11-28T02:41:16.349Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -6472,14 +6472,14 @@
     "officialUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T02:49:37.263Z",
-    "lastVerified": "2026-11-27T02:49:37.263Z",
+    "lastChecked": "2026-11-28T02:41:13.426Z",
+    "lastVerified": "2026-11-28T02:41:13.426Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "94093094df3603011e1a5a4188e504e62b6e1b9b304f5322b34e74c999cf875b",
+    "contentHash": "6656ba8acc9cd54c8eb3417742c25fc94cb63205975f4c23f58fdb1f103b4c3d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7234,13 +7234,13 @@
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T07:22:04.201Z",
-    "lastVerified": "2026-11-27T07:22:04.201Z",
+    "lastChecked": "2026-11-28T02:41:25.108Z",
+    "lastVerified": "2026-11-28T02:41:25.108Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "d5f12e4fd00f650a548feb7278e9a92cb8dcab3b651f9a30cb02fc8cd30305c5",
-    "promotedRulesCount": 1,
+    "contentHash": "74d7d2a5e34c1f484240bb6b6d183bca9d7088ee1b5a73484d380765440edafb",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -10872,9 +10872,9 @@
   "damascenorafael-reminders-menubar": {
     "name": "reminders-menubar",
     "officialUrl": "https://github.com/DamascenoRafael/reminders-menubar",
-    "lastChecked": "2026-11-26T00:46:25.341Z",
+    "lastChecked": "2026-11-28T02:41:13.455Z",
     "revisionIdentifier": "f5330cb5",
-    "lastVerified": "2026-11-26T00:46:25.341Z"
+    "lastVerified": "2026-11-28T02:41:13.455Z"
   },
   "scrapy-scrapy": {
     "name": "scrapy/scrapy",
@@ -11363,9 +11363,9 @@
   "unifiedjs-unified": {
     "name": "unified",
     "officialUrl": "https://github.com/unifiedjs/unified",
-    "lastChecked": "2026-11-24T18:00:17.853Z",
+    "lastChecked": "2026-11-28T02:41:10.944Z",
     "revisionIdentifier": "dfaf172e",
-    "lastVerified": "2026-11-24T18:00:17.853Z"
+    "lastVerified": "2026-11-28T02:41:10.944Z"
   },
   "kitlangton-hex": {
     "name": "Hex",

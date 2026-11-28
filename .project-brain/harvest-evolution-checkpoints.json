@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T02:32:24.242Z",
+  "last_updated": "2026-11-28T02:41:34.135Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-28T01:26:58.382Z",
+      "processed_at": "2026-11-28T02:41:32.980Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -953,7 +953,7 @@
       "staged_for_review": 1
     },
     "genkit-ai-genkit-learnings.md": {
-      "processed_at": "2026-11-27T07:22:10.515Z",
+      "processed_at": "2026-11-28T02:41:29.369Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3073,7 +3073,7 @@
       "staged_for_review": 0
     },
     "dicklesworthstone-destructive_command_guard-learnings.md": {
-      "processed_at": "2026-11-27T02:49:52.498Z",
+      "processed_at": "2026-11-28T02:41:31.260Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5205,
+  "total_dossiers_evaluated": 5208,
   "total_canonical_promoted": 590,
-  "total_staged_for_review": 3940
+  "total_staged_for_review": 3943
 }

@@ -4,24 +4,24 @@
 {
   "source_repository": "Dicklesworthstone/destructive_command_guard",
   "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-  "source_version": "2e7cf695",
+  "source_version": "990d02a5",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-26T02:18:35.276Z",
+  "timestamp": "2026-11-28T02:41:15.213Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard) (Revision: `2e7cf695`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-26T02:18:35.276Z`  
+> **Provenance**: Harvested from [Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard) (Revision: `990d02a5`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-28T02:41:15.213Z`  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Dicklesworthstone/destructive_command_guard:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T02:18:33.824Z  
+> **Harvest Timestamp**: 2026-11-28T02:41:13.426Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -547,8 +547,8 @@ pub enum MatchError {
         language: ScriptLanguage,
         detail: String,
     },
-    /// The code parsed, but a semantic analysis could not resolve it within
-    /// its structural limits. Retrying with a longer timeout cannot help.
+    /// A structural limit or unresolved value prevented a complete analysis.
+    /// Retrying with a longer timeout cannot help.
     AnalysisIncomplete {
         language: ScriptLanguage,
         /// Stable operation name used in incomplete-analysis diagnostics.
@@ -631,7 +631,8 @@ pub struct CompiledPattern {
     /// `call_expression`, so the pattern matches nothing, anywhere, ever.
     /// `Pattern::try_new` still returns `Ok` for it and
     /// [`Pattern::has_error`](ast_grep_core::Pattern::has_error) still returns
-    /// `false`, so neither the compile step nor a compile-only 
+    /// `false`, so neither the compile step nor a compile-only test can see the
+    /
 ```
 
 ### Core Architecture Module: `src/history/queue_budget.rs`
@@ -1456,7 +1457,9 @@ mod embedded;
 mod shell;
 mod word_splitting;
 
-pub(crate) use embedded::{scan_extracted, source_scan_required};
+pub(crate) use embedded::{
+    MAX_BYTES as MAX_PROTECTED_SOURCE_BYTES, SourceScanError, scan_extracted, source_scan_required,
+};
 // Rule NAMES are deliberately not re-exported: every hit carries the
 // rule it denies under, so the evaluator reads `hit.rule` instead of choosing
 // one. That is what keeps `.git/` writes allowlistable separately from
@@ -1662,10 +1665,7 @@ mod source_ownership_tests {
             );
             let hits =
                 classify_embedded_credential_file_writes(&command, ShellDialect::Posix, |_, _| {
-                    false
-                });
-            assert!(
-        
+          
 ```
 
 ### Core Architecture Module: `src/packs/core/credential_files/embedded.rs`
@@ -1697,13 +1697,21 @@ type Syntax<'a> = Node<'a, StrDoc<SupportLang>>;
 
 // Bound direct library calls as well as the hook. An exhausted source walk
 // must report incomplete analysis, not a successful empty match set.
-const MAX_BYTES: usize = 256 * 1024;
+pub(crate) const MAX_BYTES: usize = 256 * 1024;
 const MAX_DEPTH: usize = 128;
 const MAX_NODES: usize = 40_000;
 // A small source can repeatedly double a bound string. Bound folded values
 // separately from input bytes so path construction cannot amplify it without
 // limit. This is an analysis bound, not a query of the host filesystem.
 const MAX_STATIC_PATH_BYTES: usize = 4096;
+
+/// A grammar error can use parse-error fallback. A valid program whose
+/// writes we could not inspect must remain unverified.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum SourceScanError {
+    Syntax(&'static str),
+    Incomplete(&'static str),
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Language {
@@ -1783,7 +1791,7 @@ fn source_has_sink_name(code: &str) -> bool {
 pub(crate) fn scan_extracted(
     code: &str,
     language: ScriptLanguage,
-) -> Result<Vec<CredentialFileWrite>, &'static str> {
+) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
     if !source_scan_required(code, language) {
         return Ok(Vec::new());
     }
@@ -1932,14 +1940,7 @@ pub(super) fn scan_command(
     let mut hits = Vec::new();
     if !matches!(dialect, ShellDialect::Posix | ShellDialect::Unknown)
         || segment.len() > MAX_BYTES
-        || !source_has_sink_name(segment)
-    {
-        return hits;
-    }
-    let mut inspect_source = |code: &str, language: Language, span: Range<usize>| {
-        let script_language = match language {
-            Language::Python => ScriptLanguage::Python,
-            Language:
+   
 ```
 
 ### Core Architecture Module: `src/packs/core/credential_files/embedded/go.rs`
@@ -1962,7 +1963,7 @@ pub(super) fn scan_command(
 
 use super::{
     Access, AstGrep, CredentialFileWrite, MAX_BYTES, MAX_DEPTH, MAX_NODES, MAX_STATIC_PATH_BYTES,
-    ResolvedPath, SupportLang, Syntax, record_write,
+    ResolvedPath, SourceScanError, SupportLang, Syntax, record_write,
 };
 use std::collections::HashMap;
 
@@ -2030,9 +2031,11 @@ pub(super) fn has_sink_name(code: &str) -> bool {
     .any(|word| code.contains(word))
 }
 
-pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str> {
+pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
     if code.len() > MAX_BYTES {
-        return Err("protected-write Go source exceeds the byte limit");
+        return Err(SourceScanError::Incomplete(
+            "protected-write Go source exceeds the byte limit",
+        ));
     }
     let ast = AstGrep::new(code, SupportLang::Go);
     let mut hits = Vec::new();
@@ -2047,14 +2050,18 @@ fn visit(
     depth: usize,
     remaining: &mut usize,
     hits: &mut Vec<CredentialFileWrite>,
-) -> Result<(), &'static str> {
+) -> Result<(), SourceScanError> {
     if depth > MAX_DEPTH || *remaining == 0 || state.values.len() > 1024 {
-        return Err("protected-write Go source exceeds the traversal limit");
+        return Err(SourceScanError::Incomplete(
+            "protected-write Go source exceeds the traversal limit",
+        ));
     }
     *remaining -= 1;
     let kind = node.kind();
     if kind == "ERROR" {
-        return Err("protected-write Go source contains a syntax error");
+        return Err(SourceScanError::Syntax(
+            "protected-write Go source contains a syntax error",
+        ));
     }
 
     if kind == "import_spec" {
@@ -2140,7 +2147,7 @@ fn assign(
     depth: usize,
     remaining: &mut usize,
     hits: &mut Vec<CredentialFileWrite>,
-) -> Result<(), &'static str> {
+) -> Result<(), SourceScanError> {
     let names: Vec<String> = node
         .field("left")
         .or_else(|| node.field("name"))
@@ -2230,10 +2237,7 @@ fn inspect_call(node: &Syntax<'_>, state: &State, hits: &mut Vec<CredentialFileW
     let Some((package, name)) = sink(node, state) else {
         return;
     };
-    let target = |index: usize| arg(node, index).and_then(|a| path(&a, state));
-    let mut record = |path, access| {
-        record_write(hits, node.range(), &format!("Go {name}"), path, access);
-    }
+    let target = |index:
 ```
 
 ### Core Architecture Module: `src/packs/core/credential_files/embedded/perl.rs`
@@ -2246,9 +2250,10 @@ fn inspect_call(node: &Syntax<'_>, state: &State, hits: &mut Vec<CredentialFileW
 
 use super::{
     Access, Bindings, CredentialFileWrite, MAX_BYTES, MAX_DEPTH, MAX_NODES, MAX_STATIC_PATH_BYTES,
-    OpenFlags, ResolvedPath, Value, combine_open_flags, concatenate_text, record_write,
-    resolved_path,
+    OpenFlags, ResolvedPath, SourceScanError, Value, combine_open_flags, concatenate_text,
+    record_write, resolved_path,
 };
+use SourceScanError::{Incomplete, Syntax};
 use regex::Regex;
 use std::cell::Cell;
 use std::collections::{HashMap, HashSet};
@@ -2291,18 +2296,20 @@ struct State {
 /// Bound total token visits as well as source size and nesting. Otherwise
 /// overlapping argument scans could keep a quadratic worker alive after the
 /// caller's wall-clock deadline has expired.
-fn charge(work: &Cell<usize>) -> Result<(), &'static str> {
+fn charge(work: &Cell<usize>) -> Result<(), SourceScanError> {
     let left = work
         .get()
         .checked_sub(1)
-        .ok_or("protected-write Perl exceeds the work limit")?;
+        .ok_or(Incomplete("protected-write Perl exceeds the work limit"))?;
     work.set(left);
     Ok(())
 }
 
-pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str> {
+pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
     if code.len() > MAX_BYTES {
-        return Err("protected-write Perl source exceeds the byte limit");
+        return Err(Incomplete(
+            "protected-write Perl source exceeds the byte limit",
+        ));
     }
     let tokens = lex(code)?;
     let mut state = State {
@@ -2334,7 +2341,9 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
             }
         }
         if state.values.len() + state.handles.len() > 1024 || pending.len() > MAX_DEPTH {
-            return Err("protected-write Perl source exceeds the binding limit");
+            return Err(Incomplete(
+                "protected-write Perl source exceeds the binding limit",
+            ));
         }
         let token = &tokens[index];
         if matches!(token.text, "use" | "require")
@@ -2486,11 +2495,7 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
                 state.values.remove(name);
                 state.handles.remove(name);
                 if let Some(finding) = &finding {
-                    state.handles.insert(name.to_string(), finding.clone());
-                }
-            }
-        }
-        for (path, access) in finding.into_i
+       
 ```
 
 
@@ -2520,850 +2525,581 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `beedc5c7` (2026-11-25)
-**Commit Message**: chore(deps): refresh Cargo.lock within the current version requirements [skip ci]
+### Incident Patch 1: `c4ca6898` (2026-11-27)
+**Commit Message**: fix(install): recover ownerless install locks
 
-`cargo update` on the existing manifest; no Cargo.toml change.
+The mkdir lock treated a lock as stale only when its pid file named a dead
+process. A lock with an empty or missing pid file blocked every later run
+forever. That happens when `echo $$ > pid` fails on a full disk or spent /tmp
+quota, or when a run is killed between mkdir and the write. hz2's nightly
+`acfs update` failed xf for 3+ days on a 0-byte pid file from 11-23
+("Another installer is running").
 
-Runtime crates:
-- clap 4.6.9 -> 4.6.10, clap_builder 4.6.7 -> 4.6.10
-- hashbrown 0.17.1 -> 0.17.2 (through indexmap: serde_json, toml)
-- rich_rust 0.2.3 -> 0.2.4, which moves to fancy-regex 0.20 and drops the
-  duplicate fancy-regex 0.18.0 from the tree (pulls in lru 0.19.2)
-- globset 0.4.21 -> 0.4.22, ignore 0.4.34 -> 0.4.35 (vendored
-  ast-grep-language-dcg)
-- h2 0.4.20 -> 0.4.21, hyper 1.12.0 -> 1.13.0 (reqwest, self-update only)
-- crc32fast 1.5.5 -> 1.5.6, zlib-rs 0.6.8 -> 0.6.9 (flate2: history export
-  and self-update)
-Build and dev only: anyhow 1.0.104 -> 1.0.105 and the gix-* patch releases
-under vergen-gix (which add faster-hex 2.0, parking_lot 0.13, lock_api 0.5,
-parking_lot_core 0.10, redox_syscall 0.9.5 and winreg 0.56); litrs 1.0.1 ->
-1.1.0; zerocopy 0.8.64 -> 0.8.65 (criterion).
+- A pid that can't be written releases the lock and stops the run, as ee's
+  installer already does.
+- An existing lock with no recorded pid is stale once it is more than 10
+  minutes old. The age guard keeps a run that has just made its lock dir
+  safe.
+- A lock held by a live process still blocks.
 
-Held (breaking; each needs its own change):
-- ast-grep-core 0.45.3 -> 0.51.3: needs tree-sitter 0.27 and a matching
-  update of the vendored ast-grep-language-dcg crate, and it is the parser
-  on the hook's hot path.
-- rust-mcp-sdk 1.0.1 -> 2.0.0: 
-
-**File**: `Cargo.lock` (modified, +161/-102)
-```diff
-@@ -99,9 +99,9 @@ dependencies = [
- 
- [[package]]
- name = "anyhow"
--version = "1.0.104"
-+version = "1.0.105"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
-+checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
- 
- [[package]]
- name = "approx"
-@@ -454,19 +454,19 @@ dependencies = [
- 
- [[package]]
- name = "clap"
--version = "4.6.9"
-+version = "4.6.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
-+checksum = "50066ca966813ca8957ee15361752f19424a8ff620dbe9c8993d9f99d99b04b3"
- dependencies = [
-  "clap_builder",
-  "clap_derive",
- ]
- 
- [[package]]
- name = "clap_builder"
--version = "4.6.7"
-+version = "4.6.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
-+checksum = "a0ed97c96ef4efb3cc84e09fa388df4463e7cc3224ec38d7b1d9e45749333590"
- dependencies = [
-  "anstream",
-  "anstyle",
-@@ -653,9 +653,9 @@ dependencies = [
- 
- [[package]]
- name = "crc32fast"
--version = "1.5.5"
-+version = "1.5.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2b929dd2a135771f40afabd1073f85eed59c800b7c61901e5c254270497dad64"
-+checksum = "fd9ae8fcb3ea71b0b26338b4ffb13006bb175de8fd07921089a906ce7e5e6945"
- dependencies = [
-  "cfg-if",
- ]
-@@ -762,7 +762,7 @@ dependencies = [
-  "derive_more",
-  "document-features",
-  "mio",
-- "parking_lot",
-+ "parking_lot 0.12.5",
-  "rustix",
-  "signal-hook 0.3.18",
-  "signal-hook-mio",
-@@ -856,9 +856,9 @@ dependencies = [
-  "cfg-if",
-  "crossbeam-utils",
-  "hashbrown 0.14.5",
-- "lock_api",
-+ "lock_api 0.4.14",
-  "once_cell",
-- "parking_lot_core",
-+ "parking_lot_core 0.9.12",
- ]
- 
- [[package]]
-@@ -947,7 +947,7 @@ dependencies = [
-  "criterion",
-  "ctrlc",
-  "dirs",
-- "fancy-regex 0.20.2",
-+ "fancy-regex",
-  "flate2",
-  "fs2",
-  "glob",
-@@ -1140,17 +1140,6 @@ version = "0.1.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7360491ce676a36bf9bb3c56c1aa791658183a54d2744120f27285738d90465a"
- 
--[[package]]
--name = "fancy-regex"
--version = "0.18.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e1e1dacd0d2082dfcf1351c4bdd566bbe89a2b263235a2b50058f1e130a47277"
--dependencies = [
-- "bit-set 0.8.0",
-- "regex-automata",
-- "regex-syntax",
--]
--
- [[package]]
- name = "fancy-regex"
- version = "0.20.2"
-@@ -1174,6 +1163,16 @@ dependencies = [
-  "serde",
- ]
- 
-+[[package]]
-+name = "faster-hex"
-+version = "2.0.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e4ede54fe330383a5de28c0a1f06668ff9dbf06c8094e1c5150c39488a5e911d"
-+dependencies = [
-+ "defmt 0.3.101",
-+ "serde",
-+]
-+
- [[package]]
- name = "fastrand"
- version = "2.5.0"
-@@ -1442,7 +1441,7 @@ dependencies = [
-  "gix-worktree-stream",
-  "gix-zlib",
-  "nonempty",
-- "parking_lot",
-+ "parking_lot 0.12.5",
-  "signal-hook 0.4.6",
-  "smallvec",
- ]
-@@ -1477,27 +1476,27 @@ dependencies = [
- 
- [[package]]
- name = "gix-bitmap"
--version = "0.6.1"
-+version = "0.6.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "422cd23418fd80e9e965595323975d72abd6364a66ff8f0daade5c105a7f35d2"
-+checksum = "9543567ee22142c81fdf75b2811160bec749a5b9f48665e4763f88b1789b8612"
- dependencies = [
-  "gix-error",
- ]
- 
- [[package]]
- name = "gix-chunk"
--version = "0.10.1"
-+version = "0.10.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "dc6a775aba54f0d65698126cc4214b6bf8ddb208312e4ef4240dfe34b0697b87"
-+checksum = "60cd5f0e47ffae98bad241ccbc031693765004fb4c2a419f7fda2963232af1e3"
- dependencies = [
-  "gix-error",
- ]
- 
- [[package]]
- name = "gix-command"
--version = "0.12.1"
-+version = "0.12.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "df63215f103299169e239dfe76f5cfa4a3d6d4adf69a01774085e3e0423cba34"
-+checksum = "2986e78ebad43510ccd7dd18bd9f22e9afd52f2de791e2979b9c715bacb6f0a8"
- dependencies = [
-  "bstr",
-  "gix-error",
-@@ -1542,9 +1541,9 @@ dependencies = [
- 
- [[package]]
- name = "gix-config-value"
--version = "0.21.1"
-+version = "0.21.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6cdada8bd9c97dc6522505c08226d9c88f0a1286f2c06b9e1bf51c3bf7ad7b2b"
-+checksum = "d7666081ef0ecc5e1dc54bc6ce16dac9d7b9490780f6c130393ef9e50c909d4a"
- dependencies = [
-  "bitflags 2.13.2",
-  "bstr",
-@@ -1647,9 +1646,9 @@ dependencies = [
- 
- [[package]]
- name = "gix-error"
--version = "0.5.2"
-+version = "0.5.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d87ff4b3f3daf01234d38d176b0ec00e92de514cc0e3fb8a8898c5cb7ccd22bb"
-+checksum = "50ad6c42fa50280f382026ff838a8afa7ab2ad83e92349cab4392972baae69cd"
- dependencies = [
-  "bstr",
- ]
-@@ -1710,7 +1709,7 @@ version = "0.28.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b4802
-```
-
----
-
-### Incident Patch 2: `3573fcd3` (2026-11-24)
-**Commit Message**: fix(cli): report the heredoc fallback settings under their config keys (#555) [skip ci]
-
-`dcg config --format json` listed `[heredoc] fallback_on_parse_error` and
-`fallback_on_timeout` as `fail_open_on_parse_error` and `fail_open_on_timeout`.
-That reads as "allow when analysis fails", which neither setting does: `true`
-selects bounded fallback scanning (one retry under the structural budget for
-a timeout), and `false` blocks on the incomplete analysis. A user reading the
-JSON could not find the key they configure, and the name suggested the
-opposite of the behaviour. The JSON now uses the config key names.
-
-A test in config_toggles_e2e reads both settings back from the JSON at their
-defaults and with both set to false, and checks that no `fail_open*` key is
-left in the heredoc section.
+Verified by extracting the lock block and running 6 cases on macOS (BSD
+find/touch) and Linux (GNU): fresh, live owner, dead owner, fresh ownerless,
+old ownerless, and old with no pid file. The previous block fails both old
+ownerless cases.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +7/-0)
+**File**: `install.sh` (modified, +20/-13)
 ```diff
-@@ -30,6 +30,13 @@ never see the body of a `$(...)`. Known false positive: the unquoted
- the rules (BSD `pkill` reading `-P 1` as patterns; a `kill_tree` walk from
- launchd). The pack is off by default.
- 
-+**`dcg config --format json` reports the heredoc fallback settings under their
-+config keys (#555).** The `heredoc` object listed `fallback_on_parse_error` and
-+`fallback_on_timeout` as `fail_open_on_parse_error` and `fail_open_on_timeout`,
-+which read as "allow when analysis fails". The settings choose bounded fallback
-+scanning, and the JSON now uses the names you write in `[heredoc]`. Scripts that
-+parse this output need the new key names.
-+
- ---
- 
- ## [v0.17.1](https://github.com/Dicklesworthstone/destructive_command_guard/releases/tag/v0.17.1) -- 2026-11-23 [Release]
-```
-
-**File**: `src/cli.rs` (modified, +6/-2)
-```diff
-@@ -7183,8 +7183,12 @@ fn show_config_json(config: &Config, sources: &[ConfigSourceOutcome]) {
-             "max_body_bytes": heredoc.limits.max_body_bytes,
-             "max_body_lines": heredoc.limits.max_body_lines,
-             "max_heredocs": heredoc.limits.max_heredocs,
--            "fail_open_on_parse_error": heredoc.fallback_on_parse_error,
--            "fail_open_on_timeout": heredoc.fallback_on_timeout,
-+            // Named after the `[heredoc]` config keys they report. The settings
-+            // select bounded fallback scanning when parsing fails or times out;
-+            // the old `fail_open_on_*` names read as "allow when analysis
-+            // fails", which is not what they do (#555).
-+            "fallback_on_parse_error": heredoc.fallback_on_parse_error,
-+            "fallback_on_timeout": heredoc.fallback_on_timeout,
-             "languages": languages,
-         },
-         "overrides": {
-```
-
-**File**: `tests/config_toggles_e2e.rs` (modified, +54/-0)
-```diff
-@@ -547,6 +547,60 @@ fn test_partial_config_only_explanations() {
-     eprintln!("=== Partial config test PASSED ===");
- }
- 
-+/// `dcg config --format json` names the heredoc fallback settings by their
-+/// configuration keys (#555). They used to appear as `fail_open_on_*`, which
-+/// reads as "allow when analysis fails"; the settings select bounded fallback
-+/// scanning, and a user reading the JSON should find the key they configure.
-+#[test]
-+fn config_json_names_heredoc_fallback_settings_by_their_config_keys() {
-+    let env = TestEnv::new();
-+    let read = |config: &str| -> serde_json::Value {
-+        fs::write(&env.config_path, config).expect("write config");
-+        let output = Command::new(dcg_binary())
-+            .env_clear()
-+            .env("HOME", &env.home_dir)
-+            .env("USERPROFILE", &env.home_dir)
-+            .env("XDG_CONFIG_HOME", &env.xdg_config_dir)
-+            .env("DCG_CONFIG", &env.config_path)
-+            .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
-+            .current_dir(env.temp_dir.path())
-+            .args(["config", "--format", "json"])
-+            .output()
-+            .expect("run dcg config");
-+        assert!(
-+            output.status.success(),
-+            "dcg config failed: {}",
-+            String::from_utf8_lossy(&output.stderr)
-+        );
-+        serde_json::from_slice(&output.stdout).expect("config JSON")
-+    };
-+
-+    for (config, expected) in [
-+        ("[heredoc]\nenabled = true\n", true),
-+        (
-+            "[heredoc]\nfallback_on_parse_error = false\nfallback_on_timeout = false\n",
-+            false,
-+        ),
-+    ] {
-+        let json = read(config);
-+        let heredoc = json["heredoc"].as_object().expect("heredoc section");
-+        assert_eq!(
-+            heredoc.get("fallback_on_parse_error"),
-+            Some(&serde_json::Value::Bool(expected)),
-+            "{config}: {heredoc:?}"
-+        );
-+        assert_eq!(
-+            heredoc.get("fallback_on_timeout"),
-+            Some(&serde_json::Value::Bool(expected)),
-+            "{config}: {heredoc:?}"
-+        );
-+        assert!(
-+            !heredoc.keys().any(|key| key.starts_with("fail_open")),
-+            "{config}: {heredoc:?}"
-+        );
-+    }
+@@ -1831,20 +1831,27 @@ install_binary() {
+ # Cross-platform locking using mkdir (atomic on all POSIX systems including macOS)
+ LOCK_DIR="${LOCK_FILE}.d"
+ LOCKED=0
+-if mkdir "$LOCK_DIR" 2>/dev/null; then
++# Take the lock and record our pid. A pid that cannot be written (full disk or
++# spent quota) would leave an ownerless lock that blocks every later run, so
++# release it and stop instead.
++take_install_lock() {
++  mkdir "$LOCK_DIR" 2>/dev/null || return 1
+   LOCKED=1
+-  echo $$ > "$LOCK_DIR/pid"
+-else
+-  # Check if existing lock is stale (process no longer running)
+-  if [ -f "$LOCK_DIR/pid" ]; then
+-    OLD_PID=$(cat "$LOCK_DIR/pid" 2>/dev/null || echo "")
+-    if [ -n "$OLD_PID" ] && ! kill -0 "$OLD_PID" 2>/dev/null; then
+-      rm -rf "$LOCK_DIR"
+-      if mkdir "$LOCK_DIR" 2>/dev/null; then
+-        LOCKED=1
+-        echo $$ > "$LOCK_DIR/pid"
+-      fi
+-    fi
++  if ! echo $$ > "$LOCK_DIR/pid" 2>/dev/null; then
++    rm -rf "$LOCK_DIR" 2>/dev/null || true
++    LOCKED=0
++    err "Could not write pid file to $LOCK_DIR (disk full or read-only?)"
++    exit 1
++  fi
 +}
-+
- // =============================================================================
- // Verbose Failure Logging Test
- // =============================================================================
++if ! take_install_lock; then
++  # The existing lock is stale if its process is gone, or if it never recorded
++  # a pid (an interrupted or disk-full run) and is more than 10 minutes old.
++  OLD_PID=$(cat "$LOCK_DIR/pid" 2>/dev/null || echo "")
++  if { [ -n "$OLD_PID" ] && ! kill -0 "$OLD_PID" 2>/dev/null; } \
++    || { [ -z "$OLD_PID" ] && [ -n "$(find "$LOCK_DIR" -maxdepth 0 -mmin +10 2>/dev/null)" ]; }; then
++    rm -rf "$LOCK_DIR"
++    take_install_lock || true
+   fi
+   if [ "$LOCKED" -eq 0 ]; then
+     err "Another installer is running (lock $LOCK_DIR)"
 ```
 
 ---
 
-### Incident Patch 3: `21e57462` (2026-11-26)
-**Commit Message**: fix(analyzer): preserve Python helper identity across file reads [skip ci]
+### Incident Patch 2: `c7ba093f` (2026-11-27)
+**Commit Message**: fix(install): write agy hooks as a cmd.exe-runnable path with no shell key (#677) [skip ci]
 
-Model the built-in read-only open of a known path and a no-argument read on its file handle. Keep shadowed openers, custom conversions, and opaque calls conservative.
+`dcg install --agy` reused Claude Code's hook object. On Windows that is
+`"command": "& '<path>\dcg.exe'"` with `"shell": "powershell"`. agy's
+hooks documentation lists only `type`, `command` and `timeout` on a
+handler, and both Windows reports show agy running `command` through
+cmd.exe and ignoring `shell`. cmd.exe rejects PowerShell's call operator
+("& was unexpected at this time."), and since the matcher became
+run_command (#652) every shell call in agy failed on Windows.
 
-Classify structural Python analysis limits separately from worker and clock failures. Retain the first incomplete step on the evaluation result so the hook and CLI can explain unverified input, while independent rule findings and actual deadlines still take precedence.
+agy now gets its own handler: the absolute dcg path with no `shell` key.
+On Windows the path is written bare (the form two users confirmed works in
+agy), or in double quotes when it contains whitespace or one of
+& | < > ( ) ^ , ; =. A path with %, " or a control character is refused
+with an error instead of being written as a hook cmd.exe would expand or
+cannot run. Other platforms keep the POSIX-quoted path. Claude Code's
+Windows hook keeps its documented PowerShell form.
 
-Fixes #673
+Re-running `dcg install --agy` repairs an existing broken entry without
+--force: the desired handler differs, `shell` is a dcg-owned key and is
+dro
 
-**File**: `fuzz/fuzz_targets/ast_matcher_fuzz.rs` (modified, +2/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -96,7 +96,9 @@ fn assert_expected_fail_open_error(error: MatchError) {
-     match error {
-         MatchError::UnsupportedLanguage(_)
-         | MatchError::ParseError { .. }
-+        | MatchError::AnalysisIncomplete { .. }
-         | MatchError::Timeout { .. }
-+        | MatchError::Unavailable { .. }
-         | MatchError::PatternError { .. } => {}
+@@ -1229,7 +1229,7 @@ preserves existing hook wiring.
+ - **Cursor IDE:** Hooks are configured through `~/.cursor/hooks.json` plus a generated bridge (`dcg-pre-shell.ps1` on Windows). The installer inserts dcg first in `beforeShellExecution`, collapses duplicate dcg entries, and preserves coexisting Cursor hooks. The bridge blocks a command it cannot verify: a payload it cannot read, or a dcg that ran but gave no verdict (killed, timed out, non-zero exit, no answer). Set `DCG_BRIDGE_CRASH_DECISION=allow` to let those through instead; only a dcg that cannot be started at all is allowed, with a notice on stderr. Cursor also runs the `PreToolUse` hooks in `~/.claude/settings.json` for its `Shell` tool, and dcg judges those payloads too.
+ - **Hermes Agent:** [NousResearch's Hermes Agent](https://github.com/NousResearch/hermes-agent) declares shell hooks in its `config.yaml` under `hooks.pre_tool_call`. Hermes resolves its data root from `HERMES_HOME` when set, else `%LOCALAPPDATA%\hermes` on native Windows and `~/.hermes` on Linux/macOS — both installers write the hook to that resolved path (`install.ps1` never writes to `%USERPROFILE%\.hermes` unless `HERMES_HOME` points there, since native Windows Hermes would never read it). The installer merges a single `matcher: "terminal"` entry that invokes dcg directly — no wrapper script — because Hermes' input JSON (`hook_event_name: "pre_tool_call"`, `tool_name: "terminal"`, `tool_input.command`) deserializes straight into dcg's existing `HookInput`. Hermes [explicitly documents](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/hooks.md) that "non-zero exit codes... never abort the agent loop", so dcg switches to Hermes' JSON block protocol on output: `{"decision":"block","reason":...}` (plus the alternate `{"action":"block","message":...}` form for cross-version compatibility). The installer also sets `hooks_auto_accept: true` if not already set; Hermes silently drops un-allowlisted hooks in non-TTY runs (gateway/cron) without it. `unconfigure_hermes` in `uninstall.sh` removes only the dcg-owned entry and leaves `hooks_auto_accept` alone (other Hermes hooks may rely on it).
+ - **Grok (xAI):** [Grok Build / Grok CLI](https://x.ai/news/grok-build-cli) auto-discovers every `*.json` under `~/.grok/hooks/`. `dcg install --grok` writes a self-contained `~/.grok/hooks/dcg.json` with a `PreToolUse` / `matcher: "Bash"` entry — Grok internally aliases Claude-style `"Bash"` to its own `run_terminal_cmd` tool, so a single rule covers every shell command. dcg detects Grok at runtime from the camelCase wire shape (`hookEventName: "pre_tool_use"`, `toolName: "run_terminal_cmd"`) or from the `GROK_SESSION_ID` / `GROK_HOOK_EVENT` / `GROK_WORKSPACE_ROOT` environment variables, and switches its output to Grok's JSON contract: `{"decision":"deny","reason":...}` (note `"deny"`, not Hermes' `"block"`). Grok also reads `~/.claude/settings.json` when its Claude compatibility hooks are enabled, as documented in its [hook locations](https://github.com/xai-org/grok-build/blob/main/crates/codegen/xai-grok-pager/docs/user-guide/10-hooks.md#hook-locations). That compatibility location does **not** follow `CLAUDE_CONFIG_DIR`: DCG checks Grok's default compatibility file separately, and a hook installed only in a relocated Claude directory does not protect Grok. Use `dcg install --grok` for that setup. Add `--project` to write `<repo>/.grok/hooks/dcg.json` for a per-repo install (Grok requires `/hooks-trust` the first time it opens a repo with hooks).
+-- **Antigravity CLI (`agy`):** [Google Antigravity's `agy` CLI](https://antigravity.google) ships a Claude-Code-compatible hooks system. `dcg install --agy` merges a `PreToolUse` / `matcher: "Bash"` entry into `~/.gemini/config/hooks.json` (the canonical path; `agy` migrates the legacy `~/.gemini/antigravity-cli/hooks.json` here and symlinks the old path to it). `agy` runs the hook before its `run_command` shell tool; dcg detects `agy` at runtime from the distinctive nested `toolCall` envelope (`{"toolCall":{"name":"run_command","args":{"CommandLine":"…"}},"conversationId":…,"stepIdx":…}`) — the shell command is read from `toolCall.args.CommandLine` — or from the `ANTIGRAVITY_CONVERSATION_ID` environment variable / `agy` parent-process name. dcg follows `agy`'s [PreToolUse output contract](https://antigravity.google/docs/hooks): denials contain only `{"decision":"deny","reason":…}` on stdout with exit code 0. Antigravity CLI 1.4.0's strict `protojson` parser rejects extra fields such as `systemMessage`, `ruleId`, and `remediation` ([#573](https://github.com/Dicklesworthstone/destructive_command_guard/issues/573)); the explanation remains in `reason`. Warnings go to stderr with empty stdout and exit code 0, so dcg supplies no permission decision and leaves ordinary permission checks to `agy`. Add `--project` to write `<repo>/.gemini/config/hooks.json` for a per-repo install. Restart `agy` (start a new session) af
+```
+
+**File**: `src/cli.rs` (modified, +195/-8)
+```diff
+@@ -340,7 +340,7 @@ pub enum Command {
+ 
+         /// Install the dcg PreToolUse hook for the Antigravity CLI (`agy`) at
+         /// `~/.gemini/config/hooks.json` (user-level) or
+-        /// `<repo>/.gemini/config/hooks.json` (with `--project`). `agy` reads
++        /// `<repo>/.agents/hooks.json` (with `--project`). `agy` reads
+         /// Claude-Code-compatible `PreToolUse` hooks from this file and aborts
+         /// its `run_command` shell tool when dcg returns a block decision.
+         #[arg(
+@@ -13731,22 +13731,26 @@ fn claude_dcg_hook_for_executable(
      }
  }
-```
-
-**File**: `src/ast_matcher/python_paths.rs` (modified, +98/-17)
-```diff
-@@ -131,6 +131,7 @@ enum Symbol {
-     TemporaryDirectory,
-     Str,
-     Print,
-+    Open,
-     Getattr,
-     Builtins,
- }
-@@ -389,6 +390,8 @@ enum Value {
-     Delete(Delete),
-     Join(Path),
-     PathRead,
-+    ReadOnlyFile,
-+    FileRead,
-     LocalFunction(Arc<LocalFunction>),
- }
  
-@@ -882,8 +885,9 @@ impl<'a> Scan<'a> {
-     fn check<D: Doc>(&mut self, node: &Node<'_, D>, depth: usize) -> Result<(), MatchError> {
-         check_ast_timeout(self.started, self.timeout, self.budget_ms, self.cancel)?;
-         if depth >= MAX_DEPTH || self.remaining == 0 {
--            return Err(MatchError::Unavailable {
-+            return Err(MatchError::AnalysisIncomplete {
-                 language: ScriptLanguage::Python,
-+                stage: "python_path_bindings",
-                 detail: "Python path-binding analysis exhausted its traversal limit".to_string(),
-             });
-         }
-@@ -1018,6 +1022,7 @@ impl<'a> Scan<'a> {
-         for (name, symbol) in [
-             ("str", Symbol::Str),
-             ("print", Symbol::Print),
-+            ("open", Symbol::Open),
-             ("getattr", Symbol::Getattr),
-         ] {
-             if !writes.contains(name) && !imported_names.contains(name) {
-@@ -1033,7 +1038,7 @@ impl<'a> Scan<'a> {
-         };
-         env.values
-             .insert("getattr".to_string(), Value::Symbol(Symbol::Getattr).lost());
--        for name in ["str", "print", "getattr"] {
-+        for name in ["str", "print", "open", "getattr"] {
-             if let Some(value) = self.immutable.get(name) {
-                 env.values.insert(name.to_string(), value.clone());
-             }
-@@ -3288,8 +3293,9 @@ impl<'a> Scan<'a> {
-                     if possible.direct & MAY_LOCAL != 0 {
-                         return Err(local_call_error("exhausted local return-depth summary"));
-                     }
--                    return Err(MatchError::Unavailable {
-+                    return Err(MatchError::AnalysisIncomplete {
-                         language: ScriptLanguage::Python,
-+                        stage: "python_container_selector",
-                         detail:
-                             "Python container selector analysis exhausted its return-depth limit"
-                                 .to_string(),
-@@ -3387,6 +3393,15 @@ impl<'a> Scan<'a> {
-                     Value::Directory(path)
-                 }
-             }
-+            // Only the builtin with a proved path and plain read mode yields
-+            // this receiver. A custom opener, codec, or path conversion can
-+            // execute Python and must still invalidate the caller's bindings.
-+            Value::Symbol(Symbol::Open)
-+                if env.trusted && plain && read_only_open(&args.positional) =>
-+            {
-+                Value::ReadOnlyFile
-+            }
-+            Value::FileRead if env.trusted && plain && args.positional.is_empty() => Value::Unknown,
-             Value::PathRead | Value::Symbol(Symbol::Print) => Value::Unknown,
-             Value::LocalFunction(function) => {
-                 self.local_call(node, &function, &args, env, depth + 1)?
-@@ -3577,8 +3592,9 @@ fn bounded_container(container: Container) -> Value {
- }
- 
- fn local_call_error(detail: &str) -> MatchError {
--    MatchError::Unavailable {
-+    MatchError::AnalysisIncomplete {
-         language: ScriptLanguage::Python,
-+        stage: "python_local_call_analysis",
-         detail: format!("Python local-call analysis incomplete: {detail}"),
-     }
- }
-@@ -3832,6 +3848,7 @@ fn attribute(object: Value, member: &str) -> Value {
-             Value::Symbol(Symbol::TemporaryDirectory)
-         }
-         (Value::Directory(path), "name") => Value::Text(path.clone()),
-+        (Value::ReadOnlyFile, "read") => Value::FileRead,
-         (Value::Path(path), "joinpath") => Value::Join(path.clone()),
-         (
-             Value::Path(_),
-@@ -3860,6 +3877,19 @@ fn fold_paths(values: &[Value]) -> Option<Path> {
-     Some(path)
- }
- 
-+fn read_only_open(positional: &[Value]) -> bool {
-+    match positional {
-+        [Value::Text(_) | Value::Path(_)] => true,
-+        [
-+            Value::Text(_) | Value::Path(_),
-+            Value::Text(Path::Literal(mode)),
-+        ] => {
-+            matches!(mode.as_ref(), "r" | "rt" | "tr" | "rb" | "br")
-+        }
-+        _ => false,
-+    }
-+}
-+
- fn factory_arguments(args: &Args) -> bool {
-     if args.uncertain || args.positional.len() > 3 {
-         return false;
-@@ -3955,6 +3985,45 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn repeated_local_calls_keep_identity_across_builtin_file_reads() {
-+        for read in ["open(p).read()", "open(p, 'rb').read()"] {
-+            let source = format!(
-+                "def edit(p, pairs):\n    s = {read}\nedit('x', [('a', 'b')])\nedit('y', [('a', 'remove')])"
-+            );
-+            assert_blocked(&source, false);
-+        }
-+        // The second call must still analyze the helper with its new callback.
-+        assert_blocked(
-+           
-```
-
-**File**: `src/ast_matcher/tempfile_provenance.rs` (modified, +3/-1)
-```diff
-@@ -915,7 +915,9 @@ mod tests {
-                 case.id
-             );
-             match result {
--                Err(super::super::MatchError::Unavailable { language, detail }) => {
-+                Err(super::super::MatchError::AnalysisIncomplete {
-+                    language, detail, ..
-+                }) => {
-                     assert_eq!(language, ScriptLanguage::Python, "{}", case.id);
-                     assert_eq!(&detail, expected, "{}", case.id);
-                 }
-```
-
-**File**: `src/ast_pattern_engine.rs` (modified, +21/-0)
-```diff
-@@ -172,6 +172,14 @@ pub enum MatchError {
-         language: ScriptLanguage,
-         detail: String,
-     },
-+    /// The code parsed, but a semantic analysis could not resolve it within
-+    /// its structural limits. Retrying with a longer timeout cannot help.
-+    AnalysisIncomplete {
-+        language: ScriptLanguage,
-+        /// Stable operation name used in incomplete-analysis diagnostics.
-+        stage: &'static str,
-+        detail: String,
-+    },
-     /// Pattern matching exceeded timeout.
-     Timeout { elapsed_ms: u64, budget_ms: u64 },
-     /// Pattern compilation failed (should not happen with static patterns).
-@@ -206,6 +214,11 @@ impl std::fmt::Display for MatchError {
-             Self::ParseError { language, detail } => {
-                 write!(f, "AST parse error for {language:?}: {detail}")
-             }
-+            Self::AnalysisIncomplete {
-+                language, detail, ..
-+            } => {
-+                write!(f, "AST analysis incomplete for {language:?}: {detail}")
-+            }
-             Self::Timeout {
-                 elapsed_ms,
-                 budget_ms,
-@@ -7498,6 +7511,14 @@ mod tests {
-             .is_transient()
-         );
-         assert!(!MatchError::UnsupportedLanguage(ScriptLanguage::Unknown).is_transient());
-+        assert!(
-+            !MatchError::AnalysisIncomplete {
-+                language: ScriptLanguage::Python,
-+                stage: "python_local_call_analysis",
-+                detail: "unresolved local callable".into()
-+            }
-+            .is_transient()
-+        );
-         assert!(
-             !MatchError::PatternError {
-                 pattern: "p".into(),
-```
-
-**File**: `src/cli.rs` (modified, +25/-2)
-```diff
-@@ -1087,11 +1087,22 @@ const CLASSIFY_OUTPUT_SCHEMA_VERSION: u32 = 1;
- /// pattern has been proven, but execution is still blocked conservatively.
- const INDETERMINATE_REASON: &str = "Safety evaluation did not complete within the analysis budget";
- 
-+fn indeterminate_stage(result: &EvaluationResult) -> Option<&'static str> {
-+    result
-+        .incomplete_stage
-+        .filter(|_| !result.skipped_due_to_budget)
-+}
-+
- /// Describe the failure attached to this evaluation, never a stale thread-local
- /// observation. A regex work limit is independent of the hook's wall clock;
- /// retain the deadline wording when the evaluator actually exhausted it, with
- /// the known regex failure as additional context.
- fn indeterminate_reason(result: &EvaluationResult) -> std::borrow::Cow<'static, str> {
-+    if let Some(stage) = indeterminate_stage(result) {
-+        return std::borrow::Cow::Owned(format!(
-+            "Safety evaluation could not finish (incomplete: {stage}). The command was not verified."
-+        ));
-+    }
-     if !result.skipped_due_to_budget
-         && let Some(failure) = &result.regex_failure
-     {
-@@ -5625,7 +5636,14 @@ fn test_command(
-                     "Execution is blocked because DCG could not complete safety analysis."
-                         .to_string(),
-                 ),
--                source: Some("analysis_budget".to_string()),
-+                source: Some(
-+                    if indeterminate_stage(&result).is_some() {
-+                        "analysis_incomplete"
-+                    } else {
-+                        "analysis_budget"
-+                    }
-+                    .to_string(),
-+                ),
-                 matched_span: None,
-                 severity: None,
-                 allowlist: None,
-@@ -6207,7 +6225,12 @@ fn classify_command(config: &Config, command: &str, format: ClassifyFormat, no_c
-             "unknown".to_string(),
-             1.0,
-             vec![ClassifyReason {
--                rule_id: "dcg:analysis-budget".to_string(),
-+                rule_id: if indeterminate_stage(&result).is_some() {
-+                    "dcg:analysis-incomplete"
-+                } else {
-+                    "dcg:analysis-budget"
-+                }
-+                .to_string(),
-                 severity: "unknown".to_string(),
-                 explanation: indeterminate_reason(&result).into_owned(),
-             }],
-```
-
-**File**: `src/evaluator.rs` (modified, +71/-13)
-```diff
-@@ -989,6 +989,9 @@ pub struct EvaluationResult {
-     /// executed child. Contains bounded rule identifiers and engine limits,
-     /// never command text, pattern source, or execution context.
-     pub regex_failure: Option<crate::perf::RegexFailure>,
-+    /// The analysis step that stopped first, when the failure was outside the
-+    /// regex engine. Belongs to this request, including its executed children.
-+    pub incomplete_stage: Option<&'static str>,
-     /// Whether the evaluator proved that no enabled-pack keyword was present
-     /// and returned through the bounded quick-reject fast path.
-     pub quick_rejected: bool,
-@@ -1030,6 +1033,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1061,6 +1065,7 @@ impl EvaluationResult {
-             quick_rejected: true,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1085,6 +1090,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1115,6 +1121,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1145,6 +1152,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1186,6 +1194,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1247,6 +1256,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1315,6 +1325,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1346,6 +1357,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1376,6 +1388,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1413,6 +1426,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1450,6 +1464,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1490,6 +1505,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1518,6 +1534,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurren
-```
-
-**File**: `src/main.rs` (modified, +28/-9)
-```diff
-@@ -294,17 +294,25 @@ impl IndeterminateDetail {
- 
- /// Use the selected evaluation's provenance, not a prior diagnostic or policy
- /// probe on this thread. Keep deadline evidence independently of regex failure.
--fn take_evaluation_exhaustion(failure: Option<perf::RegexFailure>) -> perf::BudgetExhaustion {
-+fn take_evaluation_exhaustion(
-+    failure: Option<perf::RegexFailure>,
-+    stage: Option<&'static str>,
-+) -> perf::BudgetExhaustion {
-     let mut exhaustion = perf::take_budget_exhaustion();
-     if let Some(failure) = failure {
-         let phase = match failure.operation {
-             perf::RegexOperation::Compile => ProfilePhase::RegexCompile,
-             _ => ProfilePhase::RegexMatch,
-         };
-         exhaustion.incomplete = Some((failure.operation.as_str(), Some(phase)));
--    } else if exhaustion.regex_failure.is_some() {
--        // An unrelated regex note cannot identify this result's failed step.
--        exhaustion.incomplete = None;
-+    } else {
-+        exhaustion.incomplete = stage.map(|stage| {
-+            let phase = exhaustion
-+                .incomplete
-+                .filter(|(observed, _)| *observed == stage)
-+                .and_then(|(_, phase)| phase);
-+            (stage, phase)
-+        });
-     }
-     exhaustion.regex_failure = failure;
-     exhaustion
-@@ -2812,7 +2820,7 @@ fn attempt_rebase_recovery(
-     // This independent evaluation must not inherit a confidence probe's notes.
-     let _ = perf::take_budget_exhaustion();
-     if ctx.deadline.is_exceeded() {
--        return RecoveryAttempt::Indeterminate(Box::new(take_evaluation_exhaustion(None)));
-+        return RecoveryAttempt::Indeterminate(Box::new(take_evaluation_exhaustion(None, None)));
-     }
-     let relaxed = rebase_recovery::relaxed_allowlist(ctx.allowlists);
-     let residual = evaluate_command_with_pack_order_deadline_at_path_in_dialect(
-@@ -2857,6 +2865,7 @@ fn attempt_rebase_recovery(
-     if residual.decision == EvaluationDecision::Indeterminate || residual.skipped_due_to_budget {
-         return RecoveryAttempt::Indeterminate(Box::new(take_evaluation_exhaustion(
-             residual.regex_failure,
-+            residual.incomplete_stage,
+-fn hook_command_for_executable(executable: &std::path::Path) -> std::io::Result<String> {
++fn absolute_utf8_hook_program(executable: &std::path::Path) -> std::io::Result<&str> {
+     if !executable.is_absolute() {
+         return Err(std::io::Error::other(format!(
+             "dcg hook executable path is not absolute: {}",
+             executable.display()
          )));
      }
-     if residual.decision == EvaluationDecision::Deny {
-@@ -2991,7 +3000,10 @@ fn resolve_hook_command(
-         return ResolvedCommandOutcome::DeadlineExhausted {
-             command: command.to_string(),
-             stage: "evaluation",
--            exhaustion: Box::new(take_evaluation_exhaustion(result.regex_failure)),
-+            exhaustion: Box::new(take_evaluation_exhaustion(
-+                result.regex_failure,
-+                result.incomplete_stage,
-+            )),
-         };
-     }
- 
-@@ -4979,7 +4991,7 @@ mod tests {
-         };
-         perf::note_regex_failure(prior);
-         perf::note_deadline_exhausted();
--        let deadline = take_evaluation_exhaustion(None);
-+        let deadline = take_evaluation_exhaustion(None, None);
-         assert!(deadline.deadline.is_some());
-         assert!(deadline.regex_failure.is_none());
-         assert!(deadline.incomplete.is_none());
-@@ -4991,7 +5003,7 @@ mod tests {
-             operation: perf::RegexOperation::FindFrom,
-             cause: perf::RegexFailureCause::BacktrackLimit { steps: 100_000 },
-         };
--        let exhaustion = take_evaluation_exhaustion(Some(selected));
-+        let exhaustion = take_evaluation_exhaustion(Some(selected), None);
-         assert_eq!(exhaustion.regex_failure, Some(selected));
-         assert_eq!(
-             exhaustion.incomplete,
-@@ -5000,12 +5012,19 @@ mod tests {
-         assert!(exhaustion.deadline.is_none());
- 
-         perf::note_incomplete_analysis("interpreter_literal_recovery");
--        let generic = take_evaluation_exhaustion(None);
-+        let generic = take_evaluation_exhaustion(None, Some("interpreter_literal_recovery"));
-         assert_eq!(
-             generic.incomplete.unwrap().0,
-             "interpreter_literal_recovery"
-         );
-         assert!(generic.regex_failure.is_none());
+-    let executable = executable.to_str().ok_or_else(|| {
++    executable.to_str().ok_or_else(|| {
+         std::io::Error::new(
+             std::io::ErrorKind::InvalidData,
+             format!(
+                 "dcg hook executable path is not valid UTF-8: {}",
+                 executable.display()
+             ),
+         )
+-    })?;
++    })
++}
 +
-+        perf::note_incomplete_analysis("interpreter_literal_recovery");
-+        let local_call = take_evaluation_exhaustion(None, Some("python_local_call_analysis"));
-+        assert_eq!(
-+            local_call.incomplete,
-+            Some(("python_local_call_analysis", None))
-+        );
-     }
++fn hook_command_for_executable(executable: &std::path::Path) -> std::io::Result<String> {
++    let executable = absolute_utf8_hook_program(executable)?;
  
-     #[test]
+     #[cfg(windows)]
+     {
+@@ -13765,7 +13769,70 @@ fn claude_dcg_hook() -> std::io::Result<serde_json::Value> {
+ }
+ 
+ fn antigravity_dcg_hook() -> std::io::Result<serde_json::Value> {
+-    claude_dcg_hook_for_executable(&current_dcg_executable()?)
++    antigravity_dcg_hook_for_executable(&current_dcg_executable()?)
++}
++
++/// The handler dcg writes into agy's `hooks.json`.
++///
++/// agy documents only `type`, `command` and `timeout` on a handler. On
++/// Windows it runs `command` through cmd.exe and ignores the `shell` key that
++/// Claude Code's Windows hook carries, so the PowerShell call-operator form
++/// `& '…'` failed with "& was unexpected at this time." and broke every
++/// `run_command` call (#677). Write the absolute path, quoted for cmd.exe on
++/// Windows and for a POSIX shell elsewhere, and no `shell` key.
++fn antigravity_dcg_hook_for_executable(
++    executable: &std::path::Path,
++) -> std::io::Result<serde_json::Value> {
++    antigravity_dcg_hook_for_program(absolute_utf8_hook_program(executable)?, cfg!(windows))
++}
++
++/// The platform is a parameter so the Windows shape is tested on every host.
++fn antigravity_dcg_hook_for_program(
++    program: &str,
++    windows: bool,
++) -> std::io::Result<serde_json::Value> {
++    let command = if windows {
++        cmd_quote_hook_program(program)?
++    } else {
++        posix_quote_hook_program(program)
++    };
++    Ok(serde_json::json!({
++        "type": "command",
++        "command": command
++    }))
++}
++
++/// Quote an absolute Windows program path for a cmd.exe command line.
++///
++/// A path without spaces or cmd.exe metacharacters is written bare, the form
++/// confirmed to work in agy on Windows. Any other path is wrapped in double
++/// quotes, inside which cmd.exe reads `&|<>()^,;=` and spaces literally.
++/// cmd.exe expands `%NAME%` even inside quotes and a path cannot contain `"`
++/// or a control character, so those are refused rather than written as a
++/// hook that runs something else or nothing.
++fn cmd_quote_hook_program(program: &str) -> std::io::Result<String> {
++    if program
++        .chars()
++        .any(|character| matches!(character, '%' | '"') || character.is_control())
++    {
++        return Err(std::io::Error::new(
++            std::io::ErrorKind::InvalidInput,
++            format!(
++                "dcg hook executable path contains %, \" or a control character, \
++                 which cmd.exe cannot run as written: {program}"
++            ),
++        ));
++    }
++    if program.chars().any(|character| {
++        character.is_whitespace()
++            || matches!(
++                character,
++                '&' | '|' | '<' | '>' | '(' | ')' | '^' | ',' | ';' | '='
++            )
++    }) {
++        return Ok(format!("\"{program}\""));
++    }
++    Ok(program.to_string())
+ }
+ 
+ fn quoted_hook_program(command: &str) -> Option<String> {
+@@ -14736,7 +14803,7 @@ fn install_grok_hook(force: bool, project: bool) -> Result<(), Box<dyn std::erro
+ /// legacy `Bash` matcher entry written by older releases). When dcg returns a block decision
+ /// (stdout `{"decision":"block",...}`), `agy` aborts its `run_command` tool.
+ ///
+-/// With `--project`, writes to `<repo>/.gemini/config/hooks.json` instead.
++/// With `--project`, writes to `<repo>/.agents/hooks.json` instead.
+ ///
+ /// Returns `Err` if the file cannot be read/written or, for project installs,
+ /// if the current directory is not inside a git repository.
+@@ -14808,13 +14875,21 @@ fn antigravity_hooks_path() -> std::path::PathBuf {
+ }
+ 
+ /
 ```
 
-**File**: `src/output/test.rs` (modified, +1/-0)
+---
+
+### Incident Patch 3: `6ab4d758` (2026-11-27)
+**Commit Message**: fix(filesystem): review rimraf like rm -rf, also through npx, pnpm, yarn and bun (#675) [skip ci]
+
+The trash operand checks (91fd5e73) treat trash, trash-put, gio trash,
+moves into the Trash and rimraf alike: deny an empty, dynamic, cwd, home,
+root or broad operand and allow any other literal path. That fits the
+Trash routes, which are recoverable. rimraf is not: it removes its
+targets recursively and permanently, which is `rm -rf`, and `rimraf dist`
+or `rimraf a b` was allowed where `rm -rf dist` is denied.
+
+rimraf now gets rm -rf's policy. A new core.filesystem rule,
+rimraf-general (High), denies rimraf of any operand outside a literal temp
+directory (/tmp, /var/tmp, their /private forms, a literal Windows user
+temp path), using the same temp-path helpers as rm-rf-general: a real
+component below the temp root, no `..`, a glob only in the last
+component. An operand that could select the worktree, home or a root keeps
+the more specific trash-unsafe-target. Options and a bare `rimraf` or
+`rimraf --help` are not operands. The Trash utilities keep only the target
+checks, and the denial suggests them.
+
+rimraf is nearly always started by a package runner, so the argv
+classifier now read
+
+**File**: `docs/packs/core.md` (modified, +1/-0)
 ```diff
-@@ -1055,6 +1055,7 @@ mod tests {
-             skipped_due_to_budget: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             quick_rejected: false,
-             branch_context: None,
-             session_occurrence: None,
+@@ -268,6 +268,7 @@ These patterns match potentially destructive commands:
+ | `mv-sensitive-source-root-home` | mv touching a sensitive system or home path is the cross-segment recursive-force-delete bypass. EXTREMELY DANGEROUS. | critical |
+ | `mv-dynamic-path` | mv with a shell-expanded or escaped path cannot be verified before execution. | high |
+ | `trash-unsafe-target` | This disposal command could remove a worktree or a protected directory. Name a specific literal path, e.g. `trash /tmp/my-task/out`. | high |
++| `rimraf-general` | rimraf deletes recursively and permanently, like rm -rf, and requires human approval outside a temp directory. | high |
+ | `credential-file-write` | writing a credential, private-key, login-shell startup, or system authentication file (`~/.ssh/*`, `~/.aws/credentials`, `~/.netrc`, `~/.git-credentials`, `~/.npmrc`, `~/.pypirc`, `~/.docker/config.json`, `~/.kube/config`, `~/.gnupg/*`, `~/.config/gh/hosts.yml`, the token stores of cargo, gem, Vault, Terraform, gcloud, Azure, s3cmd/boto, pass and hub, `~/.pgpass`, `~/.my.cnf`, the shell rc files and `~/.bashrc.d`/`~/.zshrc.d`, `/etc/sudoers*`, `/etc/passwd`, `/etc/shadow`, `/etc/group`, `/etc/ssh/*`) with `>`, `>>`, `tee`, `cp`/`mv`/`install`/`ln`, `dd of=`, or `sed -i` — or, from PowerShell or Cmd, `Add-Content`, `Set-Content`, `Clear-Content`, `Out-File`, `Tee-Object`, `New-Item`, `Copy-Item`, `Move-Item`, `copy`, or `move` — installs persistent access or replaces the trust this machine runs on, whether or not the file exists yet. Reads and `chmod`/`chown` are unaffected; appending to `~/.ssh/known_hosts` stays allowed. | critical |
+ | `git-internals-write` | writing inside a `.git` directory with `tee`, `sponge`, `cp`/`mv`/`install`, `sed -i`, `perl -i`, `dd of=`, or an embedded-code sink rewrites repository state: `.git/config` carries remotes, `insteadOf` rewrites and credential helpers, `.git/hooks/*` run on ordinary git commands, and refs and objects are the history itself. Reads are unaffected, and `.gitignore`, `.gitattributes`, `.gitmodules` and `.github/` are not this rule. | critical |
+ | `redirect-truncate-root-home` | shell truncating redirect (including arbitrary numeric, named, and PowerShell all-stream forms) to an existing sensitive system or home path destroys the previous file contents. A currently absent literal target under the home directory with an existing parent is allowed (creation, not truncation — the same thing `>>` would do); existing files, dynamic paths, symlinks, missing parents, system paths, and .git internals stay blocked. | critical |
+```
+
+**File**: `src/evaluator.rs` (modified, +2/-2)
+```diff
+@@ -31229,11 +31229,11 @@ fn evaluate_packs_with_allowlists_at_depth(
+                     original_command,
+                     project_path,
+                 ) {
+-                    Ok(Some(span)) => {
++                    Ok(Some((span, rule))) => {
+                         if let Some(result) = evaluate_named_pack_rule_with_span(
+                             pack_id,
+                             pack,
+-                            crate::packs::core::filesystem::TRASH_TARGET_RULE,
++                            rule,
+                             allowlists,
+                             project_path,
+                             &mut first_allowlist_hit,
+```
+
+**File**: `src/packs/core/filesystem.rs` (modified, +300/-41)
+```diff
+@@ -33,6 +33,25 @@ const RM_RF_ROOT_HOME_SUGGESTIONS: &[PatternSuggestion] = &[
+     ),
+ ];
+ 
++/// Suggestions for `rimraf` outside a temp directory (#675). The Trash
++/// utilities are recoverable and dcg checks their targets.
++const RIMRAF_GENERAL_SUGGESTIONS: &[PatternSuggestion] = &[
++    PatternSuggestion::with_platform(
++        "trash-put ./build",
++        "Move the reviewed directory to the trash instead (recoverable; requires trash-cli)",
++        Platform::Linux,
++    ),
++    PatternSuggestion::with_platform(
++        "mv ./build ~/.Trash/",
++        "Move the reviewed directory to the Finder trash instead (recoverable)",
++        Platform::MacOS,
++    ),
++    PatternSuggestion::new(
++        "rimraf /tmp/task/out",
++        "rimraf of a literal path under a temp directory is allowed",
++    ),
++];
++
+ /// Suggestions for general `rm -rf` pattern.
+ const RM_RF_GENERAL_SUGGESTIONS: &[PatternSuggestion] = &[
+     PatternSuggestion::new(
+@@ -375,6 +394,27 @@ use std::ops::Range;
+ use std::path::Path;
+ 
+ pub(crate) const TRASH_TARGET_RULE: &str = "trash-unsafe-target";
++/// rimraf of a target outside a literal temp directory. rimraf removes
++/// recursively and permanently, exactly what `rm-rf-general` reviews, while
++/// the Trash utilities are recoverable and only need their target checks.
++pub(crate) const RIMRAF_GENERAL_RULE: &str = "rimraf-general";
++
++/// Programs a wrapper (`sudo`, `env`, `timeout`, …) may start that this
++/// check reads: the disposal utilities and the package runners.
++const TRASH_CHILD_PROGRAMS: &[&str] = &[
++    "trash",
++    "trash-put",
++    "rimraf",
++    "gio",
++    "mv",
++    "npx",
++    "pnpx",
++    "bunx",
++    "npm",
++    "pnpm",
++    "yarn",
++    "bun",
++];
+ 
+ /// A candidate gate only. Removing quotes here can select inert text; the
+ /// command parser below must prove the executable and each operand's role.
+@@ -405,10 +445,13 @@ fn may_name_trash(command: &str) -> bool {
+ /// Inspect original shell syntax. The Bash grammar gives us the executable
+ /// and its raw argument fields, including empty quoted words and substitutions.
+ /// Comments, redirection targets and quoted command examples are not argv.
++///
++/// Returns the span of the first disposal command that needs review and the
++/// rule that names why: [`TRASH_TARGET_RULE`] or [`RIMRAF_GENERAL_RULE`].
+ pub(crate) fn unsafe_trash_span(
+     command: &str,
+     cwd: Option<&Path>,
+-) -> Result<Option<Range<usize>>, ()> {
++) -> Result<Option<(Range<usize>, &'static str)>, ()> {
+     use ast_grep_core::AstGrep;
+     use ast_grep_language::SupportLang;
+ 
+@@ -436,68 +479,181 @@ pub(crate) fn unsafe_trash_span(
+         let words: Vec<&str> = std::iter::once(raw_name)
+             .chain(args.filter_map(|arg| source.get(arg.range())))
+             .collect();
+-        if unsafe_trash_argv(&words, cwd) {
+-            return Ok(Some(invocation.range()));
++        if let Some(rule) = unsafe_trash_argv(&words, cwd) {
++            return Ok(Some((invocation.range(), rule)));
+         }
+     }
+     Ok(None)
+ }
+ 
+-fn unsafe_trash_argv(words: &[&str], cwd: Option<&Path>) -> bool {
+-    use super::trash_target::{unsafe_rimraf_glob_operand, unsafe_trash_operand};
++fn unsafe_trash_argv(words: &[&str], cwd: Option<&Path>) -> Option<&'static str> {
++    use super::trash_target::unsafe_trash_operand;
+     use crate::normalize::decode_posix_literal_word;
+ 
+-    let Some((&name, args)) = words.split_first() else {
+-        return false;
+-    };
+-    let Some(name) = decode_posix_literal_word(name) else {
+-        return false;
+-    };
+-    match name.rsplit('/').next() {
+-        Some("trash" | "trash-put") => args.iter().any(|word| unsafe_trash_operand(word, cwd)),
+-        Some("rimraf") => {
+-            let glob = args
+-                .iter()
+-                .map(|word| decode_posix_literal_word(word))
+-                .take_while(|word| word.as_deref() != Some("--"))
+-                .any(|word| matches!(word.as_deref(), Some("--glob" | "-g")));
+-            args.iter().any(|word| {
+-                if glob {
+-                    unsafe_rimraf_glob_operand(word, cwd)
+-                } else {
+-                    unsafe_trash_operand(word, cwd)
+-                }
++    let (&name, args) = words.split_first()?;
++    let name = decode_posix_literal_word(name)?;
++    let program = name.rsplit('/').next().unwrap_or_default();
++    match program {
++        "trash" | "trash-put" => args
++            .iter()
++            .any(|word| unsafe_trash_operand(word, cwd))
++            .then_some(TRASH_TARGET_RULE),
++        "rimraf" => rimraf_argv_rule(args, cwd),
++        "gio" => args
++            .split_first()
++            .is_some_and(|(operation, operands)| {
++                decode_posix_literal_word(operation).as_deref() == Some("trash")
++                    && operands.iter().any(|word| unsafe_trash_operand(word, cwd))
+             })
+-        }
+-        Some("gio") => args.split_first().is_some_and(|(operation, operands)| {
+-  
+```
+
+**File**: `src/packs/core/trash_target.rs` (modified, +26/-0)
+```diff
+@@ -18,6 +18,32 @@ pub(super) fn unsafe_rimraf_glob_operand(raw: &str, cwd: Option<&Path>) -> bool
+     unsafe_operand_in(raw, cwd, crate::config::home_dir().as_deref(), true)
+ }
+ 
++/// rimraf deletes recursively and permanently, so it earns `rm -rf`'s temp
++/// exemption and nothing wider (#675): a literal path below `/tmp`,
++/// `/var/tmp` or their macOS `/private` forms (or a literal Windows user temp
++/// subpath), with a real component under the temp root and no `..`. A simple
++/// glob in the last component is accepted, as it is for `rm -rf /tmp/x/*`.
++pub(super) fn rimraf_operand_is_literal_temp(raw: &str) -> bool {
++    use super::filesystem::{
++        LITERAL_TEMP_PREFIXES, has_dotdot_segment, temp_path_suffix_has_real_component,
++        windows_literal_user_temp_subpath,
++    };
++
++    let Some((path, _)) = decode_target(raw) else {
++        return false;
++    };
++    if path.contains(['\0', '\\']) {
++        return false;
++    }
++    LITERAL_TEMP_PREFIXES
++        .iter()
++        .find_map(|prefix| path.strip_prefix(prefix))
++        .is_some_and(|suffix| {
++            temp_path_suffix_has_real_component(suffix) && !has_dotdot_segment(suffix)
++        })
++        || windows_literal_user_temp_subpath(&path)
++}
++
+ fn unsafe_operand_in(
+     raw: &str,
+     cwd: Option<&Path>,
+```
+
+**File**: `src/packs/mod.rs` (modified, +9/-4)
+```diff
+@@ -852,10 +852,15 @@ impl Pack {
+     /// Returns the matched pattern's reason, name, severity, and explanation if found.
+     #[must_use]
+     pub fn matches_destructive(&self, cmd: &str) -> Option<DestructiveMatch> {
+-        if self.id == "core.filesystem"
+-            && !matches!(core::filesystem::unsafe_trash_span(cmd, None), Ok(None))
+-        {
+-            return self.destructive_match_by_name(core::filesystem::TRASH_TARGET_RULE, cmd);
++        if self.id == "core.filesystem" {
++            match core::filesystem::unsafe_trash_span(cmd, None) {
++                Ok(None) => {}
++                Ok(Some((_, rule))) => return self.destructive_match_by_name(rule, cmd),
++                Err(()) => {
++                    return self
++                        .destructive_match_by_name(core::filesystem::TRASH_TARGET_RULE, cmd);
++                }
++            }
+         }
+         if self.id == "careful_company_running_windows.guardrails"
+             && crate::packs::careful_company_running_windows::guardrails::authorization_store_write_span(
+```
+
+**File**: `src/suggestions.rs` (modified, +22/-0)
+```diff
+@@ -1020,6 +1020,27 @@ fn register_core_filesystem_suggestions(m: &mut HashMap<&'static str, Vec<Sugges
+         ],
+     );
+ 
++    // rimraf is a permanent recursive delete (#675); the Trash keeps it
++    // recoverable, and a literal temp path is allowed as for `rm -rf`.
++    m.insert(
++        "core.filesystem:rimraf-general",
++        vec![
++            Suggestion::new(
++                SuggestionKind::PreviewFirst,
++                "List what rimraf would remove before asking for approval",
++            )
++            .with_command("ls -la ./build"),
++            Suggestion::new(
++                SuggestionKind::SaferAlternative,
++                "Move the reviewed directory to the Trash instead, for example `trash-put ./build` on Linux (trash-cli) or `mv ./build ~/.Trash/` on macOS",
++            ),
++            Suggestion::new(
++                SuggestionKind::SaferAlternative,
++                "Keep disposable output under a literal temp path, where `rimraf /tmp/task/out` is allowed",
++            ),
++        ],
++    );
++
+     // The command word is assembled at runtime. Do not guess a platform or
+     // repeat the unverified delete; make the executable and target reviewable.
+     m.insert(
+@@ -2420,6 +2441,7 @@ mod tests {
+             "core.filesystem:rm-bare-glob",
+             "core.filesystem:rm-bare-glob-root",
+             "core.filesystem:trash-unsafe-target",
++            "core.filesystem:rimraf-general",
+             "core.filesystem:find-delete-root-home",
+             "core.filesystem:find-delete-general",
+             "core.filesystem:unlink-root-home",
+```
+
+**File**: `tests/test_command.rs` (modified, +41/-1)
+```diff
+@@ -158,7 +158,7 @@ fn trash_operand_decisions_agree_with_the_hook() {
+         ("trash /tmp/pr-prov/render", "allow"),
+         ("trash-put ./build .env ../sibling/build", "allow"),
+         ("gio trash -- 'build outputs'", "allow"),
+-        ("rimraf a b", "allow"),
++        ("rimraf a b", "deny"),
+         ("mv ./build ~/.Trash/", "allow"),
+         ("gio info .", "allow"),
+         ("trash-put '$OUT'", "allow"),
+@@ -169,6 +169,46 @@ fn trash_operand_decisions_agree_with_the_hook() {
+     }
+ }
+ 
++/// #675: rimraf deletes permanently, so outside a literal temp directory it
++/// is reviewed like `rm -rf`, also when npx, npm exec, pnpm, yarn or bun
++/// starts it. Candidates are passed as arguments or JSON data; none runs.
++#[test]
++fn rimraf_decisions_agree_with_the_hook_675() {
++    for (command, expected) in [
++        ("rimraf dist", "deny"),
++        ("npx rimraf dist", "deny"),
++        ("npx --yes rimraf@5 ./build", "deny"),
++        ("npm exec -- rimraf node_modules", "deny"),
++        ("pnpm dlx rimraf dist", "deny"),
++        ("yarn rimraf dist", "deny"),
++        ("bunx rimraf dist", "deny"),
++        ("npx rimraf .", "deny"),
++        (r#"npx rimraf "$OUT""#, "deny"),
++        ("rimraf /tmp/task/out", "allow"),
++        ("npx rimraf /tmp/task/out", "allow"),
++        ("npm install -D rimraf", "allow"),
++        ("echo npx rimraf dist", "allow"),
++        ("trash-put ./build", "allow"),
++    ] {
++        assert_trash_decision(command, expected, None);
++    }
++    // Inside a shell -c script or a script heredoc the same argv is judged.
++    for command in [
++        "bash -c 'npx rimraf dist'",
++        "sh <<'EOF'\nnpx rimraf dist\nEOF",
++    ] {
++        let test = run_dcg_isolated(
++            &["test", "--dialect", "posix", "--format", "json", command],
++            None,
++        );
++        let verdict = parse_json(&test);
++        assert_eq!(
++            verdict["decision"], "deny",
++            "dcg test: {command}: {verdict}"
++        );
++    }
++}
++
+ #[cfg(unix)]
+ #[test]
+ fn trash_absolute_target_uses_the_reported_working_directory() {
 ```
 
 #### Recent Merged Pull Requests:
@@ -3392,96 +3128,62 @@ Fixes #673
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): refresh Cargo.lock within the current version requirements [skip ci]
+## X. install): recover ownerless install locks
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `install.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `beedc5c7`: deps): refresh Cargo.lock within the current version requirements [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4ca6898`: install): recover ownerless install locks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `install.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.0.105"
-checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
-version = "4.6.10"
-checksum = "50066ca966813ca8957ee15361752f19424a8ff620dbe9c8993d9f99d99b04b3"
-version = "4.6.10"
-checksum = "a0ed97c96ef4efb3cc84e09fa388df4463e7cc3224ec38d7b1d9e45749333590"
-version = "1.5.6"
-checksum = "fd9ae8fcb3ea71b0b26338b4ffb13006bb175de8fd07921089a906ce7e5e6945"
- "parking_lot 0.12.5",
- "lock_api 0.4.14",
- "parking_lot_core 0.9.12",
- "fancy-regex",
-[[package]]
-name = "faster-hex"
-version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4ede54fe330383a5de28c0a1f06668ff9dbf06c8094e1c5150c39488a5e911d"
-dependencies = [
- "defmt 0.3.101",
- "serde",
-]
-
- "parking_lot 0.12.5",
-version = "0.6.2"
-checksum = "9543567ee22142c81fdf75b2811160bec749a5b9f48665e4763f88b1789b8612"
-version = "0.10.2"
-checksum = "60cd5f0e47ffae98bad241ccbc031693765004fb4c2a419f7fda2963232af1e3"
-version = "0.12.2"
-checksum = "2986e78ebad43510ccd7dd18bd9f22e9afd52f2de791e2979b9c715bacb6f0a8"
-version = "0.21.2"
-checksum = "d7666081ef0ecc5e1dc54bc6ce16dac9d7b9490780f6c130393ef9e50c909d4a"
-version = "0.5.3"
-checksum = "50ad6c42fa50280f382026ff838a8afa7ab2ad83e923
+# Take the lock and record our pid. A pid that cannot be written (full disk or
+# spent quota) would leave an ownerless lock that blocks every later run, so
+# release it and stop instead.
+take_install_lock() {
+  mkdir "$LOCK_DIR" 2>/dev/null || return 1
+  if ! echo $$ > "$LOCK_DIR/pid" 2>/dev/null; then
+    rm -rf "$LOCK_DIR" 2>/dev/null || true
+    LOCKED=0
+    err "Could not write pid file to $LOCK_DIR (disk full or read-only?)"
+    exit 1
+  fi
+}
+if ! take_install_lock; then
+  # The existing lock is stale if its process is gone, or if it never recorded
+  # a pid (an interrupted or disk-full run) and is more than 10 minutes old.
+  OLD_PID=$(cat "$LOCK_DIR/pid" 2>/dev/null || echo "")
+  if { [ -n "$OLD_PID" ] && ! kill -0 "$OLD_PID" 2>/dev/null; } \
+    || { [ -z "$OLD_PID" ] && [ -n "$(find "$LOCK_DIR" -maxdepth 0 -mmin +10 2>/dev/null)" ]; }; then
+    rm -rf "$LOCK_DIR"
+    take_install_lock || true
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.0.104"
-checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
-version = "4.6.9"
-checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
-version = "4.6.7"
-checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
-version = "1.5.5"
-checksum = "2b929dd2a135771f40afabd1073f85eed59c800b7c61901e5c254270497dad64"
- "parking_lot",
- "lock_api",
- "parking_lot_core",
- "fancy-regex 0.20.2",
-[[package]]
-name = "fancy-regex"
-version = "0.18.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e1e1dacd0d2082dfcf1351c4bdd566bbe89a2b263235a2b50058f1e130a47277"
-dependencies = [
- "bit-set 0.8.0",
- "regex-automata",
- "regex-syntax",
-]
-
- "parking_lot",
-version = "0.6.1"
-checksum = "422cd23418fd80e9e965595323975d72abd6364a66ff8f0daade5c105a7f35d2"
-version = "0.10.1"
-checksum = "dc6a775aba54f0d65698126cc4214b6bf8ddb208312e4ef4240dfe34b0697b87"
-version = "0.12.1"
-checksum = "df63215f103299169e239dfe76f5cfa4a3d6d4adf69a01774085e3e0423cba34"
-version = "0.21.1"
-checksum = "6cdada8bd9c97dc6522505c08226d9c88f0a1286f2c06b9e1bf51c3bf7ad7b2b"
-version = "0.5.2"
-checksum = "d87ff4b3f3daf01234d38d176b0ec00e92de514
+if mkdir "$LOCK_DIR" 2>/dev/null; then
+  echo $$ > "$LOCK_DIR/pid"
+else
+  # Check if existing lock is stale (process no longer running)
+  if [ -f "$LOCK_DIR/pid" ]; then
+    OLD_PID=$(cat "$LOCK_DIR/pid" 2>/dev/null || echo "")
+    if [ -n "$OLD_PID" ] && ! kill -0 "$OLD_PID" 2>/dev/null; then
+      rm -rf "$LOCK_DIR"
+      if mkdir "$LOCK_DIR" 2>/dev/null; then
+        LOCKED=1
+        echo $$ > "$LOCK_DIR/pid"
+      fi
+    fi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `beedc5c7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4ca6898` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

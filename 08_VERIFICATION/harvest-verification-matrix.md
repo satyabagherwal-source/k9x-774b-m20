@@ -13947,3 +13947,5 @@
 | `CYCLE-20261128-N1BT` | `2026-11-28T02:31:05.081Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11012` | Yes (`b7ac080c...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T02:31:42.917Z` | `kubearmor-kubearmor` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D82E6746` [Domain D] | Yes (`0957c631...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T02:32:19.208Z` | `cheeriojs-dom-serializer` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-6F2C6AB3` [Domain H] | Yes (`286d59b3...`) |
+| `CYCLE-20261128-03WG` | `2026-11-28T02:41:14.944Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11019` | Yes (`6656ba8a...`) |
+| `CYCLE-20261128-0C8D` | `2026-11-28T02:41:25.741Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md` | Yes (`74d7d2a5...`) |

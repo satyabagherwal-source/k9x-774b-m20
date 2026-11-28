@@ -4,24 +4,24 @@
 {
   "source_repository": "genkit-ai/genkit",
   "source_url": "https://github.com/genkit-ai/genkit",
-  "source_version": "049b39cf",
+  "source_version": "6125d544",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T07:22:05.604Z",
+  "timestamp": "2026-11-28T02:41:26.054Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-genkit-ai-genkit",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `049b39cf`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T07:22:05.604Z`  
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `6125d544`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T02:41:26.054Z`  
 > **Learning ID**: `learn-github-genkit-ai-genkit`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from genkit-ai/genkit:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T07:22:04.201Z  
+> **Harvest Timestamp**: 2026-11-28T02:41:25.108Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6628 stars
+- **Stars / Engagement**: 6631 stars
 
 ---
 
@@ -1953,64 +1953,765 @@ async function recordInternal(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `049b39cf` (2026-11-26)
-**Commit Message**: docs(js,go): add root and JS AGENTS.md, rename go/GEMINI.md, and add rule bridges (#7345)
+### Incident Patch 1: `6125d544` (2026-11-27)
+**Commit Message**: feat(js/plugins/compat-oai): add Mistral provider, send falsy config values and map HTTP 422 (#7243)
 
-**File**: `.agents/rules/go.md` (added, +6/-0)
+**File**: `js/plugins/compat-oai/README.md` (modified, +75/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+---
-+trigger: model_decision
-+description: 'Conventions for go/ (Go SDK, plugins, registry/actions, schema generation, GoDoc, and testing). Load before planning, writing, or reviewing changes under go/.'
-+---
+@@ -19,6 +19,7 @@ Official OpenAI-compatible provider documentation:
+ - [OpenAI](https://genkit.dev/docs/integrations/openai/)
+ - [xAI (Grok)](https://genkit.dev/docs/integrations/xai/)
+ - [DeepSeek](https://genkit.dev/docs/integrations/deepseek/)
++- [Mistral](#mistral) (in this README)
+ - [Other compatible APIs](https://genkit.dev/docs/integrations/openai-compatible/)
+ 
+ ## Supported models
+@@ -181,6 +182,80 @@ const result = await ai.generate({
+ console.log(result.text);
+ ```
+ 
++### Mistral
 +
-+Read `go/AGENTS.md` before planning, writing, or reviewing changes under `go/`.
++The `mistral` plugin uses Mistral's OpenAI-compatible API at
++`https://api.mistral.ai/v1`. Pass `apiKey` or set the `MISTRAL_API_KEY`
++environment variable. Set `baseURL` to go through a proxy.
++
++```typescript
++import { genkit } from 'genkit';
++import { mistral } from '@genkit-ai/compat-oai/mistral';
++
++const ai = genkit({
++  plugins: [mistral()],
++});
++
++const response = await ai.generate({
++  model: mistral.model('mistral-small-latest'),
++  prompt: 'Tell me a joke.',
++  config: {
++    maxOutputTokens: 256,
++    seed: 42,
++    safe_prompt: true,
++  },
++});
++
++const embeddings = await ai.embed({
++  embedder: mistral.embedder('codestral-embed', { outputDimension: 256 }),
++  content: 'Hello world',
++});
++```
++
++Mistral rejects request fields it doesn't know, so the plugin sends only
++Mistral's own field names:
++
++- `maxOutputTokens` is sent as `max_tokens`, and `seed` as `random_seed`.
++- `topK` is refused before the request goes out: Mistral's models reject
++  `top_k` sampling.
++- `reasoningEffort` is sent as `reasoning_effort`. Allowed values vary by
++  model: Mistral Small and Medium take `none` and `high`, Mistral Large 4
++  (`mistral-large-latest`) takes `low`, `medium` and `high`.
++- `temperature` (0 to 1.5), `topP` (above 0, at most 1) and `seed` (0 or
++  more) are checked against Mistral's ranges before the request goes out.
++- `toolChoice` (`auto`, `required` or `none`) is sent as `tool_choice`.
++- These Mistral-only fields are passed through as they are, under Mistral's
++  names: `safe_prompt`, `parallel_tool_calls`, `min_tokens`, `prompt_mode`,
++  `repetition_penalty`, `prediction`, `guardrails`, `prompt_cache_key`,
++  `service_tier` and `metadata`. Some models reject some of them, for example
++  Mistral Small rejects `min_tokens` and `repetition_penalty`.
++- OpenAI's `user` and `max_completion_tokens`, and any other config the plugin
++  doesn't map, are ignored.
++- The embedder's `outputDimension` is sent as `output_dimension`. Embeddings are
++  always requested as floats.
++- Streaming requests don't send `stream_options`.
++- An unknown or retired model is reported as `NOT_FOUND`, with Mistral's error
++  message. Request validation errors (HTTP 422) are reported as
++  `INVALID_ARGUMENT`, with Mistral's `detail`.
++- Only image media is sent. Other media, such as inline PDFs, is refused
++  before the request goes out: Mistral's chat API only takes uploaded files.
++
++With `reasoningEffort` set, the model's thinking comes back as reasoning parts
++(`response.reasoning`), one part per `thinking` chunk, with the chunk's
++signature in `metadata.thoughtSignature`. Reasoning from earlier turns is sent
++back to Mistral as `thinking` content. Only reasoning parts marked
++`metadata.reasoningSource: 'mistral'` (as Mistral's replies are, also in the
++Python plugin) are sent back; reasoning from other models in the history is
++dropped.
++
++Any model returned by `/v1/models` can be used by name, for example
++`mistral.model('ministral-14b-2512')` or `'mistral/ministral-14b-2512'`. When
++the plugin lists models (for example in the Developer UI), it reads each
++entry's `capabilities`: only chat models are listed, and tool and image
++support follow `function_calling` and `vision`. Models outside the known list
++never get constrained output, and a model that hasn't been listed is treated as
++text only.
++
+ ### Custom models & other Cloud providers
+ 
+ ```typescript
 ```
 
-**File**: `.agents/rules/js.md` (added, +6/-0)
+**File**: `js/plugins/compat-oai/package.json` (modified, +14/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+---
-+trigger: model_decision
-+description: 'Conventions for js/ (JS SDK, plugins, builds, JSDocs, and testing). Load before planning, writing, or reviewing changes under js/.'
-+---
-+
-+Read `js/AGENTS.md` before planning, writing, or reviewing changes under `js/`.
+@@ -80,6 +80,17 @@
+         "default": "./lib/xai/index.js"
+       },
+       "default": "./lib/xai/index.js"
++    },
++    "./mistral": {
++      "import": {
++        "types": "./lib/mistral/index.d.mts",
++        "default": "./lib/mistral/index.mjs"
++      },
++      "require": {
++        "types": "./lib/mistral/index.d.ts",
++        "default": "./lib/mistral/index.js"
++      },
++      "default": "./lib/mistral/index.js"
+     }
+   },
+   "typesVersions": {
+@@ -92,6 +103,9 @@
+       ],
+       "xai": [
+         "lib/xai"
++      ],
++      "mistral": [
++        "lib/mistral"
+       ]
+     }
+   },
 ```
 
-**File**: `AGENTS.md` (added, +12/-0)
+**File**: `js/plugins/compat-oai/src/embedder.ts` (modified, +45/-5)
 ```diff
-@@ -0,0 +1,12 @@
-+# Genkit Monorepo Guide
+@@ -18,11 +18,24 @@
+ // import { defineEmbedder, embedderRef } from '@genkit-ai/ai/embedder';
+ 
+ import type { EmbedderAction, EmbedderReference } from 'genkit';
++import type { EmbedRequest } from 'genkit/embedder';
+ import { embedder } from 'genkit/plugin';
+-import OpenAI from 'openai';
++import OpenAI, { APIError } from 'openai';
++import type { EmbeddingCreateParams } from 'openai/resources/index.mjs';
+ import { PluginOptions } from './index.js';
++import { toGenkitError, type ErrorStatusClassifier } from './model.js';
+ import { maybeCreateRequestScopedOpenAIClient, toModelName } from './utils.js';
+ 
++/**
++ * Hook to modify the embeddings request body. When set, it replaces the
++ * default passthrough of embedder options, so it must copy any options the
++ * provider needs.
++ */
++export type EmbedderRequestBuilder = (
++  req: EmbedRequest,
++  params: EmbeddingCreateParams
++) => void;
 +
-+`js/`, `genkit-tools/`, and `go/` are separate workspaces with independent lockfiles and builds. Read the area guide before planning, editing, or reviewing changes:
-+
-+- `js/` (JS SDK & plugins): `js/AGENTS.md`
-+- `genkit-tools/` (CLI, MCP, telemetry server, shared schemas): `genkit-tools/AGENTS.md`
-+- `go/` (Go SDK & plugins): `go/AGENTS.md`
-+
-+## Repo-Wide Checks
-+
-+- Run `pnpm format` from the repo root to apply Prettier formatting and add missing `Copyright <year> Google LLC` Apache-2.0 headers (`pnpm format:check` to verify; `go fmt -C go ./...` for Go).
-+- Use Conventional Commit and PR headers (`<= 120` chars, non-empty scope per `commitlint.config.js`) with scopes prefixed by the workspace directory, e.g. `fix(js/ai): ...`, `fix(genkit-tools/cli): ...`, or `feat(go/ai): ...`.
+ /**
+  * Method to define a new Genkit Embedder that is compatibale with the Open AI
+  * Embeddings API. 
+@@ -33,6 +46,11 @@ import { maybeCreateRequestScopedOpenAIClient, toModelName } from './utils.js';
+  * @param params.client The OpenAI client instance.
+  * @param params.embedderRef Optional reference to the embedder's configuration and
+  * custom options.
++ * @param params.requestBuilder Optional hook to modify the request body, see
++ * {@link EmbedderRequestBuilder}.
++ * @param params.errorStatus Optional error classifier. When set, API errors
++ * are thrown as Genkit errors, with the status it returns or else one from the
++ * HTTP status code. Without it, API errors are thrown as they are.
+ 
+  * @returns the created {@link EmbedderAction}
+  */
+@@ -41,8 +59,17 @@ export function defineCompatOpenAIEmbedder(params: {
+   client: OpenAI;
+   pluginOptions?: PluginOptions;
+   embedderRef?: EmbedderReference;
++  requestBuilder?: EmbedderRequestBuilder;
++  errorStatus?: ErrorStatusClassifier;
+ }): EmbedderAction {
+-  const { name, client: defaultClient, pluginOptions, embedderRef } = params;
++  const {
++    name,
++    client: defaultClient,
++    pluginOptions,
++    embedderRef,
++    requestBuilder,
++    errorStatus,
++  } = params;
+ 
+   const modelName = toModelName(name, pluginOptions?.name);
+   const actionName =
+@@ -61,12 +88,25 @@ export function defineCompatOpenAIEmbedder(params: {
+         req,
+         defaultClient
+       );
+-      const embeddings = await client.embeddings.create({
++      let body: EmbeddingCreateParams = {
+         model: modelName,
+         input: req.input.map((d) => d.text),
+         encoding_format,
+-        ...restOfConfig,
+-      });
++      };
++      if (requestBuilder) {
++        requestBuilder(req, body);
++      } else {
++        body = { ...body, ...restOfConfig };
++      }
++      let embeddings: OpenAI.CreateEmbeddingResponse;
++      try {
++        embeddings = await client.embeddings.create(body);
++      } catch (e) {
++        if (errorStatus && e instanceof APIError) {
++          throw toGenkitError(e, errorStatus);
++        }
++        throw e;
++      }
+       return {
+         embeddings: embeddings.data.map((d) => ({ embedding: d.embedding })),
+       };
 ```
 
-**File**: `js/AGENTS.md` (added, +13/-0)
+**File**: `js/plugins/compat-oai/src/index.ts` (modified, +6/-1)
 ```diff
-@@ -0,0 +1,13 @@
-+# Genkit JS - Developer Guide
+@@ -31,7 +31,10 @@ export {
+   type SpeechRequestBuilder,
+   type TranscriptionRequestBuilder,
+ } from './audio.js';
+-export { defineCompatOpenAIEmbedder } from './embedder.js';
++export {
++  defineCompatOpenAIEmbedder,
++  type EmbedderRequestBuilder,
++} from './embedder.js';
+ export {
+   ImageGenerationCommonConfigSchema,
+   compatOaiImageModelRef,
+@@ -43,7 +46,9 @@ export {
+   compatOaiModelRef,
+   defineCompatOpenAIModel,
+   openAIModelRunner,
++  type ErrorStatusClassifier,
+   type ModelRequestBuilder,
++  type ModelRunnerOptions,
+ } from './model.js';
+ export {
+   TranslationConfigSchema,
+```
+
+**File**: `js/plugins/compat-oai/src/mistral/embedder.ts` (added, +80/-0)
+```diff
+@@ -0,0 +1,80 @@
++/**
++ * Copyright 2026 Google LLC
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
 +
-+This document defines module, documentation, and testing conventions for contributors and AI coding agents working under `js/` (`core`, `ai`, `genkit`, `plugins/*`, and `testapps/*`).
++import { EmbedderInfo, embedderRef, EmbedderReference, z } from 'genkit';
++import type { EmbedderRequestBuilder } from '../embedder.js';
 +
-+## 1. Imports & Documentation
++/** Mistral embedder configuration schema. */
++export const MistralEmbeddingConfigSchema = z.object({
++  outputDimension: z
++    .number()
++    .int()
++    .optional()
++    .describe(
++      'Dimension of the output embeddings, for models that support it. Sent as `output_dimension`.'
++    ),
++  apiKey: z
++    .string()
++    .optional()
++    .describe('Overrides the plugin API key for this request.'),
++});
 +
-+- **Relative imports**: Use explicit `.js` extensions on all relative file imports in source files (e.g., `from './foo.js'`).
-+- **JSDocs & examples**: Document exported SDK members with JSDoc comments (`CONTRIBUTING.md`). In JSDoc `@example` blocks, READMEs, and samples, use `@genkit-ai/google-genai` (e.g., `googleAI.model('gemini-flash-latest')` or current models in `js/plugins/google-genai/src/googleai/gemini.ts`) rather than the legacy `@genkit-ai/googleai` package or deprecated model IDs.
++/**
++ * Mistral uses `output_dimension` rather than `dimensions`, and rejects
++ * unknown fields, so only the fields it accepts are set.
++ */
++export const mistralEmbedderRequestBuilder: EmbedderRequestBuilder = (
++  req,
++  params
++) => {
++  const { outputDimension } = req.options ?? {};
++  // Always request floats, rather than relying on the OpenAI SDK's default.
++  params.encoding_format = 'float';
++  if (outputDimension !== undefined) {
++    (params as unknown as Record<string, unknown>).output_dimension =
++      outputDimension;
++  }
++};
 +
-+## 2. Testing & Verification
++/** Mistral EmbedderRef helper, with Mistral specific config. */
++export function mistralEmbedderRef(params: {
++  name: string;
++  info?: EmbedderInfo;
++  config?: z.infer<typeof MistralEmbeddingConfigSchema>;
++}): EmbedderReference<typeof MistralEmbeddingConfigSchema> {
++  return embedderRef({
++    name: params.name,
++    configSchema: MistralEmbeddingConfigSchema,
++    info: params.info ?? {
++      supports: {
++        input: ['text'],
++      },
++    },
++    config: params.config,
++    namespace: 'mistral',
++  });
++}
 +
-+- **Unit tests (`tests/*_test.ts`)**: Place unit tests in `tests/*_test.ts`.
-+- **Verification**: Run `pnpm build:js` and `pnpm test:js` from the repo root (or `pnpm build` and `pnpm test` in a package directory; rebuild via `pnpm build:js` when editing `core`, `ai`, or `genkit`).
++export const SUPPORTED_MISTRAL_EMBEDDERS = {
++  'mistral-embed': mistralEmbedderRef({
++    name: 'mistral-embed',
++    info: { dimensions: 1024, supports: { input: ['text'] } },
++  }),
++  'codestral-embed': mistralEmbedderRef({
++    name: 'codestral-embed',
++    info: { dimensions: 1536, supports: { input: ['text'] } },
++  }),
++};
+```
+
+**File**: `js/plugins/compat-oai/src/mistral/errors.ts` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++/**
++ * Copyright 2026 Google LLC
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++import type { ClientOptions } from 'openai';
++import type { ErrorStatusClassifier } from '../model.js';
++
++type Fetch = NonNullable<ClientOptions['fetch']>;
++
++/**
++ * Whether `body` is an error body the OpenAI SDK can't read: a JSON object
++ * with no `error` key. Mistral sends top-level errors such as
++ * `{"object": "error", "message": "...", "type": "invalid_model", ...}`, and
++ * its OpenAPI spec documents HTTP 422 as `{"detail": [...]}`
++ * (`HTTPValidationError`), neither wrapped in an `error` key as OpenAI's are.
++ */
++function isUnwrappedError(body: unknown): body is Record<string, unknown> {
++  return (
++    typeof body === 'object' &&
++    body !== null &&
++    !Array.isArray(body) &&
++    !('error' in body)
++  );
++}
++
++/**
++ * Wraps `fetch` so that Mistral's error bodies reach the OpenAI SDK. The SDK
++ * only reads errors under an `error` key, so for any other JSON object body
++ * it reports, for example, "400 status code (no body)" and drops the message
++ * and `type`. This moves the body under `error`, so the API error has
++ * Mistral's message, `type` and `code`, or the `detail` of a validation
++ * error.
++ *
++ * Returns `undefined`, keeping the SDK's own fetch, when `httpAgent` is set
++ * without a `fetch`: Node's built-in fetch would ignore the agent.
++ */
++export function mistralErrorBodyFetch(
++  options: Pick<ClientOptions, 'fetch' | 'httpAgent'> | undefined
++): Fetch | undefined {
++  if (!options?.fetch && options?.httpAgent) return undefined;
++  // `globalThis.fetch` is looked up on each call, not when the plugin is
++  // created, so a fetch patched in later (tracing, test stubs) is used.
++  const inner: typeof fetch = (input, init) =>
++    ((options?.fetch as unknown as typeof fetch) ?? globalThis.fetch)(
++      input,
++      init
++    );
++  const wrapped: typeof fetch = async (input, init) => {
++    const response = await inner(input, init);
++    if (response.ok) return response;
++    let body: unknown;
++    try {
++      body = await response.clone().json();
++    } catch {
++      return response;
++    }
++    if (!isUnwrappedError(body)) return response;
++    const headers = new Headers(response.headers);
++    // The body is re-encoded, so the original length and encoding no longer
++    // apply.
++    headers.delete('content-length');
++    headers.delete('content-encoding');
++    return new Response(JSON.stringify({ error: body }), {
++      status: response.status,
++      statusText: response.statusText,
++      headers,
++    });
++  };
++  return wrapped as unknown as Fetch;
++}
++
++/**
++ * Mistral answers an unknown or retired model with HTTP 400 and
++ * `"type": "invalid_model"`. Report that as NOT_FOUND; other errors keep the
++ * status from the HTTP status code.
++ */
++export const mistralErrorStatus: ErrorStatusClassifier = (e) =>
++  e.type === 'invalid_model' ? 'NOT_FOUND' : undefined;
+```
+
+**File**: `js/plugins/compat-oai/src/mistral/index.ts` (added, +352/-0)
+```diff
+@@ -0,0 +1,352 @@
++/**
++ * Copyright 2026 Google LLC
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++import {
++  ActionMetadata,
++  embedderActionMetadata,
++  EmbedderReference,
++  GenkitError,
++  modelActionMetadata,
++  ModelReference,
++  z,
++} from 'genkit';
++import type { ModelInfo } from 'genkit/model';
++import { type GenkitPluginV2 } from 'genkit/plugin';
++import { ActionType } from 'genkit/registry';
++import OpenAI from 'openai';
++import { defineCompatOpenAIEmbedder } from '../embedder.js';
++import { openAICompatible, PluginOptions } from '../index.js';
++import { defineCompatOpenAIModel } from '../model.js';
++import { lookup } from '../utils.js';
++import {
++  mistralEmbedderRef,
++  mistralEmbedderRequestBuilder,
++  MistralEmbeddingConfigSchema,
++  SUPPORTED_MISTRAL_EMBEDDERS,
++} from './embedder.js';
++import { mistralErrorBodyFetch, mistralErrorStatus } from './errors.js';
++import {
++  MISTRAL_RUNNER_OPTIONS,
++  MistralChatCompletionConfigSchema,
++  mistralModelRef,
++  mistralRequestBuilder,
++  SUPPORTED_MISTRAL_MODELS,
++} from './mistral.js';
++
++const MISTRAL_BASE_URL = 'https://api.mistral.ai/v1';
++
++/**
++ * Options for the Mistral plugin. `baseURL` defaults to
++ * `https://api.mistral.ai/v1`; set it to go through a proxy.
++ */
++export type MistralPluginOptions = Omit<PluginOptions, 'name'>;
++
++function defineMistralModel(
++  client: OpenAI,
++  pluginOptions: PluginOptions,
++  modelRef: ModelReference<any>
++) {
++  return defineCompatOpenAIModel({
++    name: modelRef.name,
++    client,
++    pluginOptions,
++    modelRef,
++    requestBuilder: mistralRequestBuilder,
++    runnerOptions: MISTRAL_RUNNER_OPTIONS,
++  });
++}
++
++function defineMistralEmbedder(
++  client: OpenAI,
++  pluginOptions: PluginOptions,
++  embedderRef: EmbedderReference<any>
++) {
++  return defineCompatOpenAIEmbedder({
++    name: embedderRef.name,
++    client,
++    pluginOptions,
++    embedderRef,
++    requestBuilder: mistralEmbedderRequestBuilder,
++    errorStatus: mistralErrorStatus,
++  });
++}
++
++/**
++ * The `capabilities` object of a `/v1/models` entry (Mistral's
++ * `ModelCapabilities`). Only the fields the plugin reads are listed.
++ */
++interface MistralModelCapabilities {
++  completion_chat?: boolean;
++  function_calling?: boolean;
++  vision?: boolean;
++}
++
++/**
++ * Model info for a model outside the known list, from its `/v1/models`
++ * capabilities. Output stays text only, since capabilities don't say whether
++ * the model supports constrained output.
++ */
++function modelInfoFromCapabilities(
++  capabilities: MistralModelCapabilities
++): ModelInfo {
++  return {
++    supports: {
++      multiturn: true,
++      tools: capabilities.function_calling === true,
++      toolChoice: capabilities.function_calling === true,
++      media: capabilities.vision === true,
++      systemRole: true,
++      output: ['text'],
++    },
++  };
++}
++
++/**
++ * @param lookupModelInfo Finds the info of a model outside the known list, as
++ *   `/v1/models` lists it, so a model resolves with the same capabilities
++ *   whether or not the models were listed first.
++ */
++function createResolver(
++  pluginOptions: PluginOptions,
++  lookupModelInfo: (
++    client: OpenAI,
++    name: string
++  ) => Promise<ModelInfo | undefined>
++) {
++  return async (client: OpenAI, actionType: ActionType, actionName: string) => {
++    if (actionType === 'embedder') {
++      return defineMistralEmbedder(
++        client,
++        pluginOptions,
++        lookup(SUPPORTED_MISTRAL_EMBEDDERS, actionName) ??
++          mistralEmbedderRef({ name: actionName })
++      );
++    }
++    if (actionType === 'model') {
++      return defineMistralModel(
++        client,
++        pluginOptions,
++        lookup(SUPPORTED_MISTRAL_MODELS, actionName) ??
++          mistralModelRef({
++            name: actionName,
++            info: await lookupModelInfo(client, actionName),
++          })
++      );
++    }
++    return undefined;
++  };
++}
++
++/**
++ * Lists Mistral's models and embedders from `/v1/models`. Ids containing
++ * `embed` are embedders. Other entries are chat models only when their
++ * `capabilities.completion_chat` is set, which leaves out OCR, moderation,
++ * audio and similar models. Models outside the known list take tools and
++ * media support from `capabilities`, or the text-only default when an entry
++ * has no `capabilities`.
++ */
++async function listMistralActions(
++  client: OpenAI,
++  listedModelInfo: Map<string, ModelInfo>
++): Promise<ActionMetadata[]> {
++  const r
+```
+
+**File**: `js/plugins/compat-oai/src/mistral/mistral.ts` (added, +380/-0)
+```diff
+@@ -0,0 +1,380 @@
++/**
++ * Copyright 2026 Google LLC
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++import { GenkitError, z, type MessageData } from 'genkit';
++import { ModelInfo, ModelReference } from 'genkit/model';
++import type { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
++import {
++  ChatCompletionCommonConfigSchema,
++  ModelRequestBuilder,
++  ModelRunnerOptions,
++  compatOaiModelRef,
++} from '../model.js';
++import { mistralErrorStatus } from './errors.js';
++
++/**
++ * Models with text and image input, tool calling and structured output.
++ * Mistral accepts `response_format` with `json_schema`, so output is
++ * constrained natively.
++ */
++const MISTRAL_MODEL_INFO: ModelInfo = {
++  supports: {
++    multiturn: true,
++    tools: true,
++    toolChoice: true,
++    media: true,
++    systemRole: true,
++    output: ['text', 'json'],
++    constrained: 'all',
++  },
++};
++
++/**
++ * Default for models that are not in the known list, such as ones found
++ * through `/v1/models`: text only, with no tools or constrained output, since
++ * their capabilities are unknown.
++ */
++const MISTRAL_UNKNOWN_MODEL_INFO: ModelInfo = {
++  supports: {
++    multiturn: true,
++    tools: false,
++    toolChoice: false,
++    media: false,
++    systemRole: true,
++    output: ['text'],
++  },
++};
++
++/** Models with text input only, tool calling and structured output. */
++const MISTRAL_TEXT_MODEL_INFO: ModelInfo = {
++  supports: {
++    multiturn: true,
++    tools: true,
++    toolChoice: true,
++    media: false,
++    systemRole: true,
++    output: ['text', 'json'],
++    constrained: 'all',
++  },
++};
++
++/**
++ * Mistral-only request fields that are passed through from the config as they
++ * are, under Mistral's own names. Mistral's request schema rejects unknown
++ * fields, so other config keys are not passed through.
++ */
++const MistralRequestFieldsSchema = z.object({
++  safe_prompt: z
++    .boolean()
++    .optional()
++    .describe('Whether to inject a safety prompt before all conversations.'),
++  parallel_tool_calls: z
++    .boolean()
++    .optional()
++    .describe('Whether the model can make more than one tool call per turn.'),
++  min_tokens: z
++    .number()
++    .int()
++    .min(0)
++    .optional()
++    .describe('The minimum number of tokens to generate.'),
++  prompt_mode: z
++    .enum(['reasoning'])
++    .optional()
++    .describe('Selects the system prompt Mistral adds for reasoning models.'),
++  repetition_penalty: z
++    .number()
++    .gt(0)
++    .max(2)
++    .optional()
++    .describe('Penalizes repeated tokens, above 0 and at most 2.'),
++  prediction: z
++    .object({ type: z.literal('content').optional(), content: z.string() })
++    .optional()
++    .describe('Expected completion, used to speed up the response.'),
++  guardrails: z
++    .array(z.record(z.unknown()))
++    .optional()
++    .describe("Moderation guardrails, in Mistral's `GuardrailConfig` shape."),
++  prompt_cache_key: z
++    .string()
++    .optional()
++    .describe('Key for grouping requests that share a prompt prefix.'),
++  service_tier: z
++    .enum(['auto', 'standard_only'])
++    .optional()
++    .describe('The service tier to use for the request.'),
++  metadata: z
++    .record(z.unknown())
++    .optional()
++    .describe('Metadata to attach to the request.'),
++});
++
++/** Keys of {@link MistralRequestFieldsSchema}, passed through as they are. */
++const MISTRAL_REQUEST_FIELDS = Object.keys(
++  MistralRequestFieldsSchema.shape
++) as (keyof typeof MistralRequestFieldsSchema.shape)[];
++
++/**
++ * Mistral custom configuration schema. `topK`, `logProbs` and `topLogProbs`
++ * are left out: Mistral's request schema declares `top_k`, `logprobs` and
++ * `top_logprobs`, but its models reject them ("top_k sampling is not enabled
++ * for this model", "Logprobs are not enabled for this model"). Bounds follow
++ * Mistral's request schema.
++ */
++export const MistralChatCompletionConfigSchema =
++  ChatCompletionCommonConfigSchema.omit({
++    topK: true,
++    logProbs: true,
++    topLogProbs: true,
++  })
++    .extend({
++      temperature: z
++        .number()
++        .min(0)
++        .max(1.5)
++        .optional()
++        .describe('Sampling temperature, between 0 and 1.5.'),
++      topP: z
++        .number()
++        .gt(0)
++        .max(1)
++        .optional()
++        .describe('Nucleus sampling, above 0 and at most 1.'),
++      seed: z
++        .number()
++        .int()
++        .min(0)
++        .optional()
++        .describe('Seed for 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2039,26 +2740,60 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(js,go): add root and JS AGENTS.md, rename go/GEMINI.md, and add rule bridge
+## X. js/plugins/compat-oai): add Mistral provider, send falsy config values and map H
 
 **RULE**:
-When implementing operations in `.agents/rules/go.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `js/plugins/compat-oai/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `049b39cf`: docs(js,go): add root and JS AGENTS.md, rename go/GEMINI.md, and add rule bridges. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6125d544`: js/plugins/compat-oai): add Mistral provider, send falsy config values and map HTTP 422. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/rules/go.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/plugins/compat-oai/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-trigger: model_decision
-description: 'Conventions for go/ (Go SDK, plugins, registry/actions, schema generation, GoDoc, and testing). Load before planning, writing, or reviewing changes under go/.'
----
+- [Mistral](#mistral) (in this README)
+### Mistral
 
-Read `go/AGENTS.md` before planning, writing, or reviewing changes under `go/`.
+The `mistral` plugin uses Mistral's OpenAI-compatible API at
+`https://api.mistral.ai/v1`. Pass `apiKey` or set the `MISTRAL_API_KEY`
+environment variable. Set `baseURL` to go through a proxy.
+
+```typescript
+import { genkit } from 'genkit';
+import { mistral } from '@genkit-ai/compat-oai/mistral';
+
+const ai = genkit({
+  plugins: [mistral()],
+});
+
+const response = await ai.generate({
+  model: mistral.model('mistral-small-latest'),
+  prompt: 'Tell me a joke.',
+  config: {
+    maxOutputTokens: 256,
+    seed: 42,
+    safe_prompt: true,
+  },
+});
+
+const embeddings = await ai.embed({
+  embedder: mistral.embedder('codestral-embed', { outputDimension: 256 }),
+  content: 'Hello world',
+});
+```
+
+Mistral rejects request fields it doesn't know, so the plugin sends only
+Mistral's own field names:
+
+- `maxOutputTokens` is sent as `max_tokens`, and `seed` as `random_seed`.
+- `topK` is refused before the request goes out: Mistral's models reject
+  `top_k` sampling.
+- `reasoningEffort` is sent as `reasoning_effort`. Allowed values vary by
+  model: Mistral Small and Medium take `none` and `high`, Mistral Large 4
+  (`mistral-large-latest`) takes `low`, 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2068,7 +2803,7 @@ Read `go/AGENTS.md` before planning, writing, or reviewing changes under `go/`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `049b39cf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6125d544` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -4,22 +4,22 @@
 {
   "source_repository": "Dicklesworthstone/destructive_command_guard",
   "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-  "source_version": "30d9cb34",
+  "source_version": "990d02a5",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-27T02:49:38.922Z",
+  "timestamp": "2026-11-28T02:41:15.216Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard) (Revision: `30d9cb34`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-27T02:49:38.922Z`  
+> **Provenance**: Harvested from [Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard) (Revision: `990d02a5`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-28T02:41:15.216Z`  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Dicklesworthstone/destructive_command_guard` (Commit: `30d9cb34`)
+- **Target Repository**: `Dicklesworthstone/destructive_command_guard` (Commit: `990d02a5`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T02:49:37.263Z  
+> **Harvest Timestamp**: 2026-11-28T02:41:13.426Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6380 stars
+- **Stars / Engagement**: 6382 stars
 
 ---
 
@@ -2522,890 +2522,581 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, SourceScanErr
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d93805fb` (2026-11-26)
-**Commit Message**: fix(analyzer): preserve incomplete protected-write scans [skip ci]
+### Incident Patch 1: `c4ca6898` (2026-11-27)
+**Commit Message**: fix(install): recover ownerless install locks
 
-Separate malformed embedded source from exhausted byte, traversal, and work bounds in the protected-write scanners. Propagate deterministic failures with the protected_write_analysis stage across the hook and CLI.
+The mkdir lock treated a lock as stale only when its pid file named a dead
+process. A lock with an empty or missing pid file blocked every later run
+forever. That happens when `echo $$ > pid` fails on a full disk or spent /tmp
+quota, or when a run is killed between mkdir and the write. hz2's nightly
+`acfs update` failed xf for 3+ days on a 0-byte pid file from 11-23
+("Another installer is running").
 
-Keep proven findings from either analyzer when the other reaches a structural limit. Retain the incomplete stage in the request scope if a later policy step waives that finding.
+- A pid that can't be written releases the lock and stops the run, as ee's
+  installer already does.
+- An existing lock with no recorded pid is stale once it is more than 10
+  minutes old. The age guard keeps a run that has just made its lock dir
+  safe.
+- A lock held by a live process still blocks.
 
-Cover direct scanner classifications, known findings from either side, and the live hook's shallow and over-limit decisions.
+Verified by extracting the lock block and running 6 cases on macOS (BSD
+find/touch) and Linux (GNU): fresh, live owner, dead owner, fresh ownerless,
+old ownerless, and old with no pid file. The previous block fails both old
+ownerless cases.
 
-**File**: `src/ast_source_analysis.rs` (modified, +70/-14)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `install.sh` (modified, +20/-13)
 ```diff
-@@ -1879,13 +1879,26 @@ fn compose_policy_matches(
-     matches: Result<Vec<PatternMatch>, MatchError>,
-     protected: Result<Vec<PatternMatch>, MatchError>,
- ) -> Result<Vec<PatternMatch>, MatchError> {
--    let mut matches = matches?;
--    match protected {
--        Ok(protected) => matches.extend(protected),
--        // A new classifier's limit must not suppress a deletion/exec
--        // denial the existing engine has already established.
--        Err(_) if matches.iter().any(|hit| hit.severity.blocks_by_default()) => {}
--        Err(error) => return Err(error),
-+    let (mut matches, error) = match (matches, protected) {
-+        (Ok(mut matches), Ok(protected)) => {
-+            matches.extend(protected);
-+            (matches, None)
-+        }
-+        (Ok(matches), Err(error))
-+        | (Err(error @ MatchError::AnalysisIncomplete { .. }), Ok(matches)) => {
-+            (matches, Some(error))
-+        }
-+        (Err(error), _) => return Err(error),
+@@ -1831,20 +1831,27 @@ install_binary() {
+ # Cross-platform locking using mkdir (atomic on all POSIX systems including macOS)
+ LOCK_DIR="${LOCK_FILE}.d"
+ LOCKED=0
+-if mkdir "$LOCK_DIR" 2>/dev/null; then
++# Take the lock and record our pid. A pid that cannot be written (full disk or
++# spent quota) would leave an ownerless lock that blocks every later run, so
++# release it and stop instead.
++take_install_lock() {
++  mkdir "$LOCK_DIR" 2>/dev/null || return 1
+   LOCKED=1
+-  echo $$ > "$LOCK_DIR/pid"
+-else
+-  # Check if existing lock is stale (process no longer running)
+-  if [ -f "$LOCK_DIR/pid" ]; then
+-    OLD_PID=$(cat "$LOCK_DIR/pid" 2>/dev/null || echo "")
+-    if [ -n "$OLD_PID" ] && ! kill -0 "$OLD_PID" 2>/dev/null; then
+-      rm -rf "$LOCK_DIR"
+-      if mkdir "$LOCK_DIR" 2>/dev/null; then
+-        LOCKED=1
+-        echo $$ > "$LOCK_DIR/pid"
+-      fi
+-    fi
++  if ! echo $$ > "$LOCK_DIR/pid" 2>/dev/null; then
++    rm -rf "$LOCK_DIR" 2>/dev/null || true
++    LOCKED=0
++    err "Could not write pid file to $LOCK_DIR (disk full or read-only?)"
++    exit 1
++  fi
++}
++if ! take_install_lock; then
++  # The existing lock is stale if its process is gone, or if it never recorded
++  # a pid (an interrupted or disk-full run) and is more than 10 minutes old.
++  OLD_PID=$(cat "$LOCK_DIR/pid" 2>/dev/null || echo "")
++  if { [ -n "$OLD_PID" ] && ! kill -0 "$OLD_PID" 2>/dev/null; } \
++    || { [ -z "$OLD_PID" ] && [ -n "$(find "$LOCK_DIR" -maxdepth 0 -mmin +10 2>/dev/null)" ]; }; then
++    rm -rf "$LOCK_DIR"
++    take_install_lock || true
+   fi
+   if [ "$LOCKED" -eq 0 ]; then
+     err "Another installer is running (lock $LOCK_DIR)"
+```
+
+---
+
+### Incident Patch 2: `c7ba093f` (2026-11-27)
+**Commit Message**: fix(install): write agy hooks as a cmd.exe-runnable path with no shell key (#677) [skip ci]
+
+`dcg install --agy` reused Claude Code's hook object. On Windows that is
+`"command": "& '<path>\dcg.exe'"` with `"shell": "powershell"`. agy's
+hooks documentation lists only `type`, `command` and `timeout` on a
+handler, and both Windows reports show agy running `command` through
+cmd.exe and ignoring `shell`. cmd.exe rejects PowerShell's call operator
+("& was unexpected at this time."), and since the matcher became
+run_command (#652) every shell call in agy failed on Windows.
+
+agy now gets its own handler: the absolute dcg path with no `shell` key.
+On Windows the path is written bare (the form two users confirmed works in
+agy), or in double quotes when it contains whitespace or one of
+& | < > ( ) ^ , ; =. A path with %, " or a control character is refused
+with an error instead of being written as a hook cmd.exe would expand or
+cannot run. Other platforms keep the POSIX-quoted path. Claude Code's
+Windows hook keeps its documented PowerShell form.
+
+Re-running `dcg install --agy` repairs an existing broken entry without
+--force: the desired handler differs, `shell` is a dcg-owned key and is
+dro
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -1229,7 +1229,7 @@ preserves existing hook wiring.
+ - **Cursor IDE:** Hooks are configured through `~/.cursor/hooks.json` plus a generated bridge (`dcg-pre-shell.ps1` on Windows). The installer inserts dcg first in `beforeShellExecution`, collapses duplicate dcg entries, and preserves coexisting Cursor hooks. The bridge blocks a command it cannot verify: a payload it cannot read, or a dcg that ran but gave no verdict (killed, timed out, non-zero exit, no answer). Set `DCG_BRIDGE_CRASH_DECISION=allow` to let those through instead; only a dcg that cannot be started at all is allowed, with a notice on stderr. Cursor also runs the `PreToolUse` hooks in `~/.claude/settings.json` for its `Shell` tool, and dcg judges those payloads too.
+ - **Hermes Agent:** [NousResearch's Hermes Agent](https://github.com/NousResearch/hermes-agent) declares shell hooks in its `config.yaml` under `hooks.pre_tool_call`. Hermes resolves its data root from `HERMES_HOME` when set, else `%LOCALAPPDATA%\hermes` on native Windows and `~/.hermes` on Linux/macOS — both installers write the hook to that resolved path (`install.ps1` never writes to `%USERPROFILE%\.hermes` unless `HERMES_HOME` points there, since native Windows Hermes would never read it). The installer merges a single `matcher: "terminal"` entry that invokes dcg directly — no wrapper script — because Hermes' input JSON (`hook_event_name: "pre_tool_call"`, `tool_name: "terminal"`, `tool_input.command`) deserializes straight into dcg's existing `HookInput`. Hermes [explicitly documents](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/hooks.md) that "non-zero exit codes... never abort the agent loop", so dcg switches to Hermes' JSON block protocol on output: `{"decision":"block","reason":...}` (plus the alternate `{"action":"block","message":...}` form for cross-version compatibility). The installer also sets `hooks_auto_accept: true` if not already set; Hermes silently drops un-allowlisted hooks in non-TTY runs (gateway/cron) without it. `unconfigure_hermes` in `uninstall.sh` removes only the dcg-owned entry and leaves `hooks_auto_accept` alone (other Hermes hooks may rely on it).
+ - **Grok (xAI):** [Grok Build / Grok CLI](https://x.ai/news/grok-build-cli) auto-discovers every `*.json` under `~/.grok/hooks/`. `dcg install --grok` writes a self-contained `~/.grok/hooks/dcg.json` with a `PreToolUse` / `matcher: "Bash"` entry — Grok internally aliases Claude-style `"Bash"` to its own `run_terminal_cmd` tool, so a single rule covers every shell command. dcg detects Grok at runtime from the camelCase wire shape (`hookEventName: "pre_tool_use"`, `toolName: "run_terminal_cmd"`) or from the `GROK_SESSION_ID` / `GROK_HOOK_EVENT` / `GROK_WORKSPACE_ROOT` environment variables, and switches its output to Grok's JSON contract: `{"decision":"deny","reason":...}` (note `"deny"`, not Hermes' `"block"`). Grok also reads `~/.claude/settings.json` when its Claude compatibility hooks are enabled, as documented in its [hook locations](https://github.com/xai-org/grok-build/blob/main/crates/codegen/xai-grok-pager/docs/user-guide/10-hooks.md#hook-locations). That compatibility location does **not** follow `CLAUDE_CONFIG_DIR`: DCG checks Grok's default compatibility file separately, and a hook installed only in a relocated Claude directory does not protect Grok. Use `dcg install --grok` for that setup. Add `--project` to write `<repo>/.grok/hooks/dcg.json` for a per-repo install (Grok requires `/hooks-trust` the first time it opens a repo with hooks).
+-- **Antigravity CLI (`agy`):** [Google Antigravity's `agy` CLI](https://antigravity.google) ships a Claude-Code-compatible hooks system. `dcg install --agy` merges a `PreToolUse` / `matcher: "Bash"` entry into `~/.gemini/config/hooks.json` (the canonical path; `agy` migrates the legacy `~/.gemini/antigravity-cli/hooks.json` here and symlinks the old path to it). `agy` runs the hook before its `run_command` shell tool; dcg detects `agy` at runtime from the distinctive nested `toolCall` envelope (`{"toolCall":{"name":"run_command","args":{"CommandLine":"…"}},"conversationId":…,"stepIdx":…}`) — the shell command is read from `toolCall.args.CommandLine` — or from the `ANTIGRAVITY_CONVERSATION_ID` environment variable / `agy` parent-process name. dcg follows `agy`'s [PreToolUse output contract](https://antigravity.google/docs/hooks): denials contain only `{"decision":"deny","reason":…}` on stdout with exit code 0. Antigravity CLI 1.4.0's strict `protojson` parser rejects extra fields such as `systemMessage`, `ruleId`, and `remediation` ([#573](https://github.com/Dicklesworthstone/destructive_command_guard/issues/573)); the explanation remains in `reason`. Warnings go to stderr with empty stdout and exit code 0, so dcg supplies no permission decision and leaves ordinary permission checks to `agy`. Add `--project` to write `<repo>/.gemini/config/hooks.json` for a per-repo install. Restart `agy` (start a new session) af
+```
+
+**File**: `src/cli.rs` (modified, +195/-8)
+```diff
+@@ -340,7 +340,7 @@ pub enum Command {
+ 
+         /// Install the dcg PreToolUse hook for the Antigravity CLI (`agy`) at
+         /// `~/.gemini/config/hooks.json` (user-level) or
+-        /// `<repo>/.gemini/config/hooks.json` (with `--project`). `agy` reads
++        /// `<repo>/.agents/hooks.json` (with `--project`). `agy` reads
+         /// Claude-Code-compatible `PreToolUse` hooks from this file and aborts
+         /// its `run_command` shell tool when dcg returns a block decision.
+         #[arg(
+@@ -13731,22 +13731,26 @@ fn claude_dcg_hook_for_executable(
+     }
+ }
+ 
+-fn hook_command_for_executable(executable: &std::path::Path) -> std::io::Result<String> {
++fn absolute_utf8_hook_program(executable: &std::path::Path) -> std::io::Result<&str> {
+     if !executable.is_absolute() {
+         return Err(std::io::Error::other(format!(
+             "dcg hook executable path is not absolute: {}",
+             executable.display()
+         )));
+     }
+-    let executable = executable.to_str().ok_or_else(|| {
++    executable.to_str().ok_or_else(|| {
+         std::io::Error::new(
+             std::io::ErrorKind::InvalidData,
+             format!(
+                 "dcg hook executable path is not valid UTF-8: {}",
+                 executable.display()
+             ),
+         )
+-    })?;
++    })
++}
++
++fn hook_command_for_executable(executable: &std::path::Path) -> std::io::Result<String> {
++    let executable = absolute_utf8_hook_program(executable)?;
+ 
+     #[cfg(windows)]
+     {
+@@ -13765,7 +13769,70 @@ fn claude_dcg_hook() -> std::io::Result<serde_json::Value> {
+ }
+ 
+ fn antigravity_dcg_hook() -> std::io::Result<serde_json::Value> {
+-    claude_dcg_hook_for_executable(&current_dcg_executable()?)
++    antigravity_dcg_hook_for_executable(&current_dcg_executable()?)
++}
++
++/// The handler dcg writes into agy's `hooks.json`.
++///
++/// agy documents only `type`, `command` and `timeout` on a handler. On
++/// Windows it runs `command` through cmd.exe and ignores the `shell` key that
++/// Claude Code's Windows hook carries, so the PowerShell call-operator form
++/// `& '…'` failed with "& was unexpected at this time." and broke every
++/// `run_command` call (#677). Write the absolute path, quoted for cmd.exe on
++/// Windows and for a POSIX shell elsewhere, and no `shell` key.
++fn antigravity_dcg_hook_for_executable(
++    executable: &std::path::Path,
++) -> std::io::Result<serde_json::Value> {
++    antigravity_dcg_hook_for_program(absolute_utf8_hook_program(executable)?, cfg!(windows))
++}
++
++/// The platform is a parameter so the Windows shape is tested on every host.
++fn antigravity_dcg_hook_for_program(
++    program: &str,
++    windows: bool,
++) -> std::io::Result<serde_json::Value> {
++    let command = if windows {
++        cmd_quote_hook_program(program)?
++    } else {
++        posix_quote_hook_program(program)
 +    };
-+    if let Some(error) = error {
-+        if !matches.iter().any(|hit| hit.severity.blocks_by_default()) {
-+            return Err(error);
-+        }
-+        // Keep the other classifier's proven denial. If policy waives it,
-+        // the unfinished scan still cannot establish a clean verdict.
-+        if let MatchError::AnalysisIncomplete { stage, .. } = &error {
-+            crate::packs::regex_engine::record_incomplete_analysis(stage, &error);
-+        }
++    Ok(serde_json::json!({
++        "type": "command",
++        "command": command
++    }))
++}
++
++/// Quote an absolute Windows program path for a cmd.exe command line.
++///
++/// A path without spaces or cmd.exe metacharacters is written bare, the form
++/// confirmed to work in agy on Windows. Any other path is wrapped in double
++/// quotes, inside which cmd.exe reads `&|<>()^,;=` and spaces literally.
++/// cmd.exe expands `%NAME%` even inside quotes and a path cannot contain `"`
++/// or a control character, so those are refused rather than written as a
++/// hook that runs something else or nothing.
++fn cmd_quote_hook_program(program: &str) -> std::io::Result<String> {
++    if program
++        .chars()
++        .any(|character| matches!(character, '%' | '"') || character.is_control())
++    {
++        return Err(std::io::Error::new(
++            std::io::ErrorKind::InvalidInput,
++            format!(
++                "dcg hook executable path contains %, \" or a control character, \
++                 which cmd.exe cannot run as written: {program}"
++            ),
++        ));
++    }
++    if program.chars().any(|character| {
++        character.is_whitespace()
++            || matches!(
++                character,
++                '&' | '|' | '<' | '>' | '(' | ')' | '^' | ',' | ';' | '='
++            )
++    }) {
++        return Ok(format!("\"{program}\""));
++    }
++    Ok(program.to_string())
+ }
+ 
+ fn quoted_hook_program(command: &str) -> Option<String> {
+@@ -14736,7 +14803,7 @@ fn install_grok_hook(force: bool, project: bool) -> Result<(), Box<dyn std::erro
+ /// legacy `Bash` matcher entry written by older releases). When dcg returns a block decision
+ /// (stdout `{"decision":"block",...}`), `agy` aborts its `run_command` tool.
+ ///
+-/// With `--project`, writes to `<repo>/.gemini/config/hooks.json` instead.
++/// With `--project`, writes to `<repo>/.agents/hooks.json` instead.
+ ///
+ /// Returns `Err` if the file cannot be read/written or, for project installs,
+ /// if the current directory is not inside a git repository.
+@@ -14808,13 +14875,21 @@ fn antigravity_hooks_path() -> std::path::PathBuf {
+ }
+ 
+ /
+```
+
+---
+
+### Incident Patch 3: `6ab4d758` (2026-11-27)
+**Commit Message**: fix(filesystem): review rimraf like rm -rf, also through npx, pnpm, yarn and bun (#675) [skip ci]
+
+The trash operand checks (91fd5e73) treat trash, trash-put, gio trash,
+moves into the Trash and rimraf alike: deny an empty, dynamic, cwd, home,
+root or broad operand and allow any other literal path. That fits the
+Trash routes, which are recoverable. rimraf is not: it removes its
+targets recursively and permanently, which is `rm -rf`, and `rimraf dist`
+or `rimraf a b` was allowed where `rm -rf dist` is denied.
+
+rimraf now gets rm -rf's policy. A new core.filesystem rule,
+rimraf-general (High), denies rimraf of any operand outside a literal temp
+directory (/tmp, /var/tmp, their /private forms, a literal Windows user
+temp path), using the same temp-path helpers as rm-rf-general: a real
+component below the temp root, no `..`, a glob only in the last
+component. An operand that could select the worktree, home or a root keeps
+the more specific trash-unsafe-target. Options and a bare `rimraf` or
+`rimraf --help` are not operands. The Trash utilities keep only the target
+checks, and the denial suggests them.
+
+rimraf is nearly always started by a package runner, so the argv
+classifier now read
+
+**File**: `docs/packs/core.md` (modified, +1/-0)
+```diff
+@@ -268,6 +268,7 @@ These patterns match potentially destructive commands:
+ | `mv-sensitive-source-root-home` | mv touching a sensitive system or home path is the cross-segment recursive-force-delete bypass. EXTREMELY DANGEROUS. | critical |
+ | `mv-dynamic-path` | mv with a shell-expanded or escaped path cannot be verified before execution. | high |
+ | `trash-unsafe-target` | This disposal command could remove a worktree or a protected directory. Name a specific literal path, e.g. `trash /tmp/my-task/out`. | high |
++| `rimraf-general` | rimraf deletes recursively and permanently, like rm -rf, and requires human approval outside a temp directory. | high |
+ | `credential-file-write` | writing a credential, private-key, login-shell startup, or system authentication file (`~/.ssh/*`, `~/.aws/credentials`, `~/.netrc`, `~/.git-credentials`, `~/.npmrc`, `~/.pypirc`, `~/.docker/config.json`, `~/.kube/config`, `~/.gnupg/*`, `~/.config/gh/hosts.yml`, the token stores of cargo, gem, Vault, Terraform, gcloud, Azure, s3cmd/boto, pass and hub, `~/.pgpass`, `~/.my.cnf`, the shell rc files and `~/.bashrc.d`/`~/.zshrc.d`, `/etc/sudoers*`, `/etc/passwd`, `/etc/shadow`, `/etc/group`, `/etc/ssh/*`) with `>`, `>>`, `tee`, `cp`/`mv`/`install`/`ln`, `dd of=`, or `sed -i` — or, from PowerShell or Cmd, `Add-Content`, `Set-Content`, `Clear-Content`, `Out-File`, `Tee-Object`, `New-Item`, `Copy-Item`, `Move-Item`, `copy`, or `move` — installs persistent access or replaces the trust this machine runs on, whether or not the file exists yet. Reads and `chmod`/`chown` are unaffected; appending to `~/.ssh/known_hosts` stays allowed. | critical |
+ | `git-internals-write` | writing inside a `.git` directory with `tee`, `sponge`, `cp`/`mv`/`install`, `sed -i`, `perl -i`, `dd of=`, or an embedded-code sink rewrites repository state: `.git/config` carries remotes, `insteadOf` rewrites and credential helpers, `.git/hooks/*` run on ordinary git commands, and refs and objects are the history itself. Reads are unaffected, and `.gitignore`, `.gitattributes`, `.gitmodules` and `.github/` are not this rule. | critical |
+ | `redirect-truncate-root-home` | shell truncating redirect (including arbitrary numeric, named, and PowerShell all-stream forms) to an existing sensitive system or home path destroys the previous file contents. A currently absent literal target under the home directory with an existing parent is allowed (creation, not truncation — the same thing `>>` would do); existing files, dynamic paths, symlinks, missing parents, system paths, and .git internals stay blocked. | critical |
+```
+
+**File**: `src/evaluator.rs` (modified, +2/-2)
+```diff
+@@ -31229,11 +31229,11 @@ fn evaluate_packs_with_allowlists_at_depth(
+                     original_command,
+                     project_path,
+                 ) {
+-                    Ok(Some(span)) => {
++                    Ok(Some((span, rule))) => {
+                         if let Some(result) = evaluate_named_pack_rule_with_span(
+                             pack_id,
+                             pack,
+-                            crate::packs::core::filesystem::TRASH_TARGET_RULE,
++                            rule,
+                             allowlists,
+                             project_path,
+                             &mut first_allowlist_hit,
+```
+
+**File**: `src/packs/core/filesystem.rs` (modified, +300/-41)
+```diff
+@@ -33,6 +33,25 @@ const RM_RF_ROOT_HOME_SUGGESTIONS: &[PatternSuggestion] = &[
+     ),
+ ];
+ 
++/// Suggestions for `rimraf` outside a temp directory (#675). The Trash
++/// utilities are recoverable and dcg checks their targets.
++const RIMRAF_GENERAL_SUGGESTIONS: &[PatternSuggestion] = &[
++    PatternSuggestion::with_platform(
++        "trash-put ./build",
++        "Move the reviewed directory to the trash instead (recoverable; requires trash-cli)",
++        Platform::Linux,
++    ),
++    PatternSuggestion::with_platform(
++        "mv ./build ~/.Trash/",
++        "Move the reviewed directory to the Finder trash instead (recoverable)",
++        Platform::MacOS,
++    ),
++    PatternSuggestion::new(
++        "rimraf /tmp/task/out",
++        "rimraf of a literal path under a temp directory is allowed",
++    ),
++];
++
+ /// Suggestions for general `rm -rf` pattern.
+ const RM_RF_GENERAL_SUGGESTIONS: &[PatternSuggestion] = &[
+     PatternSuggestion::new(
+@@ -375,6 +394,27 @@ use std::ops::Range;
+ use std::path::Path;
+ 
+ pub(crate) const TRASH_TARGET_RULE: &str = "trash-unsafe-target";
++/// rimraf of a target outside a literal temp directory. rimraf removes
++/// recursively and permanently, exactly what `rm-rf-general` reviews, while
++/// the Trash utilities are recoverable and only need their target checks.
++pub(crate) const RIMRAF_GENERAL_RULE: &str = "rimraf-general";
++
++/// Programs a wrapper (`sudo`, `env`, `timeout`, …) may start that this
++/// check reads: the disposal utilities and the package runners.
++const TRASH_CHILD_PROGRAMS: &[&str] = &[
++    "trash",
++    "trash-put",
++    "rimraf",
++    "gio",
++    "mv",
++    "npx",
++    "pnpx",
++    "bunx",
++    "npm",
++    "pnpm",
++    "yarn",
++    "bun",
++];
+ 
+ /// A candidate gate only. Removing quotes here can select inert text; the
+ /// command parser below must prove the executable and each operand's role.
+@@ -405,10 +445,13 @@ fn may_name_trash(command: &str) -> bool {
+ /// Inspect original shell syntax. The Bash grammar gives us the executable
+ /// and its raw argument fields, including empty quoted words and substitutions.
+ /// Comments, redirection targets and quoted command examples are not argv.
++///
++/// Returns the span of the first disposal command that needs review and the
++/// rule that names why: [`TRASH_TARGET_RULE`] or [`RIMRAF_GENERAL_RULE`].
+ pub(crate) fn unsafe_trash_span(
+     command: &str,
+     cwd: Option<&Path>,
+-) -> Result<Option<Range<usize>>, ()> {
++) -> Result<Option<(Range<usize>, &'static str)>, ()> {
+     use ast_grep_core::AstGrep;
+     use ast_grep_language::SupportLang;
+ 
+@@ -436,68 +479,181 @@ pub(crate) fn unsafe_trash_span(
+         let words: Vec<&str> = std::iter::once(raw_name)
+             .chain(args.filter_map(|arg| source.get(arg.range())))
+             .collect();
+-        if unsafe_trash_argv(&words, cwd) {
+-            return Ok(Some(invocation.range()));
++        if let Some(rule) = unsafe_trash_argv(&words, cwd) {
++            return Ok(Some((invocation.range(), rule)));
+         }
      }
-     matches.sort_by_key(|hit| hit.start);
-     Ok(matches)
-@@ -1947,9 +1960,10 @@ fn protected_matches(
-     if !credential_files::source_scan_required(code, language) {
-         return Ok(Vec::new());
-     }
--    if code.len() > 256 * 1024 {
--        return Err(MatchError::ParseError {
-+    if code.len() > credential_files::MAX_PROTECTED_SOURCE_BYTES {
-+        return Err(MatchError::AnalysisIncomplete {
-             language,
-+            stage: "protected_write_analysis",
-             detail: "protected-write source exceeds the byte limit".into(),
-         });
-     }
-@@ -1976,9 +1990,18 @@ fn protected_matches(
-             detail: format!("could not start protected-write analysis: {error}"),
-         })?;
-     let hits = match receiver.recv_timeout(budget) {
--        Ok(result) => result.map_err(|detail| MatchError::ParseError {
--            language,
--            detail: detail.to_string(),
-+        Ok(result) => result.map_err(|error| match error {
-+            credential_files::SourceScanError::Syntax(detail) => MatchError::ParseError {
-+                language,
-+                detail: detail.to_owned(),
-+            },
-+            credential_files::SourceScanError::Incomplete(detail) => {
-+                MatchError::AnalysisIncomplete {
-+                    language,
-+                    stage: "protected_write_analysis",
-+                    detail: detail.to_owned(),
+     Ok(None)
+ }
+ 
+-fn unsafe_trash_argv(words: &[&str], cwd: Option<&Path>) -> bool {
+-    use super::trash_target::{unsafe_rimraf_glob_operand, unsafe_trash_operand};
++fn unsafe_trash_argv(words: &[&str], cwd: Option<&Path>) -> Option<&'static str> {
++    use super::trash_target::unsafe_trash_operand;
+     use crate::normalize::decode_posix_literal_word;
+ 
+-    let Some((&name, args)) = words.split_first() else {
+-        return false;
+-    };
+-    let Some(name) = decode_posix_literal_word(name) else {
+-        return false;
+-    };
+-    match name.rsplit('/').next() {
+-        Some("trash" | "trash-put") => args.iter().any(|word| unsafe_trash_operand(word, cwd)),
+-        Some("rimraf") => {
+-            let glob = args
+-                .iter()
+-                .map(|word| decode_posix_literal_word(word))
+-                .take_while(|word| word.as_deref() != Some("--"))
+-                .any(|word| matches!(word.as_deref(), Some("--glob" | "-g")));
+-            args.iter().any(|word| {
+-                if glob {
+-                    unsafe_rimraf_glob_operand(word, cwd)
+-                } else {
+-                    unsafe_trash_operand(word, cwd)
+-                }
++    let (&name, args) = words.split_first()?;
++    let name = decode_posix_literal_word(name)?;
++    let program = name.rsplit('/').next().unwrap_or_default();
++    match program {
++        "trash" | "trash-put" => args
++            .iter()
++            .any(|word| unsafe_trash_operand(word, cwd))
++            .then_some(TRASH_TARGET_RULE),
++        "rimraf" => rimraf_argv_rule(args, cwd),
++        "gio" => args
++            .split_first()
++            .is_some_and(|(operation, operands)| {
++                decode_posix_literal_word(operation).as_deref() == Some("trash")
++                    && operands.iter().any(|word| unsafe_trash_operand(word, cwd))
+             })
+-        }
+-        Some("gio") => args.split_first().is_some_and(|(operation, operands)| {
+-  
+```
+
+**File**: `src/packs/core/trash_target.rs` (modified, +26/-0)
+```diff
+@@ -18,6 +18,32 @@ pub(super) fn unsafe_rimraf_glob_operand(raw: &str, cwd: Option<&Path>) -> bool
+     unsafe_operand_in(raw, cwd, crate::config::home_dir().as_deref(), true)
+ }
+ 
++/// rimraf deletes recursively and permanently, so it earns `rm -rf`'s temp
++/// exemption and nothing wider (#675): a literal path below `/tmp`,
++/// `/var/tmp` or their macOS `/private` forms (or a literal Windows user temp
++/// subpath), with a real component under the temp root and no `..`. A simple
++/// glob in the last component is accepted, as it is for `rm -rf /tmp/x/*`.
++pub(super) fn rimraf_operand_is_literal_temp(raw: &str) -> bool {
++    use super::filesystem::{
++        LITERAL_TEMP_PREFIXES, has_dotdot_segment, temp_path_suffix_has_real_component,
++        windows_literal_user_temp_subpath,
++    };
++
++    let Some((path, _)) = decode_target(raw) else {
++        return false;
++    };
++    if path.contains(['\0', '\\']) {
++        return false;
++    }
++    LITERAL_TEMP_PREFIXES
++        .iter()
++        .find_map(|prefix| path.strip_prefix(prefix))
++        .is_some_and(|suffix| {
++            temp_path_suffix_has_real_component(suffix) && !has_dotdot_segment(suffix)
++        })
++        || windows_literal_user_temp_subpath(&path)
++}
++
+ fn unsafe_operand_in(
+     raw: &str,
+     cwd: Option<&Path>,
+```
+
+**File**: `src/packs/mod.rs` (modified, +9/-4)
+```diff
+@@ -852,10 +852,15 @@ impl Pack {
+     /// Returns the matched pattern's reason, name, severity, and explanation if found.
+     #[must_use]
+     pub fn matches_destructive(&self, cmd: &str) -> Option<DestructiveMatch> {
+-        if self.id == "core.filesystem"
+-            && !matches!(core::filesystem::unsafe_trash_span(cmd, None), Ok(None))
+-        {
+-            return self.destructive_match_by_name(core::filesystem::TRASH_TARGET_RULE, cmd);
++        if self.id == "core.filesystem" {
++            match core::filesystem::unsafe_trash_span(cmd, None) {
++                Ok(None) => {}
++                Ok(Some((_, rule))) => return self.destructive_match_by_name(rule, cmd),
++                Err(()) => {
++                    return self
++                        .destructive_match_by_name(core::filesystem::TRASH_TARGET_RULE, cmd);
 +                }
 +            }
-         })?,
-         Err(mpsc::RecvTimeoutError::Timeout) => {
-             return Err(MatchError::Timeout {
-@@ -3479,13 +3502,46 @@ mod tests {
- 
-     #[test]
-     fn protected_write_limits_report_incomplete_analysis() {
--        let oversized = format!("# open\n{}", " ".repeat(256 * 1024));
-+        let oversized = format!(
-+            "# open\n{}",
-+            " ".repeat(credential_files::MAX_PROTECTED_SOURCE_BYTES)
-+        );
-         assert!(matches!(
-             DEFAULT_MATCHER.find_matches(&oversized, ScriptLanguage::Python),
--            Err(MatchError::ParseError { .. })
-+            Err(MatchError::AnalysisIncomplete {
-+                stage: "protected_write_analysis",
-+                ..
-+            })
-         ));
-     }
- 
-+    #[test]
-+    fn a_known_finding_and_an_incomplete_scan_both_survive_composition() {
-+        let language = ScriptLanguage::Python;
-+        let hits = protected_matches("open('.git/config', 'w')", language, Duration::from_secs(5))
-+            .expect("a literal destination is decidable");
-+        assert!(hits.iter().any(|hit| hit.severity.blocks_by_default()));
-+        for (protected_failed, stage) in [
-+            (true, "protected_write_analysis"),
-+            (false, "python_deletion_bindings"),
-+        ] {
-+            let scope = crate::packs::regex_engine::RegexEvaluationScope::enter();
-+            let incomplete = Err(MatchError::AnalysisIncomplete {
-+                language,
-+                stage,
-+                detail: "traversal limit".into(),
-+            });
-+            let known = Ok(hits.clone());
-+            let combined = if protected_failed {
-+                compose_policy_matches(known, incomplete)
-+            } else {
-+                compose_policy_matches(incomplete, known)
-+            };
-+            assert_eq!(combined.expect("independent finding"), hits);
-+            assert_eq!(scope.incomplete_stage(), Some(stage));
-+        }
-+    }
-+
-     mod interpreter_literal_budget_regressions_560 {
-         use super::*;
- 
+         }
+         if self.id == "careful_company_running_windows.guardrails"
+             && crate::packs::careful_company_running_windows::guardrails::authorization_store_write_span(
 ```
 
-**File**: `src/packs/core/credential_files.rs` (modified, +3/-1)
+**File**: `src/suggestions.rs` (modified, +22/-0)
 ```diff
-@@ -8,7 +8,9 @@ mod embedded;
- mod shell;
- mod word_splitting;
- 
--pub(crate) use embedded::{scan_extracted, source_scan_required};
-+pub(crate) use embedded::{
-+    MAX_BYTES as MAX_PROTECTED_SOURCE_BYTES, SourceScanError, scan_extracted, source_scan_required,
-+};
- // Rule NAMES are deliberately not re-exported: every hit carries the
- // rule it denies under, so the evaluator reads `hit.rule` instead of choosing
- // one. That is what keeps `.git/` writes allowlistable separately from
-```
-
-**File**: `src/packs/core/credential_files/embedded.rs` (modified, +21/-7)
-```diff
-@@ -25,14 +25,22 @@ type Syntax<'a> = Node<'a, StrDoc<SupportLang>>;
- 
- // Bound direct library calls as well as the hook. An exhausted source walk
- // must report incomplete analysis, not a successful empty match set.
--const MAX_BYTES: usize = 256 * 1024;
-+pub(crate) const MAX_BYTES: usize = 256 * 1024;
- const MAX_DEPTH: usize = 128;
- const MAX_NODES: usize = 40_000;
- // A small source can repeatedly double a bound string. Bound folded values
- // separately from input bytes so path construction cannot amplify it without
- // limit. This is an analysis bound, not a query of the host filesystem.
- const MAX_STATIC_PATH_BYTES: usize = 4096;
- 
-+/// A grammar error can use parse-error fallback. A valid program whose
-+/// writes we could not inspect must remain unverified.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub(crate) enum SourceScanError {
-+    Syntax(&'static str),
-+    Incomplete(&'static str),
-+}
-+
- #[derive(Clone, Copy, Debug, PartialEq, Eq)]
- enum Language {
-     Python,
-@@ -111,7 +119,7 @@ fn source_has_sink_name(code: &str) -> bool {
- pub(crate) fn scan_extracted(
-     code: &str,
-     language: ScriptLanguage,
--) -> Result<Vec<CredentialFileWrite>, &'static str> {
-+) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
-     if !source_scan_required(code, language) {
-         return Ok(Vec::new());
-     }
-@@ -649,9 +657,11 @@ fn scan_source(
-     code: &str,
-     language: Language,
-     grammar: SupportLang,
--) -> Result<Vec<CredentialFileWrite>, &'static str> {
-+) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
-     if code.len() > MAX_BYTES {
--        return Err("protected-write source exceeds the byte limit");
-+        return Err(SourceScanError::Incomplete(
-+            "protected-write source exceeds the byte limit",
-+        ));
-     }
-     let ast = AstGrep::new(code, grammar);
-     let mut bindings = Bindings::new();
-@@ -698,14 +708,18 @@ fn visit(
-     depth: usize,
-     remaining_nodes: &mut usize,
-     hits: &mut Vec<CredentialFileWrite>,
--) -> Result<(), &'static str> {
-+) -> Result<(), SourceScanError> {
-     if depth > MAX_DEPTH || *remaining_nodes == 0 {
--        return Err("protected-write source exceeds the AST traversal limit");
-+        return Err(SourceScanError::Incomplete(
-+            "protected-write source exceeds the AST traversal limit",
-+        ));
-     }
-     *remaining_nodes -= 1;
-     let kind = node.kind();
-     if kind == "ERROR" {
--        return Err("protected-write source contains a syntax error");
-+        return Err(SourceScanError::Syntax(
-+            "protected-write source contains a syntax error",
-+        ));
-     }
-     if matches!(
-         kind.as_ref(),
-```
-
-**File**: `src/packs/core/credential_files/embedded/go.rs` (modified, +13/-7)
-```diff
-@@ -16,7 +16,7 @@
- 
- use super::{
-     Access, AstGrep, CredentialFileWrite, MAX_BYTES, MAX_DEPTH, MAX_NODES, MAX_STATIC_PATH_BYTES,
--    ResolvedPath, SupportLang, Syntax, record_write,
-+    ResolvedPath, SourceScanError, SupportLang, Syntax, record_write,
- };
- use std::collections::HashMap;
- 
-@@ -84,9 +84,11 @@ pub(super) fn has_sink_name(code: &str) -> bool {
-     .any(|word| code.contains(word))
- }
- 
--pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str> {
-+pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
-     if code.len() > MAX_BYTES {
--        return Err("protected-write Go source exceeds the byte limit");
-+        return Err(SourceScanError::Incomplete(
-+            "protected-write Go source exceeds the byte limit",
-+        ));
-     }
-     let ast = AstGrep::new(code, SupportLang::Go);
-     let mut hits = Vec::new();
-@@ -101,14 +103,18 @@ fn visit(
-     depth: usize,
-     remaining: &mut usize,
-     hits: &mut Vec<CredentialFileWrite>,
--) -> Result<(), &'static str> {
-+) -> Result<(), SourceScanError> {
-     if depth > MAX_DEPTH || *remaining == 0 || state.values.len() > 1024 {
--        return Err("protected-write Go source exceeds the traversal limit");
-+        return Err(SourceScanError::Incomplete(
-+            "protected-write Go source exceeds the traversal limit",
-+        ));
-     }
-     *remaining -= 1;
-     let kind = node.kind();
-     if kind == "ERROR" {
--        return Err("protected-write Go source contains a syntax error");
-+        return Err(SourceScanError::Syntax(
-+            "protected-write Go source contains a syntax error",
-+        ));
-     }
- 
-     if kind == "import_spec" {
-@@ -194,7 +200,7 @@ fn assign(
-     depth: usize,
-     remaining: &mut usize,
-     hits: &mut Vec<CredentialFileWrite>,
--) -> Result<(), &'static str> {
-+) -> Result<(), SourceScanError> {
-     let names: Vec<String> = node
-         .field("left")
-         .or_else(|| node.field("name"))
-```
-
-**File**: `src/packs/core/credential_files/embedded/go/tests.rs` (modified, +19/-1)
-```diff
-@@ -12,7 +12,7 @@ fn rule(body: &str) -> Option<String> {
-     let source = format!(
-         "package main\n\nimport (\n\t\"os\"\n\t\"path/filepath\"\n)\n\nfunc main() {{\n{body}\n}}\n"
+@@ -1020,6 +1020,27 @@ fn register_core_filesystem_suggestions(m: &mut HashMap<&'static str, Vec<Sugges
+         ],
      );
--    let hits = scan(&source).unwrap_or_else(|error| panic!("{body} should scan: {error}"));
-+    let hits = scan(&source).unwrap_or_else(|error| panic!("{body} should scan: {error:?}"));
-     hits.first().map(|hit| hit.rule.to_string())
- }
  
-@@ -27,6 +27,24 @@ fn allows(body: &str) {
-     assert_eq!(rule(body), None, "expected no hit for:\n{body}");
- }
- 
-+#[test]
-+fn distinguishes_go_scan_limits_from_syntax_errors() {
-+    allows("println(1)");
-+    let nested = format!(
-+        "package main\nfunc main() {{ println({}1{}) }}",
-+        "(".repeat(MAX_DEPTH),
-+        ")".repeat(MAX_DEPTH)
++    // rimraf is a permanent recursive delete (#675); the Trash keeps it
++    // recoverable, and a literal temp path is allowed as for `rm -rf`.
++    m.insert(
++        "core.filesystem:rimraf-general",
++        vec![
++            Suggestion::new(
++                SuggestionKind::PreviewFirst,
++                "List what rimraf would remove before asking for approval",
++            )
++            .with_command("ls -la ./build"),
++            Suggestion::new(
++                SuggestionKind::SaferAlternative,
++                "Move the reviewed directory to the Trash instead, for example `trash-put ./build` on Linux (trash-cli) or `mv ./build ~/.Trash/` on macOS",
++            ),
++            Suggestion::new(
++                SuggestionKind::SaferAlternative,
++                "Keep disposable output under a literal temp path, where `rimraf /tmp/task/out` is allowed",
++            ),
++        ],
 +    );
-+    let oversized = format!("package main\n//{}", "x".repeat(MAX_BYTES));
-+    for source in [nested, oversized] {
-+        assert!(matches!(scan(&source), Err(SourceScanError::Incomplete(_))));
-+    }
-+    assert!(matches!(
-+        scan("package main\n???"),
-+        Err(SourceScanError::Syntax(_))
-+    ));
-+}
 +
- /// The four operations from the report's cross-language table, which were
- /// ALLOW in Go while shell, Python, Ruby and Node all denied them.
- #[test]
+     // The command word is assembled at runtime. Do not guess a platform or
+     // repeat the unverified delete; make the executable and target reviewable.
+     m.insert(
+@@ -2420,6 +2441,7 @@ mod tests {
+             "core.filesystem:rm-bare-glob",
+             "core.filesystem:rm-bare-glob-root",
+             "core.filesystem:trash-unsafe-target",
++            "core.filesystem:rimraf-general",
+             "core.filesystem:find-delete-root-home",
+             "core.filesystem:find-delete-general",
+             "core.filesystem:unlink-root-home",
 ```
 
-**File**: `src/packs/core/credential_files/embedded/perl.rs` (modified, +68/-37)
+**File**: `tests/test_command.rs` (modified, +41/-1)
 ```diff
-@@ -6,9 +6,10 @@
- 
- use super::{
-     Access, Bindings, CredentialFileWrite, MAX_BYTES, MAX_DEPTH, MAX_NODES, MAX_STATIC_PATH_BYTES,
--    OpenFlags, ResolvedPath, Value, combine_open_flags, concatenate_text, record_write,
--    resolved_path,
-+    OpenFlags, ResolvedPath, SourceScanError, Value, combine_open_flags, concatenate_text,
-+    record_write, resolved_path,
- };
-+use SourceScanError::{Incomplete, Syntax};
- use regex::Regex;
- use std::cell::Cell;
- use std::collections::{HashMap, HashSet};
-@@ -51,18 +52,20 @@ struct State {
- /// Bound total token visits as well as source size and nesting. Otherwise
- /// overlapping argument scans could keep a quadratic worker alive after the
- /// caller's wall-clock deadline has expired.
--fn charge(work: &Cell<usize>) -> Result<(), &'static str> {
-+fn charge(work: &Cell<usize>) -> Result<(), SourceScanError> {
-     let left = work
-         .get()
-         .checked_sub(1)
--        .ok_or("protected-write Perl exceeds the work limit")?;
-+        .ok_or(Incomplete("protected-write Perl exceeds the work limit"))?;
-     work.set(left);
-     Ok(())
- }
- 
--pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str> {
-+pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
-     if code.len() > MAX_BYTES {
--        return Err("protected-write Perl source exceeds the byte limit");
-+        return Err(Incomplete(
-+            "protected-write Perl source exceeds the byte limit",
-+        ));
-     }
-     let tokens = lex(code)?;
-     let mut state = State {
-@@ -94,7 +97,9 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
-             }
-         }
-         if state.values.len() + state.handles.len() > 1024 || pending.len() > MAX_DEPTH {
--            return Err("protected-write Perl source exceeds the binding limit");
-+            return Err(Incomplete(
-+                "protected-write Perl source exceeds the binding limit",
-+            ));
-         }
-         let token = &tokens[index];
-         if matches!(token.text, "use" | "require")
-@@ -284,13 +289,15 @@ fn handle_name<'a>(tokens: &[Token<'a>]) -> Option<&'a str> {
-     matches!(token.kind, Kind::Variable | Kind::Word).then_some(token.text)
- }
- 
--fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
-+fn lex(code: &str) -> Result<Vec<Token<'_>>, SourceScanError> {
-     let mut tokens: Vec<Token<'_>> = Vec::new();
-     let mut heredocs = Vec::new();
-     let mut offset = 0;
-     while offset < code.len() {
-         if tokens.len() >= MAX_NODES {
--            return Err("protected-write Perl source exceeds the token limit");
-+            return Err(Incomplete(
-+                "protected-write Perl source exceeds the token limit",
-+            ));
-         }
-         let rest = &code[offset..];
-         let line_start = offset == 0 || code.as_bytes()[offset - 1] == b'\n';
-@@ -317,7 +324,7 @@ fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
-             && crate::heredoc::is_literal_perl_print_heredoc(code, offset..end)
-         {
-             if heredocs.len() == MAX_DEPTH {
--                return Err("protected-write Perl exceeds the heredoc limit");
-+                return Err(Incomplete("protected-write Perl exceeds the heredoc limit"));
-             }
-             heredocs.push((label, indented));
-             tokens.push(Token {
-@@ -330,7 +337,7 @@ fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
-         }
-         let found = TOKEN
-             .find(rest)
--            .ok_or("protected-write Perl tokenization failed")?;
-+            .ok_or(Syntax("protected-write Perl tokenization failed"))?;
-         let raw = found.as_str();
-         let start = offset;
-         offset += raw.len();
-@@ -360,7 +367,7 @@ fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
-         let mut text = raw;
-         if matches!(kind, Kind::Quoted(_)) {
-             if raw.len() < 2 {
--                return Err("protected-write Perl has an unterminated quote");
-+                return Err(Syntax("protected-write Perl has an unterminated quote"));
-             }
-             text = &raw[1..raw.len() - 1];
-         } else if matches!(
-@@ -403,7 +410,7 @@ fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
-             kind = Kind::Opaque;
-         }
-         if matches!(raw, "'" | "\"") {
--            return Err("protected-write Perl has an unterminated quote");
-+            return Err(Syntax("protected-write Perl has an unterminated quote"));
-         }
-         tokens.push(Token {
-             text,
-@@ -412,15 +419,18 @@ fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
-         });
-     }
-     if !heredocs.is_empty() {
--        return Err("protected-write Perl has an unterminated heredoc");
-+        return Err(Syntax("protected-write Perl has an unterminated heredoc"));
-     }
-     Ok(tokens)
- }
- 
- /// Locate a Perl heredoc header. The caller skips its body ONLY for a proven
- /// literal print state
-```
-
-**File**: `src/packs/core/credential_files/embedded/php.rs` (modified, +23/-6)
-```diff
-@@ -5,7 +5,7 @@
- 
- use super::{
-     Access, AstGrep, CredentialFileWrite, MAX_BYTES, MAX_DEPTH, MAX_NODES, MAX_STATIC_PATH_BYTES,
--    ResolvedPath, SupportLang, Syntax, record_write,
-+    ResolvedPath, SourceScanError, SupportLang, Syntax, record_write,
- };
- use std::collections::HashMap;
- 
-@@ -62,9 +62,11 @@ pub(super) fn has_sink_name(code: &str) -> bool {
-     })
- }
- 
--pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str> {
-+pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
-     if code.len() > MAX_BYTES {
--        return Err("protected-write PHP source exceeds the byte limit");
-+        return Err(SourceScanError::Incomplete(
-+            "protected-write PHP source exceeds the byte limit",
-+        ));
-     }
-     // -r has no opening tag; stdin programs normally do. Keep findings in
-     // original-source coordinates rather than exposing the synthetic prefix.
-@@ -97,14 +99,18 @@ fn visit(
-     depth: usize,
-     remaining: &mut usize,
-     hits: &mut Vec<CredentialFileWrite>,
--) -> Result<(), &'static str> {
-+) -> Result<(), SourceScanError> {
-     if depth > MAX_DEPTH || *remaining == 0 || state.values.len() > 1024 {
--        return Err("protected-write PHP source exceeds the traversal limit");
-+        return Err(SourceScanError::Incomplete(
-+            "protected-write PHP source exceeds the traversal limit",
-+        ));
-     }
-     *remaining -= 1;
-     let kind = node.kind();
-     if kind == "ERROR" {
--        return Err("protected-write PHP source contains a syntax error");
-+        return Err(SourceScanError::Syntax(
-+            "protected-write PHP source contains a syntax error",
-+        ));
-     }
-     if kind == "namespace_definition" {
-         if let Some(body) = node.field("body") {
-@@ -538,6 +544,17 @@ mod tests {
-         assert!(scan(code).expect(code).is_empty(), "{code}");
-     }
- 
-+    #[test]
-+    fn distinguishes_php_scan_limits_from_syntax_errors() {
-+        allowed("echo 1;");
-+        let nested = format!("echo {}1{};", "(".repeat(MAX_DEPTH), ")".repeat(MAX_DEPTH));
-+        let oversized = format!("//{}", "x".repeat(MAX_BYTES));
-+        for source in [nested, oversized] {
-+            assert!(matches!(scan(&source), Err(SourceScanError::Incomplete(_))));
-+        }
-+        assert!(matches!(scan("echo ];"), Err(SourceScanError::Syntax(_))));
-+    }
-+
-     #[test]
-     fn php_global_sinks_modes_and_case() {
-         for mode in ["w", "w+", "a", "a+", "r+", "x", "c", "c+b", "wbe"] {
-```
-
-**File**: `tests/profile_hook.rs` (modified, +20/-14)
-```diff
-@@ -344,14 +344,23 @@ fn python_local_call_results_reach_the_hook_without_spurious_deadlines_673() {
- }
- 
- #[test]
--fn python_deletion_binding_traversal_limit_keeps_a_valid_body_unverified() {
--    // Both programs only add integers. The deeper expression exceeds the
--    // deletion-binding walk's structural limit even with time left to run.
--    for (terms, complete) in [(4, true), (160, false)] {
-+fn python_traversal_limits_keep_a_valid_body_unverified() {
-+    // The deeper sum exceeds the selected walk's structural limit even
-+    // with time left on the clock. The shallow sum can be checked in full.
-+    let deletion_docs = "import shutil\n# See the rmtree documentation.";
-+    let file_read = "text = open('notes.txt').read()";
-+    for (preamble, terms, incomplete) in [
-+        (deletion_docs, 4, None),
-+        (
-+            deletion_docs,
-+            160,
-+            Some("incomplete: python_deletion_bindings"),
-+        ),
-+        (file_read, 4, None),
-+        (file_read, 160, Some("incomplete: protected_write_analysis")),
-+    ] {
-         let sum = vec!["1"; terms].join("+");
--        let command = format!(
--            "python3 - <<'PY'\nimport shutil\n# See the rmtree documentation.\nvalue = {sum}\nPY"
--        );
-+        let command = format!("python3 - <<'PY'\n{preamble}\nvalue = {sum}\nPY");
-         let output = run_hook_with_env(
-             &payload(&command),
-             None,
-@@ -363,19 +372,16 @@ fn python_deletion_binding_traversal_limit_keeps_a_valid_body_unverified() {
-             ],
-         );
-         assert!(output.status.success(), "{output:?}");
--        if complete {
--            assert!(output.stdout.is_empty(), "{output:?}");
--        } else {
-+        if let Some(incomplete) = incomplete {
-             let wire: serde_json::Value =
-                 serde_json::from_slice(&output.stdout).expect("incomplete hook verdict");
-             let result = &wire["hookSpecificOutput"];
-             assert_eq!(result["permissionDecision"], "ask", "{wire}");
-             let reason = result["permissionDecisionReason"].as_str().unwrap();
--            assert!(
--                reason.contains("incomplete: python_deletion_bindings"),
--                "{reason}"
--            );
-+            assert!(reason.contains(incomplete), "{reason}");
-             assert!(!reason.contains("hook_timeout_ms"), "{reason}");
-+        } else {
-+            assert!(output.stdout.is_empty(), "{output:?}");
-         }
+@@ -158,7 +158,7 @@ fn trash_operand_decisions_agree_with_the_hook() {
+         ("trash /tmp/pr-prov/render", "allow"),
+         ("trash-put ./build .env ../sibling/build", "allow"),
+         ("gio trash -- 'build outputs'", "allow"),
+-        ("rimraf a b", "allow"),
++        ("rimraf a b", "deny"),
+         ("mv ./build ~/.Trash/", "allow"),
+         ("gio info .", "allow"),
+         ("trash-put '$OUT'", "allow"),
+@@ -169,6 +169,46 @@ fn trash_operand_decisions_agree_with_the_hook() {
      }
  }
-```
-
----
-
-### Incident Patch 2: `48b1d5a9` (2026-11-26)
-**Commit Message**: fix(analyzer): keep exhausted AST work unverified [skip ci]
-
-Report the direct parser byte ceiling and the Python deletion-binding traversal limit as structural failures. The evaluator can now retain the failed stage and avoid a retry even when the hook deadline has time left.
-
-Exercise both sides of the traversal limit through the real PreToolUse hook.
-
-**File**: `src/ast_pattern_engine.rs` (modified, +25/-14)
-```diff
-@@ -172,8 +172,8 @@ pub enum MatchError {
-         language: ScriptLanguage,
-         detail: String,
-     },
--    /// The code parsed, but a semantic analysis could not resolve it within
--    /// its structural limits. Retrying with a longer timeout cannot help.
-+    /// A structural limit or unresolved value prevented a complete analysis.
-+    /// Retrying with a longer timeout cannot help.
-     AnalysisIncomplete {
-         language: ScriptLanguage,
-         /// Stable operation name used in incomplete-analysis diagnostics.
-@@ -453,9 +453,16 @@ impl AstMatcher {
-             return Ok(Vec::new());
-         }
  
--        if timeout.is_zero() || code.len() > MAX_AST_INPUT_BYTES {
-+        if timeout.is_zero() {
-             return Err(timeout_error(start_time, budget_ms));
-         }
-+        if code.len() > MAX_AST_INPUT_BYTES {
-+            return Err(MatchError::AnalysisIncomplete {
-+                language,
-+                stage: "ast_input_size",
-+                detail: format!("source exceeds the {MAX_AST_INPUT_BYTES}-byte AST input limit"),
-+            });
-+        }
- 
-         run_ast_match_with_timeout(
-             code.to_string(),
-@@ -2000,8 +2007,9 @@ impl PythonDeleteScan<'_> {
-     fn check(&mut self, depth: usize) -> Result<(), MatchError> {
-         check_ast_timeout(self.start_time, self.timeout, self.budget_ms, self.cancel)?;
-         if depth > MAX_PYTHON_DELETE_DEPTH || self.remaining_nodes == 0 {
--            return Err(MatchError::ParseError {
-+            return Err(MatchError::AnalysisIncomplete {
-                 language: ScriptLanguage::Python,
-+                stage: "python_deletion_bindings",
-                 detail: "Python deletion binding analysis exceeds its traversal limit".to_string(),
-             });
-         }
-@@ -8437,21 +8445,24 @@ mod tests {
-     }
- 
-     #[test]
--    fn oversized_input_fails_open_without_ast_parse() {
-+    fn oversized_input_reports_the_byte_limit_without_ast_parse() {
-         let ast_matcher = AstMatcher::new().with_timeout(Duration::from_secs(10));
-         let code = "x = 1\n".repeat((MAX_AST_INPUT_BYTES / 6) + 2);
-         assert!(code.len() > MAX_AST_INPUT_BYTES);
- 
-         let start = Instant::now();
--        let result = ast_matcher.find_matches(&code, ScriptLanguage::Python);
--
--        assert!(
--            matches!(result, Err(MatchError::Timeout { .. })),
--            "oversized direct matcher input should fail open on the budget guard"
--        );
--        // As above, the matches!(Err(Timeout)) check is the real guard; this
--        // generous timing bound only documents the early return and avoids
--        // load-induced flakes.
-+        let error = ast_matcher
-+            .find_matches(&code, ScriptLanguage::Python)
-+            .expect_err("oversized source cannot be fully analyzed");
-+        assert!(!error.is_transient());
-+        assert!(matches!(
-+            error,
-+            MatchError::AnalysisIncomplete {
-+                language: ScriptLanguage::Python,
-+                stage: "ast_input_size",
-+                ..
-+            }
-+        ));
-         assert!(
-             start.elapsed() < Duration::from_secs(2),
-             "oversized input should not enter ast-grep parsing"
-```
-
-**File**: `tests/profile_hook.rs` (modified, +37/-0)
-```diff
-@@ -342,3 +342,40 @@ fn python_local_call_results_reach_the_hook_without_spurious_deadlines_673() {
-         }
-     }
- }
-+
++/// #675: rimraf deletes permanently, so outside a literal temp directory it
++/// is reviewed like `rm -rf`, also when npx, npm exec, pnpm, yarn or bun
++/// starts it. Candidates are passed as arguments or JSON data; none runs.
 +#[test]
-+fn python_deletion_binding_traversal_limit_keeps_a_valid_body_unverified() {
-+    // Both programs only add integers. The deeper expression exceeds the
-+    // deletion-binding walk's structural limit even with time left to run.
-+    for (terms, complete) in [(4, true), (160, false)] {
-+        let sum = vec!["1"; terms].join("+");
-+        let command = format!(
-+            "python3 - <<'PY'\nimport shutil\n# See the rmtree documentation.\nvalue = {sum}\nPY"
-+        );
-+        let output = run_hook_with_env(
-+            &payload(&command),
++fn rimraf_decisions_agree_with_the_hook_675() {
++    for (command, expected) in [
++        ("rimraf dist", "deny"),
++        ("npx rimraf dist", "deny"),
++        ("npx --yes rimraf@5 ./build", "deny"),
++        ("npm exec -- rimraf node_modules", "deny"),
++        ("pnpm dlx rimraf dist", "deny"),
++        ("yarn rimraf dist", "deny"),
++        ("bunx rimraf dist", "deny"),
++        ("npx rimraf .", "deny"),
++        (r#"npx rimraf "$OUT""#, "deny"),
++        ("rimraf /tmp/task/out", "allow"),
++        ("npx rimraf /tmp/task/out", "allow"),
++        ("npm install -D rimraf", "allow"),
++        ("echo npx rimraf dist", "allow"),
++        ("trash-put ./build", "allow"),
++    ] {
++        assert_trash_decision(command, expected, None);
++    }
++    // Inside a shell -c script or a script heredoc the same argv is judged.
++    for command in [
++        "bash -c 'npx rimraf dist'",
++        "sh <<'EOF'\nnpx rimraf dist\nEOF",
++    ] {
++        let test = run_dcg_isolated(
++            &["test", "--dialect", "posix", "--format", "json", command],
 +            None,
-+            false,
-+            false,
-+            &[
-+                ("DCG_AST_TIMEOUT_MS", "5000"),
-+                ("DCG_HEREDOC_TIMEOUT_MS", "5000"),
-+            ],
 +        );
-+        assert!(output.status.success(), "{output:?}");
-+        if complete {
-+            assert!(output.stdout.is_empty(), "{output:?}");
-+        } else {
-+            let wire: serde_json::Value =
-+                serde_json::from_slice(&output.stdout).expect("incomplete hook verdict");
-+            let result = &wire["hookSpecificOutput"];
-+            assert_eq!(result["permissionDecision"], "ask", "{wire}");
-+            let reason = result["permissionDecisionReason"].as_str().unwrap();
-+            assert!(
-+                reason.contains("incomplete: python_deletion_bindings"),
-+                "{reason}"
-+            );
-+            assert!(!reason.contains("hook_timeout_ms"), "{reason}");
-+        }
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `8538d214` (2026-11-26)
-**Commit Message**: fix(python): distinguish documentation writes and string appends from shell code [skip ci]
-
-In isolated Python input, recognize a complete program that imports pathlib and writes literal prose to ordinary documentation filenames. Keep the destination and original source available to the protected-write and execution checks. Recognize += on proven text in programs whose output remains data.
-
-Cover the reported hook decisions, later consumers, protected paths, and unproven values.
-
-Fixes #664
-
-**File**: `src/ast_source_analysis.rs` (modified, +166/-2)
-```diff
-@@ -83,19 +83,86 @@ pub(crate) fn inert_documentation_literal_ranges_with_data_inspection(
-     let root = ast.root();
-     let mut proof = DocumentationProof::new(language, 128, 16_384);
-     proof.allow_data_inspection = allow_data_inspection;
--    if proof.expression(&root, 0).is_some() {
-+    if proof.proves_program(&root) {
-         if proof.may_write_files {
-             proof.literals
-         } else {
-             proof.data_literals
-         }
-+    } else if allow_data_inspection
-+        && language == ScriptLanguage::Python
-+        && let Some(ranges) = pathlib_document_write_payloads(&root)
-+    {
-+        ranges
-     } else if has_substitution_text {
-         inert_named_exec_literal_ranges(&root, code, language)
-     } else {
-         Vec::new()
-     }
- }
- 
-+/// An isolated Python program whose only operations are importing the standard
-+/// Path constructor and writing literal text to ordinary documentation files.
-+/// Return just the payloads. The destination and original source remain visible
-+/// to protected-write checks. A second consumer, rebinding or opaque call in
-+/// the program withdraws the proof for every write.
-+fn pathlib_document_write_payloads<D: ast_grep_core::Doc>(
-+    root: &ast_grep_core::Node<'_, D>,
-+) -> Option<Vec<std::ops::Range<usize>>> {
-+    let mut statements = root
-+        .children()
-+        .filter(|child| child.is_named() && child.kind().as_ref() != "comment");
-+    let import = statements.next()?;
-+    let constructor = match (import.kind().as_ref(), import.text().as_ref()) {
-+        ("import_statement", "import pathlib") => "pathlib.Path",
-+        ("import_from_statement", "from pathlib import Path") => "Path",
-+        _ => return None,
-+    };
-+    let mut ranges = Vec::new();
-+    for statement in statements {
-+        let call = literal_statement(statement)?;
-+        let method = call.field("function")?;
-+        let receiver = method.field("object")?;
-+        if call.kind().as_ref() != "call"
-+            || method.kind().as_ref() != "attribute"
-+            || method.field("attribute")?.text() != "write_text"
-+            || receiver.kind().as_ref() != "call"
-+            || receiver.field("function")?.text() != constructor
-+        {
-+            return None;
-+        }
-+        let destination = single_python_string_argument(&receiver)?;
-+        let filename = static_interpreter_literal(&destination, ScriptLanguage::Python, 0)?;
-+        // A general file can be an executable, startup file, or configuration.
-+        // A documentation suffix on a path in a hooks/config directory does not
-+        // establish this data role. Accept ordinary relative basenames only.
-+        let (stem, extension) = filename.rsplit_once('.')?;
-+        if !matches!(extension, "md" | "markdown" | "rst")
-+            || !stem.starts_with(|c: char| c.is_ascii_alphanumeric())
-+            || !stem
-+                .bytes()
-+                .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'_' | b'.' | b' '))
-+        {
-+            return None;
-+        }
-+        let payload = single_python_string_argument(&call)?;
-+        static_interpreter_literal(&payload, ScriptLanguage::Python, 0)?;
-+        ranges.push(payload.range());
-+    }
-+    (!ranges.is_empty()).then_some(ranges)
-+}
-+
-+fn single_python_string_argument<'a, D: ast_grep_core::Doc>(
-+    call: &ast_grep_core::Node<'a, D>,
-+) -> Option<ast_grep_core::Node<'a, D>> {
-+    let arguments = call.field("arguments")?;
-+    let mut args = arguments
-+        .children()
-+        .filter(|child| child.is_named() && child.kind().as_ref() != "comment");
-+    let only = args.next()?;
-+    (only.kind().as_ref() == "string" && args.next().is_none()).then_some(only)
-+}
-+
- /// The parse the documentation proof starts from: Python or JavaScript of at
- /// most 256 KiB, with no parser recovery in its first 4,096 nodes and no more
- /// nodes than that. Traversal and recursion are bounded independently of the
-@@ -147,6 +214,9 @@ struct DocumentationProof {
-     /// later executes it. The established proof treats every open this way;
-     /// the inspection extension can prove a Python file is read-only.
-     may_write_files: bool,
-+    /// A text append is an inspection operation only when the complete
-+    /// program keeps the result away from an unproved file destination.
-+    uses_text_append: bool,
-     remaining_steps: usize,
- }
- 
-@@ -160,6 +230,7 @@ impl DocumentationProof {
-             literals: Vec::new(),
-             data_literals: Vec::new(),
-             may_write_files: false,
-+            uses_text_append: false,
-             remaining_steps,
-         }
-     }
-@@ -171,6 +242,10 @@ impl DocumentationProof {
-         self.data_literals.push(range);
-     }
- 
-+    fn proves_program<D: ast_grep_core::Doc>(&mut self, root: &ast_grep_core::Node<'_, D>) -> bool {
-+        self.expression(root, 0).is_some() && !(self.uses_text_append && self.may_write_files)
-+    }
-+
-     fn expression<D: ast_grep_core::Doc>
-```
-
-**File**: `src/evaluator.rs` (modified, +15/-0)
-```diff
-@@ -48294,6 +48294,21 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn python_text_append_reaches_print_or_a_shell_consumer_664() {
-+        let body = "s = ''\ns += \"`git checkout -- <path>` is blocked\"\nprint(s)";
-+        for dialect in [ShellDialect::Posix, ShellDialect::Unknown] {
-+            for (output, decision) in [
-+                ("", EvaluationDecision::Allow),
-+                (" | sh", EvaluationDecision::Deny),
-+            ] {
-+                let command = format!("python3 - <<'PY'{output}\n{body}\nPY");
-+                let result = evaluate_with_pack_ids_in_dialect(&command, &["core.git"], dialect);
-+                assert_eq!(result.decision, decision, "{command}: {result:?}");
-+            }
-+        }
-+    }
-+
-     #[test]
-     fn careful_windows_preset_enforces_cmd_parity_across_policy_channels() {
-         let preset = ["careful_company_running_windows"];
-```
-
-**File**: `tests/regression_heredoc_masking.rs` (modified, +26/-0)
-```diff
-@@ -1300,6 +1300,32 @@ EOF";
-         }
-     }
- 
-+    #[test]
-+    fn issue_664_pathlib_document_payload_requires_an_isolated_write() {
-+        for (path, prose) in [
-+            ("NOTES.md", "git checkout -- <path> is blocked"),
-+            ("NOTES.md", "`git checkout -- <path>` is blocked"),
-+            ("RUNBOOK.rst", "`git reset --hard` is blocked"),
-+            ("NOTES.md", "`rm -rf ~/projects` is blocked"),
-+        ] {
-+            let command = format!(
-+                "python3 - <<'PY'\nimport pathlib\npathlib.Path('{path}').write_text('{prose}')\nPY"
-+            );
-+            let (decision, rule) = hook_decision(&command);
-+            assert_eq!(decision, "allow", "{command}: {rule}");
-+        }
-+        let write = "python3 - <<'PY'\nfrom pathlib import Path\nPath('NOTES.md').write_text('git reset --hard')\nPY";
-+        let (decision, rule) = hook_decision(&format!("{write}\nsh NOTES.md"));
-+        assert_eq!(decision, "deny");
-+        assert!(rule.contains("reset-hard"), "{rule}");
-+
-+        let (decision, rule) = hook_decision(
-+            "python3 - <<'PY'\nimport pathlib\npathlib.Path('.git/config').write_text('text')\nPY",
++        let verdict = parse_json(&test);
++        assert_eq!(
++            verdict["decision"], "deny",
++            "dcg test: {command}: {verdict}"
 +        );
-+        assert_eq!(decision, "deny");
-+        assert!(rule.contains("git-internals-write"), "{rule}");
 +    }
++}
 +
-     #[test]
-     fn issue_544_document_edits_keep_the_same_command_text_inert() {
-         for (program, body) in [
+ #[cfg(unix)]
+ #[test]
+ fn trash_absolute_target_uses_the_reported_working_directory() {
 ```
 
 #### Recent Merged Pull Requests:
@@ -3434,70 +3125,62 @@ Fixes #664
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. analyzer): preserve incomplete protected-write scans [skip ci]
+## X. install): recover ownerless install locks
 
 **RULE**:
-When implementing operations in `src/ast_source_analysis.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `install.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d93805fb`: analyzer): preserve incomplete protected-write scans [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4ca6898`: install): recover ownerless install locks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ast_source_analysis.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `install.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let (mut matches, error) = match (matches, protected) {
-        (Ok(mut matches), Ok(protected)) => {
-            matches.extend(protected);
-            (matches, None)
-        }
-        (Ok(matches), Err(error))
-        | (Err(error @ MatchError::AnalysisIncomplete { .. }), Ok(matches)) => {
-            (matches, Some(error))
-        }
-        (Err(error), _) => return Err(error),
-    };
-    if let Some(error) = error {
-        if !matches.iter().any(|hit| hit.severity.blocks_by_default()) {
-            return Err(error);
-        }
-        // Keep the other classifier's proven denial. If policy waives it,
-        // the unfinished scan still cannot establish a clean verdict.
-        if let MatchError::AnalysisIncomplete { stage, .. } = &error {
-            crate::packs::regex_engine::record_incomplete_analysis(stage, &error);
-        }
-    if code.len() > credential_files::MAX_PROTECTED_SOURCE_BYTES {
-        return Err(MatchError::AnalysisIncomplete {
-            stage: "protected_write_analysis",
-        Ok(result) => result.map_err(|error| match error {
-            credential_files::SourceScanError::Syntax(detail) => MatchError::ParseError {
-                language,
-      
+# Take the lock and record our pid. A pid that cannot be written (full disk or
+# spent quota) would leave an ownerless lock that blocks every later run, so
+# release it and stop instead.
+take_install_lock() {
+  mkdir "$LOCK_DIR" 2>/dev/null || return 1
+  if ! echo $$ > "$LOCK_DIR/pid" 2>/dev/null; then
+    rm -rf "$LOCK_DIR" 2>/dev/null || true
+    LOCKED=0
+    err "Could not write pid file to $LOCK_DIR (disk full or read-only?)"
+    exit 1
+  fi
+}
+if ! take_install_lock; then
+  # The existing lock is stale if its process is gone, or if it never recorded
+  # a pid (an interrupted or disk-full run) and is more than 10 minutes old.
+  OLD_PID=$(cat "$LOCK_DIR/pid" 2>/dev/null || echo "")
+  if { [ -n "$OLD_PID" ] && ! kill -0 "$OLD_PID" 2>/dev/null; } \
+    || { [ -z "$OLD_PID" ] && [ -n "$(find "$LOCK_DIR" -maxdepth 0 -mmin +10 2>/dev/null)" ]; }; then
+    rm -rf "$LOCK_DIR"
+    take_install_lock || true
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    let mut matches = matches?;
-    match protected {
-        Ok(protected) => matches.extend(protected),
-        // A new classifier's limit must not suppress a deletion/exec
-        // denial the existing engine has already established.
-        Err(_) if matches.iter().any(|hit| hit.severity.blocks_by_default()) => {}
-        Err(error) => return Err(error),
-    if code.len() > 256 * 1024 {
-        return Err(MatchError::ParseError {
-        Ok(result) => result.map_err(|detail| MatchError::ParseError {
-            language,
-            detail: detail.to_string(),
-        let oversized = format!("# open\n{}", " ".repeat(256 * 1024));
-            Err(MatchError::ParseError { .. })
+if mkdir "$LOCK_DIR" 2>/dev/null; then
+  echo $$ > "$LOCK_DIR/pid"
+else
+  # Check if existing lock is stale (process no longer running)
+  if [ -f "$LOCK_DIR/pid" ]; then
+    OLD_PID=$(cat "$LOCK_DIR/pid" 2>/dev/null || echo "")
+    if [ -n "$OLD_PID" ] && ! kill -0 "$OLD_PID" 2>/dev/null; then
+      rm -rf "$LOCK_DIR"
+      if mkdir "$LOCK_DIR" 2>/dev/null; then
+        LOCKED=1
+        echo $$ > "$LOCK_DIR/pid"
+      fi
+    fi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d93805fb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4ca6898` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

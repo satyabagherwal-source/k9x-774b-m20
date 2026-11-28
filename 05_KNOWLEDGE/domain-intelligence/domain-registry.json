@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T02:32:23.946Z",
+  "last_updated": "2026-11-28T02:41:33.724Z",
   "total_records": 2870,
   "domains": {
     "A": {
@@ -18740,8 +18740,8 @@
       "title": "Technical Construction Intelligence: genkit-ai/genkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-technical-construction-intelligence-genkit-ai-genkit-core-invar.md",
       "repository": "genkit-ai/genkit",
-      "content_hash": "f6834d1ff33c4f528b9155e297c393fd29dac6d16ec596bf40ee7d5a5b863e1e",
-      "created_at": "2026-11-27T07:22:05.810Z"
+      "content_hash": "3fdb013ebd0939b91c30c7f0249d470fa6e5eb57e7215d35b524f6278d0ef412",
+      "created_at": "2026-11-28T02:41:26.273Z"
     },
     "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants",
@@ -23301,8 +23301,8 @@
       "title": "Architecture Intelligence: Dicklesworthstone/destructive_command_guard Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dicklesworthstone-destructive_command_guard-architecture-intelligence-dickleswor.md",
       "repository": "Dicklesworthstone/destructive_command_guard",
-      "content_hash": "954d6400e2c6478c00df8f1283bed492b52972a4c494e4a181a0044daa81605a",
-      "created_at": "2026-11-26T02:18:35.462Z"
+      "content_hash": "627c9890d2a9d7d9220ecb4e9ff8d9e3bf6841017624be5b4f662dbccd84824b",
+      "created_at": "2026-11-28T02:41:15.434Z"
     },
     "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants",
@@ -23319,8 +23319,8 @@
       "title": "Architecture Intelligence: dicklesworthstone-destructive_command_guard-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dicklesworthstone-destructive_command_guard-learnings-architecture-intelligence-.md",
       "repository": "dicklesworthstone-destructive_command_guard-learnings",
-      "content_hash": "1324e74a55a2fbd4e8d1c9e6d44a82e3f9692d5d6319cbfa48b47a0308a19d93",
-      "created_at": "2026-11-26T02:18:46.418Z"
+      "content_hash": "011a301887f26ddae150ae5451303f94e224ba53a3fa618865ddb49bef175190",
+      "created_at": "2026-11-28T02:41:32.326Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-learnings-core-invariants",
@@ -33550,8 +33550,8 @@
       "title": "Technical Construction Intelligence: genkit-ai-genkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-learnings-technical-construction-intelligence-genkit-ai-genkit-.md",
       "repository": "genkit-ai-genkit-learnings",
-      "content_hash": "a0bcbb123c9d011c5a1737a246ef5040bcfd2e222293eb6a74d38c8119636f8c",
-      "created_at": "2026-11-27T07:22:11.288Z"
+      "content_hash": "36796d7afb5e75d5d850ac42d065b40319caae4443d573ead6d60ff8f6ddef0f",
+      "created_at": "2026-11-28T02:41:30.827Z"
     },
     "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants",
@@ -46817,8 +46817,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "43ea39156bb1d4aad96de338f61708a79d86f032bfd9142a43f5848394ca481b",
-      "created_at": "2026-11-28T01:26:59.124Z"
+      "content_hash": "e7c18f2fd76b890ae655f10403b1f4fd125af7890692925f487a989142c0c558",
+      "created_at": "2026-11-28T02:41:33.724Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

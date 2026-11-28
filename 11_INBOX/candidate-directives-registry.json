@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T02:32:22.300Z",
+  "last_updated": "2026-11-28T02:41:33.509Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-CLKS",
+      "id": "CD-0I81",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-CLKS-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0I81-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -74044,6 +74044,57 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6E779A-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-043W",
+      "directive_title": "recover ownerless install locks",
+      "source_repo": "Dicklesworthstone/destructive_command_guard",
+      "source_commit": "990d02a5",
+      "staged_file": "11_INBOX/candidate-directives/CD-043W-recover-ownerless-install-locks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-0FYX",
+      "directive_title": "js/plugins/compat-oai): add Mistral provider, send falsy config values and map H",
+      "source_repo": "genkit-ai-genkit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0FYX-js-plugins-compat-oai-add-mistral-provider-send-falsy-config-values-and-map-h.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-E19FE5",
+      "directive_title": "js/plugins/compat-oai): add Mistral provider, send falsy config values and map H",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "genkit-ai-genkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E19FE5-js-plugins-compat-oai-add-mistral-provid.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-0H58",
+      "directive_title": "install): recover ownerless install locks",
+      "source_repo": "dicklesworthstone-destructive_command_guard-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0H58-install-recover-ownerless-install-locks.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-FA716E",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FA716E-markdown-fix-image-syntax-for-unpreviewa.md",
       "staged_date": "2026-11-28"
     }
   ]

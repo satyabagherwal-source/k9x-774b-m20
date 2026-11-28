@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "049b39cf",
+    "sourceVersion": "6125d544",
     "license": "Apache-2.0",
-    "contentHash": "d5f12e4fd00f650a548feb7278e9a92cb8dcab3b651f9a30cb02fc8cd30305c5",
-    "lastHarvestedAt": "2026-11-27T07:22:05.366Z",
+    "contentHash": "74d7d2a5e34c1f484240bb6b6d183bca9d7088ee1b5a73484d380765440edafb",
+    "lastHarvestedAt": "2026-11-28T02:41:25.754Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "30d9cb34",
+    "sourceVersion": "990d02a5",
     "license": "NOASSERTION",
-    "contentHash": "94093094df3603011e1a5a4188e504e62b6e1b9b304f5322b34e74c999cf875b",
-    "lastHarvestedAt": "2026-11-27T02:49:38.627Z",
+    "contentHash": "6656ba8acc9cd54c8eb3417742c25fc94cb63205975f4c23f58fdb1f103b4c3d",
+    "lastHarvestedAt": "2026-11-28T02:41:14.957Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
