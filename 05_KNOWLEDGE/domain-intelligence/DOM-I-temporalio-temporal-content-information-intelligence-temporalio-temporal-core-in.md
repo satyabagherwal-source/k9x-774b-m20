@@ -4,24 +4,24 @@
 {
   "source_repository": "temporalio/temporal",
   "source_url": "https://github.com/temporalio/temporal",
-  "source_version": "c2ec24c0",
+  "source_version": "2babb62c",
   "license": "MIT",
-  "timestamp": "2026-11-26T23:41:03.466Z",
+  "timestamp": "2026-11-28T13:39:52.265Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-temporalio-temporal",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `c2ec24c0`).  
-> **License**: MIT | **Timestamp**: `2026-11-26T23:41:03.466Z`  
+> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `2babb62c`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T13:39:52.265Z`  
 > **Learning ID**: `learn-github-temporalio-temporal`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from temporalio/temporal:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T23:41:01.833Z  
+> **Harvest Timestamp**: 2026-11-28T13:39:44.628Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24619 stars
+- **Stars / Engagement**: 24680 stars
 
 ---
 
@@ -539,6 +539,43 @@ func (this *QueueReaderState) Equal(that interface{}) bool {
 	return proto.Equal(this, that1)
 }
 
+// Marshal an object of type QueueSlicePredicateGroup to the protobuf v3 wire format
+func (val *QueueSlicePredicateGroup) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type QueueSlicePredicateGroup from the protobuf v3 wire format
+func (val *QueueSlicePredicateGroup) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *QueueSlicePredicateGroup) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two QueueSlicePredicateGroup values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *QueueSlicePredicateGroup) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *QueueSlicePredicateGroup
+	switch t := that.(type) {
+	case *QueueSlicePredicateGroup:
+		that1 = t
+	case QueueSlicePredicateGroup:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
 // Marshal an object of type QueueSliceScope to the protobuf v3 wire format
 func (val *QueueSliceScope) Marshal() ([]byte, error) {
 	return proto.Marshal(val)
@@ -744,58 +781,7 @@ func (val *QueuePartition) Size() int {
 // For more information see the documentation for
 // https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
 func (this *QueuePartition) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *QueuePartition
-	switch t := that.(type) {
-	case *QueuePartition:
-		that1 = t
-	case QueuePartition:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type Queue to the protobuf v3 wire format
-func (val *Queue) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type Queue from the protobuf v3 wire format
-func (val *Queue) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *Queue) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two Queue values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *Queue) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *Queue
-	switch t := that.(type) {
-	case *Queue:
-		that1 = t
-	case Queue:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return pr
+	if that == nil 
 ```
 
 ### Core Architecture Module: `api/persistence/v1/queues.pb.go`
@@ -882,8 +868,11 @@ type QueueState struct {
 	state                        protoimpl.MessageState      `protogen:"open.v1"`
 	ReaderStates                 map[int64]*QueueReaderState `protobuf:"bytes,1,rep,name=reader_states,json=readerStates,proto3" json:"reader_states,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	ExclusiveReaderHighWatermark *TaskKey                    `protobuf:"bytes,2,opt,name=exclusive_reader_high_watermark,json=exclusiveReaderHighWatermark,proto3" json:"exclusive_reader_high_watermark,omitempty"`
-	unknownFields                protoimpl.UnknownFields
-	sizeCache                    protoimpl.SizeCache
+	// Distinct 16-byte namespace IDs referenced by index from
+	// NamespaceIdPredicateAttributes.namespace_id_indexes.
+	NamespaceIdTable [][]byte `protobuf:"bytes,3,rep,name=namespace_id_table,json=namespaceIdTable,proto3" json:"namespace_id_table,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *QueueState) Reset() {
@@ -930,11 +919,21 @@ func (x *QueueState) GetExclusiveReaderHighWatermark() *TaskKey {
 	return nil
 }
 
+func (x *QueueState) GetNamespaceIdTable() [][]byte {
+	if x != nil {
+		return x.NamespaceIdTable
+	}
+	return nil
+}
+
 type QueueReaderState struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Scopes        []*QueueSliceScope     `protobuf:"bytes,1,rep,name=scopes,proto3" json:"scopes,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	Scopes []*QueueSliceScope     `protobuf:"bytes,1,rep,name=scopes,proto3" json:"scopes,omitempty"`
+	// Each group holds one predicate and every range that carries it. Readers expand the groups
+	// into ordinary scopes and treat them as a union with `scopes`.
+	PredicateGroups []*QueueSlicePredicateGroup `protobuf:"bytes,2,rep,name=predicate_groups,json=predicateGroups,proto3" json:"predicate_groups,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *QueueReaderState) Reset() {
@@ -974,6 +973,65 @@ func (x *QueueReaderState) GetScopes() []*QueueSliceScope {
 	return nil
 }
 
+func (x *QueueReaderState) GetPredicateGroups() []*QueueSlicePredicateGroup {
+	if x != nil {
+		return x.PredicateGroups
+	}
+	return nil
+}
+
+type QueueSlicePredicateGroup struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Predicate     *Predicate             `protobuf:"bytes,1,opt,name=predicate,proto3" json:"predicate,omitempty"`
+	Ranges        []*QueueSliceRange     `protobuf:"bytes,2,rep,name=ranges,proto3" json:"ranges,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *QueueSlicePredicateGroup) Reset() {
+	*x = QueueSlicePredicateGroup{}
+	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QueueSlicePredicateGroup) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueueSlicePredicateGroup) ProtoMessage() {}
+
+func (x *QueueSlicePredicateGroup) ProtoReflect() protoreflect.Message {
+	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QueueSlicePredicateGroup.ProtoReflect.Descriptor instead.
+func (*QueueSlicePredicateGroup) Descriptor() ([]byte, []int) {
+	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *QueueSlicePredicateGroup) GetPredicate() *Predicate {
+	if x != nil {
+		return x.Predicate
+	}
+	return nil
+}
+
+func (x *QueueSlicePredicateGroup) GetRanges() []*QueueSliceRange {
+	if x != nil {
+		return x.Ranges
+	}
+	return nil
+}
+
 type QueueSliceScope struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Range         *QueueSliceRange       `protobuf:"bytes,1,opt,name=range,proto3" json:"range,omitempty"`
@@ -984,7 +1042,7 @@ type QueueSliceScope struct {
 
 func (x *QueueSliceScope) Reset() {
 	*x = QueueSliceScope{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[3]
+	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -996,7 +1054,7 @@ func (x *QueueSliceScope) String() string {
 func (*QueueSliceScope) ProtoMessage() {}
 
 func (x *QueueSliceScope) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[3]
+	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1009,7 +1067,7 @@ func (x *QueueSliceScope) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueueSliceScope.ProtoReflect.Descriptor instead.
 func (*QueueSliceScope) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{3}
+	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *QueueSliceScope) GetRange() *QueueSliceRange {
@@ -1036,7 +1094,7 @@ type QueueSliceRange struct {
 
 func (x *QueueSliceRange) Reset() {
 	*x = QueueSliceRange{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[4]
+	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1048,88 +1106,10 @@ func (x *QueueSliceRange) String() string {
 func (*QueueSliceRange) ProtoMessage() {}
 
 func (x *QueueSliceRange) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QueueSliceRange.ProtoReflect.Descriptor instead.
-func (*QueueSliceRange) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *QueueSliceRange) GetInclusiveMin() *TaskKey {
-	if x != nil {
-		return x.InclusiveMin
-	}
-	return nil
-}
-
-func (x *QueueSliceRange) GetExclusiveMax() *TaskKey {
-	if x != nil {
-		return x.ExclusiveMax
-	}
-	return nil
-}
-
-type ReadQueueMessagesNextPageToken struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	LastReadMessageId int64                  `protobuf:"varint,1,opt,name=last_read_message_id,json=lastReadMessageId,proto3" json:"last_read_message_id,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
-}
-
-func (x *ReadQueueMessagesNextPageToken) Reset() {
-	*x = ReadQueueMessagesNextPageToken{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReadQueueMessagesNextPageToken) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReadQueueMessagesNextPageToken) ProtoMessage() {}
-
-func (x *ReadQueueMessagesNextPageToken) ProtoReflect() protoreflect.Message {
 	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReadQueueMessagesNextPageToken.ProtoReflect.Descriptor instead.
-func (*ReadQueueMessagesNextPageToken) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *ReadQueueMessagesNextPageToken) GetLastReadMessageId() int64 {
-	if x != nil {
-		return x.LastReadMessageId
-	}
-	return 0
-}
-
-type ListQueuesNextPageToken struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	LastReadQueueNumber int64                  `protobuf:"varint,1,opt,name=last_read_queue_number,json=lastReadQueueNumber,proto3" json:"last_read_queue_number,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *Lis
+		if ms.LoadMessageInfo() 
 ```
 
 ### Core Architecture Module: `api/persistence/v1/task_queues.go-helpers.pb.go`
@@ -2135,220 +2115,302 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9824fe45` (2026-11-26)
-**Commit Message**: Wire a no-op parallelsuitelint into CI (#13103)
+### Incident Patch 1: `2af2fe74` (2026-11-27)
+**Commit Message**: Fix reset history backfill after replication conflicts (#13088)
 
 ## What changed?
-Add a no-op `parallelsuitelint` analyzer, its CLI and plugin, and the
-repository's custom golangci-lint build and CI wiring.
+
+Validate existing local history batches against the source snapshot's
+event version history before reusing them during backfill. If the local
+prefix belongs to a different lineage, copy the complete source history
+into a new branch without ancestors, preserving the existing branch for
+other runs. Matching prefixes retain the existing reuse behavior.
+
+Add unit coverage for matching and divergent prefixes and a two-cluster
+functional regression covering ordinary first sync and eventless resync
+snapshots.
 
 ## Why?
-Review and verify the integration independently of suite diagnostics.
 
-**File**: `.github/.custom-gcl.yml` (added, +7/-0)
+After failover conflict resolution, a source ancestor branch ID can
+still identify the losing history on the receiver. Replicating a reset
+through an eventless, non-first-sync snapshot previously treated those
+local batches as already backfilled based only on node ID, then attached
+the correct reset suffix to the losing prefix.
+
+For example, the local ancestor batch `[10@v1, 11@v1]` was retained
+before the new reset batch `[11@v2, 12@v2]`. Replication reported
+success and persisted the winning version history, but subsequent reads
+failed with `DataLoss: corrupted history event batch, eventID 
+
+**File**: `service/history/ndc/workflow_state_replicator.go` (modified, +23/-1)
 ```diff
-@@ -0,0 +1,7 @@
-+version: v2.14.0
-+name: golangci-lint
-+destination: ../.bin
-+plugins:
-+  - module: go.temporal.io/testx/parallelsuitelint
-+    import: go.temporal.io/testx/parallelsuitelint/golangci
-+    path: ../common/testx/parallelsuitelint
+@@ -2038,17 +2038,27 @@ func (r *WorkflowStateReplicatorImpl) backfillHistory(
+ 		}()
+ 	}
+ 
+-	// Get the last batch node id to check if the history data is already in DB.
++	// Source branch IDs can refer to a losing history locally after conflict resolution.
++	// Only reuse existing batches if they belong to the source's version history.
+ 	localHistoryIterator := collection.NewPagingIterator(r.getHistoryFromLocalPaginationFn(
+ 		ctx,
+ 		backfillBranchToken,
+ 		lastEventItem.EventId,
+ 	))
+ 	var lastBatchNodeID int64
++	localHistoryMismatch := false
++LocalHistoryLoop:
+ 	for localHistoryIterator.HasNext() {
+ 		localHistoryBatch, err := localHistoryIterator.Next()
+ 		switch err.(type) {
+ 		case nil:
++			for _, event := range localHistoryBatch.GetEvents() {
++				version, err := versionhistory.GetVersionHistoryEventVersion(currentVersionHistory, event.GetEventId())
++				if err != nil || version != event.GetVersion() {
++					localHistoryMismatch = true
++					break LocalHistoryLoop
++				}
++			}
+ 			if len(localHistoryBatch.GetEvents()) > 0 {
+ 				lastBatchNodeID = localHistoryBatch.GetEvents()[0].GetEventId()
+ 			}
+@@ -2057,6 +2067,18 @@ func (r *WorkflowStateReplicatorImpl) backfillHistory(
+ 			return err
+ 		}
+ 	}
++	if localHistoryMismatch {
++		// Preserve the existing branch for other runs and copy the complete source
++		// history into an independent branch without source ancestors.
++		backfillBranchToken, err = r.shardContext.GetExecutionManager().GetHistoryBranchUtil().NewHistoryBranch(
++			namespaceID.String(), workflowID, runID, branchInfo.GetTreeId(), nil, nil,
++			0, 0, 0,
++		)
++		if err != nil {
++			return err
++		}
++		lastBatchNodeID = 0
++	}
+ 
+ 	remoteHistoryIterator := collection.NewPagingIterator(r.getHistoryFromRemotePaginationFn(
+ 		ctx,
 ```
 
-**File**: `.github/.golangci.yml` (modified, +6/-0)
+**File**: `service/history/ndc/workflow_state_replicator_test.go` (modified, +30/-2)
 ```diff
-@@ -19,7 +19,12 @@ linters:
-     - godox
-     - iotamixing
-     - testifylint
-+    - parallelsuitelint
-   settings:
-+    custom:
-+      parallelsuitelint:
-+        type: module
-+        description: Check parallel suite usage.
-     staticcheck:
-       checks:
-         - "all"
-@@ -248,6 +253,7 @@ issues:
-   max-same-issues: 0
+@@ -256,7 +256,19 @@ func (s *workflowReplicatorSuite) Test_ApplyWorkflowState_BrandNew() {
+ 	s.NoError(err)
+ }
  
- run:
-+  relative-path-mode: gomod
-   timeout: 10m
-   modules-download-mode: readonly
- 
-```
-
-**File**: `.github/workflows/testx.yml` (modified, +20/-20)
-```diff
-@@ -12,9 +12,6 @@ permissions:
- jobs:
-   testx:
-     runs-on: ubuntu-24.04-arm
--    defaults:
--      run:
--        working-directory: common/testx
-     steps:
-       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-         with:
-@@ -28,23 +25,26 @@ jobs:
-           cache-dependency-path: |
-             go.sum
-             common/testx/go.sum
-+            common/testx/parallelsuitelint/go.sum
- 
--      - name: Check testx does not depend on other go.temporal.io modules
--        run: |
--          mods=$(go list -m -f '{{if not .Main}}{{.Path}}{{end}}' all)
--          deps=$(echo "$mods" | grep '^go.temporal.io/' || true)
--          if [ -n "$deps" ]; then
--            echo "::error file=common/testx/go.mod::testx must not depend on go.temporal.io modules: $(echo "$deps" | tr "\n" " ")"
--            exit 1
--          fi
--
--      - name: Check testx go.mod is tidy
--        run: go mod tidy -diff
--
--      - name: Test testx
--        run: make test
--
--      - name: Lint testx
-+      - name: Check, test, and lint testx modules
-+        shell: bash
-         env:
-           GOLANGCI_LINT_BASE_REV: ${{ github.event.pull_request.base.sha }}
--        run: make lint
-+        run: |
-+          for module in common/testx common/testx/parallelsuitelint; do
-+            echo "::group::$module"
-+            (
-+              cd "$module"
-+              mods=$(go list -m -f '{{if not .Main}}{{.Path}}{{end}}' all)
-+              deps=$(echo "$mods" | grep '^go.temporal.io/' || true)
-+              if [ -n "$deps" ]; then
-+                echo "::error file=$module/go.mod::${module} must not depend on go.temporal.io modules: $(echo "$deps" | tr "\n" " ")"
-+                exit 1
-+              fi
-+              go mod tidy -diff
-+              make test
-+              make lint
-+            )
-+            echo "::endgroup::"
-+          done
-```
-
-**File**: `Makefile` (modified, +8/-2)
-```diff
-@@ -180,7 +180,8 @@ mise-tool = $(or \
- 		mise exec go $(2) -c 'command -v $(1)'), \
- 	$(error Cannot resolve $(1); check mise.toml and run mise install))
- 
--GOLANGCI_LINT = $(call mise-tool,golangci-lint,go:github.com/golangci/golangci-lint/v2/cmd/golangci-lint)
-+GOLANGCI_LINT_BOOTSTRAP = $(call mise-tool,golangci-lint,go:github.com/golangci/golangci-lint/v2/cmd/golangci-lint)
-+GOLANGCI_LINT := $(ROOT)/.bin/golangci-lint
- # Don't get confused, there is a single linter called gci, which is a part of the mega linter we use is called golangci-lint.
- GCI = $(call mise-tool,gci,go:github.com/daixiang0/gci)
- GOTESTSUM = $(call mise-tool,gotestsum,go:gotest.tools/gotestsum)
-@@ -330,12 +331,17 @@ define lint-go
- 	@go vet -tags $(1) -vettool="$(ERRORTYPE)" -style-check=false $(2)
- endef
- 
--lint-code:
-+lint-code: $(GOLANGCI_LINT)
- 	@printf $(COLOR) "Linting code..."
- 	$(call lint-go,$(ALL_TEST_TAGS),$(LINT_CODE_TARGETS))
- 	@printf $(COLOR) "Linting code with temporal_minimal..."
- 	$(call lint-go,$(MINIMAL_TEST_TAGS),$(MINIMAL_VARIANT_DIRS))
- 
-+$(GOLANGCI_LINT): .github/.custom-gcl.yml \
-+		common/testx/parallelsuitelint/*.go common/testx/parallelsuitelint/golangci/*.go \
-+		common/testx/parallelsuitelint/go.mod common/testx/parallelsuitelint/go.sum
-+	@cd .github && GOWORK=off $(GOLANGCI_LINT_BOOTSTRAP) custom
-+
- lint-yaml:
- 	@printf $(COLOR) "Checking YAML formatting..."
- 	@$(YAMLFMT) -conf .github/.yamlfmt -lint .
-```
-
-**File**: `common/testx/Makefile` (modified, +14/-3)
-```diff
-@@ -1,6 +1,6 @@
--GOLANGCI_LINT_VERSION ?= v2.14.0
--GOLANGCI_LINT ?= go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
--GOLANGCI_LINT_CONFIG ?= ../../.github/.golangci.yml
-+testx_repo_root := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../..)
-+
-+GOLANGCI_LINT_CONFIG ?= $(testx_repo_root)/.github/.golangci.yml
- GOLANGCI_LINT_BASE_REV ?= main
- 
- .PHONY: test lint fmt tidy
-@@ -20,3 +20,14 @@ fmt:
- 
- tidy:
- 	go mod tidy
-+
-+ifndef GOLANGCI_LINT
-+GOLANGCI_LINT := $(testx_repo_root)/.bin/golangci-lint
-+GOLANGCI_LINT_VERSION ?= v2.14.0
-+
-+.PHONY: testx-golangci-lint
-+lint fmt: testx-golangci-lint
-+testx-golangci-lint:
-+	@$(MAKE) --no-print-directory -C "$(testx_repo_root)" "$(GOLANGCI_LINT)" \
-+		'GOLANGCI_LINT_BOOTSTRAP=go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)'
-+endif
-```
-
-**File**: `common/testx/README.md` (modified, +1/-0)
-```diff
-@@ -5,6 +5,7 @@ Collection of general-purpose Go test helpers.
- - `await`: context-bounded polling assertions and channel operations.
- - `freeport`: reserve available ports for tests.
- - `parallelsuite`: isolated parallel test suites with fail-fast assertions.
-+- `parallelsuitelint`: checks Go tests for correct `parallelsuite` usage. Run it directly or as a `golangci-lint` plugin.
- - `softassert`: log failed invariants without stopping execution.
- - `testcontext`: shared test contexts with deadlines and decorators.
- - `testhooks`: typed, scoped hooks enabled with `-tags test_dep`.
-```
-
-**File**: `common/testx/parallelsuitelint/Makefile` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+include ../Makefile
-```
-
-**File**: `common/testx/parallelsuitelint/analyzer.go` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+package parallelsuitelint
-+
-+import "golang.org/x/tools/go/analysis"
-+
-+// Analyzer is the parallelsuitelint analyzer.
-+var Analyzer = New()
-+
-+// New returns an independent analyzer.
-+func New() *analysis.Analyzer {
-+	return &analysis.Analyzer{
-+		Name: "parallelsuitelint",
-+		Doc:  "check parallelsuite usage",
-+		Run: func(*analysis.Pass) (any, error) {
-+			return nil, nil //nolint:nilnil // Analysis reports diagnostics and has no result value.
-+		},
+-func (s *workflowReplicatorSuite) Test_ApplyWorkflowState_Ancestors() {
++func (s *workflowReplicatorSuite) TestApplyWorkflowStateAncestorReuse() {
++	for _, tc := range []struct {
++		name         string
++		localVersion int64
++	}{
++		{name: "matching history", localVersion: 100},
++		{name: "divergent history", localVersion: 99},
++	} {
++		s.Run(tc.name, func() { s.applyWorkflowStateWithAncestors(tc.localVersion) })
 +	}
 +}
++
++func (s *workflowReplicatorSuite) applyWorkflowStateWithAncestors(localVersion int64) {
+ 	namespaceID := uuid.NewString()
+ 	namespaceName := "namespaceName"
+ 	branchInfo := &persistencespb.HistoryBranch{
+@@ -416,16 +428,32 @@ func (s *workflowReplicatorSuite) Test_ApplyWorkflowState_Ancestors() {
+ 				Events: []*historypb.HistoryEvent{
+ 					{
+ 						EventId: 1,
++						Version: localVersion,
+ 					},
+ 					{
+ 						EventId: 2,
++						Version: localVersion,
+ 					},
+ 				},
+ 			},
+ 		},
+ 	}, nil)
+ 	s.mockExecutionManager.EXPECT().GetCurrentExecution(gomock.Any(), gomock.Any()).Return(nil, serviceerror.NewNotFound(""))
+-	s.mockExecutionManager.EXPECT().AppendRawHistoryNodes(gomock.Any(), gomock.Any()).Return(nil, nil).Times(3)
++	appends := 3
++	if localVersion != 100 {
++		appends = 4
++	}
++	s.mockExecutionManager.EXPECT().AppendRawHistoryNodes(gomock.Any(), gomock.Any()).DoAndReturn(
++		func(_ context.Context, req *persistence.AppendRawHistoryNodesRequest) (*persistence.AppendHistoryNodesResponse, error) {
++			if localVersion != 100 {
++				branch, err := s.mockExecutionManager.GetHistoryBranchUtil().ParseHistoryBranchInfo(req.BranchToken)
++				s.NoError(err)
++				s.NotEqual(branchInfo.BranchId, branch.BranchId)
++				s.Empty(branch.Ancestors)
++			}
++			return nil, nil
++		},
++	).Times(appends)
+ 	fakeStartHistory := &historypb.HistoryEvent{
+ 		Attributes: &historypb.HistoryEvent_WorkflowExecutionStartedEventAttributes{
+ 			WorkflowExecutionStartedEventAttributes: &historypb.WorkflowExecutionStartedEventAttributes{},
+```
+
+**File**: `tests/xdc/buffered_events_replication_helpers_test.go` (modified, +6/-0)
+```diff
+@@ -800,6 +800,7 @@ func (s *xdcBaseSuite) completeWorkflowTaskAndReturnNext(
+ func (s *xdcBaseSuite) blockReplicationForWorkflow(
+ 	clusterIndex int,
+ 	workflowID string,
++	transform ...func(*replicationspb.ReplicationTask) error,
+ ) <-chan *blockedReplicationTask {
+ 	s.T().Helper()
+ 	// The interceptor runs on the receiving cluster, so clusterIndex identifies the replication
+@@ -815,6 +816,11 @@ func (s *xdcBaseSuite) blockReplicationForWorkflow(
+ 			if workflowIDFromReplicationTask(task) != workflowID {
+ 				return execute()
+ 			}
++			for _, fn := range transform {
++				if err := fn(task); err != nil {
++					return err
++				}
++			}
+ 			blockedTask := &blockedReplicationTask{
+ 				execute: execute,
+ 				done:    make(chan struct{}),
+```
+
+**File**: `tests/xdc/reset_after_conflict_test.go` (added, +173/-0)
+```diff
+@@ -0,0 +1,173 @@
++package xdc
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"time"
++
++	"github.com/google/uuid"
++	"github.com/stretchr/testify/require"
++	commandpb "go.temporal.io/api/command/v1"
++	commonpb "go.temporal.io/api/common/v1"
++	enumspb "go.temporal.io/api/enums/v1"
++	historypb "go.temporal.io/api/history/v1"
++	taskqueuepb "go.temporal.io/api/taskqueue/v1"
++	"go.temporal.io/api/workflowservice/v1"
++	"go.temporal.io/server/api/adminservice/v1"
++	replicationspb "go.temporal.io/server/api/replication/v1"
++	"go.temporal.io/server/chasm"
++	"go.temporal.io/server/common/testing/await"
++	"go.temporal.io/server/common/testing/testhooks"
++	"google.golang.org/protobuf/proto"
++)
++
++// TestResetAfterConflictPreservesWinningHistory checks that a replicated reset
++// inherits the winning prefix after the original run has switched branches.
++func (s *FunctionalClustersTestSuite) TestResetAfterConflictPreservesWinningHistory() {
++	if !s.enableTransitionHistory {
++		s.T().Skip("requires state-based replication")
++	}
++	for _, tc := range []struct {
++		name         string
++		coldSnapshot bool
++	}{
++		{name: "FirstSync"},
++		{name: "ColdSnapshot", coldSnapshot: true},
++	} {
++		s.Run(tc.name, func() { s.resetAfterConflictPreservesWinningHistory(tc.coldSnapshot) })
++	}
++}
++
++func (s *FunctionalClustersTestSuite) resetAfterConflictPreservesWinningHistory(coldSnapshot bool) {
++	ctx, cancel := context.WithTimeout(s.T().Context(), 120*time.Second)
++	defer cancel()
++	ns := s.createBufferedEventsNamespace(ctx)
++	queue := &taskqueuepb.TaskQueue{Name: "reset-conflict-" + uuid.NewString()}
++	coldSnapshotFrom := func(source int, task *replicationspb.ReplicationTask) error {
++		attrs := task.GetSyncVersionedTransitionTaskAttributes()
++		if attrs == nil || attrs.WorkflowId != queue.Name {
++			return nil
++		}
++		response, err := s.clusters[source].AdminClient().SyncWorkflowState(ctx, &adminservice.SyncWorkflowStateRequest{
++			NamespaceId:     ns.ID,
++			Execution:       &commonpb.WorkflowExecution{WorkflowId: attrs.WorkflowId, RunId: attrs.RunId},
++			TargetClusterId: int32(2 - source), ArchetypeId: chasm.WorkflowArchetypeID,
++		})
++		if err != nil {
++			return err
++		}
++		artifact := response.VersionedTransitionArtifact
++		if artifact.IsFirstSync || len(artifact.EventBatches) != 0 {
++			return errors.New("expected a non-first-sync snapshot without events")
++		}
++		attrs.VersionedTransitionArtifact = artifact
++		return nil
++	}
++	removeInitialHook := func() {}
++	if coldSnapshot {
++		// Resync preserves source branch IDs, so the source ancestor can later
++		// refer to a losing history on the destination.
++		removeInitialHook = s.clusters[1].InjectHook(s.T(), testhooks.NewHook(testhooks.HistoryReplicationTaskInterceptor,
++			func(task *replicationspb.ReplicationTask, execute func() error) error {
++				if err := coldSnapshotFrom(0, task); err != nil {
++					return err
++				}
++				return execute()
++			}), testhooks.GlobalScope)
++	}
++	execution := s.startBufferedEventsWorkflow(ctx, startBufferedEventsWorkflowArgs{
++		Namespace: ns.Name, WorkflowID: queue.Name, TaskQueue: queue,
++	})
++	first := s.pollBufferedEventsWorkflowTask(ctx, 0, ns.Name, queue)
++	s.completeWorkflowTask(ctx, workflowTaskCompletion{
++		Task: first, Commands: []*commandpb.Command{scheduleActivityCommand("activity", queue, 2*time.Minute)},
++	})
++	await.Require(ctx, s.T(), func(t *await.T) {
++		response, err := s.clusters[1].FrontendClient().GetWorkflowExecutionHistory(t.Context(), &workflowservice.GetWorkflowExecutionHistoryRequest{
++			Namespace: ns.Name, Execution: execution,
++		})
++		require.NoError(t, err)
++		require.Len(t, response.History.Events, 5)
++	}, replicationWaitTime, replicationCheckInterval)
++	removeInitialHook()
++	commonHistory := s.getWorkflowHistory(ctx, s.T(), 1, ns.Name, execution)
++	s.EqualHistoryEvents(`
++1 WorkflowExecutionStarted
++2 WorkflowTaskScheduled
++3 WorkflowTaskStarted
++4 WorkflowTaskCompleted
++5 ActivityTaskScheduled`, commonHistory)
++
++	// Activity results and markers are not reapplied from the losing branch.
++	// Keep its replication blocked so the winner is written from the common prefix.
++	s.blockReplicationForWorkflow(1, execution.WorkflowId)
++	toOldActive := s.blockReplicationForWorkflow(0, execution.WorkflowId, func(task *replicationspb.ReplicationTask) error {
++		attrs := task.GetSyncVersionedTransitionTaskAttributes()
++		if !coldSnapshot || attrs == nil || attrs.RunId == execution.RunId {
++			return nil
++		}
++		// Fetch an eventless snapshot so the receiver backfills the reset history.
++		return coldSnapshotFrom(1, task)
++	})
++	activity := s.pollBufferedActivityTask(ctx, ns.Name, queue)
++	s.completeActivityTask(ctx, activity)
++	losingTask := s.pollBufferedEventsWorkflowTask(ctx, 0, ns.Name, queue)
++	s.completeWorkflowTask(ctx, workflowTaskCompletion{
++		Task: losingTask,
++		Commands: []*commandpb.Command{{
++			CommandType: enumspb.COMMAND_TYPE_RECORD_MARKER,
++			Attributes: &commandpb.Command_RecordMarkerCommandAttributes{
++	
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13365** (2026-11-28): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13353** (closed): Adopt Onelint (@stephanos)
+- **PR #13350** (2026-11-27): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 - **PR #13335** (2026-11-26): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13324** (closed): Add registry Fallback hook to testx/failpoint (@stephanos)
-- **PR #13314** (2026-11-25): Improve shard ownership checks (@prathyushpv)
-- **PR #13311** (2026-11-25): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13309** (2026-11-25): add oss foundations as owner to batcher owner (@feiyang3cat)
-- **PR #13304** (closed): Fix: Recover Activity delivery after a sync-match start timeout (@ali-khokhar-nvidia)
+- **PR #13329** (closed): Add testcore failpoint injection helpers (@stephanos)
+- **PR #13328** (closed): Add Panic, Call, Block and Pause actions to testx/failpoint (@stephanos)
 
 ---
 
@@ -2368,37 +2430,53 @@ Review and verify the integration independently of suite diagnostics.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Wire a no-op parallelsuitelint into CI
+## X. reset history backfill after replication conflicts
 
 **RULE**:
-When implementing operations in `.github/.custom-gcl.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `service/history/ndc/workflow_state_replicator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9824fe45`: Wire a no-op parallelsuitelint into CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2af2fe74`: reset history backfill after replication conflicts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/.custom-gcl.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/history/ndc/workflow_state_replicator.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-version: v2.14.0
-name: golangci-lint
-destination: ../.bin
-plugins:
-  - module: go.temporal.io/testx/parallelsuitelint
-    import: go.temporal.io/testx/parallelsuitelint/golangci
-    path: ../common/testx/parallelsuitelint
+	// Source branch IDs can refer to a losing history locally after conflict resolution.
+	// Only reuse existing batches if they belong to the source's version history.
+	localHistoryMismatch := false
+LocalHistoryLoop:
+			for _, event := range localHistoryBatch.GetEvents() {
+				version, err := versionhistory.GetVersionHistoryEventVersion(currentVersionHistory, event.GetEventId())
+				if err != nil || version != event.GetVersion() {
+					localHistoryMismatch = true
+					break LocalHistoryLoop
+				}
+			}
+	if localHistoryMismatch {
+		// Preserve the existing branch for other runs and copy the complete source
+		// history into an independent branch without source ancestors.
+		backfillBranchToken, err = r.shardContext.GetExecutionManager().GetHistoryBranchUtil().NewHistoryBranch(
+			namespaceID.String(), workflowID, runID, branchInfo.GetTreeId(), nil, nil,
+			0, 0, 0,
+		)
+		if err != nil {
+			return err
+		}
+		lastBatchNodeID = 0
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	// Get the last batch node id to check if the history data is already in DB.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9824fe45` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2af2fe74` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

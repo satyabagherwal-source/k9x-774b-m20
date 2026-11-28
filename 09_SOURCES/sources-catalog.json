@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "c2ec24c0",
+    "sourceVersion": "2babb62c",
     "license": "MIT",
-    "contentHash": "d5ab62b9195acd3405271ccfaddb74fcb3fd7456456ee12bd97ab6bb4dc149cc",
-    "lastHarvestedAt": "2026-11-26T23:41:03.176Z",
+    "contentHash": "ccc1d7a7faffcba1a864e3ebb93752c942ff547384f36bdd2477fe16554f7e3e",
+    "lastHarvestedAt": "2026-11-28T13:39:52.020Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T13:18:26.401Z",
+  "last_updated": "2026-11-28T13:39:58.597Z",
   "total_records": 2902,
   "domains": {
     "A": {
@@ -11291,8 +11291,8 @@
       "title": "Content & Information Intelligence: temporalio/temporal Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-temporalio-temporal-content-information-intelligence-temporalio-temporal-core-in.md",
       "repository": "temporalio/temporal",
-      "content_hash": "93bc697ecf0f42f7efa7c72ef4644eb490083fa93edcc17e0a47aae360e2d7e7",
-      "created_at": "2026-11-26T23:41:03.699Z"
+      "content_hash": "ce143c06f7da0d0701a703fbe67e3158873f2685fea38406a8e7a0512800dd99",
+      "created_at": "2026-11-28T13:39:52.487Z"
     },
     "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants",
@@ -11318,8 +11318,8 @@
       "title": "Content & Information Intelligence: temporalio-temporal-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-temporalio-temporal-learnings-content-information-intelligence-temporalio-tempor.md",
       "repository": "temporalio-temporal-learnings",
-      "content_hash": "84ed339b7ca450dbb55985b85e5631001f14f65e1a479031b026e0507df5d93c",
-      "created_at": "2026-11-26T05:48:50.965Z"
+      "content_hash": "01b90197fb46babf1a53a69c25329cfcefd44c394249a82354d25a0656032330",
+      "created_at": "2026-11-28T13:39:56.166Z"
     },
     "domain_intelligence-content-information-intelligence-alibaba-zvec-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-alibaba-zvec-learnings-core-invariants",
@@ -15693,8 +15693,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "8fc2e36d1b2c1e92d71b1b057f08dde7e0670fbe95ec83e2712c92a053cf91f5",
-      "created_at": "2026-11-28T07:49:44.745Z"
+      "content_hash": "48e040c3e69f95ce17d176778c540c24c30142994a252fa663d4c67913722c70",
+      "created_at": "2026-11-28T13:39:58.597Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -18552,8 +18552,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "62100bb75fbd71161b4e516d8571e38785f6b914975a688504c7adf0b85ea04f",
-      "created_at": "2026-11-28T12:58:55.484Z"
+      "content_hash": "c0b2c6cb631c904c9c928c706ac7131fb4afe9fa32fe81d135582ff188a8db94",
+      "created_at": "2026-11-28T13:39:57.715Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",

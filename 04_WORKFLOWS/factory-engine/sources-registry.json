@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T13:18:20.720Z",
-    "lastVerified": "2026-11-28T13:18:20.720Z",
+    "lastChecked": "2026-11-28T13:39:55.377Z",
+    "lastVerified": "2026-11-28T13:39:55.377Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -287,9 +287,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-28T12:09:34.074Z",
+    "lastChecked": "2026-11-28T13:39:48.733Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-28T12:09:34.074Z"
+    "lastVerified": "2026-11-28T13:39:48.733Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2265,12 +2265,12 @@
     "lastVerified": "2026-11-27T22:22:49.334Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale/tailscale",
+    "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-28T06:04:23.471Z",
-    "lastVerified": "2026-11-28T06:04:23.471Z",
+    "lastChecked": "2026-11-28T13:39:43.763Z",
+    "lastVerified": "2026-11-28T13:39:43.763Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2279,7 +2279,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d486755f"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -3067,9 +3068,9 @@
   "pingcap-autoflow": {
     "name": "autoflow",
     "officialUrl": "https://github.com/pingcap/autoflow",
-    "lastChecked": "2026-11-27T16:21:37.598Z",
+    "lastChecked": "2026-11-28T13:39:46.217Z",
     "revisionIdentifier": "01cdf88f",
-    "lastVerified": "2026-11-27T16:21:37.598Z"
+    "lastVerified": "2026-11-28T13:39:46.217Z"
   },
   "orange-opensource-hurl": {
     "name": "Orange-OpenSource/hurl",
@@ -7303,22 +7304,21 @@
     "revisionIdentifier": "23a33ef5"
   },
   "temporalio-temporal": {
-    "name": "temporal",
+    "name": "temporalio/temporal",
     "officialUrl": "https://github.com/temporalio/temporal",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T17:41:51.339Z",
-    "lastVerified": "2026-11-27T17:41:51.339Z",
+    "lastChecked": "2026-11-28T13:39:44.628Z",
+    "lastVerified": "2026-11-28T13:39:44.628Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "d5ab62b9195acd3405271ccfaddb74fcb3fd7456456ee12bd97ab6bb4dc149cc",
+    "contentHash": "ccc1d7a7faffcba1a864e3ebb93752c942ff547384f36bdd2477fe16554f7e3e",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c2ec24c0"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "redisearch-redisearch": {
     "name": "RediSearch/RediSearch",
@@ -9192,8 +9192,8 @@
     "officialUrl": "https://github.com/google/tcmalloc",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-27T11:24:33.097Z",
-    "lastVerified": "2026-11-27T11:24:33.097Z",
+    "lastChecked": "2026-11-28T13:39:33.753Z",
+    "lastVerified": "2026-11-28T13:39:33.753Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-google-tcmalloc",
@@ -12036,9 +12036,9 @@
   "shpigford-chops": {
     "name": "chops",
     "officialUrl": "https://github.com/Shpigford/chops",
-    "lastChecked": "2026-11-26T08:10:01.435Z",
+    "lastChecked": "2026-11-28T13:39:38.716Z",
     "revisionIdentifier": "9d379d58",
-    "lastVerified": "2026-11-26T08:10:01.435Z"
+    "lastVerified": "2026-11-28T13:39:38.716Z"
   },
   "webpack-webpack": {
     "name": "webpack/webpack",
@@ -12471,9 +12471,9 @@
   "jestjs-jest": {
     "name": "jest",
     "officialUrl": "https://github.com/jestjs/jest",
-    "lastChecked": "2026-11-25T01:35:55.979Z",
+    "lastChecked": "2026-11-28T13:39:36.280Z",
     "revisionIdentifier": "aa88f7cf",
-    "lastVerified": "2026-11-25T01:35:55.979Z"
+    "lastVerified": "2026-11-28T13:39:36.280Z"
   },
   "tauri-apps-tauri": {
     "name": "tauri-apps/tauri",

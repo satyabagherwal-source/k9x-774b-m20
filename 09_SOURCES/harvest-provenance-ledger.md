@@ -14089,3 +14089,4 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6e57e554` | Multi-dimensional audit evidence | 2026-11-28T12:35:57.116Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `42a602c0` | Multi-dimensional audit evidence | 2026-11-28T13:17:57.045Z |
 | `learn-github-gitroomhq-postiz-app` | `https://github.com/gitroomhq/postiz-app` | `6086870d` | Multi-dimensional audit evidence | 2026-11-28T13:18:17.164Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `2babb62c` | Multi-dimensional audit evidence | 2026-11-28T13:39:52.020Z |

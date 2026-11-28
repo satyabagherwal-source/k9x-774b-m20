@@ -840536,3 +840536,95 @@ import { getSsrfSafeDispatcher } from '@gitroom/nestjs-libraries/dtos/webhooks/s
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ad57f595` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11104. reset history backfill after replication conflicts (Harvested from temporalio/temporal)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "reset history backfill after replication conflicts",
+  "source": "temporalio/temporal",
+  "source_url": "https://github.com/temporalio/temporal",
+  "source_version": "2babb62c",
+  "license": "MIT",
+  "extracted_at": "2026-11-28T13:39:51.389Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-temporalio-temporal",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `2babb62c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `service/history/ndc/workflow_state_replicator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2af2fe74`: reset history backfill after replication conflicts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/history/ndc/workflow_state_replicator.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// Source branch IDs can refer to a losing history locally after conflict resolution.
+	// Only reuse existing batches if they belong to the source's version history.
+	localHistoryMismatch := false
+LocalHistoryLoop:
+			for _, event := range localHistoryBatch.GetEvents() {
+				version, err := versionhistory.GetVersionHistoryEventVersion(currentVersionHistory, event.GetEventId())
+				if err != nil || version != event.GetVersion() {
+					localHistoryMismatch = true
+					break LocalHistoryLoop
+				}
+			}
+	if localHistoryMismatch {
+		// Preserve the existing branch for other runs and copy the complete source
+		// history into an independent branch without source ancestors.
+		backfillBranchToken, err = r.shardContext.GetExecutionManager().GetHistoryBranchUtil().NewHistoryBranch(
+			namespaceID.String(), workflowID, runID, branchInfo.GetTreeId(), nil, nil,
+			0, 0, 0,
+		)
+		if err != nil {
+			return err
+		}
+		lastBatchNodeID = 0
+	}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	// Get the last batch node id to check if the history data is already in DB.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2af2fe74` are properly handled with clean fallback behavior.

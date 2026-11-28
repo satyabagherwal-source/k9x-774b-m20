@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T13:18:17.171Z",
-  "total_cycles_completed": 13330,
-  "total_learnings_persisted": 13330,
-  "total_rules_promoted": 12028,
+  "last_updated": "2026-11-28T13:39:52.025Z",
+  "total_cycles_completed": 13331,
+  "total_learnings_persisted": 13331,
+  "total_rules_promoted": 12029,
   "history": [
-    {
-      "timestamp": "2026-11-27T17:50:18.413Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T17:50:22.208Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T13:18:17.171Z",
       "repository": "gitroomhq/postiz-app",
       "learningId": "learn-github-gitroomhq-postiz-app",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T13:39:52.025Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

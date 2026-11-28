@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T05:48:50.563Z",
+  "timestamp": "2026-11-28T13:39:55.815Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-temporalio-temporal-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [temporalio-temporal-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T05:48:50.563Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T13:39:55.815Z`  
 > **Learning ID**: `LEARN-EVO-temporalio-temporal-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from temporalio-temporal-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `67959df6`  
+> **Source Version**: `2babb62c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T05:48:44.454Z  
+> **Timestamp**: 2026-11-28T13:39:50.757Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T05:48:44.446Z  
+> **Harvest Timestamp**: 2026-11-28T13:39:44.628Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24606 stars
+- **Stars / Engagement**: 24680 stars
 
 ---
 
@@ -553,6 +553,43 @@ func (this *QueueReaderState) Equal(that interface{}) bool {
 	return proto.Equal(this, that1)
 }
 
+// Marshal an object of type QueueSlicePredicateGroup to the protobuf v3 wire format
+func (val *QueueSlicePredicateGroup) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type QueueSlicePredicateGroup from the protobuf v3 wire format
+func (val *QueueSlicePredicateGroup) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *QueueSlicePredicateGroup) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two QueueSlicePredicateGroup values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *QueueSlicePredicateGroup) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *QueueSlicePredicateGroup
+	switch t := that.(type) {
+	case *QueueSlicePredicateGroup:
+		that1 = t
+	case QueueSlicePredicateGroup:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
 // Marshal an object of type QueueSliceScope to the protobuf v3 wire format
 func (val *QueueSliceScope) Marshal() ([]byte, error) {
 	return proto.Marshal(val)
@@ -758,58 +795,7 @@ func (val *QueuePartition) Size() int {
 // For more information see the documentation for
 // https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
 func (this *QueuePartition) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *QueuePartition
-	switch t := that.(type) {
-	case *QueuePartition:
-		that1 = t
-	case QueuePartition:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return proto.Equal(this, that1)
-}
-
-// Marshal an object of type Queue to the protobuf v3 wire format
-func (val *Queue) Marshal() ([]byte, error) {
-	return proto.Marshal(val)
-}
-
-// Unmarshal an object of type Queue from the protobuf v3 wire format
-func (val *Queue) Unmarshal(buf []byte) error {
-	return proto.Unmarshal(buf, val)
-}
-
-// Size returns the size of the object, in bytes, once serialized
-func (val *Queue) Size() int {
-	return proto.Size(val)
-}
-
-// Equal returns whether two Queue values are equivalent by recursively
-// comparing the message's fields.
-// For more information see the documentation for
-// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
-func (this *Queue) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	var that1 *Queue
-	switch t := that.(type) {
-	case *Queue:
-		that1 = t
-	case Queue:
-		that1 = &t
-	default:
-		return false
-	}
-
-	return pr
+	if that == nil 
 ```
 
 ### Core Architecture Module: `api/persistence/v1/queues.pb.go`
@@ -896,8 +882,11 @@ type QueueState struct {
 	state                        protoimpl.MessageState      `protogen:"open.v1"`
 	ReaderStates                 map[int64]*QueueReaderState `protobuf:"bytes,1,rep,name=reader_states,json=readerStates,proto3" json:"reader_states,omitempty" protobuf_key:"varint,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	ExclusiveReaderHighWatermark *TaskKey                    `protobuf:"bytes,2,opt,name=exclusive_reader_high_watermark,json=exclusiveReaderHighWatermark,proto3" json:"exclusive_reader_high_watermark,omitempty"`
-	unknownFields                protoimpl.UnknownFields
-	sizeCache                    protoimpl.SizeCache
+	// Distinct 16-byte namespace IDs referenced by index from
+	// NamespaceIdPredicateAttributes.namespace_id_indexes.
+	NamespaceIdTable [][]byte `protobuf:"bytes,3,rep,name=namespace_id_table,json=namespaceIdTable,proto3" json:"namespace_id_table,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *QueueState) Reset() {
@@ -944,11 +933,21 @@ func (x *QueueState) GetExclusiveReaderHighWatermark() *TaskKey {
 	return nil
 }
 
+func (x *QueueState) GetNamespaceIdTable() [][]byte {
+	if x != nil {
+		return x.NamespaceIdTable
+	}
+	return nil
+}
+
 type QueueReaderState struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Scopes        []*QueueSliceScope     `protobuf:"bytes,1,rep,name=scopes,proto3" json:"scopes,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	Scopes []*QueueSliceScope     `protobuf:"bytes,1,rep,name=scopes,proto3" json:"scopes,omitempty"`
+	// Each group holds one predicate and every range that carries it. Readers expand the groups
+	// into ordinary scopes and treat them as a union with `scopes`.
+	PredicateGroups []*QueueSlicePredicateGroup `protobuf:"bytes,2,rep,name=predicate_groups,json=predicateGroups,proto3" json:"predicate_groups,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *QueueReaderState) Reset() {
@@ -988,6 +987,65 @@ func (x *QueueReaderState) GetScopes() []*QueueSliceScope {
 	return nil
 }
 
+func (x *QueueReaderState) GetPredicateGroups() []*QueueSlicePredicateGroup {
+	if x != nil {
+		return x.PredicateGroups
+	}
+	return nil
+}
+
+type QueueSlicePredicateGroup struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Predicate     *Predicate             `protobuf:"bytes,1,opt,name=predicate,proto3" json:"predicate,omitempty"`
+	Ranges        []*QueueSliceRange     `protobuf:"bytes,2,rep,name=ranges,proto3" json:"ranges,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *QueueSlicePredicateGroup) Reset() {
+	*x = QueueSlicePredicateGroup{}
+	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QueueSlicePredicateGroup) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueueSlicePredicateGroup) ProtoMessage() {}
+
+func (x *QueueSlicePredicateGroup) ProtoReflect() protoreflect.Message {
+	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QueueSlicePredicateGroup.ProtoReflect.Descriptor instead.
+func (*QueueSlicePredicateGroup) Descriptor() ([]byte, []int) {
+	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *QueueSlicePredicateGroup) GetPredicate() *Predicate {
+	if x != nil {
+		return x.Predicate
+	}
+	return nil
+}
+
+func (x *QueueSlicePredicateGroup) GetRanges() []*QueueSliceRange {
+	if x != nil {
+		return x.Ranges
+	}
+	return nil
+}
+
 type QueueSliceScope struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Range         *QueueSliceRange       `protobuf:"bytes,1,opt,name=range,proto3" json:"range,omitempty"`
@@ -998,7 +1056,7 @@ type QueueSliceScope struct {
 
 func (x *QueueSliceScope) Reset() {
 	*x = QueueSliceScope{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[3]
+	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1010,7 +1068,7 @@ func (x *QueueSliceScope) String() string {
 func (*QueueSliceScope) ProtoMessage() {}
 
 func (x *QueueSliceScope) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[3]
+	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1023,7 +1081,7 @@ func (x *QueueSliceScope) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueueSliceScope.ProtoReflect.Descriptor instead.
 func (*QueueSliceScope) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{3}
+	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *QueueSliceScope) GetRange() *QueueSliceRange {
@@ -1050,7 +1108,7 @@ type QueueSliceRange struct {
 
 func (x *QueueSliceRange) Reset() {
 	*x = QueueSliceRange{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[4]
+	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1062,88 +1120,10 @@ func (x *QueueSliceRange) String() string {
 func (*QueueSliceRange) ProtoMessage() {}
 
 func (x *QueueSliceRange) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QueueSliceRange.ProtoReflect.Descriptor instead.
-func (*QueueSliceRange) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *QueueSliceRange) GetInclusiveMin() *TaskKey {
-	if x != nil {
-		return x.InclusiveMin
-	}
-	return nil
-}
-
-func (x *QueueSliceRange) GetExclusiveMax() *TaskKey {
-	if x != nil {
-		return x.ExclusiveMax
-	}
-	return nil
-}
-
-type ReadQueueMessagesNextPageToken struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	LastReadMessageId int64                  `protobuf:"varint,1,opt,name=last_read_message_id,json=lastReadMessageId,proto3" json:"last_read_message_id,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
-}
-
-func (x *ReadQueueMessagesNextPageToken) Reset() {
-	*x = ReadQueueMessagesNextPageToken{}
-	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReadQueueMessagesNextPageToken) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReadQueueMessagesNextPageToken) ProtoMessage() {}
-
-func (x *ReadQueueMessagesNextPageToken) ProtoReflect() protoreflect.Message {
 	mi := &file_temporal_server_api_persistence_v1_queues_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReadQueueMessagesNextPageToken.ProtoReflect.Descriptor instead.
-func (*ReadQueueMessagesNextPageToken) Descriptor() ([]byte, []int) {
-	return file_temporal_server_api_persistence_v1_queues_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *ReadQueueMessagesNextPageToken) GetLastReadMessageId() int64 {
-	if x != nil {
-		return x.LastReadMessageId
-	}
-	return 0
-}
-
-type ListQueuesNextPageToken struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	LastReadQueueNumber int64                  `protobuf:"varint,1,opt,name=last_read_queue_number,json=lastReadQueueNumber,proto3" json:"last_read_queue_number,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *Lis
+		if ms.LoadMessageInfo() 
 ```
 
 ### Core Architecture Module: `api/persistence/v1/task_queues.go-helpers.pb.go`
@@ -2149,653 +2129,302 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fd06a49a` (2026-11-25)
-**Commit Message**: Elasticsearch search attribute mapping backwards compatibility fix (#13188)
+### Incident Patch 1: `2af2fe74` (2026-11-27)
+**Commit Message**: Fix reset history backfill after replication conflicts (#13088)
 
 ## What changed?
-Fixes for OSS clusters on Elasticsearch visibility that have the
-pre-allocated custom search attribute fields (`Bool01`–`03`,
-`Int01`–`03`, `Double01`–`03`, `Datetime01`–`03`, `KeywordList01`–`03`,
-`Text01`–`03`, `Keyword01`–`10`) in cluster metadata (added in v1.31 by
-#9346):
 
-- **`OperatorService.ListSearchAttributes` hides pre-allocated fields on
-Elasticsearch.**
-- When a namespace is given, it returns that namespace's aliases of
-pre-allocated fields, the same way `listSearchAttributesSQL` does. A
-cluster-level custom search attribute wins over an alias with the same
-name.
-  - A namespace lookup error is now returned instead of being ignored.
-- **History adds the pre-allocated fields to the Elasticsearch index
-mapping at startup.**
-- It reads the pre-allocated fields from cluster metadata and registers
-them through `VisibilityManager.AddSearchAttributes`. This follows
-saas-temporal#5983.
-- It runs in the background. Each attempt has a 30s timeout, with
-exponential backoff for up to 10 minutes. It stops when the service
-stops.
-- **Cluster-level custom search attributes win over namespace
+Validate existing local history batches against the source snapshot's
+event version history before reusing them during backfill. If the local
+prefix belongs to a different lineage, copy the complete source history
+into a new branch without ancestors, preserving the existing branch for
+other runs. Matching prefixes retain the existing reuse behavior.
 
-**File**: `common/searchattribute/mapper.go` (modified, +42/-19)
+Add unit coverage for matching and divergent prefixes and a two-cluster
+functional regression covering ordinary first sync and eventless resync
+snapshots.
+
+## Why?
+
+After failover conflict resolution, a source ancestor branch ID can
+still identify the losing history on the receiver. Replicating a reset
+through an eventless, non-first-sync snapshot previously treated those
+local batches as already backfilled based only on node ID, then attached
+the correct reset suffix to the losing prefix.
+
+For example, the local ancestor batch `[10@v1, 11@v1]` was retained
+before the new reset batch `[11@v2, 12@v2]`. Replication reported
+success and persisted the winning version history, but subsequent reads
+failed with `DataLoss: corrupted history event batch, eventID 
+
+**File**: `service/history/ndc/workflow_state_replicator.go` (modified, +23/-1)
 ```diff
-@@ -58,28 +58,39 @@ func (*NoopMapper) GetFieldName(alias string, _ string) (string, error) {
- 	return alias, nil
- }
- 
-+// GetAlias returns the alias of fieldName. A legacy custom search attribute (registered
-+// through cluster metadata) always maps to itself. A namespace alias that has the same name as a
-+// legacy custom search attribute is not used: GetFieldName resolves that name to the legacy
-+// attribute. The field has no alias in that case, so that two fields never get the same alias.
- func (m *backCompMapper) GetAlias(fieldName string, namespaceName string) (string, error) {
--	alias, firstErr := m.mapper.GetAlias(fieldName, namespaceName)
--	if firstErr != nil {
--		if !m.isLegacyCustomSearchAttribute(fieldName) {
--			return "", firstErr
--		}
--		// this is a custom search attribute registered through cluster metadata.
-+	if m.isLegacyCustomSearchAttribute(fieldName) {
- 		return fieldName, nil
+@@ -2038,17 +2038,27 @@ func (r *WorkflowStateReplicatorImpl) backfillHistory(
+ 		}()
  	}
-+	alias, err := m.mapper.GetAlias(fieldName, namespaceName)
-+	if err != nil {
-+		return "", err
-+	}
-+	// TODO: Remove this check once custom search attributes of Elasticsearch visibility stores
-+	// are only registered as namespace aliases and no cluster-level custom search attribute is left.
-+	if m.isLegacyCustomSearchAttribute(alias) {
-+		return "", serviceerror.NewInvalidArgumentf(
-+			"search attribute field %s is aliased to %s, which is already a cluster-level custom search attribute",
-+			fieldName,
-+			alias,
-+		)
-+	}
- 	return alias, nil
- }
  
-+// GetFieldName returns the field name of alias. A legacy custom search attribute (registered
-+// through cluster metadata) takes precedence over a namespace alias with the same name: its
-+// existing documents are stored under its own name, so resolving it through a namespace alias
-+// (eg: one left over from a SQL visibility store) would hide them.
- func (m *backCompMapper) GetFieldName(alias string, namespaceName string) (string, error) {
--	fieldName, firstErr := m.mapper.GetFieldName(alias, namespaceName)
--	if firstErr != nil {
--		if !m.isLegacyCustomSearchAttribute(alias) {
--			return "", firstErr
--		}
--		// this is a custom search attribute registered through cluster metadata.
-+	if m.isLegacyCustomSearchAttribute(alias) {
- 		return alias, nil
- 	}
--	return fieldName, nil
-+	return m.mapper.GetFieldName(alias, namespaceName)
- }
- 
- func (m *backCompMapper) isLegacyCustomSearchAttribute(name string) bool {
-@@ -124,18 +135,28 @@ func (m *mapperProviderImpl) GetMapper(nsName namespace.Name) (Mapper, error) {
- }
- 
- func legacyCustomSearchAttributes(nameTypeMap NameTypeMap) NameTypeMap {
--	legacyCustomSearchAttributes := make(map[string]enumspb.IndexedValueType)
--	for name, valueType := range nameTypeMap.Custom() {
-+	return NewNameTypeMap(WithoutPreallocatedFields(nameTypeMap.Custom()))
-+}
-+
-+// WithoutPreallocatedFields returns a copy of the custom search attributes without the
-+// pre-allocated custom search attribute fields (eg: Keyword01), which are only usable through
-+// a namespace alias.
-+func WithoutPreallocatedFields(
-+	customSearchAttributes map[string]enumspb.IndexedValueType,
-+) map[string]enumspb.IndexedValueType {
-+	result := make(map[string]enumspb.IndexedValueType, len(customSearchAttributes))
-+	for name, valueType := range customSearchAttributes {
- 		if sadefs.IsPreallocatedCSAFieldName(name, valueType) {
- 			continue
- 		}
--		legacyCustomSearchAttributes[name] = valueType
-+		result[name] = valueType
- 	}
--	return NewNameTypeMap(legacyCustomSearchAttributes)
-+	return result
- }
- 
- // AliasFields returns SearchAttributes struct where each custom search attribute name is replaced with alias.
--// If no replacement where made, it returns nil which means that original SearchAttributes struct should be used.
-+// Fields that have no alias are dropped. If no field was renamed or dropped, it returns the original
-+// SearchAttributes struct.
- func AliasFields(
- 	mapperProvider MapperProvider,
- 	searchAttributes *commonpb.SearchAttributes,
-@@ -164,6 +185,8 @@ func AliasFields(
- 			// IMPORTANT: AliasFields should never return serviceerror.InvalidArgument because it is used by Poll API and the error
- 			// goes through up to SDK, which shutdowns worker when it receives serviceerror.InvalidArgument as poll response.
- 			if _, ok := errors.AsType[*serviceerror.InvalidArgument](err); ok {
-+				// The field is dropped, so the original SearchAttributes can't be returned.
-+				mapped = true
- 				continue
+-	// Get the last batch node id to check if the history data is already in DB.
++	// Source branch IDs can refer to a losing history locally after conflict resolution.
++	// Only reuse existing batches if they belong to the source's version history.
+ 	localHistoryIterator := collection.NewPagingIterator(r.getHistoryFromLocalPaginationFn(
+ 		ctx,
+ 		backfillBranchToken,
+ 		lastEventItem.EventId,
+ 	))
+ 	var lastBatchNodeID int64
++	localHistoryMismatch := false
++LocalHistoryLoop:
+ 	for localHistoryIterator.HasNext() {
+ 		localHistoryBatch, err := localHistoryIterator.Next()
+ 		switch err.(type) {
+ 		case nil:
++			for _, event := range localHistoryBatch.GetEvents() {
++				version, err := versionhistory.GetVersionHistoryEventVersion(currentVersionHistory, event.GetEventId())
++				if err != nil || version != event.GetVersion() {
++					localHistoryMismatch = true
++					break LocalHistoryLoop
++				}
++			}
+ 			if len(localHistoryBatch.GetEvents()) > 0 {
+ 				lastBatchNodeID = localHistoryBatch.GetEvents()[0].GetEventId()
  			}
- 			return nil, err
-@@ -174,7 +197,7 @@ func AliasFields(
- 		newIndexedFields[aliasName] = saPayload
+@@ -2057,6 +2067,18 @@ func (r *WorkflowStateReplicatorImpl) backfillHistory(
+ 			return err
+ 		}
  	}
- 
--	// If no field name was mapped, return nil to save on clone operation on caller side.
-+	// If no field was renamed or dropped, return the original to save on clone operation on caller side.
- 	if !mapped {
- 		return searchAttributes, nil
- 	}
-```
-
-**File**: `common/searchattribute/mapper_test.go` (modified, +120/-2)
-```diff
-@@ -21,9 +21,10 @@ func Test_AliasFields(t *testing.T) {
- 			"wrong_field": {Data: []byte("data23")}, // Wrong unknown name must be ignored.
- 		},
- 	}
-+	// Fields without an alias are dropped, even when no other field is renamed.
- 	sb, err := AliasFields(mapperProvider, sa, "error-namespace")
- 	require.NoError(t, err)
--	require.Equal(t, sa, sb)
-+	require.Empty(t, sb.GetIndexedFields())
- 
- 	sa = &commonpb.SearchAttributes{
- 		IndexedFields: map[string]*commonpb.Payload{
-@@ -33,7 +34,7 @@ func Test_AliasFields(t *testing.T) {
- 	}
- 	sb, err = AliasFields(mapperProvider, sa, "unknown-namespace")
- 	require.NoError(t, err)
--	require.Equal(t, sa, sb)
-+	require.Empty(t, sb.GetIndexedFields())
- 
- 	sa = &commonpb.SearchAttributes{
- 		IndexedFields: map[string]*commonpb.Payload{
-@@ -253,3 +254,120 @@ func TestMapperProviderReturnsFallbackLookupError(t *testing.T) {
- 	require.ErrorContains(t, err, `failed to load search attributes for fallback index "test-visibility-index"`)
- 	require.ErrorContains(t, err, expectedErr.Error())
- }
-+
-+type staticAliasMapper struct {
-+	aliasToField map[string]string
-+}
-+
-+func (m staticAliasMapper) GetAlias(fieldName string, namespaceName string) (string, error) {
-+	for alias, field := range m.aliasToField {
-+		if field == fieldName {
-+			return alias, nil
-+		}
-+	}
-+	return "", serviceerror.NewInvalidArgumentf("namespace %s has no mapping for field %s", namespaceName, fieldName)
-+}
-+
-+func (m staticAliasMapper) GetFieldName(alias string, namespaceName string) (string, error) {
-+	if field, ok := m.aliasToField[alias]; ok {
-+		return field, nil
-+	}
-+	return "", serviceerror.NewInvalidArgumentf("namespace %s has no mapping for alias %s", namespaceName, alias)
-+}
-+
-+func Test_BackCompMapperPrefersLegacyCustomSearchAttributeOverNamespaceAlias(t *testing.T) {
-+	mapper := &backCompMapper{
-+		mapper: staticAliasMapper{aliasToField: map[string]string{
-+			// Left over from a SQL visibility store: same name as the legacy attribute below.
-+			"CustomerId": "Keyword01",
-+			"NewAttr":    "Keyword02",
-+		}},
-+		fallbackNameTypeMap: NewNameTypeMap(map[string]enumspb.IndexedValueType{
-+			"CustomerId": enumspb.INDEXED_VALUE_TYPE_KEYWORD,
-+		}),
-+	}
-+
-+	fieldName, err := mapper.GetFieldName("CustomerId", "ns")
-+	require.NoError(t, err)
-+	require.Equal(t, "CustomerId", fieldName)
-+
-+	fieldName, err = mapper.GetFieldName("NewAttr", "ns")
-+	require.NoError(t, err)
-+	require.Equal(t, "Keyword02", fieldName)
-+
-+	_, err = mapper.GetFieldName("Unknown", "ns")
-+	var invalidArgumentErr *serviceerror.InvalidArgument
-+	require.ErrorAs(t, err, &invalidArgumentErr)
-+
-+	alias, err := mapper.GetAlias("CustomerId", "ns")
-+	require.NoError(t, err)
-+	require.Equal(t, "CustomerId", alias)
-+
-+	alias, err = mapper.GetAlias("Keyword02", "ns")
-+	require.NoError(t, err)
-+	require.Equal(t, "NewAttr", alias)
-+
-+	// The field behind the shadowed alias has no alias, so it doesn't collide with the legacy
-+	// attribute.
-+	_, err = mapper.GetAlias("Keyword01", "ns")
-+	require.ErrorAs(t, err, &invalidArgumentErr)
-+
-+	for _, tc := range []struct {
-+		name     string
-+		input    map[string]string
-+		expected map[string]string
-+	}{
-+		{
-+			name:     "with another renamed field",
-+			input:    map[string]string{"CustomerId": "legacy", "Keyword01": "via-alias", "Keyword02": "new"},
-+			expected: map[string]string{"CustomerId": "legacy", "NewAttr": "new"},
-+		},
-+		{
-+			// The result doesn't depend on whether another field is renamed.
-+			name:     "without another renamed field",
-+			input:    map[string]string{"CustomerId": "legacy", "Keyword01": "via-alias"},
-+			expected: map[string]string{"CustomerId": "legacy"},
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			indexedFields := make(map[string]*commonpb.Payload, len(tc.input))
-+			for name, value := range tc.input {
-+				indexedFields[name] = &commonpb.Payload{Data: []byte(value)}
-+			}
-+			sa, err := AliasFields(
-+				staticMapperProvider{mapper: mapper},
-+				&commonpb.SearchAttributes{IndexedFields: indexedFields},
-+				"ns",
-+			)
-+			require.NoError(t, err)
-+			result := make(map[string]string, len(sa.GetIndexedFields()))
-+			for name, payload := range sa.GetIndexedFields() {
-+				result[name] = string(payload.GetData())
-+			}
-+			require.Equal(t, tc.expected, result)
-+		})
-+	}
-+}
-+
-+type staticMapperProvider struct {
-+	mapper Mapper
-+}
-+
-+func (p staticMapperProvider) GetMapper(namespace.Name) (Mapper, error) {
-+	return p.mapper, nil
-+}
-+
-+func TestWithoutPreallocatedFields(t *testing.T) {
-+	result := WithoutPreallocatedFields(map[string]enumspb.IndexedValueType{
-+		"Keyword01":     enumspb.INDEXED_VALUE_TYPE_KEYWORD,
-+		"KeywordList03": enumspb.INDEXED_VALUE_TYPE_KEYWORD_LIST,
-+		"Text02":        enumspb.INDEXED_VALUE_TYPE_TEXT,
-+		// Same pattern but a different type than the pre-allocated field: registered by a user.
-+		"Int01":      enumspb.INDEXED_VALUE_TYPE_KEYWORD,
-+		"CustomerId": enumspb.INDEXED_VALUE_TYPE_KEYWORD,
-+	})
-+	require.Equal(t, map[string]enumspb.Index
-```
-
-**File**: `service/frontend/operator_handler.go` (modified, +33/-4)
-```diff
-@@ -491,18 +491,47 @@ func (h *OperatorHandlerImpl) ListSearchAttributes(
- 	}
- 
- 	if h.visibilityMgr.HasStoreName(esconfig.PersistenceName) {
--		return h.listSearchAttributesElasticsearch(ctx, indexName, searchAttributes)
-+		return h.listSearchAttributesElasticsearch(request, searchAttributes)
- 	}
- 	return h.listSearchAttributesSQL(ctx, request, searchAttributes)
- }
- 
-+// listSearchAttributesElasticsearch returns the custom search attributes registered at the
-+// cluster level, plus the namespace aliases of pre-allocated fields. Pre-allocated fields
-+// themselves (eg: Keyword01) are not returned: they can only be used through an alias.
- func (h *OperatorHandlerImpl) listSearchAttributesElasticsearch(
--	ctx context.Context,
--	indexName string,
-+	request *operatorservice.ListSearchAttributesRequest,
- 	searchAttributes searchattribute.NameTypeMap,
- ) (*operatorservice.ListSearchAttributesResponse, error) {
-+	cmCSA := searchAttributes.Custom()
-+	customSearchAttributes := searchattribute.WithoutPreallocatedFields(cmCSA)
-+	if nsName := request.GetNamespace(); nsName != "" {
-+		ns, err := h.namespaceRegistry.GetNamespace(namespace.Name(nsName))
-+		if err != nil {
-+			return nil, err
-+		}
-+		// Like listSearchAttributesSQL, iterate over the fields in cluster metadata and return the
-+		// alias of the pre-allocated ones.
-+		saMapper := ns.CustomSearchAttributesMapper()
-+		fieldToAliasMap := saMapper.FieldToAliasMap()
-+		for field, tp := range cmCSA {
-+			if !sadefs.IsPreallocatedCSAFieldName(field, tp) {
-+				continue
-+			}
-+			alias, ok := fieldToAliasMap[field]
-+			if !ok {
-+				continue
-+			}
-+			// A cluster-level custom search attribute takes precedence over a namespace alias
-+			// with the same name.
-+			if _, exists := customSearchAttributes[alias]; exists {
-+				continue
-+			}
-+			customSearchAttributes[alias] = tp
-+		}
-+	}
- 	return &operatorservice.ListSearchAttributesResponse{
--		CustomAttributes: searchAttributes.Custom(),
-+		CustomAttributes: customSearchAttributes,
- 		SystemAttributes: searchAttributes.System(),
- 	}, nil
- }
-```
-
-**File**: `service/frontend/operator_handler_test.go` (modified, +43/-0)
-```diff
-@@ -836,6 +836,49 @@ func (s *operatorHandlerSuite) Test_ListSearchAttributes_Elasticsearch() {
- 	s.Nil(resp)
- }
- 
-+func (s *operatorHandlerSuite) Test_ListSearchAttributes_ElasticsearchHidesPreallocatedFields() {
-+	ctx := context.Background()
-+	customSearchAttributes := maps.Clone(searchattribute.TestEsNameTypeMap().Custom())
-+	maps.Copy(customSearchAttributes, searchattribute.TestNameTypeMap().Custom())
-+	saTypeMap := searchattribute.NewNameTypeMap(customSearchAttributes)
-+	legacyOnly := searchattribute.TestEsNameTypeMap().Custom()
-+
-+	s.mockResource.VisibilityManager.EXPECT().HasStoreName(esconfig.PersistenceName).Return(true).AnyTimes()
-+	s.mockResource.VisibilityManager.EXPECT().GetIndexName().Return(testIndexName).AnyTimes()
-+	s.mockResource.SearchAttributesManager.EXPECT().GetSearchAttributes(testIndexName, true).Return(saTypeMap, nil).AnyTimes()
-+
-+	// Without a namespace, only the cluster-level custom search attributes are returned.
-+	resp, err := s.handler.ListSearchAttributes(ctx, &operatorservice.ListSearchAttributesRequest{})
-+	s.Require().NoError(err)
-+	s.Equal(legacyOnly, resp.GetCustomAttributes())
-+
-+	// With a namespace, its aliases of pre-allocated fields are returned too.
-+	ns := namespace.NewLocalNamespaceForTest(
-+		&persistencespb.NamespaceInfo{Name: testNamespace},
-+		&persistencespb.NamespaceConfig{CustomSearchAttributeAliases: map[string]string{
-+			"Keyword05": "NewAttr",
-+			// Same name as a cluster-level custom search attribute: not exposed.
-+			"Keyword06": "CustomKeywordField",
-+			// A field that is not in cluster metadata (eg: a larger pool on another cluster): not exposed.
-+			"Keyword50": "OtherAttr",
-+		}},
-+		s.currentClusterName,
-+	)
-+	s.mockResource.NamespaceCache.EXPECT().GetNamespace(namespace.Name(testNamespace)).Return(ns, nil)
-+	resp, err = s.handler.ListSearchAttributes(ctx, &operatorservice.ListSearchAttributesRequest{Namespace: testNamespace})
-+	s.Require().NoError(err)
-+	expected := maps.Clone(legacyOnly)
-+	expected["NewAttr"] = enumspb.INDEXED_VALUE_TYPE_KEYWORD
-+	s.Equal(expected, resp.GetCustomAttributes())
-+
-+	// A namespace that can't be read is an error.
-+	s.mockResource.NamespaceCache.EXPECT().GetNamespace(namespace.Name("missing")).
-+		Return(nil, serviceerror.NewNamespaceNotFound("missing"))
-+	_, err = s.handler.ListSearchAttributes(ctx, &operatorservice.ListSearchAttributesRequest{Namespace: "missing"})
-+	var namespaceNotFoundErr *serviceerror.NamespaceNotFound
-+	s.Require().ErrorAs(err, &namespaceNotFoundErr)
-+}
-+
- func (s *operatorHandlerSuite) Test_ListSearchAttributes_SQL() {
- 	handler := s.handler
- 	ctx := context.Background()
-```
-
-**File**: `service/history/fx.go` (modified, +1/-0)
-```diff
-@@ -118,6 +118,7 @@ var Module = fx.Options(
- 	workerdeployment.ClientModule,
- 	fx.Provide(RoutingInfoCacheProvider),
- 	fx.Invoke(ServiceLifetimeHooks),
-+	fx.Invoke(RegisterPreallocatedSearchAttributeMappings),
- 	fx.Invoke(func(
- 		chasmEngine chasm.Engine,
- 		chasmVisibilityManager chasm.VisibilityManager,
-```
-
-**File**: `service/history/preallocated_search_attributes.go` (added, +122/-0)
-```diff
-@@ -0,0 +1,122 @@
-+package history
-+
-+import (
-+	"context"
-+	"sync"
-+	"time"
-+
-+	enumspb "go.temporal.io/api/enums/v1"
-+	"go.temporal.io/server/common/backoff"
-+	"go.temporal.io/server/common/log"
-+	"go.temporal.io/server/common/log/tag"
-+	"go.temporal.io/server/common/persistence/visibility"
-+	"go.temporal.io/server/common/persistence/visibility/manager"
-+	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
-+	"go.temporal.io/server/common/searchattribute"
-+	"go.temporal.io/server/common/searchattribute/sadefs"
-+	"go.uber.org/fx"
-+)
-+
-+const registerPreallocatedSearchAttributesAttemptTimeout = 30 * time.Second
-+
-+var registerPreallocatedSearchAttributesRetryPolicy = backoff.NewExponentialRetryPolicy(time.Second).
-+	WithMaximumInterval(time.Minute).
-+	WithExpirationInterval(10 * time.Minute)
-+
-+// RegisterPreallocatedSearchAttributeMappings adds the pre-allocated custom search attribute
-+// fields (eg: Keyword01) listed in cluster metadata to the mappings of the Elasticsearch
-+// visibility indexes. The index mapping is not dynamic, so values of unmapped fields are not
-+// indexed, and queries on their namespace aliases return nothing.
-+// It runs in the background when the service starts, and retries failures for a limited time.
-+func RegisterPreallocatedSearchAttributeMappings(
-+	lc fx.Lifecycle,
-+	visibilityManager manager.VisibilityManager,
-+	searchAttributesProvider searchattribute.Provider,
-+	logger log.Logger,
-+) {
-+	ctx, cancel := context.WithCancel(context.Background())
-+	var wg sync.WaitGroup
-+	lc.Append(fx.Hook{
-+		OnStart: func(context.Context) error {
-+			wg.Go(func() {
-+				registerPreallocatedSearchAttributeMappings(
-+					ctx,
-+					visibilityManager,
-+					searchAttributesProvider,
-+					registerPreallocatedSearchAttributesRetryPolicy,
-+					logger,
-+				)
-+			})
-+			return nil
-+		},
-+		OnStop: func(context.Context) error {
-+			cancel()
-+			wg.Wait()
-+			return nil
-+		},
-+	})
-+}
-+
-+func registerPreallocatedSearchAttributeMappings(
-+	ctx context.Context,
-+	visibilityManager manager.VisibilityManager,
-+	searchAttributesProvider searchattribute.Provider,
-+	retryPolicy backoff.RetryPolicy,
-+	logger log.Logger,
-+) {
-+	visibilityManagers := []manager.VisibilityManager{visibilityManager}
-+	if visibilityManagerDual, ok := visibilityManager.(*visibility.VisibilityManagerDual); ok {
-+		visibilityManagers = []manager.VisibilityManager{
-+			visibilityManagerDual.GetPrimaryVisibility(),
-+			visibilityManagerDual.GetSecondaryVisibility(),
-+		}
-+	}
-+
-+	for _, visManager := range visibilityManagers {
-+		// TODO: Other visibility stores don't support adding search attributes.
-+		if visManager.GetStoreNames()[0] != esconfig.PersistenceName {
-+			continue
-+		}
-+		indexName := visManager.GetIndexName()
-+		err := backoff.ThrottleRetryContext(
-+			ctx,
-+			func(ctx context.Context) error {
-+				return registerPreallocatedFieldMappings(ctx, visManager, searchAttributesProvider)
-+			},
-+			retryPolicy,
-+			nil,
++	if localHistoryMismatch {
++		// Preserve the existing branch for other runs and copy the complete source
++		// history into an independent branch without source ancestors.
++		backfillBranchToken, err = r.shardContext.GetExecutionManager().GetHistoryBranchUtil().NewHistoryBranch(
++			namespaceID.String(), workflowID, runID, branchInfo.GetTreeId(), nil, nil,
++			0, 0, 0,
 +		)
 +		if err != nil {
-+			logger.Error("Failed to register pre-allocated custom search attribute mappings.",
-+				tag.ESIndex(indexName), tag.Error(err))
-+			continue
++			return err
 +		}
-+		logger.Info("Registered pre-allocated custom search attribute mappings.", tag.ESIndex(indexName))
++		lastBatchNodeID = 0
 +	}
-+}
-+
-+// registerPreallocatedFieldMappings adds the mappings of all the pre-allocated fields in one
-+// request. Adding a field that is already mapped with the same type doesn't change it.
-+func registerPreallocatedFieldMappings(
-+	ctx context.Context,
-+	visManager manager.VisibilityManager,
-+	searchAttributesProvider searchattribute.Provider,
-+) error {
-+	searchAttributes, err := searchAttributesProvider.GetSearchAttributes(visManager.GetIndexName(), false)
-+	if err != nil {
-+		return err
-+	}
-+	preallocatedFields := make(map[string]enumspb.IndexedValueType)
-+	for name, valueType := range searchAttributes.Custom() {
-+		if sadefs.IsPreallocatedCSAFieldName(name, valueType) {
-+			preallocatedFields[name] = valueType
-+		}
-+	}
-+	if len(preallocatedFields) == 0 {
-+		return nil
-+	}
-+
-+	ctx, cancel := context.WithTimeout(ctx, registerPreallocatedSearchAttributesAttemptTimeout)
-+	defer cancel()
-+	return visManager.AddSearchAttributes(ctx, &manager.AddSearchAttributesRequest{SearchAttributes: preallocatedFields})
-+}
+ 
+ 	remoteHistoryIterator := collection.NewPagingIterator(r.getHistoryFromRemotePaginationFn(
+ 		ctx,
 ```
 
-**File**: `service/history/preallocated_search_attributes_test.go` (added, +152/-0)
+**File**: `service/history/ndc/workflow_state_replicator_test.go` (modified, +30/-2)
 ```diff
-@@ -0,0 +1,152 @@
-+package history
+@@ -256,7 +256,19 @@ func (s *workflowReplicatorSuite) Test_ApplyWorkflowState_BrandNew() {
+ 	s.NoError(err)
+ }
+ 
+-func (s *workflowReplicatorSuite) Test_ApplyWorkflowState_Ancestors() {
++func (s *workflowReplicatorSuite) TestApplyWorkflowStateAncestorReuse() {
++	for _, tc := range []struct {
++		name         string
++		localVersion int64
++	}{
++		{name: "matching history", localVersion: 100},
++		{name: "divergent history", localVersion: 99},
++	} {
++		s.Run(tc.name, func() { s.applyWorkflowStateWithAncestors(tc.localVersion) })
++	}
++}
++
++func (s *workflowReplicatorSuite) applyWorkflowStateWithAncestors(localVersion int64) {
+ 	namespaceID := uuid.NewString()
+ 	namespaceName := "namespaceName"
+ 	branchInfo := &persistencespb.HistoryBranch{
+@@ -416,16 +428,32 @@ func (s *workflowReplicatorSuite) Test_ApplyWorkflowState_Ancestors() {
+ 				Events: []*historypb.HistoryEvent{
+ 					{
+ 						EventId: 1,
++						Version: localVersion,
+ 					},
+ 					{
+ 						EventId: 2,
++						Version: localVersion,
+ 					},
+ 				},
+ 			},
+ 		},
+ 	}, nil)
+ 	s.mockExecutionManager.EXPECT().GetCurrentExecution(gomock.Any(), gomock.Any()).Return(nil, serviceerror.NewNotFound(""))
+-	s.mockExecutionManager.EXPECT().AppendRawHistoryNodes(gomock.Any(), gomock.Any()).Return(nil, nil).Times(3)
++	appends := 3
++	if localVersion != 100 {
++		appends = 4
++	}
++	s.mockExecutionManager.EXPECT().AppendRawHistoryNodes(gomock.Any(), gomock.Any()).DoAndReturn(
++		func(_ context.Context, req *persistence.AppendRawHistoryNodesRequest) (*persistence.AppendHistoryNodesResponse, error) {
++			if localVersion != 100 {
++				branch, err := s.mockExecutionManager.GetHistoryBranchUtil().ParseHistoryBranchInfo(req.BranchToken)
++				s.NoError(err)
++				s.NotEqual(branchInfo.BranchId, branch.BranchId)
++				s.Empty(branch.Ancestors)
++			}
++			return nil, nil
++		},
++	).Times(appends)
+ 	fakeStartHistory := &historypb.HistoryEvent{
+ 		Attributes: &historypb.HistoryEvent_WorkflowExecutionStartedEventAttributes{
+ 			WorkflowExecutionStartedEventAttributes: &historypb.WorkflowExecutionStartedEventAttributes{},
+```
+
+**File**: `tests/xdc/buffered_events_replication_helpers_test.go` (modified, +6/-0)
+```diff
+@@ -800,6 +800,7 @@ func (s *xdcBaseSuite) completeWorkflowTaskAndReturnNext(
+ func (s *xdcBaseSuite) blockReplicationForWorkflow(
+ 	clusterIndex int,
+ 	workflowID string,
++	transform ...func(*replicationspb.ReplicationTask) error,
+ ) <-chan *blockedReplicationTask {
+ 	s.T().Helper()
+ 	// The interceptor runs on the receiving cluster, so clusterIndex identifies the replication
+@@ -815,6 +816,11 @@ func (s *xdcBaseSuite) blockReplicationForWorkflow(
+ 			if workflowIDFromReplicationTask(task) != workflowID {
+ 				return execute()
+ 			}
++			for _, fn := range transform {
++				if err := fn(task); err != nil {
++					return err
++				}
++			}
+ 			blockedTask := &blockedReplicationTask{
+ 				execute: execute,
+ 				done:    make(chan struct{}),
+```
+
+**File**: `tests/xdc/reset_after_conflict_test.go` (added, +173/-0)
+```diff
+@@ -0,0 +1,173 @@
++package xdc
 +
 +import (
 +	"context"
 +	"errors"
-+	"maps"
-+	"testing"
++	"fmt"
 +	"time"
 +
-+	"go.temporal.io/server/common/backoff"
-+	"go.temporal.io/server/common/log"
-+	"go.temporal.io/server/common/persistence/sql/sqlplugin/mysql"
-+	"go.temporal.io/server/common/persistence/visibility"
-+	"go.temporal.io/server/common/persistence/visibility/manager"
-+	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
-+	"go.temporal.io/server/common/searchattribute"
-+	"go.uber.org/fx/fxtest"
-+	"go.uber.org/mock/gomock"
++	"github.com/google/uuid"
++	"github.com/stretchr/testify/require"
++	commandpb "go.temporal.io/api/command/v1"
++	commonpb "go.temporal.io/api/common/v1"
++	enumspb "go.temporal.io/api/enums/v1"
++	historypb "go.temporal.io/api/history/v1"
++	taskqueuepb "go.temporal.io/api/taskqueue/v1"
++	"go.temporal.io/api/workflowservice/v1"
++	"go.temporal.io/server/api/adminservice/v1"
++	replicationspb "go.temporal.io/server/api/replication/v1"
++	"go.temporal.io/server/chasm"
++	"go.temporal.io/server/common/testing/await"
++	"go.temporal.io/server/common/testing/testhooks"
++	"google.golang.org/protobuf/proto"
 +)
 +
-+const preallocatedFieldsTestIndex = "test-index"
-+
-+// esClusterMetadataTypeMap returns the custom search attributes of an Elasticsearch cluster with
-+// legacy cluster-level search attributes and the pre-allocated fields in cluster metadata.
-+func esClusterMetadataTypeMap() searchattribute.NameTypeMap {
-+	customSearchAttributes := maps.Clone(searchattribute.TestEsNameTypeMap().Custom())
-+	maps.Copy(customSearchAttributes, searchattribute.TestNameTypeMap().Custom())
-+	return searchattribute.NewNameTypeMap(customSearchAttributes)
-+}
-+
-+func newMockVisibilityManager(ctrl *gomock.Controller, storeName string) *manager.MockVisibilityManager {
-+	visManager := manager.NewMockVisibilityManager(ctrl)
-+	visManager.EXPECT().GetStoreNames().Return([]string{storeName}).AnyTimes()
-+	visManager.EXPECT().GetIndexName().Return(preallocatedFieldsTestIndex).AnyTimes()
-+	return visManager
-+}
-+
-+func TestRegisterPreallocatedSearchAttributeMappings(t *testing.T) {
-+	expectedRequest := &manager.AddSearchAttributesRequest{
-+		SearchAttributes: searchattribute.TestNameTypeMap().Custom(),
++// TestResetAfterConflictPreservesWinningHistory checks that a replicated reset
++// inherits the winning prefix after the original run has switched branches.
++func (s *FunctionalClustersTestSuite) TestResetAfterConflictPreservesWinningHistory() {
++	if !s.enableTransitionHistory {
++		s.T().Skip("requires state-based replication")
 +	}
-+
-+	testCases := []struct {
-+		name  string
-+		setup func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager
++	for _, tc := range []struct {
++		name         string
++		coldSnapshot bool
 +	}{
-+		{
-+			name: "elasticsearch registers only the pre-allocated fields",
-+			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
-+				visManager := newMockVisibilityManager(ctrl, esconfig.PersistenceName)
-+				saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).Return(esClusterMetadataTypeMap(), nil)
-+				visManager.EXPECT().AddSearchAttributes(gomock.Any(), expectedRequest).Return(nil)
-+				return visManager
-+			},
-+		},
-+		{
-+			name: "elasticsearch failure is retried",
-+			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
-+				visManager := newMockVisibilityManager(ctrl, esconfig.PersistenceName)
-+				saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).Return(esClusterMetadataTypeMap(), nil).Times(2)
-+				gomock.InOrder(
-+					visManager.EXPECT().AddSearchAttributes(gomock.Any(), expectedRequest).Return(errors.New("unavailable")),
-+					visManager.EXPECT().AddSearchAttributes(gomock.Any(), expectedRequest).Return(nil),
-+				)
-+				return visManager
-+			},
-+		},
-+		{
-+			name: "elasticsearch failure gives up after the retries",
-+			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
-+				visManager := newMockVisibilityManager(ctrl, esconfig.PersistenceName)
-+				saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).Return(esClusterMetadataTypeMap(), nil).Times(3)
-+				visManager.EXPECT().AddSearchAttributes(gomock.Any(), expectedRequest).Return(errors.New("forbidden")).Times(3)
-+				return visManager
-+			},
-+		},
-+		{
-+			name: "cluster metadata lookup failure is retried",
-+			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
-+				visManager := newMockVisibilityManager(ctrl, esconfig.PersistenceName)
-+				gomock.InOrder(
-+					saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).
-+						Return(searchattribute.NameTypeMap{}, errors.New("unavailable")),
-+					saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).
-+						Return(esClusterMetadataTypeMap(), nil),
-+				)
-+				visManager.EXPECT().AddSearchAttributes(gomock.Any(), expectedRequest).Return(nil)
-+				return visManager
-+			},
-+		},
-+		{
-+			name: "no pre-allocated fields in cluster metadata",
-+			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
-+				visManager := newMockVisibilityManager(ctrl, esconfig.PersistenceName)
-+				saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).Return(searchattribute.TestEsNameTypeMap(), nil)
-+				return visManager
-+			},
-+		},
-+		{
-+			name: "sql is skipped",
-+			setup: func(ctrl *gomock.Controller, _ *searchattribute.MockProvider) manager.VisibilityManager {
-+				return newMockVisibilityManager(ctrl, mysql.PluginName)
-+			},
-+		},
-+		{
-+			name: "dual visibility registers only the elasticsearch store",
-+			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
-+				sqlManager := newMockVisi
++		{name: "FirstSync"},
++		{name: "ColdSnapshot", coldSnapshot: true},
++	} {
++		s.Run(tc.name, func() { s.resetAfterConflictPreservesWinningHistory(tc.coldSnapshot) })
++	}
++}
++
++func (s *FunctionalClustersTestSuite) resetAfterConflictPreservesWinningHistory(coldSnapshot bool) {
++	ctx, cancel := context.WithTimeout(s.T().Context(), 120*time.Second)
++	defer cancel()
++	ns := s.createBufferedEventsNamespace(ctx)
++	queue := &taskqueuepb.TaskQueue{Name: "reset-conflict-" + uuid.NewString()}
++	coldSnapshotFrom := func(source int, task *replicationspb.ReplicationTask) error {
++		attrs := task.GetSyncVersionedTransitionTaskAttributes()
++		if attrs == nil || attrs.WorkflowId != queue.Name {
++			return nil
++		}
++		response, err := s.clusters[source].AdminClient().SyncWorkflowState(ctx, &adminservice.SyncWorkflowStateRequest{
++			NamespaceId:     ns.ID,
++			Execution:       &commonpb.WorkflowExecution{WorkflowId: attrs.WorkflowId, RunId: attrs.RunId},
++			TargetClusterId: int32(2 - source), ArchetypeId: chasm.WorkflowArchetypeID,
++		})
++		if err != nil {
++			return err
++		}
++		artifact := response.VersionedTransitionArtifact
++		if artifact.IsFirstSync || len(artifact.EventBatches) != 0 {
++			return errors.New("expected a non-first-sync snapshot without events")
++		}
++		attrs.VersionedTransitionArtifact = artifact
++		return nil
++	}
++	removeInitialHook := func() {}
++	if coldSnapshot {
++		// Resync preserves source branch IDs, so the source ancestor can later
++		// refer to a losing history on the destination.
++		removeInitialHook = s.clusters[1].InjectHook(s.T(), testhooks.NewHook(testhooks.HistoryReplicationTaskInterceptor,
++			func(task *replicationspb.ReplicationTask, execute func() error) error {
++				if err := coldSnapshotFrom(0, task); err != nil {
++					return err
++				}
++				return execute()
++			}), testhooks.GlobalScope)
++	}
++	execution := s.startBufferedEventsWorkflow(ctx, startBufferedEventsWorkflowArgs{
++		Namespace: ns.Name, WorkflowID: queue.Name, TaskQueue: queue,
++	})
++	first := s.pollBufferedEventsWorkflowTask(ctx, 0, ns.Name, queue)
++	s.completeWorkflowTask(ctx, workflowTaskCompletion{
++		Task: first, Commands: []*commandpb.Command{scheduleActivityCommand("activity", queue, 2*time.Minute)},
++	})
++	await.Require(ctx, s.T(), func(t *await.T) {
++		response, err := s.clusters[1].FrontendClient().GetWorkflowExecutionHistory(t.Context(), &workflowservice.GetWorkflowExecutionHistoryRequest{
++			Namespace: ns.Name, Execution: execution,
++		})
++		require.NoError(t, err)
++		require.Len(t, response.History.Events, 5)
++	}, replicationWaitTime, replicationCheckInterval)
++	removeInitialHook()
++	commonHistory := s.getWorkflowHistory(ctx, s.T(), 1, ns.Name, execution)
++	s.EqualHistoryEvents(`
++1 WorkflowExecutionStarted
++2 WorkflowTaskScheduled
++3 WorkflowTaskStarted
++4 WorkflowTaskCompleted
++5 ActivityTaskScheduled`, commonHistory)
++
++	// Activity results and markers are not reapplied from the losing branch.
++	// Keep its replication blocked so the winner is written from the common prefix.
++	s.blockReplicationForWorkflow(1, execution.WorkflowId)
++	toOldActive := s.blockReplicationForWorkflow(0, execution.WorkflowId, func(task *replicationspb.ReplicationTask) error {
++		attrs := task.GetSyncVersionedTransitionTaskAttributes()
++		if !coldSnapshot || attrs == nil || attrs.RunId == execution.RunId {
++			return nil
++		}
++		// Fetch an eventless snapshot so the receiver backfills the reset history.
++		return coldSnapshotFrom(1, task)
++	})
++	activity := s.pollBufferedActivityTask(ctx, ns.Name, queue)
++	s.completeActivityTask(ctx, activity)
++	losingTask := s.pollBufferedEventsWorkflowTask(ctx, 0, ns.Name, queue)
++	s.completeWorkflowTask(ctx, workflowTaskCompletion{
++		Task: losingTask,
++		Commands: []*commandpb.Command{{
++			CommandType: enumspb.COMMAND_TYPE_RECORD_MARKER,
++			Attributes: &commandpb.Command_RecordMarkerCommandAttributes{
++	
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13314** (2026-11-25): Improve shard ownership checks (@prathyushpv)
-- **PR #13311** (2026-11-25): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13309** (2026-11-25): add oss foundations as owner to batcher owner (@feiyang3cat)
-- **PR #13304** (closed): Fix: Recover Activity delivery after a sync-match start timeout (@ali-khokhar-nvidia)
-- **PR #13296** (closed): Add persistence failpoints with namespace scoping (@stephanos)
-- **PR #13295** (closed): Run gRPC and HTTP test faults on failpoints (@stephanos)
+- **PR #13365** (2026-11-28): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13353** (closed): Adopt Onelint (@stephanos)
+- **PR #13350** (2026-11-27): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13335** (2026-11-26): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13329** (closed): Add testcore failpoint injection helpers (@stephanos)
+- **PR #13328** (closed): Add Panic, Call, Block and Pause actions to testx/failpoint (@stephanos)
 
 ---
 
@@ -2815,69 +2444,53 @@ stops.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Elasticsearch search attribute mapping backwards compatibility fix
+## X. reset history backfill after replication conflicts
 
 **RULE**:
-When implementing operations in `common/searchattribute/mapper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `service/history/ndc/workflow_state_replicator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fd06a49a`: Elasticsearch search attribute mapping backwards compatibility fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2af2fe74`: reset history backfill after replication conflicts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/searchattribute/mapper.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/history/ndc/workflow_state_replicator.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// GetAlias returns the alias of fieldName. A legacy custom search attribute (registered
-// through cluster metadata) always maps to itself. A namespace alias that has the same name as a
-// legacy custom search attribute is not used: GetFieldName resolves that name to the legacy
-// attribute. The field has no alias in that case, so that two fields never get the same alias.
-	if m.isLegacyCustomSearchAttribute(fieldName) {
-	alias, err := m.mapper.GetAlias(fieldName, namespaceName)
-	if err != nil {
-		return "", err
-	}
-	// TODO: Remove this check once custom search attributes of Elasticsearch visibility stores
-	// are only registered as namespace aliases and no cluster-level custom search attribute is left.
-	if m.isLegacyCustomSearchAttribute(alias) {
-		return "", serviceerror.NewInvalidArgumentf(
-			"search attribute field %s is aliased to %s, which is already a cluster-level custom search attribute",
-			fieldName,
-			alias,
+	// Source branch IDs can refer to a losing history locally after conflict resolution.
+	// Only reuse existing batches if they belong to the source's version history.
+	localHistoryMismatch := false
+LocalHistoryLoop:
+			for _, event := range localHistoryBatch.GetEvents() {
+				version, err := versionhistory.GetVersionHistoryEventVersion(currentVersionHistory, event.GetEventId())
+				if err != nil || version != event.GetVersion() {
+					localHistoryMismatch = true
+					break LocalHistoryLoop
+				}
+			}
+	if localHistoryMismatch {
+		// Preserve the existing branch for other runs and copy the complete source
+		// history into an independent branch without source ancestors.
+		backfillBranchToken, err = r.shardContext.GetExecutionManager().GetHistoryBranchUtil().NewHistoryBranch(
+			namespaceID.String(), workflowID, runID, branchInfo.GetTreeId(), nil, nil,
+			0, 0, 0,
 		)
+		if err != nil {
+			return err
+		}
+		lastBatchNodeID = 0
 	}
-// GetFieldName returns the field name of alias. A legacy custom search attribute (registered
-// through cluster metadata) takes precedence over a namespace alias with the same name: its
-// existing documents are stored under its own name, so resolving it t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	alias, firstErr := m.mapper.GetAlias(fieldName, namespaceName)
-	if firstErr != nil {
-		if !m.isLegacyCustomSearchAttribute(fieldName) {
-			return "", firstErr
-		}
-		// this is a custom search attribute registered through cluster metadata.
-	fieldName, firstErr := m.mapper.GetFieldName(alias, namespaceName)
-	if firstErr != nil {
-		if !m.isLegacyCustomSearchAttribute(alias) {
-			return "", firstErr
-		}
-		// this is a custom search attribute registered through cluster metadata.
-	return fieldName, nil
-	legacyCustomSearchAttributes := make(map[string]enumspb.IndexedValueType)
-	for name, valueType := range nameTypeMap.Custom() {
-		legacyCustomSearchAttributes[name] = valueType
-	return NewNameTypeMap(legacyCustomSearchAttributes)
-// If no replacement where made, it returns nil which means that original SearchAttributes struct should be used.
-	// If no field name was mapped, return nil to save on clone operation on caller side.
+	// Get the last batch node id to check if the history data is already in DB.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fd06a49a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2af2fe74` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

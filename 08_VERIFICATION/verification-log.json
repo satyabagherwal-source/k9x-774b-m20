@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-QIML",
-    "timestamp": "2026-11-26T18:50:13.581Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-    "contentHash": "cb743ba61acea1c17e278cd8816f955e535792ea09829632b5d7f4f90eda3675",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-QT00",
     "timestamp": "2026-11-26T18:50:27.024Z",
     "repository": "langchain4j/langchain4j",
@@ -7490,6 +7475,21 @@
     "repository": "gitroomhq/postiz-app",
     "learningId": "learn-github-gitroomhq-postiz-app",
     "contentHash": "4592fa4ae2bff83d8fbc3d5b52ce49882f1a2a3cb7011368c5388a818f3a60d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-J3GV",
+    "timestamp": "2026-11-28T13:39:52.015Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "ccc1d7a7faffcba1a864e3ebb93752c942ff547384f36bdd2477fe16554f7e3e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
