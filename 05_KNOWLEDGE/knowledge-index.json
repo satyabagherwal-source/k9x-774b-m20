@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T08:40:16.455Z",
+  "last_updated": "2026-11-28T09:08:28.369Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27051,
+  "total_items": 27062,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -233828,13 +233828,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "02e1c520",
-      "content_hash": "f27ffb22a855059ff2a3241526c70652d8741fcfea543eb86c905c4177214251",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "98e055e6",
+      "content_hash": "261c2eda6aef104230b23c43298e108f80cfa461ab284fcad99906b5f2b34e90",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -233925,6 +233925,21 @@
           "number": 10917,
           "title": "compaction summaries reuse the turn's cached prefix on DeepSeek",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11075,
+          "title": "Lattice-Based Monotonic Capability Intersection for Agent Sub-Processes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11076,
+          "title": "Off-Thread Snapshot Capture for UI Dispatch with Recovery Rollbacks",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11077,
+          "title": "Byte-Level Prefix Fingerprinting with Strict Wire-Ordering Serialization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233932,7 +233947,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T15:18:19.869Z",
+      "verified_at": "2026-11-28T09:08:19.744Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233983,25 +233998,25 @@
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "02e1c520",
-      "content_hash": "77d63f377c9484b1ac61b1c21fcb2215a29b28108d5c9d69fa7b91f35bdcef2b",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-27T15:18:20.730Z"
+      "source_version": "98e055e6",
+      "content_hash": "c5530915c29068e9c8ade88d4337710ef1740601af4f1063d64cba19b9e04554",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:08:20.965Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
+      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "02e1c520",
-      "content_hash": "74b92c7f99cace389b9ad0bea5ff65b2a30a0ebd78a157286c568228bf749485",
+      "source_version": "98e055e6",
+      "content_hash": "cdf68a222dcb07fe645478e70493fc92a1b26dbb6eaabf2e8884aaeb3b64d865",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:18:20.905Z"
+      "persisted_at": "2026-11-28T09:08:21.134Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -234035,9 +234050,9 @@
       "title": "Agent Contract: codewhale-hq-codewhale-learnings Autonomous Specialist Persona",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "3cb35c37d164f6370387084476ee094e3b8f6fa3130d7e83565ec2c508aa429a",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-27T09:17:48.049Z"
+      "content_hash": "2f1194f1d2bc8ea8e83df0a050ce8b83ad65beb592fd36efb1d8600442481069",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:08:25.088Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin",
@@ -234047,9 +234062,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq-codewhale-learnings",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7e1af6ccf0ac8e7ffa0b41f5451cb55b2f1b2a86dd02993e3266a0d8c0ca0cf",
+      "content_hash": "36cf3cebb4d1b0e334bade34bf18451ca9e6019bb1d35fe6b8df8e5180bbb509",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T09:17:48.223Z"
+      "persisted_at": "2026-11-28T09:08:25.249Z"
     },
     "learn-huggingface-bingsu-adetailer": {
       "learning_id": "learn-huggingface-bingsu-adetailer",
@@ -285194,10 +285209,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-codewhale-hq-codewhale-technical-construction-intelligence-codewhale-hq-codewhal.md",
       "title": "Technical Construction Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "9c7cb976",
-      "content_hash": "fe8867154895356b3728feb660e3670129b3915344b23f941cb1a458b00acdea",
+      "source_version": "98e055e6",
+      "content_hash": "2cdbdbac741dc70af7520e9c101fd4be44c2fcabe1267b39a2167c098a3b570b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:54:43.454Z"
+      "persisted_at": "2026-11-28T09:08:20.784Z"
     },
     "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari",
@@ -285207,9 +285222,9 @@
       "title": "Technical Construction Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f52ac69369cd0b56b1853b65498b55545c1f4f3d3a45cb5651d226b40cae6c6",
+      "content_hash": "8586b866109fd0937dad6f709e7ea76fdbb7707da4ef2d63186da154e06a3080",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:54:47.058Z"
+      "persisted_at": "2026-11-28T09:08:24.905Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-small-learnings-co": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-small-learnings-co",
@@ -315400,8 +315415,8 @@
       "slug": "parcel-bundler-parcel",
       "platform": "github",
       "source_url": "https://github.com/parcel-bundler/parcel",
-      "source_version": "63a71c9c",
-      "content_hash": "1963c926f9e3328f231fae258b31cf7d4580221bb9a133ec0b3c8e56947c4c4a",
+      "source_version": "346bc724",
+      "content_hash": "d86f038f2f3acf4e39a7fe1de316c102c022ceee1117e40a9fab545d5a8e3265",
       "dossier_path": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md",
       "promoted_rules": [
@@ -315424,6 +315439,11 @@
           "number": 10389,
           "title": "filename/dirname handling in JS plugin runtime",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11073,
+          "title": "CSS source maps with multiple assets with the same file path",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -315431,7 +315451,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:50:53.883Z",
+      "verified_at": "2026-11-28T09:05:04.717Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -315525,10 +315545,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-parcel-bundler-parcel-technical-construction-intelligence-parcel-bundler-parcel-.md",
       "title": "Technical Construction Intelligence: parcel-bundler/parcel Core Invariants",
       "repository": "parcel-bundler/parcel",
-      "source_version": "63a71c9c",
-      "content_hash": "e491aed1cbba77c7a918d1424f7c447f9975b18260c269f8ac5475161cf2ee7d",
+      "source_version": "346bc724",
+      "content_hash": "ac5be2c3ff99ca34ee36c1272dfae1e5ec1e46e2bf0491fa39120d8bc93212b2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:50:54.744Z"
+      "persisted_at": "2026-11-28T09:05:05.467Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-parcel-bundler-parcel": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-parcel-bundler-parcel",
@@ -315537,10 +315557,10 @@
       "relative_path": "08_VERIFICATION/parcel-bundler-parcel-verification-protocol-empirical-defect-shield-for-parcel-b.md",
       "title": "Verification Protocol: Empirical Defect Shield for parcel-bundler/parcel",
       "repository": "parcel-bundler/parcel",
-      "source_version": "63a71c9c",
-      "content_hash": "756a094211985acbdb6bc1a1964bf27a53fb0d16a12880ce5a160583cf5dd447",
+      "source_version": "346bc724",
+      "content_hash": "38cadb3ef40ebb7b9098bbc6f9e642f5d4730c82a0eeb461f7db253907dc3866",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:50:54.974Z"
+      "persisted_at": "2026-11-28T09:05:05.677Z"
     },
     "rule-9672": {
       "learning_id": "rule-9672",
@@ -315652,9 +315672,9 @@
       "title": "Technical Construction Intelligence: parcel-bundler-parcel-learnings Core Invariants",
       "repository": "parcel-bundler-parcel-learnings",
       "source_version": "HEAD",
-      "content_hash": "defdeac774fd9109c415848aedd204c5c95654499c1aecc487049e3bdc9b0085",
+      "content_hash": "20aa6cc10cd4d5d9597a9004825b8f7d4c6f5b20173949e969438a1530df39dc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:51:07.950Z"
+      "persisted_at": "2026-11-28T09:08:26.012Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-parcel-bundler-parcel-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-parcel-bundler-parcel-learning",
@@ -315664,9 +315684,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for parcel-bundler-parcel-learnings",
       "repository": "parcel-bundler-parcel-learnings",
       "source_version": "HEAD",
-      "content_hash": "53063272f3389e94793ea8e7fbe505450405fc26be169fd16bf6356925d18b00",
+      "content_hash": "09f3f47267f5ea5fd53108f0187c18930d6997f5cec8b6b0a35a2ef3dcc92cd8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:51:08.178Z"
+      "persisted_at": "2026-11-28T09:08:26.209Z"
     },
     "rule-9675": {
       "learning_id": "rule-9675",
@@ -354196,14 +354216,19 @@
       "slug": "oshai-kotlin-logging",
       "platform": "github",
       "source_url": "https://github.com/oshai/kotlin-logging",
-      "source_version": "0eeeba0c",
-      "content_hash": "9b77a41a56726bcfb6d9eea39f556df3520ee95c3a7430b7e4247d32d0ff0858",
+      "source_version": "5d29bb85",
+      "content_hash": "e2001df808f0ec0305fba2a0470c2616b64e95573ccddb4e9976cbf8421cda8e",
       "dossier_path": "07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
       "promoted_rules": [
         {
           "number": 10615,
           "title": "harden workflow token permissions and update security/Maven docs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11074,
+          "title": "bump gradle-wrapper from 8.14.7 to 8.14.8",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -354212,7 +354237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T06:26:53.214Z",
+      "verified_at": "2026-11-28T09:05:14.568Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -354254,10 +354279,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-oshai-kotlin-logging-quality-verification-intelligence-oshai-kotlin-logging-core.md",
       "title": "Quality & Verification Intelligence: oshai/kotlin-logging Core Invariants",
       "repository": "oshai/kotlin-logging",
-      "source_version": "0eeeba0c",
-      "content_hash": "43cdf9b6a3c1aa72bddad005368ea0a07543db8f4ec86156c11eefd81e746bcb",
+      "source_version": "5d29bb85",
+      "content_hash": "b2759c27c6f9ec0bac31851d857e9c89daed99992b2281062fabb58ea660515f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T06:26:54.012Z"
+      "persisted_at": "2026-11-28T09:05:15.314Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-oshai-kotlin-logging": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-oshai-kotlin-logging",
@@ -354266,10 +354291,10 @@
       "relative_path": "08_VERIFICATION/oshai-kotlin-logging-verification-protocol-empirical-defect-shield-for-oshai-kot.md",
       "title": "Verification Protocol: Empirical Defect Shield for oshai/kotlin-logging",
       "repository": "oshai/kotlin-logging",
-      "source_version": "0eeeba0c",
-      "content_hash": "5b81e4030c4d29b08593f69f97dd9af5bcd237a8911c28b4126d55bf0ad402b1",
+      "source_version": "5d29bb85",
+      "content_hash": "a846be4c10632e10f6bfd03bbb0380c571d8788f9d43fb1449a12ac495046669",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T06:26:54.231Z"
+      "persisted_at": "2026-11-28T09:05:15.522Z"
     },
     "candidate_directive-ci-harden-workflow-token-permissions-and-update-security-maven-docs": {
       "item_id": "candidate_directive-ci-harden-workflow-token-permissions-and-update-security-maven-docs",
@@ -354291,9 +354316,9 @@
       "title": "Quality & Verification Intelligence: oshai-kotlin-logging-learnings Core Invariants",
       "repository": "oshai-kotlin-logging-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fe66352bab39e27d7905007d3b40f66a9a59072875df296402021f59b9b66fb",
+      "content_hash": "0c0027fc1664a719ec8f6125137013a1fcf2bb9884d39027dd3283efeb7e985b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T06:27:05.400Z"
+      "persisted_at": "2026-11-28T09:08:28.178Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-oshai-kotlin-logging-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-oshai-kotlin-logging-learnings",
@@ -354303,9 +354328,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oshai-kotlin-logging-learnings",
       "repository": "oshai-kotlin-logging-learnings",
       "source_version": "HEAD",
-      "content_hash": "35dcc169cab4ba899358741c27b55287e52cdb68a117761fb9c5cbc82ae6ad02",
+      "content_hash": "36ffc51e956ea69fa23f1b0f752aaffc5fb3e0bf021a9b81ff904a8865310fda",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T06:27:05.617Z"
+      "persisted_at": "2026-11-28T09:08:28.369Z"
     },
     "rule-10616": {
       "learning_id": "rule-10616",
@@ -371813,6 +371838,148 @@
       "content_hash": "08ef2d6ddb5d12db4d22b19cc16a2d1deb58a3e1957db3dc169154b7b547526e",
       "domain_letter": "J",
       "persisted_at": "2026-11-28T08:40:13.073Z"
+    },
+    "rule-11073": {
+      "learning_id": "rule-11073",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11073,
+      "title": "CSS source maps with multiple assets with the same file path",
+      "source_url": "https://github.com/parcel-bundler/parcel",
+      "source_version": "346bc724",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:05:04.717Z"
+    },
+    "candidate_directive-css-source-maps-with-multiple-assets-with-the-same-file-path": {
+      "item_id": "candidate_directive-css-source-maps-with-multiple-assets-with-the-same-file-path",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U0YP-css-source-maps-with-multiple-assets-with-the-same-file-path.md",
+      "title": "CSS source maps with multiple assets with the same file path",
+      "repository": "parcel-bundler-parcel-learnings",
+      "source_version": "HEAD",
+      "content_hash": "290d1fd8c34212ba6c6490e92090ee001a199295492cd79537b64b028f6d676d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T09:08:25.828Z"
+    },
+    "rule-11074": {
+      "learning_id": "rule-11074",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11074,
+      "title": "bump gradle-wrapper from 8.14.7 to 8.14.8",
+      "source_url": "https://github.com/oshai/kotlin-logging",
+      "source_version": "5d29bb85",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:05:14.568Z"
+    },
+    "candidate_directive-bump-gradle-wrapper-from-8-14-7-to-8-14-8": {
+      "item_id": "candidate_directive-bump-gradle-wrapper-from-8-14-7-to-8-14-8",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PXSB-bump-gradle-wrapper-from-8-14-7-to-8-14-8.md",
+      "title": "bump gradle-wrapper from 8.14.7 to 8.14.8",
+      "repository": "oshai/kotlin-logging",
+      "source_version": "5d29bb85",
+      "content_hash": "fa44db248ccdc0b5e33c8b3dfccbed19db96adc3bfecbb9aa5586c5cba3ef079",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T09:05:15.084Z"
+    },
+    "rule-11075": {
+      "learning_id": "rule-11075",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11075,
+      "title": "Lattice-Based Monotonic Capability Intersection for Agent Sub-Processes",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "98e055e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:08:19.744Z"
+    },
+    "rule-11076": {
+      "learning_id": "rule-11076",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11076,
+      "title": "Off-Thread Snapshot Capture for UI Dispatch with Recovery Rollbacks",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "98e055e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:08:19.744Z"
+    },
+    "rule-11077": {
+      "learning_id": "rule-11077",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11077,
+      "title": "Byte-Level Prefix Fingerprinting with Strict Wire-Ordering Serialization",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "98e055e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:08:19.744Z"
+    },
+    "candidate_directive-lattice-based-monotonic-capability-intersection-for-agent-sub-processes": {
+      "item_id": "candidate_directive-lattice-based-monotonic-capability-intersection-for-agent-sub-processes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TZSN-lattice-based-monotonic-capability-intersection-for-agent-sub-processes.md",
+      "title": "Lattice-Based Monotonic Capability Intersection for Agent Sub-Processes",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5b32361b5dbc24a84fed06eccee498da612378b7c57b8c2965db1979fb386662",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:08:24.313Z"
+    },
+    "candidate_directive-off-thread-snapshot-capture-for-ui-dispatch-with-recovery-rollbacks": {
+      "item_id": "candidate_directive-off-thread-snapshot-capture-for-ui-dispatch-with-recovery-rollbacks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TZSN-off-thread-snapshot-capture-for-ui-dispatch-with-recovery-rollbacks.md",
+      "title": "Off-Thread Snapshot Capture for UI Dispatch with Recovery Rollbacks",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fbd6542d6759323e4727de480dcfe2fa9ab0e1a485710c8dd2bae59b5bfd694f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:08:24.506Z"
+    },
+    "candidate_directive-byte-level-prefix-fingerprinting-with-strict-wire-ordering-serialization": {
+      "item_id": "candidate_directive-byte-level-prefix-fingerprinting-with-strict-wire-ordering-serialization",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TZSO-byte-level-prefix-fingerprinting-with-strict-wire-ordering-serialization.md",
+      "title": "Byte-Level Prefix Fingerprinting with Strict Wire-Ordering Serialization",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "595bcdf3eb787040f7d4c10e500e29f16ee9ab6b193e775c4b7756da7186d0dd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:08:24.696Z"
+    },
+    "candidate_directive-deps-bump-gradle-wrapper-from-8-14-7-to-8-14-8": {
+      "item_id": "candidate_directive-deps-bump-gradle-wrapper-from-8-14-7-to-8-14-8",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U2M8-deps-bump-gradle-wrapper-from-8-14-7-to-8-14-8.md",
+      "title": "deps): bump gradle-wrapper from 8.14.7 to 8.14.8",
+      "repository": "oshai-kotlin-logging-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f57ff9618d9f7e972040d6283c071131b49cc6ddc4d198ed6befe46ba4f11f85",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T09:08:27.969Z"
     }
   },
   "ai-builder-brain": {

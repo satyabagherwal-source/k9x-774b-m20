@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "8838e415",
+    "sourceVersion": "98e055e6",
     "license": "MIT",
-    "contentHash": "6703ccf7b77f4d5f0c78d09ec1ab9ac01b2009eba61d0a601aee3bb868d912d1",
-    "lastHarvestedAt": "2026-11-27T09:17:32.932Z",
+    "contentHash": "261c2eda6aef104230b23c43298e108f80cfa461ab284fcad99906b5f2b34e90",
+    "lastHarvestedAt": "2026-11-28T09:08:19.995Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {
@@ -10043,10 +10043,10 @@
     "repository": "parcel-bundler/parcel",
     "platform": "github",
     "sourceUrl": "https://github.com/parcel-bundler/parcel",
-    "sourceVersion": "63a71c9c",
+    "sourceVersion": "346bc724",
     "license": "MIT",
-    "contentHash": "1963c926f9e3328f231fae258b31cf7d4580221bb9a133ec0b3c8e56947c4c4a",
-    "lastHarvestedAt": "2026-11-24T23:50:54.167Z",
+    "contentHash": "d86f038f2f3acf4e39a7fe1de316c102c022ceee1117e40a9fab545d5a8e3265",
+    "lastHarvestedAt": "2026-11-28T09:05:05.002Z",
     "learningId": "learn-github-parcel-bundler-parcel"
   },
   "tanstack-query": {
@@ -13493,10 +13493,10 @@
     "repository": "oshai/kotlin-logging",
     "platform": "github",
     "sourceUrl": "https://github.com/oshai/kotlin-logging",
-    "sourceVersion": "0eeeba0c",
+    "sourceVersion": "5d29bb85",
     "license": "Apache-2.0",
-    "contentHash": "9b77a41a56726bcfb6d9eea39f556df3520ee95c3a7430b7e4247d32d0ff0858",
-    "lastHarvestedAt": "2026-11-26T06:26:53.472Z",
+    "contentHash": "e2001df808f0ec0305fba2a0470c2616b64e95573ccddb4e9976cbf8421cda8e",
+    "lastHarvestedAt": "2026-11-28T09:05:14.842Z",
     "learningId": "learn-github-oshai-kotlin-logging"
   },
   "nexu-io-openmotion": {

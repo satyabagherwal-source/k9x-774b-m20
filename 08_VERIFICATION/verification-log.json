@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-WBA4",
-    "timestamp": "2026-11-26T17:30:45.148Z",
-    "repository": "google/electra-base-discriminator",
-    "learningId": "learn-huggingface-google-electra-base-discriminator",
-    "contentHash": "a54184f8d0c72c943b79ad88bdc2540e6e78dbf90ae3aef4fb6866c282cec782",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-WDBN",
-    "timestamp": "2026-11-26T17:30:47.795Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "0ca6140159b9d8570b0657d99387f8815c0a3719108161c4a214f940db25ba46",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-78GD",
-    "timestamp": "2026-11-26T17:39:14.701Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-    "contentHash": "10720556e3f75c1006c732fa90d075d386d272c3c834f0f5b4f0f3b735fd8764",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-7E4Y",
     "timestamp": "2026-11-26T17:39:22.067Z",
     "repository": "zulip/zulip",
@@ -7490,6 +7445,51 @@
     "repository": "lancedb/lancedb",
     "learningId": "learn-github-lancedb-lancedb",
     "contentHash": "95a230309321b931cc3b7f84a58d6eb82fb2949c5340b9298df7785cf4e16f26",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-PQ05",
+    "timestamp": "2026-11-28T09:05:04.997Z",
+    "repository": "parcel-bundler/parcel",
+    "learningId": "learn-github-parcel-bundler-parcel",
+    "contentHash": "d86f038f2f3acf4e39a7fe1de316c102c022ceee1117e40a9fab545d5a8e3265",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-PXLH",
+    "timestamp": "2026-11-28T09:05:14.837Z",
+    "repository": "oshai/kotlin-logging",
+    "learningId": "learn-github-oshai-kotlin-logging",
+    "contentHash": "e2001df808f0ec0305fba2a0470c2616b64e95573ccddb4e9976cbf8421cda8e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-TWGN",
+    "timestamp": "2026-11-28T09:08:19.991Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "261c2eda6aef104230b23c43298e108f80cfa461ab284fcad99906b5f2b34e90",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

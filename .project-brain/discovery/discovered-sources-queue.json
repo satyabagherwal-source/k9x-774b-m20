@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T07:58:58.096Z",
+  "updated_at": "2026-11-28T09:08:27.729Z",
   "stats": {
-    "total_discovered": 10867,
-    "approved_pending_harvest": 10319,
+    "total_discovered": 10884,
+    "approved_pending_harvest": 10336,
     "harvested_count": 0,
     "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10327,
-      "OFFICIAL_DOCUMENTATION": 298,
+      "COMMUNITY_AND_EXPERT": 10343,
+      "OFFICIAL_DOCUMENTATION": 299,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 59,
@@ -235265,6 +235265,380 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
         "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-B2E37B88DC3C": {
+      "id": "SRC-B2E37B88DC3C",
+      "url": "https://docs.gradle.org/8.14.8/release-notes.html",
+      "title": "https://docs.gradle.org/8.14.8/release-notes.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:26.590Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-310AEA7B31D5": {
+      "id": "SRC-310AEA7B31D5",
+      "url": "https://github.com/liutikas",
+      "title": "https://github.com/liutikas",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:26.675Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-ACBD832F4857": {
+      "id": "SRC-ACBD832F4857",
+      "url": "https://github.com/benjamin-bader",
+      "title": "https://github.com/benjamin-bader",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:26.741Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-249B95943EDD": {
+      "id": "SRC-249B95943EDD",
+      "url": "https://github.com/Vampire",
+      "title": "https://github.com/Vampire",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:26.816Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-5E9655F775A5": {
+      "id": "SRC-5E9655F775A5",
+      "url": "https://github.com/chandre92",
+      "title": "https://github.com/chandre92",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:26.883Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-A5D752577284": {
+      "id": "SRC-A5D752577284",
+      "url": "https://github.com/dlehammer",
+      "title": "https://github.com/dlehammer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:26.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-D7EBC5CA4F3C": {
+      "id": "SRC-D7EBC5CA4F3C",
+      "url": "https://github.com/danishnawab",
+      "title": "https://github.com/danishnawab",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:27.021Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-15D4526A99A7": {
+      "id": "SRC-15D4526A99A7",
+      "url": "https://github.com/DreierF",
+      "title": "https://github.com/DreierF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:27.102Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-286840F75B4F": {
+      "id": "SRC-286840F75B4F",
+      "url": "https://github.com/Mengmeiivy",
+      "title": "https://github.com/Mengmeiivy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:27.178Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-BDF06D504D7C": {
+      "id": "SRC-BDF06D504D7C",
+      "url": "https://github.com/jjohannes",
+      "title": "https://github.com/jjohannes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:27.249Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-03D160DEB001": {
+      "id": "SRC-03D160DEB001",
+      "url": "https://github.com/jimmy1995-gu",
+      "title": "https://github.com/jimmy1995-gu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:27.317Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-ADC03E98A2F4": {
+      "id": "SRC-ADC03E98A2F4",
+      "url": "https://github.com/vmadalin",
+      "title": "https://github.com/vmadalin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:27.385Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-A4E9F12C7AF7": {
+      "id": "SRC-A4E9F12C7AF7",
+      "url": "https://github.com/NaMinhyeok",
+      "title": "https://github.com/NaMinhyeok",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:27.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-4257EB2443A0": {
+      "id": "SRC-4257EB2443A0",
+      "url": "https://github.com/gradle/gradle/compare/v8.14.7...v8.14.8",
+      "title": "https://github.com/gradle/gradle/compare/v8.14.7...v8.14.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:27.530Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-AB43BBAC4274": {
+      "id": "SRC-AB43BBAC4274",
+      "url": "https://github.com/oracle/graal",
+      "title": "https://github.com/oracle/graal",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:27.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-0C10A185F367": {
+      "id": "SRC-0C10A185F367",
+      "url": "https://github.com/oracle/graal/releases",
+      "title": "https://github.com/oracle/graal/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:27.663Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-4D57D52B2F94": {
+      "id": "SRC-4D57D52B2F94",
+      "url": "https://github.com/oracle/graal/compare/vm-25.5.5.0.3...vm-25.6.5.1",
+      "title": "https://github.com/oracle/graal/compare/vm-25.5.5.0.3...vm-25.6.5.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:08:27.729Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
+        "fileName": "oshai-kotlin-logging-learnings.md"
       }
     }
   }

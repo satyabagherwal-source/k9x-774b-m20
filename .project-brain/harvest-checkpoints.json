@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T08:38:57.910Z",
+  "last_updated": "2026-11-28T09:08:20.004Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "f27ffb22a855059ff2a3241526c70652d8741fcfea543eb86c905c4177214251",
-      "verified_at": "2026-11-27T15:18:20.135Z",
+      "content_hash": "261c2eda6aef104230b23c43298e108f80cfa461ab284fcad99906b5f2b34e90",
+      "verified_at": "2026-11-28T09:08:20.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T15:18:20.135Z"
+      "last_updated": "2026-11-28T09:08:20.003Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -15111,14 +15111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-parcel-bundler-parcel",
-      "content_hash": "1963c926f9e3328f231fae258b31cf7d4580221bb9a133ec0b3c8e56947c4c4a",
-      "verified_at": "2026-11-24T23:50:54.191Z",
+      "content_hash": "d86f038f2f3acf4e39a7fe1de316c102c022ceee1117e40a9fab545d5a8e3265",
+      "verified_at": "2026-11-28T09:05:05.010Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:50:54.191Z"
+      "last_updated": "2026-11-28T09:05:05.010Z"
     },
     "TanStack/query": {
       "repository": "TanStack/query",
@@ -20361,14 +20361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oshai-kotlin-logging",
-      "content_hash": "9b77a41a56726bcfb6d9eea39f556df3520ee95c3a7430b7e4247d32d0ff0858",
-      "verified_at": "2026-11-26T06:26:53.490Z",
+      "content_hash": "e2001df808f0ec0305fba2a0470c2616b64e95573ccddb4e9976cbf8421cda8e",
+      "verified_at": "2026-11-28T09:05:14.851Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T06:26:53.490Z"
+      "last_updated": "2026-11-28T09:05:14.851Z"
     },
     "nexu-io/openmotion": {
       "repository": "nexu-io/openmotion",

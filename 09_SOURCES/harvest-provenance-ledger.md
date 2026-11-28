@@ -14057,3 +14057,6 @@ Every entry in this ledger must capture:
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `9e3af362` | Multi-dimensional audit evidence | 2026-11-28T08:38:57.901Z |
 | `learn-dom-h-6ced55f4` | `project://lancedb-lancedb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md` | 2026-11-28T08:39:33.265Z |
 | `learn-dom-h-73f87cc1` | `project://lancedb-lancedb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md` | 2026-11-28T08:40:12.155Z |
+| `learn-github-parcel-bundler-parcel` | `https://github.com/parcel-bundler/parcel` | `346bc724` | Multi-dimensional audit evidence | 2026-11-28T09:05:05.002Z |
+| `learn-github-oshai-kotlin-logging` | `https://github.com/oshai/kotlin-logging` | `5d29bb85` | Multi-dimensional audit evidence | 2026-11-28T09:05:14.842Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `98e055e6` | Multi-dimensional audit evidence | 2026-11-28T09:08:19.995Z |

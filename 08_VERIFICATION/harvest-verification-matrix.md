@@ -14024,3 +14024,6 @@
 | `CYCLE-20261128-S4TK` | `2026-11-28T08:38:57.896Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11070, Rule 11071, Rule 11072` | Yes (`95a23030...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T08:39:33.265Z` | `lancedb-lancedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-6CED55F4` [Domain H] | Yes (`df49e7a1...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T08:40:12.155Z` | `lancedb-lancedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-73F87CC1` [Domain H] | Yes (`ca5b4ccd...`) |
+| `CYCLE-20261128-PQ05` | `2026-11-28T09:05:04.997Z` | `parcel-bundler/parcel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11073` | Yes (`d86f038f...`) |
+| `CYCLE-20261128-PXLH` | `2026-11-28T09:05:14.837Z` | `oshai/kotlin-logging` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11074` | Yes (`e2001df8...`) |
+| `CYCLE-20261128-TWGN` | `2026-11-28T09:08:19.991Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11075, Rule 11076, Rule 11077` | Yes (`261c2eda...`) |

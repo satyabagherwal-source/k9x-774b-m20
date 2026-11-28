@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T08:40:16.181Z",
+  "last_updated": "2026-11-28T09:08:28.178Z",
   "total_records": 2890,
   "domains": {
     "A": {
@@ -29522,8 +29522,8 @@
       "title": "Technical Construction Intelligence: codewhale-hq/Codewhale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-codewhale-hq-codewhale-technical-construction-intelligence-codewhale-hq-codewhal.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "fe8867154895356b3728feb660e3670129b3915344b23f941cb1a458b00acdea",
-      "created_at": "2026-11-17T19:54:43.454Z"
+      "content_hash": "2cdbdbac741dc70af7520e9c101fd4be44c2fcabe1267b39a2167c098a3b570b",
+      "created_at": "2026-11-28T09:08:20.784Z"
     },
     "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari",
@@ -29531,8 +29531,8 @@
       "title": "Technical Construction Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-codewhale-hq-codewhale-learnings-technical-construction-intelligence-codewhale-h.md",
       "repository": "codewhale-hq-codewhale-learnings",
-      "content_hash": "0f52ac69369cd0b56b1853b65498b55545c1f4f3d3a45cb5651d226b40cae6c6",
-      "created_at": "2026-11-17T19:54:47.058Z"
+      "content_hash": "8586b866109fd0937dad6f709e7ea76fdbb7707da4ef2d63186da154e06a3080",
+      "created_at": "2026-11-28T09:08:24.905Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-small-learnings-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-small-learnings-co",
@@ -37628,8 +37628,8 @@
       "title": "Technical Construction Intelligence: parcel-bundler/parcel Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-parcel-bundler-parcel-technical-construction-intelligence-parcel-bundler-parcel-.md",
       "repository": "parcel-bundler/parcel",
-      "content_hash": "e491aed1cbba77c7a918d1424f7c447f9975b18260c269f8ac5475161cf2ee7d",
-      "created_at": "2026-11-24T23:50:54.744Z"
+      "content_hash": "ac5be2c3ff99ca34ee36c1272dfae1e5ec1e46e2bf0491fa39120d8bc93212b2",
+      "created_at": "2026-11-28T09:05:05.467Z"
     },
     "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-core-invariants",
@@ -37723,8 +37723,8 @@
       "title": "Technical Construction Intelligence: parcel-bundler-parcel-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-parcel-bundler-parcel-learnings-technical-construction-intelligence-parcel-bundl.md",
       "repository": "parcel-bundler-parcel-learnings",
-      "content_hash": "defdeac774fd9109c415848aedd204c5c95654499c1aecc487049e3bdc9b0085",
-      "created_at": "2026-11-24T23:51:07.950Z"
+      "content_hash": "20aa6cc10cd4d5d9597a9004825b8f7d4c6f5b20173949e969438a1530df39dc",
+      "created_at": "2026-11-28T09:08:26.012Z"
     },
     "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants",
@@ -46096,8 +46096,8 @@
       "title": "Quality & Verification Intelligence: oshai/kotlin-logging Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-oshai-kotlin-logging-quality-verification-intelligence-oshai-kotlin-logging-core.md",
       "repository": "oshai/kotlin-logging",
-      "content_hash": "43cdf9b6a3c1aa72bddad005368ea0a07543db8f4ec86156c11eefd81e746bcb",
-      "created_at": "2026-11-26T06:26:54.012Z"
+      "content_hash": "b2759c27c6f9ec0bac31851d857e9c89daed99992b2281062fabb58ea660515f",
+      "created_at": "2026-11-28T09:05:15.314Z"
     },
     "domain_intelligence-quality-verification-intelligence-oshai-kotlin-logging-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-oshai-kotlin-logging-learnings-core-invariants",
@@ -46105,8 +46105,8 @@
       "title": "Quality & Verification Intelligence: oshai-kotlin-logging-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-oshai-kotlin-logging-learnings-quality-verification-intelligence-oshai-kotlin-lo.md",
       "repository": "oshai-kotlin-logging-learnings",
-      "content_hash": "3fe66352bab39e27d7905007d3b40f66a9a59072875df296402021f59b9b66fb",
-      "created_at": "2026-11-26T06:27:05.400Z"
+      "content_hash": "0c0027fc1664a719ec8f6125137013a1fcf2bb9884d39027dd3283efeb7e985b",
+      "created_at": "2026-11-28T09:08:28.178Z"
     },
     "domain_intelligence-technical-construction-intelligence-sozercan-kaset-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-sozercan-kaset-core-invariants",

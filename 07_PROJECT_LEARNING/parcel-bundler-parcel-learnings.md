@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md`  
 > **Source**: github ([https://github.com/parcel-bundler/parcel](https://github.com/parcel-bundler/parcel))  
-> **Source Version**: `63a71c9c`  
+> **Source Version**: `346bc724`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T23:50:52.721Z  
+> **Timestamp**: 2026-11-28T09:05:03.726Z  
 > **Learning ID**: `learn-github-parcel-bundler-parcel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/parcel-bundler-parcel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/parcel-bundler/parcel](https://github.com/parcel-bundler/parcel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T23:50:52.616Z  
+> **Harvest Timestamp**: 2026-11-28T09:04:55.674Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The zero configuration build tool for the web. 📦🚀
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 44031 stars
+- **Stars / Engagement**: 44032 stars
 
 ---
 
@@ -2699,453 +2699,260 @@ bitflags::bitflags! {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `63a71c9c` (2026-11-22)
-**Commit Message**: Fix filename/dirname handling in JS plugin runtime
+### Incident Patch 1: `346bc724` (2026-11-25)
+**Commit Message**: Fix CSS source maps with multiple assets with the same file path
 
-**File**: `crates/plugin-js/src/cjs.rs` (modified, +19/-3)
+**File**: `crates/css/src/packager.rs` (modified, +65/-41)
 ```diff
-@@ -331,14 +331,30 @@ impl CjsLoader {
-             })?,
-         );
-       }
--      let mut code = String::with_capacity(source.len() + 32);
--      code.push_str("(function (module, exports) {");
-+      // Node's module wrapper. `__filename` and `__dirname` must be parameters rather than
-+      // globals: a `var` with a parameter's name refers to the parameter, so code that redeclares
-+      // one, e.g. `var dir = __dirname; var __dirname = path.resolve(dir, '..')`, still reads the
-+      // value passed in. As globals, the hoisted `var` would shadow them with `undefined`.
-+      let mut code = String::with_capacity(source.len() + 64);
-+      code.push_str("(function (exports, require, module, __filename, __dirname) {");
-       code.push_str(&source);
-       code.push_str("\n})");
-       Ok(code)
-     })?;
-     let f = Function::from_js(ctx, f)?;
--    f.call::<_, ()>((module.clone(), module.get::<_, Value>("exports")?))?;
-+    let dirname = Path::new(resolved)
-+      .parent()
-+      .and_then(|p| p.to_str())
-+      .unwrap_or_default();
-+    // The global `require`, which has `resolve` and `cache`, and resolves from the module calling
-+    // it like the one Node passes.
-+    f.call::<_, ()>((
-+      module.get::<_, Value>("exports")?,
-+      ctx.globals().get::<_, Value>("require")?,
-+      module.clone(),
-+      resolved,
-+      dirname,
-+    ))?;
- 
-     let exports: Value = module.get("exports")?;
-     Ok(exports)
-```
-
-**File**: `crates/plugin-js/src/esm.rs` (modified, +7/-0)
-```diff
-@@ -221,6 +221,13 @@ impl Loader for ModuleLoader {
- 
-     let meta: rquickjs::Object<'js> = module.meta()?;
-     meta.prop("url", url::Url::from_file_path(name).unwrap().to_string())?;
-+    // As in Node (20.11+), for the file: modules it loads.
-+    if self.environment != Environment::Browser {
-+      meta.prop("filename", name)?;
-+      if let Some(dirname) = Path::new(name).parent().and_then(|p| p.to_str()) {
-+        meta.prop("dirname", dirname)?;
+@@ -55,28 +55,72 @@ impl CssContent {
+   ) -> Result<Arc<dyn Content>, DiagnosticList> {
+     let mut asset_index_to_stylesheet_index: HashMap<AssetIndex, usize> = HashMap::new();
+     let mut stylesheets = Vec::new();
++    let contents: Vec<(AssetIndex, &Asset, &CssContent, bool)> = bundle
++      .assets
++      .iter()
++      .map(|asset_index| {
++        let asset = bundle_graph.asset_graph.asset(*asset_index);
++        let Some(content) = asset.content.downcast_ref::<CssContent>() else {
++          unreachable!("expected a CSS asset")
++        };
++        let has_input_map = content.stylesheet.source_map(0).is_some();
++        (*asset_index, asset, content, has_input_map)
++      })
++      .collect();
++
++    // Rule locations index into the assembled sheet's sources, and the printer writes
++    // that index into the map as is, unless the sheet has an input map, which it looks
++    // up by the same index and remaps through. SourceMap::add_source dedupes, and
++    // several assets can share a file (e.g. conditional imports of one file), so the
++    // first slots follow the map's sources one to one, and sheets without an input map
++    // point at their file's slot. Sheets with an input map each take a slot after
++    // those; the printer adds the sources their maps reach as it encounters them.
+     let mut source_map = SourceMap::new("/");
++    let mut sources = Vec::new();
++    let mut source_indices: Vec<u32> = contents
++      .iter()
++      .map(|(_, _, content, _)| {
++        let path = &content.stylesheet.sources[0];
++        let index = source_map.add_source(crate::map_source(path));
++        if index as usize == sources.len() {
++          sources.push(path.clone());
++        }
++        index
++      })
++      .collect();
++    let mut source_map_urls = vec![None; sources.len()];
++    for ((_, _, content, has_input_map), source_index) in contents.iter().zip(&mut source_indices) {
++      if *has_input_map {
++        *source_index = sources.len() as u32;
++        sources.push(content.stylesheet.sources[0].clone());
++        source_map_urls.push(content.stylesheet.source_map_urls[0].clone());
 +      }
 +    }
-     Ok(module)
-   }
- }
-```
-
-**File**: `plugin-rs/examples/custom-content-transformer/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ dependencies = [
  
- [[package]]
- name = "parcel-plugin"
--version = "0.1.0"
-+version = "0.2.0"
- dependencies = [
-  "sha2-const-stable",
- ]
-```
-
-**File**: `plugin-rs/examples/custom-namer/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ dependencies = [
- 
- [[package]]
- name = "parcel-plugin"
--version = "0.1.0"
-+version = "0.2.0"
- dependencies = [
-  "sha2-const-stable",
- ]
-```
-
-**File**: `plugin-rs/examples/custom-optimizer/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ dependencies = [
- 
- [[package]]
- name = "parcel-plugin"
--version = "0.1.0"
-+version = "0.2.0"
- dependencies = [
-  "sha2-const-stable",
- ]
-```
-
-**File**: `plugin-rs/examples/custom-reporter/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ dependencies = [
- 
- [[package]]
- name = "parcel-plugin"
--version = "0.1.0"
-+version = "0.2.0"
- dependencies = [
-  "sha2-const-stable",
- ]
-```
-
-**File**: `plugin-rs/examples/custom-resolver/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ dependencies = [
- 
- [[package]]
- name = "parcel-plugin"
--version = "0.1.0"
-+version = "0.2.0"
- dependencies = [
-  "sha2-const-stable",
- ]
-```
-
-**File**: `plugin-rs/examples/prepend-transformer/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
- 
- [[package]]
- name = "parcel-plugin"
--version = "0.1.0"
-+version = "0.2.0"
- dependencies = [
-  "sha2-const-stable",
- ]
-```
-
----
-
-### Incident Patch 2: `a29d302b` (2026-11-22)
-**Commit Message**: Fix shadowing __filename/__dirname in library builds
-
-**File**: `crates/js/src/packager/mod.rs` (modified, +5/-4)
-```diff
-@@ -3,6 +3,7 @@ use std::{fmt::Write, sync::Arc};
- use crate::transformer::{
-   Ast,
-   async_module::wrap_async_module,
-+  node_replacer,
-   refresh::{react_refresh_text, unused_name},
- };
- use indexmap::{IndexMap, IndexSet};
-@@ -773,8 +774,8 @@ fn write_node_replacement_decls(
- 
-   let (filename, dirname) = node_replacement_paths(asset, from);
-   for (needed, name, value) in [
--    (content.needs_filename, "__filename", filename),
--    (content.needs_dirname, "__dirname", dirname),
-+    (content.needs_filename, node_replacer::FILENAME, filename),
-+    (content.needs_dirname, node_replacer::DIRNAME, dirname),
-   ] {
-     if needed {
-       let value = serde_json::to_string(&value).unwrap();
-@@ -872,7 +873,7 @@ fn insert_node_replacement_decls(
-     let mut items = Vec::with_capacity(2);
- 
-     if content.needs_filename {
--      let name = Ident::new("__filename".into(), DUMMY_SP, ctxt);
-+      let name = Ident::new(node_replacer::FILENAME.into(), DUMMY_SP, ctxt);
-       items.push(quote!(
-         "var $name = $value" as ModuleItem,
-         name: Ident = name,
-@@ -881,7 +882,7 @@ fn insert_node_replacement_decls(
+-    for asset_index in &bundle.assets {
+-      let asset = &bundle_graph.asset_graph.asset(*asset_index);
+-      if let Some(content) = asset.content.downcast_ref::<CssContent>() {
+-        asset_index_to_stylesheet_index.insert(*asset_index, stylesheets.len());
+-        let source_index = stylesheets.len() as u32;
+-        stylesheets.push(StyleSheetWrapper {
+-          asset_index: *asset_index,
+-          stylesheet: content.stylesheet.clone(),
+-          parent_stylesheet_index: 0,
+-          parent_dep_index: 0,
+-          has_parent: false,
+-          loc: lightningcss::rules::Location {
+-            source_index,
+-            line: asset.loc.start.line,
+-            column: asset.loc.start.column + 1,
+-          },
+-        });
++    for ((asset_index, asset, content, has_input_map), source_index) in
++      contents.into_iter().zip(source_indices)
++    {
++      asset_index_to_stylesheet_index.insert(asset_index, stylesheets.len());
++      // Rule locations are relative to the sheet, so offset them by where the asset starts
++      // in its file (e.g. an inline <style>). An input map (e.g. from a macro's addAsset)
++      // already maps the sheet's own positions to the file, so they must stay unshifted.
++      let (line, column) = if has_input_map {
++        (0, 1)
+       } else {
+-        unreachable!("expected a CSS asset")
+-      }
++        (asset.loc.start.line, asset.loc.start.column + 1)
++      };
++      stylesheets.push(StyleSheetWrapper {
++        asset_index,
++        stylesheet: content.stylesheet.clone(),
++        parent_stylesheet_index: 0,
++        parent_dep_index: 0,
++        has_parent: false,
++        loc: lightningcss::rules::Location {
++          source_index,
++          line,
++          column,
++        },
++      });
      }
  
-     if content.needs_dirname {
--      let name = Ident::new("__dirname".into(), DUMMY_SP, ctxt);
-+      let name = Ident::new(node_replacer::DIRNAME.into(), DUMMY_SP, ctxt);
-       items.push(quote!(
-         "var $name = $value" as ModuleItem,
-         name: Ident = name,
+     let mut visited: Vec<bool> = vec![false; stylesheets.len()];
+@@ -174,33 +218,13 @@ impl CssContent {
+     let dest = rules;
+ 
+     let mut stylesheet = StyleSheet::new(
+-      stylesheets
+-        .iter()
+-        .flat_map(|s| s.stylesheet.sources.clone())
+-        .collect(),
++      sources,
+       CssRuleList(dest),
+       ParserOptions {
+         ..Default::default()
+       },
+     );
+-
+-    stylesheet.source_map_urls = stylesheets
+-      .iter()
+-      .flat_map(|s| s.stylesheet.source_map_urls.clone())
+-      .collect();
+-
+-    // Rule locations index into the assembled sheet's sources, so the map needs
+-    // them in the same order. Sources reached through input maps are added as
+-    // the printer encounters them.
+-    if bundle.target.source_map.is_some() {
+-      source_map.add_sources(
+-        stylesheet
+-          .sources
+-          .iter()
+-          .map(|s| crate::map_source(s))
+-          .collect(),
+-      );
+-    }
++    stylesheet.source_map_urls = source_map_urls;
+ 
+     let targets = Targets {
+       browsers: if bundle
 ```
 
-**File**: `crates/js/src/transformer/mod.rs` (modified, +1/-1)
+**File**: `crates/parcel/tests/fixtures/css/import-condition-combined/expected/dep_dep_a.css` (modified, +1/-1)
 ```diff
-@@ -7,7 +7,7 @@ mod fs;
- mod global_replacer;
- mod mdx;
- mod modules;
--mod node_replacer;
-+pub(crate) mod node_replacer;
- mod plugin;
- mod react_compiler;
- mod react_lazy;
+@@ -1,2 +1,2 @@
+ @media print{.dep{color:red}}@supports (display:grid){.dep{color:red}}.a{color:#000}
+-/*# sourceMappingURL=qmvzarql.css.map */
++/*# sourceMappingURL=7474niir.css.map */
 ```
 
-**File**: `crates/js/src/transformer/node_replacer.rs` (modified, +92/-41)
+**File**: `crates/parcel/tests/source_maps.rs` (modified, +102/-0)
 ```diff
-@@ -1,16 +1,25 @@
-+use rustc_hash::FxHashMap;
- use swc_core::{
--  common::Mark,
-+  common::{Mark, SyntaxContext},
-   ecma::{
--    ast::{self, MemberProp},
-+    ast::{self, Id},
-+    utils::IdentRenamer,
-     visit::{VisitMut, VisitMutWith},
-   },
- };
- 
- use crate::transformer::utils::is_unresolved;
- 
--/// Tracks whether a module references the Node.js `__filename` or `__dirname` globals.
--/// The packager uses this information to insert module-local definitions with paths relative
--/// to the bundle.
-+/// What a module's references to the Node `__filename` global are renamed to.
-+pub const FILENAME: &str = "$parcel$__filename";
-+/// What a module's references to the Node `__dirname` global are renamed to.
-+pub const DIRNAME: &str = "$parcel$__dirname";
-+
-+/// Tracks whether a module references the Node.js `__filename` or `__dirname` globals, and
-+/// renames those references to [`FILENAME`] and [`DIRNAME`]. The packager declares them with
-+/// paths relative to the bundle. They are renamed rather than declared as `__filename` and
-+/// `__dirname` so that the module's declarations never shadow the bundle's own, which the
-+/// packager reads to find the bundle's directory, wherever they end up in the same scope.
- pub struct NodeReplacer<'a> {
-   pub unresolved_mark: Mark,
-   pub needs_filename: &'a mut bool,
-@@ -19,39 +28,39 @@ pub struct NodeReplacer<'a> {
+@@ -261,6 +261,108 @@ fn css_source_map_maps_to_original_code() {
+   );
  }
  
- impl<'a> VisitMut for NodeReplacer<'a> {
--  fn visit_mut_expr(&mut self, node: &mut ast::Expr) {
--    use ast::Expr::*;
--
--    match node {
--      Ident(id) => {
--        // Only handle global variables
--        if !is_unresolved(&id, self.unresolved_mark) {
--          return;
--        }
--
--        match id.sym.as_ref() {
--          "__filename" => {
--            *self.needs_filename = true;
--            *self.has_node_replacements = true;
--          }
--          "__dirname" => {
--            *self.needs_dirname = true;
--            *self.has_node_replacements = true;
--          }
--          _ => {}
--        }
--      }
--      _ => {
--        node.visit_mut_children_with(self);
--      }
--    };
-+  fn visit_mut_module(&mut self, node: &mut ast::Module) {
-+    node.visit_mut_children_with(self);
-+    if !*self.needs_filename && !*self.needs_dirname {
-+      return;
-+    }
++const CONDITIONAL_INDEX: &str = r#"@import "./shared.css" screen;
++@import "./shared.css" print;
++.index-token { color: red }
++"#;
 +
-+    let ctxt = SyntaxContext::empty().apply_mark(self.unresolved_mark);
-+    let mut renames = FxHashMap::<Id, Id>::default();
-+    if *self.needs_filename {
-+      renames.insert(("__filename".into(), ctxt), (FILENAME.into(), ctxt));
-+    }
-+    if *self.needs_dirname {
-+      renames.insert(("__dirname".into(), ctxt), (DIRNAME.into(), ctxt));
-+    }
-+    node.visit_mut_with(&mut IdentRenamer::new(&renames));
-   }
- 
--  // Do not traverse into the `prop` side of member expressions unless computed.
--  fn visit_mut_member_prop(&mut self, node: &mut MemberProp) {
--    match node {
--      MemberProp::Computed(computed) => {
--        computed.visit_mut_children_with(self);
-+  // Every reference is an `Ident`, which property names (`a.__dirname`, `{__dirname: 1}`) are
-+  // not, so this finds exactly the identifiers `IdentRenamer` renames.
-+  fn visit_mut_ident(&mut self, id: &mut ast::Ident) {
-+    // Only handle global variables
-+    if !is_unresolved(id, self.unresolved_mark) {
-+      return;
-+    }
++const CONDITIONAL_SHARED: &str = r#".shared-token { color: pink }
++"#;
 +
-+    match id.sym.as_ref() {
-+      "__filename" => {
-+        *self.needs_filename = true;
-+        *self.has_node_replacements = true;
-+      }
-+      "__dirname" => {
-+        *self.needs_dirname = true;
-+        *self.has_node_replacements = true;
-       }
-       _ => {}
-     }
-@@ -79,22 +88,28 @@ mod test {
-   }
- 
-   #[test]
--  fn tracks_filename_without_transforming_it() {
-+  fn tracks_and_renames_filename() {
-     let code = "const filename = __filename;\nconsole.log(__filename);";
-     let (output, needs_filename, needs_dirname, has_node_replacements) = run(code);
- 
--    assert_eq!(output, format!("{}\n", code));
-+    assert_eq!(
-+      output,
-+      "const filename = $parcel$__filename;\nconsole.log($parcel$__filename);\n"
-+    );
-     assert!(needs_filename);
-     assert!(!needs_dirname);
-     assert!(has_node_replacements);
-   }
- 
-   #[test]
--  fn tracks_dirname_without_transforming_it() {
-+  fn tracks_and_renames_dirname() {
-     let code = "const dirname = __dirname;\nconsole.log(__dirname);";
-     let (output, needs_filename, needs_dirname, has_node_replacements) = run(code);
- 
--    assert_eq!(output, format!("{}\n", code));
-+    assert_eq!(
-+      output,
-+      "const dirname = $parcel$__dirname;\nconsole.log($parcel$__dirname);\n"
-+    );
-     assert!(!needs_filename);
-     assert!(needs_dirname);
-     assert!(has_node_replacements);
-@@ -119,9 +134,45 @@ console.log(object.__filename, object.__dirname);"#;
-     let code = "console.log(object[__filename], object[__dirname]);";
-     let (output, needs_filename, needs_dirname, has_node_replacements) = run(code);
- 
--    assert_eq!(output, format!("{}\n", code));
-+    assert_eq!(
-+      output,
-+      "console.log(object[$par
-```
-
-**File**: `crates/parcel/tests/fixtures/env/env-node-replacements/test.json` (modified, +4/-4)
-```diff
-@@ -6,14 +6,14 @@
-       "assets": ["index.js", "function.js", "index.js"],
-       "contains": [
-         "var $parcel$path = module.require('path');",
--        "var __dirname = $parcel$path.resolve($parcel$bundleDir",
--        "var __filename = $parcel$path.resolve($parcel$bundleDir"
-+        "var $parcel$__dirname = $parcel$path.resolve($parcel$bundleDir",
-+        "var $parcel$__filename = $parcel$path.resolve($parcel$bundleDir"
-       ],
-       "notContains": [
-         "$parcel$dirnameReplace",
-         "$parcel$filenameReplace",
--        "$parcel$__dirname",
--        "$parcel$__filename"
-+        "var __dirname",
-+        "var __filename"
-       ]
-     }],
-     "TODO:output": {
-```
-
-**File**: `crates/parcel/tests/fixtures/library-bundler/node-replacements/package.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "source": "src/index.js",
-+  "module": "dist/module.mjs",
-+  "main": "dist/main.js",
-+  "engines": { "node": "*" }
++#[test]
++fn dev_css_source_map_shares_source_across_assets() {
++  assert_shared_source_css_source_map(BuildMode::Development, Some(false));
 +}
-```
-
-**File**: `crates/parcel/tests/fixtures/library-bundler/node-replacements/src/data.txt` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+hello
-\ No newline at end of file
-```
-
-**File**: `crates/parcel/tests/fixtures/library-bundler/node-replacements/src/index.js` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+import fs from 'fs';
-+import path from 'path';
 +
-+// Reads a file next to this one at runtime, the way the dist of a macro library does.
-+export const data = fs.readFileSync(__dirname + '/data.txt', 'utf8');
-+export const dirname = path.basename(__dirname);
-+export const filename = path.basename(__filename);
-```
-
-**File**: `crates/parcel/tests/fixtures/library-bundler/node-replacements/test.json` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+{
-+  "description": "should resolve __dirname and __filename relative to the output in library builds",
-+  "input": ".",
-+  "options": {
-+    "mode": "production"
-+  },
-+  "output": {
-+    "data": "hello",
-+    "dirname": "src",
-+    "filename": "index.js"
-+  },
-+  "bundles": [
-+    {
-+      "assets": [
-+        "index.js"
-+      ],
-+      "outputFormat": "commonjs",
-+      "contains": [
-+        "var $parcel$bundleDir = __dirname;",
-+        "var $parcel$__dirname = $parcel$path.resolve($parcel$bundleDir, \"../src/\");",
-+        "var $parcel$__filename = $parcel$path.resolve($parcel$bundleDir, \"../src/index.js\");"
-+      ],
-+      "notContains": [
-+        "var __dirname",
-+        "var __filename"
-+      ]
-+    },
-+    {
-+      "assets": [
-+        "esmodule-helpers.js"
-+      ]
-+    },
-+    {
-+      "assets": [
-+        "index.js"
-+      ],
-+      "outputFormat": "esmodule",
-+      "contains": [
-+        "var $parcel$bundleDir = import.meta.dirname;",
-+        "var $parcel$__dirname ="
-+      ],
-+      "notContains": [
-+        "var __dirname",
-+        "var __filename"
-+      ]
-+    }
-+  ]
++#[test]
++fn prod_css_source_map_shares_source_across_assets() {
++  assert_shared_source_css_source_map(BuildMode::Production, Some(true));
 +}
++
++/// Each conditional import of shared.css is its own asset, so several assets share a
++/// source. The map lists it once, and every mapping must still point at a source it has.
++fn assert_shared_source_css_source_map(mode: BuildMode, minify: Option<bool>) {
++  let bundles = build_outputs(
++    "shared-source-css",
++    &[
++      ("index.css", CONDITIONAL_INDEX),
++      ("shared.css", CONDITIONAL_SHARED),
++    ],
++    "index.css",
++    AssetType::Css,
++    mode,
++    minify,
++  );
++  let (_, json) = bundles
++    .iter()
++    .find(|(code, _)| code.contains(".index-token"))
++    .expect("CSS bundle");
++  let map = SourceMap::from_json("/", json).unwrap();
++  assert_eq!(map.get_sources().len(), 2, "{json}");
++  for mapping in map.get_mappings() {
++    if let Some(original) = mapping.original {
++      assert!(
++        map.get_source(original.source).is_ok(),
++        "mapping points at missing source {}: {json}",
++        original.source,
++      );
++    }
++  }
++  assert_token_maps_to(
++    &bundles,
++    ".index-token",
++    ".index-token",
++    "index.css",
++    CONDITIONAL_INDEX,
++  );
++  assert_token_maps_to(
++    &bundles,
++    ".shared-token",
++    ".shared-token",
++    "shared.css",
++    CONDITIONAL_SHARED,
++  );
++}
++
++const MACRO_INDEX: &str = r#"import { css } from "./macro.mjs" with { type: "macro" };
++output = css(".first-macro-token { color: red }") +
++  css(".second-macro-token { color: pink }");
++"#;
++
++const MACRO_CSS: &str = r#"export function css(v) {
++  this.addAsset({ type: "css", content: v });
++  return "foo";
++}
++"#;
++
++#[test]
++fn dev_macro_css_source_map_maps_to_macro_call() {
++  assert_macro_css_source_map(BuildMode::Development, Some(false));
++}
++
++#[test]
++fn prod_macro_css_source_map_maps_to_macro_call() {
++  assert_macro_css_source_map(BuildMode::Production, Some(true));
++}
++
++/// CSS a macro emits carries an input map pointing at the macro call, so each rule maps there.
++fn assert_macro_css_source_map(mode: BuildMode, minify: Option<bool>) {
++  let bundles = build_outputs(
++    "macro-css",
++    &[("index.mjs", MACRO_INDEX), ("macro.mjs", MACRO_CSS)],
++    "index.mjs",
++    AssetType::Css,
++    mode,
++    minify,
++  );
++  for (token, call) in [
++    (".first-macro-token", "css(\".first"),
++    (".second-macro-token", "css(\".second"),
++  ] {
++    assert_token_maps_to(&bundles, token, call, "index.mjs", MACRO_INDEX);
++  }
++}
++
+ #[test]
+ fn dev_babel_source_map_maps_through_input_map() {
+   assert_babel_source_map(BuildMode::Development, Some(false));
 ```
 
 #### Recent Merged Pull Requests:
@@ -3174,48 +2981,82 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. filename/dirname handling in JS plugin runtime
+## X. CSS source maps with multiple assets with the same file path
 
 **RULE**:
-When implementing operations in `crates/plugin-js/src/cjs.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in parcel-bundler/parcel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/css/src/packager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in parcel-bundler/parcel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `63a71c9c`: filename/dirname handling in JS plugin runtime. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `346bc724`: CSS source maps with multiple assets with the same file path. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/plugin-js/src/cjs.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/css/src/packager.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      // Node's module wrapper. `__filename` and `__dirname` must be parameters rather than
-      // globals: a `var` with a parameter's name refers to the parameter, so code that redeclares
-      // one, e.g. `var dir = __dirname; var __dirname = path.resolve(dir, '..')`, still reads the
-      // value passed in. As globals, the hoisted `var` would shadow them with `undefined`.
-      let mut code = String::with_capacity(source.len() + 64);
-      code.push_str("(function (exports, require, module, __filename, __dirname) {");
-    let dirname = Path::new(resolved)
-      .parent()
-      .and_then(|p| p.to_str())
-      .unwrap_or_default();
-    // The global `require`, which has `resolve` and `cache`, and resolves from the module calling
-    // it like the one Node passes.
-    f.call::<_, ()>((
-      module.get::<_, Value>("exports")?,
-      ctx.globals().get::<_, Value>("require")?,
-      module.clone(),
-      resolved,
-      dirname,
-    ))?;
+    let contents: Vec<(AssetIndex, &Asset, &CssContent, bool)> = bundle
+      .assets
+      .iter()
+      .map(|asset_index| {
+        let asset = bundle_graph.asset_graph.asset(*asset_index);
+        let Some(content) = asset.content.downcast_ref::<CssContent>() else {
+          unreachable!("expected a CSS asset")
+        };
+        let has_input_map = content.stylesheet.source_map(0).is_some();
+        (*asset_index, asset, content, has_input_map)
+      })
+      .collect();
+
+    // Rule locations index into the assembled sheet's sources, and the printer writes
+    // that index into the map as is, unless the sheet has an input map, which it looks
+    // up by the same index and remaps through. SourceMap::add_source dedupes, and
+    // several assets can share a file (e.g. conditional imports of one file), so the
+    // first slots follow the map's sources one to one, and sheets without an input map
+    // point at their file's slot. Sheets with an input map each take a slot after
+    // those; the printer adds the sources their maps reach as it encounters them.
+    let mut sources = Vec::new();
+    let mut source_indices: Vec<u32> = contents
+      .iter()
+      .map(|(_, _, cont
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      let mut code = String::with_capacity(source.len() + 32);
-      code.push_str("(function (module, exports) {");
-    f.call::<_, ()>((module.clone(), module.get::<_, Value>("exports")?))?;
+    for asset_index in &bundle.assets {
+      let asset = &bundle_graph.asset_graph.asset(*asset_index);
+      if let Some(content) = asset.content.downcast_ref::<CssContent>() {
+        asset_index_to_stylesheet_index.insert(*asset_index, stylesheets.len());
+        let source_index = stylesheets.len() as u32;
+        stylesheets.push(StyleSheetWrapper {
+          asset_index: *asset_index,
+          stylesheet: content.stylesheet.clone(),
+          parent_stylesheet_index: 0,
+          parent_dep_index: 0,
+          has_parent: false,
+          loc: lightningcss::rules::Location {
+            source_index,
+            line: asset.loc.start.line,
+            column: asset.loc.start.column + 1,
+          },
+        });
+        unreachable!("expected a CSS asset")
+      }
+      stylesheets
+        .iter()
+        .flat_map(|s| s.stylesheet.sources.clone())
+        .collect(),
+
+    stylesheet.source_map_urls = stylesheets
+      .iter()
+      .flat_map(|s| s.stylesheet.source_map_urls.clone())
+      .collect();
+
+    // Rule locations index into the assembled sheet's sources, so the map needs
+    // them in the same order. Sources reached through input maps are added as
+    // the prin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `63a71c9c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `346bc724` are properly handled with clean fallback behavior.

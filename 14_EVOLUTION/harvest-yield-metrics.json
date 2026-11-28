@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T08:38:57.906Z",
-  "total_cycles_completed": 13300,
-  "total_learnings_persisted": 13300,
-  "total_rules_promoted": 11993,
+  "last_updated": "2026-11-28T09:08:20.001Z",
+  "total_cycles_completed": 13303,
+  "total_learnings_persisted": 13303,
+  "total_rules_promoted": 11998,
   "history": [
-    {
-      "timestamp": "2026-11-27T14:39:33.127Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T15:00:03.464Z",
-      "repository": "sharkdp/bat",
-      "learningId": "learn-github-sharkdp-bat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T15:18:20.133Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T15:27:13.882Z",
       "repository": "momenbasel/PureMac",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T08:38:57.906Z",
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T09:05:05.007Z",
+      "repository": "parcel-bundler/parcel",
+      "learningId": "learn-github-parcel-bundler-parcel",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T09:05:14.848Z",
+      "repository": "oshai/kotlin-logging",
+      "learningId": "learn-github-oshai-kotlin-logging",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T09:08:20.001Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
