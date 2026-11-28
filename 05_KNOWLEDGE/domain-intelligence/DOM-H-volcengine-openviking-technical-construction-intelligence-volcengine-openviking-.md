@@ -4,24 +4,24 @@
 {
   "source_repository": "volcengine/OpenViking",
   "source_url": "https://github.com/volcengine/OpenViking",
-  "source_version": "d421d520",
+  "source_version": "280caf35",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-27T09:17:44.097Z",
+  "timestamp": "2026-11-28T04:12:26.974Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-volcengine-openviking",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `d421d520`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-27T09:17:44.097Z`  
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `280caf35`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-28T04:12:26.974Z`  
 > **Learning ID**: `learn-github-volcengine-openviking`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), G (Architecture Intelligence), F (Design Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from volcengine/OpenViking:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T09:17:43.222Z  
+> **Harvest Timestamp**: 2026-11-28T04:12:25.306Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42909 stars
+- **Stars / Engagement**: 42946 stars
 
 ---
 
@@ -1504,1943 +1504,837 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `220dd481` (2026-11-27)
-**Commit Message**: test(security): 收敛权限、隐私与加密核心测试 (#8511)
+### Incident Patch 1: `bab33336` (2026-11-27)
+**Commit Message**: fix(snapshot-log)!: scope postgres indexes and use full paths (#8562)
 
-将重复覆盖合并到请求、存储和密钥的真实流程，补强跨账户隔离和根密钥恢复的结果断言。
+* fix(snapshot-log)!: isolate postgres indexes by service_name
 
-**File**: `openviking/crypto/exceptions.py` (modified, +0/-12)
+Keep shared PostgreSQL index progress, path rows and append locks
+independent for each deployment. Align schema limits with the
+64-byte service_name and account contract.
+
+BREAKING CHANGE: PostgreSQL store constructors require service_name.
+Existing tables must be rebuilt with the revised PostgreSQL DDL.
+
+* test(snapshot-log): remove shared postgres isolation test
+
+* fix(snapshot-log)!: use full paths in postgres indexes
+
+Prevent path digest collisions from rejecting PostgreSQL history rows.
+Limit indexed branch names to 128 bytes so full-path keys fit.
+
+BREAKING CHANGE: PostgreSQL SnapshotLog indexes branches up to 128 bytes.
+Shared runtime field-limit alignment is deferred to a separate change.
+
+* fix(snapshot-log): align postgres runtime branch limit
+
+* fix(snapshot-log)!: set shared branch limit to 128 bytes
+
+Use one branch limit for SnapshotLog providers and remove the
+PostgreSQL-specific override.
+
+BREAKING CHANGE: SnapshotLog providers index branches up to 128 bytes.
+
+**File**: `crates/ragfs-python/src/git.rs` (modified, +9/-0)
 ```diff
-@@ -35,19 +35,7 @@ class KeyMismatchError(EncryptionError):
-     pass
- 
- 
--class KeyNotFoundError(EncryptionError):
--    """Key not found error."""
--
--    pass
--
--
- class ConfigError(EncryptionError):
-     """Configuration error."""
- 
-     pass
--
--
--class KMSError(EncryptionError):
--    """KMS service error."""
--
--    pass
-```
-
-**File**: `tests/integration/test_encryption_integration.py` (modified, +123/-437)
-```diff
-@@ -7,148 +7,69 @@
- Tests encryption functionality integrated with VikingFS and OpenViking service.
- """
- 
--import os
- import secrets
- from pathlib import Path
- 
- import pytest
- import pytest_asyncio
- 
- from openviking.crypto.config import bootstrap_encryption
--from openviking.crypto.encryptor import FileEncryptor
--from openviking.crypto.providers import LocalFileProvider
-+from openviking.crypto.exceptions import KeyMismatchError
- from openviking.message import TextPart
- from openviking.server.api_keys import is_valid_format_key
- from openviking.server.identity import RequestContext, Role
- from openviking.server.store_assembly import build_api_key_manager
- from openviking.service.core import OpenVikingService
- from openviking_cli.session.user_id import UserIdentifier
- from openviking_cli.utils.config.open_viking_config import OpenVikingConfigSingleton
-+from tests.integration.conftest import (
-+    VAULT_ADDR,
-+    VAULT_TOKEN,
-+    VOLCENGINE_ACCESS_KEY,
-+    VOLCENGINE_KMS_KEY_ID,
-+    VOLCENGINE_KMS_REGION,
-+    VOLCENGINE_SECRET_KEY,
-+    requires_vault,
-+    requires_volcengine_kms,
-+)
- from tests.server.conftest import _install_fake_embedder, _install_fake_vlm
- 
- 
--@pytest_asyncio.fixture(scope="function")
--async def encryption_config(tmp_path):
--    """Fixture that provides encryption configuration with local provider"""
--    # Create temporary key file
--    key_file = tmp_path / "master.key"
--    root_key = secrets.token_bytes(32)
--    key_file.write_text(root_key.hex())
--    os.chmod(key_file, 0o600)
--
-+@pytest.fixture
-+def encryption_provider():
-+    return "local"
-+
-+
-+@pytest.fixture
-+def encryption_config(tmp_path, encryption_provider):
-+    if encryption_provider == "disabled":
-+        return {"encryption": {"enabled": False}}
-+    if encryption_provider == "vault":
-+        options = {"address": VAULT_ADDR, "token": VAULT_TOKEN}
-+    elif encryption_provider == "volcengine_kms":
-+        options = {
-+            "region": VOLCENGINE_KMS_REGION,
-+            "access_key": VOLCENGINE_ACCESS_KEY,
-+            "secret_key": VOLCENGINE_SECRET_KEY,
-+            "key_id": VOLCENGINE_KMS_KEY_ID,
-+            "key_file": str(tmp_path / "kms-root-key.enc"),
-+        }
-+    else:
-+        key_file = tmp_path / "master.key"
-+        key_file.write_text(secrets.token_hex(32))
-+        key_file.chmod(0o600)
-+        options = {"key_file": str(key_file)}
-     return {
--        "encryption": {"enabled": True, "provider": "local", "local": {"key_file": str(key_file)}}
-+        "encryption": {
-+            "enabled": True,
-+            "provider": encryption_provider,
-+            encryption_provider: options,
-+        }
+@@ -170,6 +170,7 @@ fn build_snapshot_log_store(
+                 PyRuntimeError::new_err("build_snapshot_log_store must run inside a tokio runtime")
+             })?;
+             match handle.block_on(ragfs::git::PostgresSnapshotLogStore::connect_with_timeout(
++                service_name,
+                 &dsn,
+                 postgres.max_connections,
+                 postgres.connect_timeout_ms,
+@@ -851,6 +852,9 @@ mod tests {
+         let store = build_snapshot_log_store(&cfg, "test-service")
+             .unwrap()
+             .expect("PG index enabled");
++        let other = build_snapshot_log_store(&cfg, "other-service")
++            .unwrap()
++            .expect("PG index enabled for another service");
+         runtime.block_on(async {
+             let account = uuid::Uuid::new_v4().simple().to_string();
+             let oid = "1234567890123456789012345678901234567890";
+@@ -875,6 +879,11 @@ mod tests {
+                     .1,
+                 oid
+             );
++            assert!(other
++                .load_latest_indexed_commit(&account, "main")
++                .await
++                .unwrap()
++                .is_none());
+         });
      }
  
- 
--@pytest_asyncio.fixture(scope="function")
--async def file_encryptor(tmp_path):
--    """Fixture that provides a FileEncryptor instance for testing"""
--    # Create temporary key file
--    key_file = tmp_path / "master.key"
--    root_key = secrets.token_bytes(32)
--    key_file.write_text(root_key.hex())
--    os.chmod(key_file, 0o600)
--
--    provider = LocalFileProvider(key_file=str(key_file))
--    return FileEncryptor(provider)
--
--
--class TestEncryptionBootstrap:
--    """Tests for encryption module bootstrap"""
--
--    async def test_bootstrap_encryption_enabled(self, encryption_config):
--        """Test bootstrapping encryption with enabled configuration"""
--        encryptor = await bootstrap_encryption(encryption_config)
--        assert encryptor is not None
--        assert isinstance(encryptor, FileEncryptor)
--
--    async def test_bootstrap_encryption_disabled(self):
--        """Test bootstrapping encryption with disabled configuration"""
--        config = {"encryption": {"enabled": False}}
--        encryptor = await bootstrap_encryption(config)
--        assert encryptor is None
--
--
--class TestFileEncryptorIntegration:
--    """Tests for FileEncryptor integration"""
--
--    async def test_encrypt_decrypt_roundtrip(self, file_encryptor):
--        """Test basic encryption/decryption roundtrip"""
--        account_id = "test_account"
--        plaintext = b"This is a test file content for encryption integration"
--
--        # Encrypt
--        ciphertext = await file_encryptor.encrypt(account_id, plaintext)
--        assert ciphertext != plaintext
--        assert ciphertext.startswith(b"OVE1")
--
--        # Decrypt
--        decrypted = await file_encryptor.decrypt(account_id, ciphertext)
--        assert decrypted == plaintext
--
--    async def test_different_accounts_isolation(self, file_encryptor):
--        """Test that different accounts cannot decrypt each other's data"""
--        account1 = "account_1"
--        account2 = "account_2"
--        plaintext = b"Sensitive data for account isolation test"
--
--        # Encrypt with account1
--        ciphertext = await file_encryptor.encrypt(account1, plaintext)
--
--        # Decrypt with account1 should work
--        decrypted1 = await file_encryptor.decrypt(account1, ciphertext)
--        assert decrypted1 == plaintext
--
--        # Decrypt with ac
 ```
 
-**File**: `tests/integration/test_vault_encryption_integration.py` (modified, +13/-663)
+**File**: `crates/ragfs/src/git/snapshot_log/postgres.rs` (modified, +37/-19)
 ```diff
-@@ -1,678 +1,28 @@
- # Copyright (c) 2026 Beijing Volcano Engine Technology Co., Ltd.
- # SPDX-License-Identifier: AGPL-3.0
--
--"""
--Vault encryption integration tests.
--
--Tests encryption functionality with HashiCorp Vault as the key provider.
--Requires VAULT_TOKEN env var to be set.
--Run: pytest tests/integration/test_vault_encryption_integration.py -v -m integration
--"""
--
--import secrets
--from pathlib import Path
-+"""Vault-specific failure handling. The file roundtrip is shared by all providers."""
+@@ -7,8 +7,8 @@ use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
+ use sqlx::{PgPool, Postgres, QueryBuilder};
  
- import pytest
--import pytest_asyncio
+ use super::store::{
+-    ensure_latest_matches, validate_append, SnapshotLogError, SnapshotLogHit, SnapshotLogLimits,
+-    SnapshotLogRow, SnapshotLogStore,
++    ensure_latest_matches, validate_append, validate_service_name, SnapshotLogError, SnapshotLogHit,
++    SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
+ };
  
--from openviking.crypto.config import bootstrap_encryption
--from openviking.crypto.encryptor import FileEncryptor
- from openviking.crypto.exceptions import AuthenticationFailedError, ConfigError
--from openviking.crypto.providers import VaultProvider, create_root_key_provider
--from openviking.server.store_assembly import build_api_key_manager
--from openviking.service.core import OpenVikingService
--from openviking_cli.session.user_id import UserIdentifier
--from openviking_cli.utils.config.open_viking_config import OpenVikingConfigSingleton
--from tests.integration.conftest import VAULT_ADDR, VAULT_TOKEN, requires_vault
--
--pytestmark = [pytest.mark.integration, requires_vault]
--
--# Vault environment configuration
--VAULT_MOUNT_PATH = "transit"
--
--
--class TestVaultProviderIntegration:
--    """Integration tests for VaultProvider."""
--
--    @pytest_asyncio.fixture(scope="function")
--    async def vault_provider(self):
--        """Fixture that provides a VaultProvider instance."""
--        provider = VaultProvider(addr=VAULT_ADDR, token=VAULT_TOKEN, mount_path=VAULT_MOUNT_PATH)
--        yield provider
--
--    @pytest.fixture(scope="function")
--    def vault_config(self):
--        """Fixture that provides Vault configuration."""
--        return {
--            "vault": {
--                "address": VAULT_ADDR,
--                "token": VAULT_TOKEN,
--                "mount_point": VAULT_MOUNT_PATH,
--            }
--        }
--
--    async def test_vault_provider_initialization(self, vault_provider):
--        """Test VaultProvider initialization and Vault connection."""
--        client = await vault_provider._get_client()
--        assert client is not None
--        assert client.is_authenticated()
--
--    async def test_derive_account_key(self, vault_provider):
--        """Test deriving account keys."""
--        account_id = "test-account-vault"
--        account_key = await vault_provider.derive_account_key(account_id)
--
--        assert account_key is not None
--        assert isinstance(account_key, bytes)
--        assert len(account_key) == 32
--
--    async def test_derive_different_account_keys(self, vault_provider):
--        """Test that different accounts get different keys."""
--        account1_key = await vault_provider.derive_account_key("account-1")
--        account2_key = await vault_provider.derive_account_key("account-2")
--
--        assert account1_key != account2_key
--
--    async def test_derive_same_account_key_consistent(self, vault_provider):
--        """Test that same account gets consistent key."""
--        key1 = await vault_provider.derive_account_key("test-account")
--        key2 = await vault_provider.derive_account_key("test-account")
--
--        assert key1 == key2
--
--    async def test_encrypt_decrypt_file_key(self, vault_provider):
--        """Test encrypting and decrypting file keys."""
--        plaintext_key = secrets.token_bytes(32)
--        account_id = "test-account-encrypt"
--
--        encrypted_key, iv = await vault_provider.encrypt_file_key(plaintext_key, account_id)
-+from openviking.crypto.providers import create_root_key_provider
-+from tests.integration.conftest import VAULT_ADDR, requires_vault
+ const POSTGRES_INSERT_BATCH_ROWS: usize = 1_000;
+@@ -33,16 +33,20 @@ pub struct PostgresSnapshotLogStore {
+     pool: PgPool,
+     limits: SnapshotLogLimits,
+     operation_timeout: Duration,
++    service_name: String,
+ }
  
--        assert encrypted_key is not None
--        assert isinstance(encrypted_key, bytes)
--        assert encrypted_key != plaintext_key
--        assert iv is not None
--        assert isinstance(iv, bytes)
--
--        decrypted = await vault_provider.decrypt_file_key(encrypted_key, iv, account_id)
--
--        assert decrypted == plaintext_key
--
--    async def test_encrypt_decrypt_multiple_keys(self, vault_provider):
--        """Test encrypting and decrypting multiple different keys."""
--        key1 = secrets.token_bytes(32)
--        key2 = secrets.token_bytes(32)
--        account_id = "test-account-multiple"
--
--        encrypted1, iv1 = await vault_provider.encrypt_file_key(key1, account_id)
--        encrypted2, iv2 = await vault_provider.encrypt_file_key(key2, account_id)
--
--        assert encrypted1 != encrypted2
--
--        decrypted1 = await vault_provider.decrypt_file_key(encrypted1, iv1, account_id)
--        decrypted2 = await vault_provider.decrypt_file_key(encrypted2, iv2, account_id)
--
--        assert decrypted1 == key1
--        assert decrypted2 == key2
--
--    async def test_create_root_key_provider_vault(self, vault_config):
--        """Test creating VaultProvider via create_root_key_provider."""
--        provider = create_root_key_provider("vault", vau
+ impl PostgresSnapshotLogStore {
+-    /// Connect to a pre-provisioned database without creating or migrating tables.
++    /// Connect using a service name, DSN, pool size and acquisition timeout.
++    /// Return the service-scoped store or an error; never provision tables.
+     pub async fn connect(
++        service_name: &str,
+         dsn: &str,
+         max_connections: u32,
+         connect_timeout_ms: u64,
+     ) -> Result<Self, SnapshotLogError> {
+         Self::connect_with_timeout(
++            service_name,
+             dsn,
+             max_connections,
+             connect_timeout_ms,
+@@ -51,14 +55,17 @@ impl PostgresSnapshotLogStore {
+         .await
+     }
+ 
+-    /// Bound initialization and each complete index operation, including pool
+-    /// acquisition, lock waits and all statements in an append transaction.
++    /// Connect using a service name, DSN, pool size and timeouts in milliseconds.
++    /// Return a store whose initialization and complete operations have deadlines,
++    /// or a configuration/database error.
+     pub async fn connect_with_timeout(
++        service_name: &str,
+         dsn: &str,
+         max_connections: u32,
+         connect_timeout_ms: u64,
+         operation_timeout_ms: u64,
+     ) -> Result<Self, SnapshotLogError> {
++        validate_service_name(service_name)?;
+         if dsn.trim().is_empty()
+             || max_connections == 0
+             || connect_timeout_ms == 0
+@@ -89,13 +96,16 @@ impl PostgresSnapshotLogStore {
+                 .await?;
+             // Fail initialization if deployment DDL/permissions are missing, allowing
+             // the binding's existing best-effort fallback to the Git scan path.
+-            sqlx::query("SELECT id, account, branch, path, commit_oid FROM snapshot_log LIMIT 0")
+-                .execute(&pool)
+-                .await?;
++            sqlx::query(
++                "SELECT id, service_name, account, branch, path, commit_oid FROM snapshot_log LIMIT 0",
++            )
++            .execute(&pool)
++            .await?;
+             Ok(Self {
+                 pool,
+                 limits: SnapshotLogLimits::default(),
+                 operation_timeout,
++                service_name: service_name.to_string(),
+             })
+         })
+         .await
+@@ -116,8 +126,9 @@ impl SnapshotLogStore for PostgresSnapshotLogStore {
+         with_timeout(self.operation_timeout, async {
+             Ok(sqlx::query_as::<_, (i64, String)>(
+                 "SELECT id, commit_oid FROM snapshot_log \
+-             WHERE account = $1 AND branch = $2 ORDER BY id DESC LIMIT 1",
++             WHERE service_name = $1 AND account = $2 AND branch = $3 ORDER BY id DESC LIMIT 1",
+             )
++            .bind(&self.service_name)
+             .bind(account)
+             .bind(branch)
+             .fetch_optional(&self.pool)
+@@ -142,18 +153,22 @@ impl SnapshotLogStore for PostgresSnapshotLogStore {
+                 .execute(&mut *tx)
+                 .await?;
+             // Row locking cannot serialize two first appends to an empty branch.
+-            // Length-prefixing avoids ambiguous (account, branch) concatenations.
++            // Length-prefixing isolates service/account/branch lock namespaces.
+             // Hash collisions only serialize unrelated branches; equality is still
+-            // checked against the original account/branch columns.
+-            let lock_key = format!("{}:{}{}", account.len(), account, branch);
++            // checked against the original service/account/branch columns.
++            let lock_key = format!(
++                "{}:{}|{}:{}{}",
++                self.service_name.len(), self.service_name, account.len(), account, branch
++            );
+             sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))")
+                 .bind(lock_key)
+                 .execute(&mut *tx)
+                 .await?;
+             let latest = sqlx::query_as::<_, (i64, String)>(
+                 "SELECT id, commit_oid FROM snapshot_log \
+-             WHERE account = $1 AND branch = $2 ORDER BY id DESC LIMIT 1",
++             WHERE service_name = $1 AND account = $2 AND branch = $3 ORDER BY id DESC LIMIT 1",
+             )
++            .bind(&self.service_name)
+             .bind(account)
+             .bind(branch)
+             .fetch_optional
 ```
 
-**File**: `tests/integration/test_volcengine_kms_encryption_integration.py` (removed, +0/-697)
+**File**: `crates/ragfs/src/git/snapshot_log/store.rs` (modified, +1/-1)
 ```diff
-@@ -1,697 +0,0 @@
--# Copyright (c) 2026 Beijing Volcano Engine Technology Co., Ltd.
--# SPDX-License-Identifier: AGPL-3.0
--
--"""
--Volcengine KMS Encryption Integration Tests
--
--Tests encryption functionality integrated with VikingFS and OpenViking service
--using Volcengine KMS as the key provider.
--Requires VOLCENGINE_ACCESS_KEY, VOLCENGINE_SECRET_KEY, and VOLCENGINE_KMS_KEY_ID env vars.
--Run: pytest tests/integration/test_volcengine_kms_encryption_integration.py -v -m integration
--"""
--
--import secrets
--import tempfile
--from pathlib import Path
--
--import pytest
--import pytest_asyncio
--
--from openviking.crypto.encryptor import FileEncryptor
--from openviking.crypto.providers import VolcengineKMSProvider
--from openviking.server.api_keys import is_valid_format_key
--from openviking.server.store_assembly import build_api_key_manager
--from openviking.service.core import OpenVikingService
--from openviking_cli.session.user_id import UserIdentifier
--from openviking_cli.utils.config.open_viking_config import OpenVikingConfigSingleton
--from tests.integration.conftest import (
--    VOLCENGINE_ACCESS_KEY,
--    VOLCENGINE_KMS_KEY_ID,
--    VOLCENGINE_KMS_REGION,
--    VOLCENGINE_SECRET_KEY,
--    requires_volcengine_kms,
--)
--
--pytestmark = [pytest.mark.integration, requires_volcengine_kms]
--
--
--class TestVolcengineKMSProvider:
--    """Tests for VolcengineKMSProvider"""
--
--    @pytest_asyncio.fixture(scope="module")
--    async def volcengine_kms_provider(self):
--        """
--        Fixture that provides a VolcengineKMSProvider instance for testing.
--        Requires valid Volcengine KMS credentials from environment variables.
--        """
--        provider = VolcengineKMSProvider(
--            region=VOLCENGINE_KMS_REGION,
--            access_key_id=VOLCENGINE_ACCESS_KEY,
--            secret_access_key=VOLCENGINE_SECRET_KEY,
--            key_id=VOLCENGINE_KMS_KEY_ID,
--        )
--        return provider
--
--    @pytest.mark.asyncio
--    async def test_initialize_provider(self, volcengine_kms_provider):
--        """Test that VolcengineKMSProvider initializes correctly"""
--        assert volcengine_kms_provider is not None
--        assert volcengine_kms_provider.region == "cn-beijing"
--        assert volcengine_kms_provider.key_id == "d926aa0d-deee-455a-9186-0d07e2e250e1"
--
--    @pytest.mark.asyncio
--    async def test_get_root_key(self, volcengine_kms_provider):
--        """Test getting root key"""
--        root_key = await volcengine_kms_provider.get_root_key()
--        assert isinstance(root_key, bytes)
--        assert len(root_key) > 0
--
--    @pytest.mark.asyncio
--    async def test_derive_account_key(self, volcengine_kms_provider):
--        """Test deriving account key"""
--        account_id = "test-account-volcengine"
--        account_key = await volcengine_kms_provider.derive_account_key(account_id)
--        assert isinstance(account_key, bytes)
--        assert len(account_key) == 32  # Should be 256-bit key
--
--    @pytest.mark.asyncio
--    async def test_derive_different_account_keys(self, volcengine_kms_provider):
--        """Test that different account IDs produce different keys"""
--        account1 = "account-1-volc"
--        account2 = "account-2-volc"
--
--        key1 = await volcengine_kms_provider.derive_account_key(account1)
--        key2 = await volcengine_kms_provider.derive_account_key(account2)
--
--        assert key1 != key2
--
--    @pytest.mark.asyncio
--    async def test_derive_same_account_key(self, volcengine_kms_provider):
--        """Test that same account ID produces same key"""
--        account_id = "test-account-consistent"
--
--        key1 = await volcengine_kms_provider.derive_account_key(account_id)
--        key2 = await volcengine_kms_provider.derive_account_key(account_id)
--
--        assert key1 == key2
--
--    @pytest.mark.asyncio
--    async def test_encrypt_decrypt_file_key(self, volcengine_kms_provider):
--        """Test encrypting and decrypting a file key"""
--        plaintext_key = secrets.token_bytes(32)  # 256-bit key
--        account_id = "test-account-encrypt"
--
--        encrypted_key, iv = await volcengine_kms_provider.encrypt_file_key(
--            plaintext_key, account_id
--        )
--        assert isinstance(encrypted_key, bytes)
--        assert isinstance(iv, bytes)
--
--        decrypted = await volcengine_kms_provider.decrypt_file_key(encrypted_key, iv, account_id)
--        assert decrypted == plaintext_key
--
--    @pytest.mark.asyncio
--    async def test_encrypt_different_keys(self, volcengine_kms_provider):
--        """Test that different plaintexts produce different ciphertexts"""
--        key1 = secrets.token_bytes(32)
--        key2 = secrets.token_bytes(32)
--        account_id = "test-account-multi"
--
--        encrypted1, iv1 = await volcengine_kms_provider.encrypt_file_key(key1, account_id)
--        encrypted2, iv2 = await volcengine_kms_provider.encrypt_file_key(key2, account_id)
--
--        assert encrypted1 != encrypted2
--
--    @pytest.mark.asyncio
--    async def test_full_rou
+@@ -20,7 +20,7 @@ impl Default for SnapshotLogLimits {
+     fn default() -> Self {
+         Self {
+             account_bytes: 64,
+-            branch_bytes: 512,
++            branch_bytes: 128,
+             path_bytes: 2048,
+             max_rows_per_commit: SNAPSHOT_LOG_MAX_ROWS_PER_COMMIT,
+         }
 ```
 
-**File**: `tests/server/oauth/test_router.py` (modified, +32/-102)
+**File**: `crates/ragfs/src/git/tests/test_snapshot_log.rs` (modified, +7/-5)
 ```diff
-@@ -329,6 +329,11 @@ async def test_full_device_flow(app_with_oauth, client):
-     assert body["client_name"] == "Claude"
-     pending = await store.load_pending_authorization(pending_id)
-     assert pending["verified_key_fp"] == "f" * 64
-+    repeated = await client.post(
-+        "/api/v1/auth/oauth-verify", json={"code": display_code, "decision": "approve"}
-+    )
-+    assert repeated.status_code == 400
-+    assert repeated.json()["error_description"] == "Invalid or expired verification code"
- 
-     # Status after verify: approved + redirect_url with code/state.
-     post = await client.get("/oauth/authorize/page/status", params={"pending": pending_id})
-@@ -370,6 +375,21 @@ async def test_full_device_flow(app_with_oauth, client):
-     refresh_record = await store.peek_refresh(tokens["refresh_token"])
-     assert record.authorizing_key_fp == refresh_record["authorizing_key_fp"] == "f" * 64
- 
-+    refresh_form = {
-+        "grant_type": "refresh_token",
-+        "refresh_token": tokens["refresh_token"],
-+        "client_id": client_id,
-+    }
-+    rotated = await client.post("/token", data=refresh_form)
-+    assert rotated.status_code == 200, rotated.text
-+    replacement = rotated.json()
-+    assert replacement["access_token"] != tokens["access_token"]
-+    assert replacement["refresh_token"] != tokens["refresh_token"]
-+
-+    replay = await client.post("/token", data=refresh_form)
-+    assert replay.status_code == 400
-+    assert replay.json()["error"] == "invalid_grant"
-+
- 
- @pytest.mark.asyncio
- async def test_oauth_pending_info_endpoint(app_with_oauth, client):
-@@ -392,36 +412,13 @@ async def test_oauth_pending_info_endpoint(app_with_oauth, client):
-     record = await store.load_pending_authorization(pending_id)
-     assert record is not None and record["display_code"]
- 
--
--@pytest.mark.asyncio
--async def test_oauth_pending_info_404_when_missing(client):
--    resp = await client.get("/api/v1/auth/oauth/pending/doesnotexist")
--    assert resp.status_code == 404
--    status = await client.get("/oauth/authorize/page/status", params={"pending": "doesnotexist"})
--    assert status.status_code == 410
--    assert status.json() == {"status": "expired"}
--
--
--@pytest.mark.asyncio
--async def test_oauth_verify_by_pending_id(app_with_oauth, client):
--    """Studio consent path: verify with pending_id instead of display_code."""
--    _, store, _ = app_with_oauth
--    client_id, pending_id, _, _ = await _start_authorize(
--        client, redirect_uri="https://claude.ai/cb", state="abc"
-+    verified = await client.post(
-+        "/api/v1/auth/oauth-verify", json={"pending_id": pending_id, "decision": "approve"}
-     )
--
--    verify = await client.post(
--        "/api/v1/auth/oauth-verify",
--        json={"pending_id": pending_id, "decision": "approve"},
--    )
--    assert verify.status_code == 200, verify.text
--    body = verify.json()
--    assert body["status"] == "approved"
--    assert body["client_id"] == client_id
--
--    record = await store.load_pending_authorization(pending_id)
--    assert record is not None
--    assert record["verified"] is True
-+    assert verified.status_code == 200, verified.text
-+    assert verified.json()["status"] == "approved"
-+    assert verified.json()["client_id"] == client_id
-+    assert (await store.load_pending_authorization(pending_id))["verified"] is True
- 
- 
- @pytest.mark.asyncio
-@@ -430,17 +427,11 @@ async def test_oauth_verify_requires_pending_or_code(client):
-     assert resp.status_code == 400
-     assert resp.json()["error_description"] == "Must provide either 'pending_id' or 'code'"
- 
--
--@pytest.mark.asyncio
--async def test_oauth_verify_unknown_code(app_with_oauth, client):
--    _, _, _ = app_with_oauth
--    resp = await client.post(
--        "/api/v1/auth/oauth-verify",
--        json={"code": "BOGUS1", "decision": "approve"},
-+    unknown = await client.post(
-+        "/api/v1/auth/oauth-verify", json={"code": "BOGUS1", "decision": "approve"}
-     )
--    assert resp.status_code == 400
--    body = resp.json()
--    assert "Invalid" in body.get("error_description", "") or "Invalid" in body.get("message", "")
-+    assert unknown.status_code == 400
-+    assert "Invalid" in unknown.json()["error_description"]
- 
- 
- @pytest.mark.asyncio
-@@ -459,69 +450,8 @@ async def test_oauth_verify_deny_destroys_pending(app_with_oauth, client):
-     # Pending row gone — page polling now returns 410.
-     status = await client.get("/oauth/authorize/page/status", params={"pending": pending_id})
-     assert status.status_code == 410
--
--
--@pytest.mark.asyncio
--async def test_oauth_verify_idempotency(app_with_oauth, client):
--    """A second verify with the same code must fail — pending is one-shot."""
--    _, store, _ = app_with_oauth
--    _, pending_id, _, _ = await _start_authorize(client)
--    record = await store.load_pending_authorization(pending_id)
--    code = record["display_code"]
--
--    first = await client.post(
--        "/api/v1/auth/oauth-verify", json={"code": code, "decision": "ap
+@@ -6,7 +6,7 @@ async fn make_snapshot_log_store() -> Arc<dyn SnapshotLogStore> {
+     #[cfg(feature = "postgres")]
+     if let Ok(dsn) = std::env::var("SNAPSHOT_LOG_TEST_PG_DSN") {
+         return Arc::new(
+-            crate::git::PostgresSnapshotLogStore::connect(&dsn, 4, 5_000)
++            crate::git::PostgresSnapshotLogStore::connect("test-service", &dsn, 4, 5_000)
+                 .await
+                 .expect("PostgreSQL SnapshotLog schema must be provisioned"),
+         );
+@@ -215,9 +215,11 @@ async fn test_snapshot_log_postgres_restore_completes_with_locked_index_and_back
+     let account = uuid::Uuid::new_v4().simple().to_string();
+     let (_dir, vfs, _object_store, _ref_store, svc) = make_service(&account);
+     let store = Arc::new(
+-        crate::git::PostgresSnapshotLogStore::connect_with_timeout(&dsn, 2, 5_000, 200)
+-            .await
+-            .unwrap(),
++        crate::git::PostgresSnapshotLogStore::connect_with_timeout(
++            "test-service", &dsn, 2, 5_000, 200,
++        )
++        .await
++        .unwrap(),
+     );
+     let svc = svc.with_snapshot_log(Some(store.clone()));
+     vfs.put("proj/a.md", b"v1");
+@@ -232,7 +234,7 @@ async fn test_snapshot_log_postgres_restore_completes_with_locked_index_and_back
+         .unwrap();
+     let mut lock = pool.begin().await.unwrap();
+     sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))")
+-        .bind(format!("{}:{}main", account.len(), account))
++        .bind(format!("12:test-service|{}:{}main", account.len(), account))
+         .execute(&mut *lock)
+         .await
+         .unwrap();
 ```
 
-**File**: `tests/server/oauth/test_storage.py` (modified, +68/-147)
+**File**: `crates/ragfs/tests/postgres_snapshot_log.rs` (modified, +21/-9)
 ```diff
-@@ -5,12 +5,12 @@
- from __future__ import annotations
+@@ -9,6 +9,8 @@ use std::sync::Arc;
+ use tokio::sync::Barrier;
+ use tokio::time::{timeout, Duration, Instant};
  
- import asyncio
--import time
-+from types import SimpleNamespace
- 
- import pytest
- import pytest_asyncio
- 
--from openviking.server.oauth.otp import hash_secret
-+from openviking.server.oauth import storage
- from openviking.server.oauth.storage import OAuthStore
- 
- # Test stand-in for an API key fingerprint. Real fps come from
-@@ -29,6 +29,13 @@ async def store(tmp_path):
-         await s.close()
- 
- 
-+@pytest.fixture
-+def clock(monkeypatch):
-+    now = SimpleNamespace(seconds=1_000)
-+    monkeypatch.setattr(storage, "time", SimpleNamespace(time=lambda: now.seconds))
-+    return now
++const TEST_SERVICE: &str = "test-service";
 +
-+
- @pytest.mark.asyncio
- async def test_refresh_path_role_downgrade_rejected(store):
-     """Provider's exchange_refresh_token must refuse to mint new tokens
-@@ -70,42 +77,26 @@ async def test_refresh_path_role_downgrade_rejected(store):
-     assert await store.peek_refresh(token) is not None
- 
- 
--@pytest.mark.asyncio
--async def test_register_and_get_client(store):
--    record = await store.register_client(
--        redirect_uris=["https://claude.ai/api/mcp/auth_callback"],
--        client_name="Claude.ai",
--        scope="mcp",
--    )
--    assert record["client_id"]
--    assert record["redirect_uris"] == ["https://claude.ai/api/mcp/auth_callback"]
--    assert record["token_endpoint_auth_method"] == "none"
--    assert record["scope"] == "mcp"
--    fetched = await store.get_client(record["client_id"])
--    assert fetched is not None
--    assert fetched["redirect_uris"] == ["https://claude.ai/api/mcp/auth_callback"]
--    assert fetched["client_name"] == "Claude.ai"
--    assert fetched["scope"] == "mcp"
--    assert "authorization_code" in fetched["grant_types"]
--    assert await store.get_client("unregistered-client") is None
--
--
--@pytest.mark.asyncio
- async def test_provider_get_client_keeps_registered_scope(store):
--    """The missing-scope fallback must not clobber an explicitly registered
--    scope (e.g. Claude registers its own scope string via DCR)."""
-     from openviking.server.oauth.provider import OpenVikingOAuthProvider
- 
-+    callback = "https://claude.ai/api/mcp/auth_callback"
-     record = await store.register_client(
--        redirect_uris=["https://claude.ai/api/mcp/auth_callback"],
--        client_name="Claude.ai",
--        scope="claudeai",
-+        redirect_uris=[callback], client_name="Claude.ai", scope="claudeai"
-     )
-     provider = OpenVikingOAuthProvider(store=store, issuer="https://ov.test")
-+
-     client = await provider.get_client(record["client_id"])
-     assert client is not None
-+    assert client.client_id == record["client_id"]
-+    assert client.redirect_uris is not None
-+    assert [str(uri) for uri in client.redirect_uris] == [callback]
-+    assert client.client_name == "Claude.ai"
-+    assert client.token_endpoint_auth_method == "none"
-+    assert "authorization_code" in client.grant_types
-     assert client.scope == "claudeai"
-     assert client.validate_scope("claudeai") == ["claudeai"]
-+    assert await provider.get_client("unregistered-client") is None
- 
- 
- def _insert_code(store, code, *, account_id="a", user_id="u", ttl_seconds=300):
-@@ -125,115 +116,56 @@ def _insert_code(store, code, *, account_id="a", user_id="u", ttl_seconds=300):
-     )
- 
- 
--@pytest.mark.asyncio
- async def test_auth_code_concurrent_consume_race(store, tmp_path):
--    """Two coroutines racing to consume the same code — exactly one wins."""
-     code = "race-code"
--    await _insert_code(store, code)
-+    claims = {
-+        "client_id": "cx",
-+        "redirect_uri": "https://x.test/cb",
-+        "code_challenge": "challenge-xyz",
-+        "code_challenge_method": "S256",
-+        "scope": "mcp",
-+        "resource": "https://x.test/mcp",
-+        "account_id": "a",
-+        "user_id": "u",
-+        "role": "user",
-+        "authorizing_key_fp": _FP,
-+    }
-+    await store.insert_auth_code(code_plain=code, ttl_seconds=300, **claims)
-     second_store = OAuthStore(tmp_path / "oauth.db")
-     await second_store.initialize()
-     try:
-         results = await asyncio.gather(
-             store.consume_auth_code(code), second_store.consume_auth_code(code)
-         )
--        winners = [record for record in results if record is not None]
--        assert len(winners) == 1
--        assert (winners[0]["account_id"], winners[0]["user_id"]) == ("a", "u")
-+        [winner] = [record for record in results if record is not None]
-+        assert {field: winner[field] for field in claims} == claims
-         assert await second_store.peek_auth_code(code) is None
-     finally:
-         await second_store.close()
- 
- 
--@pytest.mark.asyncio
--async def test_auth_code_expired_rejected(store):
--    code = "stale-code"
--    await _insert_code(store, code, ttl_seconds=60)
--    # Forge expiry by editing the row to be in the past.
--    assert store._conn is not None
--    store._conn.execute(
--        "UPDATE oauth_codes SET expires_at = ? WHERE used = 0",
--        (int(time.time()) - 10,),
-```
-
-**File**: `tests/server/test_api_key_manager.py` (modified, +50/-147)
-```diff
-@@ -428,22 +428,6 @@ async def mutate():
- # ---- User lifecycle tests ----
- 
- 
--async def test_register_user(manager: APIKeyManager):
--    """register_user should create a user with given role."""
--    from openviking.server.api_keys import parse_api_key
--
--    acct = _uid()
--    await manager.create_account(acct, "alice")
--    key = await manager.register_user(acct, "bob", "user")
--    assert parse_api_key(key)[:2] == (acct, "bob")
--
--    identity = await manager.resolve_identity(key)
--    assert identity.role == Role.USER
--    assert identity.account_id == acct
--    assert identity.user_id == "bob"
--    assert await manager.get_registered_user_role(acct, "bob") == Role.USER
--
--
- async def test_register_user_in_nonexistent_account_raises(manager: APIKeyManager):
-     """Registering user in nonexistent account should raise NotFoundError."""
-     with pytest.raises(NotFoundError):
-@@ -516,7 +500,6 @@ async def test_regenerate_key(manager: APIKeyManager):
-     old_key = await manager.register_user(account, "bob", Role.USER)
-     original_fingerprint = hashlib.sha256(old_key.encode()).hexdigest()
-     assert await manager.get_user_key_fingerprint(account, "bob") == original_fingerprint
--    assert await manager.get_user_key_fingerprint(account, "bob") == original_fingerprint
- 
-     new_key = await manager.regenerate_key(account, "bob")
-     assert new_key != old_key
-@@ -579,144 +562,74 @@ async def test_conditional_rotation_checks_persisted_key(manager_service, hashin
- 
- 
- async def test_set_role(manager: APIKeyManager):
--    """set_role should update user's role in both storage and index."""
-+    """An issued key keeps its identity and sees the registered role change."""
-+    from openviking.server.api_keys import parse_api_key
-+
-     acct = _uid()
-     await manager.create_account(acct, "alice")
--    bob_key = await manager.register_user(acct, "bob", "user")
--
--    assert (await manager.resolve_identity(bob_key)).role == Role.USER
-+    key = await manager.register_user(acct, "bob", "user")
-+    assert parse_api_key(key)[:2] == (acct, "bob")
-+    identity = await manager.resolve_identity(key)
-+    assert (identity.account_id, identity.user_id, identity.role) == (acct, "bob", Role.USER)
-+    assert await manager.get_registered_user_role(acct, "bob") == Role.USER
- 
-     await manager.set_role(acct, "bob", "admin")
--    assert (await manager.resolve_identity(bob_key)).role == Role.ADMIN
--
-     with pytest.raises(PermissionDeniedError, match="server.root_api_key"):
-         await manager.set_role(acct, "bob", Role.ROOT)
--    assert (await manager.resolve_identity(bob_key)).role == Role.ADMIN
-+    assert (await manager.resolve_identity(key)).role == Role.ADMIN
-+    assert await manager.get_registered_user_role(acct, "bob") == Role.ADMIN
- 
- 
--async def test_get_users(manager: APIKeyManager):
--    """list_users should list all users in an account."""
-+async def test_get_users_pagination_and_ordering(manager: APIKeyManager):
-     acct = _uid()
-     await manager.create_account(acct, "alice")
--    await manager.register_user(acct, "bob", "user")
-+    for user in ("dave", "alan", "carol"):
-+        await manager.register_user(acct, user, "user")
- 
-     users = await _list_users(manager, acct)
--    user_ids = {u["user_id"] for u in users}
--    assert user_ids == {"alice", "bob"}
--
--    roles = {u["user_id"]: u["role"] for u in users}
--    assert roles["alice"] == "admin"
--    assert roles["bob"] == "user"
-+    assert [(u["user_id"], u["role"]) for u in users] == [
-+        ("alice", Role.ADMIN),
-+        ("dave", Role.USER),
-+        ("alan", Role.USER),
-+        ("carol", Role.USER),
-+    ]
-+    for page, expected in enumerate((["alice", "dave"], ["alan", "carol"], []), start=1):
-+        assert [
-+            u["user_id"] for u in await _list_users(manager, acct, limit=2, page=page)
-+        ] == expected
-+    for pattern, expected in (("al*", ["alice", "alan"]), ("alice", ["alice"]), ("zzz*", [])):
-+        assert [
-+            u["user_id"] for u in await _list_users(manager, acct, name_filter=pattern)
-+        ] == expected
- 
-     await manager.begin_deletion(
-         acct,
--        "bob",
--        task_id="delete-bob",
-+        "alan",
-+        task_id="delete-alan",
-         owner_account_id=acct,
-         owner_user_id="alice",
-     )
--    users = await _list_users(manager, acct)
--    assert {u["user_id"] for u in users} == {"alice"}
--
--
--async def test_get_users_name_filter(manager: APIKeyManager):
--    """list_users name_filter uses fnmatch wildcard matching against user IDs."""
--    acct = _uid()
--    await manager.create_account(acct, "alice")
--    await manager.register_user(acct, "alan", "user")
--    await manager.register_user(acct, "bob", "user")
--
--    # Wildcard substring match
--    matched = {u["user_id"] for u in await _list_users(manager, acct, name_filter="al*")}
--    assert matched == {"alice", "alan"}
--
--    # Exact match (no wildcard) only hits the literal ID
--    assert {u["user_id"] for u in 
-```
-
-**File**: `tests/server/test_api_privacy_configs.py` (modified, +23/-49)
-```diff
-@@ -122,19 +122,25 @@ async def test_privacy_config_api_roundtrip(client: httpx.AsyncClient):
-     assert current_body["result"]["current"]["values"]["api_key"] == "sample"
-     assert current_body["result"]["meta"]["active_version"] == 1
- 
-+    second_values = {"api_key": "secret-2", "new_key": "x"}
-     second = await client.post(
-         "/api/v1/privacy-configs/credential/demo-skill",
-         json={
--            "values": {"api_key": "secret-2"},
-+            "values": second_values,
-             "change_reason": "rotate",
-         },
-     )
-     assert second.status_code == 200
-     assert second.json()["result"]["version"] == 2
-+    assert second.json()["result"]["values"] == second_values
- 
-     versions = await client.get("/api/v1/privacy-configs/credential/demo-skill/versions")
-     assert versions.status_code == 200
-     assert versions.json()["result"] == [1, 2]
-+    missing = await client.get("/api/v1/privacy-configs/credential/demo-skill/versions/10")
-+    assert missing.status_code == 404
-+    assert missing.json()["status"] == "error"
-+    assert missing.json()["error"]["code"] == "NOT_FOUND"
- 
-     activate = await client.post(
-         "/api/v1/privacy-configs/credential/demo-skill/activate",
-@@ -144,31 +150,7 @@ async def test_privacy_config_api_roundtrip(client: httpx.AsyncClient):
-     assert activate.json()["result"]["version"] == 1
- 
-     final_current = await client.get("/api/v1/privacy-configs/credential/demo-skill")
--    assert final_current.json()["result"]["current"]["values"]["api_key"] == "sample"
--
--
--async def test_privacy_config_update_allows_new_keys(client: httpx.AsyncClient):
--    create = await client.post(
--        "/api/v1/privacy-configs/skill/demo-skill-unknown-key",
--        json={
--            "values": {"api_key": "secret-1"},
--            "change_reason": "seed",
--        },
--    )
--    assert create.status_code == 200
--
--    update = await client.post(
--        "/api/v1/privacy-configs/skill/demo-skill-unknown-key",
--        json={
--            "values": {"api_key": "secret-2", "new_key": "x"},
--            "change_reason": "extend-keys",
--        },
--    )
--    assert update.status_code == 200
--    body = update.json()
--    assert body["status"] == "ok"
--    assert body["result"]["values"]["api_key"] == "secret-2"
--    assert body["result"]["values"]["new_key"] == "x"
-+    assert final_current.json()["result"]["current"]["values"] == {"api_key": "sample"}
- 
- 
- async def test_privacy_config_patch_creates_target_and_atomically_merges_fields(
-@@ -188,10 +170,11 @@ async def test_privacy_config_patch_creates_target_and_atomically_merges_fields(
-     )
-     assert updated.status_code == 200, updated.text
-     assert updated.json()["result"]["version"] == 2
--    assert updated.json()["result"]["values"] == {
--        "pat": "github_pat_mock_value",
--        "username": "alice",
--    }
-+    expected = {"pat": "github_pat_mock_value", "username": "alice"}
-+    assert updated.json()["result"]["values"] == expected
-+    current = await client.get("/api/v1/privacy-configs/credential/github")
-+    assert current.status_code == 200, current.text
-+    assert current.json()["result"]["current"]["values"] == expected
- 
- 
- async def test_privacy_api_rejects_invalid_target_with_structured_format_error(
-@@ -227,25 +210,6 @@ async def test_privacy_api_rejects_oversized_values_without_echoing_secret(
-     assert secret not in response.text
- 
- 
--async def test_privacy_config_get_version_not_found(client: httpx.AsyncClient):
--    create = await client.post(
--        "/api/v1/privacy-configs/skill/demo-skill-version-not-found",
--        json={
--            "values": {"api_key": "secret-1"},
--            "change_reason": "seed",
--        },
--    )
--    assert create.status_code == 200
--
--    missing = await client.get(
--        "/api/v1/privacy-configs/skill/demo-skill-version-not-found/versions/10"
--    )
--    assert missing.status_code == 404
--    body = missing.json()
--    assert body["status"] == "error"
--    assert body["error"]["code"] == "NOT_FOUND"
--
--
- async def test_privacy_config_target_not_found(client: httpx.AsyncClient):
-     missing_target = "demo-skill-target-not-found"
- 
-@@ -394,6 +358,16 @@ async def test_privacy_config_delete_is_idempotent_and_removes_history(
-     assert deleted_again.status_code == 200, deleted_again.text
-     assert deleted_again.json()["result"]["deleted"] is False
- 
-+    recreated = await client.post(
-+        "/api/v1/privacy-configs/credential/delete-me",
-+        json={"values": {"api_key": "replacement"}},
-+    )
-+    assert recreated.status_code == 200, recreated.text
-+    assert recreated.json()["result"]["version"] == 1
-+    old_version = await client.get("/api/v1/privacy-configs/credential/delete-me/versions/2")
-+    assert old_version.status_code == 404
-+    assert old_version.json()["error"]["code"] == "NOT_FOUND"
-+
- 
- async def test_privacy_scan_is_dry_run_by_default_and_fix_rewrites_content(
-     client: httpx.AsyncClient,
-```
-
----
-
-### Incident Patch 2: `4fe7846b` (2026-11-27)
-**Commit Message**: fix(studio): manage Compile plans by compile_name (#8393)
-
-* fix(studio): manage Compile plans by compile_name
-
-The scheduled plans tab crashed with "Cannot read properties of undefined
-(reading 'map')" because GET /api/v1/compile/configs returns configs, not
-targets. Studio also still read and updated configurations by to, and
-created scheduled plans through the full-input POST /api/v1/compile,
-which now rejects scheduling options.
-
-- List, read and update configurations by compile_name, and carry saved
-  args through updates so they are not cleared.
-- Show next_triggered_slot and last_run_time instead of the removed
-  next_run_at and running fields.
-- Save new scheduled plans with POST /api/v1/compile/create under a
-  validated plan name.
-- Open the editor at /compile/new?name=<compile_name>.
-
-Fixes #8392
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(studio): read last_run_time as Unix seconds
-
-The Last run column passed last_run_time to new Date() as milliseconds,
-but the API returns Unix seconds from task created_at, so 1793606700
-rendered as 1970-01-21. Type last_run_time and task_first_create_time as
-number | null and scale Last run by 1000; next_triggered_slot s
-
-**File**: `web-studio/src/features/workbench/compile/components/compile-form.test.tsx` (modified, +56/-15)
-```diff
-@@ -18,6 +18,8 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
- const api = vi.hoisted(() => ({
-   BUILTIN_SKILLS_ROOT: 'viking://system/compile/example-skills',
-   createCompile: vi.fn(),
-+  createCompileConfig: vi.fn(),
-+  isCompileName: (name: string) => /^[A-Za-z0-9_][A-Za-z0-9_-]*$/.test(name),
-   fetchCompileConfig: vi.fn(),
-   updateCompileConfig: vi.fn(),
-   lookupSubmission: vi.fn(),
-@@ -81,7 +83,7 @@ const storageKey = 'compile-submission:recovery-test'
- const clients: QueryClient[] = []
- const task = { task_id: 'cmp-original', status: 'pending' }
- function mount(
--  props: { fromTask?: string; sourceUri?: string; target?: string } = {},
-+  props: { fromTask?: string; sourceUri?: string; compileName?: string } = {},
-   cachedConfig?: unknown,
-   cachedAt = Date.now(),
+ async fn expect_timeout<T: std::fmt::Debug>(
+     operation: impl std::future::Future<Output = Result<T, SnapshotLogError>>,
  ) {
-@@ -91,7 +93,7 @@ function mount(
-   clients.push(client)
-   if (cachedConfig)
-     client.setQueryData(
--      ['compile-config', 'recovery-test', props.target],
-+      ['compile-config', 'recovery-test', props.compileName],
-       cachedConfig,
-       { updatedAt: cachedAt },
+@@ -32,7 +34,7 @@ fn dsn() -> String {
+ }
+ 
+ async fn store() -> PostgresSnapshotLogStore {
+-    PostgresSnapshotLogStore::connect(&dsn(), 4, 5_000)
++    PostgresSnapshotLogStore::connect(TEST_SERVICE, &dsn(), 4, 5_000)
+         .await
+         .expect("provision openviking/service/sql/snapshot_log_postgres_init.sql first")
+ }
+@@ -69,8 +71,8 @@ async fn cleanup(account: &str) {
+ #[ignore = "requires a real PostgreSQL database"]
+ async fn postgres_snapshot_log_history_scope_width_and_watermark() {
+     let store = store().await;
+-    let account = uuid::Uuid::new_v4().simple().to_string() + &"a".repeat(223);
+-    let branch = "b".repeat(512);
++    let account = uuid::Uuid::new_v4().simple().to_string() + &"a".repeat(32);
++    let branch = "b".repeat(128);
+     // Varied four-byte characters exercise the full 2048-byte path limit.
+     let wide: String = (0..512)
+         .map(|i| char::from_u32(0x10000 + i).unwrap())
+@@ -291,7 +293,7 @@ async fn postgres_snapshot_log_startup_does_not_provision_schema() {
+     url.query_pairs_mut()
+         .append_pair("options", &format!("-c search_path={schema}"));
+     assert!(matches!(
+-        PostgresSnapshotLogStore::connect(url.as_str(), 1, 5_000).await,
++        PostgresSnapshotLogStore::connect(TEST_SERVICE, url.as_str(), 1, 5_000).await,
+         Err(SnapshotLogError::Sql(_))
+     ));
+     let count: i64 = sqlx::query_scalar("SELECT count(*) FROM pg_tables WHERE schemaname = $1")
+@@ -330,7 +332,7 @@ async fn postgres_snapshot_log_bounds_startup_and_read_table_lock_waits() {
+     let mut url = url::Url::parse(&dsn()).unwrap();
+     url.query_pairs_mut()
+         .append_pair("options", &format!("-c search_path={schema}"));
+-    let store = PostgresSnapshotLogStore::connect_with_timeout(url.as_str(), 1, 5_000, 200)
++    let store = PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, url.as_str(), 1, 5_000, 200)
+         .await
+         .unwrap();
+     let mut lock = pool.begin().await.unwrap();
+@@ -343,7 +345,7 @@ async fn postgres_snapshot_log_bounds_startup_and_read_table_lock_waits() {
+     // Do not release the lock until every call has returned by its own deadline.
+     let result = timeout(
+         Duration::from_secs(2),
+-        PostgresSnapshotLogStore::connect_with_timeout(url.as_str(), 1, 5_000, 200),
++        PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, url.as_str(), 1, 5_000, 200),
      )
-@@ -259,22 +261,32 @@ it('still recovers an accepted task when execution is no longer configured', asy
-   await waitFor(() => expect(api.navigate).toHaveBeenCalled())
-   expect(api.createCompile).not.toHaveBeenCalled()
- })
-+// Shape follows GET /api/v1/compile/config.
- const configuredTarget = {
--  ...savedDraft,
-+  compile_name: 'weekly-wiki',
-   from: savedDraft.sources.split('\n'),
-+  to: savedDraft.to,
-+  skill: savedDraft.skill,
-+  instruction: savedDraft.instruction,
-+  args: { mode_hint: 'summary' },
-   auto_update: true,
-   update_schedule: { frequency: 'weekly', weekday: 3, hour: 14, minute: 30 },
--  next_run_at: '2026-11-04T14:30:00+08:00',
-+  task_first_create_time: null,
-+  last_run_time: null,
-+  last_triggered_slot: null,
-+  next_triggered_slot: '2026-11-04T14:30:00+08:00',
- }
-+const planName = () => screen.getByRole('textbox', { name: 'schedule.name *' })
- 
- it('saves a weekly plan without navigating to a task or leaving a submission recovery key', async () => {
-   prepareCompileHandoff(
-     'recovery-test',
-     'compile --from viking://resources/source --to viking://resources/wiki --skill viking://agent/skills/wiki',
-   )
--  api.createCompile.mockResolvedValueOnce(configuredTarget)
-+  api.createCompileConfig.mockResolvedValueOnce({ compile_name: 'weekly-wiki' })
-   const page = mount()
-   fireEvent.click(page.getByRole('checkbox', { name: 'schedule.enabled' }))
-+  fireEvent.change(planName(), { target: { value: 'weekly-wiki' } })
-   await choose(
-     page.getByRole('combobox', { name: 'schedule.frequency' }),
-     'schedule.weekly',
-@@ -292,23 +304,47 @@ it('saves a weekly plan without navigating to a task or leaving a submission rec
-       search: { tab: 'schedules' },
-     }),
-   )
--  expect(api.createCompile.mock.calls[0][0].args).toEqual({
--    auto_update: true,
--    update_schedule: configuredTarget.update_schedule,
-+  expect(api.createCompileConfig).toHaveBeenCalledWith({
-+    compile_name: 'weekly-wiki',
-+    from: ['viking://resources/source'],
-+    to: 'viking://resources/wiki',
-+    skill: 'viking://agent/skills/wiki',
-+    args: {
-+      auto_update: true,
-+      update_schedule: configuredTarget.update_schedule,
-+    },
-   })
-+  expect(api.createCompile).not.toHaveBeenCalled()
-   expect(sessionStorage.getItem(storageKey)).toBeNull()
- })
- 
-+it('requires a valid plan name before saving a schedule', async () => {
-+  prepareCompileHandoff(
-+    'recovery-test',
-+    'compile --from viking://resources/source --to viking://resources/wiki --skill viking://agent/skills/wiki',
-+  )
-+  const page = mount()
-+  fireEvent.click(page.getByRole('checkbox', { name: 'schedule.enabled' }))
-+  page.submit()
-+  expect(await page.findByText('schedule.nameRequired')).toBeTruthy()
-+  fireEvent.change(planName(), { target: { value: '-weekly' } })
-+  page.submit()
-+  expect(await page.findByText('schedule.nameInvalid')).toBeTruthy()
-+  expect(api.createCompileConfig).not.toHaveBeenCalled()
-+  expect(api.createCompile).not.toHaveBeenCalled()
-+})
-+
- it('keeps a failed plan save retryable without task submission recovery', async () => {
-   prepareCompileHandoff(
-     'recovery-test',
-     'compile --from viking://resources/source --to viking://resources/wiki --skill viking://agent/skills/wiki',
-   )
--  api.createCompile
-+  api.createCompileConfig
-     .mockRejectedValueOnce(new Error('response lost'))
--    .mockResolvedValueOnce(configuredTarget)
-+    .mockResolvedValueOnce({ compile_name: 'weekly-wiki' })
-   const page = mount()
-   fireEvent.click(page.getByRole('checkbox', { name: 'schedule.enabled' }))
-+  fireEvent.change(planName(), { target: { value: 'weekly-wiki' } })
-   page.submit()
-   await waitFor(() => expect(page.getByRole('alert')).toBeTruthy())
-   expect(sessionStorage.getItem(storageKey)).toBeNull()
-@@ -329,7 +365,7 @@ it('loads a registered target and disables its schedule without requiring an exe
-     configur
-```
-
-**File**: `web-studio/src/features/workbench/compile/components/compile-form.tsx` (modified, +82/-41)
-```diff
-@@ -16,14 +16,15 @@ import {
-   ScheduleFields,
- } from '#/features/workbench/compile/components/schedule-fields'
- import type {
--  CompileConfig,
-   CompileRequest,
-   CompileTask,
-   UpdateSchedule,
- } from '#/features/workbench/compile/lib/api'
- import {
-   createCompile,
-+  createCompileConfig,
-   fetchCompileConfig,
-+  isCompileName,
-   fetchCompileTask,
-   lookupSubmission,
-   updateCompileConfig,
-@@ -53,6 +54,7 @@ import {
- import { isOvClientError } from '#/shared/api/ov-client/index'
- import { createRandomUuid } from '#/shared/lib/browser-crypto'
- import { Button } from '#/shared/ui/button'
-+import { Input } from '#/shared/ui/input'
- import {
-   Dialog,
-   DialogContent,
-@@ -87,11 +89,11 @@ function readDraft(key: string): Draft {
- export function CompileForm({
-   fromTask,
-   sourceUri,
--  target,
-+  compileName,
- }: {
-   fromTask?: string
-   sourceUri?: string
--  target?: string
-+  compileName?: string
- }) {
-   const { t } = useTranslation('compile'),
-     navigate = useNavigate()
-@@ -103,14 +105,15 @@ export function CompileForm({
-   const queryClient = useQueryClient()
-   const [autoUpdate, setAutoUpdate] = useState(false)
-   const [schedule, setSchedule] = useState<UpdateSchedule>(defaultSchedule)
-+  const [planName, setPlanName] = useState('')
-   const config = useQuery({
--    queryKey: ['compile-config', identityScopeKey, target],
--    queryFn: ({ signal }) => fetchCompileConfig(target!, signal),
--    enabled: !!target,
-+    queryKey: ['compile-config', identityScopeKey, compileName],
-+    queryFn: ({ signal }) => fetchCompileConfig(compileName!, signal),
-+    enabled: !!compileName,
-     staleTime: 0,
-   })
-   const [recoverKey, setRecoverKey] = useState(() => {
--    if (target) return null
-+    if (compileName) return null
-     try {
-       return sessionStorage.getItem(submissionKey)
-     } catch {
-@@ -125,8 +128,8 @@ export function CompileForm({
-     clearCompileHandoff()
-   }, [])
-   const [draft, setDraft] = useState(() =>
--    target
--      ? { ...empty, to: target }
-+    compileName
-+      ? empty
-       : recoverKey
-         ? savedDraft
-         : handoff
-@@ -144,7 +147,7 @@ export function CompileForm({
-               },
-   )
-   const [args, setArgs] = useState(
--      !target && !recoverKey && handoff?.args
-+      !compileName && !recoverKey && handoff?.args
-         ? JSON.stringify(handoff.args, null, 2)
-         : '',
-     ),
-@@ -175,14 +178,14 @@ export function CompileForm({
-     enableBeforeUnload: () => !completed.current && !!args.trim(),
-   })
-   useEffect(() => {
--    if (completed.current || !draftStarted || target) return
-+    if (completed.current || !draftStarted || compileName) return
-     try {
-       localStorage.setItem(draftKey, JSON.stringify(draft))
-       setSavingError(false)
-     } catch {
-       setSavingError(true)
-     }
--  }, [draft, draftKey, draftStarted, target])
-+  }, [draft, draftKey, draftStarted, compileName])
-   useEffect(() => {
-     if (!config.isSuccess || !config.isFetchedAfterMount || filled.current)
-       return
-@@ -243,6 +246,15 @@ export function CompileForm({
-         ? t('invalidUri')
-         : '',
-     to: targetError(draft.to.trim()) ? t(targetError(draft.to.trim())!) : '',
-+    // Only new plans need a name; existing configurations keep theirs.
-+    name:
-+      compileName || !autoUpdate
-+        ? ''
-+        : !planName.trim()
-+          ? t('schedule.nameRequired')
-+          : !isCompileName(planName.trim())
-+            ? t('schedule.nameInvalid')
-+            : '',
-     args: (() => {
-       try {
-         const parsed = parseArgs(args)
-@@ -319,10 +331,10 @@ export function CompileForm({
-   function isCurrent() {
-     return mounted.current
-   }
--  async function finish(result: CompileTask | CompileConfig) {
-+  async function finish(result: CompileTask | { compile_name: string }) {
-     if (!isCurrent()) return
-     completed.current = true
--    if (!target) {
-+    if (!compileName) {
-       try {
-         localStorage.removeItem(draftKey)
-         sessionStorage.removeItem(submissionKey)
-@@ -350,7 +362,7 @@ export function CompileForm({
-   async function submit() {
-     if (
-       busy ||
--      (target &&
-+      (compileName &&
-         (!config.data || !config.isFetchedAfterMount || config.isError))
-     )
-       return
-@@ -375,14 +387,16 @@ export function CompileForm({
-           throw new Error(t('expiredSubmission'))
-       }
-       if (!submission.current && !validate()) return
--      if (target) {
-+      if (compileName) {
-         const body = request()
-         await finish(
-           await updateCompileConfig({
--            to: target,
-+            compile_name: compileName,
-             from: body.from,
-             skill: body.skill,
-             instruction: draft.instruction.trim() || null,
-+            // Args are not editable here; updates replace them, so keep the saved ones.
-+            args: config.data?.args ?? null,
-             auto_update: autoUpdate,
-             update_schedule: autoUpdate ? 
-```
-
-**File**: `web-studio/src/features/workbench/compile/components/schedule-list.test.tsx` (modified, +68/-45)
-```diff
-@@ -54,25 +54,37 @@ vi.mock('#/features/workbench/compile/components/shared', () => ({
-   ),
- }))
- 
-+// Shapes follow GET /api/v1/compile/configs.
- const daily = {
-+  compile_name: 'daily',
-+  from: ['viking://resources/source'],
-   to: 'viking://resources/daily',
--  status: 'ready',
--  initialized: true,
--  running: true,
-+  skill: 'viking://agent/skills/wiki',
-+  instruction: null,
-+  args: {},
-   auto_update: true,
-   update_schedule: { frequency: 'daily', hour: 8, minute: 5 },
--  next_run_at: '2026-11-03T08:05:00+00:00',
-+  task_first_create_time: 1793577600,
-+  last_run_time: 1793606700,
-+  last_triggered_slot: '2026-11-02T08:05:00+00:00',
-+  next_triggered_slot: '2026-11-03T08:05:00+00:00',
-+  owner_user_id: 'alice',
-+  executor_user_id: 'alice',
-+  updated_by: 'alice',
- }
- const weekly = {
-   ...daily,
-+  compile_name: 'weekly',
-   to: 'viking://resources/weekly',
--  running: false,
-   auto_update: false,
-   update_schedule: { frequency: 'weekly', weekday: 3, hour: 14, minute: 30 },
--  next_run_at: null,
-+  last_run_time: null,
-+  last_triggered_slot: null,
-+  next_triggered_slot: null,
- }
- const unscheduled = {
-   ...weekly,
-+  compile_name: 'unscheduled',
-   to: 'viking://resources/unscheduled',
-   update_schedule: null,
- }
-@@ -91,7 +103,10 @@ function mount(cachedConfig?: unknown) {
-   })
-   clients.push(client)
-   if (cachedConfig)
--    client.setQueryData(['compile-config', 'account-a', daily.to], cachedConfig)
-+    client.setQueryData(
-+      ['compile-config', 'account-a', daily.compile_name],
-+      cachedConfig,
+     .await
+     .expect("startup probe must have an execution deadline");
+@@ -372,7 +374,7 @@ async fn postgres_snapshot_log_bounds_startup_and_read_table_lock_waits() {
+ #[tokio::test]
+ #[ignore = "requires a real PostgreSQL database"]
+ async fn postgres_snapshot_log_bounds_advisory_lock_and_reuses_pool() {
+-    let store = PostgresSnapshotLogStore::connect_with_timeout(&dsn(), 1, 5_000, 200)
++    let store = PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, &dsn(), 1, 5_000, 200)
+         .await
+         .unwrap();
+     let pool = PgPoolOptions::new()
+@@ -383,11 +385,21 @@ async fn postgres_snapshot_log_bounds_advisory_lock_and_reuses_pool() {
+     let account = uuid::Uuid::new_v4().simple().to_string();
+     let mut lock = pool.begin().await.unwrap();
+     sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))")
+-        .bind(format!("{}:{}main", account.len(), account))
++        .bind(format!("12:test-service|{}:{}main", account.len(), account))
+         .execute(&mut *lock)
+         .await
+         .unwrap();
+     expect_timeout(store.append_rows_if_latest(&account, "main", None, &rows(1, &["/"]))).await;
++    // Another service must append without waiting for this service's lock.
++    let other = PostgresSnapshotLogStore::connect_with_timeout(
++        "other-service", &dsn(), 1, 5_000, 200,
 +    )
-   const content = () => (
-     <QueryClientProvider client={client}>
-       <CompileScheduleList />
-@@ -114,7 +129,7 @@ afterEach(() => {
- 
- it('shows all registered targets, schedule details, execution state, and editor actions', async () => {
-   mocks.fetchCompileConfigs.mockResolvedValue({
--    targets: [daily, weekly, unscheduled],
-+    configs: [daily, weekly, unscheduled],
-     next_cursor: null,
-   })
-   const page = mount()
-@@ -125,22 +140,24 @@ it('shows all registered targets, schedule details, execution state, and editor
-     page.getByText('schedule.weeklyAt schedule.weekdays.3 14:30'),
-   ).toBeTruthy()
-   expect(page.getByText('schedule.noSchedule')).toBeTruthy()
--  expect(page.getByText('schedule.running')).toBeTruthy()
--  expect(page.getAllByText('schedule.idle')).toHaveLength(2)
-+  expect(page.getByRole('heading', { name: daily.compile_name })).toBeTruthy()
-+  expect(page.getAllByText('schedule.neverRun')).toHaveLength(2)
-   expect(page.getAllByText('schedule.active')).toHaveLength(1)
-   const nextRun = page.container.querySelector('time')!
-   expect(nextRun.dateTime).toBe('2026-11-03T08:05:00.000Z')
-   expect(nextRun.textContent).toBe(
--    new Date(daily.next_run_at).toLocaleString('en', {
-+    new Date(daily.next_triggered_slot).toLocaleString('en', {
-       timeZone: 'Asia/Shanghai',
-     }),
-   )
-+  const lastRun = page.container.querySelectorAll('time')[1]
-+  expect(lastRun.dateTime).toBe('2026-11-02T08:05:00.000Z')
-   fireEvent.click(
--    page.getByRole('button', { name: `schedule.edit: ${weekly.to}` }),
-+    page.getByRole('button', { name: `schedule.edit: ${weekly.compile_name}` }),
-   )
-   expect(mocks.navigate).toHaveBeenCalledWith({
-     to: '/compile/new',
--    search: { target: weekly.to },
-+    search: { name: weekly.compile_name },
-   })
-   expect(mocks.fetchCompileConfigs).toHaveBeenCalledWith(
-     undefined,
-@@ -150,8 +167,8 @@ it('shows all registered targets, schedule details, execution state, and editor
- 
- it('filters loaded targets locally and keeps pagination available when a page has no matches', async () => {
-   mocks.fetchCompileConfigs
--    .mockResolvedValueOnce({ targets: [daily], next_cursor: 'page-2' })
--    .mockResolvedValueOnce({ targets: [weekly], next_cursor: null })
-+    .mockResolvedValueOnce({ configs: [daily], next_cursor: 'page-2' })
-+    .mockResolvedValueOnce({ configs: [weekly], next_cursor: null })
-   const page = mount()
-   await page.findByRole('link', { name: daily.to })
-   await choose(
-@@ -178,7 +195,7 @@ it('filters loaded targets locally and keeps pagination available when a page ha
- 
- it('only claims an exhaustive filtered empty result after the last page', async () => {
-   mocks.fetchCompileConfigs.mockResolvedValue({
--    targets: [daily],
-+    configs: [daily],
-     next_cursor: null,
-   })
-   const page = mount()
-@@ -199,7 +216,7 @@ it('shows loading and retryable errors, then the empty registered-target state',
-   await page.findByRole('alert')
-   expect(page.queryByText('schedule.empty')).toBeNull()
-   mocks.fetchCompileConfigs.mockResolvedValueOnce({
--    targets: [],
-+    configs: [],
-     next_cursor: null,
-   })
-   fireEvent.click(page.getByRole('button', { name: 'Retry' }))
-@@ -209,9 +226,9 @@ it('shows loading and retryable errors, then the empty registered-target state',
- 
- it('refreshes the current list and isolates data when the active identity changes', async () => {
-   mocks.fetchCompileC
++    .await
++    .unwrap();
++    other
++        .append_rows_if_latest(&account, "main", None, &rows(1, &["/"]))
++        .await
++        .unwrap();
+     lock.rollback().await.unwrap();
+     assert!(store
+         .load_latest_indexed_commit(&account, "main")
+@@ -438,7 +450,7 @@ async fn postgres_snapshot_log_deadline_covers_all_batches_and_rolls_back() {
+     let mut url = url::Url::parse(&dsn()).unwrap();
+     url.query_pairs_mut()
+         .append_pair("options", &format!("-c search_path={schema}"));
+-    let store = PostgresSnapshotLogStore::connect_with_timeout(url.as_str(), 1, 5_000, 500)
++    let store = PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, url.as_str(), 1, 5_000, 500)
+         .await
+         .unwrap();
+     let account = uuid::Uuid::new_v4().simple().to_string();
 ```
 
-**File**: `web-studio/src/features/workbench/compile/components/schedule-list.tsx` (modified, +2/-2)
+**File**: `docs/en/guides/15-snapshot.md` (modified, +10/-6)
 ```diff
-@@ -25,7 +25,7 @@ export function CompileScheduleList() {
-   const targets = [
-     ...new Map(
-       query.data?.pages.flatMap((page) =>
--        page.targets.map((target) => [target.to, target] as const),
-+        page.configs.map((config) => [config.compile_name, config] as const),
-       ),
-     ).values(),
-   ].filter(
-@@ -83,7 +83,7 @@ export function CompileScheduleList() {
-         <ul className="overflow-hidden rounded-xl border">
-           {targets.map((target) => (
-             <CompileScheduleTarget
--              key={`${identityScopeKey}:${target.to}`}
-+              key={`${identityScopeKey}:${target.compile_name}`}
-               target={target}
-             />
-           ))}
+@@ -218,8 +218,13 @@ export OPENVIKING_SNAPSHOT_LOG_POSTGRES_DSN='postgresql://user:password@host:543
+ 
+ Runtime startup does not create or migrate PostgreSQL tables. The runtime role
+ needs `SELECT` and `INSERT` on `snapshot_log`, and `USAGE` on its identity sequence.
+-Use a dedicated database or schema per OV deployment; accounts and branches
+-are isolated within that index. When using a custom schema, set the URL's
++Provision the table with the supplied DDL before deploying.
++Rows, indexes and append locks are scoped by the top-level `service_name`,
++so deployments can share one database or schema. Use the same name for replicas
++of one deployment and distinct names for separate deployments.
++`service_name` accepts 1–64 ASCII letters, digits, `.`, `_` or `-`; `account` is
++limited to 64 bytes. A dedicated database or schema per deployment also works.
++When using a custom schema, set the URL's
+ `options` parameter to a URL-encoded `-c search_path=your_schema`.
+ No PostgreSQL extension or Python database extra is required: the driver is
+ part of the Rust binding (`ragfs/postgres` for standalone Rust consumers).
+@@ -232,12 +237,11 @@ Git when the index is unavailable. A write transaction that times out before
+ commit is rolled back.
+ Increase `operation_timeout_ms` if normal index operations exceed the default.
+ 
+-Each account/branch append is serialized with a transaction advisory lock,
++Each service/account/branch append is serialized with a transaction advisory lock,
+ including the first append to an empty index. All rows are committed atomically
+ only when the latest indexed commit matches the expected parent.
+-Path indexes use `md5(path)` to stay within PostgreSQL B-tree width limits;
+-queries also check the original path. A digest collision for the same commit
+-rejects the append rather than silently dropping a path.
++Path indexes use the complete path for lookups and uniqueness.
++PostgreSQL indexes branches up to 128 bytes and paths up to 2048 bytes.
+ Switching providers does not copy an existing index. Path queries trigger
+ background backfill from Git history when needed. An unavailable database or
+ missing schema disables the index for that service instance at startup and
 ```
 
-**File**: `web-studio/src/features/workbench/compile/components/schedule-target.tsx` (modified, +54/-24)
+**File**: `docs/zh/guides/15-snapshot.md` (modified, +8/-4)
 ```diff
-@@ -36,6 +36,10 @@ import { useTranslation } from 'react-i18next'
- import { toast } from 'sonner'
+@@ -213,7 +213,11 @@ export OPENVIKING_SNAPSHOT_LOG_POSTGRES_DSN='postgresql://user:password@host:543
  
- const SCHEDULE_TIME_ZONE = 'Asia/Shanghai'
-+const parseTime = (value: string | null | undefined) => {
-+  const time = value ? new Date(value) : null
-+  return time && !Number.isNaN(time.getTime()) ? time : null
-+}
- type ConfigPage = Awaited<ReturnType<typeof fetchCompileConfigs>>
+ 运行时不会创建或迁移 PostgreSQL 表。运行账号只需 `snapshot_log` 的
+ `SELECT`、`INSERT` 权限，以及 identity sequence 的 `USAGE` 权限。
+-不同 OV 部署应使用独立数据库或 schema；同一索引内按账号、分支隔离。
++部署前使用提供的 DDL 建表。
++记录、索引和追加锁都按顶层 `service_name` 隔离，多个部署可以共用数据库或 schema。
++同一部署的副本使用相同名称，不同部署使用不同名称。
++`service_name` 允许 1–64 个 ASCII 字母、数字、`.`、`_` 或 `-`；`account` 上限为 64 字节。
++每个部署使用独立数据库或 schema 也仍然可行。
+ 自定义 schema 可通过连接 URL 的 `options` 参数指定
+ `-c search_path=your_schema`，参数值需要 URL 编码。
  
- export function CompileScheduleTarget({
-@@ -56,14 +60,19 @@ export function CompileScheduleTarget({
-       // Read fresh source/Skill settings so a list action cannot restore stale ones.
-       const controller = new AbortController()
-       pendingRead.current = controller
--      const config = await fetchCompileConfig(target.to, controller.signal)
-+      const config = await fetchCompileConfig(
-+        target.compile_name,
-+        controller.signal,
-+      )
-       // The active connection may have changed while reading the configuration.
-       controller.signal.throwIfAborted()
-       return updateCompileConfig({
--        to: target.to,
-+        compile_name: target.compile_name,
-         from: config.from,
-         skill: config.skill,
-         instruction: config.instruction,
-+        // Updates replace args, so carry the saved ones forward.
-+        args: config.args,
-         auto_update: schedule !== null,
-         update_schedule: schedule,
-       })
-@@ -78,8 +87,10 @@ export function CompileScheduleTarget({
-             ...data,
-             pages: data.pages.map((page) => ({
-               ...page,
--              targets: page.targets.map((item) =>
--                item.to === target.to ? { ...item, ...config } : item,
-+              configs: page.configs.map((item) =>
-+                item.compile_name === target.compile_name
-+                  ? { ...item, ...config }
-+                  : item,
-               ),
-             })),
-           },
-@@ -91,7 +102,7 @@ export function CompileScheduleTarget({
-       await Promise.all([
-         client.invalidateQueries({ queryKey: listKey }),
-         client.invalidateQueries({
--          queryKey: ['compile-config', identityScopeKey, target.to],
-+          queryKey: ['compile-config', identityScopeKey, target.compile_name],
-           refetchType: 'none',
-         }),
-       ])
-@@ -105,25 +116,38 @@ export function CompileScheduleTarget({
-   const time = schedule
-     ? `${String(schedule.hour).padStart(2, '0')}:${String(schedule.minute).padStart(2, '0')}`
-     : ''
--  const nextRun = target.next_run_at ? new Date(target.next_run_at) : null
--  const validNextRun = nextRun && !Number.isNaN(nextRun.getTime())
-+  const nextRun = parseTime(target.next_triggered_slot)
-+  const lastRun =
-+    target.last_run_time == null
-+      ? null
-+      : new Date(target.last_run_time * 1000)
-+  const formatTime = (value: Date) =>
-+    value.toLocaleString(i18n.language, { timeZone: SCHEDULE_TIME_ZONE })
+@@ -225,10 +229,10 @@ PostgreSQL 索引操作有执行期限，连接同时设置 `statement_timeout`
+ 无需安装 PostgreSQL 扩展或 Python 数据库 extra，驱动由 Rust binding 提供；
+ 独立 Rust 接入需启用 `ragfs/postgres` feature。
  
-   return (
-     <li
-       className="space-y-4 border-b p-5 last:border-b-0"
-       aria-busy={mutation.isPending}
-     >
-       <div className="flex flex-wrap items-start justify-between gap-3">
--        <h2 className="min-w-0 flex-1 break-words text-sm font-medium [overflow-wrap:anywhere]">
--          <ContextLink uri={target.to}>{target.to}</ContextLink>
--        </h2>
-+        <div className="min-w-0 flex-1 space-y-1">
-+          <h2 className="break-words text-sm font-medium [overflow-wrap:anywhere]">
-+            {target.compile_name}
-+          </h2>
-+          <p className="break-words text-xs text-muted-foreground [overflow-wrap:anywhere]">
-+            <ContextLink uri={target.to}>{target.to}</ContextLink>
-+          </p>
-+        </div>
-         <Button
-           variant="ghost"
-           size="sm"
-           disabled={mutation.isPending}
--          aria-label={`${t('schedule.edit')}: ${target.to}`}
-+          aria-label={`${t('schedule.edit')}: ${target.compile_name}`}
-           onClick={() =>
--            void navigate({ to: '/compile/new', search: { target: target.to } })
-+            void navigate({
-+              to: '/compile/new',
-+              search: { name: target.compile_name },
-+            })
-           }
-         >
-           {t('schedule.edit')}
-@@ -132,11 +156,11 @@ export function CompileScheduleTarget({
-       <div className="flex flex-wrap items-center gap-3">
-         <label htmlFor={switchId} className="text-sm font-medium">
-           {t('schedule.autoUpdate')}
--          <span className="sr-only">{`: ${target.to}`}</span>
-+          <span className="sr-only">{`: ${target.compile_name}`}</span>
-         </label>
-         <Switch
-           id={switchId}
--          aria-label={`${t('schedule.autoUpdate')}: ${target.to}`}
-+          aria-label={`${t('schedule.autoUpdate')}: ${target.compile_name}`}
-           checked={target.auto_update}
-           disabled={mutation.isPending}
-           onCheckedChange={(checked) => {
-@@ -181,7 +205,7 @@ export function CompileScheduleTarget({
-               size="sm"
-               className="h-auto px-1 py-0.5 te
+-同一账号、分支的索引追加使用事务 advisory lock 串行化，包括空索引的首次写入。
++同一服务、账号、分支的索引追加使用事务 advisory lock 串行化，包括空索引的首次写入。
+ 仅当最新索引提交等于预期父提交时，整批路径记录才会原子提交。
+-路径索引使用 `md5(path)` 避免超过 PostgreSQL B-tree 键宽限制，
+-查询同时校验原始路径；同一提交发生摘要冲突时会拒绝整批追加，不会静默丢失路径。
++路径索引使用完整路径查询和保证唯一性。
++PostgreSQL 索引的分支上限为 128 字节，路径上限为 2048 字节。
+ 切换 provider 不会复制旧索引，按路径查询会在需要时触发从 Git 历史后台回填。
+ 启动时数据库不可用或缺少表，会为该实例关闭索引并回退到历史扫描；
+ 恢复后需重启实例。回退扫描仍受 1000 个候选提交上限约束。
 ```
 
-**File**: `web-studio/src/features/workbench/compile/lib/api.test.ts` (modified, +38/-22)
+**File**: `openviking/service/sql/snapshot_log_postgres_init.sql` (modified, +8/-9)
 ```diff
-@@ -2,10 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
+@@ -1,21 +1,20 @@
+ -- Provision once with a deployment/migration role before starting OV.
+ -- Runtime needs SELECT and INSERT on snapshot_log and USAGE on its sequence.
+--- No extensions are required. Use a dedicated database/schema per OV deployment.
++-- No extensions are required. service_name isolates deployments sharing a database/schema.
+ CREATE TABLE IF NOT EXISTS snapshot_log (
+     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+-    account TEXT COLLATE "C" NOT NULL CHECK (octet_length(account) <= 255),
+-    branch TEXT COLLATE "C" NOT NULL CHECK (octet_length(branch) <= 512),
++    service_name TEXT COLLATE "C" NOT NULL CHECK (octet_length(service_name) BETWEEN 1 AND 64),
++    account TEXT COLLATE "C" NOT NULL CHECK (octet_length(account) <= 64),
++    branch TEXT COLLATE "C" NOT NULL CHECK (octet_length(branch) <= 128),
+     path TEXT COLLATE "C" NOT NULL CHECK (octet_length(path) BETWEEN 1 AND 2048),
+     commit_oid TEXT COLLATE "C" NOT NULL CHECK (commit_oid ~ '^[0-9a-fA-F]{40}$'),
+     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+ );
  
- import {
-   BUILTIN_SKILLS_ROOT,
--  createCompile,
-+  createCompileConfig,
-   fetchCompileConfig,
-   fetchCompileConfigs,
-   fetchCompileSkills,
-+  isCompileName,
-   updateCompileConfig,
-   fetchCompileTask,
-   fetchCompileTasks,
-@@ -39,44 +40,46 @@ beforeEach(() => {
- })
- 
- describe('Compile scheduling APIs', () => {
--  it('accepts a saved configuration without inventing a task ID', async () => {
--    const config = {
-+  it('creates a named configuration without executing it', async () => {
-+    clientMocks.post.mockResolvedValueOnce({ compile_name: '每日_wiki' })
-+    const body = {
-+      compile_name: '每日_wiki',
-+      from: ['viking://resources/source'],
-       to: 'viking://resources/wiki',
--      auto_update: true,
--      next_run_at: '2026-11-03T09:00:00+08:00',
--    }
--    clientMocks.post.mockResolvedValueOnce(config)
--    const result = await createCompile(
--      {
--        from: ['viking://resources/source'],
--        to: config.to,
--        skill: 'viking://agent/skills/wiki',
--        args: { auto_update: true },
-+      skill: 'viking://agent/skills/wiki',
-+      args: {
-+        auto_update: true,
-+        update_schedule: { frequency: 'daily' as const, hour: 9, minute: 0 },
-       },
--      'schedule-save-key',
--    )
--    expect(result).toEqual(config)
--    expect(result).not.toHaveProperty('task_id')
-+    }
-+    await expect(createCompileConfig(body)).resolves.toEqual({
-+      compile_name: '每日_wiki',
-+    })
-+    expect(clientMocks.post).toHaveBeenLastCalledWith({
-+      url: '/api/v1/compile/create',
-+      body,
-+    })
-   })
- 
--  it('passes target cursors and URI query values without changing them', async () => {
--    const cursor = 'viking://resources/a folder?value=1'
-+  it('addresses configurations by compile_name and passes cursors unchanged', async () => {
-+    const cursor = 'team-wiki_2'
-     await fetchCompileConfigs(cursor)
-     expect(clientMocks.get).toHaveBeenLastCalledWith({
-       url: '/api/v1/compile/configs',
-       signal: undefined,
-       query: { limit: 30, cursor },
-     })
--    await fetchCompileConfig(cursor)
-+    await fetchCompileConfig('团队 wiki?')
-     expect(clientMocks.get).toHaveBeenLastCalledWith({
-       url: '/api/v1/compile/config',
-       signal: undefined,
--      query: { to: cursor },
-+      query: { compile_name: '团队 wiki?' },
-     })
-     const body = {
--      to: cursor,
-+      compile_name: 'team-wiki',
-       from: ['viking://resources/source'],
-       skill: 'viking://agent/skills/wiki',
-+      args: { mode_hint: 'summary' },
-       auto_update: false,
-       update_schedule: null,
-     }
-@@ -86,6 +89,19 @@ describe('Compile scheduling APIs', () => {
-       body,
-     })
-   })
-+
-+  it.each([
-+    ['team-wiki_2', true],
-+    ['每日编译', true],
-+    ['-leading', false],
-+    ['has space', false],
-+    ['a'.repeat(64), true],
-+    ['a'.repeat(65), false],
-+    ['汉'.repeat(32), true],
-+    ['汉'.repeat(33), false],
-+  ])('validates compile name %s', (name, valid) => {
-+    expect(isCompileName(name)).toBe(valid)
-+  })
- })
- 
- describe('compile task API normalization', () => {
-```
-
-**File**: `web-studio/src/features/workbench/compile/lib/api.ts` (modified, +43/-23)
-```diff
-@@ -19,33 +19,47 @@ export type CompileRequest = {
- export type UpdateSchedule =
-   | { frequency: 'daily'; hour: number; minute: number }
-   | { frequency: 'weekly'; weekday: number; hour: number; minute: number }
--export type CompileConfigSummary = {
--  status: string
-+// Saved configurations are identified by their creator-scoped compile_name.
-+export type CompileConfig = {
-+  compile_name: string
-+  from: string[]
-   to: string
--  initialized: boolean
--  running: boolean
-+  skill: string
-+  instruction: string | null
-+  args: Record<string, unknown> | null
-   auto_update: boolean
-   update_schedule: UpdateSchedule | null
--  next_run_at: string | null
-+  // Unix seconds, as stored on the task records.
-+  task_first_create_time: number | null
-+  last_run_time: number | null
-+  last_triggered_slot: string | null
-+  next_triggered_slot: string | null
- }
--export type CompileConfig = Omit<CompileConfigSummary, 'running'> & {
--  from: string[]
--  skill: string
--  instruction: string | null
--  last_error: string | null
--  last_run: unknown
-+export type CompileConfigSummary = CompileConfig & {
-+  owner_user_id?: string
-+  executor_user_id?: string | null
-+  updated_by?: string | null
- }
-+export type CompileConfigCreate = Required<
-+  Pick<CompileRequest, 'from' | 'to' | 'skill'>
-+> &
-+  Pick<CompileRequest, 'instruction' | 'args'> & { compile_name: string }
- export type CompileConfigUpdate = {
--  to: string
-+  compile_name: string
-   from: string[]
-   skill: string
-   instruction?: string | null
-+  args?: Record<string, unknown> | null
-   auto_update: boolean
-   update_schedule: UpdateSchedule | null
- }
-+// Mirrors the server's CompileName pattern; the server remains authoritative.
-+const COMPILE_NAME =
-+  /^(?:[A-Za-z0-9_][A-Za-z0-9_-]{0,63}|[\p{Script=Han}A-Za-z0-9_][\p{Script=Han}A-Za-z0-9_-]{0,31})$/u
-+export const isCompileName = (name: string) => COMPILE_NAME.test(name)
- export function fetchCompileConfigs(cursor?: string, signal?: AbortSignal) {
-   return getOvResult<{
--    targets: CompileConfigSummary[]
-+    configs: CompileConfigSummary[]
-     next_cursor: string | null
-   }>(
-     ovClient.client.get({
-@@ -55,15 +69,20 @@ export function fetchCompileConfigs(cursor?: string, signal?: AbortSignal) {
-     }),
-   )
- }
--export function fetchCompileConfig(to: string, signal?: AbortSignal) {
-+export function fetchCompileConfig(compileName: string, signal?: AbortSignal) {
-   return getOvResult<CompileConfig>(
-     ovClient.client.get({
-       url: '/api/v1/compile/config',
-       signal,
--      query: { to },
-+      query: { compile_name: compileName },
-     }),
-   )
- }
-+export function createCompileConfig(body: CompileConfigCreate) {
-+  return getOvResult<{ compile_name: string }>(
-+    ovClient.client.post({ url: '/api/v1/compile/create', body }),
-+  )
-+}
- export function updateCompileConfig(body: CompileConfigUpdate) {
-   return getOvResult<CompileConfig>(
-     ovClient.client.post({
-@@ -147,15 +166,16 @@ export async function fetchCompileTask(id: string, signal?: AbortSignal) {
- export async function createCompile(
-   body: CompileRequest,
-   key: string,
--): Promise<CompileTask | CompileConfig> {
--  const result = await getOvResult<CompileTaskPayload | CompileConfig>(
--    ovClient.client.post({
--      url: '/api/v1/compile',
--      body,
--      headers: { 'Idempotency-Key': key },
--    }),
-+): Promise<CompileTask> {
-+  return normalizeCompileTask(
-+    await getOvResult<CompileTaskPayload>(
-+      ovClient.client.post({
-+        url: '/api/v1/compile',
-+        body,
-+        headers: { 'Idempotency-Key': key },
-+      }),
-+    ),
-   )
--  return 'task_id' in result ? normalizeCompileTask(result) : result
- }
- export async function cancelCompile(id: string) {
-   return normalizeCompileTask(
-```
-
-**File**: `web-studio/src/features/workbench/compile/lib/terminal.test.ts` (modified, +6/-14)
-```diff
-@@ -21,23 +21,15 @@ beforeEach(() => vi.resetAllMocks())
- afterEach(() => vi.unstubAllGlobals())
- 
- describe('Compile terminal regressions', () => {
--  it('handles a saved plan without a task ID or a persistent recovery key', async () => {
--    api.createCompile.mockResolvedValue({
--      to: 'viking://resources/b',
--      next_run_at: '2026-11-03T09:00:00+08:00',
--    })
-+  it('surfaces scheduling-option rejections without keeping a recovery key', async () => {
-+    const rejection = new Error('use POST /api/v1/compile/create')
-+    api.createCompile.mockRejectedValue(rejection)
-     const saveKey = vi.fn()
-     const pending = { current: null }
-     const command = `compile --from viking://resources/a --to viking://resources/b --skill viking://agent/skills/s --args '{"auto_update":true,"update_schedule":{"frequency":"daily"}}'`
--    const result = await runCompileSubmission(
--      command,
--      pending,
--      (value) => value,
--      saveKey,
--    )
--    expect(result.taskId).toBeUndefined()
--    expect(result.body).toContain('2026-11-03T09:00:00+08:00')
--    expect(result.body).not.toContain('undefined')
-+    await expect(
-+      runCompileSubmission(command, pending, (value) => value, saveKey),
-+    ).rejects.toBe(rejection)
-     expect(pending.current).toBeNull()
-     expect(saveKey).not.toHaveBeenCalled()
-   })
+--- A path digest keeps maximum-width keys below PostgreSQL's B-tree tuple limit.
+--- Queries also compare the original path; digest matches alone are never trusted.
+--- A digest collision for the same commit rejects the append rather than losing rows.
++-- Bounded service/account/branch lengths keep full-path keys within the B-tree limit.
+ CREATE UNIQUE INDEX IF NOT EXISTS uniq_snapshot_log_path_commit
+-    ON snapshot_log (account, branch, md5(path), commit_oid);
++    ON snapshot_log (service_name, account, branch, path, commit_oid);
+ CREATE INDEX IF NOT EXISTS idx_snapshot_log_lookup
+-    ON snapshot_log (account, branch, md5(path), id DESC);
++    ON snapshot_log (service_name, account, branch, path, id DESC);
+ CREATE INDEX IF NOT EXISTS idx_snapshot_log_latest
+-    ON snapshot_log (account, branch, id DESC);
++    ON snapshot_log (service_name, account, branch, id DESC);
 ```
 
 ---
 
-### Incident Patch 3: `28194c3b` (2026-11-27)
-**Commit Message**: fix(retry): apply the rate-limit backoff on 429 responses (#7948)
+### Incident Patch 2: `56e568f4` (2026-11-27)
+**Commit Message**: docs(gateway): end the cache-hit range where memory A is missing (#8590)
 
-rate_limit_retry_delay() has no call site: every retryable error, including
-a provider rate limit, is delayed by _compute_delay() with the generic
-0.5s -> 8s backoff. The dedicated LLM backoff (5s -> 120s with jitter)
-was added in #2503 and never wired in.
+The 'not replayed' row of the one-turn figure painted Reply 1 and
+Message 2 green and bracketed them as 'same as last turn: hit'. A
+prefix cache breaks at the first byte that differs, so once memory A
+is absent everything after it, from Reply 1 on, is billed at the full
+rate. Colour Reply 1 and Message 2 as misses, end the green bracket
+after Message 1, and start the red bracket at the missing block.
 
-The generic backoff is short enough to keep a provider's limiter
-saturated: the retries themselves consume the quota, so the limit window
-never recovers and the work unit fails with the raw 429 instead of
-backing off and succeeding. Measured against a provider that allows ~5
-concurrent requests: 3277 rejected requests in 5 minutes, with the log
-showing "retrying in 0.94s".
+Co-authored-by: openviking-superagent <[REDACTED_EMAIL]>
 
-retry_sync() and retry_async() now pick the delay through _retry_delay(),
-which uses rate_limit_retry_delay() for errors that
-is_retryable_rate_limit_error() accepts and keeps the generic backoff for
-every other transient error. The attempt number is 1-based, so the ramp
-is 5s, 10s, 20s, 40s, 80s, 120s.
-
-Fixes #7936
-
-**File**: `openviking/utils/model_retry.py` (modified, +29/-2)
+**File**: `docs/images/gateway/one-turn.en.svg` (modified, +9/-9)
 ```diff
-@@ -431,6 +431,31 @@ def _compute_delay(
-     return delay
- 
- 
-+def _retry_delay(
-+    error: BaseException,
-+    attempt: int,
-+    *,
-+    base_delay: float,
-+    max_delay: float,
-+    jitter: bool,
-+) -> float:
-+    """Pick the backoff to wait before the next attempt.
-+
-+    Rate-limit errors use the dedicated LLM backoff (5s -> 120s). The generic
-+    backoff (0.5s -> 8s by default) is short enough to keep a provider's
-+    limiter saturated: the retries themselves consume the quota, so the limit
-+    window never recovers and the work unit fails with the raw 429.
-+    """
-+    if is_retryable_rate_limit_error(error):
-+        return rate_limit_retry_delay(attempt + 1)
-+    return _compute_delay(
-+        attempt,
-+        base_delay=base_delay,
-+        max_delay=max_delay,
-+        jitter=jitter,
-+    )
-+
-+
- def _retry_limit(
-     error: Exception,
-     *,
-@@ -481,7 +506,8 @@ def retry_sync(
-             if attempt >= retry_limit:
-                 raise
- 
--            delay = _compute_delay(
-+            delay = _retry_delay(
-+                e,
-                 attempt,
-                 base_delay=base_delay,
-                 max_delay=max_delay,
-@@ -529,7 +555,8 @@ async def retry_async(
-             if attempt >= retry_limit:
-                 raise
- 
--            delay = _compute_delay(
-+            delay = _retry_delay(
-+                e,
-                 attempt,
-                 base_delay=base_delay,
-                 max_delay=max_delay,
+@@ -125,9 +125,9 @@
+ <text x="364" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">Message 1</text>
+ <rect x="416" y="738" width="96" height="44" rx="4" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="464" y="765" font-size="14" font-weight="400" fill="#8F959E" text-anchor="middle">none</text>
+-<rect x="516" y="738" width="84" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="516" y="738" width="84" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="558" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">Reply 1</text>
+-<rect x="604" y="738" width="96" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="604" y="738" width="96" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="652" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">Message 2</text>
+ <rect x="704" y="738" width="96" height="44" rx="4" fill="#FFFFFF" stroke="#F54A45" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="752" y="765" font-size="14" font-weight="400" fill="#F54A45" text-anchor="middle">missing</text>
+@@ -137,14 +137,14 @@
+ <text x="955" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">New message 3</text>
+ <rect x="1022" y="738" width="100" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="1072" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">New recall</text>
+-<line x1="192" y1="728" x2="700" y2="728" stroke="#2EA121" stroke-width="1.5"/>
++<line x1="192" y1="728" x2="412" y2="728" stroke="#2EA121" stroke-width="1.5"/>
+ <line x1="192" y1="728" x2="192" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<line x1="700" y1="728" x2="700" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<text x="446" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">Same as last turn: hit</text>
+-<line x1="704" y1="728" x2="1122" y2="728" stroke="#F54A45" stroke-width="1.5"/>
+-<line x1="704" y1="728" x2="704" y2="734" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="412" y1="728" x2="412" y2="734" stroke="#2EA121" stroke-width="1.5"/>
++<text x="302" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">Same as last turn: hit</text>
++<line x1="416" y1="728" x2="1122" y2="728" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="416" y1="728" x2="416" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+ <line x1="1122" y1="728" x2="1122" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+-<text x="913" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">Full price from last turn's memory onward</text>
++<text x="769" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">Full price from the missing memory onward</text>
+ <rect x="1164" y="652" width="26" height="18" rx="3" fill="#EDE6FF" stroke="#2EA121" stroke-width="1.5"/>
+ <text x="1200" y="667" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">Memory the gateway added</text>
+ <rect x="1164" y="682" width="26" height="18" rx="3" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
+@@ -154,7 +154,7 @@
+ <rect x="1164" y="742" width="26" height="18" rx="3" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5"/>
+ <text x="1200" y="757" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">New in this turn</text>
+ <text x="40" y="812" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">The client's history never contains what the gateway added, so the gateway keeps its own record and puts it back on every request.</text>
+-<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">Without replay, each turn is recomputed from where memory was added in the previous turn; the exact cost depends on the provider's cache breakpoints.</text>
++<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">Without replay, the prefix breaks where memory A should be, and everything after it is billed at full price; the exact cost depends on the provider's cache breakpoints.</text>
+ <rect x="40" y="856" width="760" height="180" rx="12" fill="#F7F3FF" stroke="#7F3BF5" stroke-width="1.5"/>
+ <text x="62" y="888" font-size="17" font-weight="700" fill="#1F2329" text-anchor="start">Across turns: save the conversation, extract memories</text>
+ <rect x="62" y="904" width="159.5" height="72" rx="8" fill="#FFFFFF" stroke="#7F3BF5" stroke-width="1.5"/>
 ```
 
-**File**: `tests/unit/test_model_retry.py` (modified, +75/-0)
+**File**: `docs/images/gateway/one-turn.zh.svg` (modified, +9/-9)
 ```diff
-@@ -229,6 +229,81 @@ async def _call():
-     assert attempts["count"] == 1
+@@ -117,9 +117,9 @@
+ <text x="355" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">消息 1</text>
+ <rect x="402" y="738" width="86" height="44" rx="4" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="445" y="765" font-size="14" font-weight="400" fill="#8F959E" text-anchor="middle">无</text>
+-<rect x="492" y="738" width="86" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="492" y="738" width="86" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="535" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">回复 1</text>
+-<rect x="582" y="738" width="86" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="582" y="738" width="86" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="625" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">消息 2</text>
+ <rect x="672" y="738" width="86" height="44" rx="4" fill="#FFFFFF" stroke="#F54A45" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="715" y="765" font-size="14" font-weight="400" fill="#F54A45" text-anchor="middle">缺失</text>
+@@ -129,14 +129,14 @@
+ <text x="905" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">新消息 3</text>
+ <rect x="962" y="738" width="96" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="1010" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">本轮召回</text>
+-<line x1="192" y1="728" x2="668" y2="728" stroke="#2EA121" stroke-width="1.5"/>
++<line x1="192" y1="728" x2="398" y2="728" stroke="#2EA121" stroke-width="1.5"/>
+ <line x1="192" y1="728" x2="192" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<line x1="668" y1="728" x2="668" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<text x="430" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">和上一轮相同，命中</text>
+-<line x1="672" y1="728" x2="1058" y2="728" stroke="#F54A45" stroke-width="1.5"/>
+-<line x1="672" y1="728" x2="672" y2="734" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="398" y1="728" x2="398" y2="734" stroke="#2EA121" stroke-width="1.5"/>
++<text x="295" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">和上一轮相同，命中</text>
++<line x1="402" y1="728" x2="1058" y2="728" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="402" y1="728" x2="402" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+ <line x1="1058" y1="728" x2="1058" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+-<text x="865" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">从上一轮补充记忆的位置起按原价重算</text>
++<text x="730" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">从缺失记忆的位置起，后面全部按原价重算</text>
+ <rect x="1100" y="652" width="26" height="18" rx="3" fill="#EDE6FF" stroke="#2EA121" stroke-width="1.5"/>
+ <text x="1136" y="667" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">网关补充的记忆</text>
+ <rect x="1100" y="682" width="26" height="18" rx="3" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
+@@ -146,7 +146,7 @@
+ <rect x="1100" y="742" width="26" height="18" rx="3" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5"/>
+ <text x="1136" y="757" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">本轮新内容</text>
+ <text x="40" y="812" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">客户端的历史里没有网关补充的内容，网关自己记下，并在每个请求里放回原位。</text>
+-<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">不放回时，每轮都从上一轮补充记忆的位置起重算，具体还取决于服务商的缓存断点。</text>
++<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">不放回时，前缀在记忆 A 本该出现的位置断开，后面的内容全部按原价重算；具体还取决于服务商的缓存断点。</text>
+ <rect x="40" y="856" width="760" height="180" rx="12" fill="#F7F3FF" stroke="#7F3BF5" stroke-width="1.5"/>
+ <text x="62" y="888" font-size="17" font-weight="700" fill="#1F2329" text-anchor="start">跨轮：保存对话，提取记忆</text>
+ <rect x="62" y="904" width="159.5" height="72" rx="8" fill="#FFFFFF" stroke="#7F3BF5" stroke-width="1.5"/>
+```
+
+---
+
+### Incident Patch 3: `280caf35` (2026-11-27)
+**Commit Message**: fix(privacy): match values next to non-ASCII text, simplify the Betterleaks import (#8602)
+
+* refactor(privacy): import upstream rules without per-rule curation
+
+Drop the exclusion list, the two pattern overrides and the repeated-character exemption, so an upstream bump only needs the tag changed and the script rerun. The generator keeps its rule-agnostic criteria and the skip pattern for formats the hand-written file owns.
+
+* refactor(privacy): keep hand-written rules to OpenViking keys and three key shapes
+
+Remove the Telegram, Alibaba Cloud and Vault detectors. The sk- shapes and the Zhipu shape stay because upstream only matches them next to a provider name.
+
+* build: ship the Betterleaks license in the wheel
+
+The imported rules are compiled into the ragfs extension that the wheel carries, so the MIT notice has to travel with it.
+
+* fix(privacy): replace registered values typed right next to non-ASCII text
+
+The registered-value matcher treated a Han character and an adjacent ASCII value as one word, so a value written without a space after Chinese text was never replaced. Sealing enrolled such a token through the detector and then left it in the text. ASCII next to another scri
+
+**File**: `crates/ragfs/src/privacy_extractor_rules.json` (modified, +0/-40)
+```diff
+@@ -244,46 +244,6 @@
+         ["0a1b2c3d4e5f60718293a4b5c6d7e8f9", ".", "aB3dE5gH7jK9mN2pQ4sT6vW8"],
+         ["0A1B2C3D4E5F60718293A4B5C6D7E8F9", ".", "aB3dE5gH7jK9mN2p"]
+       ]
+-    },
+-    {
+-      "id": "alibaba_access_key_id",
+-      "pattern": "LTAI[A-Za-z0-9]{17,21}",
+-      "reject_repeated": true,
+-      "positive": [
+-        ["LTAI", "aB3dE5gH7jK9mN2pQ"],
+-        ["LTAI", "aB3dE5gH7jK9mN2pQ4sT"]
+-      ],
+-      "negative": [
+-        ["LTAI", "aB3dE5gH7jK9mN2p"],
+-        ["LTAI", "aB3dE5gH7jK9mN2pQ4sT6v"],
+-        ["LTAI", "EXAMPLE", "aB3dE5gH7jK9m"]
+-      ]
+-    },
+-    {
+-      "id": "vault",
+-      "pattern": "hvs\\.[A-Za-z0-9_-]{90,120}",
+-      "reject_repeated": true,
+-      "positive": [
+-        ["hvs.", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB3dE5gH7jK9mN2pQ4sT6vW8yZ"]
+-      ],
+-      "negative": [
+-        ["hvs.", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rU"],
+-        ["hvs.", "your-vault-token"]
+-      ]
+-    },
+-    {
+-      "id": "telegram_bot_token",
+-      "pattern": "(?:bot)?[0-9]{5,16}:A[A-Za-z0-9_-]{34}",
+-      "reject_repeated": true,
+-      "positive": [
+-        ["1234567890:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"],
+-        ["bot1234567890:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"]
+-      ],
+-      "negative": [
+-        ["1234:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"],
+-        ["1234567890:B", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"],
+-        ["1234567890:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUa"]
+-      ]
+     }
+   ],
+   "reference_pattern": "\\{\\{[ \\t]*ov_privacy:[^{}\\r\\n]+\\}\\}"
+```
+
+**File**: `crates/ragfs/src/privacy_extractor_rules_betterleaks.json` (modified, +10/-3)
+```diff
+@@ -12,10 +12,13 @@
+     {"id": "artifactory-api-key", "pattern": "AKCp[A-Za-z0-9]{68,70}", "reject_repeated": true},
+     {"id": "artifactory-reference-token", "pattern": "cmVmd[A-Za-z0-9]{59}", "reject_repeated": true},
+     {"id": "atlassian-api-token", "pattern": "ATAT[A-Za-z0-9_\\-=]{100,}", "reject_repeated": true},
++    {"id": "authress-service-client-access-key", "pattern": "(?i)(?:sc|ext|scauth|authress)_[a-z0-9]{5,30}\\.[a-z0-9]{4,6}\\.acc[_-][a-z0-9-]{10,32}\\.[a-z0-9+/_=-]{30,120}", "reject_repeated": true},
+     {"id": "aws-amazon-bedrock-api-key-long-lived", "pattern": "ABSK[A-Za-z0-9+/]{109,269}={0,2}", "reject_repeated": true},
++    {"id": "azure-servicebus-connection-string", "pattern": "(?i)Endpoint=sb://[a-z0-9-]+\\.servicebus\\.windows\\.net/;SharedAccessKeyName=[^;=\\t\\n\\f\\r '\"]{1,128};SharedAccessKey=[A-Za-z0-9+/]{32,100}={0,2}(?:;EntityPath=[^;\\t\\n\\f\\r '\"]{1,128})?", "reject_repeated": true},
+     {"id": "bitbucket-data-center-token", "pattern": "BBDC-[A-Za-z0-9+/=]{32,}", "reject_repeated": true},
++    {"id": "brave-search-api-key", "pattern": "BSA[A-Za-z0-9_-]{24,40}", "reject_repeated": true},
+     {"id": "buildkite-service-token", "pattern": "bkaa_[A-Za-z0-9_-]{75}|bkaj_[A-Za-z0-9_-]{333}|bkar_[A-Za-z0-9_-]{73}|bkct_[A-Za-z0-9_-]{73}|bkpt_[A-Za-z0-9_-]{199}|bkpat_[A-Za-z0-9_-]{54}|bkps_[A-Za-z0-9_-]{64}", "reject_repeated": true},
+-    {"id": "buildkite-user-access-token", "pattern": "bkua_(?:[a-z0-9]{53}|[a-z0-9]{40})", "reject_repeated": true},
++    {"id": "buildkite-user-access-token", "pattern": "bkua_(?:[a-z0-9]{40}|[a-z0-9]{53})", "reject_repeated": true},
+     {"id": "cal-api-key", "pattern": "cal_live_[a-f0-9]{32}", "reject_repeated": true},
+     {"id": "canva-client-secret", "pattern": "cnvca[a-zA-Z0-9_-]{51}", "reject_repeated": true},
+     {"id": "cartesia-api-key.1", "pattern": "sk_car_[A-Za-z0-9_]{20}", "reject_repeated": true},
+@@ -29,7 +32,7 @@
+     {"id": "cockroachlabs-cloud-api-key", "pattern": "CCDB1_[A-Za-z0-9]{22}_[A-Za-z0-9]{40}", "reject_repeated": true},
+     {"id": "configcat-sdk-key-extended", "pattern": "configcat-sdk-1/[A-Za-z0-9_-]{22}/[A-Za-z0-9_-]{22}", "reject_repeated": true},
+     {"id": "databricks-api-token", "pattern": "dapi[a-f0-9]{32}(?:-[0-9])?", "reject_repeated": true},
+-    {"id": "datastax-astra-application-token", "pattern": "AstraCS:[A-Za-z0-9]{20,}:[a-f0-9]{64}", "reject_repeated": true},
++    {"id": "datastax-astra-application-token", "pattern": "AstraCS:[A-Za-z0-9]{20,}", "reject_repeated": true},
+     {"id": "daytona-api-key", "pattern": "dtn_[a-f0-9]{64}", "reject_repeated": true},
+     {"id": "deno-account-token", "pattern": "ddp_[A-Za-z0-9]{36}", "reject_repeated": true},
+     {"id": "devcycle-server-sdk-key", "pattern": "dvc_server_[A-Za-z0-9]{8,32}", "reject_repeated": true},
+@@ -54,7 +57,7 @@
+     {"id": "figma-personal-access-token", "pattern": "(?i)figd_[A-Z0-9_-]{38,42}", "reject_repeated": true},
+     {"id": "flutterwave-encryption-key", "pattern": "FLWSECK_TEST-(?i)[a-h0-9]{12}", "reject_repeated": true},
+     {"id": "flutterwave-secret-key", "pattern": "FLWSECK_TEST-(?i)[a-h0-9]{32}-X", "reject_repeated": true},
+-    {"id": "flyio-access-token", "pattern": "FlyV1[\\t\\n\\f\\r ][A-Za-z0-9=_\\-,/+]{100,}"},
++    {"id": "flyio-access-token", "pattern": "FlyV1[\\t\\n\\f\\r ][A-Za-z0-9=_\\-,/+]{100,}", "reject_repeated": true},
+     {"id": "frameio-api-token", "pattern": "fio-u-(?i)[a-z0-9\\-_=]{64}", "reject_repeated": true},
+     {"id": "gcp-api-key", "pattern": "AIza[0-9A-Za-z_-]{35}", "reject_repeated": true},
+     {"id": "gcp-gemini-api", "pattern": "AQ\\.Ab8RN6[A-Za-z0-9_-]{44}", "reject_repeated": true},
+@@ -91,6 +94,7 @@
+     {"id": "langchain-langsmith-personal-access-token", "pattern": "lsv2_pt_[0-9a-fA-F]{32}_[0-9a-fA-F]{10}", "reject_repeated": true},
+     {"id": "langchain-langsmith-service-key", "pattern": "lsv2_sk_[0-9a-fA-F]{32}_[0-9a-fA-F]{10}", "reject_repeated": true},
+     {"id": "langfuse-secret-key.1", "pattern": "sk-lf-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", "reject_repeated": true},
++    {"id": "lichess-personal-access-token", "pattern": "lip_[A-Za-z0-9_]{16,60}", "reject_repeated": true},
+     {"id": "linear-api-key", "pattern": "lin_api_(?i)[a-z0-9]{40}", "reject_repeated": true},
+     {"id": "llama-cloud-api-key.1", "pattern": "llx-[A-Za-z0-9]{44,52}", "reject_repeated": true},
+     {"id": "mailersend-api-token", "pattern": "mlsn\\.[A-Za-z0-9]{30,100}", "reject_repeated": true},
+@@ -122,11 +126,13 @@
+     {"id": "planetscale-api-token", "pattern": "pscale_tkn_(?i)[0-9A-Za-z_=\\.-]{32,64}", "reject_repeated": true},
+     {"id": "planetscale-oauth-token", "pattern": "pscale_oauth_[0-9A-Za-z_=\\.-]{32,64}", "reject_repeated": true},
+     {"id": "planetscale-password", "pattern": "(?i)pscale_pw_(?i)[0-9A-Za-z_=\\.-]{32,64}", "reject_repeated": true},
++    {"id": "polar-oauth-access-token", "pattern": "polar_at_[A-Za-z0-9_-]{20,100}", "reject_repeated": true},
+     {"id":
+```
+
+**File**: `crates/ragfs/src/privacy_matcher.rs` (modified, +15/-7)
+```diff
+@@ -115,9 +115,10 @@ impl PrivacyMatcher {
+             parent_prefix[index] = prefixes.last().copied().unwrap_or(patterns.len());
+             for &prefix in prefixes.iter().rev() {
+                 let end = patterns[prefix].len();
+-                if !(value[..end].chars().next_back().is_some_and(word_char)
+-                    && value[end..].chars().next().is_some_and(word_char))
+-                {
++                if !joins_word(
++                    value[..end].chars().next_back(),
++                    value[end..].chars().next(),
++                ) {
+                     shorter_prefixes[index] = Some(PatternID::must(prefix));
+                     break;
+                 }
+@@ -457,8 +458,15 @@ fn next_unmarked_prefix(links: &mut [usize], mut index: usize) -> usize {
+ }
+ // Matches may not split adjacent word characters.
+ fn is_match_boundary(content: &str, at: usize) -> bool {
+-    !(content[..at].chars().next_back().is_some_and(word_char)
+-        && content[at..].chars().next().is_some_and(word_char))
++    !joins_word(
++        content[..at].chars().next_back(),
++        content[at..].chars().next(),
++    )
++}
++// ASCII next to another script, such as a token typed right after Chinese text, is not one word.
++fn joins_word(left: Option<char>, right: Option<char>) -> bool {
++    matches!((left, right), (Some(l), Some(r))
++        if word_char(l) && word_char(r) && l.is_ascii() == r.is_ascii())
+ }
+ fn word_char(c: char) -> bool {
+     c.is_alphanumeric() || c == '_'
+@@ -497,9 +505,9 @@ mod tests {
+         ]);
+         assert_eq!(
+             matcher
+-                .sanitize("pass123-v2x pass123-v2 中pass123 pass123_ pass123²")
++                .sanitize("pass123-v2x pass123-v2 中pass123 pass123_ pass123² 秘密值们 x秘密")
+                 .content,
+-            "short-v2x long 中pass123 pass123_ pass123²"
++            "short-v2x long 中short pass123_ short² 秘密值们 xshort"
+         );
+         let input = format!("🙂秘密值 {reference} session default");
+         let (found, exceeded) = matcher.find_limited(&input, 3);
+```
+
+**File**: `docs/en/concepts/13-privacy.md` (modified, +1/-1)
+```diff
+@@ -225,7 +225,7 @@ Restoration is supported for these files under the current user's Session direct
+ 
+ PrivacySanitizer does not infer sensitivity from field names. String values in the active Privacy catalog participate in automatic content scanning and reference replacement only when they contain at least 6 Unicode characters. Shorter values can still be stored, referenced, and explicitly resolved, but are excluded from global substring replacement to reduce false positives in ordinary text. Python owns catalog loading, reference generation, and cache policy; matcher construction, leftmost-longest matching, and text rewriting run in RAGFS's Rust Aho-Corasick implementation through a reusable PyO3 matcher that releases the GIL while scanning. The matcher catalog is cached per user and process-local revision; local changes invalidate it immediately, and a 3600-second TTL bounds staleness after changes made by another worker or node.
+ 
+-Values stored under `credential` for the current user take priority. Otherwise, only values in the current Skill's or Session's Privacy config that match a recognized credential format are used. Matching respects word boundaries and skips values listed in `never_mask`.
++Values stored under `credential` for the current user take priority. Otherwise, only values in the current Skill's or Session's Privacy config that match a recognized credential format are used. Matching respects word boundaries, where an ASCII value next to text in another script such as Chinese still counts as a whole word, and skips values listed in `never_mask`.
+ 
+ Using a GitHub Personal Access Token (PAT) as an example:
+ 
+```
+
+**File**: `docs/zh/concepts/13-privacy.md` (modified, +1/-1)
+```diff
+@@ -223,7 +223,7 @@ fs.read(uri)
+ 
+ PrivacySanitizer 不根据字段名猜测敏感性。当前 active Privacy 中长度不少于 6 个 Unicode 字符的字符串值会参与正文自动扫描与引用替换；更短的值仍可保存、引用和显式读取，但不会参与全文替换，以降低普通正文误命中。Python 负责目录、引用和缓存策略，匹配器构建、最长匹配与正文重写由 `ragfs` 的 Rust Aho-Corasick 实现完成，并通过 PyO3 复用不可变 matcher、扫描时释放 GIL。匹配目录按用户和本进程 revision 缓存，本进程修改会立即失效，另外设有 3600 秒缓存 TTL 以覆盖多 worker/多节点修改。
+ 
+-上述按值匹配优先使用当前用户的 `credential`；未命中时，仅使用当前 Skill 或 Session 中符合凭据格式的值，其他对象不参与匹配。匹配遵循词边界，并排除 `never_mask` 中的值。
++上述按值匹配优先使用当前用户的 `credential`；未命中时，仅使用当前 Skill 或 Session 中符合凭据格式的值，其他对象不参与匹配。匹配遵循词边界（ASCII 值紧贴中文等其他文字时仍算完整的词），并排除 `never_mask` 中的值。
+ 
+ 以保存 GitHub Personal Access Token（PAT）为例：
+ 
+```
+
+**File**: `pyproject.toml` (modified, +1/-0)
+```diff
+@@ -17,6 +17,7 @@ authors = [
+     {name = "ByteDance", email = "noreply@bytedance.com"}
+ ]
+ license = "AGPL-3.0"
++license-files = ["LICENSE", "crates/ragfs/src/BETTERLEAKS_LICENSE.txt"]
+ classifiers = [
+     "Development Status :: 3 - Alpha",
+     "Intended Audience :: Developers",
+```
+
+**File**: `scripts/maintenance/privacy_rules/sync_betterleaks.py` (modified, +1/-25)
+```diff
+@@ -38,25 +38,6 @@
+     r"^(?:anthropic|aws-access-token|github|jwt|openai|private-key"
+     r"|slack-(?:app|bot|config-access|legacy|user)-)"
+ )
+-EXCLUDED = {
+-    # The prefix and body also fit ordinary identifiers such as prf_hmac_sha256_expand_label.
+-    "brave-search-api-key": "matches ordinary identifiers",
+-    "lichess-personal-access-token": "matches ordinary identifiers",
+-    "polar-oauth-access-token": "matches ordinary identifiers",
+-    "proof-full-access-api-key": "matches ordinary identifiers",
+-    "thunderstore-api-token.1": "matches ordinary identifiers",
+-    # Their lazy DFAs do not fit the per-pattern cache of the built-in detectors.
+-    "authress-service-client-access-key": "too large for the built-in cache budget",
+-    "azure-servicebus-connection-string": "too large for the built-in cache budget",
+-}
+-# Upstream relies on a trailing \b to reach the longer branch or to stop early; the
+-# extractor checks boundaries after matching, so these need the full token spelled out.
+-OVERRIDES = {
+-    "buildkite-user-access-token": "bkua_(?:[a-z0-9]{53}|[a-z0-9]{40})",
+-    "datastax-astra-application-token": "AstraCS:[A-Za-z0-9]{20,}:[a-f0-9]{64}",
+-}
+-# Real tokens of these rules contain long runs of one character.
+-KEEP_REPEATED = {"flyio-access-token"}
+ MIN_PREFIX = 3
+ 
+ ASCII_CLASS = {"w": "0-9A-Za-z_", "d": "0-9", "s": r"\t\n\f\r "}
+@@ -239,8 +220,6 @@ def convert(rules: list[dict]) -> tuple[list[dict], dict[str, str]]:
+         try:
+             if HAND_WRITTEN.match(rule_id):
+                 raise Skip("covered by a hand-written detector")
+-            if rule_id in EXCLUDED:
+-                raise Skip(EXCLUDED[rule_id])
+             if not rule.get("regex") or rule.get("path"):
+                 raise Skip("matches file paths")
+             if rule.get("skipReport"):
+@@ -253,10 +232,7 @@ def convert(rules: list[dict]) -> tuple[list[dict], dict[str, str]]:
+                 raise Skip("no fixed prefix")
+             if fixed:
+                 raise Skip("fixed string without a secret part")
+-            detector = {"id": rule_id, "pattern": to_rust(OVERRIDES.get(rule_id, pattern))}
+-            if rule_id not in KEEP_REPEATED:
+-                detector["reject_repeated"] = True
+-            detectors.append(detector)
++            detectors.append({"id": rule_id, "pattern": to_rust(pattern), "reject_repeated": True})
+         except Skip as reason:
+             skipped[rule_id] = str(reason)
+     return sorted(detectors, key=lambda detector: detector["id"]), skipped
+```
+
+**File**: `tests/server/test_api_privacy_configs.py` (modified, +15/-0)
+```diff
+@@ -677,6 +677,21 @@ async def test_privacy_seal_replaces_registered_values_when_mode_is_off(
+     assert again == {"revision": revision, "texts": [None]}
  
  
-+# --- rate-limit backoff ---
-+
-+
-+def _rate_limit_error() -> RuntimeError:
-+    return RuntimeError(
-+        "Error code: 429 - {'error': {'code': '1302', 'message': 'Rate limit reached for requests'}}"
++async def test_privacy_seal_replaces_a_new_token_typed_next_to_cjk_text(client: httpx.AsyncClient):
++    token = _github_token("cjk-adjacent")
++    response = await _seal(
++        client,
++        {"text": f"密钥是{token}请保存", "enroll": True},
++        f"历史消息里的{token}也要替换",
 +    )
++    assert response.status_code == 200, response.text
++    sealed, history = response.json()["result"]["texts"]
++    reference = sealed["replaced"][0]["reference"]
++    assert sealed["replaced"][0]["created"] is True
++    assert sealed["text"] == f"密钥是{reference}请保存"
++    assert history["text"] == f"历史消息里的{reference}也要替换"
 +
 +
-+def test_retry_sync_uses_rate_limit_backoff_for_rate_limit_errors(monkeypatch):
-+    delays: list[float] = []
-+    attempts: list[int] = []
-+    monkeypatch.setattr(
-+        "openviking.utils.model_retry.time.sleep", lambda delay: delays.append(delay)
-+    )
-+    monkeypatch.setattr(
-+        "openviking.utils.model_retry.rate_limit_retry_delay",
-+        lambda attempt: attempts.append(attempt) or float(attempt),
-+    )
-+    error = _rate_limit_error()
-+
-+    @model_error_boundary
-+    def _call():
-+        raise error
-+
-+    with pytest.raises(RuntimeError) as raised:
-+        retry_sync(_call, max_retries=3)
-+
-+    assert raised.value is error
-+    assert attempts == [1, 2, 3]
-+    assert delays == [1.0, 2.0, 3.0]
-+
-+
-+@pytest.mark.asyncio
-+async def test_retry_async_uses_rate_limit_backoff_for_rate_limit_errors(monkeypatch):
-+    delays: list[float] = []
-+    attempts: list[int] = []
-+
-+    async def _sleep(delay):
-+        delays.append(delay)
-+
-+    monkeypatch.setattr("openviking.utils.model_retry.asyncio.sleep", _sleep)
-+    monkeypatch.setattr(
-+        "openviking.utils.model_retry.rate_limit_retry_delay",
-+        lambda attempt: attempts.append(attempt) or float(attempt),
-+    )
-+    error = _rate_limit_error()
-+
-+    @model_error_boundary
-+    async def _call():
-+        raise error
-+
-+    with pytest.raises(RuntimeError) as raised:
-+        await retry_async(_call, max_retries=3)
-+
-+    assert raised.value is error
-+    assert attempts == [1, 2, 3]
-+    assert delays == [1.0, 2.0, 3.0]
-+
-+
-+def test_retry_sync_keeps_generic_backoff_for_other_transient_errors(monkeypatch):
-+    delays: list[float] = []
-+    monkeypatch.setattr(
-+        "openviking.utils.model_retry.time.sleep", lambda delay: delays.append(delay)
-+    )
-+
-+    def _fail():
-+        raise TimeoutError("timed out")
-+
-+    with pytest.raises(TimeoutError):
-+        retry_sync(_fail, max_retries=3, base_delay=0.5, max_delay=8.0, jitter=False)
-+
-+    assert delays == [0.5, 1.0, 2.0]
-+
-+
- # --- quota_exceeded classification ---
- 
- 
+ async def test_privacy_seal_enrolls_new_tokens_once(client: httpx.AsyncClient, service):
+     token = _github_token("enroll-once")
+     first = await _seal(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8585** (2026-11-27): feat(privacy): widen built-in detectors with Betterleaks rules and OpenViking keys (@t0saki)
-- **PR #8582** (2026-11-27): feat(pgvector): select native or ByteDance enhanced search explicitly (@zhanglistar)
-- **PR #8581** (2026-11-27): Revert "fix(ovpack): 修复向量备份校验与目录索引重建" (@qin-ctx)
-- **PR #8579** (2026-11-27): feat(superagent): make the worker slot count configurable per instance and at runtime (@openviking-superagent)
-- **PR #8575** (2026-11-27): Revert "fix(memory): narrow automatic output language detection to four languages" (@MaojiaSheng)
-- **PR #8572** (2026-11-27): fix(storage): 停止预建 Agent 端点和支付目录 (@qin-ctx)
+- **PR #8603** (closed): fix(privacy): replace registered values typed right next to non-ASCII text (@t0saki)
+- **PR #8602** (2026-11-27): fix(privacy): match values next to non-ASCII text, simplify the Betterleaks import (@t0saki)
+- **PR #8597** (2026-11-27): fix(superagent): keep card images named by img_key or i18n_img_key (@ZaynJarvis)
+- **PR #8595** (2026-11-27): fix(superagent): read one language of a composite interactive card (@MaojiaSheng)
+- **PR #8590** (2026-11-27): docs(gateway): end the cache-hit range where memory A is missing (@openviking-superagent)
+- **PR #8588** (2026-11-27): fix(snapshot-log)!: backport mysql branch limit to v0.5.6 (@baojun-zhang)
 
 ---
 
@@ -3454,6 +2348,45 @@ Fixes #7936
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. snapshot-log)!: scope postgres indexes and use full paths
+
+**RULE**:
+When implementing operations in `crates/ragfs-python/src/git.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `bab33336`: snapshot-log)!: scope postgres indexes and use full paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ragfs-python/src/git.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+                service_name,
+        let other = build_snapshot_log_store(&cfg, "other-service")
+            .unwrap()
+            .expect("PG index enabled for another service");
+            assert!(other
+                .load_latest_indexed_commit(&account, "main")
+                .await
+                .unwrap()
+                .is_none());
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `bab33336` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

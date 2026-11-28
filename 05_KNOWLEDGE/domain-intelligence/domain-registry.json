@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T04:03:46.938Z",
+  "last_updated": "2026-11-28T04:12:32.731Z",
   "total_records": 2871,
   "domains": {
     "A": {
@@ -9448,8 +9448,8 @@
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "repository": "volcengine/OpenViking",
-      "content_hash": "d93083bacd658b9b8b00f815534c3e9a8b771c439e8ecbd9ecf3d0c02d5582ff",
-      "created_at": "2026-11-27T09:17:44.101Z"
+      "content_hash": "3980368382452de225654a2a7285fc8aed98c983bb6d1f667b10bbc544784d08",
+      "created_at": "2026-11-28T04:12:27.193Z"
     },
     "DOM-D-E243BB51": {
       "record_id": "DOM-D-E243BB51",
@@ -9517,8 +9517,8 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-learnings-technical-construction-intelligence-volcengine-o.md",
       "repository": "volcengine-openviking-learnings",
-      "content_hash": "7b1bbe8e9b2f831f2309604d572a44ea7446ad8741d306a3ac3f05510bbb5fb0",
-      "created_at": "2026-11-27T09:18:17.202Z"
+      "content_hash": "02a054eca3f9d56d414762942deb7c0252fce699e606dcd96303a3410c39c598",
+      "created_at": "2026-11-28T04:12:30.803Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -9604,8 +9604,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "5464cb46ddd29354922dbe3519035de731e3f04cbb09971d42060d89ac3c54bc",
-      "created_at": "2026-11-28T04:03:46.938Z"
+      "content_hash": "a9cc76e961e4f5dc9643fbcda91ee8086beb4d9484804bbc857f2a2c08c71825",
+      "created_at": "2026-11-28T04:12:32.731Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12262,8 +12262,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "b9f496cf83a52efd1bcf37d39ed61e53cb31a72fabc1aaa39e4767829415f9ac",
-      "created_at": "2026-11-28T02:22:42.067Z"
+      "content_hash": "20187e59bcb2c1bc872bd17c73ce59d88aa06a7db907841f55d882c9edf1f2db",
+      "created_at": "2026-11-28T04:12:31.777Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",

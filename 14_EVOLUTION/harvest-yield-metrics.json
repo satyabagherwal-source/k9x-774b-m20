@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T04:03:35.859Z",
-  "total_cycles_completed": 13252,
-  "total_learnings_persisted": 13252,
-  "total_rules_promoted": 11950,
+  "last_updated": "2026-11-28T04:12:26.727Z",
+  "total_cycles_completed": 13253,
+  "total_learnings_persisted": 13253,
+  "total_rules_promoted": 11951,
   "history": [
-    {
-      "timestamp": "2026-11-27T10:01:40.356Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T10:16:41.015Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T04:03:35.859Z",
       "repository": "duongductrong/Snapzy",
       "learningId": "learn-github-duongductrong-snapzy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:12:26.727Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

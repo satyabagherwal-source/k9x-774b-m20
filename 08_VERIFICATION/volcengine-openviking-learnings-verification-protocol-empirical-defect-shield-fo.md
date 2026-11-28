@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T18:35:08.158Z",
+  "timestamp": "2026-11-28T04:12:30.437Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-volcengine-openviking-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [volcengine-openviking-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T18:35:08.158Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T04:12:30.437Z`  
 > **Learning ID**: `LEARN-EVO-volcengine-openviking-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `e13f0441`  
+> **Source Version**: `280caf35`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T18:34:32.444Z  
+> **Timestamp**: 2026-11-28T04:12:25.439Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T18:34:32.437Z  
+> **Harvest Timestamp**: 2026-11-28T04:12:25.306Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42693 stars
+- **Stars / Engagement**: 42946 stars
 
 ---
 
@@ -78,6 +78,7 @@ import { createInterface } from "node:readline";
 import { buildOvHeaders } from "./ov-http.mjs";
 
 const DEFAULT_PROTOCOL_VERSION = "2025-06-18";
+const SESSION_HISTORY_TOOL = "session_history";
 const DELETE_TIMEOUT_MS = 2000;
 const MAX_CONCURRENT_REQUESTS = 16;
 
@@ -211,6 +212,9 @@ export function createOpenVikingMcpProxy({
   loggerFactory,
   fetchImpl = globalThis.fetch,
   localToolProvider = null,
+  // (params) => the OV session id of the host session making this tools/call,
+  // or "" when the harness cannot tell; fills `session_history`'s `session`.
+  defaultHistorySession = null,
 } = {}) {
   if (typeof fetchImpl !== "function") {
     throw new Error("global fetch is required; use Node.js 18 or newer");
@@ -285,6 +289,33 @@ export function createOpenVikingMcpProxy({
     return localToolProvider.callTool(message.params, { config: proxyConfig });
   }
 
+  // A `session` the model passed is kept as is, even one this proxy would not
+  // have chosen; only a missing or blank one is filled.
+  function withDefaultHistorySession(message) {
+    if (
+      typeof defaultHistorySession !== "function"
+      || message.method !== "tools/call"
+      || message.params?.name !== SESSION_HISTORY_TOOL
+    ) {
+      return message;
+    }
+    const args = message.params.arguments;
+    const given = args && typeof args === "object" ? args.session : undefined;
+    if (given != null && (typeof given !== "string" || given.trim())) return message;
+    let session = "";
+    try {
+      session = String(defaultHistorySession(message.params) || "").trim();
+    } catch (err) {
+      logError("default_history_session", err);
+    }
+    log("default_history_session", { filled: Boolean(session) });
+    if (!session) return message;
+    return {
+      ...message,
+      params: { ...message.params, arguments: { ...(args || {}), session } },
+    };
+  }
+
   function reloadConfig(reason) {
     proxyConfig = readConfig();
     logger = loggerFactory("mcp-proxy", proxyConfig);
@@ -346,35 +377,7 @@ export function createOpenVikingMcpProxy({
         return errorResponse(
           id,
           -32001,
-          `OpenViking MCP authentication failed (HTTP ${err.status}). Check ~/.openviking/ovcli.conf or OPENVIKING_API_KEY, and verify the configured account/user for trusted mode.`,
-          {
-            status: err.status,
-            credentialSource: proxyConfig.credentialSource,
-            credentialPath: proxyConfig.credentialPath || undefined,
-            serverMessage: serializeBodyForError(err.bodyText) || undefined,
-          },
-        );
-      }
-      return errorResponse(
-        id,
-        -32002,
-        `OpenViking MCP upstream returned HTTP ${err.status}.`,
-        {
-          status: err.status,
-          serverMessage: serializeBodyForError(err.bodyText) || undefined,
-        },
-      );
-    }
-    const msg = err instanceof Error ? err.message : String(err);
-    if (err && err.name === "AbortError") {
-      // Client-side timeout, not an outage: the server may be healthy and
-      // still computing (rerank-inclusive find/search can legitimately take
-      // longer than the default budget). Keep -32001 for genuine
-      // connection failures so the two are not misdiagnosed as each other.
-      return errorResponse(
-        id,
-        -32004,
-        `OpenViking MCP request timed out after ${proxyConfig.timeoutMs}ms (${proxyConfig.mcpUrl}).
+          `OpenViking MCP authentication failed (HTTP ${err.st
 ```
 
 ### Core Architecture Module: `benchmark/RAG/src/core/judge_util.py`
@@ -911,10 +914,13 @@ import numpy as np
 BENCHMARK_DIR = Path(__file__).resolve().parent
 if str(BENCHMARK_DIR) not in sys.path:
     sys.path.insert(0, str(BENCHMARK_DIR))
+if not __package__:
+    sys.path.insert(0, str(BENCHMARK_DIR.parents[1]))
 
 from run_collection_benchmark import parse_positive_int_list  # noqa: E402
 from run_index_benchmark import percentile, prepare_dataset, runtime_metadata  # noqa: E402
 
+from benchmark.vector_config import BenchmarkVectorConfigResolver  # noqa: E402
 from openviking.server.identity import RequestContext, Role  # noqa: E402
 from openviking.storage.viking_vector_index_backend import (  # noqa: E402
     VikingVectorIndexBackend,
@@ -936,18 +942,21 @@ def collection_schema(collection_name: str, dimension: int) -> dict[str, Any]:
             {"FieldName": "id", "FieldType": "string", "IsPrimaryKey": True},
             {"FieldName": "vector", "FieldType": "vector", "Dim": dimension},
             {"FieldName": "account_id", "FieldType": "string"},
+            {"FieldName": "uri", "FieldType": "path"},
             {"FieldName": "uniform_bucket", "FieldType": "int64"},
             {"FieldName": "row_number", "FieldType": "int64"},
         ],
-        "ScalarIndex": ["account_id", "uniform_bucket", "row_number"],
+        "ScalarIndex": ["account_id", "uri", "uniform_bucket", "row_number"],
     }
 
 
 def make_record(row_index: int, vector: Sequence[float]) -> dict[str, Any]:
+    record_id = f"record-{row_index}"
     return {
-        "id": f"record-{row_index}",
+        "id": record_id,
         "vector": list(vector),
         "account_id": ACCOUNT_ID,
+        "uri": f"viking://resources/bench/cuvs-service/{record_id}",
         "uniform_bucket": row_index % 1000,
         "row_number": row_index,
     }
@@ -1174,21 +1183,7 @@ async def run_cached_scenario(
         result["concurrency"] = concurrency
         results.append(result)
     return {
-        "name": name,
-        "filter_mode": "cached",
-        "filter": filter,
-        "initial_filter_query_ms": initial_filter_ms,
-        "results": results,
-    }
-
-
-async def run_unique_filter_scenario(
-    manager: VikingVectorIndexBackend,
-    ctx: RequestContext,
-    queries: np.ndarray,
-    *,
-    vector_count: int,
-   
+        "name": name
 ```
 
 ### Core Architecture Module: `benchmark/locomo/vikingbot/progress_utils.py`
@@ -1499,11 +1494,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8416** (2026-11-27): **[Bug]: `backup --include-vectors` fails permanently — consistency checker expects index records for namespaces that reindex cannot build**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  `ov backup --include-vectors` and `ov system consistency viking://` fail with `Cannot export incomplete OpenViking vector index snapshot` because the consistency checker (`openviking/storage/index_consistency.py`) builds index expectations for namespaces where the reindex path either refuses to run or skips by design. The checker and the indexer disagree on which namespaces are indexable, so the check can never pass — not after a full-namespace `semantic_and_vectors --force` reindex that completes with `failed_records=0`.  Three concrete mismatches were observed:  1. **`viking://system/*` (FILE_ONLY)** — `namespace_policy.py` marks the system    namespace `processing_mode=FILE_ONLY, supports_reindex=False`, and    `reindex_executor.py` rejects it with `reindex is not supported for namespace`,    but `index_consistency.py` only excludes sessions    (`NON_INDEX_SCOPES = frozenset({"session"})`), so it still expects level=0/1    records for every system sidecar. These records can never be created. 2. **`viking://agent` root** — reindex of the root URI is rejected    (`UNSUPPORTED_URI`), yet the checker expects its level=0/1 records. Children    (`endpoints`, `payments`) reindex fine; `agent/skills` reindex completes    (`rebuilt_records=6, failed_records=0`) but its level=0/1 records stay missing. 3. **Fingerprint-skip with absent record** — for `viking://user/alice/skills`,    `.abstract.md`/`.
+
 - **Issue #7814** (2026-11-19): **[Bug]: 100篇目录输入，生成wiki，非常耗时且存在循环调用**
   *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  版本	 ：                          0.4.20	                    ；       新版对照（官方 0.5.5 包） 运行时间：	          约 11 分 50 秒，完成	     ；       30 分 12 秒，未完成 模型 token：	      约 208 万                      ；     	已消耗约 501 万 来源抽取	：       138 篇进入清单	         ；          138 篇均生成中间记录 最终 Wiki	 ：           26 个 Markdown 文件	    ；            0 个页面  来源抽取已完成 134/138，只有 4 个仍在运行。到目前为止，输入约 245 万、输出约 149 万 token；新版确实显著更耗模型资源。马上可以观察它进入合并阶段后的实际页面产出。   138/138 个来源都完成了逐篇抽取，并生成 138 条记录。流程已进入审阅／合并；这一阶段决定最终 Wiki 的内容覆盖，我会继续核对任务状态和实际页面。   逐篇抽取完成后，审阅器判断这 138 条记录跨多个无关主题，正在调整合并指令；目前已生成分组文件，但还没有最终 Wiki 页面。这里是新版的关键风险点：若把全部记录压到同一组，可能再次遗漏独立主题。我会继续观察合并结果和 token 增量。  现在满足你设定的停止条件：138 条抽取记录已生成，但合并阶段连续 27 次模型调用，额外消耗约 74 万输入 token，只反复读取同一个 assignment.json 的异常偏移，仍未写出 Wiki 页面。我会停止这轮独立服务，保存工作区和日志，再分析卡住的原因；继续等待只会增加无效调用。  ### Steps to Reproduce  可以随便找100篇文章，或者200篇，调用wiki能力。  ### Expected Behavior  能完整较快的生成wiki  ### Actual Behavior  wiki生成  ### Minimal Reproducible Example  ```python  ```  ### Error Logs  ```shell  ```  ### OpenViking Version  0.5.5  ### Python Version  Python 3.12.8  ### Operating System  Windows  ### Model Backend  None  ### Additional Context  _No response_
-
-- **Issue #7802** (2026-11-19): **[Bug]: 环境存在 socks5 代理（ALL_PROXY）时 ov 命令报 unsupported scheme socks5，且配置向导隐藏真实错误**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  而同一台机器上浏览器、curl访问同一个服务端均正常，但使用 `ov config` 添加配置时报错 「无法连接服务器。请检查 URL 和网络连接。」  ### Steps to Reproduce  1. 准备 socks5 代理环境：     ```bash    export ALL_PROXY=socks5://127.0.0.1:10808    ```  2. 服务端可直连，自部署地址为 `http://private-server:1933`，用 curl 验证正常：     ```bash    curl -s http://private-server:1933/health    # {"status":"ok","healthy":true,"version":"v0.5.5","auth_mode":"api_key"}    ```  3. 用 CLI 写入配置：     ```bash    printf '%s' "$KEY" | ov config add custom --name home \      --url http://private-server:1933 --api-key-stdin --activate    ```  4. 执行健康检查：     ```bash    ov health    ```  ### Expected Behavior  1. 正常通过 socks5 代理访问服务端； 2. 遇到不支持的代理 scheme 时，忽略该代理（回退直连）并给出警告，而不是让所有请求失败； 3. 至少把真实错误（`unsupported scheme socks5`）透出到 `ov config` / 向导界面上，并提示检查 `ALL_PROXY` / `NO_PROXY`。  ### Actual Behavior  `ov health`（含详情）：  ``` OPENVIKING 健康检查  ╭─ 连接错误 ───────────────────────────────────────────────────────────╮ │ 无法连接 OpenViking。请先查看详情，再确认服务器是否运行、URL         │ │ 是否正确。 详情：HTTP request failed: error sending request for url  │ │ (http://private-server:1933/health): client error (Connect):            │ │ unsupported scheme socks5                                            │ ╰──────────────────────────────────────────────────────────────────────╯ ```  `ov config add custom` / 配置向导（向导界面上只剩一句通用文案）：  ``` Error [validation_failed] Could not reach the custom server. HTTP request failed: error sending request for ur
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1520,687 +1515,837 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e13f0441` (2026-11-24)
-**Commit Message**: fix(acl): restore empty-string grant decoding (#8371)
+### Incident Patch 1: `bab33336` (2026-11-27)
+**Commit Message**: fix(snapshot-log)!: scope postgres indexes and use full paths (#8562)
 
-Restore the exact-empty-string filtering introduced by #6067 and removed by #6956. Normalize offline-index empty ACL elements only at DirectAcl.from_context_fields; preserve valid direct/inherited grants, singleton none serialization, and rejection of every other malformed token.
+* fix(snapshot-log)!: isolate postgres indexes by service_name
 
-Extend the existing ACL roundtrip and mixed-grant tests for list/tuple inputs and both grant prefixes. Document the read contract in English and Chinese.
+Keep shared PostgreSQL index progress, path rows and append locks
+independent for each deployment. Align schema limits with the
+64-byte service_name and account contract.
 
-Validation: seven regression cases fail on main before the decoder change; all 22 focused ACL cases pass afterward. Ruff lint/format and git diff --check pass. Focused mypy matches the baseline assignment diagnostic; unrestricted mypy has existing transitive errors. OpenViking has no check-domain Make target. No runtime, deployment, or index changes.
+BREAKING CHANGE: PostgreSQL store constructors require service_name.
+Existing tables must be rebuilt with the revised PostgreSQL DDL.
 
-**File**: `docs/en/concepts/15-acl.md` (modified, +1/-1)
+* test(snapshot-log): remove shared postgres isolation test
+
+* fix(snapshot-log)!: use full paths in postgres indexes
+
+Prevent path digest collisions from rejecting PostgreSQL history rows.
+Limit indexed branch names to 128 bytes so full-path keys fit.
+
+BREAKING CHANGE: PostgreSQL SnapshotLog indexes branches up to 128 bytes.
+Shared runtime field-limit alignment is deferred to a separate change.
+
+* fix(snapshot-log): align postgres runtime branch limit
+
+* fix(snapshot-log)!: set shared branch limit to 128 bytes
+
+Use one branch limit for SnapshotLog providers and remove the
+PostgreSQL-specific override.
+
+BREAKING CHANGE: SnapshotLog providers index branches up to 128 bytes.
+
+**File**: `crates/ragfs-python/src/git.rs` (modified, +9/-0)
 ```diff
-@@ -127,7 +127,7 @@ acl_inherited_grants
- 
- `acl_direct_grants` is the ACL assigned to the current node. `acl_inherited_grants` stores the parent's current effective ACL. `acl_mode` controls whether inherited grants contribute to the current node's effective permissions. Each principal stores only its highest level as `{mask}:{principal}`: `1` means `read`, `3` means `write`, and `7` means `manage`. There is no separate ACL collection.
- 
--An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
-+An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. Exact empty-string elements introduced by offline indexes are ignored on reads; other invalid grant tokens are rejected. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
- 
- ACLs update with the index, so records for the same URI may temporarily hold different versions. Reads use one ACL snapshot returned by the index, without merging grants across versions or blocking on temporary disagreement. Permission changes take effect as index updates complete; strong consistency is not guaranteed.
- 
-```
-
-**File**: `docs/zh/concepts/15-acl.md` (modified, +1/-1)
-```diff
-@@ -122,7 +122,7 @@ acl_inherited_grants
- 
- `acl_direct_grants` 是当前节点直接 ACL，`acl_inherited_grants` 是父节点当前有效 ACL，`acl_mode` 决定 inherited 是否参与当前节点的有效权限。每个 principal 只保存最高 level，编码为 `{mask}:{principal}`：`1` 表示 `read`、`3` 表示 `write`、`7` 表示 `manage`。不维护独立 ACL collection。
- 
--空 grants 列表存储为 `["none"]`，读取时解析为空权限。`"none"` 必须单独出现，不授予任何权限。该存储标记与 `acl_mode` 独立：清空直接授权时，模式和已有继承权限保持原有语义。
-+空 grants 列表存储为 `["none"]`，读取时解析为空权限。`"none"` 必须单独出现，不授予任何权限。读取时忽略离线索引产生的精确空字符串元素，其他非法 grant token 仍报错。该存储标记与 `acl_mode` 独立：清空直接授权时，模式和已有继承权限保持原有语义。
- 
- ACL 随索引更新，允许同一 URI 的不同索引记录短暂保留不同版本。读取采用索引返回的一份 ACL 快照，不合并不同版本的授权，也不因副本暂时不一致阻断处理。权限变更按索引更新进度生效，不保证强一致。
- 
-```
-
-**File**: `openviking/storage/acl.py` (modified, +2/-0)
-```diff
-@@ -126,6 +126,8 @@ def from_context_fields(cls, record: Mapping[str, Any], prefix: str) -> "DirectA
-             raise RuntimeError(f"Invalid ACL grants for {prefix}: expected a list")
-         if len(raw_grants) == 1 and raw_grants[0] == EMPTY_ACL_GRANT:
-             return cls()
-+        # 离线索引可能将空列表还原为空字符串元素；仅忽略精确空串。
-+        raw_grants = [grant for grant in raw_grants if grant != ""]
-         return cls.from_entries(_decode_grant(grant) for grant in raw_grants)
- 
- 
-```
-
-**File**: `tests/storage/test_acl.py` (modified, +29/-6)
-```diff
-@@ -10,6 +10,9 @@
-         {"acl_direct_grants": None},
-         {"acl_direct_grants": []},
-         {"acl_direct_grants": ["none"]},
-+        {"acl_direct_grants": [""]},
-+        {"acl_direct_grants": ["", ""]},
-+        {"acl_direct_grants": ("", "")},
-     ],
- )
- def test_context_fields_roundtrip_empty_grants(record):
-@@ -19,23 +22,43 @@ def test_context_fields_roundtrip_empty_grants(record):
-     assert acl.context_fields("acl_direct") == {"acl_direct_grants": ["none"]}
- 
- 
--def test_context_fields_preserve_valid_grants():
--    raw_grants = ["3:user:alice", "1:group:readers"]
-+@pytest.mark.parametrize("prefix", ["acl_direct", "acl_inherited"])
-+@pytest.mark.parametrize(
-+    "raw_grants",
-+    [
-+        ["3:user:alice", "1:group:readers"],
-+        ["", "3:user:alice", "", "1:group:readers", ""],
-+        ("", "3:user:alice", "1:group:readers", ""),
-+    ],
-+)
-+def test_context_fields_preserve_valid_grants(prefix, raw_grants):
-     acl = DirectAcl.from_context_fields(
--        {"acl_inherited_grants": raw_grants},
--        "acl_inherited",
-+        {f"{prefix}_grants": raw_grants},
-+        prefix,
-     )
- 
-     assert {(entry.principal, entry.level) for entry in acl.entries} == {
-         ("user:alice", AclLevel.WRITE),
-         ("group:readers", AclLevel.READ),
+@@ -170,6 +170,7 @@ fn build_snapshot_log_store(
+                 PyRuntimeError::new_err("build_snapshot_log_store must run inside a tokio runtime")
+             })?;
+             match handle.block_on(ragfs::git::PostgresSnapshotLogStore::connect_with_timeout(
++                service_name,
+                 &dsn,
+                 postgres.max_connections,
+                 postgres.connect_timeout_ms,
+@@ -851,6 +852,9 @@ mod tests {
+         let store = build_snapshot_log_store(&cfg, "test-service")
+             .unwrap()
+             .expect("PG index enabled");
++        let other = build_snapshot_log_store(&cfg, "other-service")
++            .unwrap()
++            .expect("PG index enabled for another service");
+         runtime.block_on(async {
+             let account = uuid::Uuid::new_v4().simple().to_string();
+             let oid = "1234567890123456789012345678901234567890";
+@@ -875,6 +879,11 @@ mod tests {
+                     .1,
+                 oid
+             );
++            assert!(other
++                .load_latest_indexed_commit(&account, "main")
++                .await
++                .unwrap()
++                .is_none());
+         });
      }
--    assert set(acl.context_fields("acl_inherited")["acl_inherited_grants"]) == set(raw_grants)
-+    assert set(acl.context_fields(prefix)[f"{prefix}_grants"]) == {
-+        "3:user:alice",
-+        "1:group:readers",
-+    }
  
- 
- @pytest.mark.parametrize(
-     "raw_grants",
--    [[""], ["none", "3:user:alice"], ["none", "none"], [1]],
-+    [
-+        [" "],
-+        ["invalid"],
-+        ["", "invalid"],
-+        ["", 1],
-+        ["", "none"],
-+        ["none", "3:user:alice"],
-+        ["none", "none"],
-+        [1],
-+    ],
- )
- def test_context_fields_reject_invalid_grants(raw_grants):
-     with pytest.raises(RuntimeError, match="Invalid ACL grant token"):
 ```
 
----
-
-### Incident Patch 2: `dfad651f` (2026-11-24)
-**Commit Message**: fix(compile): 修复增量编译漏处理和重复执行 (#7813)
-
-* fix(compile): retain partial delivery across incremental runs
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-* test(compile): keep focused delivery regressions
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-* fix(compile): preserve failures for individual diff pages
-
-* fix(compile): advance baseline after verified no-change recovery
-
-* fix(compile): retain rejected pages in partial delivery
-
-Apply the rejected-page coverage fix from #8207 (0a6e2fba7). Exercise the Complex service path where a valid page and a rejected page share one source.
-
-Co-authored-by: wrfgup <[REDACTED_EMAIL]>
-
-* test(compile): streamline partial recovery coverage
-
-* refactor(compile): align snapshot and coverage naming with existing terms
-
-- Rename download_snapshot_bytes to git_show_bytes: the wrapper only
-  calls the SDK git_show snapshot endpoint, so "download" misrepresented
-  the operation and diverged from download_bytes, which really hits
-  /content/download.
-- Drop the AI-introduced "delivered" wording in the compile chain:
-  coverage state and output flag become "pu
-
-**File**: `bot/tests/test_compile_markdown.py` (modified, +247/-29)
+**File**: `crates/ragfs/src/git/snapshot_log/postgres.rs` (modified, +37/-19)
 ```diff
-@@ -14,7 +14,12 @@
- from vikingbot.bus.queue import MessageBus
- from vikingbot.compile import simple
- from vikingbot.compile.file_ops import DocumentReader
--from vikingbot.compile.models import CompileFailure, CompileLimits, SanitizedCompileRequest
-+from vikingbot.compile.models import (
-+    CompileFailure,
-+    CompileLimits,
-+    CompileTask,
-+    SanitizedCompileRequest,
-+)
- from vikingbot.compile.ops import finalize
- from vikingbot.compile.ops import reduce as reduce_op
- from vikingbot.compile.ops.shuffle import Shuffle
-@@ -29,9 +34,11 @@
- from vikingbot.sandbox.backends.direct import DirectBackend
- from vikingbot.session.manager import SessionManager
+@@ -7,8 +7,8 @@ use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
+ use sqlx::{PgPool, Postgres, QueryBuilder};
  
-+from openviking.utils.compile_recovery import source_set_digest
- from openviking_cli.exceptions import NotFoundError
+ use super::store::{
+-    ensure_latest_matches, validate_append, SnapshotLogError, SnapshotLogHit, SnapshotLogLimits,
+-    SnapshotLogRow, SnapshotLogStore,
++    ensure_latest_matches, validate_append, validate_service_name, SnapshotLogError, SnapshotLogHit,
++    SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
+ };
  
- MAP_ONLY = "drafts = p.map(sources, task=contract.extract)\np.finalize(drafts, into=target)"
-+INVALID_FRONTMATTER = "---\ntype: concept\ntitle: Rules\n description: invalid\n---\n"
- MERGE = (
-     "drafts = p.map(sources, task=contract.extract)\n"
-     "groups = p.shuffle(drafts, by=contract.routing)\n"
-@@ -150,7 +157,7 @@ def test_plan_rejects_unsafe_or_invalid_flows(program):
-         parse_plan(program, contract(True))
+ const POSTGRES_INSERT_BATCH_ROWS: usize = 1_000;
+@@ -33,16 +33,20 @@ pub struct PostgresSnapshotLogStore {
+     pool: PgPool,
+     limits: SnapshotLogLimits,
+     operation_timeout: Duration,
++    service_name: String,
+ }
  
+ impl PostgresSnapshotLogStore {
+-    /// Connect to a pre-provisioned database without creating or migrating tables.
++    /// Connect using a service name, DSN, pool size and acquisition timeout.
++    /// Return the service-scoped store or an error; never provision tables.
+     pub async fn connect(
++        service_name: &str,
+         dsn: &str,
+         max_connections: u32,
+         connect_timeout_ms: u64,
+     ) -> Result<Self, SnapshotLogError> {
+         Self::connect_with_timeout(
++            service_name,
+             dsn,
+             max_connections,
+             connect_timeout_ms,
+@@ -51,14 +55,17 @@ impl PostgresSnapshotLogStore {
+         .await
+     }
  
--async def configure_pipeline(pipeline, merge=False, fail_second=False):
-+async def configure_pipeline(pipeline, merge=False, fail_second=False, invalid_sibling=False):
-     """Use actual file collection with controlled agent jobs and JSON control responses."""
-     proposal = PlanProposal(contract=contract(merge), plan=MERGE if merge else MAP_ONLY)
- 
-@@ -173,6 +180,8 @@ async def worker(system, data, model, *, stage, runtime):
-             assert len(data["documents"]) == 2
-             content += "Combined details from both drafts.\n"
-         await model.files.sandbox.write_file(f"{root}/{name}", content)
-+        if invalid_sibling:
-+            await model.files.sandbox.write_file(f"{root}/bad.md", INVALID_FRONTMATTER)
-         await model.files.sandbox.write_file(
-             root.rsplit("/", 1)[0] + "/scratch.md", "private scratch"
-         )
-@@ -432,7 +441,7 @@ async def chat(**kwargs):
-         f"# Fact {i}" in "\n".join(op["content"] for op in bundle.operations) for i in range(3)
-     )
-     await pipeline.write_coverage([op["uri"] for op in bundle.operations])
--    assert (await pipeline.files.get("coverage"))["counts"] == {"delivered": 3}
-+    assert (await pipeline.files.get("coverage"))["counts"] == {"prepared": 3}
- 
- 
- async def test_finalization_requires_unique_paths_and_prior_target_read(pipeline):
-@@ -452,26 +461,7 @@ async def test_finalization_requires_unique_paths_and_prior_target_read(pipeline
-         await finalize.run(pipeline, [doc])
- 
- 
--@pytest.mark.parametrize("cancelled,conflict", [(False, False), (False, True), (True, False)])
--async def test_service_publishes_final_markdown_with_batch_write_and_honors_cancel(
--    pipeline, monkeypatch, cancelled, conflict
--):
--    if conflict:
--        pipeline.client.batch_write.return_value = {
--            "created": [],
--            "updated": [],
--            "unchanged": [],
--            "conflicts": [
--                {
--                    "uri": pipeline.target + "/topic.md",
--                    "code": "ALREADY_EXISTS",
--                    "message": "Exists",
--                }
--            ],
--        }
--    await configure_pipeline(pipeline)
--    task = SimpleNamespace(status="cancelling" if cancelled else "running", meta={}, result=None)
--
-+def compile_service_for_test(pipeline, task, monkeypatch):
-     async def update(task_id, mutate):
-         mutate(task)
- 
-@@ -489,17 +479,51 @@ async def update(task_id, mutate):
-     )
-     service._set_state = AsyncMock()
-     monkeypatch.setattr("vikingbot.compile.service.Pipeline", lambda **kwargs: pipeline)
-+    return service
-+
-+
-+@pytest.mark.parametrize("case", ["normal", "cancelled", "conflict", "source", "worker", "sibling"])
-+async def test_service_publishes_final_markdown_with_batch_write_and_honors_cancel(
-+    pipeline, monkeypatch, case
-+):
-+    source_files = [pipeline.request.from_[0] + "/one.md"]
-+    output_files = [pipeline.target + "/topic.md"]
-+    if case in {"source", "worker"}:
-+        source_files.append(pipeline.request.from_[0] + "/two.md")
-+    if case == "conflict":
-+        pipeline.client.batch_write.return_value = {
-+            "created": [],
-+            "conflicts": [
-+                {
-+                    "uri": output_files[0],
-+                    "code": "ALREADY_EXISTS",
-+                    "message": "Exists",
-+                }
-+            ],
-+        }
-+    await configure_pipeline(
-+        pipeline, fail_second=case == "worker", invalid_sibling=case == "sibling"
-+    )
-+    if case == "source":
-+        pipeline.client.read_raw.side_effect = [
-+            "source fact",
-+            ConnectionError("Source unavailable"),
-+        ]
-+    task = SimpleNamespace(
-+        status="cancelling" if case == "cancelled" else "running", meta={}, result=
-```
-
-**File**: `bot/tests/test_openapi_auth.py` (modified, +2/-2)
-```diff
-@@ -77,7 +77,7 @@ async def create_task(self, request, *, principal_scope, task_id=None):
-                     to=request.to,
-                 )
- 
--            async def get_task(self, task_id, *, principal_scope):
-+            async def get_task(self, task_id, *, principal_scope, include_recovery_proof=False):
-                 if task_id != "cmp_test" or principal_scope != self.scope:
-                     return None
-                 return self.task
-@@ -173,7 +173,7 @@ async def create_task(self, request, *, principal_scope, task_id=None):
-                     to=request.to,
-                 )
- 
--            async def get_task(self, task_id, *, principal_scope):
-+            async def get_task(self, task_id, *, principal_scope, include_recovery_proof=False):
-                 if task_id != "cmp_dev" or principal_scope != self.scope:
-                     return None
-                 return {
-```
-
-**File**: `bot/vikingbot/compile/models.py` (modified, +9/-3)
-```diff
-@@ -207,11 +207,13 @@ class CompileResult(BaseModel):
-     created: list[str] = Field(default_factory=list)
-     updated: list[str] = Field(default_factory=list)
-     unchanged: list[str] = Field(default_factory=list)
--    # Skipped target-state conflicts, each containing uri, code and message; never delivered.
-+    # Skipped target-state conflicts, each containing uri, code and message; never published.
-     conflicts: list[dict[str, str]] = Field(default_factory=list)
-     page_count: int = 0
-     link_count: int = 0
-     warnings: list[str] = Field(default_factory=list)
-+    completion_status: Literal["partial"] | None = None
-+    recovery_proof: str | None = None
- 
- 
- class CompileTask(BaseModel):
-@@ -236,10 +238,14 @@ class CompileTask(BaseModel):
-     result: CompileResult | None = None
-     error: CompileErrorInfo | None = None
- 
--    def public_dict(self) -> dict[str, Any]:
-+    def public_dict(self, *, include_recovery_proof: bool = False) -> dict[str, Any]:
-         data = self.model_dump(exclude={"principal_scope", "sanitized_request"}, exclude_none=True)
-         if self.result is not None:
--            data["result"] = self.result.model_dump(by_alias=True)
-+            data["result"] = self.result.model_dump(
-+                by_alias=True,
-+                exclude_none=True,
-+                exclude=None if include_recovery_proof else {"recovery_proof"},
+-    /// Bound initialization and each complete index operation, including pool
+-    /// acquisition, lock waits and all statements in an append transaction.
++    /// Connect using a service name, DSN, pool size and timeouts in milliseconds.
++    /// Return a store whose initialization and complete operations have deadlines,
++    /// or a configuration/database error.
+     pub async fn connect_with_timeout(
++        service_name: &str,
+         dsn: &str,
+         max_connections: u32,
+         connect_timeout_ms: u64,
+         operation_timeout_ms: u64,
+     ) -> Result<Self, SnapshotLogError> {
++        validate_service_name(service_name)?;
+         if dsn.trim().is_empty()
+             || max_connections == 0
+             || connect_timeout_ms == 0
+@@ -89,13 +96,16 @@ impl PostgresSnapshotLogStore {
+                 .await?;
+             // Fail initialization if deployment DDL/permissions are missing, allowing
+             // the binding's existing best-effort fallback to the Git scan path.
+-            sqlx::query("SELECT id, account, branch, path, commit_oid FROM snapshot_log LIMIT 0")
+-                .execute(&pool)
+-                .await?;
++            sqlx::query(
++                "SELECT id, service_name, account, branch, path, commit_oid FROM snapshot_log LIMIT 0",
 +            )
-         return data
- 
- 
-```
-
-**File**: `bot/vikingbot/compile/ops/finalize.py` (modified, +3/-2)
-```diff
-@@ -19,7 +19,7 @@ async def run(runtime, documents):
-     prior read by a worker. This preflight does not provide atomic compare-and-swap writes.
-     """
-     bundle = RenderedBundle()
--    contents, outputs = {}, {}
-+    contents, outputs, rejected = {}, {}, {}
-     seen_paths: set[str] = set()
-     for document in documents:
-         path = validate_relative_file_path(document.path)
-@@ -38,6 +38,7 @@ async def run(runtime, documents):
-                 validate_declared_okf_markdown(uri, content.encode("utf-8"))
-             except ValueError as exc:
-                 runtime.warnings.append(str(exc))
-+                rejected[path] = document.source_refs
-                 continue
-         contents[path] = content
-         outputs[path] = {"source_refs": document.source_refs, "sha256": content_hash(content)}
-@@ -63,5 +64,5 @@ async def run(runtime, documents):
-         outputs[path] = {"source_refs": document.source_refs, "sha256": content_hash(content)}
-     if runtime.skill_target and contents:
-         file_ops.validate_skill_output(contents)
--    await runtime.files.put("finalize", {"outputs": outputs})
-+    await runtime.files.put("finalize", {"outputs": outputs, "rejected": rejected})
-     return bundle
-```
-
-**File**: `bot/vikingbot/compile/pipeline.py` (modified, +18/-12)
-```diff
-@@ -58,6 +58,7 @@ def __init__(
-         self.tools, self.tool_context = {}, None
-         self.sources: dict[str, Source] = {}
-         self.evidence, self.status, self.old = {}, {}, {}
-+        self.recovery_evidence: set[str] = set()
-         self.failures, self.warnings = [], []
-         self.artifacts: list[Document] = []
-         self.noop = False
-@@ -243,30 +244,35 @@ def validate(proposal):
-                     raise
-                 logger.exception("Compile diagnostic write failed; preserving the execution error")
- 
--    async def write_coverage(self, published=()):
--        """Track assignment provenance and acknowledged output URIs without claiming semantic coverage."""
-+    async def write_coverage(self, published=None):
-+        """Record source states; only supplied write results can mark outputs incomplete."""
-         manifest = await self.files.get("inputs") or {}
-         final = await self.files.get("finalize") or {}
--        delivered = set(published)
-+        published = set(published) if published is not None else None
-         inputs = {}
-         for source_id, metadata in self.evidence.items():
-             item = inputs.setdefault(metadata["uri"], {"ranges": {}, "outputs": []})
-             item["ranges"][source_id] = self.status[source_id]
--        for path, output in final.get("outputs", {}).items():
-+        rejected = final.get("rejected", {})
-+        if published is not None:
-+            published.difference_update(safe_join_viking_uri(self.target, path) for path in rejected)
-+        references = {
-+            path: output["source_refs"] for path, output in final.get("outputs", {}).items()
-+        }
-+        for path, refs in (references | rejected).items():
-             uri = safe_join_viking_uri(self.target, path)
--            for source_uri in {self.evidence[ref]["uri"] for ref in output["source_refs"]}:
--                inputs[source_uri]["outputs"].append({"uri": uri, "delivered": uri in delivered})
-+            for source_uri in {self.evidence[ref]["uri"] for ref in refs}:
-+                inputs[source_uri]["outputs"].append(uri)
-         for uri, item in inputs.items():
-             states = item["ranges"].values()
-             state = next(
-                 (s for s in ("failed", "pending", "unreferenced") if s in states), "prepared"
++            .execute(&pool)
++            .await?;
+             Ok(Self {
+                 pool,
+                 limits: SnapshotLogLimits::default(),
+                 operation_timeout,
++                service_name: service_name.to_string(),
+             })
+         })
+         .await
+@@ -116,8 +126,9 @@ impl SnapshotLogStore for PostgresSnapshotLogStore {
+         with_timeout(self.operation_timeout, async {
+             Ok(sqlx::query_as::<_, (i64, String)>(
+                 "SELECT id, commit_oid FROM snapshot_log \
+-             WHERE account = $1 AND branch = $2 ORDER BY id DESC LIMIT 1",
++             WHERE service_name = $1 AND account = $2 AND branch = $3 ORDER BY id DESC LIMIT 1",
              )
--            if (
--                state == "prepared"
--                and item["outputs"]
--                and all(o["delivered"] for o in item["outputs"])
--            ):
--                state = "delivered"
-+            if state == "prepared" and published is not None:
-+                if not item["outputs"]:
-+                    state = "unreferenced"
-+                elif any(output not in published for output in item["outputs"]):
-+                    state = "failed"
-             manifest[uri] = item["status"] = state
-         await self.files.put("inputs", manifest)
-         await self.files.put(
++            .bind(&self.service_name)
+             .bind(account)
+             .bind(branch)
+             .fetch_optional(&self.pool)
+@@ -142,18 +153,22 @@ impl SnapshotLogStore for PostgresSnapshotLogStore {
+                 .execute(&mut *tx)
+                 .await?;
+             // Row locking cannot serialize two first appends to an empty branch.
+-            // Length-prefixing avoids ambiguous (account, branch) concatenations.
++            // Length-prefixing isolates service/account/branch lock namespaces.
+             // Hash collisions only serialize unrelated branches; equality is still
+-            // checked against the original account/branch columns.
+-            let lock_key = format!("{}:{}{}", account.len(), account, branch);
++            // checked against the original service/account/branch columns.
++            let lock_key = format!(
++                "{}:{}|{}:{}{}",
++                self.service_name.len(), self.service_name, account.len(), account, branch
++            );
+             sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))")
+                 .bind(lock_key)
+                 .execute(&mut *tx)
+                 .await?;
+             let latest = sqlx::query_as::<_, (i64, String)>(
+                 "SELECT id, commit_oid FROM snapshot_log \
+-             WHERE account = $1 AND branch = $2 ORDER BY id DESC LIMIT 1",
++             WHERE service_name = $1 AND account = $2 AND branch = $3 ORDER BY id DESC LIMIT 1",
+             )
++            .bind(&self.service_name)
+             .bind(account)
+             .bind(branch)
+             .fetch_optional
 ```
 
-**File**: `bot/vikingbot/compile/pipeline_agent.py` (modified, +9/-3)
+**File**: `crates/ragfs/src/git/snapshot_log/store.rs` (modified, +1/-1)
 ```diff
-@@ -113,9 +113,15 @@ async def run(system, data, model, *, stage, runtime):
-             registry.register(
-                 CompileChildTool(tool, output_root, merge_only=True, readonly_paths=readonly_paths)
-             )
--        evidence = EvidenceReader(model.files, data)
--        if evidence.allowed:
--            registry.register(evidence)
-+        reader = EvidenceReader(
-+            model.files,
-+            data,
-+            recovery_evidence=(
-+                runtime.recovery_evidence if (runtime.changes or {}).get("recovery_sources") else None
-+            ),
+@@ -20,7 +20,7 @@ impl Default for SnapshotLogLimits {
+     fn default() -> Self {
+         Self {
+             account_bytes: 64,
+-            branch_bytes: 512,
++            branch_bytes: 128,
+             path_bytes: 2048,
+             max_rows_per_commit: SNAPSHOT_LOG_MAX_ROWS_PER_COMMIT,
+         }
+```
+
+**File**: `crates/ragfs/src/git/tests/test_snapshot_log.rs` (modified, +7/-5)
+```diff
+@@ -6,7 +6,7 @@ async fn make_snapshot_log_store() -> Arc<dyn SnapshotLogStore> {
+     #[cfg(feature = "postgres")]
+     if let Ok(dsn) = std::env::var("SNAPSHOT_LOG_TEST_PG_DSN") {
+         return Arc::new(
+-            crate::git::PostgresSnapshotLogStore::connect(&dsn, 4, 5_000)
++            crate::git::PostgresSnapshotLogStore::connect("test-service", &dsn, 4, 5_000)
+                 .await
+                 .expect("PostgreSQL SnapshotLog schema must be provisioned"),
+         );
+@@ -215,9 +215,11 @@ async fn test_snapshot_log_postgres_restore_completes_with_locked_index_and_back
+     let account = uuid::Uuid::new_v4().simple().to_string();
+     let (_dir, vfs, _object_store, _ref_store, svc) = make_service(&account);
+     let store = Arc::new(
+-        crate::git::PostgresSnapshotLogStore::connect_with_timeout(&dsn, 2, 5_000, 200)
+-            .await
+-            .unwrap(),
++        crate::git::PostgresSnapshotLogStore::connect_with_timeout(
++            "test-service", &dsn, 2, 5_000, 200,
 +        )
-+        if reader.allowed:
-+            registry.register(reader)
-         registry.register(runtime.resources)
-         registry.register(TargetReader(runtime))
-         search = runtime.tools.get("openviking_search")
++        .await
++        .unwrap(),
+     );
+     let svc = svc.with_snapshot_log(Some(store.clone()));
+     vfs.put("proj/a.md", b"v1");
+@@ -232,7 +234,7 @@ async fn test_snapshot_log_postgres_restore_completes_with_locked_index_and_back
+         .unwrap();
+     let mut lock = pool.begin().await.unwrap();
+     sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))")
+-        .bind(format!("{}:{}main", account.len(), account))
++        .bind(format!("12:test-service|{}:{}main", account.len(), account))
+         .execute(&mut *lock)
+         .await
+         .unwrap();
 ```
 
-**File**: `bot/vikingbot/compile/router.py` (modified, +3/-1)
+**File**: `crates/ragfs/tests/postgres_snapshot_log.rs` (modified, +21/-9)
 ```diff
-@@ -124,7 +124,9 @@ async def load_session(
-         if cancel:
-             task = await service.cancel_task(body.session_id, principal_scope=principal_scope)
-         else:
--            task = await service.get_task(body.session_id, principal_scope=principal_scope)
-+            task = await service.get_task(
-+                body.session_id, principal_scope=principal_scope, include_recovery_proof=True
-+            )
-         if task is None:
-             raise HTTPException(
-                 status_code=status.HTTP_404_NOT_FOUND,
+@@ -9,6 +9,8 @@ use std::sync::Arc;
+ use tokio::sync::Barrier;
+ use tokio::time::{timeout, Duration, Instant};
+ 
++const TEST_SERVICE: &str = "test-service";
++
+ async fn expect_timeout<T: std::fmt::Debug>(
+     operation: impl std::future::Future<Output = Result<T, SnapshotLogError>>,
+ ) {
+@@ -32,7 +34,7 @@ fn dsn() -> String {
+ }
+ 
+ async fn store() -> PostgresSnapshotLogStore {
+-    PostgresSnapshotLogStore::connect(&dsn(), 4, 5_000)
++    PostgresSnapshotLogStore::connect(TEST_SERVICE, &dsn(), 4, 5_000)
+         .await
+         .expect("provision openviking/service/sql/snapshot_log_postgres_init.sql first")
+ }
+@@ -69,8 +71,8 @@ async fn cleanup(account: &str) {
+ #[ignore = "requires a real PostgreSQL database"]
+ async fn postgres_snapshot_log_history_scope_width_and_watermark() {
+     let store = store().await;
+-    let account = uuid::Uuid::new_v4().simple().to_string() + &"a".repeat(223);
+-    let branch = "b".repeat(512);
++    let account = uuid::Uuid::new_v4().simple().to_string() + &"a".repeat(32);
++    let branch = "b".repeat(128);
+     // Varied four-byte characters exercise the full 2048-byte path limit.
+     let wide: String = (0..512)
+         .map(|i| char::from_u32(0x10000 + i).unwrap())
+@@ -291,7 +293,7 @@ async fn postgres_snapshot_log_startup_does_not_provision_schema() {
+     url.query_pairs_mut()
+         .append_pair("options", &format!("-c search_path={schema}"));
+     assert!(matches!(
+-        PostgresSnapshotLogStore::connect(url.as_str(), 1, 5_000).await,
++        PostgresSnapshotLogStore::connect(TEST_SERVICE, url.as_str(), 1, 5_000).await,
+         Err(SnapshotLogError::Sql(_))
+     ));
+     let count: i64 = sqlx::query_scalar("SELECT count(*) FROM pg_tables WHERE schemaname = $1")
+@@ -330,7 +332,7 @@ async fn postgres_snapshot_log_bounds_startup_and_read_table_lock_waits() {
+     let mut url = url::Url::parse(&dsn()).unwrap();
+     url.query_pairs_mut()
+         .append_pair("options", &format!("-c search_path={schema}"));
+-    let store = PostgresSnapshotLogStore::connect_with_timeout(url.as_str(), 1, 5_000, 200)
++    let store = PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, url.as_str(), 1, 5_000, 200)
+         .await
+         .unwrap();
+     let mut lock = pool.begin().await.unwrap();
+@@ -343,7 +345,7 @@ async fn postgres_snapshot_log_bounds_startup_and_read_table_lock_waits() {
+     // Do not release the lock until every call has returned by its own deadline.
+     let result = timeout(
+         Duration::from_secs(2),
+-        PostgresSnapshotLogStore::connect_with_timeout(url.as_str(), 1, 5_000, 200),
++        PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, url.as_str(), 1, 5_000, 200),
+     )
+     .await
+     .expect("startup probe must have an execution deadline");
+@@ -372,7 +374,7 @@ async fn postgres_snapshot_log_bounds_startup_and_read_table_lock_waits() {
+ #[tokio::test]
+ #[ignore = "requires a real PostgreSQL database"]
+ async fn postgres_snapshot_log_bounds_advisory_lock_and_reuses_pool() {
+-    let store = PostgresSnapshotLogStore::connect_with_timeout(&dsn(), 1, 5_000, 200)
++    let store = PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, &dsn(), 1, 5_000, 200)
+         .await
+         .unwrap();
+     let pool = PgPoolOptions::new()
+@@ -383,11 +385,21 @@ async fn postgres_snapshot_log_bounds_advisory_lock_and_reuses_pool() {
+     let account = uuid::Uuid::new_v4().simple().to_string();
+     let mut lock = pool.begin().await.unwrap();
+     sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))")
+-        .bind(format!("{}:{}main", account.len(), account))
++        .bind(format!("12:test-service|{}:{}main", account.len(), account))
+         .execute(&mut *lock)
+         .await
+         .unwrap();
+     expect_timeout(store.append_rows_if_latest(&account, "main", None, &rows(1, &["/"]))).await;
++    // Another service must append without waiting for this service's lock.
++    let other = PostgresSnapshotLogStore::connect_with_timeout(
++        "other-service", &dsn(), 1, 5_000, 200,
++    )
++    .await
++    .unwrap();
++    other
++        .append_rows_if_latest(&account, "main", None, &rows(1, &["/"]))
++        .await
++        .unwrap();
+     lock.rollback().await.unwrap();
+     assert!(store
+         .load_latest_indexed_commit(&account, "main")
+@@ -438,7 +450,7 @@ async fn postgres_snapshot_log_deadline_covers_all_batches_and_rolls_back() {
+     let mut url = url::Url::parse(&dsn()).unwrap();
+     url.query_pairs_mut()
+         .append_pair("options", &format!("-c search_path={schema}"));
+-    let store = PostgresSnapshotLogStore::connect_with_timeout(url.as_str(), 1, 5_000, 500)
++    let store = PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, url.as_str(), 1, 5_000, 500)
+         .await
+         .unwrap();
+     let account = uuid::Uuid::new_v4().simple().to_string();
 ```
 
-**File**: `bot/vikingbot/compile/service.py` (modified, +35/-5)
+**File**: `docs/en/guides/15-snapshot.md` (modified, +10/-6)
 ```diff
-@@ -43,6 +43,7 @@
- from vikingbot.agent.tools.registry import ToolRegistry
- from vikingbot.agent.tools.spawn import WaitSubagentsTool
- from vikingbot.compile import file_ops, simple
-+from vikingbot.compile.hashing import content_hash
- from vikingbot.compile.models import (
-     COMPILE_DRAFT_ROOT,
-     COMPILE_STAGING_ROOT,
-@@ -68,7 +69,12 @@
-     validate_declared_okf_markdown,
- )
- from vikingbot.compile.sandbox import CompileSandboxManager
--from vikingbot.compile.sources import CompileSourceRange, pack_source_batches, read_source
-+from vikingbot.compile.sources import (
-+    CompileSourceRange,
-+    pack_source_batches,
-+    read_source,
-+    verify_recovery_sources,
-+)
- from vikingbot.compile.store import CompileTaskStore
- from vikingbot.config.schema import SandboxBackend, SandboxMode, SessionKey
- from vikingbot.openviking_mount.ov_server import VikingClient
-@@ -361,15 +367,17 @@ async def create_task(
-             if not runner_started:
-                 await self._release_admission(principal_scope)
+@@ -218,8 +218,13 @@ export OPENVIKING_SNAPSHOT_LOG_POSTGRES_DSN='postgresql://user:password@host:543
  
--    async def get_task(self, task_id: str, *, principal_scope: str) -> dict[str, Any] | None:
-+    async def get_task(
-+        self, task_id: str, *, principal_scope: str, include_recovery_proof: bool = False
-+    ) -> dict[str, Any] | None:
-         await self.start()
-         try:
-             task = await self.store.get(task_id)
-         except ValueError:
-             return None
-         if task is None or task.principal_scope != principal_scope:
-             return None
--        return task.public_dict()
-+        return task.public_dict(include_recovery_proof=include_recovery_proof)
+ Runtime startup does not create or migrate PostgreSQL tables. The runtime role
+ needs `SELECT` and `INSERT` on `snapshot_log`, and `USAGE` on its identity sequence.
+-Use a dedicated database or schema per OV deployment; accounts and branches
+-are isolated within that index. When using a custom schema, set the URL's
++Provision the table with the supplied DDL before deploying.
++Rows, indexes and append locks are scoped by the top-level `service_name`,
++so deployments can share one database or schema. Use the same name for replicas
++of one deployment and distinct names for separate deployments.
++`service_name` accepts 1–64 ASCII letters, digits, `.`, `_` or `-`; `account` is
++limited to 64 bytes. A dedicated database or schema per deployment also works.
++When using a custom schema, set the URL's
+ `options` parameter to a URL-encoded `-c search_path=your_schema`.
+ No PostgreSQL extension or Python database extra is required: the driver is
+ part of the Rust binding (`ragfs/postgres` for standalone Rust consumers).
+@@ -232,12 +237,11 @@ Git when the index is unavailable. A write transaction that times out before
+ commit is rolled back.
+ Increase `operation_timeout_ms` if normal index operations exceed the default.
  
-     async def cancel_task(self, task_id: str, *, principal_scope: str) -> dict[str, Any] | None:
-         """Request cooperative cancellation of one principal-owned Compile task."""
-@@ -1024,8 +1032,8 @@ async def resolve_wiki_uri(uri: str) -> bool:
-             preserve_workspace = preserve_workspace or bool(warnings)
-             if output_file_count == 0:
-                 warnings.append("No reliable output was produced from the supplied materials.")
--            result = CompileResult(
--                **{
-+            result = CompileResult.model_validate(
-+                {
-                     "from": request.from_,
-                     "to": request.to,
-                     "skill": request.skill,
-@@ -1141,6 +1149,8 @@ def record_metrics(task):
-         source_limits = self.limits.model_copy(
-             update={"source_batch_chars": min(self.limits.source_batch_chars, 10_000)}
-         )
-+        recovery = (request.changes or {}).get("recovery_sources")
-+        source_hashes: dict[str, str] = {}
+-Each account/branch append is serialized with a transaction advisory lock,
++Each service/account/branch append is serialized with a transaction advisory lock,
+ including the first append to an empty index. All rows are committed atomically
+ only when the latest indexed commit matches the expected parent.
+-Path indexes use `md5(path)` to stay within PostgreSQL B-tree width limits;
+-queries also check the original path. A digest collision for the same commit
+-rejects the append rather than silently dropping a path.
++Path indexes use the complete path for lookups and uniqueness.
++PostgreSQL indexes branches up to 128 bytes and paths up to 2048 bytes.
+ Switching providers does not copy an existing index. Path queries trigger
+ background backfill from Git history when needed. An unavailable database or
+ missing schema disables the index for that service instance at startup and
+```
+
+**File**: `docs/zh/guides/15-snapshot.md` (modified, +8/-4)
+```diff
+@@ -213,7 +213,11 @@ export OPENVIKING_SNAPSHOT_LOG_POSTGRES_DSN='postgresql://user:password@host:543
  
-         async def source_batches():
-             """Retain at most one read batch of source bodies while seeding task shards."""
-@@ -1160,6 +1170,8 @@ async def source_batches():
-                     elif isinstance(content, BaseException):
-                         raise content
-                     else:
-+                        if recovery and isinstance(content, str):
-+                            source_hashes[uri] = content_hash(content)
-                         readable.append((uri, content))
-                 for batch in pack_source_batches(readable, source_limits):
-                     yield batch
-@@ -1200,6 +1212,22 @@ async def source_batches():
-                 ]
-             )
-             await pipeline.write_coverage(published)
-+            counts = (await pipeline.files.get("coverage") or {}).get("counts", {})
-+            partial = bool(pipeline.failures or conflicts) or any(
-+                counts.get(state, 0) for state in ("failed", "pending", "unreferenced")
-+            )
-+            recovery_proof = None
-+            if (
-+                recovery
-+                and not partial
-+                and not pipeline.warnings
-+                and not rendered.operations
-+                and counts.get("prepared") == len(ordered)
-+                and pipeline.evidence.keys() <= pipeline.recovery_evidence
-+            ):
-+                recovery_proof = await verify_recovery_sources(
-+                    client, request.changes, source_hashes
-+                )
-             summary = await pipeline.files.get("summary")
-             summary["committed"] = True
-             summary["warnings"] = pipeline.warnings
-@@ -1223,6 +1251,8 @@ async def source_batches():
-                 page_count=len(set(published)),
-                 link_count=rendered.link_count,
-                 warnings=pipeline.warnings,
-+                completion_status="partial" if partial else None,
-+                recovery_proof=recovery_proof,
-             )
+ 运行时不会创建或迁移 PostgreSQL 表。运行账号只需 `snapshot_log` 的
+ `SELECT`、`INSERT` 权限，以及 identity sequence 的 `USAGE` 权限。
+-不同 OV 部署应使用独立数据库或 schema；同一索引内按账号、分支隔离。
++部署前使用提供的 DDL 建表。
++记录、索引和追加锁都按顶层 `service_name` 隔离，多个部署可以共用数据库或 schema。
++同一部署的副本使用相同名称，不同部署使用不同名称。
++`service_name` 允许 1–64 个 ASCII 字母、数字、`.`、`_` 或 `-`；`account` 上限为 64 字节。
++每个部署使用独立数据库或 schema 也仍然可行。
+ 自定义 schema 可通过连接 URL 的 `options` 参数指定
+ `-c search_path=your_schema`，参数值需要 URL 编码。
  
-             def complete(task):
+@@ -225,10 +229,10 @@ PostgreSQL 索引操作有执行期限，连接同时设置 `statement_timeout`
+ 无需安装 PostgreSQL 扩展或 Python 数据库 extra，驱动由 Rust binding 提供；
+ 独立 Rust 接入需启用 `ragfs/postgres` feature。
+ 
+-同一账号、分支的索引追加使用事务 advisory lock 串行化，包括空索引的首次写入。
++同一服务、账号、分支的索引追加使用事务 advisory lock 串行化，包括空索引的首次写入。
+ 仅当最新索引提交等于预期父提交时，整批路径记录才会原子提交。
+-路径索引使用 `md5(path)` 避免超过 PostgreSQL B-tree 键宽限制，
+-查询同时校验原始路径；同一提交发生摘要冲突时会拒绝整批追加，不会静默丢失路径。
++路径索引使用完整路径查询和保证唯一性。
++PostgreSQL 索引的分支上限为 128 字节，路径上限为 2048 字节。
+ 切换 provider 不会复制旧索引，按路径查询会在需要时触发从 Git 历史后台回填。
+ 启动时数据库不可用或缺少表，会为该实例关闭索引并回退到历史扫描；
+ 恢复后需重启实例。回退扫描仍受 1000 个候选提交上限约束。
+```
+
+**File**: `openviking/service/sql/snapshot_log_postgres_init.sql` (modified, +8/-9)
+```diff
+@@ -1,21 +1,20 @@
+ -- Provision once with a deployment/migration role before starting OV.
+ -- Runtime needs SELECT and INSERT on snapshot_log and USAGE on its sequence.
+--- No extensions are required. Use a dedicated database/schema per OV deployment.
++-- No extensions are required. service_name isolates deployments sharing a database/schema.
+ CREATE TABLE IF NOT EXISTS snapshot_log (
+     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+-    account TEXT COLLATE "C" NOT NULL CHECK (octet_length(account) <= 255),
+-    branch TEXT COLLATE "C" NOT NULL CHECK (octet_length(branch) <= 512),
++    service_name TEXT COLLATE "C" NOT NULL CHECK (octet_length(service_name) BETWEEN 1 AND 64),
++    account TEXT COLLATE "C" NOT NULL CHECK (octet_length(account) <= 64),
++    branch TEXT COLLATE "C" NOT NULL CHECK (octet_length(branch) <= 128),
+     path TEXT COLLATE "C" NOT NULL CHECK (octet_length(path) BETWEEN 1 AND 2048),
+     commit_oid TEXT COLLATE "C" NOT NULL CHECK (commit_oid ~ '^[0-9a-fA-F]{40}$'),
+     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+ );
+ 
+--- A path digest keeps maximum-width keys below PostgreSQL's B-tree tuple limit.
+--- Queries also compare the original path; digest matches alone are never trusted.
+--- A digest collision for the same commit rejects the append rather than losing rows.
++-- Bounded service/account/branch lengths keep full-path keys within the B-tree limit.
+ CREATE UNIQUE INDEX IF NOT EXISTS uniq_snapshot_log_path_commit
+-    ON snapshot_log (account, branch, md5(path), commit_oid);
++    ON snapshot_log (service_name, account, branch, path, commit_oid);
+ CREATE INDEX IF NOT EXISTS idx_snapshot_log_lookup
+-    ON snapshot_log (account, branch, md5(path), id DESC);
++    ON snapshot_log (service_name, account, branch, path, id DESC);
+ CREATE INDEX IF NOT EXISTS idx_snapshot_log_latest
+-    ON snapshot_log (account, branch, id DESC);
++    ON snapshot_log (service_name, account, branch, id DESC);
 ```
 
 ---
 
-### Incident Patch 3: `6b42f562` (2026-11-24)
-**Commit Message**: fix(react): 保持未知预览类型并修复前端测试 (#8369)
+### Incident Patch 2: `56e568f4` (2026-11-27)
+**Commit Message**: docs(gateway): end the cache-hit range where memory A is missing (#8590)
 
-* fix(react): 保持未知预览类型并修复前端测试
+The 'not replayed' row of the one-turn figure painted Reply 1 and
+Message 2 green and bracketed them as 'same as last turn: hit'. A
+prefix cache breaks at the first byte that differs, so once memory A
+is absent everything after it, from Reply 1 on, is billed at the full
+rate. Colour Reply 1 and Message 2 as misses, end the green bracket
+after Message 1, and start the red bracket at the missing block.
 
-Only resolve the loading preview type from actual stat metadata. Align existing tests with automatic empty-directory expansion, Skill candidate collapse and independent Wiki badge reads.
+Co-authored-by: openviking-superagent <[REDACTED_EMAIL]>
 
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-* chore(react): remove release note from CI repair
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-**File**: `frontend/packages/react/src/modules/file-browser/use-fs-preview.ts` (modified, +1/-1)
+**File**: `docs/images/gateway/one-turn.en.svg` (modified, +9/-9)
 ```diff
-@@ -145,7 +145,7 @@ export function useFsPreview({
-       const stat = resourceType === 'unknown' ? await metadata : undefined;
-       const isDir = stat?.isDirectory ?? resourceType === 'directory';
-       if (signal.aborted) throw abortError();
--      if (resourceType === 'unknown' && isDir !== undefined) {
-+      if (resourceType === 'unknown' && stat?.isDirectory !== undefined) {
-         const type = isDir ? 'directory' : 'file';
-         setStatType({ lookup, type });
-         setTabs([loadingTab(uri, type)]);
+@@ -125,9 +125,9 @@
+ <text x="364" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">Message 1</text>
+ <rect x="416" y="738" width="96" height="44" rx="4" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="464" y="765" font-size="14" font-weight="400" fill="#8F959E" text-anchor="middle">none</text>
+-<rect x="516" y="738" width="84" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="516" y="738" width="84" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="558" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">Reply 1</text>
+-<rect x="604" y="738" width="96" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="604" y="738" width="96" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="652" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">Message 2</text>
+ <rect x="704" y="738" width="96" height="44" rx="4" fill="#FFFFFF" stroke="#F54A45" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="752" y="765" font-size="14" font-weight="400" fill="#F54A45" text-anchor="middle">missing</text>
+@@ -137,14 +137,14 @@
+ <text x="955" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">New message 3</text>
+ <rect x="1022" y="738" width="100" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="1072" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">New recall</text>
+-<line x1="192" y1="728" x2="700" y2="728" stroke="#2EA121" stroke-width="1.5"/>
++<line x1="192" y1="728" x2="412" y2="728" stroke="#2EA121" stroke-width="1.5"/>
+ <line x1="192" y1="728" x2="192" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<line x1="700" y1="728" x2="700" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<text x="446" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">Same as last turn: hit</text>
+-<line x1="704" y1="728" x2="1122" y2="728" stroke="#F54A45" stroke-width="1.5"/>
+-<line x1="704" y1="728" x2="704" y2="734" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="412" y1="728" x2="412" y2="734" stroke="#2EA121" stroke-width="1.5"/>
++<text x="302" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">Same as last turn: hit</text>
++<line x1="416" y1="728" x2="1122" y2="728" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="416" y1="728" x2="416" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+ <line x1="1122" y1="728" x2="1122" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+-<text x="913" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">Full price from last turn's memory onward</text>
++<text x="769" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">Full price from the missing memory onward</text>
+ <rect x="1164" y="652" width="26" height="18" rx="3" fill="#EDE6FF" stroke="#2EA121" stroke-width="1.5"/>
+ <text x="1200" y="667" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">Memory the gateway added</text>
+ <rect x="1164" y="682" width="26" height="18" rx="3" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
+@@ -154,7 +154,7 @@
+ <rect x="1164" y="742" width="26" height="18" rx="3" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5"/>
+ <text x="1200" y="757" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">New in this turn</text>
+ <text x="40" y="812" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">The client's history never contains what the gateway added, so the gateway keeps its own record and puts it back on every request.</text>
+-<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">Without replay, each turn is recomputed from where memory was added in the previous turn; the exact cost depends on the provider's cache breakpoints.</text>
++<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">Without replay, the prefix breaks where memory A should be, and everything after it is billed at full price; the exact cost depends on the provider's cache breakpoints.</text>
+ <rect x="40" y="856" width="760" height="180" rx="12" fill="#F7F3FF" stroke="#7F3BF5" stroke-width="1.5"/>
+ <text x="62" y="888" font-size="17" font-weight="700" fill="#1F2329" text-anchor="start">Across turns: save the conversation, extract memories</text>
+ <rect x="62" y="904" width="159.5" height="72" rx="8" fill="#FFFFFF" stroke="#7F3BF5" stroke-width="1.5"/>
 ```
 
-**File**: `frontend/packages/react/test/console-inactive-overlays.test.mjs` (modified, +4/-0)
+**File**: `docs/images/gateway/one-turn.zh.svg` (modified, +9/-9)
 ```diff
-@@ -76,6 +76,10 @@ test('inactive Skill upload releases its focus and body lock while its inline an
-               value: 'viking://agent/skills/wiki/SKILL.md',
-               label: 'Wiki Skill',
-             },
-+            {
-+              value: 'viking://agent/skills/report/SKILL.md',
-+              label: 'Report Skill',
-+            },
-           ],
-           initialValue: 'viking://agent/skills/wiki/SKILL.md',
-         },
+@@ -117,9 +117,9 @@
+ <text x="355" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">消息 1</text>
+ <rect x="402" y="738" width="86" height="44" rx="4" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="445" y="765" font-size="14" font-weight="400" fill="#8F959E" text-anchor="middle">无</text>
+-<rect x="492" y="738" width="86" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="492" y="738" width="86" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="535" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">回复 1</text>
+-<rect x="582" y="738" width="86" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="582" y="738" width="86" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="625" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">消息 2</text>
+ <rect x="672" y="738" width="86" height="44" rx="4" fill="#FFFFFF" stroke="#F54A45" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="715" y="765" font-size="14" font-weight="400" fill="#F54A45" text-anchor="middle">缺失</text>
+@@ -129,14 +129,14 @@
+ <text x="905" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">新消息 3</text>
+ <rect x="962" y="738" width="96" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="1010" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">本轮召回</text>
+-<line x1="192" y1="728" x2="668" y2="728" stroke="#2EA121" stroke-width="1.5"/>
++<line x1="192" y1="728" x2="398" y2="728" stroke="#2EA121" stroke-width="1.5"/>
+ <line x1="192" y1="728" x2="192" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<line x1="668" y1="728" x2="668" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<text x="430" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">和上一轮相同，命中</text>
+-<line x1="672" y1="728" x2="1058" y2="728" stroke="#F54A45" stroke-width="1.5"/>
+-<line x1="672" y1="728" x2="672" y2="734" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="398" y1="728" x2="398" y2="734" stroke="#2EA121" stroke-width="1.5"/>
++<text x="295" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">和上一轮相同，命中</text>
++<line x1="402" y1="728" x2="1058" y2="728" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="402" y1="728" x2="402" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+ <line x1="1058" y1="728" x2="1058" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+-<text x="865" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">从上一轮补充记忆的位置起按原价重算</text>
++<text x="730" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">从缺失记忆的位置起，后面全部按原价重算</text>
+ <rect x="1100" y="652" width="26" height="18" rx="3" fill="#EDE6FF" stroke="#2EA121" stroke-width="1.5"/>
+ <text x="1136" y="667" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">网关补充的记忆</text>
+ <rect x="1100" y="682" width="26" height="18" rx="3" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
+@@ -146,7 +146,7 @@
+ <rect x="1100" y="742" width="26" height="18" rx="3" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5"/>
+ <text x="1136" y="757" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">本轮新内容</text>
+ <text x="40" y="812" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">客户端的历史里没有网关补充的内容，网关自己记下，并在每个请求里放回原位。</text>
+-<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">不放回时，每轮都从上一轮补充记忆的位置起重算，具体还取决于服务商的缓存断点。</text>
++<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">不放回时，前缀在记忆 A 本该出现的位置断开，后面的内容全部按原价重算；具体还取决于服务商的缓存断点。</text>
+ <rect x="40" y="856" width="760" height="180" rx="12" fill="#F7F3FF" stroke="#7F3BF5" stroke-width="1.5"/>
+ <text x="62" y="888" font-size="17" font-weight="700" fill="#1F2329" text-anchor="start">跨轮：保存对话，提取记忆</text>
+ <rect x="62" y="904" width="159.5" height="72" rx="8" fill="#FFFFFF" stroke="#7F3BF5" stroke-width="1.5"/>
 ```
 
-**File**: `frontend/packages/react/test/file-browser-metadata-ownership.test.mjs` (modified, +1/-0)
+---
+
+### Incident Patch 3: `280caf35` (2026-11-27)
+**Commit Message**: fix(privacy): match values next to non-ASCII text, simplify the Betterleaks import (#8602)
+
+* refactor(privacy): import upstream rules without per-rule curation
+
+Drop the exclusion list, the two pattern overrides and the repeated-character exemption, so an upstream bump only needs the tag changed and the script rerun. The generator keeps its rule-agnostic criteria and the skip pattern for formats the hand-written file owns.
+
+* refactor(privacy): keep hand-written rules to OpenViking keys and three key shapes
+
+Remove the Telegram, Alibaba Cloud and Vault detectors. The sk- shapes and the Zhipu shape stay because upstream only matches them next to a provider name.
+
+* build: ship the Betterleaks license in the wheel
+
+The imported rules are compiled into the ragfs extension that the wheel carries, so the MIT notice has to travel with it.
+
+* fix(privacy): replace registered values typed right next to non-ASCII text
+
+The registered-value matcher treated a Han character and an adjacent ASCII value as one word, so a value written without a space after Chinese text was never replaced. Sealing enrolled such a token through the detector and then left it in the text. ASCII next to another scri
+
+**File**: `crates/ragfs/src/privacy_extractor_rules.json` (modified, +0/-40)
 ```diff
-@@ -106,6 +106,7 @@ test('a known Wiki keeps the truncation hint when its full read fails', async ()
-     content,
-     taggedTarget: uri,
-     fullRead: full.promise,
-+    kinds: [],
-   });
-   try {
-     assert.equal(f.tab.source.truncated, true);
+@@ -244,46 +244,6 @@
+         ["0a1b2c3d4e5f60718293a4b5c6d7e8f9", ".", "aB3dE5gH7jK9mN2pQ4sT6vW8"],
+         ["0A1B2C3D4E5F60718293A4B5C6D7E8F9", ".", "aB3dE5gH7jK9mN2p"]
+       ]
+-    },
+-    {
+-      "id": "alibaba_access_key_id",
+-      "pattern": "LTAI[A-Za-z0-9]{17,21}",
+-      "reject_repeated": true,
+-      "positive": [
+-        ["LTAI", "aB3dE5gH7jK9mN2pQ"],
+-        ["LTAI", "aB3dE5gH7jK9mN2pQ4sT"]
+-      ],
+-      "negative": [
+-        ["LTAI", "aB3dE5gH7jK9mN2p"],
+-        ["LTAI", "aB3dE5gH7jK9mN2pQ4sT6v"],
+-        ["LTAI", "EXAMPLE", "aB3dE5gH7jK9m"]
+-      ]
+-    },
+-    {
+-      "id": "vault",
+-      "pattern": "hvs\\.[A-Za-z0-9_-]{90,120}",
+-      "reject_repeated": true,
+-      "positive": [
+-        ["hvs.", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB3dE5gH7jK9mN2pQ4sT6vW8yZ"]
+-      ],
+-      "negative": [
+-        ["hvs.", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rU"],
+-        ["hvs.", "your-vault-token"]
+-      ]
+-    },
+-    {
+-      "id": "telegram_bot_token",
+-      "pattern": "(?:bot)?[0-9]{5,16}:A[A-Za-z0-9_-]{34}",
+-      "reject_repeated": true,
+-      "positive": [
+-        ["1234567890:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"],
+-        ["bot1234567890:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"]
+-      ],
+-      "negative": [
+-        ["1234:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"],
+-        ["1234567890:B", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"],
+-        ["1234567890:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUa"]
+-      ]
+     }
+   ],
+   "reference_pattern": "\\{\\{[ \\t]*ov_privacy:[^{}\\r\\n]+\\}\\}"
 ```
 
-**File**: `frontend/packages/react/test/file-browser-preview-priority.test.mjs` (modified, +6/-1)
+**File**: `crates/ragfs/src/privacy_extractor_rules_betterleaks.json` (modified, +10/-3)
 ```diff
-@@ -185,7 +185,12 @@ test('a listed Markdown file reads its body while Wiki attrs are pending', async
-       ),
-     );
-     await settle();
--    assert.equal(fetch.countOf('/api/v1/content/read'), 1);
-+    assert.deepEqual(
-+      fetch.calls
-+        .filter(({ path }) => path === '/api/v1/content/read')
-+        .map(({ query }) => query.limit),
-+      ['2000', '-1'],
-+    );
-     assert.equal(body(), 'Chapter text');
-   } finally {
-     await view.unmount();
+@@ -12,10 +12,13 @@
+     {"id": "artifactory-api-key", "pattern": "AKCp[A-Za-z0-9]{68,70}", "reject_repeated": true},
+     {"id": "artifactory-reference-token", "pattern": "cmVmd[A-Za-z0-9]{59}", "reject_repeated": true},
+     {"id": "atlassian-api-token", "pattern": "ATAT[A-Za-z0-9_\\-=]{100,}", "reject_repeated": true},
++    {"id": "authress-service-client-access-key", "pattern": "(?i)(?:sc|ext|scauth|authress)_[a-z0-9]{5,30}\\.[a-z0-9]{4,6}\\.acc[_-][a-z0-9-]{10,32}\\.[a-z0-9+/_=-]{30,120}", "reject_repeated": true},
+     {"id": "aws-amazon-bedrock-api-key-long-lived", "pattern": "ABSK[A-Za-z0-9+/]{109,269}={0,2}", "reject_repeated": true},
++    {"id": "azure-servicebus-connection-string", "pattern": "(?i)Endpoint=sb://[a-z0-9-]+\\.servicebus\\.windows\\.net/;SharedAccessKeyName=[^;=\\t\\n\\f\\r '\"]{1,128};SharedAccessKey=[A-Za-z0-9+/]{32,100}={0,2}(?:;EntityPath=[^;\\t\\n\\f\\r '\"]{1,128})?", "reject_repeated": true},
+     {"id": "bitbucket-data-center-token", "pattern": "BBDC-[A-Za-z0-9+/=]{32,}", "reject_repeated": true},
++    {"id": "brave-search-api-key", "pattern": "BSA[A-Za-z0-9_-]{24,40}", "reject_repeated": true},
+     {"id": "buildkite-service-token", "pattern": "bkaa_[A-Za-z0-9_-]{75}|bkaj_[A-Za-z0-9_-]{333}|bkar_[A-Za-z0-9_-]{73}|bkct_[A-Za-z0-9_-]{73}|bkpt_[A-Za-z0-9_-]{199}|bkpat_[A-Za-z0-9_-]{54}|bkps_[A-Za-z0-9_-]{64}", "reject_repeated": true},
+-    {"id": "buildkite-user-access-token", "pattern": "bkua_(?:[a-z0-9]{53}|[a-z0-9]{40})", "reject_repeated": true},
++    {"id": "buildkite-user-access-token", "pattern": "bkua_(?:[a-z0-9]{40}|[a-z0-9]{53})", "reject_repeated": true},
+     {"id": "cal-api-key", "pattern": "cal_live_[a-f0-9]{32}", "reject_repeated": true},
+     {"id": "canva-client-secret", "pattern": "cnvca[a-zA-Z0-9_-]{51}", "reject_repeated": true},
+     {"id": "cartesia-api-key.1", "pattern": "sk_car_[A-Za-z0-9_]{20}", "reject_repeated": true},
+@@ -29,7 +32,7 @@
+     {"id": "cockroachlabs-cloud-api-key", "pattern": "CCDB1_[A-Za-z0-9]{22}_[A-Za-z0-9]{40}", "reject_repeated": true},
+     {"id": "configcat-sdk-key-extended", "pattern": "configcat-sdk-1/[A-Za-z0-9_-]{22}/[A-Za-z0-9_-]{22}", "reject_repeated": true},
+     {"id": "databricks-api-token", "pattern": "dapi[a-f0-9]{32}(?:-[0-9])?", "reject_repeated": true},
+-    {"id": "datastax-astra-application-token", "pattern": "AstraCS:[A-Za-z0-9]{20,}:[a-f0-9]{64}", "reject_repeated": true},
++    {"id": "datastax-astra-application-token", "pattern": "AstraCS:[A-Za-z0-9]{20,}", "reject_repeated": true},
+     {"id": "daytona-api-key", "pattern": "dtn_[a-f0-9]{64}", "reject_repeated": true},
+     {"id": "deno-account-token", "pattern": "ddp_[A-Za-z0-9]{36}", "reject_repeated": true},
+     {"id": "devcycle-server-sdk-key", "pattern": "dvc_server_[A-Za-z0-9]{8,32}", "reject_repeated": true},
+@@ -54,7 +57,7 @@
+     {"id": "figma-personal-access-token", "pattern": "(?i)figd_[A-Z0-9_-]{38,42}", "reject_repeated": true},
+     {"id": "flutterwave-encryption-key", "pattern": "FLWSECK_TEST-(?i)[a-h0-9]{12}", "reject_repeated": true},
+     {"id": "flutterwave-secret-key", "pattern": "FLWSECK_TEST-(?i)[a-h0-9]{32}-X", "reject_repeated": true},
+-    {"id": "flyio-access-token", "pattern": "FlyV1[\\t\\n\\f\\r ][A-Za-z0-9=_\\-,/+]{100,}"},
++    {"id": "flyio-access-token", "pattern": "FlyV1[\\t\\n\\f\\r ][A-Za-z0-9=_\\-,/+]{100,}", "reject_repeated": true},
+     {"id": "frameio-api-token", "pattern": "fio-u-(?i)[a-z0-9\\-_=]{64}", "reject_repeated": true},
+     {"id": "gcp-api-key", "pattern": "AIza[0-9A-Za-z_-]{35}", "reject_repeated": true},
+     {"id": "gcp-gemini-api", "pattern": "AQ\\.Ab8RN6[A-Za-z0-9_-]{44}", "reject_repeated": true},
+@@ -91,6 +94,7 @@
+     {"id": "langchain-langsmith-personal-access-token", "pattern": "lsv2_pt_[0-9a-fA-F]{32}_[0-9a-fA-F]{10}", "reject_repeated": true},
+     {"id": "langchain-langsmith-service-key", "pattern": "lsv2_sk_[0-9a-fA-F]{32}_[0-9a-fA-F]{10}", "reject_repeated": true},
+     {"id": "langfuse-secret-key.1", "pattern": "sk-lf-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", "reject_repeated": true},
++    {"id": "lichess-personal-access-token", "pattern": "lip_[A-Za-z0-9_]{16,60}", "reject_repeated": true},
+     {"id": "linear-api-key", "pattern": "lin_api_(?i)[a-z0-9]{40}", "reject_repeated": true},
+     {"id": "llama-cloud-api-key.1", "pattern": "llx-[A-Za-z0-9]{44,52}", "reject_repeated": true},
+     {"id": "mailersend-api-token", "pattern": "mlsn\\.[A-Za-z0-9]{30,100}", "reject_repeated": true},
+@@ -122,11 +126,13 @@
+     {"id": "planetscale-api-token", "pattern": "pscale_tkn_(?i)[0-9A-Za-z_=\\.-]{32,64}", "reject_repeated": true},
+     {"id": "planetscale-oauth-token", "pattern": "pscale_oauth_[0-9A-Za-z_=\\.-]{32,64}", "reject_repeated": true},
+     {"id": "planetscale-password", "pattern": "(?i)pscale_pw_(?i)[0-9A-Za-z_=\\.-]{32,64}", "reject_repeated": true},
++    {"id": "polar-oauth-access-token", "pattern": "polar_at_[A-Za-z0-9_-]{20,100}", "reject_repeated": true},
+     {"id":
 ```
 
-**File**: `frontend/packages/react/test/file-browser-wiki-conflict-editing.test.mjs` (modified, +2/-1)
+**File**: `crates/ragfs/src/privacy_matcher.rs` (modified, +15/-7)
 ```diff
-@@ -171,13 +171,14 @@ test('navigating away discards a pending Wiki conflict edit before preview loadi
-       view.container.textContent,
-       new RegExp(`${otherBody.length} characters`),
-     );
-+    const otherReads = editReads(otherFile);
+@@ -115,9 +115,10 @@ impl PrivacyMatcher {
+             parent_prefix[index] = prefixes.last().copied().unwrap_or(patterns.len());
+             for &prefix in prefixes.iter().rev() {
+                 let end = patterns[prefix].len();
+-                if !(value[..end].chars().next_back().is_some_and(word_char)
+-                    && value[end..].chars().next().is_some_and(word_char))
+-                {
++                if !joins_word(
++                    value[..end].chars().next_back(),
++                    value[end..].chars().next(),
++                ) {
+                     shorter_prefixes[index] = Some(PatternID::must(prefix));
+                     break;
+                 }
+@@ -457,8 +458,15 @@ fn next_unmarked_prefix(links: &mut [usize], mut index: usize) -> usize {
+ }
+ // Matches may not split adjacent word characters.
+ fn is_match_boundary(content: &str, at: usize) -> bool {
+-    !(content[..at].chars().next_back().is_some_and(word_char)
+-        && content[at..].chars().next().is_some_and(word_char))
++    !joins_word(
++        content[..at].chars().next_back(),
++        content[at..].chars().next(),
++    )
++}
++// ASCII next to another script, such as a token typed right after Chinese text, is not one word.
++fn joins_word(left: Option<char>, right: Option<char>) -> bool {
++    matches!((left, right), (Some(l), Some(r))
++        if word_char(l) && word_char(r) && l.is_ascii() == r.is_ascii())
+ }
+ fn word_char(c: char) -> bool {
+     c.is_alphanumeric() || c == '_'
+@@ -497,9 +505,9 @@ mod tests {
+         ]);
+         assert_eq!(
+             matcher
+-                .sanitize("pass123-v2x pass123-v2 中pass123 pass123_ pass123²")
++                .sanitize("pass123-v2x pass123-v2 中pass123 pass123_ pass123² 秘密值们 x秘密")
+                 .content,
+-            "short-v2x long 中pass123 pass123_ pass123²"
++            "short-v2x long 中short pass123_ short² 秘密值们 xshort"
+         );
+         let input = format!("🙂秘密值 {reference} session default");
+         let (found, exceeded) = matcher.find_limited(&input, 3);
+```
+
+**File**: `docs/en/concepts/13-privacy.md` (modified, +1/-1)
+```diff
+@@ -225,7 +225,7 @@ Restoration is supported for these files under the current user's Session direct
  
-     await act(async () => preview.resolve());
-     await settle();
-     assert.equal(activeTab(), otherFile);
-     assert.equal(view.container.querySelector('.cm-content'), null);
-     assert.equal(editReads(file), dashboardReads);
--    assert.equal(editReads(otherFile), 0);
-+    assert.equal(editReads(otherFile), otherReads);
-   } finally {
-     await view.unmount();
-   }
+ PrivacySanitizer does not infer sensitivity from field names. String values in the active Privacy catalog participate in automatic content scanning and reference replacement only when they contain at least 6 Unicode characters. Shorter values can still be stored, referenced, and explicitly resolved, but are excluded from global substring replacement to reduce false positives in ordinary text. Python owns catalog loading, reference generation, and cache policy; matcher construction, leftmost-longest matching, and text rewriting run in RAGFS's Rust Aho-Corasick implementation through a reusable PyO3 matcher that releases the GIL while scanning. The matcher catalog is cached per user and process-local revision; local changes invalidate it immediately, and a 3600-second TTL bounds staleness after changes made by another worker or node.
+ 
+-Values stored under `credential` for the current user take priority. Otherwise, only values in the current Skill's or Session's Privacy config that match a recognized credential format are used. Matching respects word boundaries and skips values listed in `never_mask`.
++Values stored under `credential` for the current user take priority. Otherwise, only values in the current Skill's or Session's Privacy config that match a recognized credential format are used. Matching respects word boundaries, where an ASCII value next to text in another script such as Chinese still counts as a whole word, and skips values listed in `never_mask`.
+ 
+ Using a GitHub Personal Access Token (PAT) as an example:
+ 
 ```
 
-**File**: `frontend/packages/react/test/file-tree-root-order.test.mjs` (modified, +1/-2)
+**File**: `docs/zh/concepts/13-privacy.md` (modified, +1/-1)
 ```diff
-@@ -128,8 +128,7 @@ test('FileBrowser marks only shared resources and labels an expanded empty folde
-   try {
-     await expand(user);
-     await expand(agent);
--    assert.equal(row(`${endpoints}::empty`), null);
--    await expand(endpoints);
-+    assert.ok(row(`${endpoints}::empty`));
-     assert.match(row(`${endpoints}::empty`).textContent, /该文件夹为空/);
-     assert.doesNotMatch(row(`${endpoints}::empty`).textContent, /暂无文件/);
-     assert.equal(
+@@ -223,7 +223,7 @@ fs.read(uri)
+ 
+ PrivacySanitizer 不根据字段名猜测敏感性。当前 active Privacy 中长度不少于 6 个 Unicode 字符的字符串值会参与正文自动扫描与引用替换；更短的值仍可保存、引用和显式读取，但不会参与全文替换，以降低普通正文误命中。Python 负责目录、引用和缓存策略，匹配器构建、最长匹配与正文重写由 `ragfs` 的 Rust Aho-Corasick 实现完成，并通过 PyO3 复用不可变 matcher、扫描时释放 GIL。匹配目录按用户和本进程 revision 缓存，本进程修改会立即失效，另外设有 3600 秒缓存 TTL 以覆盖多 worker/多节点修改。
+ 
+-上述按值匹配优先使用当前用户的 `credential`；未命中时，仅使用当前 Skill 或 Session 中符合凭据格式的值，其他对象不参与匹配。匹配遵循词边界，并排除 `never_mask` 中的值。
++上述按值匹配优先使用当前用户的 `credential`；未命中时，仅使用当前 Skill 或 Session 中符合凭据格式的值，其他对象不参与匹配。匹配遵循词边界（ASCII 值紧贴中文等其他文字时仍算完整的词），并排除 `never_mask` 中的值。
+ 
+ 以保存 GitHub Personal Access Token（PAT）为例：
+ 
+```
+
+**File**: `pyproject.toml` (modified, +1/-0)
+```diff
+@@ -17,6 +17,7 @@ authors = [
+     {name = "ByteDance", email = "noreply@bytedance.com"}
+ ]
+ license = "AGPL-3.0"
++license-files = ["LICENSE", "crates/ragfs/src/BETTERLEAKS_LICENSE.txt"]
+ classifiers = [
+     "Development Status :: 3 - Alpha",
+     "Intended Audience :: Developers",
+```
+
+**File**: `scripts/maintenance/privacy_rules/sync_betterleaks.py` (modified, +1/-25)
+```diff
+@@ -38,25 +38,6 @@
+     r"^(?:anthropic|aws-access-token|github|jwt|openai|private-key"
+     r"|slack-(?:app|bot|config-access|legacy|user)-)"
+ )
+-EXCLUDED = {
+-    # The prefix and body also fit ordinary identifiers such as prf_hmac_sha256_expand_label.
+-    "brave-search-api-key": "matches ordinary identifiers",
+-    "lichess-personal-access-token": "matches ordinary identifiers",
+-    "polar-oauth-access-token": "matches ordinary identifiers",
+-    "proof-full-access-api-key": "matches ordinary identifiers",
+-    "thunderstore-api-token.1": "matches ordinary identifiers",
+-    # Their lazy DFAs do not fit the per-pattern cache of the built-in detectors.
+-    "authress-service-client-access-key": "too large for the built-in cache budget",
+-    "azure-servicebus-connection-string": "too large for the built-in cache budget",
+-}
+-# Upstream relies on a trailing \b to reach the longer branch or to stop early; the
+-# extractor checks boundaries after matching, so these need the full token spelled out.
+-OVERRIDES = {
+-    "buildkite-user-access-token": "bkua_(?:[a-z0-9]{53}|[a-z0-9]{40})",
+-    "datastax-astra-application-token": "AstraCS:[A-Za-z0-9]{20,}:[a-f0-9]{64}",
+-}
+-# Real tokens of these rules contain long runs of one character.
+-KEEP_REPEATED = {"flyio-access-token"}
+ MIN_PREFIX = 3
+ 
+ ASCII_CLASS = {"w": "0-9A-Za-z_", "d": "0-9", "s": r"\t\n\f\r "}
+@@ -239,8 +220,6 @@ def convert(rules: list[dict]) -> tuple[list[dict], dict[str, str]]:
+         try:
+             if HAND_WRITTEN.match(rule_id):
+                 raise Skip("covered by a hand-written detector")
+-            if rule_id in EXCLUDED:
+-                raise Skip(EXCLUDED[rule_id])
+             if not rule.get("regex") or rule.get("path"):
+                 raise Skip("matches file paths")
+             if rule.get("skipReport"):
+@@ -253,10 +232,7 @@ def convert(rules: list[dict]) -> tuple[list[dict], dict[str, str]]:
+                 raise Skip("no fixed prefix")
+             if fixed:
+                 raise Skip("fixed string without a secret part")
+-            detector = {"id": rule_id, "pattern": to_rust(OVERRIDES.get(rule_id, pattern))}
+-            if rule_id not in KEEP_REPEATED:
+-                detector["reject_repeated"] = True
+-            detectors.append(detector)
++            detectors.append({"id": rule_id, "pattern": to_rust(pattern), "reject_repeated": True})
+         except Skip as reason:
+             skipped[rule_id] = str(reason)
+     return sorted(detectors, key=lambda detector: detector["id"]), skipped
+```
+
+**File**: `tests/server/test_api_privacy_configs.py` (modified, +15/-0)
+```diff
+@@ -677,6 +677,21 @@ async def test_privacy_seal_replaces_registered_values_when_mode_is_off(
+     assert again == {"revision": revision, "texts": [None]}
+ 
+ 
++async def test_privacy_seal_replaces_a_new_token_typed_next_to_cjk_text(client: httpx.AsyncClient):
++    token = _github_token("cjk-adjacent")
++    response = await _seal(
++        client,
++        {"text": f"密钥是{token}请保存", "enroll": True},
++        f"历史消息里的{token}也要替换",
++    )
++    assert response.status_code == 200, response.text
++    sealed, history = response.json()["result"]["texts"]
++    reference = sealed["replaced"][0]["reference"]
++    assert sealed["replaced"][0]["created"] is True
++    assert sealed["text"] == f"密钥是{reference}请保存"
++    assert history["text"] == f"历史消息里的{reference}也要替换"
++
++
+ async def test_privacy_seal_enrolls_new_tokens_once(client: httpx.AsyncClient, service):
+     token = _github_token("enroll-once")
+     first = await _seal(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8379** (closed): feat(retrieve): add RL query planner intent-analysis prompt (@Guoxuter)
-- **PR #8372** (2026-11-24): fix(acl): restore empty-string grant decoding on v0.5.2 (@chuanbao666)
-- **PR #8371** (2026-11-24): fix(acl): restore empty-string grant decoding (@chuanbao666)
-- **PR #8369** (2026-11-24): fix(react): 保持未知预览类型并修复前端测试 (@cocolord)
-- **PR #8367** (2026-11-24): test(react): 修复当前用户目录展开测试卡死 (@cocolord)
-- **PR #8363** (2026-11-24): feat(superagent): refresh the /tasks cards in place (@krsish)
+- **PR #8603** (closed): fix(privacy): replace registered values typed right next to non-ASCII text (@t0saki)
+- **PR #8602** (2026-11-27): fix(privacy): match values next to non-ASCII text, simplify the Betterleaks import (@t0saki)
+- **PR #8597** (2026-11-27): fix(superagent): keep card images named by img_key or i18n_img_key (@ZaynJarvis)
+- **PR #8595** (2026-11-27): fix(superagent): read one language of a composite interactive card (@MaojiaSheng)
+- **PR #8590** (2026-11-27): docs(gateway): end the cache-hit range where memory A is missing (@openviking-superagent)
+- **PR #8588** (2026-11-27): fix(snapshot-log)!: backport mysql branch limit to v0.5.6 (@baojun-zhang)
 
 ---
 
@@ -2220,31 +2365,39 @@ Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. acl): restore empty-string grant decoding
+## X. snapshot-log)!: scope postgres indexes and use full paths
 
 **RULE**:
-When implementing operations in `docs/en/concepts/15-acl.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ragfs-python/src/git.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e13f0441`: acl): restore empty-string grant decoding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bab33336`: snapshot-log)!: scope postgres indexes and use full paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/concepts/15-acl.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ragfs-python/src/git.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. Exact empty-string elements introduced by offline indexes are ignored on reads; other invalid grant tokens are rejected. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
+                service_name,
+        let other = build_snapshot_log_store(&cfg, "other-service")
+            .unwrap()
+            .expect("PG index enabled for another service");
+            assert!(other
+                .load_latest_indexed_commit(&account, "main")
+                .await
+                .unwrap()
+                .is_none());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e13f0441` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bab33336` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "d421d520",
+    "sourceVersion": "280caf35",
     "license": "AGPL-3.0",
-    "contentHash": "6d0c2c9be61c5f4b6c75c583c38afbeb9839964f7d39a969b0c26f670c0f296b",
-    "lastHarvestedAt": "2026-11-27T09:17:43.839Z",
+    "contentHash": "52ec2a8ee89abf90da2e2dcc00b93a650274018485700e510d0abaa91f5b6644",
+    "lastHarvestedAt": "2026-11-28T04:12:26.721Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {

@@ -4,22 +4,22 @@
 {
   "source_repository": "volcengine/OpenViking",
   "source_url": "https://github.com/volcengine/OpenViking",
-  "source_version": "fe354f74",
+  "source_version": "280caf35",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-26T15:02:25.792Z",
+  "timestamp": "2026-11-28T04:12:26.976Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-volcengine-openviking",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `fe354f74`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-26T15:02:25.792Z`  
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `280caf35`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-28T04:12:26.976Z`  
 > **Learning ID**: `learn-github-volcengine-openviking`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `volcengine/OpenViking` (Commit: `fe354f74`)
+- **Target Repository**: `volcengine/OpenViking` (Commit: `280caf35`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T15:02:24.163Z  
+> **Harvest Timestamp**: 2026-11-28T04:12:25.306Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42862 stars
+- **Stars / Engagement**: 42946 stars
 
 ---
 
@@ -900,10 +900,13 @@ import numpy as np
 BENCHMARK_DIR = Path(__file__).resolve().parent
 if str(BENCHMARK_DIR) not in sys.path:
     sys.path.insert(0, str(BENCHMARK_DIR))
+if not __package__:
+    sys.path.insert(0, str(BENCHMARK_DIR.parents[1]))
 
 from run_collection_benchmark import parse_positive_int_list  # noqa: E402
 from run_index_benchmark import percentile, prepare_dataset, runtime_metadata  # noqa: E402
 
+from benchmark.vector_config import BenchmarkVectorConfigResolver  # noqa: E402
 from openviking.server.identity import RequestContext, Role  # noqa: E402
 from openviking.storage.viking_vector_index_backend import (  # noqa: E402
     VikingVectorIndexBackend,
@@ -925,18 +928,21 @@ def collection_schema(collection_name: str, dimension: int) -> dict[str, Any]:
             {"FieldName": "id", "FieldType": "string", "IsPrimaryKey": True},
             {"FieldName": "vector", "FieldType": "vector", "Dim": dimension},
             {"FieldName": "account_id", "FieldType": "string"},
+            {"FieldName": "uri", "FieldType": "path"},
             {"FieldName": "uniform_bucket", "FieldType": "int64"},
             {"FieldName": "row_number", "FieldType": "int64"},
         ],
-        "ScalarIndex": ["account_id", "uniform_bucket", "row_number"],
+        "ScalarIndex": ["account_id", "uri", "uniform_bucket", "row_number"],
     }
 
 
 def make_record(row_index: int, vector: Sequence[float]) -> dict[str, Any]:
+    record_id = f"record-{row_index}"
     return {
-        "id": f"record-{row_index}",
+        "id": record_id,
         "vector": list(vector),
         "account_id": ACCOUNT_ID,
+        "uri": f"viking://resources/bench/cuvs-service/{record_id}",
         "uniform_bucket": row_index % 1000,
         "row_number": row_index,
     }
@@ -1163,21 +1169,7 @@ async def run_cached_scenario(
         result["concurrency"] = concurrency
         results.append(result)
     return {
-        "name": name,
-        "filter_mode": "cached",
-        "filter": filter,
-        "initial_filter_query_ms": initial_filter_ms,
-        "results": results,
-    }
-
-
-async def run_unique_filter_scenario(
-    manager: VikingVectorIndexBackend,
-    ctx: RequestContext,
-    queries: np.ndarray,
-    *,
-    vector_count: int,
-   
+        "name": name
 ```
 
 ### Core Architecture Module: `benchmark/locomo/vikingbot/progress_utils.py`
@@ -1488,11 +1480,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8416** (2026-11-27): **[Bug]: `backup --include-vectors` fails permanently — consistency checker expects index records for namespaces that reindex cannot build**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  `ov backup --include-vectors` and `ov system consistency viking://` fail with `Cannot export incomplete OpenViking vector index snapshot` because the consistency checker (`openviking/storage/index_consistency.py`) builds index expectations for namespaces where the reindex path either refuses to run or skips by design. The checker and the indexer disagree on which namespaces are indexable, so the check can never pass — not after a full-namespace `semantic_and_vectors --force` reindex that completes with `failed_records=0`.  Three concrete mismatches were observed:  1. **`viking://system/*` (FILE_ONLY)** — `namespace_policy.py` marks the system    namespace `processing_mode=FILE_ONLY, supports_reindex=False`, and    `reindex_executor.py` rejects it with `reindex is not supported for namespace`,    but `index_consistency.py` only excludes sessions    (`NON_INDEX_SCOPES = frozenset({"session"})`), so it still expects level=0/1    records for every system sidecar. These records can never be created. 2. **`viking://agent` root** — reindex of the root URI is rejected    (`UNSUPPORTED_URI`), yet the checker expects its level=0/1 records. Children    (`endpoints`, `payments`) reindex fine; `agent/skills` reindex completes    (`rebuilt_records=6, failed_records=0`) but its level=0/1 records stay missing. 3. **Fingerprint-skip with absent record** — for `viking://user/alice/skills`,    `.abstract.md`/`.
+
 - **Issue #7814** (2026-11-19): **[Bug]: 100篇目录输入，生成wiki，非常耗时且存在循环调用**
   *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  版本	 ：                          0.4.20	                    ；       新版对照（官方 0.5.5 包） 运行时间：	          约 11 分 50 秒，完成	     ；       30 分 12 秒，未完成 模型 token：	      约 208 万                      ；     	已消耗约 501 万 来源抽取	：       138 篇进入清单	         ；          138 篇均生成中间记录 最终 Wiki	 ：           26 个 Markdown 文件	    ；            0 个页面  来源抽取已完成 134/138，只有 4 个仍在运行。到目前为止，输入约 245 万、输出约 149 万 token；新版确实显著更耗模型资源。马上可以观察它进入合并阶段后的实际页面产出。   138/138 个来源都完成了逐篇抽取，并生成 138 条记录。流程已进入审阅／合并；这一阶段决定最终 Wiki 的内容覆盖，我会继续核对任务状态和实际页面。   逐篇抽取完成后，审阅器判断这 138 条记录跨多个无关主题，正在调整合并指令；目前已生成分组文件，但还没有最终 Wiki 页面。这里是新版的关键风险点：若把全部记录压到同一组，可能再次遗漏独立主题。我会继续观察合并结果和 token 增量。  现在满足你设定的停止条件：138 条抽取记录已生成，但合并阶段连续 27 次模型调用，额外消耗约 74 万输入 token，只反复读取同一个 assignment.json 的异常偏移，仍未写出 Wiki 页面。我会停止这轮独立服务，保存工作区和日志，再分析卡住的原因；继续等待只会增加无效调用。  ### Steps to Reproduce  可以随便找100篇文章，或者200篇，调用wiki能力。  ### Expected Behavior  能完整较快的生成wiki  ### Actual Behavior  wiki生成  ### Minimal Reproducible Example  ```python  ```  ### Error Logs  ```shell  ```  ### OpenViking Version  0.5.5  ### Python Version  Python 3.12.8  ### Operating System  Windows  ### Model Backend  None  ### Additional Context  _No response_
-
-- **Issue #7802** (2026-11-19): **[Bug]: 环境存在 socks5 代理（ALL_PROXY）时 ov 命令报 unsupported scheme socks5，且配置向导隐藏真实错误**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  而同一台机器上浏览器、curl访问同一个服务端均正常，但使用 `ov config` 添加配置时报错 「无法连接服务器。请检查 URL 和网络连接。」  ### Steps to Reproduce  1. 准备 socks5 代理环境：     ```bash    export ALL_PROXY=socks5://127.0.0.1:10808    ```  2. 服务端可直连，自部署地址为 `http://private-server:1933`，用 curl 验证正常：     ```bash    curl -s http://private-server:1933/health    # {"status":"ok","healthy":true,"version":"v0.5.5","auth_mode":"api_key"}    ```  3. 用 CLI 写入配置：     ```bash    printf '%s' "$KEY" | ov config add custom --name home \      --url http://private-server:1933 --api-key-stdin --activate    ```  4. 执行健康检查：     ```bash    ov health    ```  ### Expected Behavior  1. 正常通过 socks5 代理访问服务端； 2. 遇到不支持的代理 scheme 时，忽略该代理（回退直连）并给出警告，而不是让所有请求失败； 3. 至少把真实错误（`unsupported scheme socks5`）透出到 `ov config` / 向导界面上，并提示检查 `ALL_PROXY` / `NO_PROXY`。  ### Actual Behavior  `ov health`（含详情）：  ``` OPENVIKING 健康检查  ╭─ 连接错误 ───────────────────────────────────────────────────────────╮ │ 无法连接 OpenViking。请先查看详情，再确认服务器是否运行、URL         │ │ 是否正确。 详情：HTTP request failed: error sending request for url  │ │ (http://private-server:1933/health): client error (Connect):            │ │ unsupported scheme socks5                                            │ ╰──────────────────────────────────────────────────────────────────────╯ ```  `ov config add custom` / 配置向导（向导界面上只剩一句通用文案）：  ``` Error [validation_failed] Could not reach the custom server. HTTP request failed: error sending request for ur
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1509,993 +1501,837 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b4dc8c4` (2026-11-26)
-**Commit Message**: fix(plugins): send the profile again after a host compaction drops it (#8497)
+### Incident Patch 1: `bab33336` (2026-11-27)
+**Commit Message**: fix(snapshot-log)!: scope postgres indexes and use full paths (#8562)
 
-* fix(dsh): send the profile again after a compaction drops it
+* fix(snapshot-log)!: isolate postgres indexes by service_name
 
-The profile block (with the skill catalog) went out once per process: a
-latch set at delivery was never cleared, and the re-seed check scanned the
-raw event log, which a compaction never edits. After the first compaction
-the model lost the block for the rest of the session, and a restart over
-the compacted session did not bring it back either.
+Keep shared PostgreSQL index progress, path rows and append locks
+independent for each deployment. Align schema limits with the
+64-byte service_name and account contract.
 
-The latch is gone. A pre-step sends the block whenever the model would not
-see it: not in session.deriveMessages() (the history the model keeps), the
-pending inbox, or the step's claimed batch. The batch check also covers a
-pressure compaction that runs inside the pre-step after the startup block
-was claimed, and a cancelled step no longer loses the block for good.
+BREAKING CHANGE: PostgreSQL store constructors require service_name.
+Existing tables must be rebuilt with the revised PostgreSQL DDL.
 
-* fix(opencode): send the session-start context again after a compaction
+* test(snapshot-log): remove shared postgres isolation test
 
-The session-start block went out on the first message of a session and an
-in-memory set kept it from ever going out again, so a compaction that
-summarized it away left the session without the profile and skill catalog.
+* fix(snapshot-log)!: use full paths in postgres indexes
 
-- The set now records the compaction each block
+Prevent path digest collisions from rejecting PostgreSQL history rows.
+Limit indexed branch names to 128 bytes so full-path keys fit.
 
-**File**: `docs/en/agent-integrations/16-capability-reference.md` (modified, +12/-11)
+BREAKING CHANGE: PostgreSQL SnapshotLog indexes branches up to 128 bytes.
+Shared runtime field-limit alignment is deferred to a separate change.
+
+* fix(snapshot-log): align postgres runtime branch limit
+
+* fix(snapshot-log)!: set shared branch limit to 128 bytes
+
+Use one branch limit for SnapshotLog providers and remove the
+PostgreSQL-specific override.
+
+BREAKING CHANGE: SnapshotLog providers index branches up to 128 bytes.
+
+**File**: `crates/ragfs-python/src/git.rs` (modified, +9/-0)
 ```diff
-@@ -60,7 +60,7 @@ Long-term memories are extracted from a session only after a **commit**. Capture
- | Qoder CLI | Yes, session-aware | Profile, memory index, skills | Every 8 captured messages | Yes | Commits uncommitted messages |
- | Antigravity | Yes, session-aware, at the first model call of each turn | Profile, memory index, skills | Every turn | No exit hook; turns are already committed | No pre-compaction hook |
- | OpenCode | Yes, session-aware | Profile, memory index, skills, indexed repositories | At 20,000 pending tokens, when idle | Yes, within the host's cleanup time | Commits around compaction |
--| DSH | Yes, session-aware | Profile, memory index, skills, once per session | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
-+| DSH | Yes, session-aware | Profile, memory index, skills | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
- | pi | Yes, session-aware | Profile, memory index, skills, every turn | Takeover on: about 30,000 tokens; off: 20,000 | Takeover on: no; off: yes | Takeover replaces pi's summary |
- | OpenClaw | Yes, session-aware | Profile, every turn | At half the token budget (64,000 by default) | No | The plugin owns compaction |
- | Hermes (bundled) | Yes, session-aware with a fallback | Profile and memory listings | No; only at session boundaries | Yes, if pending uploads finish within 10 seconds | Commits at fork-style compaction |
-@@ -257,13 +257,14 @@ When each integration injects it:
- | Integration | When |
- |---|---|
- | Claude Code | `SessionStart`, every source |
--| Codex | `SessionStart` on startup, clear, and resume |
--| Cursor, TRAE, TRAE CN, ZCode, Antigravity | `SessionStart` |
-+| Codex | `SessionStart` on startup, clear, resume, and compact |
-+| Cursor, TRAE, TRAE CN, ZCode | `SessionStart` |
-+| Antigravity | `SessionStart`, and the first turn after each compaction checkpoint in the transcript |
- | Kimi Code | The first prompt; retried on later prompts until it succeeds |
--| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent |
-+| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent. CodeBuddy drops `SessionStart` context at a compaction, so the next prompt sends it again |
- | Qoder CLI | `SessionStart`, every source (`startup`, `resume`, `compact`) |
--| OpenCode | The first message of each session; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
--| DSH | Once per session; not sent again after compaction |
-+| OpenCode | The first message of each session and the first after each compaction; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
-+| DSH | At session start, and again on the next model step when a compaction dropped it |
- | pi | In the system prompt, rebuilt every turn |
- | OpenClaw | In the system prompt, rebuilt every turn: `<user-profile>` for the user's profile and, with `peer_role`, the actor peer's profile. No memory index or skill catalog |
- | Hermes | Its own reader loads the profile and the preferences and entities listings, with a 6,000-token default budget |
-@@ -442,15 +443,15 @@ When the host shortens its context, most integrations make sure the dropped mess
- | Integration | Approach | Before compaction | After compaction |
- |---|---|---|---|
- | Claude Code | Host summarizes | `PreCompact` commits synchronously; this is the one write that never runs in the background, because the host rewrites the transcript right after | `SessionStart` with `source="compact"` injects the archive overview and up to 5 summaries |
--| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | The archive summary is injected on resume |
-+| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | `SessionStart` with `source="compact"` sends the profile again; the archive summary is injected on resume |
- | Cursor | Host summarizes | `preCompact` commits | Nothing |
--| CodeBuddy Code | Host summarizes | `PreCompact` commits | Nothing |
-+| CodeBuddy Code | Host summarizes | `PreCompact` commits | The next prompt sends the profile again |
- | Qoder CLI | Host summarizes | `PreCompact` commits | Nothing |
- | TRAE, TRAE CN, ZCode | Host summarizes | No pre-compaction event | Nothing |
--| Antigravity | Not verified | No pre-compaction hook | Nothing |
-+| Antigravity | Host summarizes | No pre-compaction hook | The first turn after the compaction checkpoint sends the profile again |
- | Kimi Code | Host s
-```
-
-**File**: `docs/en/agent-integrations/17-dsh.md` (modified, +1/-1)
-```diff
-@@ -118,7 +118,7 @@ To remove the bundle, use **Uninstall** on its Plugins page entry, or quit Deskt
- 
- ## How it works
- 
--The bundle runs inside DSH as a Cordis plugin rather than as external hooks, so it follows the session in-process. At session start it injects your OpenViking profile block, an index of available memories, and an `<available-skills>` catalog of your OpenViking skills. When a model step takes new user input, it searches OpenViking with the text the user typed and appends what it finds to that step as a durable message, so the injection replays with the session and is visible to compaction. Context that DSH or other plugins inject (for example `time-context` or job notices) and tool results neither trigger recall nor enter the query. It captures user, assistant, and (optionally) tool-result messages straight from DSH's event stream, skipping injected context, and commits to OpenViking once pending tokens cross the threshold or when DSH begins a compaction, archiving every captured message. Writes that fail land in a pending queue and replay at the next session start.
-+The bundle runs inside DSH as a Cordis plugin rather than as external hooks, so it follows the session in-process. At session start it injects your OpenViking profile block, an index of available memories, and an `<available-skills>` catalog of your OpenViking skills; when a compaction summarizes that block away, the next model step sends it again. When a model step takes new user input, it searches OpenViking with the text the user typed and appends what it finds to that step as a durable message, so the injection replays with the session and is visible to compaction. Context that DSH or other plugins inject (for example `time-context` or job notices) and tool results neither trigger recall nor enter the query. It captures user, assistant, and (optionally) tool-result messages straight from DSH's event stream, skipping injected context, and commits to OpenViking once pending tokens cross the threshold or when DSH begins a compaction, archiving every captured message. Writes that fail land in a pending queue and replay at the next session start.
- 
- Each DSH session maps to `dsh-<session-id>` in OpenViking, and every subagent gets its own session.
- 
-```
-
-**File**: `docs/zh/agent-integrations/16-capability-reference.md` (modified, +12/-11)
-```diff
-@@ -60,7 +60,7 @@
- | Qoder CLI | 是，带会话 | profile、记忆索引、skill | 每捕获 8 条消息 | 是 | 提交尚未提交的消息 |
- | Antigravity | 是，带会话，在每轮第一次模型调用时 | profile、记忆索引、skill | 每轮 | 没有退出 hook；每轮已提交 | 没有压缩前 hook |
- | OpenCode | 是，带会话 | profile、记忆索引、skill、已索引的仓库 | 空闲时，待提交 token 达到 20,000 | 是，在宿主的清理时限内 | 在压缩前后提交 |
--| DSH | 是，带会话 | profile、记忆索引、skill，每个会话一次 | 待提交 token 达到 20,000 | 是，预算 3 秒 | 先提交，再由宿主摘要 |
-+| DSH | 是，带会话 | profile、记忆索引、skill | 待提交 token 达到 20,000 | 是，预算 3 秒 | 先提交，再由宿主摘要 |
- | pi | 是，带会话 | profile、记忆索引、skill，每轮 | takeover 开：约 30,000 token；关：20,000 | takeover 开：否；关：是 | takeover 替换 pi 的摘要 |
- | OpenClaw | 是，带会话 | profile，每轮 | token 预算的一半（默认 64,000） | 否 | 插件接管压缩 |
- | Hermes（内置） | 是，带会话，有回退路径 | profile 与记忆清单 | 否；只在会话边界 | 是，前提是待上传内容在 10 秒内完成 | fork 型压缩时提交 |
-@@ -255,13 +255,14 @@ skill 走单独的路径。创建、安装或替换 skill 用 MCP `add_skill` 
- | 集成 | 时机 |
- |---|---|
- | Claude Code | `SessionStart`，所有 source |
--| Codex | `SessionStart` 的 startup、clear 和 resume |
--| Cursor、TRAE、TRAE CN、ZCode、Antigravity | `SessionStart` |
-+| Codex | `SessionStart` 的 startup、clear、resume 和 compact |
-+| Cursor、TRAE、TRAE CN、ZCode | `SessionStart` |
-+| Antigravity | `SessionStart`，以及 transcript 中每个压缩检查点之后的第一轮 |
- | Kimi Code | 首次提问时；失败后在后续提问中重试，直到成功 |
--| CodeBuddy Code | `SessionStart`，所有 source；同一会话内可能投递两次，因此 hook 是幂等的 |
-+| CodeBuddy Code | `SessionStart`，所有 source；同一会话内可能投递两次，因此 hook 是幂等的。CodeBuddy 压缩时会丢掉 `SessionStart` 上下文，因此下一次提问重新发送 |
- | Qoder CLI | `SessionStart`，所有 source（`startup`、`resume`、`compact`） |
--| OpenCode | 每个会话的第一条消息；失败后不重试，子代理会话跳过。已索引仓库的列表同时进入 system prompt |
--| DSH | 每个会话一次；压缩后不再发送 |
-+| OpenCode | 每个会话的第一条消息，以及每次压缩后的第一条消息；失败后不重试，子代理会话跳过。已索引仓库的列表同时进入 system prompt |
-+| DSH | 会话开始时；压缩去掉它之后，在下一个模型步骤重新发送 |
- | pi | 放在 system prompt 中，每轮重建 |
- | OpenClaw | 放在 system prompt 中，每轮重建：`<user-profile>` 包含用户的 profile，设置了 `peer_role` 时还包含当前 actor peer 的 profile。不注入记忆索引和 skill 清单 |
- | Hermes | 用自己的读取逻辑加载 profile 及 preferences、entities 清单，默认预算 6,000 token |
-@@ -440,15 +441,15 @@ Claude Code 和 Codex 默认 `auto`，其他集成默认 `off`。支持服务端
- | 集成 | 方式 | 压缩前 | 压缩后 |
- |---|---|---|---|
- | Claude Code | 宿主摘要 | `PreCompact` 同步提交；这是唯一不在后台运行的写入，因为宿主紧接着就会重写 transcript | `source="compact"` 的 `SessionStart` 注入归档概览和最多 5 条摘要 |
--| Codex、TraeCode CLI 2.0 | 宿主摘要 | `PreCompact` 补齐未捕获的轮次，提交全部内容，并开始一个新的 OpenViking 会话。补齐不完整时不提交，稍后重试 | resume 时注入归档摘要 |
-+| Codex、TraeCode CLI 2.0 | 宿主摘要 | `PreCompact` 补齐未捕获的轮次，提交全部内容，并开始一个新的 OpenViking 会话。补齐不完整时不提交，稍后重试 | `source="compact"` 的 `SessionStart` 重新发送 profile；resume 时注入归档摘要 |
- | Cursor | 宿主摘要 | `preCompact` 提交 | 无 |
--| CodeBuddy Code | 宿主摘要 | `PreCompact` 提交 | 无 |
-+| CodeBuddy Code | 宿主摘要 | `PreCompact` 提交 | 下一次提问重新发送 profile |
- | Qoder CLI | 宿主摘要 | `PreCompact` 提交 | 无 |
- | TRAE、TRAE CN、ZCode | 宿主摘要 | 没有压缩前事件 | 无 |
--| Antigravity | 未验证 | 没有压缩前 hook | 无 |
-+| Antigravity | 宿主摘要 | 没有压缩前 hook | 压缩检查点之后的第一轮重新发送 profile |
- | Kimi Code | 宿主摘要 | `PreCompact` 提交 | 无 |
--| OpenCode | 宿主摘要 | v1 刷新并提交；v2 捕获 transcript | v1 在 `session.compacted` 时再提交一次；v2 在 `session.compaction.ended` 后提交 |
--| DSH | 宿主摘要 | `compaction/start` 无论 token 阈值如何都会提交。注入的上下文是一条用户消息，随宿主压缩一起缩减；profile 不再发送 | 无 |
-+| OpenCode | 宿主摘要 | v1 刷新并提交；v2 捕获 transcript | v1 在 `session.compacted` 时再提交一次；v2 在 `session.compaction.ended` 后提交。下一条消息重新发送会话开始上下文 |
-+| DSH | 宿主摘要 | `compaction/start` 无论 token 阈值如何都会提交。注入的上下文是一条用户消息，随宿主压缩一起缩减 | 压缩去掉了 profile 时，下一个模型步骤重新发送 |
- | pi | takeover，默认开启 | 提交并等待归档概览 | 用概览替换 pi 的摘要；失败时 pi 照常压缩 |
- | OpenClaw | 插件接管压缩 | `compact()` 提交并等待 | 下一次上下文组装从服务端重建历史 |
- | Hermes（内置） | 宿主摘要 | fork 型压缩提交旧会话；原地压缩不做任何处理 | 无 |
-```
-
-**File**: `docs/zh/agent-integrations/17-dsh.md` (modified, +1/-1)
-```diff
-@@ -118,7 +118,7 @@ Windows 上安装器不可用，只能用这种方式；macOS 上不想跑安装
- 
- ## 工作方式
- 
--插件以 Cordis 插件的形式跑在 DSH 进程内，而不是外挂 hook，因此能贴着会话走。会话开始时注入 OpenViking 画像块、可用记忆索引和 OpenViking 技能清单 `<available-skills>`；模型步骤带有新的用户输入时，用用户输入的文本做语义检索，把结果作为持久消息追加到同一步骤，因此注入会随会话重放，也对压缩可见。DSH 或其他插件注入的上下文（例如 `time-context`、job 通知）和工具结果既不触发召回，也不拼进检索文本。它直接从 DSH 的事件流捕获 user、assistant 以及（可选的）工具结果消息，并跳过注入的上下文，待同步 token 超过阈值或 DSH 开始压缩时即 commit，每次 commit 都归档全部已捕获的消息。写入失败会进入待写队列，在下次会话开始时重放。
-+插件以 Cordis 插件的形式跑在 DSH 进程内，而不是外挂 hook，因此能贴着会话走。会话开始时注入 OpenViking 画像块、可用记忆索引和 OpenViking 技能清单 `<available-skills>`，压缩把这块内容摘要掉后，下一个模型步骤会重新发送；模型步骤带有新的用户输入时，用用户输入的文本做语义检索，把结果作为持久消息追加到同一步骤，因此注入会随会话重放，也对压缩可见。DSH 或其他插件注入的上下文（例如 `time-context`、job 通知）和工具结果既不触发召回，也不拼进检索文本。它直接从 DSH 的事件流捕获 user、assistant 以及（可选的）工具结果消息，并跳过注入的上下文，待同步 token 超过阈值或 DSH 开始压缩时即 commit，每次 commit 都归档全部已捕获的消息。写入失败会进入待写队列，在下次会话开始时重放。
- 
- 每个 DSH 会话映射为 OpenViking 中的 `dsh-<session-id>`，子 agent 各自拥有独立会话。
- 
-```
-
-**File**: `examples/agent-hook-plugin/hosts/antigravity.mjs` (modified, +20/-2)
-```diff
-@@ -98,6 +98,23 @@ export function resolveAntigravityTurnStep(jsonl, initialNumSteps, lastUserInput
-   return lastUserStep + 1;
- }
- 
-+/**
-+ * The step index of the latest compaction. Antigravity has no compaction hook;
-+ * each compaction writes a `CHECKPOINT` step, and the context before it, the
-+ * session-start profile included, is gone.
-+ */
-+export function latestAntigravityCheckpoint(jsonl) {
-+  let latest;
-+  for (const line of String(jsonl || "").split("\n")) {
-+    if (!line.includes('"CHECKPOINT"')) continue;
-+    try {
-+      const step = JSON.parse(line);
-+      if (step.type === "CHECKPOINT" && step.source === "SYSTEM") latest = step.step_index;
-+    } catch { /* a partial last line */ }
-+  }
-+  return latest;
-+}
-+
- /** The user requests and text replies of finished steps after `afterStep`. */
- export function buildAntigravityTurns(jsonl, afterStep = -1) {
-   const turns = [];
-@@ -168,8 +185,9 @@ export const antigravity = {
-     let turnStep;
-     if (input.transcriptPath) {
-       try {
--        turnStep = resolveAntigravityTurnStep(
--          readFileSync(antigravityTranscriptPath(input.transcriptPath), "utf8"), input.initialNumSteps, text);
-+        const jsonl = readFileSync(antigravityTranscriptPath(input.transcriptPath), "utf8");
-+        turnStep = resolveAntigravityTurnStep(jsonl, input.initialNumSteps, text);
-+        input.latestCompaction = latestAntigravityCheckpoint(jsonl);
-       } catch {
-         turnStep = undefined;
-       }
-```
-
-**File**: `examples/agent-hook-plugin/hosts/codebuddy.mjs` (modified, +4/-2)
-```diff
-@@ -42,8 +42,10 @@ export const codebuddy = {
-     return null;
-   },
-   // SessionStart context is dropped after a compaction and a --resume, so they
--  // leave the note for the next UserPromptSubmit. `/compact` after `-c` fired
--  // no PreCompact, hence SessionStart(compact) too (DESIGN.md §12).
-+  // leave the note, and after a compaction the profile, for the next
-+  // UserPromptSubmit. `/compact` after `-c` fired no PreCompact, hence
-+  // SessionStart(compact) too (DESIGN.md §12).
-+  compactionDropsProfile: true,
-   historyPointer: {
-     sessionDefault: true,
-     defer: (event, input) => {
-```
-
-**File**: `examples/agent-hook-plugin/hosts/codebuddy/plugin.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "openviking-memory",
--  "version": "0.5.37",
-+  "version": "0.5.38",
-   "description": "Long-term semantic memory for the CodeBuddy Code CLI, powered by OpenViking. Injects relevant context at session start and on each prompt, and captures the conversation back into OpenViking.",
-   "author": {
-     "name": "OpenViking",
-```
-
-**File**: `examples/agent-hook-plugin/hosts/cursor/openviking.integration.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "schemaVersion": 1,
-   "id": "openviking-memory",
--  "version": "0.5.37",
-+  "version": "0.5.38",
-   "clients": [
-     "cursor"
-   ],
-```
-
----
-
-### Incident Patch 2: `fe354f74` (2026-11-26)
-**Commit Message**: fix(snapshot-log): isolate sqlite/mysql index by service_name (#8452)
-
-* feat(snapshot-log): isolate sqlite/mysql index by service_name
-
-Add a service_name column to the SQLite and MySQL snapshot_log tables and
-prefix the unique key and both lookup indexes with it, so multiple OV
-deployments sharing one database keep independent path-history indexes.
-
-Thread the top-level service_name from the binding through build_git_service
-into the SQLite/MySQL store constructors; validate it as 1..=255 ASCII
-[0-9A-Za-z._-] at connect time. The SnapshotLogStore trait and GitService
-are unchanged.
-
-MySQL no longer runs CREATE TABLE at startup. Provision the table once with
-the new snapshot_log_mysql_init.sql so the runtime role needs only
-SELECT/INSERT, keeping DDL and DML privileges separate. A missing table or
-insufficient privilege disables the index and falls back to Git scanning.
-
-PostgreSQL is intentionally left unchanged and gets the same service_name
-treatment in a follow-up change, keeping this commit easy to backport.
-
-* fix(snapshot-log): cap mysql service_name at 128 to fit index limit
-
-Adding service_name to the MySQL composite indexes pushed the path-bearing
-keys past InnoDB's 3072
-
-**File**: `crates/ragfs-python/src/binding/client.rs` (modified, +4/-2)
-```diff
-@@ -8,25 +8,27 @@ fn build_git_from_cfg(
-     git_cfg: ragfs::git::GitConfig,
-     fs: &Arc<MountableFS>,
-     rt: &tokio::runtime::Runtime,
-+    service_name: &str,
- ) -> PyResult<(Option<Arc<ragfs::git::GitService>>, Option<String>)> {
-     let backend = git_cfg.backend.clone();
-     let vfs = fs.clone() as Arc<dyn ragfs::core::FileSystem>;
-     let _guard = rt.enter();
--    let svc = git::build_git_service(&git_cfg, vfs)?;
-+    let svc = git::build_git_service(&git_cfg, vfs, service_name)?;
-     Ok((svc, Some(backend)))
- }
- 
- fn load_git_from_config(
-     path: &str,
-     fs: &Arc<MountableFS>,
-     rt: &tokio::runtime::Runtime,
-+    service_name: &str,
- ) -> PyResult<(Option<Arc<ragfs::git::GitService>>, Option<String>)> {
-     let body = std::fs::read_to_string(path)
-         .map_err(|e| PyRuntimeError::new_err(format!("read config_path {}: {}", path, e)))?;
-     let cfg: BindingConfig = toml::from_str(&body)
-         .map_err(|e| PyRuntimeError::new_err(format!("parse config_path: {}", e)))?;
-     match cfg.git {
--        Some(git_cfg) => build_git_from_cfg(git_cfg, fs, rt),
-+        Some(git_cfg) => build_git_from_cfg(git_cfg, fs, rt, service_name),
-         None => Ok((None, None)),
-     }
- }
-```
-
-**File**: `crates/ragfs-python/src/binding/client/constructor.rs` (modified, +12/-2)
-```diff
-@@ -236,9 +236,19 @@ impl RAGFSBindingClient {
-         // Build the git service from inline config when present; otherwise fall
-         // back to loading the [git] section from a config file path.
-         let (git_service, git_backend) = match inline_git_cfg {
--            Some(git_cfg) => build_git_from_cfg(git_cfg, &stack.mountable, &rt)?,
-+            Some(git_cfg) => {
-+                let service_name = service_name
-+                    .as_deref()
-+                    .ok_or_else(|| PyValueError::new_err("service_name is required"))?;
-+                build_git_from_cfg(git_cfg, &stack.mountable, &rt, service_name)?
-+            }
-             None => match git_config_path {
--                Some(path) => load_git_from_config(path, &stack.mountable, &rt)?,
-+                Some(path) => load_git_from_config(
-+                    path,
-+                    &stack.mountable,
-+                    &rt,
-+                    service_name.as_deref().unwrap_or("ragfs"),
-+                )?,
-                 None => (None, None),
-             },
-         };
-```
-
-**File**: `crates/ragfs-python/src/git.rs` (modified, +16/-9)
-```diff
-@@ -42,6 +42,7 @@ use ragfs::git::{CasMode, S3Config, S3IndexStore, S3ObjectStore, S3RefStore};
- pub fn build_git_service(
-     cfg: &GitConfig,
-     vfs: Arc<dyn FileSystem>,
-+    service_name: &str,
- ) -> PyResult<Option<Arc<GitService>>> {
-     if !cfg.enabled {
-         return Ok(None);
-@@ -82,7 +83,7 @@ pub fn build_git_service(
-         }
-     };
- 
--    let snapshot_log_store = build_snapshot_log_store(cfg)?;
-+    let snapshot_log_store = build_snapshot_log_store(cfg, service_name)?;
- 
-     let svc = GitService::with_index(vfs, object_store, ref_store, index_store)
-         .with_blob_exists_precheck(cfg.tuning.blob_exists_precheck_enabled);
-@@ -93,6 +94,7 @@ pub fn build_git_service(
- 
- fn build_snapshot_log_store(
-     cfg: &GitConfig,
-+    service_name: &str,
- ) -> PyResult<Option<Arc<dyn ragfs::git::SnapshotLogStore>>> {
-     match cfg.snapshot.log.provider.as_str() {
-         "none" => Ok(None),
-@@ -105,8 +107,11 @@ fn build_snapshot_log_store(
-                     "git.snapshot.log.sqlite.path is required for sqlite provider",
-                 )
+@@ -170,6 +170,7 @@ fn build_snapshot_log_store(
+                 PyRuntimeError::new_err("build_snapshot_log_store must run inside a tokio runtime")
              })?;
-+            let service_name = service_name.to_string();
-             match handle
--                .block_on(async move { ragfs::git::SqliteSnapshotLogStore::connect(&path).await })
-+                .block_on(async move {
-+                    ragfs::git::SqliteSnapshotLogStore::connect(&service_name, &path).await
-+                })
-             {
-                 Ok(store) => Ok(Some(
-                     Arc::new(store) as Arc<dyn ragfs::git::SnapshotLogStore>
-@@ -132,8 +137,10 @@ fn build_snapshot_log_store(
-             })?;
-             let max_connections = mysql.max_connections;
-             let connect_timeout_ms = mysql.connect_timeout_ms;
-+            let service_name = service_name.to_string();
-             match handle.block_on(async move {
-                 ragfs::git::MySqlSnapshotLogStore::connect(
-+                    &service_name,
-                     &dsn,
-                     max_connections,
-                     connect_timeout_ms,
-@@ -806,7 +813,7 @@ mod tests {
-         Python::initialize();
-         let mut cfg = local_cfg("/tmp/snapshot-pg-config");
-         cfg.snapshot.log.provider = "postgres".into();
--        let err = match build_snapshot_log_store(&cfg) {
-+        let err = match build_snapshot_log_store(&cfg, "test-service") {
-             Err(err) => err,
-             Ok(_) => panic!("missing PostgreSQL section must fail"),
-         };
-@@ -819,7 +826,7 @@ mod tests {
-             connect_timeout_ms: 1000,
-             operation_timeout_ms: 1000,
-         });
--        let err = match build_snapshot_log_store(&cfg) {
-+        let err = match build_snapshot_log_store(&cfg, "test-service") {
-             Err(err) => err,
-             Ok(_) => panic!("missing PostgreSQL DSN environment must fail"),
-         };
-@@ -841,7 +848,7 @@ mod tests {
-         });
-         let runtime = tokio::runtime::Runtime::new().unwrap();
-         let _enter = runtime.enter();
--        let store = build_snapshot_log_store(&cfg)
-+        let store = build_snapshot_log_store(&cfg, "test-service")
+             match handle.block_on(ragfs::git::PostgresSnapshotLogStore::connect_with_timeout(
++                service_name,
+                 &dsn,
+                 postgres.max_connections,
+                 postgres.connect_timeout_ms,
+@@ -851,6 +852,9 @@ mod tests {
+         let store = build_snapshot_log_store(&cfg, "test-service")
              .unwrap()
              .expect("PG index enabled");
++        let other = build_snapshot_log_store(&cfg, "other-service")
++            .unwrap()
++            .expect("PG index enabled for another service");
          runtime.block_on(async {
-@@ -876,15 +883,15 @@ mod tests {
-         let fs = Arc::new(MountableFS::new()) as Arc<dyn ragfs::core::FileSystem>;
-         let mut cfg = local_cfg("/tmp/ov-git-test-disabled");
-         cfg.enabled = false;
--        let svc = build_git_service(&cfg, fs).expect("build ok");
-+        let svc = build_git_service(&cfg, fs, "test-service").expect("build ok");
-         assert!(svc.is_none());
+             let account = uuid::Uuid::new_v4().simple().to_string();
+             let oid = "1234567890123456789012345678901234567890";
+@@ -875,6 +879,11 @@ mod tests {
+                     .1,
+                 oid
+             );
++            assert!(other
++                .load_latest_indexed_commit(&account, "main")
++                .await
++                .unwrap()
++                .is_none());
+         });
      }
  
-     #[tokio::test]
-     async fn build_git_service_local_returns_some() {
-         let fs = Arc::new(MountableFS::new()) as Arc<dyn ragfs::core::FileSystem>;
-         let cfg = local_cfg("/tmp/ov-git-test-local");
--        let svc = build_git_service(&cfg, fs).expect("build ok");
-+        let svc = build_git_service(&cfg, fs, "test-service").expect("build ok");
-         assert!(svc.is_some());
-     }
- 
-@@ -897,7 +904,7 @@ mod tests {
-         let mut cfg = local_cfg("/tmp/ov-git-test-bad");
-         cfg.backend = "bogus".into();
-         // `GitService` is not `Debug`, so we can't use `unwrap_err()`; match instead.
--        let err = match build_git_service(&cfg, fs) {
-+        let err = match build_git_service(&cfg, fs, "test-service") {
-             Ok(_) => panic!("expected error for bogus backend"),
-             Err(e) => e,
-         };
-@@ -910,7 +917,7 @@ mod tests {
-         let fs = Arc::new(MountableFS::new()) as Arc<dyn ragfs::core::FileSystem>;
-         let mut cfg = local_cfg("/tmp/ov-git-test-nolocal");
-         cfg.local = None;
--        let err = match build_git_service(&cfg, fs) {
-+        let err = match build_git_service(&cfg, fs, "test-service") {
-             Ok(_) => panic!("expected error when [git.local] missing"),
-             Err(e) => e,
-         };
 ```
 
-**File**: `crates/ragfs/src/git/snapshot_log/mod.rs` (modified, +2/-2)
+**File**: `crates/ragfs/src/git/snapshot_log/postgres.rs` (modified, +37/-19)
 ```diff
-@@ -11,8 +11,8 @@ pub use mysql::MySqlSnapshotLogStore;
- pub use postgres::PostgresSnapshotLogStore;
- pub use sqlite::SqliteSnapshotLogStore;
- pub use store::{
--    can_index_account_branch, can_index_paths, fanout_changed_paths, SnapshotLogError,
--    SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
-+    can_index_account_branch, can_index_paths, fanout_changed_paths, validate_service_name,
-+    SnapshotLogError, SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
- };
- 
- /// Conservative per-commit row cap for synchronous best-effort indexing.
-```
-
-**File**: `crates/ragfs/src/git/snapshot_log/mysql.rs` (modified, +24/-20)
-```diff
-@@ -5,37 +5,28 @@ use sqlx::mysql::MySqlPoolOptions;
- use sqlx::{MySql, MySqlPool, QueryBuilder};
+@@ -7,8 +7,8 @@ use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
+ use sqlx::{PgPool, Postgres, QueryBuilder};
  
  use super::store::{
 -    ensure_latest_matches, validate_append, SnapshotLogError, SnapshotLogHit, SnapshotLogLimits,
 -    SnapshotLogRow, SnapshotLogStore,
-+    ensure_latest_matches, validate_append, validate_service_name, SnapshotLogError,
-+    SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
++    ensure_latest_matches, validate_append, validate_service_name, SnapshotLogError, SnapshotLogHit,
++    SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
  };
  
- const MYSQL_INSERT_BATCH_ROWS: usize = 1_000;
- 
--const MYSQL_SCHEMA: &str = r#"CREATE TABLE IF NOT EXISTS snapshot_log (
--  id BIGINT AUTO_INCREMENT PRIMARY KEY,
--  account VARBINARY(255) NOT NULL,
--  branch VARBINARY(512) NOT NULL,
--  path VARBINARY(2048) NOT NULL,
--  commit_oid CHAR(40) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
--  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
--  UNIQUE KEY uniq_snapshot_log_path_commit (account, branch, path, commit_oid),
--  KEY idx_snapshot_log_latest (account, branch, id DESC),
--  KEY idx_snapshot_log_lookup (account, branch, path, id DESC)
--)"#;
--
- /// MySQL-backed SnapshotLog store.
- pub struct MySqlSnapshotLogStore {
-     pool: MySqlPool,
+ const POSTGRES_INSERT_BATCH_ROWS: usize = 1_000;
+@@ -33,16 +33,20 @@ pub struct PostgresSnapshotLogStore {
+     pool: PgPool,
      limits: SnapshotLogLimits,
+     operation_timeout: Duration,
 +    service_name: String,
  }
  
- impl MySqlSnapshotLogStore {
--    /// Open a MySQL SnapshotLog store and run idempotent migrations.
-+    /// Connect to a pre-provisioned MySQL table without creating or migrating it.
+ impl PostgresSnapshotLogStore {
+-    /// Connect to a pre-provisioned database without creating or migrating tables.
++    /// Connect using a service name, DSN, pool size and acquisition timeout.
++    /// Return the service-scoped store or an error; never provision tables.
      pub async fn connect(
 +        service_name: &str,
          dsn: &str,
          max_connections: u32,
          connect_timeout_ms: u64,
      ) -> Result<Self, SnapshotLogError> {
-+        validate_service_name(service_name)?;
-         if dsn.is_empty() {
-             return Err(SnapshotLogError::Config(
-                 "mysql snapshot_log dsn must not be empty".to_string(),
-@@ -46,10 +37,18 @@ impl MySqlSnapshotLogStore {
-             .acquire_timeout(Duration::from_millis(connect_timeout_ms))
-             .connect(dsn)
-             .await?;
--        sqlx::query(MYSQL_SCHEMA).execute(&pool).await?;
-+        // Fail initialization when deployment DDL/permissions are missing, allowing
-+        // the binding's best-effort fallback to the Git scan path. The runtime role
-+        // needs only DML (SELECT/INSERT), so the table is provisioned separately.
-+        sqlx::query(
-+            "SELECT id, service_name, account, branch, path, commit_oid FROM snapshot_log LIMIT 0",
-+        )
-+        .execute(&pool)
-+        .await?;
-         Ok(Self {
-             pool,
-             limits: SnapshotLogLimits::default(),
-+            service_name: service_name.to_string(),
-         })
+         Self::connect_with_timeout(
++            service_name,
+             dsn,
+             max_connections,
+             connect_timeout_ms,
+@@ -51,14 +55,17 @@ impl PostgresSnapshotLogStore {
+         .await
      }
- }
-@@ -69,8 +68,9 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
-     ) -> Result<Option<(i64, String)>, SnapshotLogError> {
-         let row = sqlx::query_as::<_, (i64, Vec<u8>)>(
-             "SELECT id, commit_oid FROM snapshot_log \
--             WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
-+             WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
-         )
-+        .bind(&self.service_name)
-         .bind(account)
-         .bind(branch)
-         .fetch_optional(&self.pool)
-@@ -92,8 +92,9 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
-         let mut tx = self.pool.begin().await?;
-         let latest = sqlx::query_as::<_, (i64, Vec<u8>)>(
-             "SELECT id, commit_oid FROM snapshot_log \
--             WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1 FOR UPDATE",
-+             WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1 FOR UPDATE",
-         )
-+        .bind(&self.service_name)
-         .bind(account)
-         .bind(branch)
-         .fetch_optional(&mut *tx)
-@@ -108,10 +109,11 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
-         )?;
-         for chunk in rows.chunks(MYSQL_INSERT_BATCH_ROWS) {
-             let mut builder = QueryBuilder::<MySql>::new(
--                "INSERT INTO snapshot_log (account, branch, path, commit_oid) ",
-+                "INSERT INTO snapshot_log (service_name, account, branch, path, commit_oid) ",
-             );
-             builder.push_values(chunk, |mut row_builder, row| {
-                 row_builder
-+                    .push_bind(&self.service_name)
-                     .push_bind(account)
-                     .push_bind(branch)
-                     .push_bind(&row.path)
-@@ -140,9 +142,11 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
-             i64::try_from(offset).map_err(|err| sqlx::Error::Encode(Box::new(err)))?;
-         let mut builder = QueryBuilder::<MySql>::new(
-             "SELECT commit_oid, MAX(id) AS last_id FROM snapshot_log \
--             WHERE account = ",
-+             WHERE service_name = ",
-         );
-         builder
-+            .push_bind(&self.service_name)
-+            .push(" AND account = ")
-             .push_bind(account)
-             .push(" AND branch = ")
-             .push_bind(branch)
-```
-
-**File**: `crates/ragfs/src/git/snapshot_log/sqlite.rs` (modified, +19/-10)
-```diff
-@@ -7,38 +7,41 @@ use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions};
- use sqlx::{QueryBuilder, Sqlite, SqlitePool};
  
- use super::store::{
--    ensure_latest_matches, validate_append, SnapshotLogError, SnapshotLogHit, SnapshotLogLimits,
--    SnapshotLogRow, SnapshotLogStore,
-+    ensure_latest_matches, validate_append, validate_service_name, SnapshotLogError,
-+    SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
- };
- 
- const SQLITE_INSERT_BATCH_ROWS: usize = 200;
- 
- const SQLITE_SCHEMA: &[&str] = &[
-     r#"CREATE TABLE IF NOT EXISTS snapshot_log (
-   id INTEGER PRIMARY KEY AUTOINCREMENT,
-+  service_name TEXT NOT NULL,
-   account TEXT NOT NULL,
-   branch TEXT NOT NULL,
-   path TEXT NOT NULL,
-   commit_oid TEXT NOT NULL,
-   created_at INTEGER NOT NULL DEFAULT (unixepoch())
- )"#,
-     r#"CREATE UNIQUE INDEX IF NOT EXISTS uniq_snapshot_log_path_commit
--ON snapshot_log (account, branch, path, commit_oid)"#,
-+ON snapshot_log (service_name, account, branch, path, commit_oid)"#,
-     r#"CREATE INDEX IF NOT EXISTS idx_snapshot_log_lookup
--ON snapshot_log (account, branch, path, id DESC)"#,
-+ON snapshot_log (service_name, account, branch, path, id DESC)"#,
-     r#"CREATE INDEX IF NOT EXISTS idx_snapshot_log_latest
--ON snapshot_log (account, branch, id DESC)"#,
-+ON snapshot_log (service_name, account, branch, id DESC)"#,
- ];
- 
- /// SQLite-backed SnapshotLog store.
- pub struct SqliteSnapshotLogStore {
-     pool: SqlitePool,
-     limits: SnapshotLogLimits,
-+    service_name: String,
- }
- 
- impl SqliteSnapshotLogStore {
-     /// Open a SQLite SnapshotLog store and run idempotent migrations.
--    pub async fn connect(path: &str) -> Result<Self, SnapshotLogError> {
-+    pub async fn connect(service_name: &str, path: &str) -> Result<Self, SnapshotLogError> {
+-    /// Bound initialization and each complete index operation, including pool
+-    /// acquisition, lock waits and all statements in an append transaction.
++    /// Connect using a service name, DSN, pool size and timeouts in milliseconds.
++    /// Return a store whose initialization and complete operations have deadlines,
++    /// or a configuration/database error.
+     pub async fn connect_with_timeout(
++        service_name: &str,
+         dsn: &str,
+         max_connections: u32,
+         connect_timeout_ms: u64,
+         operation_timeout_ms: u64,
+     ) -> Result<Self, SnapshotLogError> {
 +        validate_service_name(service_name)?;
-         if !Path::new(path).is_absolute() {
-             return Err(SnapshotLogError::Config(
-                 "sqlite snapshot_log path must be absolute".to_string(),
-@@ -62,6 +65,7 @@ impl SqliteSnapshotLogStore {
-         Ok(Self {
-             pool,
-             limits: SnapshotLogLimits::default(),
-+            service_name: service_name.to_string(),
+         if dsn.trim().is_empty()
+             || max_connections == 0
+             || connect_timeout_ms == 0
+@@ -89,13 +96,16 @@ impl PostgresSnapshotLogStore {
+                 .await?;
+             // Fail initialization if deployment DDL/permissions are missing, allowing
+             // the binding's existing best-effort fallback to the Git scan path.
+-            sqlx::query("SELECT id, account, branch, path, commit_oid FROM snapshot_log LIMIT 0")
+-                .execute(&pool)
+-                .await?;
++            sqlx::query(
++                "SELECT id, service_name, account, branch, path, commit_oid FROM snapshot_log LIMIT 0",
++            )
++            .execute(&pool)
++            .await?;
+             Ok(Self {
+                 pool,
+                 limits: SnapshotLogLimits::default(),
+                 operation_timeout,
++                service_name: service_name.to_string(),
+             })
          })
-     }
- }
-@@ -81,8 +85,9 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
-     ) -> Result<Option<(i64, String)>, SnapshotLogError> {
-         let row = sqlx::query_as::<_, (i64, String)>(
-             "SELECT id, commit_oid FROM snapshot_log \
--             WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
-+             WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
-         )
-+        .bind(&self.service_name)
-         .bind(account)
-         .bind(branch)
-         .fetch_optional(&self.pool)
-@@ -106,8 +111,9 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
-         let result = async {
-             let latest = sqlx::query_as::<_, (i64, String)>(
+         .await
+@@ -116,8 +126,9 @@ impl SnapshotLogStore for PostgresSnapshotLogStore {
+         with_timeout(self.operation_timeout, async {
+             Ok(sqlx::query_as::<_, (i64, String)>(
                  "SELECT id, commit_oid FROM snapshot_log \
--                 WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
-+                 WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
+-             WHERE account = $1 AND branch = $2 ORDER BY id DESC LIMIT 1",
++             WHERE service_name = $1 AND account = $2 AND branch = $3 ORDER BY id DESC LIMIT 1",
              )
 +            .bind(&self.service_name)
              .bind(account)
              .bind(branch)
-             .fetch_optional(&mut *conn)
-@@ -118,9 +124,10 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
-             )?;
-             for chunk in rows.chunks(SQLITE_INSERT_BATCH_ROWS) {
-                 let mut builder =
--                    QueryBuilder::<Sqlite>::new("INSERT INTO snapshot_log (account, branch, path, commit_oid) ");
-+                    QueryBuilder::<Sqlite>::new("INSERT INTO snapshot_log (service_name, account, branch, path, commit_oid) ");
-                 builder.push_values(chunk, |mut row_builder, row| {
-                     row_builder
-+                        .push_bind(&self.service_name)
-                         .push_bind(account)
-                         .push_bind(branch)
-                         .push_bind(&row.path)
-@@ -161,9 +168,11 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
-             i64::try_from(offset).map_err(|err| sqlx::Error::Encode(Box::new(err)))?;
-         let mut builder = QueryBuilder::<Sqlite>::new(
-             "SELECT commit_oid, MAX(id) AS last_id FROM snapshot_log \
--             WHERE account = ",
-+             WHERE service_name = ",
-         );
-         builder
-+            .push_bind(&self.service_name)
-+            .push(" AND account = ")
-             .push_bind(account)
-             .push(" AND branch = ")
-             .push_bind(branch)
+             .fetch_optional(&self.pool)
+@@ -142,18 +153,22 @@ impl SnapshotLogStore for PostgresSnapshotLogStore {
+                 .execute(&mut *tx)
+                 .await?;
+             // Row locking cannot serialize two first appends to an empty branch.
+-            // Length-prefixing avoids ambiguous (account, branch) concatenations.
++            // Length-prefixing isolates service/account/branch lock namespaces.
+             // Hash collisions only serialize unrelated branches; equality is still
+-            // checked against the original account/branch columns.
+-            let lock_key = format!("{}:{}{}", account.len(), account, branch);
++            // checked against the original service/account/branch columns.
++            let lock_key = format!(
++                "{}:{}|{}:{}{}",
++                self.service_name.len(), self.service_name, account.len(), account, branch
++            );
+             sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))")
+                 .bind(lock_key)
+                 .execute(&mut *tx)
+                 .await?;
+             let latest = sqlx::query_as::<_, (i64, String)>(
+                 "SELECT id, commit_oid FROM snapshot_log \
+-             WHERE account = $1 AND branch = $2 ORDER BY id DESC LIMIT 1",
++             WHERE service_name = $1 AND account = $2 AND branch = $3 ORDER BY id DESC LIMIT 1",
+             )
++            .bind(&self.service_name)
+             .bind(account)
+             .bind(branch)
+             .fetch_optional
 ```
 
-**File**: `crates/ragfs/src/git/snapshot_log/store.rs` (modified, +20/-1)
+**File**: `crates/ragfs/src/git/snapshot_log/store.rs` (modified, +1/-1)
 ```diff
-@@ -19,7 +19,7 @@ pub struct SnapshotLogLimits {
- impl Default for SnapshotLogLimits {
+@@ -20,7 +20,7 @@ impl Default for SnapshotLogLimits {
      fn default() -> Self {
          Self {
--            account_bytes: 255,
-+            account_bytes: 64,
-             branch_bytes: 512,
+             account_bytes: 64,
+-            branch_bytes: 512,
++            branch_bytes: 128,
              path_bytes: 2048,
              max_rows_per_commit: SNAPSHOT_LOG_MAX_ROWS_PER_COMMIT,
-@@ -122,6 +122,25 @@ pub trait SnapshotLogStore: Send + Sync {
-     ) -> Result<Vec<SnapshotLogHit>, SnapshotLogError>;
- }
- 
-+/// Maximum service_name length in bytes.
-+pub const SNAPSHOT_LOG_SERVICE_NAME_BYTES: usize = 64;
-+
-+/// Validate the deployment-scoped service_name used for shared-DB isolation.
-+pub fn validate_service_name(service_name: &str) -> Result<(), SnapshotLogError> {
-+    if service_name.is_empty()
-+        || service_name.len() > SNAPSHOT_LOG_SERVICE_NAME_BYTES
-+        || !service_name
-+            .bytes()
-+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
-+    {
-+        return Err(SnapshotLogError::Config(
-+            "snapshot log service_name must be 1..=64 ASCII letters, digits, '.', '_' or '-'"
-+                .to_string(),
-+        ));
-+    }
-+    Ok(())
-+}
-+
- /// Return whether an account and branch fit provider index limits.
- pub fn can_index_account_branch(
-     limits: SnapshotLogLimits,
+         }
 ```
 
-**File**: `crates/ragfs/src/git/tests/test_snapshot_log.rs` (modified, +44/-1)
+**File**: `crates/ragfs/src/git/tests/test_snapshot_log.rs` (modified, +7/-5)
 ```diff
-@@ -14,7 +14,7 @@ async fn make_snapshot_log_store() -> Arc<dyn SnapshotLogStore> {
-     let dir = tempfile::tempdir().unwrap().keep();
-     let db_path = dir.join("snapshot-log.db");
-     Arc::new(
--        SqliteSnapshotLogStore::connect(db_path.to_str().unwrap())
-+        SqliteSnapshotLogStore::connect("test-service", db_path.to_str().unwrap())
-             .await
-             .unwrap(),
-     )
-@@ -325,3 +325,46 @@ async fn test_snapshot_log_store_rejects_non_root_commit_when_empty() {
-         .unwrap()
-         .is_none());
+@@ -6,7 +6,7 @@ async fn make_snapshot_log_store() -> Arc<dyn SnapshotLogStore> {
+     #[cfg(feature = "postgres")]
+     if let Ok(dsn) = std::env::var("SNAPSHOT_LOG_TEST_PG_DSN") {
+         return Arc::new(
+-            crate::git::PostgresSnapshotLogStore::connect(&dsn, 4, 5_000)
++            crate::git::PostgresSnapshotLogStore::connect("test-service", &dsn, 4, 5_000)
+                 .await
+                 .expect("PostgreSQL SnapshotLog schema must be provisioned"),
+         );
+@@ -215,9 +215,11 @@ async fn test_snapshot_log_postgres_restore_completes_with_locked_index_and_back
+     let account = uuid::Uuid::new_v4().simple().to_string();
+     let (_dir, vfs, _object_store, _ref_store, svc) = make_service(&account);
+     let store = Arc::new(
+-        crate::git::PostgresSnapshotLogStore::connect_with_timeout(&dsn, 2, 5_000, 200)
+-            .await
+-            .unwrap(),
++        crate::git::PostgresSnapshotLogStore::connect_with_timeout(
++            "test-service", &dsn, 2, 5_000, 200,
++        )
++        .await
++        .unwrap(),
+     );
+     let svc = svc.with_snapshot_log(Some(store.clone()));
+     vfs.put("proj/a.md", b"v1");
+@@ -232,7 +234,7 @@ async fn test_snapshot_log_postgres_restore_completes_with_locked_index_and_back
+         .unwrap();
+     let mut lock = pool.begin().await.unwrap();
+     sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))")
+-        .bind(format!("{}:{}main", account.len(), account))
++        .bind(format!("12:test-service|{}:{}main", account.len(), account))
+         .execute(&mut *lock)
+         .await
+         .unwrap();
+```
+
+**File**: `crates/ragfs/tests/postgres_snapshot_log.rs` (modified, +21/-9)
+```diff
+@@ -9,6 +9,8 @@ use std::sync::Arc;
+ use tokio::sync::Barrier;
+ use tokio::time::{timeout, Duration, Instant};
+ 
++const TEST_SERVICE: &str = "test-service";
++
+ async fn expect_timeout<T: std::fmt::Debug>(
+     operation: impl std::future::Future<Output = Result<T, SnapshotLogError>>,
+ ) {
+@@ -32,7 +34,7 @@ fn dsn() -> String {
  }
-+
-+/// Verify two services sharing one SQLite file keep independent index progress.
-+#[tokio::test]
-+async fn test_snapshot_log_service_name_isolates_shared_sqlite_db() {
-+    let dir = tempfile::tempdir().unwrap().keep();
-+    let path = dir.join("snapshot-log-isolation.db").to_str().unwrap().to_string();
-+
-+    let store_a = SqliteSnapshotLogStore::connect("svc-a", &path).await.unwrap();
-+    let store_b = SqliteSnapshotLogStore::connect("svc-b", &path).await.unwrap();
-+
-+    let root_row = vec![SnapshotLogRow {
-+        path: "/".into(),
-+        commit_oid: "1111111111111111111111111111111111111111".into(),
-+    }];
-+    store_a
-+        .append_rows_if_latest("acct", "main", None, &root_row)
+ 
+ async fn store() -> PostgresSnapshotLogStore {
+-    PostgresSnapshotLogStore::connect(&dsn(), 4, 5_000)
++    PostgresSnapshotLogStore::connect(TEST_SERVICE, &dsn(), 4, 5_000)
+         .await
+         .expect("provision openviking/service/sql/snapshot_log_postgres_init.sql first")
+ }
+@@ -69,8 +71,8 @@ async fn cleanup(account: &str) {
+ #[ignore = "requires a real PostgreSQL database"]
+ async fn postgres_snapshot_log_history_scope_width_and_watermark() {
+     let store = store().await;
+-    let account = uuid::Uuid::new_v4().simple().to_string() + &"a".repeat(223);
+-    let branch = "b".repeat(512);
++    let account = uuid::Uuid::new_v4().simple().to_string() + &"a".repeat(32);
++    let branch = "b".repeat(128);
+     // Varied four-byte characters exercise the full 2048-byte path limit.
+     let wide: String = (0..512)
+         .map(|i| char::from_u32(0x10000 + i).unwrap())
+@@ -291,7 +293,7 @@ async fn postgres_snapshot_log_startup_does_not_provision_schema() {
+     url.query_pairs_mut()
+         .append_pair("options", &format!("-c search_path={schema}"));
+     assert!(matches!(
+-        PostgresSnapshotLogStore::connect(url.as_str(), 1, 5_000).await,
++        PostgresSnapshotLogStore::connect(TEST_SERVICE, url.as_str(), 1, 5_000).await,
+         Err(SnapshotLogError::Sql(_))
+     ));
+     let count: i64 = sqlx::query_scalar("SELECT count(*) FROM pg_tables WHERE schemaname = $1")
+@@ -330,7 +332,7 @@ async fn postgres_snapshot_log_bounds_startup_and_read_table_lock_waits() {
+     let mut url = url::Url::parse(&dsn()).unwrap();
+     url.query_pairs_mut()
+         .append_pair("options", &format!("-c search_path={schema}"));
+-    let store = PostgresSnapshotLogStore::connect_with_timeout(url.as_str(), 1, 5_000, 200)
++    let store = PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, url.as_str(), 1, 5_000, 200)
+         .await
+         .unwrap();
+     let mut lock = pool.begin().await.unwrap();
+@@ -343,7 +345,7 @@ async fn postgres_snapshot_log_bounds_startup_and_read_table_lock_waits() {
+     // Do not release the lock until every call has returned by its own deadline.
+     let result = timeout(
+         Duration::from_secs(2),
+-        PostgresSnapshotLogStore::connect_with_timeout(url.as_str(), 1, 5_000, 200),
++        PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, url.as_str(), 1, 5_000, 200),
+     )
+     .await
+     .expect("startup probe must have an execution deadline");
+@@ -372,7 +374,7 @@ async fn postgres_snapshot_log_bounds_startup_and_read_table_lock_waits() {
+ #[tokio::test]
+ #[ignore = "requires a real PostgreSQL database"]
+ async fn postgres_snapshot_log_bounds_advisory_lock_and_reuses_pool() {
+-    let store = PostgresSnapshotLogStore::connect_with_timeout(&dsn(), 1, 5_000, 200)
++    let store = PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, &dsn(), 1, 5_000, 200)
+         .await
+         .unwrap();
+     let pool = PgPoolOptions::new()
+@@ -383,11 +385,21 @@ async fn postgres_snapshot_log_bounds_advisory_lock_and_reuses_pool() {
+     let account = uuid::Uuid::new_v4().simple().to_string();
+     let mut lock = pool.begin().await.unwrap();
+     sqlx::query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))")
+-        .bind(format!("{}:{}main", account.len(), account))
++        .bind(format!("12:test-service|{}:{}main", account.len(), account))
+         .execute(&mut *lock)
+         .await
+         .unwrap();
+     expect_timeout(store.append_rows_if_latest(&account, "main", None, &rows(1, &["/"]))).await;
++    // Another service must append without waiting for this service's lock.
++    let other = PostgresSnapshotLogStore::connect_with_timeout(
++        "other-service", &dsn(), 1, 5_000, 200,
++    )
++    .await
++    .unwrap();
++    other
++        .append_rows_if_latest(&account, "main", None, &rows(1, &["/"]))
 +        .await
 +        .unwrap();
-+
-+    // service b must not see service a's indexed progress.
-+    assert!(store_b
-+        .load_latest_indexed_commit("acct", "main")
-+        .await
-+        .unwrap()
-+        .is_none());
-+    assert!(store_a
-+        .load_latest_indexed_commit("acct", "main")
-+        .await
-+        .unwrap()
-+        .is_some());
-+
-+    // The same account/branch/commit under another service is not a unique-key conflict.
-+    store_b
-+        .append_rows_if_latest("acct", "main", None, &root_row)
-+        .await
-+        .unwrap();
-+
-+    // Illegal service_name values are rejected before touching the database.
-+    assert!(SqliteSnapshotLogStore::connect("bad name", &path)
-+        .await
-+        .is_err());
-+    assert!(SqliteSnapshotLogStore::connect("", &path).await.is_err());
-+}
+     lock.rollback().await.unwrap();
+     assert!(store
+         .load_latest_indexed_commit(&account, "main")
+@@ -438,7 +450,7 @@ async fn postgres_snapshot_log_deadline_covers_all_batches_and_rolls_back() {
+     let mut url = url::Url::parse(&dsn()).unwrap();
+     url.query_pairs_mut()
+         .append_pair("options", &format!("-c search_path={schema}"));
+-    let store = PostgresSnapshotLogStore::connect_with_timeout(url.as_str(), 1, 5_000, 500)
++    let store = PostgresSnapshotLogStore::connect_with_timeout(TEST_SERVICE, url.as_str(), 1, 5_000, 500)
+         .await
+         .unwrap();
+     let account = uuid::Uuid::new_v4().simple().to_string();
+```
+
+**File**: `docs/en/guides/15-snapshot.md` (modified, +10/-6)
+```diff
+@@ -218,8 +218,13 @@ export OPENVIKING_SNAPSHOT_LOG_POSTGRES_DSN='postgresql://user:password@host:543
+ 
+ Runtime startup does not create or migrate PostgreSQL tables. The runtime role
+ needs `SELECT` and `INSERT` on `snapshot_log`, and `USAGE` on its identity sequence.
+-Use a dedicated database or schema per OV deployment; accounts and branches
+-are isolated within that index. When using a custom schema, set the URL's
++Provision the table with the supplied DDL before deploying.
++Rows, indexes and append locks are scoped by the top-level `service_name`,
++so deployments can share one database or schema. Use the same name for replicas
++of one deployment and distinct names for separate deployments.
++`service_name` accepts 1–64 ASCII letters, digits, `.`, `_` or `-`; `account` is
++limited to 64 bytes. A dedicated database or schema per deployment also works.
++When using a custom schema, set the URL's
+ `options` parameter to a URL-encoded `-c search_path=your_schema`.
+ No PostgreSQL extension or Python database extra is required: the driver is
+ part of the Rust binding (`ragfs/postgres` for standalone Rust consumers).
+@@ -232,12 +237,11 @@ Git when the index is unavailable. A write transaction that times out before
+ commit is rolled back.
+ Increase `operation_timeout_ms` if normal index operations exceed the default.
+ 
+-Each account/branch append is serialized with a transaction advisory lock,
++Each service/account/branch append is serialized with a transaction advisory lock,
+ including the first append to an empty index. All rows are committed atomically
+ only when the latest indexed commit matches the expected parent.
+-Path indexes use `md5(path)` to stay within PostgreSQL B-tree width limits;
+-queries also check the original path. A digest collision for the same commit
+-rejects the append rather than silently dropping a path.
++Path indexes use the complete path for lookups and uniqueness.
++PostgreSQL indexes branches up to 128 bytes and paths up to 2048 bytes.
+ Switching providers does not copy an existing index. Path queries trigger
+ background backfill from Git history when needed. An unavailable database or
+ missing schema disables the index for that service instance at startup and
+```
+
+**File**: `docs/zh/guides/15-snapshot.md` (modified, +8/-4)
+```diff
+@@ -213,7 +213,11 @@ export OPENVIKING_SNAPSHOT_LOG_POSTGRES_DSN='postgresql://user:password@host:543
+ 
+ 运行时不会创建或迁移 PostgreSQL 表。运行账号只需 `snapshot_log` 的
+ `SELECT`、`INSERT` 权限，以及 identity sequence 的 `USAGE` 权限。
+-不同 OV 部署应使用独立数据库或 schema；同一索引内按账号、分支隔离。
++部署前使用提供的 DDL 建表。
++记录、索引和追加锁都按顶层 `service_name` 隔离，多个部署可以共用数据库或 schema。
++同一部署的副本使用相同名称，不同部署使用不同名称。
++`service_name` 允许 1–64 个 ASCII 字母、数字、`.`、`_` 或 `-`；`account` 上限为 64 字节。
++每个部署使用独立数据库或 schema 也仍然可行。
+ 自定义 schema 可通过连接 URL 的 `options` 参数指定
+ `-c search_path=your_schema`，参数值需要 URL 编码。
+ 
+@@ -225,10 +229,10 @@ PostgreSQL 索引操作有执行期限，连接同时设置 `statement_timeout`
+ 无需安装 PostgreSQL 扩展或 Python 数据库 extra，驱动由 Rust binding 提供；
+ 独立 Rust 接入需启用 `ragfs/postgres` feature。
+ 
+-同一账号、分支的索引追加使用事务 advisory lock 串行化，包括空索引的首次写入。
++同一服务、账号、分支的索引追加使用事务 advisory lock 串行化，包括空索引的首次写入。
+ 仅当最新索引提交等于预期父提交时，整批路径记录才会原子提交。
+-路径索引使用 `md5(path)` 避免超过 PostgreSQL B-tree 键宽限制，
+-查询同时校验原始路径；同一提交发生摘要冲突时会拒绝整批追加，不会静默丢失路径。
++路径索引使用完整路径查询和保证唯一性。
++PostgreSQL 索引的分支上限为 128 字节，路径上限为 2048 字节。
+ 切换 provider 不会复制旧索引，按路径查询会在需要时触发从 Git 历史后台回填。
+ 启动时数据库不可用或缺少表，会为该实例关闭索引并回退到历史扫描；
+ 恢复后需重启实例。回退扫描仍受 1000 个候选提交上限约束。
+```
+
+**File**: `openviking/service/sql/snapshot_log_postgres_init.sql` (modified, +8/-9)
+```diff
+@@ -1,21 +1,20 @@
+ -- Provision once with a deployment/migration role before starting OV.
+ -- Runtime needs SELECT and INSERT on snapshot_log and USAGE on its sequence.
+--- No extensions are required. Use a dedicated database/schema per OV deployment.
++-- No extensions are required. service_name isolates deployments sharing a database/schema.
+ CREATE TABLE IF NOT EXISTS snapshot_log (
+     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+-    account TEXT COLLATE "C" NOT NULL CHECK (octet_length(account) <= 255),
+-    branch TEXT COLLATE "C" NOT NULL CHECK (octet_length(branch) <= 512),
++    service_name TEXT COLLATE "C" NOT NULL CHECK (octet_length(service_name) BETWEEN 1 AND 64),
++    account TEXT COLLATE "C" NOT NULL CHECK (octet_length(account) <= 64),
++    branch TEXT COLLATE "C" NOT NULL CHECK (octet_length(branch) <= 128),
+     path TEXT COLLATE "C" NOT NULL CHECK (octet_length(path) BETWEEN 1 AND 2048),
+     commit_oid TEXT COLLATE "C" NOT NULL CHECK (commit_oid ~ '^[0-9a-fA-F]{40}$'),
+     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+ );
+ 
+--- A path digest keeps maximum-width keys below PostgreSQL's B-tree tuple limit.
+--- Queries also compare the original path; digest matches alone are never trusted.
+--- A digest collision for the same commit rejects the append rather than losing rows.
++-- Bounded service/account/branch lengths keep full-path keys within the B-tree limit.
+ CREATE UNIQUE INDEX IF NOT EXISTS uniq_snapshot_log_path_commit
+-    ON snapshot_log (account, branch, md5(path), commit_oid);
++    ON snapshot_log (service_name, account, branch, path, commit_oid);
+ CREATE INDEX IF NOT EXISTS idx_snapshot_log_lookup
+-    ON snapshot_log (account, branch, md5(path), id DESC);
++    ON snapshot_log (service_name, account, branch, path, id DESC);
+ CREATE INDEX IF NOT EXISTS idx_snapshot_log_latest
+-    ON snapshot_log (account, branch, id DESC);
++    ON snapshot_log (service_name, account, branch, id DESC);
 ```
 
 ---
 
-### Incident Patch 3: `2faf02a6` (2026-11-26)
-**Commit Message**: fix(task): make periodic task history cleanup configurable (#8469)
+### Incident Patch 2: `56e568f4` (2026-11-27)
+**Commit Message**: docs(gateway): end the cache-hit range where memory A is missing (#8590)
 
-* fix(task): allow read replicas to disable history cleanup
+The 'not replayed' row of the one-turn figure painted Reply 1 and
+Message 2 green and bracketed them as 'same as last turn: hit'. A
+prefix cache breaks at the first byte that differs, so once memory A
+is absent everything after it, from Reply 1 on, is billed at the full
+rate. Colour Reply 1 and Message 2 as misses, end the green bracket
+after Message 1, and start the red bracket at the missing block.
 
-* docs(config): 补充读副本任务历史清理说明 (#8492)
+Co-authored-by: openviking-superagent <[REDACTED_EMAIL]>
 
-说明读节点如何关闭清理，以及共享历史存储如何保留可写清理节点。
-
-Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
-Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
-
-* fix(config): move task history cleanup under server
-
----------
-
-Co-authored-by: bot-of-qin-ctx <[REDACTED_EMAIL]>
-Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
-Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
-
-**File**: `docs/en/guides/01-configuration.md` (modified, +12/-1)
+**File**: `docs/images/gateway/one-turn.en.svg` (modified, +9/-9)
 ```diff
-@@ -2193,6 +2193,16 @@ When config files are at the default path, OpenViking loads them automatically 
- > the two values identical and rotate both files together. The normal
- > tenant-scoped `api_key` remains a separate user/admin credential.
- 
-+### Task history cleanup on read replicas {#task-history-cleanup}
-+
-+The startup option `server.enable_task_history_cleanup` defaults to `true`.
-+When enabled, the node cleans up expired Task and Compile history every five minutes.
-+On a read replica, set it to `false` in `ov.conf` and restart the service.
-+Running tasks can still receive cancellation signals.
-+
-+For each shared Task store and Compile history store, keep cleanup enabled on
-+at least one node with write access to that store.
-+
- ### Reload boundary
- 
- The server reads `ov.conf` during process startup and does not watch the file
-@@ -2476,7 +2486,8 @@ When running OpenViking as an HTTP service, add a `server` section to `ov.conf`:
- | `root_api_key` | str | Root API key for multi-tenant auth in `api_key` mode. In `trusted` mode it is required on every deployment, including localhost; it does not become the source of user identity | `null` |
- | `account_store.provider` | str | Complete Account store provider. Built-in values are `"file"`, `"mysql"`, `"postgres"`, and `"redis_mysql"`; it owns account, user, group, and API-key records. `"file"` preserves the existing AGFS JSON registry and owns its process-local lookup indexes. `"postgres"` uses PostgreSQL directly. `"redis_mysql"` keeps MySQL authoritative and adds a shared Redis cache for authentication and request identity reads. | `"file"` |
- | `account_store.params` | object | Provider-specific startup parameters. Framework-owned filesystem and File-provider API-key hashing dependencies cannot be overridden here. | `{}` |
--| `account_store.params.read_only` | bool | File provider only. Load an existing writer-created registry without locks, bootstrap, or credential migrations, and reject identity mutations. Keep the replica's data mount read-only and set `reconcile_system_assets_on_startup=false`; enable `api_key_watch_enabled` to observe writer changes. A missing registry prevents startup. | `false` |
-+| `account_store.params.read_only` | bool | File provider only. Load an existing writer-created registry without locks, bootstrap, or credential migrations, and reject identity mutations. Keep the replica's data mount read-only and set `reconcile_system_assets_on_startup=false`; enable `api_key_watch_enabled` to observe writer changes. A missing registry prevents startup. Configure [task history cleanup](#task-history-cleanup) separately. | `false` |
-+| `enable_task_history_cleanup` | bool | Periodically delete expired Task and Compile history on this node. | `true` |
- | `profile_enabled` | bool | Whether to allow request-scoped cProfile via `profile=1` on HTTP requests. When disabled, the server ignores that query parameter. When enabled, the CLI can display the returned `profile`, while the Python HTTP client currently triggers profiling but does not automatically attach the top-level `profile` field to most SDK return values. | `false` |
- | `cors_origins` | list | Allowed CORS origins | `["*"]` |
- | `public_base_url` | str | Public-facing base URL emitted in MCP-issued upload instructions. Resolution order: env var `OPENVIKING_PUBLIC_BASE_URL` → this field → `X-Forwarded-Host`/`X-Forwarded-Proto` request headers → `Host` request header → listen-address fallback. Set this (or the env var) when the server runs behind a reverse proxy that does not forward `X-Forwarded-*` headers. | `null` |
+@@ -125,9 +125,9 @@
+ <text x="364" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">Message 1</text>
+ <rect x="416" y="738" width="96" height="44" rx="4" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="464" y="765" font-size="14" font-weight="400" fill="#8F959E" text-anchor="middle">none</text>
+-<rect x="516" y="738" width="84" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="516" y="738" width="84" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="558" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">Reply 1</text>
+-<rect x="604" y="738" width="96" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="604" y="738" width="96" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="652" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">Message 2</text>
+ <rect x="704" y="738" width="96" height="44" rx="4" fill="#FFFFFF" stroke="#F54A45" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="752" y="765" font-size="14" font-weight="400" fill="#F54A45" text-anchor="middle">missing</text>
+@@ -137,14 +137,14 @@
+ <text x="955" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">New message 3</text>
+ <rect x="1022" y="738" width="100" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="1072" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">New recall</text>
+-<line x1="192" y1="728" x2="700" y2="728" stroke="#2EA121" stroke-width="1.5"/>
++<line x1="192" y1="728" x2="412" y2="728" stroke="#2EA121" stroke-width="1.5"/>
+ <line x1="192" y1="728" x2="192" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<line x1="700" y1="728" x2="700" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<text x="446" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">Same as last turn: hit</text>
+-<line x1="704" y1="728" x2="1122" y2="728" stroke="#F54A45" stroke-width="1.5"/>
+-<line x1="704" y1="728" x2="704" y2="734" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="412" y1="728" x2="412" y2="734" stroke="#2EA121" stroke-width="1.5"/>
++<text x="302" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">Same as last turn: hit</text>
++<line x1="416" y1="728" x2="1122" y2="728" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="416" y1="728" x2="416" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+ <line x1="1122" y1="728" x2="1122" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+-<text x="913" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">Full price from last turn's memory onward</text>
++<text x="769" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">Full price from the missing memory onward</text>
+ <rect x="1164" y="652" width="26" height="18" rx="3" fill="#EDE6FF" stroke="#2EA121" stroke-width="1.5"/>
+ <text x="1200" y="667" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">Memory the gateway added</text>
+ <rect x="1164" y="682" width="26" height="18" rx="3" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
+@@ -154,7 +154,7 @@
+ <rect x="1164" y="742" width="26" height="18" rx="3" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5"/>
+ <text x="1200" y="757" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">New in this turn</text>
+ <text x="40" y="812" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">The client's history never contains what the gateway added, so the gateway keeps its own record and puts it back on every request.</text>
+-<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">Without replay, each turn is recomputed from where memory was added in the previous turn; the exact cost depends on the provider's cache breakpoints.</text>
++<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">Without replay, the prefix breaks where memory A should be, and everything after it is billed at full price; the exact cost depends on the provider's cache breakpoints.</text>
+ <rect x="40" y="856" width="760" height="180" rx="12" fill="#F7F3FF" stroke="#7F3BF5" stroke-width="1.5"/>
+ <text x="62" y="888" font-size="17" font-weight="700" fill="#1F2329" text-anchor="start">Across turns: save the conversation, extract memories</text>
+ <rect x="62" y="904" width="159.5" height="72" rx="8" fill="#FFFFFF" stroke="#7F3BF5" stroke-width="1.5"/>
 ```
 
-**File**: `docs/zh/guides/01-configuration.md` (modified, +9/-1)
+**File**: `docs/images/gateway/one-turn.zh.svg` (modified, +9/-9)
 ```diff
-@@ -2153,6 +2153,13 @@ OpenViking 使用两个配置文件：
- > 副本。如果该 CLI 用于管理这个服务端，两处值必须一致，并在轮换时同时更新。
- > 普通租户数据使用的 `api_key` 仍是另一把 user/admin 凭据。
- 
-+### 读副本的任务历史清理 {#task-history-cleanup}
-+
-+启动参数 `server.enable_task_history_cleanup` 默认为 `true`。开启时，本节点每 5 分钟清理过期的 Task 和 Compile 历史。
-+在读副本的 `ov.conf` 中设为 `false` 并重启服务，运行中的任务仍能收到取消信号。
-+
-+每组共享的 Task 存储和 Compile 历史存储，都应至少有一个能写入相应存储的节点开启清理。
-+
- ### 配置重载边界
- 
- 服务端只在进程启动时读取 `ov.conf`，不会监听文件变化。修改 `embedding`、
-@@ -2431,7 +2438,8 @@ ov add-resource ./docs --exclude "*.tmp"
- | `root_api_key` | str | `api_key` 模式必填的 Root API Key；`trusted` 模式在所有部署中均必填，包括 localhost，不负责解析普通用户身份 | `null` |
- | `account_store.provider` | str | 完整 Account Store Provider。内置 `"file"`、`"mysql"`、`"postgres"` 和 `"redis_mysql"`；统一持久化 Account、User、Group 和 API Key。`"file"` 兼容现有 AGFS JSON 注册表，并由 Provider 自身维护进程内查询索引。`"postgres"` 直接使用 PostgreSQL。`"redis_mysql"` 保持 MySQL 为权威存储，并增加共享 Redis 认证和请求身份读取缓存。 | `"file"` |
- | `account_store.params` | object | Provider 启动参数。不能通过这里覆盖框架注入的 VikingFS 和 File Provider API Key Hash 配置。 | `{}` |
--| `account_store.params.read_only` | bool | 仅 File Provider。只读取 writer 已创建的注册表，启动时不写锁、不初始化、不迁移凭据，并拒绝身份变更。副本数据盘仍保持只读挂载，设置 `reconcile_system_assets_on_startup=false`；开启 `api_key_watch_enabled` 感知 writer 的变更。注册表缺失时拒绝启动。 | `false` |
-+| `account_store.params.read_only` | bool | 仅 File Provider。只读取 writer 已创建的注册表，启动时不写锁、不初始化、不迁移凭据，并拒绝身份变更。副本数据盘仍保持只读挂载，设置 `reconcile_system_assets_on_startup=false`；开启 `api_key_watch_enabled` 感知 writer 的变更。注册表缺失时拒绝启动。[任务历史清理](#task-history-cleanup)需另行配置。 | `false` |
-+| `enable_task_history_cleanup` | bool | 是否在本节点定期清理过期的 Task 和 Compile 历史。 | `true` |
- | `profile_enabled` | bool | 是否允许 HTTP 请求通过 `profile=1` 开启请求级 cProfile。关闭时服务端会忽略该请求参数；开启后，CLI 可以显示返回的 `profile`，而 Python HTTP client 默认只触发服务端 profile，不会把顶层 `profile` 字段自动附着到大多数 SDK 返回值上。 | `false` |
- | `cors_origins` | list | CORS 允许的来源 | `["*"]` |
- | `public_base_url` | str | MCP `add_resource` 和 `add_skill` 工具向客户端返回的上传指令里使用的对外可见 base URL。解析顺序：环境变量 `OPENVIKING_PUBLIC_BASE_URL` → 本字段 → 请求头 `X-Forwarded-Host` / `X-Forwarded-Proto` → 请求头 `Host` → 监听地址兜底。当 server 部署在反向代理后且代理不转发 `X-Forwarded-*` 时，请显式设置本字段（或环境变量）。 | `null` |
+@@ -117,9 +117,9 @@
+ <text x="355" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">消息 1</text>
+ <rect x="402" y="738" width="86" height="44" rx="4" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="445" y="765" font-size="14" font-weight="400" fill="#8F959E" text-anchor="middle">无</text>
+-<rect x="492" y="738" width="86" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="492" y="738" width="86" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="535" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">回复 1</text>
+-<rect x="582" y="738" width="86" height="44" rx="4" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
++<rect x="582" y="738" width="86" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="625" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">消息 2</text>
+ <rect x="672" y="738" width="86" height="44" rx="4" fill="#FFFFFF" stroke="#F54A45" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <text x="715" y="765" font-size="14" font-weight="400" fill="#F54A45" text-anchor="middle">缺失</text>
+@@ -129,14 +129,14 @@
+ <text x="905" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">新消息 3</text>
+ <rect x="962" y="738" width="96" height="44" rx="4" fill="#FDECEC" stroke="#F54A45" stroke-width="1.5"/>
+ <text x="1010" y="765" font-size="14" font-weight="400" fill="#1F2329" text-anchor="middle">本轮召回</text>
+-<line x1="192" y1="728" x2="668" y2="728" stroke="#2EA121" stroke-width="1.5"/>
++<line x1="192" y1="728" x2="398" y2="728" stroke="#2EA121" stroke-width="1.5"/>
+ <line x1="192" y1="728" x2="192" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<line x1="668" y1="728" x2="668" y2="734" stroke="#2EA121" stroke-width="1.5"/>
+-<text x="430" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">和上一轮相同，命中</text>
+-<line x1="672" y1="728" x2="1058" y2="728" stroke="#F54A45" stroke-width="1.5"/>
+-<line x1="672" y1="728" x2="672" y2="734" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="398" y1="728" x2="398" y2="734" stroke="#2EA121" stroke-width="1.5"/>
++<text x="295" y="721" font-size="14" font-weight="700" fill="#2EA121" text-anchor="middle">和上一轮相同，命中</text>
++<line x1="402" y1="728" x2="1058" y2="728" stroke="#F54A45" stroke-width="1.5"/>
++<line x1="402" y1="728" x2="402" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+ <line x1="1058" y1="728" x2="1058" y2="734" stroke="#F54A45" stroke-width="1.5"/>
+-<text x="865" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">从上一轮补充记忆的位置起按原价重算</text>
++<text x="730" y="721" font-size="14" font-weight="700" fill="#F54A45" text-anchor="middle">从缺失记忆的位置起，后面全部按原价重算</text>
+ <rect x="1100" y="652" width="26" height="18" rx="3" fill="#EDE6FF" stroke="#2EA121" stroke-width="1.5"/>
+ <text x="1136" y="667" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">网关补充的记忆</text>
+ <rect x="1100" y="682" width="26" height="18" rx="3" fill="#E3F5E1" stroke="#2EA121" stroke-width="1.5"/>
+@@ -146,7 +146,7 @@
+ <rect x="1100" y="742" width="26" height="18" rx="3" fill="#FFFFFF" stroke="#8F959E" stroke-width="1.5"/>
+ <text x="1136" y="757" font-size="14" font-weight="400" fill="#646A73" text-anchor="start">本轮新内容</text>
+ <text x="40" y="812" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">客户端的历史里没有网关补充的内容，网关自己记下，并在每个请求里放回原位。</text>
+-<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">不放回时，每轮都从上一轮补充记忆的位置起重算，具体还取决于服务商的缓存断点。</text>
++<text x="40" y="832" font-size="14.5" font-weight="400" fill="#646A73" text-anchor="start">不放回时，前缀在记忆 A 本该出现的位置断开，后面的内容全部按原价重算；具体还取决于服务商的缓存断点。</text>
+ <rect x="40" y="856" width="760" height="180" rx="12" fill="#F7F3FF" stroke="#7F3BF5" stroke-width="1.5"/>
+ <text x="62" y="888" font-size="17" font-weight="700" fill="#1F2329" text-anchor="start">跨轮：保存对话，提取记忆</text>
+ <rect x="62" y="904" width="159.5" height="72" rx="8" fill="#FFFFFF" stroke="#7F3BF5" stroke-width="1.5"/>
 ```
 
-**File**: `openviking/server/config.py` (modified, +4/-0)
+---
+
+### Incident Patch 3: `280caf35` (2026-11-27)
+**Commit Message**: fix(privacy): match values next to non-ASCII text, simplify the Betterleaks import (#8602)
+
+* refactor(privacy): import upstream rules without per-rule curation
+
+Drop the exclusion list, the two pattern overrides and the repeated-character exemption, so an upstream bump only needs the tag changed and the script rerun. The generator keeps its rule-agnostic criteria and the skip pattern for formats the hand-written file owns.
+
+* refactor(privacy): keep hand-written rules to OpenViking keys and three key shapes
+
+Remove the Telegram, Alibaba Cloud and Vault detectors. The sk- shapes and the Zhipu shape stay because upstream only matches them next to a provider name.
+
+* build: ship the Betterleaks license in the wheel
+
+The imported rules are compiled into the ragfs extension that the wheel carries, so the MIT notice has to travel with it.
+
+* fix(privacy): replace registered values typed right next to non-ASCII text
+
+The registered-value matcher treated a Han character and an adjacent ASCII value as one word, so a value written without a space after Chinese text was never replaced. Sealing enrolled such a token through the detector and then left it in the text. ASCII next to another scri
+
+**File**: `crates/ragfs/src/privacy_extractor_rules.json` (modified, +0/-40)
 ```diff
-@@ -483,6 +483,10 @@ class ServerConfig(BaseModel):
-     roles: List[Literal["api", "queue_worker", "scheduler"]] = Field(
-         default_factory=lambda: ["api", "queue_worker", "scheduler"], min_length=1
-     )
-+    enable_task_history_cleanup: bool = Field(
-+        default=True,
-+        description="Periodically delete expired Task and Compile history on this node.",
+@@ -244,46 +244,6 @@
+         ["0a1b2c3d4e5f60718293a4b5c6d7e8f9", ".", "aB3dE5gH7jK9mN2pQ4sT6vW8"],
+         ["0A1B2C3D4E5F60718293A4B5C6D7E8F9", ".", "aB3dE5gH7jK9mN2p"]
+       ]
+-    },
+-    {
+-      "id": "alibaba_access_key_id",
+-      "pattern": "LTAI[A-Za-z0-9]{17,21}",
+-      "reject_repeated": true,
+-      "positive": [
+-        ["LTAI", "aB3dE5gH7jK9mN2pQ"],
+-        ["LTAI", "aB3dE5gH7jK9mN2pQ4sT"]
+-      ],
+-      "negative": [
+-        ["LTAI", "aB3dE5gH7jK9mN2p"],
+-        ["LTAI", "aB3dE5gH7jK9mN2pQ4sT6v"],
+-        ["LTAI", "EXAMPLE", "aB3dE5gH7jK9m"]
+-      ]
+-    },
+-    {
+-      "id": "vault",
+-      "pattern": "hvs\\.[A-Za-z0-9_-]{90,120}",
+-      "reject_repeated": true,
+-      "positive": [
+-        ["hvs.", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB3dE5gH7jK9mN2pQ4sT6vW8yZ"]
+-      ],
+-      "negative": [
+-        ["hvs.", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rU"],
+-        ["hvs.", "your-vault-token"]
+-      ]
+-    },
+-    {
+-      "id": "telegram_bot_token",
+-      "pattern": "(?:bot)?[0-9]{5,16}:A[A-Za-z0-9_-]{34}",
+-      "reject_repeated": true,
+-      "positive": [
+-        ["1234567890:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"],
+-        ["bot1234567890:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"]
+-      ],
+-      "negative": [
+-        ["1234:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"],
+-        ["1234567890:B", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUaB"],
+-        ["1234567890:A", "aB3dE5gH7jK9mN2pQ4sT6vW8yZ0cF1rUa"]
+-      ]
+     }
+   ],
+   "reference_pattern": "\\{\\{[ \\t]*ov_privacy:[^{}\\r\\n]+\\}\\}"
+```
+
+**File**: `crates/ragfs/src/privacy_extractor_rules_betterleaks.json` (modified, +10/-3)
+```diff
+@@ -12,10 +12,13 @@
+     {"id": "artifactory-api-key", "pattern": "AKCp[A-Za-z0-9]{68,70}", "reject_repeated": true},
+     {"id": "artifactory-reference-token", "pattern": "cmVmd[A-Za-z0-9]{59}", "reject_repeated": true},
+     {"id": "atlassian-api-token", "pattern": "ATAT[A-Za-z0-9_\\-=]{100,}", "reject_repeated": true},
++    {"id": "authress-service-client-access-key", "pattern": "(?i)(?:sc|ext|scauth|authress)_[a-z0-9]{5,30}\\.[a-z0-9]{4,6}\\.acc[_-][a-z0-9-]{10,32}\\.[a-z0-9+/_=-]{30,120}", "reject_repeated": true},
+     {"id": "aws-amazon-bedrock-api-key-long-lived", "pattern": "ABSK[A-Za-z0-9+/]{109,269}={0,2}", "reject_repeated": true},
++    {"id": "azure-servicebus-connection-string", "pattern": "(?i)Endpoint=sb://[a-z0-9-]+\\.servicebus\\.windows\\.net/;SharedAccessKeyName=[^;=\\t\\n\\f\\r '\"]{1,128};SharedAccessKey=[A-Za-z0-9+/]{32,100}={0,2}(?:;EntityPath=[^;\\t\\n\\f\\r '\"]{1,128})?", "reject_repeated": true},
+     {"id": "bitbucket-data-center-token", "pattern": "BBDC-[A-Za-z0-9+/=]{32,}", "reject_repeated": true},
++    {"id": "brave-search-api-key", "pattern": "BSA[A-Za-z0-9_-]{24,40}", "reject_repeated": true},
+     {"id": "buildkite-service-token", "pattern": "bkaa_[A-Za-z0-9_-]{75}|bkaj_[A-Za-z0-9_-]{333}|bkar_[A-Za-z0-9_-]{73}|bkct_[A-Za-z0-9_-]{73}|bkpt_[A-Za-z0-9_-]{199}|bkpat_[A-Za-z0-9_-]{54}|bkps_[A-Za-z0-9_-]{64}", "reject_repeated": true},
+-    {"id": "buildkite-user-access-token", "pattern": "bkua_(?:[a-z0-9]{53}|[a-z0-9]{40})", "reject_repeated": true},
++    {"id": "buildkite-user-access-token", "pattern": "bkua_(?:[a-z0-9]{40}|[a-z0-9]{53})", "reject_repeated": true},
+     {"id": "cal-api-key", "pattern": "cal_live_[a-f0-9]{32}", "reject_repeated": true},
+     {"id": "canva-client-secret", "pattern": "cnvca[a-zA-Z0-9_-]{51}", "reject_repeated": true},
+     {"id": "cartesia-api-key.1", "pattern": "sk_car_[A-Za-z0-9_]{20}", "reject_repeated": true},
+@@ -29,7 +32,7 @@
+     {"id": "cockroachlabs-cloud-api-key", "pattern": "CCDB1_[A-Za-z0-9]{22}_[A-Za-z0-9]{40}", "reject_repeated": true},
+     {"id": "configcat-sdk-key-extended", "pattern": "configcat-sdk-1/[A-Za-z0-9_-]{22}/[A-Za-z0-9_-]{22}", "reject_repeated": true},
+     {"id": "databricks-api-token", "pattern": "dapi[a-f0-9]{32}(?:-[0-9])?", "reject_repeated": true},
+-    {"id": "datastax-astra-application-token", "pattern": "AstraCS:[A-Za-z0-9]{20,}:[a-f0-9]{64}", "reject_repeated": true},
++    {"id": "datastax-astra-application-token", "pattern": "AstraCS:[A-Za-z0-9]{20,}", "reject_repeated": true},
+     {"id": "daytona-api-key", "pattern": "dtn_[a-f0-9]{64}", "reject_repeated": true},
+     {"id": "deno-account-token", "pattern": "ddp_[A-Za-z0-9]{36}", "reject_repeated": true},
+     {"id": "devcycle-server-sdk-key", "pattern": "dvc_server_[A-Za-z0-9]{8,32}", "reject_repeated": true},
+@@ -54,7 +57,7 @@
+     {"id": "figma-personal-access-token", "pattern": "(?i)figd_[A-Z0-9_-]{38,42}", "reject_repeated": true},
+     {"id": "flutterwave-encryption-key", "pattern": "FLWSECK_TEST-(?i)[a-h0-9]{12}", "reject_repeated": true},
+     {"id": "flutterwave-secret-key", "pattern": "FLWSECK_TEST-(?i)[a-h0-9]{32}-X", "reject_repeated": true},
+-    {"id": "flyio-access-token", "pattern": "FlyV1[\\t\\n\\f\\r ][A-Za-z0-9=_\\-,/+]{100,}"},
++    {"id": "flyio-access-token", "pattern": "FlyV1[\\t\\n\\f\\r ][A-Za-z0-9=_\\-,/+]{100,}", "reject_repeated": true},
+     {"id": "frameio-api-token", "pattern": "fio-u-(?i)[a-z0-9\\-_=]{64}", "reject_repeated": true},
+     {"id": "gcp-api-key", "pattern": "AIza[0-9A-Za-z_-]{35}", "reject_repeated": true},
+     {"id": "gcp-gemini-api", "pattern": "AQ\\.Ab8RN6[A-Za-z0-9_-]{44}", "reject_repeated": true},
+@@ -91,6 +94,7 @@
+     {"id": "langchain-langsmith-personal-access-token", "pattern": "lsv2_pt_[0-9a-fA-F]{32}_[0-9a-fA-F]{10}", "reject_repeated": true},
+     {"id": "langchain-langsmith-service-key", "pattern": "lsv2_sk_[0-9a-fA-F]{32}_[0-9a-fA-F]{10}", "reject_repeated": true},
+     {"id": "langfuse-secret-key.1", "pattern": "sk-lf-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", "reject_repeated": true},
++    {"id": "lichess-personal-access-token", "pattern": "lip_[A-Za-z0-9_]{16,60}", "reject_repeated": true},
+     {"id": "linear-api-key", "pattern": "lin_api_(?i)[a-z0-9]{40}", "reject_repeated": true},
+     {"id": "llama-cloud-api-key.1", "pattern": "llx-[A-Za-z0-9]{44,52}", "reject_repeated": true},
+     {"id": "mailersend-api-token", "pattern": "mlsn\\.[A-Za-z0-9]{30,100}", "reject_repeated": true},
+@@ -122,11 +126,13 @@
+     {"id": "planetscale-api-token", "pattern": "pscale_tkn_(?i)[0-9A-Za-z_=\\.-]{32,64}", "reject_repeated": true},
+     {"id": "planetscale-oauth-token", "pattern": "pscale_oauth_[0-9A-Za-z_=\\.-]{32,64}", "reject_repeated": true},
+     {"id": "planetscale-password", "pattern": "(?i)pscale_pw_(?i)[0-9A-Za-z_=\\.-]{32,64}", "reject_repeated": true},
++    {"id": "polar-oauth-access-token", "pattern": "polar_at_[A-Za-z0-9_-]{20,100}", "reject_repeated": true},
+     {"id":
+```
+
+**File**: `crates/ragfs/src/privacy_matcher.rs` (modified, +15/-7)
+```diff
+@@ -115,9 +115,10 @@ impl PrivacyMatcher {
+             parent_prefix[index] = prefixes.last().copied().unwrap_or(patterns.len());
+             for &prefix in prefixes.iter().rev() {
+                 let end = patterns[prefix].len();
+-                if !(value[..end].chars().next_back().is_some_and(word_char)
+-                    && value[end..].chars().next().is_some_and(word_char))
+-                {
++                if !joins_word(
++                    value[..end].chars().next_back(),
++                    value[end..].chars().next(),
++                ) {
+                     shorter_prefixes[index] = Some(PatternID::must(prefix));
+                     break;
+                 }
+@@ -457,8 +458,15 @@ fn next_unmarked_prefix(links: &mut [usize], mut index: usize) -> usize {
+ }
+ // Matches may not split adjacent word characters.
+ fn is_match_boundary(content: &str, at: usize) -> bool {
+-    !(content[..at].chars().next_back().is_some_and(word_char)
+-        && content[at..].chars().next().is_some_and(word_char))
++    !joins_word(
++        content[..at].chars().next_back(),
++        content[at..].chars().next(),
 +    )
-     executor_threads: int = Field(
-         default=64,
-         ge=0,
++}
++// ASCII next to another script, such as a token typed right after Chinese text, is not one word.
++fn joins_word(left: Option<char>, right: Option<char>) -> bool {
++    matches!((left, right), (Some(l), Some(r))
++        if word_char(l) && word_char(r) && l.is_ascii() == r.is_ascii())
+ }
+ fn word_char(c: char) -> bool {
+     c.is_alphanumeric() || c == '_'
+@@ -497,9 +505,9 @@ mod tests {
+         ]);
+         assert_eq!(
+             matcher
+-                .sanitize("pass123-v2x pass123-v2 中pass123 pass123_ pass123²")
++                .sanitize("pass123-v2x pass123-v2 中pass123 pass123_ pass123² 秘密值们 x秘密")
+                 .content,
+-            "short-v2x long 中pass123 pass123_ pass123²"
++            "short-v2x long 中short pass123_ short² 秘密值们 xshort"
+         );
+         let input = format!("🙂秘密值 {reference} session default");
+         let (found, exceeded) = matcher.find_limited(&input, 3);
 ```
 
-**File**: `openviking/service/core.py` (modified, +5/-1)
+**File**: `docs/en/concepts/13-privacy.md` (modified, +1/-1)
 ```diff
-@@ -1049,7 +1049,11 @@ async def start_background(self, *, queue_worker: bool = True, scheduler: bool =
-             await self._expiry_runtime.start_roles()
-         if self._runtime_config_manager is not None:
-             self._runtime_config_manager.start_refresh_loop()
--        get_task_tracker().start_cleanup_loop()
-+        get_task_tracker().start_cleanup_loop(
-+            cleanup_history=(
-+                self._server_config is None or self._server_config.enable_task_history_cleanup
-+            )
-+        )
-         if scheduler:
-             await self.start_scheduler()
-         if queue_worker:
-```
-
-**File**: `openviking/service/task_tracker.py` (modified, +3/-2)
-```diff
-@@ -422,8 +422,9 @@ async def restore_work_tasks(self, owners: Dict[str, tuple[str, str]]) -> List[T
-                 restored.append(task)
-         return restored
+@@ -225,7 +225,7 @@ Restoration is supported for these files under the current user's Session direct
  
--    def start_cleanup_loop(self) -> None:
--        if self._cleanup_task is None or self._cleanup_task.done():
-+    def start_cleanup_loop(self, *, cleanup_history: bool = True) -> None:
-+        """Start cancellation polling. Set cleanup_history=False on read-only replicas."""
-+        if cleanup_history and (self._cleanup_task is None or self._cleanup_task.done()):
-             self._cleanup_task = asyncio.create_task(self._cleanup_loop())
-         if self._cancel_poll_task is None or self._cancel_poll_task.done():
-             self._cancel_poll_task = asyncio.create_task(self._cancel_poll_loop())
-```
-
-**File**: `tests/service/test_task_work_contract.py` (modified, +1/-1)
-```diff
-@@ -736,7 +736,7 @@ async def execute():
-         assert await tracker.get_work_state("task", work_ids[0], **OWNER) is WorkState.CANCELLED
-         assert not worker.done()
-         monkeypatch.setattr("openviking.service.task_tracker._CANCEL_POLL_INTERVAL", 0)
--        remote.start_cleanup_loop()
-+        remote.start_cleanup_loop(cleanup_history=False)
-         # Cancellation delivery precedes durable cleanup. MySQL commits during
-         # unregister_running_task must settle before the worker propagates it;
-         # a one-second timeout on the worker can cancel that cleanup itself.
-```
-
-**File**: `tests/test_server_config_loader.py` (modified, +3/-0)
-```diff
-@@ -56,6 +56,7 @@ def test_load_server_config_preserves_supported_fields(tmp_path):
-                     "host": "0.0.0.0",
-                     "port": 1944,
-                     "workers": 2,
-+                    "enable_task_history_cleanup": False,
-                     "executor_threads": 48,
-                     "timeout_keep_alive": 120,
-                     "auth_mode": "trusted",
-@@ -74,6 +75,7 @@ def test_load_server_config_preserves_supported_fields(tmp_path):
-     assert config.host == "0.0.0.0"
-     assert config.port == 1944
-     assert config.workers == 2
-+    assert config.enable_task_history_cleanup is False
-     assert config.executor_threads == 48
-     assert config.timeout_keep_alive == 120
-     assert config.auth_mode == "trusted"
-@@ -89,6 +91,7 @@ def test_load_server_config_defaults(tmp_path):
+ PrivacySanitizer does not infer sensitivity from field names. String values in the active Privacy catalog participate in automatic content scanning and reference replacement only when they contain at least 6 Unicode characters. Shorter values can still be stored, referenced, and explicitly resolved, but are excluded from global substring replacement to reduce false positives in ordinary text. Python owns catalog loading, reference generation, and cache policy; matcher construction, leftmost-longest matching, and text rewriting run in RAGFS's Rust Aho-Corasick implementation through a reusable PyO3 matcher that releases the GIL while scanning. The matcher catalog is cached per user and process-local revision; local changes invalidate it immediately, and a 3600-second TTL bounds staleness after changes made by another worker or node.
  
-     config = load_server_config(str(config_path))
+-Values stored under `credential` for the current user take priority. Otherwise, only values in the current Skill's or Session's Privacy config that match a recognized credential format are used. Matching respects word boundaries and skips values listed in `never_mask`.
++Values stored under `credential` for the current user take priority. Otherwise, only values in the current Skill's or Session's Privacy config that match a recognized credential format are used. Matching respects word boundaries, where an ASCII value next to text in another script such as Chinese still counts as a whole word, and skips values listed in `never_mask`.
  
-+    assert config.enable_task_history_cleanup is True
-     assert config.timeout_keep_alive == 5
-     assert config.executor_threads == 64
+ Using a GitHub Personal Access Token (PAT) as an example:
  
 ```
 
-**File**: `tests/test_task_tracker.py` (modified, +23/-0)
+**File**: `docs/zh/concepts/13-privacy.md` (modified, +1/-1)
 ```diff
-@@ -687,6 +687,29 @@ def __deepcopy__(self, memo):
- # ── TTL / Eviction ──
+@@ -223,7 +223,7 @@ fs.read(uri)
+ 
+ PrivacySanitizer 不根据字段名猜测敏感性。当前 active Privacy 中长度不少于 6 个 Unicode 字符的字符串值会参与正文自动扫描与引用替换；更短的值仍可保存、引用和显式读取，但不会参与全文替换，以降低普通正文误命中。Python 负责目录、引用和缓存策略，匹配器构建、最长匹配与正文重写由 `ragfs` 的 Rust Aho-Corasick 实现完成，并通过 PyO3 复用不可变 matcher、扫描时释放 GIL。匹配目录按用户和本进程 revision 缓存，本进程修改会立即失效，另外设有 3600 秒缓存 TTL 以覆盖多 worker/多节点修改。
+ 
+-上述按值匹配优先使用当前用户的 `credential`；未命中时，仅使用当前 Skill 或 Session 中符合凭据格式的值，其他对象不参与匹配。匹配遵循词边界，并排除 `never_mask` 中的值。
++上述按值匹配优先使用当前用户的 `credential`；未命中时，仅使用当前 Skill 或 Session 中符合凭据格式的值，其他对象不参与匹配。匹配遵循词边界（ASCII 值紧贴中文等其他文字时仍算完整的词），并排除 `never_mask` 中的值。
+ 
+ 以保存 GitHub Personal Access Token（PAT）为例：
+ 
+```
+
+**File**: `pyproject.toml` (modified, +1/-0)
+```diff
+@@ -17,6 +17,7 @@ authors = [
+     {name = "ByteDance", email = "noreply@bytedance.com"}
+ ]
+ license = "AGPL-3.0"
++license-files = ["LICENSE", "crates/ragfs/src/BETTERLEAKS_LICENSE.txt"]
+ classifiers = [
+     "Development Status :: 3 - Alpha",
+     "Intended Audience :: Developers",
+```
+
+**File**: `scripts/maintenance/privacy_rules/sync_betterleaks.py` (modified, +1/-25)
+```diff
+@@ -38,25 +38,6 @@
+     r"^(?:anthropic|aws-access-token|github|jwt|openai|private-key"
+     r"|slack-(?:app|bot|config-access|legacy|user)-)"
+ )
+-EXCLUDED = {
+-    # The prefix and body also fit ordinary identifiers such as prf_hmac_sha256_expand_label.
+-    "brave-search-api-key": "matches ordinary identifiers",
+-    "lichess-personal-access-token": "matches ordinary identifiers",
+-    "polar-oauth-access-token": "matches ordinary identifiers",
+-    "proof-full-access-api-key": "matches ordinary identifiers",
+-    "thunderstore-api-token.1": "matches ordinary identifiers",
+-    # Their lazy DFAs do not fit the per-pattern cache of the built-in detectors.
+-    "authress-service-client-access-key": "too large for the built-in cache budget",
+-    "azure-servicebus-connection-string": "too large for the built-in cache budget",
+-}
+-# Upstream relies on a trailing \b to reach the longer branch or to stop early; the
+-# extractor checks boundaries after matching, so these need the full token spelled out.
+-OVERRIDES = {
+-    "buildkite-user-access-token": "bkua_(?:[a-z0-9]{53}|[a-z0-9]{40})",
+-    "datastax-astra-application-token": "AstraCS:[A-Za-z0-9]{20,}:[a-f0-9]{64}",
+-}
+-# Real tokens of these rules contain long runs of one character.
+-KEEP_REPEATED = {"flyio-access-token"}
+ MIN_PREFIX = 3
+ 
+ ASCII_CLASS = {"w": "0-9A-Za-z_", "d": "0-9", "s": r"\t\n\f\r "}
+@@ -239,8 +220,6 @@ def convert(rules: list[dict]) -> tuple[list[dict], dict[str, str]]:
+         try:
+             if HAND_WRITTEN.match(rule_id):
+                 raise Skip("covered by a hand-written detector")
+-            if rule_id in EXCLUDED:
+-                raise Skip(EXCLUDED[rule_id])
+             if not rule.get("regex") or rule.get("path"):
+                 raise Skip("matches file paths")
+             if rule.get("skipReport"):
+@@ -253,10 +232,7 @@ def convert(rules: list[dict]) -> tuple[list[dict], dict[str, str]]:
+                 raise Skip("no fixed prefix")
+             if fixed:
+                 raise Skip("fixed string without a secret part")
+-            detector = {"id": rule_id, "pattern": to_rust(OVERRIDES.get(rule_id, pattern))}
+-            if rule_id not in KEEP_REPEATED:
+-                detector["reject_repeated"] = True
+-            detectors.append(detector)
++            detectors.append({"id": rule_id, "pattern": to_rust(pattern), "reject_repeated": True})
+         except Skip as reason:
+             skipped[rule_id] = str(reason)
+     return sorted(detectors, key=lambda detector: detector["id"]), skipped
+```
+
+**File**: `tests/server/test_api_privacy_configs.py` (modified, +15/-0)
+```diff
+@@ -677,6 +677,21 @@ async def test_privacy_seal_replaces_registered_values_when_mode_is_off(
+     assert again == {"revision": revision, "texts": [None]}
  
  
-+@pytest.mark.parametrize("cleanup_history", [True, False])
-+async def test_periodic_history_cleanup(tracker, monkeypatch, cleanup_history):
-+    compile_cleanup = AsyncMock(return_value=0)
-+    # End the loop after one sweep reaches the Task store.
-+    task_cleanup = AsyncMock(side_effect=asyncio.CancelledError)
-+    tracker.compile_history_cleanup = compile_cleanup
-+    monkeypatch.setattr(tracker._store, "delete_expired", task_cleanup)
-+    monkeypatch.setattr(tracker, "CLEANUP_INTERVAL", 0)
++async def test_privacy_seal_replaces_a_new_token_typed_next_to_cjk_text(client: httpx.AsyncClient):
++    token = _github_token("cjk-adjacent")
++    response = await _seal(
++        client,
++        {"text": f"密钥是{token}请保存", "enroll": True},
++        f"历史消息里的{token}也要替换",
++    )
++    assert response.status_code == 200, response.text
++    sealed, history = response.json()["result"]["texts"]
++    reference = sealed["replaced"][0]["reference"]
++    assert sealed["replaced"][0]["created"] is True
++    assert sealed["text"] == f"密钥是{reference}请保存"
++    assert history["text"] == f"历史消息里的{reference}也要替换"
 +
-+    tracker.start_cleanup_loop(cleanup_history=cleanup_history)
-+    try:
-+        if cleanup_history:
-+            await asyncio.wait_for(tracker._cleanup_task, timeout=1)
-+            compile_cleanup.assert_awaited_once()
-+            task_cleanup.assert_awaited_once()
-+        else:
-+            assert tracker._cleanup_task is None
-+            compile_cleanup.assert_not_awaited()
-+            task_cleanup.assert_not_awaited()
-+    finally:
-+        await tracker.stop_background_loops()
 +
-+
- @pytest.mark.parametrize("already_missing", [False, True])
- async def test_evict_expired_completed(already_missing, monkeypatch):
-     agfs = _FakeAgfs()
+ async def test_privacy_seal_enrolls_new_tokens_once(client: httpx.AsyncClient, service):
+     token = _github_token("enroll-once")
+     first = await _seal(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8535** (2026-11-26): fix(snapshot-log): backport service_name isolation to v0.5.6 (@baojun-zhang)
-- **PR #8534** (2026-11-26): fix(setup): detect an Antigravity sign-in that lives outside ~/.gemini (@ZaynJarvis)
-- **PR #8520** (2026-11-26): feat(compile): limit source directories to 100 (@fujiajie666)
-- **PR #8515** (2026-11-26): fix(superagent): report apps the upgrade left running (@ZaynJarvis)
-- **PR #8513** (2026-11-26): docs: clarify managed setup connection requirements (@ehz0ah)
-- **PR #8500** (2026-11-26): feat(onboarding): align BytePlus managed-service setup (@ehz0ah)
+- **PR #8603** (closed): fix(privacy): replace registered values typed right next to non-ASCII text (@t0saki)
+- **PR #8602** (2026-11-27): fix(privacy): match values next to non-ASCII text, simplify the Betterleaks import (@t0saki)
+- **PR #8597** (2026-11-27): fix(superagent): keep card images named by img_key or i18n_img_key (@ZaynJarvis)
+- **PR #8595** (2026-11-27): fix(superagent): read one language of a composite interactive card (@MaojiaSheng)
+- **PR #8590** (2026-11-27): docs(gateway): end the cache-hit range where memory A is missing (@openviking-superagent)
+- **PR #8588** (2026-11-27): fix(snapshot-log)!: backport mysql branch limit to v0.5.6 (@baojun-zhang)
 
 ---
 
@@ -2515,46 +2351,39 @@ Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. plugins): send the profile again after a host compaction drops it
+## X. snapshot-log)!: scope postgres indexes and use full paths
 
 **RULE**:
-When implementing operations in `docs/en/agent-integrations/16-capability-reference.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ragfs-python/src/git.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b4dc8c4`: plugins): send the profile again after a host compaction drops it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bab33336`: snapshot-log)!: scope postgres indexes and use full paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/agent-integrations/16-capability-reference.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ragfs-python/src/git.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-| DSH | Yes, session-aware | Profile, memory index, skills | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
-| Codex | `SessionStart` on startup, clear, resume, and compact |
-| Cursor, TRAE, TRAE CN, ZCode | `SessionStart` |
-| Antigravity | `SessionStart`, and the first turn after each compaction checkpoint in the transcript |
-| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent. CodeBuddy drops `SessionStart` context at a compaction, so the next prompt sends it again |
-| OpenCode | The first message of each session and the first after each compaction; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
-| DSH | At session start, and again on the next model step when a compaction dropped it |
-| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | `SessionStart` with `source="compact"` sends the profile again; the archive summary is injected
+                service_name,
+        let other = build_snapshot_log_store(&cfg, "other-service")
+            .unwrap()
+            .expect("PG index enabled for another service");
+            assert!(other
+                .load_latest_indexed_commit(&account, "main")
+                .await
+                .unwrap()
+                .is_none());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-| DSH | Yes, session-aware | Profile, memory index, skills, once per session | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
-| Codex | `SessionStart` on startup, clear, and resume |
-| Cursor, TRAE, TRAE CN, ZCode, Antigravity | `SessionStart` |
-| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent |
-| OpenCode | The first message of each session; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
-| DSH | Once per session; not sent again after compaction |
-| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | The archive summary is injected on resume |
-| CodeBuddy Code | Host summarizes | `PreCompact` commits | Nothing |
-| Antigravity | Not verified | No pre-compaction hook | Nothing |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b4dc8c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bab33336` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -13965,3 +13965,4 @@
 | `CYCLE-20261128-LQE7` | `2026-11-28T03:54:03.103Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11028` | Yes (`cbe2c0fc...`) |
 | `CYCLE-20261128-XY5Y` | `2026-11-28T04:03:33.046Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11029` | Yes (`ef13f5fc...`) |
 | `CYCLE-20261128-Y0BG` | `2026-11-28T04:03:35.836Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11030` | Yes (`98a422ad...`) |
+| `CYCLE-20261128-9DXW` | `2026-11-28T04:12:26.708Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11031` | Yes (`52ec2a8e...`) |

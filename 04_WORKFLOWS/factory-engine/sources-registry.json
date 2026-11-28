@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T04:03:40.967Z",
-    "lastVerified": "2026-11-28T04:03:40.967Z",
+    "lastChecked": "2026-11-28T04:12:30.131Z",
+    "lastVerified": "2026-11-28T04:12:30.131Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -403,8 +403,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T03:35:30.569Z",
-    "lastVerified": "2026-11-28T03:35:30.569Z",
+    "lastChecked": "2026-11-28T04:12:24.331Z",
+    "lastVerified": "2026-11-28T04:12:24.331Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1188,8 +1188,8 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T23:57:32.561Z",
-    "lastVerified": "2026-11-27T23:57:32.561Z",
+    "lastChecked": "2026-11-28T04:12:19.350Z",
+    "lastVerified": "2026-11-28T04:12:19.350Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -4687,8 +4687,8 @@
     "officialUrl": "https://github.com/zarf-dev/zarf",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T10:51:53.744Z",
-    "lastVerified": "2026-11-27T10:51:53.744Z",
+    "lastChecked": "2026-11-28T04:12:16.892Z",
+    "lastVerified": "2026-11-28T04:12:16.892Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zarf-dev-zarf",
@@ -7244,12 +7244,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dalance-procs": {
-    "name": "dalance/procs",
+    "name": "procs",
     "officialUrl": "https://github.com/dalance/procs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T04:27:11.116Z",
-    "lastVerified": "2026-11-27T04:27:11.116Z",
+    "lastChecked": "2026-11-28T04:12:09.338Z",
+    "lastVerified": "2026-11-28T04:12:09.338Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dalance-procs",
@@ -7258,7 +7258,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8741327f"
   },
   "hf-zai-org-glm-5.3": {
     "name": "zai-org/GLM-5.3",
@@ -7913,14 +7914,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-27T09:17:43.222Z",
-    "lastVerified": "2026-11-27T09:17:43.222Z",
+    "lastChecked": "2026-11-28T04:12:25.306Z",
+    "lastVerified": "2026-11-28T04:12:25.306Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "6d0c2c9be61c5f4b6c75c583c38afbeb9839964f7d39a969b0c26f670c0f296b",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 11,
+    "contentHash": "52ec2a8ee89abf90da2e2dcc00b93a650274018485700e510d0abaa91f5b6644",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11091,9 +11092,9 @@
   "signerlabs-shipswift": {
     "name": "ShipSwift",
     "officialUrl": "https://github.com/signerlabs/ShipSwift",
-    "lastChecked": "2026-11-26T02:18:35.396Z",
+    "lastChecked": "2026-11-28T04:12:14.352Z",
     "revisionIdentifier": "d05d75e7",
-    "lastVerified": "2026-11-26T02:18:35.396Z"
+    "lastVerified": "2026-11-28T04:12:14.352Z"
   },
   "archivebox-archivebox": {
     "name": "ArchiveBox/ArchiveBox",
@@ -11537,9 +11538,9 @@
   "psf-requests": {
     "name": "requests",
     "officialUrl": "https://github.com/psf/requests",
-    "lastChecked": "2026-11-24T19:19:06.829Z",
+    "lastChecked": "2026-11-28T04:12:11.893Z",
     "revisionIdentifier": "3c7baaa0",
-    "lastVerified": "2026-11-24T19:19:06.829Z"
+    "lastVerified": "2026-11-28T04:12:11.893Z"
   },
   "sdwebimage-sdwebimageswiftui": {
     "name": "SDWebImageSwiftUI",
