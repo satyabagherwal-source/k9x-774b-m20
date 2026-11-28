@@ -14072,3 +14072,6 @@
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T14:57:07.184Z` | `rmax-scrapy-redis` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-EA0B2006` [Domain D] | Yes (`e3588a3f...`) |
 | `CYCLE-20261128-LRM6` | `2026-11-28T15:05:55.470Z` | `MemTensor/MemT-1.0-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-memtensor-memt-1.0-pro-learnings.md` | Yes (`646879a7...`) |
 | `CYCLE-20261128-LTP8` | `2026-11-28T15:05:58.172Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11114` | Yes (`86562dd7...`) |
+| `CYCLE-20261128-31F4` | `2026-11-28T15:19:21.328Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11115` | Yes (`12a83298...`) |
+| `CYCLE-20261128-33O5` | `2026-11-28T15:19:24.245Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11116` | Yes (`5a904249...`) |
+| `CYCLE-20261128-3AW7` | `2026-11-28T15:19:33.607Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11117` | Yes (`61162dd8...`) |

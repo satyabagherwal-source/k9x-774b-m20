@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T15:06:09.441Z",
+  "last_updated": "2026-11-28T15:19:44.471Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T13:18:25.502Z",
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-28T14:29:44.227Z",
+      "processed_at": "2026-11-28T15:19:41.690Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1813,7 +1813,7 @@
       "staged_for_review": 0
     },
     "typewhisper-typewhisper-mac-learnings.md": {
-      "processed_at": "2026-11-26T09:52:55.968Z",
+      "processed_at": "2026-11-28T15:19:40.075Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1853,7 +1853,7 @@
       "staged_for_review": 1
     },
     "tuist-tuist-learnings.md": {
-      "processed_at": "2026-11-27T12:32:43.266Z",
+      "processed_at": "2026-11-28T15:19:37.676Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4083,7 +4083,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5373,
+  "total_dossiers_evaluated": 5376,
   "total_canonical_promoted": 606,
-  "total_staged_for_review": 4092
+  "total_staged_for_review": 4095
 }

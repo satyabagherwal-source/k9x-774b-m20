@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T15:06:09.257Z",
+  "last_updated": "2026-11-28T15:19:44.203Z",
   "total_verified_learnings": 9153,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27173,
+  "total_items": 27183,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "ca34987a",
-      "content_hash": "25b92529b340ef9f6c9ed31c3a4caa0c28c37f914157b95c30efc39d681635f5",
+      "source_version": "e6479ba8",
+      "content_hash": "afe4a31a42cc16bf63f130fbd0b212c2a51ca30e480488b0003a5fcc97275ede",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T14:29:37.102Z"
+      "persisted_at": "2026-11-28T15:19:34.568Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "ffcd8804cf7292a830339851d27734cad8932f98e800b8a403d4adcf0450595b",
+      "content_hash": "4e4e73e4f33b23a5e15047a6f4e6b637e6ddd4e39617e36ce5cdd503b7d35cf2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T14:29:45.759Z"
+      "persisted_at": "2026-11-28T15:19:44.203Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -220904,8 +220904,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "ca34987a",
-      "content_hash": "605727ce53f4f6a599cefdedcc0de4bf1533895756f8235a26b89edc9024a028",
+      "source_version": "e6479ba8",
+      "content_hash": "61162dd8751c2baeebd496b0b4f51cb7a05e326b896b63f8735a5d602ede909e",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -221173,6 +221173,11 @@
           "number": 11109,
           "title": "read an index mixing dates and datetimes, dates as midnight",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11117,
+          "title": "escape <placeholders> in generated help docs; fix timebucketp option list",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221180,7 +221185,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T14:29:36.253Z",
+      "verified_at": "2026-11-28T15:19:33.268Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222357,10 +222362,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "ca34987a",
-      "content_hash": "07c1c684776fe14760afc524c80c416ba3b0017c1bab848683ab9e947db93309",
+      "source_version": "e6479ba8",
+      "content_hash": "95e24b49408db85b2eea0ad25e1e5d63eba067785f83f8d688799482d802549a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T14:29:36.926Z"
+      "persisted_at": "2026-11-28T15:19:34.270Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -222430,9 +222435,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7ae5d3f0e7962dc64a43fd724bbfe91039cc96b5e234a7abf66e1bfe4856d63",
+      "content_hash": "d363cac1f55c72de590e083d907d7d569e8c6594703dcebc825d6c96d3e0ef46",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T14:29:45.572Z"
+      "persisted_at": "2026-11-28T15:19:43.906Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -249141,8 +249146,8 @@
       "slug": "tuist-tuist",
       "platform": "github",
       "source_url": "https://github.com/tuist/tuist",
-      "source_version": "99a394b3",
-      "content_hash": "38a06a565ef4567059baa80735b9fda78f33b0ec43c875931cd41b95af7c501d",
+      "source_version": "8b30c334",
+      "content_hash": "12a832986e77cdcf6ab2ae026549d7f5d348939c86bf27543e5284789e457845",
       "dossier_path": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "promoted_rules": [
@@ -249195,6 +249200,11 @@
           "number": 10900,
           "title": "send security and incident reports to [REDACTED_EMAIL]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11115,
+          "title": "cap template builds and prebuild only with room",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -249202,7 +249212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T12:32:35.758Z",
+      "verified_at": "2026-11-28T15:19:20.963Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249256,10 +249266,10 @@
       "relative_path": "08_VERIFICATION/tuist-tuist-verification-protocol-empirical-defect-shield-for-tuist-tuist.md",
       "title": "Verification Protocol: Empirical Defect Shield for tuist/tuist",
       "repository": "tuist/tuist",
-      "source_version": "99a394b3",
-      "content_hash": "1b9fa3ef596a97b9e0b7d956e100de3a05d1055a8d8924573e134f895fb0b1f4",
+      "source_version": "8b30c334",
+      "content_hash": "4332586b59fb226d31f84d6806039a94af03d309d0fdf8df5246d9c4f19b4fb9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:32:37.227Z"
+      "persisted_at": "2026-11-28T15:19:22.309Z"
     },
     "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated": {
       "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
@@ -249579,9 +249589,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tuist-tuist-learnings",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e8cce6c0c83f99b82d926a8ae2b48674f77cd1cdf5d1a0ac2865058cfd958c1",
+      "content_hash": "d04014c777817371204851f3d2a4310bc75ccc2b5ab339193a3a61f822e25ef7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:32:45.903Z"
+      "persisted_at": "2026-11-28T15:19:39.773Z"
     },
     "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation": {
       "item_id": "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation",
@@ -270673,8 +270683,8 @@
       "slug": "typewhisper-typewhisper-mac",
       "platform": "github",
       "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-      "source_version": "31093800",
-      "content_hash": "4d93c3df5990a65eb3484c66425b2730e78a89fde3fa30fdc0ce79d3cf159524",
+      "source_version": "8e35bfec",
+      "content_hash": "5a9042499d2a97266f8c83054550f0757ce3fe4e8ade16d265188669450ef502",
       "dossier_path": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "promoted_rules": [
@@ -270697,6 +270707,11 @@
           "number": 10642,
           "title": "(bug) Fix Chinese number normalization for mixed numerals and spoken tails",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11116,
+          "title": "(feature) Show a guide beside System Settings while granting Accessibility",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -270704,7 +270719,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T09:47:57.510Z",
+      "verified_at": "2026-11-28T15:19:23.897Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270746,10 +270761,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-typewhisper-typewhisper-mac-architecture-intelligence-typewhisper-typewhisper-ma.md",
       "title": "Architecture Intelligence: TypeWhisper/typewhisper-mac Core Invariants",
       "repository": "TypeWhisper/typewhisper-mac",
-      "source_version": "31093800",
-      "content_hash": "d3bfb5dfea7f3b0e85f4d621b43562f53c76ae920a0c9a34cc401ec3b1858289",
+      "source_version": "8e35bfec",
+      "content_hash": "753ee1b7f60de5afa3e8d649c3f137772f8c3e2f8a4a3103b49db9ebe96bcf36",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T09:47:58.549Z"
+      "persisted_at": "2026-11-28T15:19:24.910Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac",
@@ -270758,10 +270773,10 @@
       "relative_path": "12_DECISIONS/ADR-typewhisper-typewhisper-mac-adr-subsystem-boundary-modular-decoupling-in-typewhi.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in TypeWhisper/typewhisper-mac",
       "repository": "TypeWhisper/typewhisper-mac",
-      "source_version": "31093800",
-      "content_hash": "a2555f0f88e1472ca76ac7bdb0f1a0975f2ade712ef43b3b3393b27211e940f8",
+      "source_version": "8e35bfec",
+      "content_hash": "e27b40f71fc5b519941cf3d91af960258808b6996bcb4978298a36d62ef5ef4e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T09:47:58.933Z"
+      "persisted_at": "2026-11-28T15:19:25.224Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac",
@@ -270770,10 +270785,10 @@
       "relative_path": "08_VERIFICATION/typewhisper-typewhisper-mac-verification-protocol-empirical-defect-shield-for-ty.md",
       "title": "Verification Protocol: Empirical Defect Shield for TypeWhisper/typewhisper-mac",
       "repository": "TypeWhisper/typewhisper-mac",
-      "source_version": "31093800",
-      "content_hash": "0914786a352bee00c78d109526047c16f837e07557031c5a3f71caec98e915b4",
+      "source_version": "8e35bfec",
+      "content_hash": "a626582651567e4c1c646becb9e0a75148a5d3cada4748540e0e4aef13ea1c9a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T09:47:59.198Z"
+      "persisted_at": "2026-11-28T15:19:25.498Z"
     },
     "candidate_directive-infra-fail-stalled-node-blob-cache-downloads-within-seconds": {
       "item_id": "candidate_directive-infra-fail-stalled-node-blob-cache-downloads-within-seconds",
@@ -270807,9 +270822,9 @@
       "title": "Architecture Intelligence: typewhisper-typewhisper-mac-learnings Core Invariants",
       "repository": "typewhisper-typewhisper-mac-learnings",
       "source_version": "HEAD",
-      "content_hash": "50386c16b888bc2cc9b2836b1f6ac145fe10b27832f10b6c3762f980bd57dc9a",
+      "content_hash": "a50839d32e6730500e044c3a32503dc9fea77ce035bbe6aa1f161861af7ae346",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T09:52:56.708Z"
+      "persisted_at": "2026-11-28T15:19:40.797Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac-learnin": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-typewhisper-typewhisper-mac-learnin",
@@ -270819,9 +270834,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in typewhisper-typewhisper-mac-learnings",
       "repository": "typewhisper-typewhisper-mac-learnings",
       "source_version": "HEAD",
-      "content_hash": "1705b6aaf3fe1d1032efbea155418fd5554750f64f3bef0669fd10ec498bbc8f",
+      "content_hash": "1574139117de023d0b61b279e36f6248e80235aa745d91de5129545a281a10d6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T09:52:56.977Z"
+      "persisted_at": "2026-11-28T15:19:41.094Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typewhisper-typewhisper-mac-le",
@@ -270831,9 +270846,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for typewhisper-typewhisper-mac-learnings",
       "repository": "typewhisper-typewhisper-mac-learnings",
       "source_version": "HEAD",
-      "content_hash": "740dea73ef37b6a6e92a78b22d45fb8d7065b8bae8bb8b4613b80bc251b33c59",
+      "content_hash": "4a1b14de578a87c0e9c5020cb170b7ea9f0627c377751220954fb75ef67a7a98",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T09:52:57.229Z"
+      "persisted_at": "2026-11-28T15:19:41.393Z"
     },
     "rule-8839": {
       "learning_id": "rule-8839",
@@ -373648,6 +373663,132 @@
       "content_hash": "6f7856d5f379c61dc0ad09b45dc196919e2f86425cbfe79c253551345972f8b2",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T15:06:07.413Z"
+    },
+    "rule-11115": {
+      "learning_id": "rule-11115",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11115,
+      "title": "cap template builds and prebuild only with room",
+      "source_url": "https://github.com/tuist/tuist",
+      "source_version": "8b30c334",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T15:19:20.963Z"
+    },
+    "candidate_directive-cap-template-builds-and-prebuild-only-with-room": {
+      "item_id": "candidate_directive-cap-template-builds-and-prebuild-only-with-room",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-31PG-cap-template-builds-and-prebuild-only-with-room.md",
+      "title": "cap template builds and prebuild only with room",
+      "repository": "tuist/tuist",
+      "source_version": "8b30c334",
+      "content_hash": "c529f166bbefd6ae6e54782b55ede77e7393553ffc7bb29f7b7c5b88ff858a8d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T15:19:21.702Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tuist-tuist-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tuist-tuist-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tuist-tuist-technical-construction-intelligence-tuist-tuist-core-invariants.md",
+      "title": "Technical Construction Intelligence: tuist/tuist Core Invariants",
+      "repository": "tuist/tuist",
+      "source_version": "8b30c334",
+      "content_hash": "98ab1599753a11b7c6e0b7605935bcd8dd6665932b5c4ec93c5638d2f1daaa3a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T15:19:22.007Z"
+    },
+    "rule-11116": {
+      "learning_id": "rule-11116",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11116,
+      "title": "(feature) Show a guide beside System Settings while granting Accessibility",
+      "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+      "source_version": "8e35bfec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T15:19:23.897Z"
+    },
+    "candidate_directive-feature-show-a-guide-beside-system-settings-while-granting-accessibility": {
+      "item_id": "candidate_directive-feature-show-a-guide-beside-system-settings-while-granting-accessibility",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3G7J-feature-show-a-guide-beside-system-settings-while-granting-accessibility.md",
+      "title": "(feature) Show a guide beside System Settings while granting Accessibility",
+      "repository": "typewhisper-typewhisper-mac-learnings",
+      "source_version": "HEAD",
+      "content_hash": "defad23c1d82fd55002d6c264ad979e12d8ff5d6e30e6c14c8c15012583d7482",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-28T15:19:40.502Z"
+    },
+    "rule-11117": {
+      "learning_id": "rule-11117",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11117,
+      "title": "escape <placeholders> in generated help docs; fix timebucketp option list",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "e6479ba8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T15:19:33.268Z"
+    },
+    "candidate_directive-escape-placeholders-in-generated-help-docs-fix-timebucketp-option-list": {
+      "item_id": "candidate_directive-escape-placeholders-in-generated-help-docs-fix-timebucketp-option-list",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3B6E-escape-placeholders-in-generated-help-docs-fix-timebucketp-option-list.md",
+      "title": "escape <placeholders> in generated help docs; fix timebucketp option list",
+      "repository": "dathere/qsv",
+      "source_version": "e6479ba8",
+      "content_hash": "53966ab0d5702e65b65077ec6563186ee743ee059c9caa352db3e3dd65701252",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T15:19:33.981Z"
+    },
+    "candidate_directive-sandboxd-cap-template-builds-and-prebuild-only-with-room": {
+      "item_id": "candidate_directive-sandboxd-cap-template-builds-and-prebuild-only-with-room",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3F6V-sandboxd-cap-template-builds-and-prebuild-only-with-room.md",
+      "title": "sandboxd): cap template builds and prebuild only with room",
+      "repository": "tuist-tuist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d55f4eb2110a771a70ae13efad33c12625317ac6992cd77349f5afcf403b3f56",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T15:19:39.177Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tuist-tuist-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tuist-tuist-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tuist-tuist-learnings-technical-construction-intelligence-tuist-tuist-learnings-.md",
+      "title": "Technical Construction Intelligence: tuist-tuist-learnings Core Invariants",
+      "repository": "tuist-tuist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "32fd91c09cb976d7c2cf711283459a646a0b95d9e06407324c33b93088d94de5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T15:19:39.479Z"
+    },
+    "candidate_directive-help-escape-placeholders-in-generated-help-docs-fix-timebucketp-option-list": {
+      "item_id": "candidate_directive-help-escape-placeholders-in-generated-help-docs-fix-timebucketp-option-list",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3ILJ-help-escape-placeholders-in-generated-help-docs-fix-timebucketp-option-list.md",
+      "title": "help): escape <placeholders> in generated help docs; fix timebucketp option list",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4ef63120efe6b1e95fd64c827fb6eb23691c062c14d7a3fffc7abdbcc4e0bd75",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T15:19:43.598Z"
     }
   },
   "ai-builder-brain": {

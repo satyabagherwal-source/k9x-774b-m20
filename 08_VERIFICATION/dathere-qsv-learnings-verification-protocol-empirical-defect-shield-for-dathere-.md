@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-28T14:29:45.252Z",
+  "timestamp": "2026-11-28T15:19:43.418Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-28T14:29:45.252Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T15:19:43.418Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `ca34987a`  
+> **Source Version**: `e6479ba8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-28T14:29:35.334Z  
+> **Timestamp**: 2026-11-28T15:19:31.979Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-28T14:29:35.329Z  
+> **Harvest Timestamp**: 2026-11-28T15:19:31.971Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2304,376 +2304,25 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0dd1ae72` (2026-11-28)
-**Commit Message**: fix(timebucketp): read an index mixing dates and datetimes, dates as midnight (#5130)
+### Incident Patch 1: `e6479ba8` (2026-11-28)
+**Commit Message**: fix(help): escape <placeholders> in generated help docs; fix timebucketp option lists (#5132)
 
-* fix(timebucketp): read an index mixing dates and datetimes, dates as midnight
+* fix(help): escape <placeholders> in generated help docs; fix timebucketp option lists
 
-`qsv datefmt` drops midnight times by default, so its output mixes
-dates and datetimes, and timebucketp failed on it with a misleading
-QSV_PREFER_DMY hint. The index format is guessed from the first value,
-so whichever kind came second failed to parse.
+GitHub reads `<file>`, `<column>`, `quantile@<p>` and the like in
+docs/help/*.md as HTML: unknown tags are stripped ("Write output to
+ instead of stdout.") and `<p>` splits table cells. The generator now
+entity-escapes them in option/argument tables, descriptions and example
+captions, outside code spans, keeping its own <br>/<ul>/<li> tags and
+<https://...> autolinks.
 
-When no --date-format is given, timebucketp now finds the first value
-that does not match the first value's format. If that value is the
-other kind (a date vs a datetime), the rest are parsed strictly in its
-format, and the two parses are coalesced as datetimes. Both orderings
-work: ISO, month-first and zoned. A value that is neither still errors.
-
-An explicit date-only --date-format on a mixed column now names the mix
-instead of suggesting QSV_PREFER_DMY.
-
-Closes #5129
+timebucketp: --start-by lost its value list (a bare "One of:" line ends
+the option description), and --label's values ran together. Both are
+now bullet lists.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #5130 for timebucketp mixed index [skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* perf(timebucketp): look for a mixed index only after the strict parse fails
-
-Probing every guessed text index for a second form
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
- 
- ### Added
--- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. Text columns holding only dates are parsed the same way for min/max/mean/median/quantile, so they compare as dates rather than text, while first/last keep the values as written. Dates need 4-digit years unless `--date-format` is given (chrono would read `10/05/24` as the year 10). `--sorted` skips the sort for pre-sorted input, but still verifies the order: Polars' lazy `group_by_dynamic` does not check it without `--by` and silently builds wrong windows from unsorted input. Enables Polars' `dynamic_group_by` feature ([#5112](https://github.com/dathere/qsv/pull/5112)).
-+- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. An index that mixes dates and datetimes, as `datefmt` writes midnight values, is read as datetimes, its dates as midnight ([#5130](https://github.com/dathere/qsv/pull/5130)). Text columns holding only dates are parsed the same way for min/max/mean/median/quantile, so they compare as dates rather than text, while first/last keep the values as written. Dates need 4-digit years unless `--date-format` is given (chrono would read `10/05/24` as the year 10). `--sorted` skips the sort for pre-sorted input, but still verifies the order: Polars' lazy `group_by_dynamic` does not check it without `--by` and silently builds wrong windows from unsorted input. Enables Polars' `dynamic_group_by` feature ([#5112](https://github.com/dathere/qsv/pull/5112)).
- - `sqlp`: new SQL from the Polars bump to `08b2814` (all failed on `93d31f0`): `INSERT INTO <table> VALUES ...` and `UPDATE <table> SET ...` on registered tables ([#30958](https://github.com/pola-rs/polars/pull/30958)), which change the table for the statements after them in a `.sql` script but never the input file; `COPY <table> FROM '<file>'`, which appends a file's rows to a table as in Postgres (give `(HEADER true)` for a file with a header row; without it the header is read as a data row, which fails on a numeric column) ([#30975](https://github.com/pola-rs/polars/pull/30975)); `UNNEST ... WITH ORDINALITY` ([#31017](https://github.com/pola-rs/polars/pull/31017)); window frames that end before the current row, e.g. `ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING` ([#31022](https://github.com/pola-rs/polars/pull/31022)); `SHOW FUNCTIONS` ([#31002](https://github.com/pola-rs/polars/pull/31002)); and the functions `REGEXP_SUBSTR`, `JSON_EXTRACT_PATH` and `JSON_EXTRACT_PATH_TEXT` ([#31003](https://github.com/pola-rs/polars/pull/31003)). `RANDOM()` in `LIMIT`/`OFFSET` is drawn once, so it no longer fails ([#30944](https://github.com/pola-rs/polars/pull/30944)). `QSV_SQL_DISABLE_FILE_WRITES` still refuses `COPY ... TO`; it doesn't block `INSERT`, `UPDATE` or `COPY ... FROM`, which write no files (SQL could already read any file through `read_c
-```
-
-**File**: `docs/help/timebucketp.md` (modified, +3/-1)
-```diff
-@@ -42,7 +42,9 @@ the --date-format option. A text column whose every value is a date is
- parsed the same way for min, max, mean, median and quantile, so it compares
- as dates; first, last and --by keep values as written (unless a pschema.json
- types them). Dates need 4-digit years unless --date-format is given. An index
--that does not parse as dates is an error, as is an empty index value.
-+that does not parse as dates is an error, as is an empty index value. An
-+index that mixes dates and datetimes, as `qsv datefmt` writes midnight
-+values, is read as datetimes, its dates as midnight.
- 
- A pschema.json made by `qsv schema --polars` while QSV_PREFER_DMY was set
- marks day/month dates as already parsed, so they stay day-first in later
-```
-
-**File**: `src/cmd/timebucketp.rs` (modified, +177/-20)
-```diff
-@@ -30,7 +30,9 @@ the --date-format option. A text column whose every value is a date is
- parsed the same way for min, max, mean, median and quantile, so it compares
- as dates; first, last and --by keep values as written (unless a pschema.json
- types them). Dates need 4-digit years unless --date-format is given. An index
--that does not parse as dates is an error, as is an empty index value.
-+that does not parse as dates is an error, as is an empty index value. An
-+index that mixes dates and datetimes, as `qsv datefmt` writes midnight
-+values, is read as datetimes, its dates as midnight.
- 
- A pschema.json made by `qsv schema --polars` while QSV_PREFER_DMY was set
- marks day/month dates as already parsed, so they stay day-first in later
-@@ -452,6 +454,19 @@ fn text_date_expr(
-     strict: bool,
-     guessed: bool,
-     nanos: bool,
-+) -> Expr {
-+    text_date_expr_of(col(name), name, format, first, strict, guessed, nanos)
-+}
-+
-+/// `text_date_expr` of any text expression, aliased to `name`.
-+fn text_date_expr_of(
-+    input: Expr,
-+    name: &str,
-+    format: Option<&str>,
-+    first: Option<&str>,
-+    strict: bool,
-+    guessed: bool,
-+    nanos: bool,
- ) -> Expr {
-     use polars::chunked_array::temporal::string::{infer::infer_pattern_single, patterns::Pattern};
-     let options = StrptimeOptions {
-@@ -460,19 +475,19 @@ fn text_date_expr(
-         ..Default::default()
-     };
-     let parsed = if format.is_some_and(|f| !format_has_time(f)) {
--        col(name).str().to_date(options)
-+        input.str().to_date(options)
-     } else {
-         let zoned =
-             format.is_none() && first.and_then(infer_pattern_single) == Some(Pattern::DatetimeYMDZ);
--        col(name).str().to_datetime(
-+        input.str().to_datetime(
-             nanos.then_some(TimeUnit::Nanoseconds),
-             zoned.then_some(TimeZone::UTC),
-             options,
-             lit("raise"),
-         )
-     };
-     if !guessed {
--        return parsed;
-+        return parsed.alias(name);
-     }
-     // A guessed or inferred format's %Y also takes 2-digit years (10/06/24, 10/06/ 24 or
-     // 24-10-06T10:15 as the year 24), and only the first value is checked, so years before
-@@ -483,6 +498,92 @@ fn text_date_expr(
-         .alias(name)
- }
- 
-+/// A text index that mixes dates and datetimes, e.g. `qsv datefmt` output, which drops midnight
-+/// times. Parses it as datetimes, its dates as midnight: values in the first value's `format`
-+/// as such, the rest strictly in the format of the first value that does not match it. None when
-+/// every value matches `format`, or the first that does not is no date or datetime of the other
-+/// kind.
-+fn mixed_index_expr(
-+    lf: &LazyFrame,
-+    name: &str,
-+    format: Option<&str>,
-+    first: &str,
-+    prefer_dmy: bool,
-+    nanos: bool,
-+) -> CliResult<Option<Expr>> {
-+    use polars::chunked_array::temporal::string::{infer::infer_pattern_single, patterns::Pattern};
-+    let first_is_date = format.is_some_and(|f| !format_has_time(f));
-+    let primary = text_date_expr_of(col(name), name, format, Some(first), false, false, nanos);
-+    let unmatched = lf
-+        .clone()
-+        .select([col(name)])
-+        .filter(col(name).is_not_null().and(primary.clone().is_null()))
-+        .limit(1)
-+        .collect()?;
-+    // ChunkedArray::get panics out of bounds; no row means every value matches `format`
-+    if unmatched.height() == 0 {
-+        return Ok(None);
-+    }
-+    let Some(value) = unmatched
-+        .column(name)?
-+        .str()?
-+        .get(0)
-+        .map(|v| v.trim().to_string())
-+    else {
-+        return Ok(None);
-+    };
-+    // a day/month first value settles the order for the rest too
-+    // Some(true) for day-first, Some(false) for month-first, None for year-first or inferred
-+    let day_first = |f: Option<&str>| match f.and_then(|f| f.get(..2)) {
-+        Some("%d") => Some(true),
-+        Some("%m") => Some(false),
-+        _ => None,
-+    };
-+    let first_order = day_first(format);
-+    let other_format = index_date_format(&value, first_order.unwrap_or(prefer_dmy));
-+    let other_is_kind = match other_format.as_deref() {
-+        Some(f) => {
-+            format_has_time(f) == first_is_date
-+                && first_order.is_none_or(|o| day_first(Some(f)) == Some(o))
-+        },
-+        None => first_is_date && looks_like_datetime(&value),
-+    };
-+    if !other_is_kind {
-+        return Ok(None);
-+    }
-+    // parse the rest on its own, so a format inferred by Polars comes from one of its values
-+    let others = text_date_expr_of(
-+        when(primary.clone().is_null())
-+            .then(col(name))
-+            .otherwise(lit(NULL)),
-+        name,
-+        other_format.as_deref(),
-+        Some(&value),
-+        true,
-+        false,
-+        nanos,
-+    );
-+    let zoned = |f: Option<&str>, v: &str| {
-+        f.is_none() && infer_pattern_single(v) == Some(Pattern::DatetimeYMDZ)
-+    };
-+    let dtype = DataType::Datetime(
-+        if nanos {
-+      
-```
-
-**File**: `tests/test_timebucketp.rs` (modified, +273/-0)
-```diff
-@@ -632,6 +632,279 @@ fn timebucketp_later_day_first_value_is_an_error() {
-     );
- }
- 
-+// `qsv datefmt` drops midnight times, so its output mixes dates and datetimes (#5129)
-+#[test]
-+fn timebucketp_mixed_dates_and_datetimes_read_dates_as_midnight() {
-+    let wrk = Workdir::new("timebucketp_mixed_dates_and_datetimes_read_dates_as_midnight");
-+    wrk.create(
-+        "m.csv",
-+        vec![
-+            svec!["ts", "v"],
-+            svec!["2020-01-01", "1"],
-+            svec!["2020-01-01T10:30:00", "2"],
-+            svec!["2020-01-02T08:00:00", "3"],
-+            svec!["2020-01-02", "4"],
-+        ],
-+    );
-+    let mut cmd = tb(
-+        &wrk,
-+        &["-i", "ts", "--every", "12h", "--agg", "sum:v", "m.csv"],
-+    );
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["ts", "v_sum"],
-+            svec!["2020-01-01 00:00:00", "3"],
-+            svec!["2020-01-02 00:00:00", "7"],
-+        ]
-+    );
-+}
-+
-+#[test]
-+fn timebucketp_mixed_month_first_dates_and_datetimes() {
-+    let wrk = Workdir::new("timebucketp_mixed_month_first_dates_and_datetimes");
-+    wrk.create(
-+        "m.csv",
-+        vec![
-+            svec!["ts", "v"],
-+            svec!["01/02/2020", "1"],
-+            svec!["01/02/2020 10:30", "2"],
-+            svec!["01/03/2020 08:00", "3"],
-+        ],
-+    );
-+    let mut cmd = tb(
-+        &wrk,
-+        &["-i", "ts", "--every", "1d", "--agg", "sum:v", "m.csv"],
-+    );
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["ts", "v_sum"],
-+            svec!["2020-01-02 00:00:00", "3"],
-+            svec!["2020-01-03 00:00:00", "3"],
-+        ]
-+    );
-+}
-+
-+// `qsv datefmt`'s default RFC 3339 output: a zoned datetime first, midnight dates later
-+#[test]
-+fn timebucketp_zoned_datetimes_then_dates_read_dates_as_midnight_utc() {
-+    let wrk = Workdir::new("timebucketp_zoned_datetimes_then_dates_read_dates_as_midnight_utc");
-+    wrk.create(
-+        "m.csv",
-+        vec![
-+            svec!["ts", "v"],
-+            svec!["2010-08-25T13:00:00+00:00", "1"],
-+            svec!["2010-08-25", "2"],
-+            svec!["2010-08-26T08:00:00+00:00", "3"],
-+            svec!["2010-08-26", "4"],
-+        ],
-+    );
-+    let mut cmd = tb(
-+        &wrk,
-+        &["-i", "ts", "--every", "1h", "--agg", "sum:v", "m.csv"],
-+    );
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["ts", "v_sum"],
-+            svec!["2010-08-25 00:00:00", "2"],
-+            svec!["2010-08-25 13:00:00", "1"],
-+            svec!["2010-08-26 00:00:00", "4"],
-+            svec!["2010-08-26 08:00:00", "3"],
-+        ]
-+    );
-+}
-+
-+#[test]
-+fn timebucketp_month_first_datetimes_then_dates() {
-+    let wrk = Workdir::new("timebucketp_month_first_datetimes_then_dates");
-+    wrk.create(
-+        "m.csv",
-+        vec![
-+            svec!["ts", "v"],
-+            svec!["01/02/2020 10:30", "1"],
-+            svec!["01/02/2020", "2"],
-+            svec!["01/03/2020", "3"],
-+        ],
-+    );
-+    let mut cmd = tb(
-+        &wrk,
-+        &["-i", "ts", "--every", "1d", "--agg", "sum:v", "m.csv"],
-+    );
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["ts", "v_sum"],
-+            svec!["2020-01-02 00:00:00", "3"],
-+            svec!["2020-01-03 00:00:00", "3"],
-+        ]
-+    );
-+}
-+
-+// a first value that only parses day-first settles the order for the datetimes too
-+#[test]
-+fn timebucketp_day_first_date_settles_the_order_of_later_datetimes() {
-+    let wrk = Workdir::new("timebucketp_day_first_date_settles_the_order_of_later_datetimes");
-+    wrk.create(
-+        "m.csv",
-+        vec![
-+            svec!["ts", "v"],
-+            svec!["25/12/2024", "1"],
-+            svec!["03/01/2025 10:30", "2"],
-+        ],
-+    );
-+    let mut cmd = tb(
-+        &wrk,
-+        &["-i", "ts", "--every", "1mo", "--agg", "sum:v", "m.csv"],
-+    );
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["ts", "v_sum"],
-+            svec!["2024-12-01 00:00:00", "1"],
-+            svec!["2025-01-01 00:00:00", "2"],
-+        ]
-+    );
-+}
-+
-+// a third shape fails the date fallback; without --date-format, don't tell the user to drop it
-+#[test]
-+fn timebucketp_third_index_shape_does_not_blame_date_format() {
-+    let wrk = Workdir::new("timebucketp_third_index_shape_does_not_blame_date_format");
-+    wrk.create(
-+        "m.csv",
-+        vec![
-+            svec!["ts", "v"],
-+            svec!["01/02/2020 10:30", "1"],
-+            svec!["01/02/2020", "2"],
-+            svec!["01/03/2020T08:00:00", "3"],
-+        ],
-+    );
-+    let mut cmd = tb(&wrk, &["-i", "ts", "--every", "1d", "m.csv"]);
-+    let stderr = wrk.stderr_on_error(&m
-```
-
----
-
-### Incident Patch 2: `ca34987a` (2026-11-28)
-**Commit Message**: fix(timebucketp): accept a year-first date after a day/month-first datetime (#5131)
-
-* fix(timebucketp): accept a year-first date after a day/month-first datetime
-
-#5130 carried a day/month-first value's order over to the other kind
-of index value. It also rejected an unambiguous year-first date there
-(25/12/2024 10:30 followed by 2025-01-03), since that format has no
-day/month order to compare. The order is now compared only when both
-formats have one.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): cite #5131 for timebucketp mixed index [skip ci]
+* docs(changelog): cite #5132 [skip ci]
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2681,77 +2330,256 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `.claude/skills/qsv/qsv-timebucketp.json` (modified, +2/-2)
 ```diff
-@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
- 
- ### Added
--- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. An index that mixes dates and datetimes, as `datefmt` writes midnight values, is read as datetimes, its dates as midnight ([#5130](https://github.com/dathere/qsv/pull/5130)). Text columns holding only dates are parsed the same way for min/max/mean/median/quantile, so they compare as dates rather than text, while first/last keep the values as written. Dates need 4-digit years unless `--date-format` is given (chrono would read `10/05/24` as the year 10). `--sorted` skips the sort for pre-sorted input, but still verifies the order: Polars' lazy `group_by_dynamic` does not check it without `--by` and silently builds wrong windows from unsorted input. Enables Polars' `dynamic_group_by` feature ([#5112](https://github.com/dathere/qsv/pull/5112)).
-+- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. An index that mixes dates and datetimes, as `datefmt` writes midnight values, is read as datetimes, its dates as midnight ([#5130](https://github.com/dathere/qsv/pull/5130), [#5131](https://github.com/dathere/qsv/pull/5131)). Text columns holding only dates are parsed the same way for min/max/mean/median/quantile, so they compare as dates rather than text, while first/last keep the values as written. Dates need 4-digit years unless `--date-format` is given (chrono would read `10/05/24` as the year 10). `--sorted` skips the sort for pre-sorted input, but still verifies the order: Polars' lazy `group_by_dynamic` does not check it without `--by` and silently builds wrong windows from unsorted input. Enables Polars' `dynamic_group_by` feature ([#5112](https://github.com/dathere/qsv/pull/5112)).
- - `sqlp`: new SQL from the Polars bump to `08b2814` (all failed on `93d31f0`): `INSERT INTO <table> VALUES ...` and `UPDATE <table> SET ...` on registered tables ([#30958](https://github.com/pola-rs/polars/pull/30958)), which change the table for the statements after them in a `.sql` script but never the input file; `COPY <table> FROM '<file>'`, which appends a file's rows to a table as in Postgres (give `(HEADER true)` for a file with a header row; without it the header is read as a data row, which fails on a numeric column) ([#30975](https://github.com/pola-rs/polars/pull/30975)); `UNNEST ... WITH ORDINALITY` ([#31017](https://github.com/pola-rs/polars/pull/31017)); window frames that end before the current row, e.g. `ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING` ([#31022](https://github.com/pola-rs/polars/pull/31022)); `SHOW FUNCTIONS` ([#31002](https://github.com/pola-rs/polars/pull/31002)); and the functions `REGEXP_SUBSTR`, `JSON_EXTRACT_PATH` and `JSON_EXTRACT_PATH_TEXT` ([#31003](https://github.com/pola-rs/polars/pull/31003)). `RANDOM()` in `LIMIT`/`OFFSET` is drawn once, so it no longer fails ([#30944](https:
+@@ -79,7 +79,7 @@
+       {
+         "flag": "--label",
+         "type": "string",
+-        "description": "The value written to the index column for each window. Window mode only. One of: left      - the window's start (the default) right     - the window's end datapoint - the window's first index value"
++        "description": "The value written to the index column for each window. Window mode only. One of: * left - the window's start (the default) * right - the window's end * datapoint - the window's first index value"
+       },
+       {
+         "flag": "--offset",
+@@ -109,7 +109,7 @@
+       {
+         "flag": "--start-by",
+         "type": "string",
+-        "description": "Where the first window starts. Window mode only. One of: window    - the --every boundary at or before the first index value (the default) datapoint - the first index value itself monday ... sunday - that weekday (weekly --every)"
++        "description": "Where the first window starts, in window mode only. One of: * window - the --every boundary at or before the first index value (the default) * datapoint - the first index value itself * monday ... sunday - that weekday (weekly --every)"
+       }
+     ]
+   },
 ```
 
-**File**: `src/cmd/timebucketp.rs` (modified, +4/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -544,7 +544,10 @@ fn mixed_index_expr(
-     let other_is_kind = match other_format.as_deref() {
-         Some(f) => {
-             format_has_time(f) == first_is_date
--                && first_order.is_none_or(|o| day_first(Some(f)) == Some(o))
-+                // a year-first value can't conflict with a day/month order
-+                && first_order
-+                    .zip(day_first(Some(f)))
-+                    .is_none_or(|(a, b)| a == b)
-         },
-         None => first_is_date && looks_like_datetime(&value),
-     };
+@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
+ 
+ ### Fixed
++- Help docs (`docs/help/*.md`): `<placeholder>` text such as `<file>`, `<column>` or `quantile@<p>` was read by GitHub as HTML, so it vanished from option tables, descriptions and examples (e.g. "Write output to  instead of stdout."), and `<p>` split table cells. The help generator now escapes it outside code spans, keeping its own `<br>`/`<ul>`/`<li>` tags and `<https://...>` links. `timebucketp`'s `--start-by` values were missing from its help doc, and its `--label` values ran together; both now render as lists ([#5132](https://github.com/dathere/qsv/pull/5132)).
+ - JSONL/NDJSON inputs: object and array values are written as their JSON text (e.g. `{"k": 1}`, `["a", "b"]`), so a file with nested values converts instead of failing with "CSV format does not support nested data". This also covers a nested key that first appears after the first 100 rows, which #5125's whole-file inference would otherwise have turned into that error (before #5125 such a key was silently dropped). A `.pschema.json` still decides the columns. The `sqlp` help also notes that only a query selecting a late `read_ndjson()` key fails, and that a `.pschema.json` can type a column as a date before `CAST` runs. ([#5127](https://github.com/dathere/qsv/pull/5127))
+ - `pivotp`: when every column was a pivot or `--index` column, the default `--values` (all remaining columns) was empty, and the pivot failed with a raw Polars error ("`pivot` called without `values` columns"). `pivotp region --index sex` now counts the rows of each cell, as `--values region --agg len` already did. Any aggregation other than `len` (the default here) stops with an error asking for `--values`. Fixes [#5122](https://github.com/dathere/qsv/issues/5122). ([#5124](https://github.com/dathere/qsv/pull/5124))
+ - `pivotp`: a generated pivot column could take the name of an `--index` column, and the pivot failed with "Duplicate: column with name '...' has more than one occurrence". Generated columns are named `<value column><--col-separator><pivot value>` (or just the pivot value with one value column), so `readstat --sentinels-as` output, where `name` sits next to `name_null`, hit this when `name_null` was the `--index`, `name` a value column, and the pivot column had empty cells. Such a generated column is now renamed to the first free `<name>_<n>` (from 2), with a warning on stderr (unless `--quiet`). Two generated names that coincide (e.g. `a_b` × `c` and `a` × `b_c`) still stop the pivot, now with an error suggesting `--col-separator` or `--values`. Fixes [#5123](https://github.com/dathere/qsv/issues/5123). ([#5124](https://github.com/dathere/qsv/pull/5124))
 ```
 
-**File**: `tests/test_timebucketp.rs` (modified, +26/-0)
+**File**: `docs/help/apply.md` (modified, +12/-12)
 ```diff
-@@ -773,6 +773,32 @@ fn timebucketp_day_first_date_settles_the_order_of_later_datetimes() {
-     );
- }
+@@ -16,9 +16,9 @@ perform typical data-wrangling tasks and/or to harmonize some values, etc.
  
-+#[test]
-+fn timebucketp_year_first_date_after_day_first_datetime() {
-+    let wrk = Workdir::new("timebucketp_year_first_date_after_day_first_datetime");
-+    wrk.create(
-+        "m.csv",
-+        vec![
-+            svec!["ts", "v"],
-+            svec!["25/12/2024 10:30", "1"],
-+            svec!["2025-01-03", "2"],
-+        ],
-+    );
-+    let mut cmd = tb(
-+        &wrk,
-+        &["-i", "ts", "--every", "1mo", "--agg", "sum:v", "m.csv"],
-+    );
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["ts", "v_sum"],
-+            svec!["2024-12-01 00:00:00", "1"],
-+            svec!["2025-01-01 00:00:00", "2"],
-+        ]
-+    );
-+}
-+
- // a third shape fails the date fallback; without --date-format, don't tell the user to drop it
- #[test]
- fn timebucketp_third_index_shape_does_not_blame_date_format() {
+ It has five subcommands:  
+ 1. operations*   - 40 string, format, currency, regex & NLP operators.
+-2. emptyreplace* - replace empty cells with <--replacement> string.
++2. emptyreplace* - replace empty cells with &lt;--replacement&gt; string.
+ 3. dynfmt        - Dynamically constructs a new column from other columns using
+-the <--formatstr> template.
++the &lt;--formatstr&gt; template.
+ 4. calcconv      - parse and evaluate math expressions, with support for units
+ and conversions.
+ 5. summarize*    - summarize a column or group of columns using an OpenAI
+@@ -69,7 +69,7 @@ It has 40 supported operations:
+ * replace: Replace all matches of a pattern (using --comparand)
+ with a string (using --replacement) (Rust replace)
+ * regex_replace: Replace all regex matches in --comparand w/ --replacement.
+-Specify <NULL> as --replacement to remove matches.
++Specify &lt;NULL&gt; as --replacement to remove matches.
+ * titlecase - capitalizes English text using Daring Fireball titlecase style
+ <https://daringfireball.net/2008/05/title_case>
+ * censor: profanity filter. Add additional comma-delimited profanities with --comparand.
+@@ -116,12 +116,12 @@ question mark (e.g. 0.9?)
+ <https://github.com/greyblake/whatlang-rs/blob/master/SUPPORTED_LANGUAGES.md>
+ 
+ EMPTYREPLACE (multi-column capable)
+-Replace empty cells with <--replacement> string.
++Replace empty cells with &lt;--replacement&gt; string.
+ Non-empty cells are not modified. See the `fill` command for more complex empty field operations.
+ 
+ ### Dynfmt
+ 
+-Dynamically constructs a new column from other columns using the <--formatstr> template.
++Dynamically constructs a new column from other columns using the &lt;--formatstr&gt; template.
+ The template can contain arbitrary characters. To insert a column value, enclose the
+ column name in curly braces, replacing all non-alphanumeric characters with underscores.
+ 
+@@ -131,8 +131,8 @@ computed values, check out the py command to take advantage of Python's f-string
+ ### Calcconv
+ 
+ Parse and evaluate math expressions into a new column, with support for units and conversions.
+-The math expression is built dynamically using the <--formatstr> template, similar to the DYNFMT
+-subcommand, with the addition that if the literal '<UNIT>' is found at the end of the template, the
++The math expression is built dynamically using the &lt;--formatstr&gt; template, similar to the DYNFMT
++subcommand, with the addition that if the literal '&lt;UNIT&gt;' is found at the end of the template, the
+ inferred unit will be appended to the result.
+ 
+ For a complete list of supported units, constants, operators and functions, see <https://docs.rs/cpc>
+@@ -287,7 +287,7 @@ qsv apply calcconv --formatstr '{col1} Fahrenheit in Celsius' -c metric_temperat
+ qsv apply calcconv --formatstr '{col1}km + {col2}mi in meters' -c meters file.csv
+ ```
+ 
+-> You can append the inferred unit at the end of the result by ending the expression with '<UNIT>':
++> You can append the inferred unit at the end of the result by ending the expression with '&lt;UNIT&gt;':
+ 
+ ```console
+ qsv apply calcconv --formatstr '({col1} + {col2})km to light years <UNIT>' -c light_years file.csv
+@@ -373,7 +373,7 @@ qsv apply --help
+ 
+ | &nbsp;&nbsp;&nbsp;Argument&nbsp;&nbsp;&nbsp; | Description |
+ |----------|-------------|
+-| &nbsp;`<column>`&nbsp; | The column/s to apply the transformation to. Note that the <column> argument supports multiple columns for the operations & emptyreplace subcommands. See 'qsv select --help' for the format details. |
++| &nbsp;`<column>`&nbsp; | The column/s to apply the transformation to. Note that the &lt;column&gt; argument supports multiple columns for the operations & emptyreplace subcommands. See 'qsv select --help' for the format details. |
+ | &nbsp;`<operations>`&nbsp; | The operation/s to apply. |
+ | &nbsp;`<column>`&nbsp; | The column/s to apply the operations to. |
+ | &nbsp;`<column>`&nbsp; | The column/s to check for emptiness. |
+@@ -416,12 +416,12 @@ qsv apply --help
+ | &nbsp;`‑‑prompt`&nbsp; | string | MiniJinja prompt template rendered per record. Overrides the default prompt. Reference columns by their safe name. |  |
+ | &nbsp;`‑‑prompt‑file`&nbsp; | string | Read the prompt template from a file. Ignored if --prompt is set. |  |
+ | &nbsp;`‑‑rate‑limit`&nbsp; | float | Seconds to sleep between LLM requests to avoid provider rate limits. Accepts fractional seconds (e.g. 0.5). | `0` |
+-| &nbsp;`‑‑on‑error`&nbsp; | string | What to do when an LLM request fails: "fail" aborts; "skip" writes an "<ERROR: ...>" cell and continues. | `fail` |
++| &nbsp;`‑‑on‑error`&nbsp; | string | What to do when an LLM request fails: "fail" aborts; "skip" writes an "&lt;ERROR: ...&gt;" cell and continues. | `fail` |
+ | &nbsp;`‑‑user‑agent`&nbsp; | string | Custom user agent for LLM requests. Supports variables like $QSV_VERSION. |  |
+ | &nbsp;`‑‑cache‑dir`&nbsp; | string | D
+```
+
+**File**: `docs/help/applydp.md` (modified, +7/-7)
+```diff
+@@ -17,9 +17,9 @@ perform typical data-wrangling tasks and/or to harmonize some values, etc.
+ 
+ It has three subcommands:  
+ 1. operations*   - 18 string, format & regex operators.
+-2. emptyreplace* - replace empty cells with <--replacement> string.
++2. emptyreplace* - replace empty cells with &lt;--replacement&gt; string.
+ 3. dynfmt        - Dynamically constructs a new column from other columns using
+-the <--formatstr> template.
++the &lt;--formatstr&gt; template.
+ * subcommand is multi-column capable.
+ 
+ OPERATIONS (multi-column capable)
+@@ -56,19 +56,19 @@ It has 18 supported operations:
+ * replace: Replace all matches of a pattern (using --comparand)
+ with a string (using --replacement) (Rust replace)
+ * regex_replace: Replace all regex matches in --comparand w/ --replacement.
+-Specify <NULL> as --replacement to remove matches.
++Specify &lt;NULL&gt; as --replacement to remove matches.
+ * round: Round numeric values to the specified number of decimal places using
+ Midpoint Nearest Even Rounding Strategy AKA "Bankers Rounding."
+ Specify the number of decimal places with --formatstr (default: 3).
+ * copy: Mark a column for copying
+ 
+ EMPTYREPLACE (multi-column capable)
+-Replace empty cells with <--replacement> string.
++Replace empty cells with &lt;--replacement&gt; string.
+ Non-empty cells are not modified. See the `fill` command for more complex empty field operations.
+ 
+ ### Dynfmt
+ 
+-Dynamically constructs a new column from other columns using the <--formatstr> template.
++Dynamically constructs a new column from other columns using the &lt;--formatstr&gt; template.
+ The template can contain arbitrary characters. To insert a column value, enclose the
+ column name in curly braces, replacing all non-alphanumeric characters with underscores.
+ 
+@@ -200,7 +200,7 @@ qsv applydp --help
+ 
+ | &nbsp;&nbsp;&nbsp;Argument&nbsp;&nbsp;&nbsp; | Description |
+ |----------|-------------|
+-| &nbsp;`<column>`&nbsp; | The column/s to apply the transformation to. Note that the <column> argument supports multiple columns for the operations & emptyreplace subcommands. See 'qsv select --help' for the format details. |
++| &nbsp;`<column>`&nbsp; | The column/s to apply the transformation to. Note that the &lt;column&gt; argument supports multiple columns for the operations & emptyreplace subcommands. See 'qsv select --help' for the format details. |
+ | &nbsp;`<operations>`&nbsp; | The operation/s to apply. |
+ | &nbsp;`<column>`&nbsp; | The column/s to apply the operations to. |
+ | &nbsp;`<column>`&nbsp; | The column/s to check for emptiness. |
+@@ -234,7 +234,7 @@ qsv applydp --help
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+ | &nbsp;`‑h,`<br>`‑‑help`&nbsp; | flag | Display this message |  |
+-| &nbsp;`‑o,`<br>`‑‑output`&nbsp; | string | Write output to <file> instead of stdout. |  |
++| &nbsp;`‑o,`<br>`‑‑output`&nbsp; | string | Write output to &lt;file&gt; instead of stdout. |  |
+ | &nbsp;`‑n,`<br>`‑‑no‑headers`&nbsp; | flag | When set, the first row will not be interpreted as headers. |  |
+ | &nbsp;`‑d,`<br>`‑‑delimiter`&nbsp; | string | The field delimiter for reading CSV data. Must be a single character. (default: ,) |  |
+ 
+```
+
+**File**: `docs/help/behead.md` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@ qsv behead --help
+ |--------|------|-------------|--------|
+ | &nbsp;`‑h,`<br>`‑‑help`&nbsp; | flag | Display this message |  |
+ | &nbsp;`‑f,`<br>`‑‑flexible`&nbsp; | flag | Do not validate if the CSV has different number of fields per record, increasing performance. |  |
+-| &nbsp;`‑o,`<br>`‑‑output`&nbsp; | string | Write output to <file> instead of stdout. |  |
++| &nbsp;`‑o,`<br>`‑‑output`&nbsp; | string | Write output to &lt;file&gt; instead of stdout. |  |
+ 
+ ---
+ **Source:** [`src/cmd/behead.rs`](https://github.com/dathere/qsv/blob/master/src/cmd/behead.rs)
+```
+
+**File**: `docs/help/blake3.md` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ qsv blake3 --help
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+ | &nbsp;`‑h,`<br>`‑‑help`&nbsp; | flag | Display this message |  |
+-| &nbsp;`‑o,`<br>`‑‑output`&nbsp; | string | Write output to <file> instead of stdout. |  |
++| &nbsp;`‑o,`<br>`‑‑output`&nbsp; | string | Write output to &lt;file&gt; instead of stdout. |  |
+ | &nbsp;`‑q,`<br>`‑‑quiet`&nbsp; | flag | Skip printing OK for each checked file. Must be used with --check. |  |
+ 
+ ---
+```
+
+**File**: `docs/help/cat.md` (modified, +2/-2)
+```diff
+@@ -114,7 +114,7 @@ qsv cat --help
+ 
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+-| &nbsp;`‑g,`<br>`‑‑group`&nbsp; | string | When concatenating with rowskey, you can specify a grouping value which will be used as the first column in the output. This is useful when you want to know which file a row came from. Valid values are 'fullpath', 'parentdirfname', 'parentdirfstem', 'fname', 'fstem' and 'none'. For a file at /data/2024/jan/sales.csv, 'fullpath' gives '/data/2024/jan/sales.csv', 'parentdirfname' gives 'jan/sales.csv', 'parentdirfstem' gives 'jan/sales', 'fname' gives 'sales.csv' and 'fstem' gives 'sales'. 'fullpath' and the parentdir kinds use the file's real location (symlinks and relative paths resolved), so the result does not depend on how the path was typed. Use a parentdir kind to tell apart same-named files in different directories. For a compressed input, 'fullpath' names the real file (/data/jan/sales.csv.sz, or /data/jan/2024.zip/sales.csv for an entry sales.csv in a zip archive). The other kinds treat it as if unpacked in place, so 'parentdirfname' gives jan/sales.csv and 2024/sales.csv. Piped stdin is named 'stdin.csv' ('<stdin>' for 'fullpath'). A new column will be added to the beginning of each row using --group-name. If 'none' is specified, no grouping column will be added. | `none` |
++| &nbsp;`‑g,`<br>`‑‑group`&nbsp; | string | When concatenating with rowskey, you can specify a grouping value which will be used as the first column in the output. This is useful when you want to know which file a row came from. Valid values are 'fullpath', 'parentdirfname', 'parentdirfstem', 'fname', 'fstem' and 'none'. For a file at /data/2024/jan/sales.csv, 'fullpath' gives '/data/2024/jan/sales.csv', 'parentdirfname' gives 'jan/sales.csv', 'parentdirfstem' gives 'jan/sales', 'fname' gives 'sales.csv' and 'fstem' gives 'sales'. 'fullpath' and the parentdir kinds use the file's real location (symlinks and relative paths resolved), so the result does not depend on how the path was typed. Use a parentdir kind to tell apart same-named files in different directories. For a compressed input, 'fullpath' names the real file (/data/jan/sales.csv.sz, or /data/jan/2024.zip/sales.csv for an entry sales.csv in a zip archive). The other kinds treat it as if unpacked in place, so 'parentdirfname' gives jan/sales.csv and 2024/sales.csv. Piped stdin is named 'stdin.csv' ('&lt;stdin&gt;' for 'fullpath'). A new column will be added to the beginning of each row using --group-name. If 'none' is specified, no grouping column will be added. | `none` |
+ | &nbsp;`‑N,`<br>`‑‑group‑name`&nbsp; | string | When concatenating with rowskey, this flag provides the name for the new grouping column. | `file` |
+ 
+ <a name="common-options"></a>
+@@ -124,7 +124,7 @@ qsv cat --help
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+ | &nbsp;`‑h,`<br>`‑‑help`&nbsp; | flag | Display this message |  |
+-| &nbsp;`‑o,`<br>`‑‑output`&nbsp; | string | Write output to <file> instead of stdout. |  |
++| &nbsp;`‑o,`<br>`‑‑output`&nbsp; | string | Write output to &lt;file&gt; instead of stdout. |  |
+ | &nbsp;`‑n,`<br>`‑‑no‑headers`&nbsp; | flag | When set, the first row will NOT be interpreted as column names. Note that this has no effect when concatenating columns. |  |
+ | &nbsp;`‑d,`<br>`‑‑delimiter`&nbsp; | string | The field delimiter for reading CSV data. Must be a single character. (default: ,) |  |
+ 
+```
+
+**File**: `docs/help/clean.md` (modified, +4/-4)
+```diff
+@@ -16,10 +16,10 @@ Removes qsv-generated cache files to reduce clutter and simplify data packaging.
+ By default, clean removes the three auto-regenerable CACHES qsv writes next to a
+ source file:  
+ 
+-* <file>.idx                                              (index)
+-* <stem>.stats.csv / .stats.weighted.csv / .stats.csv.json
++* &lt;file&gt;.idx                                              (index)
++* &lt;stem&gt;.stats.csv / .stats.weighted.csv / .stats.csv.json
+ / .stats.csv.data.jsonl                                 (stats cache)
+-* <stem>.freq.csv.data.jsonl                              (frequency cache)
++* &lt;stem&gt;.freq.csv.data.jsonl                              (frequency cache)
+ 
+ Only files that are VERIFIABLY generated by qsv are removed, so a user file that
+ merely happens to be named e.g. report.stats.csv is never touched (qsv stats
+@@ -76,7 +76,7 @@ qsv clean --help
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+ | &nbsp;`‑‑stale`&nbsp; | flag | Only remove STALE or ORPHANED caches: a cache whose source file is newer than the cache, or whose source file no longer exists. |  |
+-| &nbsp;`‑r,`<br>`‑‑recursive`&nbsp; | flag | Recurse into subdirectories when <input> is a directory. |  |
++| &nbsp;`‑r,`<br>`‑‑recursive`&nbsp; | flag | Recurse into subdirectories when &lt;input&gt; is a directory. |  |
+ | &nbsp;`‑n,`<br>`‑‑dry‑run`&nbsp; | flag | Preview only; never delete. Wins over --force if both are given (this is also the default when neither is set). |  |
+ | &nbsp;`‑f,`<br>`‑‑force`&nbsp; | flag | Actually delete the files. |  |
+ | &nbsp;`‑‑index`&nbsp; | flag | Index (.idx) caches. [default category] |  |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5132** (2026-11-28): fix(help): escape <placeholders> in generated help docs; fix timebucketp option lists (@jqnatividad)
 - **PR #5131** (2026-11-28): fix(timebucketp): accept a year-first date after a day/month-first datetime (@jqnatividad)
 - **PR #5130** (2026-11-28): fix(timebucketp): read an index mixing dates and datetimes, dates as midnight (@jqnatividad)
 - **PR #5128** (2026-11-28): fix(sqlp, joinp): refuse JSONL/NDJSON inputs; point to read_ndjson() (@jqnatividad)
 - **PR #5127** (2026-11-27): fix: write nested JSONL values as JSON text (#5125 follow-up) (@jqnatividad)
 - **PR #5125** (2026-11-27): deps: bump Polars to upstream 4ba28fb (41 commits past py-2.2.0) (@jqnatividad)
-- **PR #5124** (2026-11-27): fix(pivotp): count rows when no columns remain for --values; rename clashing generated columns (@jqnatividad)
 
 ---
 
@@ -2771,31 +2599,33 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. timebucketp): read an index mixing dates and datetimes, dates as midnight
+## X. help): escape <placeholders> in generated help docs; fix timebucketp option list
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-timebucketp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0dd1ae72`: timebucketp): read an index mixing dates and datetimes, dates as midnight. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6479ba8`: help): escape <placeholders> in generated help docs; fix timebucketp option lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-timebucketp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. An index that mixes dates and datetimes, as `datefmt` writes midnight values, is read as datetimes, its dat
+        "description": "The value written to the index column for each window. Window mode only. One of: * left - the window's start (the default) * right - the window's end * datapoint - the window's first index value"
+        "description": "Where the first window starts, in window mode only. One of: * window - the --every boundary at or before the first index value (the default) * datapoint - the first index value itself * monday ... sunday - that weekday (weekly --every)"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- `timebucketp`: new Polars-powered command that buckets time-series data into time windows over a date, datetime or integer index column. Window mode (`--every`, `--period`, `--offset`) groups rows into fixed or overlapping windows that need not be calendar units (e.g. `--every 15m --period 1h`), with `--label`, `--closed`, `--start-by` (incl. a weekday) and `--boundaries`; `--rolling` instead gives each row a trailing `(index - period, index]` window. `--by` computes windows per group, and `--agg` takes several `func:column` aggregations at once (first, last, sum, min, max, mean, median, quantile@<p>, len), output as `<column>_<func>`. `--fill-gaps` also emits the empty windows between each group's first and last window (count, sum and len 0, other aggregations empty); it needs the default left labels, since window ends are not evenly spaced with calendar or overlapping periods. Ambiguous dates such as `01/03/2024` are read month-first like the rest of qsv (Polars alone reads them day-first), or day-first with `QSV_PREFER_DMY`; `--date-format` sets an explicit index format. Text columns holding only dates are parsed the same way for min/max/mean/median/quantile, so they compare a
+        "description": "The value written to the index column for each window. Window mode only. One of: left      - the window's start (the default) right     - the window's end datapoint - the window's first index value"
+        "description": "Where the first window starts. Window mode only. One of: window    - the --every boundary at or before the first index value (the default) datapoint - the first index value itself monday ... sunday - that weekday (weekly --every)"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0dd1ae72` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6479ba8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

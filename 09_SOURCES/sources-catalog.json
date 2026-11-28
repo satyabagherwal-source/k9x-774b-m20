@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "ca34987a",
+    "sourceVersion": "e6479ba8",
     "license": "NOASSERTION",
-    "contentHash": "605727ce53f4f6a599cefdedcc0de4bf1533895756f8235a26b89edc9024a028",
-    "lastHarvestedAt": "2026-11-28T14:29:36.480Z",
+    "contentHash": "61162dd8751c2baeebd496b0b4f51cb7a05e326b896b63f8735a5d602ede909e",
+    "lastHarvestedAt": "2026-11-28T15:19:33.612Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -10103,10 +10103,10 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "platform": "github",
     "sourceUrl": "https://github.com/TypeWhisper/typewhisper-mac",
-    "sourceVersion": "31093800",
+    "sourceVersion": "8e35bfec",
     "license": "GPL-3.0",
-    "contentHash": "4d93c3df5990a65eb3484c66425b2730e78a89fde3fa30fdc0ce79d3cf159524",
-    "lastHarvestedAt": "2026-11-26T09:47:57.842Z",
+    "contentHash": "5a9042499d2a97266f8c83054550f0757ce3fe4e8ade16d265188669450ef502",
+    "lastHarvestedAt": "2026-11-28T15:19:24.251Z",
     "learningId": "learn-github-typewhisper-typewhisper-mac"
   },
   "vitest-dev-vitest": {
@@ -12453,10 +12453,10 @@
     "repository": "tuist/tuist",
     "platform": "github",
     "sourceUrl": "https://github.com/tuist/tuist",
-    "sourceVersion": "99a394b3",
+    "sourceVersion": "8b30c334",
     "license": "NOASSERTION",
-    "contentHash": "38a06a565ef4567059baa80735b9fda78f33b0ec43c875931cd41b95af7c501d",
-    "lastHarvestedAt": "2026-11-27T12:32:36.093Z",
+    "contentHash": "12a832986e77cdcf6ab2ae026549d7f5d348939c86bf27543e5284789e457845",
+    "lastHarvestedAt": "2026-11-28T15:19:21.334Z",
     "learningId": "learn-github-tuist-tuist"
   },
   "mixelpixx-kicad-mcp-server": {

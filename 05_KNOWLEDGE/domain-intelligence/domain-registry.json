@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T15:06:09.055Z",
-  "total_records": 2908,
+  "last_updated": "2026-11-28T15:19:43.906Z",
+  "total_records": 2910,
   "domains": {
     "A": {
       "total": 27,
@@ -1784,7 +1784,7 @@
       ]
     },
     "H": {
-      "total": 709,
+      "total": 711,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2494,7 +2494,9 @@
         "domain_intelligence-technical-construction-intelligence-devexpress-testcafe-core-invariants",
         "domain_intelligence-technical-construction-intelligence-devexpress-testcafe-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-learnings-core-invarian"
+        "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-learnings-core-invarian",
+        "domain_intelligence-technical-construction-intelligence-tuist-tuist-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tuist-tuist-learnings-core-invariants"
       ]
     },
     "I": {
@@ -12965,8 +12967,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "07c1c684776fe14760afc524c80c416ba3b0017c1bab848683ab9e947db93309",
-      "created_at": "2026-11-28T14:29:36.926Z"
+      "content_hash": "95e24b49408db85b2eea0ad25e1e5d63eba067785f83f8d688799482d802549a",
+      "created_at": "2026-11-28T15:19:34.270Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -13034,8 +13036,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "b7ae5d3f0e7962dc64a43fd724bbfe91039cc96b5e234a7abf66e1bfe4856d63",
-      "created_at": "2026-11-28T14:29:45.572Z"
+      "content_hash": "d363cac1f55c72de590e083d907d7d569e8c6594703dcebc825d6c96d3e0ef46",
+      "created_at": "2026-11-28T15:19:43.906Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -26156,8 +26158,8 @@
       "title": "Architecture Intelligence: TypeWhisper/typewhisper-mac Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-typewhisper-typewhisper-mac-architecture-intelligence-typewhisper-typewhisper-ma.md",
       "repository": "TypeWhisper/typewhisper-mac",
-      "content_hash": "d3bfb5dfea7f3b0e85f4d621b43562f53c76ae920a0c9a34cc401ec3b1858289",
-      "created_at": "2026-11-26T09:47:58.549Z"
+      "content_hash": "753ee1b7f60de5afa3e8d649c3f137772f8c3e2f8a4a3103b49db9ebe96bcf36",
+      "created_at": "2026-11-28T15:19:24.910Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant",
@@ -26174,8 +26176,8 @@
       "title": "Architecture Intelligence: typewhisper-typewhisper-mac-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-typewhisper-typewhisper-mac-learnings-architecture-intelligence-typewhisper-type.md",
       "repository": "typewhisper-typewhisper-mac-learnings",
-      "content_hash": "50386c16b888bc2cc9b2836b1f6ac145fe10b27832f10b6c3762f980bd57dc9a",
-      "created_at": "2026-11-26T09:52:56.708Z"
+      "content_hash": "a50839d32e6730500e044c3a32503dc9fea77ce035bbe6aa1f161861af7ae346",
+      "created_at": "2026-11-28T15:19:40.797Z"
     },
     "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants",
@@ -49413,6 +49415,24 @@
       "repository": "exyte-chat-learnings",
       "content_hash": "d46aa120a6a36699335287ad0f167e69bcda84433bf5dc9b16f420af022cb02a",
       "created_at": "2026-11-28T14:57:09.001Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tuist-tuist-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tuist-tuist-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tuist/tuist Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tuist-tuist-technical-construction-intelligence-tuist-tuist-core-invariants.md",
+      "repository": "tuist/tuist",
+      "content_hash": "98ab1599753a11b7c6e0b7605935bcd8dd6665932b5c4ec93c5638d2f1daaa3a",
+      "created_at": "2026-11-28T15:19:22.007Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tuist-tuist-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tuist-tuist-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tuist-tuist-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tuist-tuist-learnings-technical-construction-intelligence-tuist-tuist-learnings-.md",
+      "repository": "tuist-tuist-learnings",
+      "content_hash": "32fd91c09cb976d7c2cf711283459a646a0b95d9e06407324c33b93088d94de5",
+      "created_at": "2026-11-28T15:19:39.479Z"
     }
   }
 }

@@ -4,17 +4,17 @@
 {
   "source_repository": "TypeWhisper/typewhisper-mac",
   "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-  "source_version": "31093800",
+  "source_version": "8e35bfec",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-26T09:47:58.204Z",
+  "timestamp": "2026-11-28T15:19:24.619Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-typewhisper-typewhisper-mac",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac) (Revision: `31093800`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-26T09:47:58.204Z`  
+> **Provenance**: Harvested from [TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac) (Revision: `8e35bfec`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-28T15:19:24.619Z`  
 > **Learning ID**: `learn-github-typewhisper-typewhisper-mac`
 
 
@@ -30,7 +30,7 @@ During deep inspection of TypeWhisper/typewhisper-mac, modular boundaries, perfo
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T09:47:56.229Z  
+> **Harvest Timestamp**: 2026-11-28T15:19:22.603Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -40,7 +40,7 @@ During deep inspection of TypeWhisper/typewhisper-mac, modular boundaries, perfo
 - **Description**: Local speech-to-text for macOS  on-device AI, fully private, optional cloud
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1940 stars
+- **Stars / Engagement**: 1948 stars
 
 ---
 
@@ -1938,1399 +1938,699 @@ final class ExampleWebhookS
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c636d716` (2026-11-25)
-**Commit Message**: (bug) Fix Chinese number normalization for mixed numerals and spoken tails (#2023)
+### Incident Patch 1: `8e35bfec` (2026-11-28)
+**Commit Message**: (feature) Show a guide beside System Settings while granting Accessibility (#2050)
 
-* fix: normalize mixed Chinese numerals and spoken tails
+* (feature) Show a guide beside System Settings while granting Accessibility
 
-* fix: limit spoken-tail scaling and check overflow in Han number parsing
+macOS lets only the user turn on Accessibility or Input Monitoring. When
+TypeWhisper opens System Settings for one of them, a panel next to the
+window names the switch and offers the app icon to drag into the list.
+It closes once access arrives and brings TypeWhisper back, and the setup
+wizard moves on from the permissions step. The permission check keeps
+running while the panel waits instead of stopping after 30 seconds.
 
-Address CodeRabbit review findings on the mixed-numeral fix:
+The App Store edition shows the same panel with a restart button,
+because CoreGraphics reports the grant only after a restart there.
 
-- Record explicit ASCII zeroes so 1万05 normalizes to 10005 while 1万5
-  keeps the spoken-tail reading 15000.
-- Apply spoken-tail scaling only to a single trailing digit, so
-  multi-digit ASCII tails like 1万2345 keep literal place values.
-- Use checked arithmetic in unit and final accumulation, returning nil
-  on overflow instead of trapping on inputs like 万9223372036854775807.
-- Restrict the approximation-prefix guard to bare unit runs so count
-  labels such as 总数, 人数 and 訂單數 no longer block normalization of
-  digit-led numbers (总数一百 -> 总数100), while genuine approximations
-  (數百, 幾千, 成千上萬) stay unchanged.
+* Keep a replaced permission guide from closing the new one
 
-* fix: compose ascending large units and protect lexical words at digit boundaries
+A guide replaced during its 1.2-second confirmation no longer closes the new guide, brings TypeWhisper forward or posts the grant notification. TypeWhisper comes forward only when System Settings is still in front after the confirmation, not when the user has switched to another app. Closing the panel during the confirmation still counts the grant, so the setup wizard moves on.
 
-Address the second round of CodeRabbit review findings:
+* Open Home after the restart offe
 
-- Ascending large units now compose multiplicatively, so 1万亿 =
-  1000000000000 instead of 100010000, while descending expressions
-  such as 1亿2万 stay additive.
-- Adjac
-
-**File**: `TypeWhisper/Services/NumberNormalization/ChineseNumberWordParser.swift` (modified, +1/-1)
+**File**: `AppStore/Sources/AppStoreInputAccess.swift` (modified, +6/-2)
 ```diff
-@@ -2,6 +2,6 @@ import Foundation
- 
- enum ChineseNumberWordParser {
-     static func parse(_ words: [String]) -> NumberWordNormalizer.ParsedWords? {
--        HanNumberWordParser.parse(words)
-+        HanNumberWordParser.parse(words, spokenTailEnabled: true)
+@@ -96,14 +96,17 @@ enum AppStoreInputAccess {
+         hasRequestedListenEventAccess && !CGPreflightListenEventAccess()
      }
- }
+ 
+-    /// Asks for PostEvent access. macOS 27 neither prompts for it nor lists a
+-    /// sandboxed app, so System Settings opens with a guide to drag the app in.
++    /// Asks for PostEvent access. macOS 27 does not prompt inside the app. It may
++    /// show its own alert and list the app with the switch off, or leave the app
++    /// out of the list, so System Settings opens with a guide that also offers
++    /// the icon to drag in. The guide cannot see the grant and offers a restart.
+     @MainActor
+     static func requestPostEventAccess() {
+         guard isAutoPasteEnabled else { return }
+         hasRequestedPostEventAccess = true
+         guard !CGRequestPostEventAccess() else { return }
+         openSettings(accessibilitySettingsURL)
++        PermissionGuideController.shared.begin(kind: .accessibility, isGranted: nil)
+         offerRestartOnReturn { postEventAccessPending }
+     }
+ 
+@@ -114,6 +117,7 @@ enum AppStoreInputAccess {
+         hasRequestedListenEventAccess = true
+         guard !CGRequestListenEventAccess() else { return }
+         openSettings(inputMonitoringSettingsURL)
++        PermissionGuideController.shared.begin(kind: .inputMonitoring, isGranted: nil)
+         offerRestartOnReturn { listenEventAccessPending }
+     }
+ 
 ```
 
-**File**: `TypeWhisper/Services/NumberNormalization/HanNumberWordParser.swift` (modified, +120/-10)
+**File**: `TypeWhisper.xcodeproj/project.pbxproj` (modified, +8/-0)
 ```diff
-@@ -17,7 +17,10 @@ enum HanNumberWordParser {
-     private static let decimalMarkers: Set<Character> = ["点", "點"]
-     private static let negativeMarkers: Set<Character> = ["负", "負"]
- 
--    static func parse(_ words: [String]) -> NumberWordNormalizer.ParsedWords? {
-+    static func parse(
-+        _ words: [String],
-+        spokenTailEnabled: Bool = false
-+    ) -> NumberWordNormalizer.ParsedWords? {
-         guard !words.isEmpty else { return nil }
- 
-         var consumedWords = 0
-@@ -37,11 +40,11 @@ enum HanNumberWordParser {
- 
-         let numberText = pieces.joined()
-         guard containsNumberMarker(numberText) else { return nil }
--        guard let parsed = parseNumberText(numberText) else { return nil }
-+        guard let parsed = parseNumberText(numberText, spokenTailEnabled: spokenTailEnabled) else { return nil }
-         return NumberWordNormalizer.ParsedWords(value: parsed, consumedWords: consumedWords, kind: parsed.contains(".") ? .decimal : .number)
-     }
- 
--    private static func parseNumberText(_ text: String) -> String? {
-+    private static func parseNumberText(_ text: String, spokenTailEnabled: Bool) -> String? {
-         var characters = Array(text)
-         var isNegative = false
- 
-@@ -52,7 +55,10 @@ enum HanNumberWordParser {
+@@ -182,6 +182,7 @@
+ 		133200000000000000000002 /* SetupWizardEngineRecommendationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133200000000000000000001 /* SetupWizardEngineRecommendationTests.swift */; };
+ 		545000000000000000000004 /* SetupWizardTrialSignalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545000000000000000000003 /* SetupWizardTrialSignalTests.swift */; };
+ 		AA00000000000000000367 /* AccessibilityPermissionPaneTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000367 /* AccessibilityPermissionPaneTests.swift */; };
++		C10400000000000000000003 /* PermissionGuidePlacementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10400000000000000000004 /* PermissionGuidePlacementTests.swift */; };
+ 		AA00000000000000000368 /* SelectableTextAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000368 /* SelectableTextAccessibilityTests.swift */; };
+ 		91B4D7E2C5A809F1632E4B7E /* StreamingHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B4D7E2C5A809F1632E4B7F /* StreamingHandlerTests.swift */; };
+ 		9A584149706C7567496E0100 /* XAIPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A584149706C7567496E0101 /* XAIPluginTests.swift */; };
+@@ -224,6 +225,7 @@
+ 		A91F00000000000000000003 /* RecentTranscriptionPaletteHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91F00000000000000000003 /* RecentTranscriptionPaletteHandler.swift */; };
+ 		C10200000000000000000001 /* LastDictationCorrectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10200000000000000000002 /* LastDictationCorrectionHandler.swift */; };
+ 		C10200000000000000000003 /* LastDictationCorrectionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10200000000000000000004 /* LastDictationCorrectionPanel.swift */; };
++		C10400000000000000000001 /* PermissionGuidePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10400000000000000000002 /* PermissionGuidePanel.swift */; };
+ 		A91F00000000000000000004 /* RecentTranscriptionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91F00000000000000000004 /* RecentTranscriptionStoreTests.swift */; };
+ 		A91F00000000000000000005 /* RecentTranscriptionPaletteHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91F00000000000000000005 /* RecentTranscriptionPaletteHandlerTests.swift */; };
+ 		C10200000000000000000005 /* LastDictationCorrectionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10200000000000000000006 /* LastDictationCorrectionHandlerTests.swift */; };
+@@ -997,6 +999,7 @@
+ 		B91F00000000000000000003 /* RecentTranscriptionPaletteHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTranscriptionPaletteHandler.swift; sourceTree = "<group>"; };
+ 		C10200000000000000000002 /* LastDictationCorrectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastDictationCorrectionHandler.swift; sourceTree = "<group>"; };
+ 		C10200000000000000000004 /* LastDictationCorrectionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastDictationCorrectionPanel.swift; sourceTree = "<group>"; };
++		C10400000000000000000002 /* PermissionGuidePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionGuidePanel.swift; sourceTree = "<group>"; };
+ 		B91F00000000000000000004 /* RecentTranscriptionStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecentTranscriptionStoreTests.swift; sourceTree = "<group>"; };
+ 		B91F00000000000000000005 /* RecentTranscriptionPaletteHandlerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecentTranscriptionPaletteHandlerTests.swift; sourceTree = "<group>"; };
+ 		C10200000000000000000006 /* LastDictationCorrectionHandlerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LastDictationCorrectionHandlerTests.swift; sourceTree = "<group>"; };
+@@ -1541,6 +1544,7 @@
+ 		133200000000000000000001 /* SetupWizardEngineRecommendationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetupWizardEngineRecommendationTests.swift; sourceTree = "<group>"; };
+ 		545000000000000000000003 /* SetupWizardTrialSignalTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SetupWizardTrialSignalTests.swift; sourceTree = "<group>"; };
+ 		BB00000000000000000367 /* AccessibilityPermissionPaneTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AccessibilityPermissionPaneTests.swift; sourceTree = "<group>"; };
++		C10400000000000000000004 /* PermissionGuidePlacementTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnown
+```
+
+**File**: `TypeWhisper/Services/TextInsertionService.swift` (modified, +4/-0)
+```diff
+@@ -477,6 +477,10 @@ final class TextInsertionService {
+         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+             NSWorkspace.shared.open(url)
          }
- 
-         let parts = splitDecimal(characters)
--        guard let integer = parseInteger(parts.integer), parts.integerHadNumber else { return nil }
-+        guard let integer = parseInteger(parts.integer, spokenTailEnabled: spokenTailEnabled),
-+              parts.integerHadNumber else {
-+            return nil
++        guard !isAccessibilityGranted else { return }
++        PermissionGuideController.shared.begin(kind: .accessibility) { [weak self] in
++            self?.isAccessibilityGranted ?? false
 +        }
- 
-         var replacement = "\(integer)"
-         if let decimal = parts.decimal {
-@@ -77,50 +83,154 @@ enum HanNumberWordParser {
-         return (integer, integer.contains(where: isNumericCharacter), decimal)
+ #endif
      }
  
--    private static func parseInteger(_ characters: [Character]) -> Int? {
-+    private static func parseInteger(_ characters: [Character], spokenTailEnabled: Bool) -> Int? {
-         guard !characters.isEmpty else { return nil }
+```
+
+**File**: `TypeWhisper/ViewModels/DictationSettingsHandler.swift` (modified, +4/-1)
+```diff
+@@ -171,7 +171,10 @@ final class DictationSettingsHandler {
+             #else
+             let pollSeconds = 30
+             #endif
+-            for _ in 0..<pollSeconds {
++            var polledSeconds = 0
++            // Keeps going while the guide beside System Settings waits for the user.
++            while polledSeconds < pollSeconds || PermissionGuideController.shared.isActive {
++                polledSeconds += 1
+                 try? await Task.sleep(for: .seconds(1))
+                 guard !Task.isCancelled else { return }
+                 DispatchQueue.main.async { [weak self] in
+```
+
+**File**: `TypeWhisper/Views/GeneralSettingsView.swift` (modified, +3/-0)
+```diff
+@@ -113,6 +113,8 @@ struct GeneralSettingsView: View {
+ /// does not leave the user without the window they were working in.
+ /// Stored in the defaults because the sandbox drops launch arguments.
+ enum RelaunchSettingsPage: String, CaseIterable {
++    /// Home shows whether a permission granted before the restart is in effect.
++    case home
+     case general
+     case integrations
  
-         var total = 0
-         var section = 0
-         var number = 0
-+        var lastUnit: Int?
-+        var lastLargeUnit: Int?
-+        var lastUnitHadExplicitZero = false
-+        var lastCharacterWasDigit = false
-+        var previousCharacterWasASCIIDigit = false
-+        // Length of the digit run after the most recent unit. The spoken-tail
-+        // reading only exists for a single trailing digit; longer runs such as
-+        // the `2345` in `1万2345` or the `05` in `1万05` keep their literal
-+        // place values.
-+        var trailingDigitCount = 0
+@@ -121,6 +123,7 @@ enum RelaunchSettingsPage: String, CaseIterable {
  
-         for character in characters {
-+            if let digit = asciiDigitValue(character) {
-+                if previousCharacterWasASCIIDigit {
-+                    let (multiplied, multiplyOverflow) = number.multipliedReportingOverflow(by: 10)
-+                    guard !multiplyOverflow else { return nil }
-+                    let (sum, addOverflow) = multiplied.addingReportingOverflow(digit)
-+                    guard !addOverflow else { return nil }
-+                    number = sum
-+                    trailingDigitCount += 1
-+                } else {
-+                    number = digit
-+                    trailingDigitCount = 1
-+                }
-+                // No explicit-zero tracking needed here: ASCII zeroes only
-+                // appear in multi-digit tails, which trailingDigitCount
-+                // already keeps literal (1万05 = 10005).
-+                lastCharacterWasDigit = true
-+                previousCharacterWasASCIIDigit = true
-+                continue
+     var tab: SettingsTab {
+         switch self {
++        case .home: .home
+         case .general: .general
+         case .integrations: .integrations
+         }
+```
+
+**File**: `TypeWhisper/Views/PermissionGuidePanel.swift` (added, +545/-0)
+```diff
+@@ -0,0 +1,545 @@
++import AppKit
++import SwiftUI
++
++/// The list in System Settings > Privacy & Security that a permission guide points to.
++enum PermissionGuideKind: Equatable {
++    /// Accessibility, called Device Control and Data Access from macOS 27.
++    case accessibility
++    /// Input Monitoring.
++    case inputMonitoring
++
++    var listName: String {
++        switch self {
++        case .accessibility:
++            AccessibilityPermissionPane.localizedName()
++        case .inputMonitoring:
++            localizedAppText("Input Monitoring", de: "Eingabeüberwachung", ja: "入力監視", zh: "输入监控", es: "Monitorización de entrada")
++        }
++    }
++}
++
++/// Shows a small panel beside System Settings while the user grants a permission there.
++///
++/// macOS lets no installer or app grant Accessibility or Input Monitoring itself; the user has
++/// to turn on the switch. The panel names the list and the switch, offers the app icon to drag
++/// into the list when TypeWhisper is missing from it, and appears only while System Settings
++/// is in front. When the grant is visible to the running app, the panel closes on its own and
++/// TypeWhisper comes back to the front.
++@MainActor
++final class PermissionGuideController {
++    static let shared = PermissionGuideController()
++
++    /// Posted after a guided permission was granted and TypeWhisper was brought back.
++    static let didGrantAccess = Notification.Name("PermissionGuideDidGrantAccess")
++
++    private var panel: PermissionGuidePanel?
++    private var model: PermissionGuideModel?
++    private var watchTask: Task<Void, Never>?
++    private var lastPlacedOrigin: NSPoint?
++    private var userMovedPanel = false
++    /// Counts up with every guide, so a guide replaced during its confirmation leaves the new one alone.
++    private var guideID = 0
++
++    /// Whether a guide is waiting for a permission.
++    var isActive: Bool { watchTask != nil }
++
++    /// Starts guiding after System Settings was asked to open the list for `kind`.
++    ///
++    /// - Parameter isGranted: Checked twice a second. Pass `nil` when the running app cannot
++    ///   see the grant, as in the App Store edition, where CoreGraphics keeps its first answer
++    ///   until a restart; the panel then offers to restart TypeWhisper instead.
++    func begin(kind: PermissionGuideKind, isGranted: (@MainActor () -> Bool)?) {
++        end()
++
++        let model = PermissionGuideModel(
++            kind: kind,
++            appName: Self.appName,
++            detectsGrant: isGranted != nil
++        )
++        model.onClose = { [weak self] in self?.end() }
++        model.onRestart = {
++            PermissionGuideController.shared.end()
++            // Comes back with a window, so the user sees whether the permission is in effect.
++            // An unfinished setup wizard opens instead.
++            ApplicationRelauncher.relaunch(reopening: .home)
++        }
++        self.model = model
++        guideID += 1
++        let guideID = self.guideID
++        watchTask = Task { [weak self] in
++            await self?.watch(guideID: guideID, isGranted: isGranted)
++        }
++    }
++
++    /// Closes the panel and stops waiting.
++    func end() {
++        watchTask?.cancel()
++        watchTask = nil
++        panel?.orderOut(nil)
++        panel = nil
++        model = nil
++        lastPlacedOrigin = nil
++        userMovedPanel = false
++    }
++
++    private func watch(guideID: Int, isGranted: (@MainActor () -> Bool)?) async {
++        let start = ContinuousClock.now
++        var settingsWasRunning = false
++        var frontWithoutWindowTicks = 0
++
++        while !Task.isCancelled {
++            if let isGranted, isGranted() {
++                await finishAfterGrant(guideID: guideID)
++                return
 +            }
 +
-             if let digit = digitValues[character] {
-                 number = digit
-+                if digit == 0 {
-+                    lastUnitHadExplicitZero = true
++            let elapsed = ContinuousClock.now - start
++            let settings = SystemSettingsWindowLocator.runningApplication
++            settingsWasRunning = settingsWasRunning || settings != nil
++            // System Settings quit, never opened, or the user left it open and walked away.
++            let settingsGone = settings == nil && (settingsWasRunning || elapsed > .seconds(10))
++            if settingsGone || elapsed > .seconds(20 * 60) {
++                end()
++                return
++            }
++
++            if let settings, SystemSettingsWindowLocator.isFrontmost {
++                let settingsFrame = SystemSettingsWindowLocator.frontWindowFrame(
++                    processIdentifier: settings.processIdentifier
++                )
++                // Waits briefly for the window so the panel does not jump once it appears.
++                frontWithoutWindowTicks = settingsFrame == nil ? frontWithoutWindowTicks + 1 : 0
++                if settingsFrame != nil || frontWithoutWindowTicks > 4 {
++                    showPanel(besideSettingsFrame: settingsFrame)
 +                }
-+                lastCharacterWasDigit = true
-+                previousCharacterWasASCIIDigit = false
-+                trailingDigitCount += 1
-                 continue
-             }
- 
-             if let unit = unitValues[character] {
--                section += (number == 0 ? 1 : number) * unit
-+                let magnitude = number == 0 ? 1 : number
-+                let (product, multiplyOverflow) = magnitude.multipliedReportingOverflow(by: unit)
-+                guard !multiplyOverflow else { return nil }
-+                let (sectionSum, addOverflow) = section.addingReportingOverflow(product)
-+                guard !addOverflow else { return nil }
-+                section = sectionSum
-                 number = 0
-+                lastUnit = unit
-+                lastUnitHadExplicitZero = false
-+                lastCharacterWasDigit = false
-+                previousCharacterWasASCIIDigit = false
-+                trailingDigitCount = 0
-                 continue
-             }
- 
-             if let largeUnit = largeUnitValues[character] {
--                section += number
--                total += max(section, 1) * largeUnit
-+        
++            } else {
++                panel?.orderOut(nil)
++            }
++
++            try? await Ta
 ```
 
-**File**: `TypeWhisper/Services/NumberWordNormalizer.swift` (modified, +128/-1)
+**File**: `TypeWhisper/Views/SetupWizardView.swift` (modified, +11/-0)
 ```diff
-@@ -8,6 +8,16 @@ enum NumberWordNormalizer {
-     private static let ordinaryWordsByLanguage: [String: Set<String>] = [
-         "pl": ["ten", "one"],
+@@ -105,6 +105,9 @@ struct SetupWizardView: View {
+         .onReceive(NotificationCenter.default.publisher(for: .resetSetupWizardWindow)) { _ in
+             restartWizardFromBeginning()
+         }
++        .onReceive(NotificationCenter.default.publisher(for: PermissionGuideController.didGrantAccess)) { _ in
++            continueAfterGuidedPermission()
++        }
+     }
+ 
+     // MARK: - Shell
+@@ -372,6 +375,14 @@ struct SetupWizardView: View {
+         }
+     }
+ 
++    /// Moves on once the guide beside System Settings saw the last missing permission arrive.
++    private func continueAfterGuidedPermission() {
++        guard currentWizardStep == .permissions,
++              !dictation.needsMicPermission,
++              !dictation.needsAccessibilityPermission else { return }
++        handlePrimaryAction()
++    }
++
+     private func completeSetupAndOpenHome() {
+         // A past test never substitutes for the current engine and permissions.
+         if setupReadiness.canCompleteSetup {
+```
+
+**File**: `TypeWhisperTests/PermissionGuidePlacementTests.swift` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++import XCTest
++@testable import TypeWhisper
++
++/// The permission guide sits beside the System Settings window so it never covers the
++/// switch the user has to turn on.
++final class PermissionGuidePlacementTests: XCTestCase {
++    private let screen = NSRect(x: 0, y: 0, width: 1920, height: 1050)
++    private let panelSize = NSSize(width: 300, height: 180)
++
++    func testPlacesGuideRightOfSettingsLevelWithTheList() {
++        let settings = NSRect(x: 400, y: 200, width: 700, height: 600)
++
++        let origin = PermissionGuidePlacement.origin(panelSize: panelSize, settingsFrame: settings, visibleFrame: screen)
++
++        XCTAssertEqual(origin.x, settings.maxX + PermissionGuidePlacement.gap)
++        XCTAssertEqual(origin.y + panelSize.height, settings.maxY - PermissionGuidePlacement.toolbarHeight)
++    }
++
++    func testFallsBackToTheLeftWhenTheRightEdgeIsTooClose() {
++        let settings = NSRect(x: 1000, y: 200, width: 800, height: 600)
++
++        let origin = PermissionGuidePlacement.origin(panelSize: panelSize, settingsFrame: settings, visibleFrame: screen)
++
++        XCTAssertEqual(origin.x + panelSize.width, settings.minX - PermissionGuidePlacement.gap)
++    }
++
++    func testOverlapsBottomRightCornerOfAWindowThatFillsTheScreen() {
++        let settings = screen
++
++        let origin = PermissionGuidePlacement.origin(panelSize: panelSize, settingsFrame: settings, visibleFrame: screen)
++        let guide = NSRect(origin: origin, size: panelSize)
++
++        XCTAssertTrue(screen.contains(guide))
++        XCTAssertEqual(guide.maxX, settings.maxX - PermissionGuidePlacement.margin)
++        XCTAssertEqual(guide.minY, settings.minY + PermissionGuidePlacement.margin)
++    }
++
++    func testConvertsWindowBoundsFromTopLeftScreenCoordinates() {
++        let bounds = CGRect(x: 100, y: 50, width: 700, height: 600)
++
++        let frame = SystemSettingsWindowLocator.cocoaFrame(fromWindowBounds: bounds, primaryScreenHeight: 1080)
++
++        XCTAssertEqual(frame, NSRect(x: 100, y: 430, width: 700, height: 600))
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `0cf71b2b` (2026-11-27)
+**Commit Message**: (bug) Spell names from the screen at the start of a sentence too (#2047)
+
+* (bug) Spell names from the screen at the start of a sentence too
+
+The spelling pairs from #2043 skipped every word at the start of a
+sentence, since speech recognition capitalizes those and a pair like
+"Mark" → "Marc" also turned "Mark my words" into "Marc my words".
+Messages often start with the name, so "Sofia, can you…" kept its
+spelling while the chat showed "Sofya".
+
+A word at the start of a sentence now pairs when the spell checker does
+not know it in lowercase in English, the dictation's language or the
+user's preferred languages: "sofia" is no word, "mark" is one. Letters
+for the same sound now count as one when comparing spellings, so
+Whisper's "Sophia" pairs with "Sofya" as well.
+
+* (bug) Read lowercase language names in the ordinary-word check
+
+The OpenAI API reports the detected language as a lowercase name
+("english"). Locale reads no language code from it, so the spell checker
+skipped the dictation's language and asked only English and the
+preferred languages. The identifier now goes through
+WorkflowTranslationLanguageNormalizer, which the translation fallback
+already uses.
+
+**File**: `TypeWhisper/Services/ScreenContextService.swift` (modified, +59/-10)
+```diff
+@@ -178,12 +178,19 @@ extension ScreenContextService {
+     /// even with the screen text in the prompt, but they follow an explicit pair.
+     ///
+     /// They follow it even where the word is no name ("Mark my words" with "Marc" on
+-    /// screen), so the match is strict: only capitalized dictated words that do not start
+-    /// a sentence count, because there speech recognition capitalizes names and not
+-    /// ordinary words. The screen word must be capitalized as well, have the same sound
+-    /// key and vowel sounds and differ by a few letters, the dictated spelling must not
+-    /// appear on screen, and the screen must offer only one such spelling.
+-    static func spellingHints(dictation: String, screenText: String) -> [SpellingHint] {
++    /// screen), so the match is strict: only capitalized dictated words count, because
++    /// within a sentence speech recognition capitalizes names and not ordinary words. A
++    /// word that starts a sentence is capitalized either way, so it counts only when
++    /// `isOrdinaryWord` says it is no ordinary word ("Sofia, can you…" but not "Mark my
++    /// words"). The screen word must be capitalized as well, have the same sound key and
++    /// vowel sounds and differ by a few letters, where letters for the same sound count as
++    /// one ("Sophia" and "Sofya"). The dictated spelling must not appear on screen, and the
++    /// screen must offer only one such spelling.
++    static func spellingHints(
++        dictation: String,
++        screenText: String,
++        isOrdinaryWord: (String) -> Bool
++    ) -> [SpellingHint] {
+         let screenWords = words(in: screenText)
+         let screenSpellings = Set(screenWords.map { $0.text.lowercased() })
+         var namesByKey: [String: [String]] = [:]
+@@ -199,16 +206,20 @@ extension ScreenContextService {
+ 
+         var hints: [SpellingHint] = []
+         var seen = Set<String>()
+-        for word in words(in: dictation) where !word.startsSentence && isNameCandidate(word.text) {
++        for word in words(in: dictation) where isNameCandidate(word.text) {
+             let dictated = word.text.lowercased()
+-            guard !screenSpellings.contains(dictated), seen.insert(dictated).inserted else { continue }
++            guard !screenSpellings.contains(dictated), !seen.contains(dictated) else { continue }
+             let vowels = vowelSounds(word.text)
++            let sounds = soundSpelling(word.text)
+             let matches = (namesByKey[soundKey(word.text)] ?? []).filter { name in
+                 let spelled = name.lowercased()
++                let distance = min(editDistance(dictated, spelled), editDistance(sounds, soundSpelling(name)))
+                 return vowelSounds(name) == vowels
+-                    && editDistance(dictated, spelled) <= (max(dictated.count, spelled.count) > 6 ? 3 : 2)
++                    && distance <= (max(dictated.count, spelled.count) > 6 ? 3 : 2)
+             }
+-            guard matches.count == 1 else { continue }
++            // The dictionary is asked last, and only for words that would pair.
++            guard matches.count == 1, !word.startsSentence || !isOrdinaryWord(word.text) else { continue }
++            seen.insert(dictated)
+             hints.append(SpellingHint(dictated: word.text, screen: matches[0]))
+             if hints.count == maxSpellingHints { break }
+         }
+@@ -219,6 +230,44 @@ extension ScreenContextService {
+         word.count >= 3 && word.first?.isUppercase == true
+     }
+ 
++    /// Whether `word` in lowercase is spelled correctly in one of `languages`, as "mark"
++    /// and "will" are in English. The spell checker knows names only capitalized, so
++    /// "sofia" and "steven" are no ordinary words. Some names are ("linda" in Spanish),
++    /// and then a sentence start gets no pair.
++    @MainActor
++    static func isOrdinaryWord(_ word: String, languages: [String]) -> Bool {
++        let checker = NSSpellChecker.shared
++        let lowercased = word.lowercased()
++        return languages.contains { language in
++            checker.checkSpelling(
++                of: lowercased,
++                startingAt: 0,
++                language: language,
++                wrap: false,
++                inSpellDocumentWithTag: 0,
++                wordCount: nil
++            ).location == NSNotFound
++        }
++    }
++
++    /// The spell checker languages for `isOrdinaryWord`: English, the dictation's language
++    /// and the user's preferred languages. A language the spell checker lacks is left out,
++    /// because the spell checker accepts every word in it. The dictation's language may be
++    /// a lowercase name, as the OpenAI API reports it ("english"), which `Locale` does not read.
++    @MainActor
++    static func ordinaryWordLanguages(dictationLanguage: String?) -> [String] {
++        let available = NSSpellChecker.shared.availableLanguages
++        var languages: [String] = []
++        for identifier in ["en", dictationLanguage].compactMap({ $
+```
+
+**File**: `TypeWhisper/Services/WorkflowTextProcessingService.swift` (modified, +19/-3)
+```diff
+@@ -192,7 +192,12 @@ struct WorkflowTextProcessingService {
+         screenContext: String? = nil
+     ) async throws -> String {
+         let screenContextBlock = workflow.usesScreenContext
+-            ? Self.screenContextInstruction(screenContext, dictation: text)
++            ? Self.screenContextInstruction(
++                screenContext,
++                dictation: text,
++                dictationLanguage: Workflow.languageIdentifier(detectedLanguage)
++                    ?? Workflow.languageIdentifier(configuredLanguage)
++            )
+             : ""
+         if workflow.usesInlineCommands {
+             let behavior = workflow.behavior
+@@ -482,7 +487,11 @@ struct WorkflowTextProcessingService {
+     /// contain anything, including instructions, so the prompt fences it off explicitly.
+     /// Dictated names that sound like a differently spelled name on screen are listed
+     /// after it (see `ScreenContextService.spellingHints`).
+-    static func screenContextInstruction(_ screenContext: String?, dictation: String = "") -> String {
++    static func screenContextInstruction(
++        _ screenContext: String?,
++        dictation: String = "",
++        dictationLanguage: String? = nil
++    ) -> String {
+         guard let screenContext = trimmedOrNil(screenContext) else { return "" }
+         let fenced = ScreenContextService.promptExcerpt(screenContext)
+             .replacingOccurrences(of: "</screen_context>", with: "")
+@@ -495,7 +504,14 @@ struct WorkflowTextProcessingService {
+             </screen_context>
+             """
+ 
+-        let hints = ScreenContextService.spellingHints(dictation: dictation, screenText: screenContext)
++        let hints = ScreenContextService.spellingHints(dictation: dictation, screenText: screenContext) { word in
++            ScreenContextService.isOrdinaryWord(
++                word,
++                languages: ScreenContextService.ordinaryWordLanguages(
++                    dictationLanguage: dictationLanguage ?? DictatedTextLanguage.identifier(of: dictation)
++                )
++            )
++        }
+         if !hints.isEmpty {
+             workflowTextProcessingLogger.info("Screen context: \(hints.count, privacy: .public) spelling hints")
+             instruction += """
+```
+
+**File**: `TypeWhisperTests/WorkflowServiceTests.swift` (modified, +50/-4)
+```diff
+@@ -2053,21 +2053,67 @@ final class WorkflowServiceTests: XCTestCase {
+             Send
+             """
+         func hints(_ dictation: String) -> [String] {
+-            ScreenContextService.spellingHints(dictation: dictation, screenText: screen)
+-                .map { "\($0.dictated)→\($0.screen)" }
++            ScreenContextService.spellingHints(dictation: dictation, screenText: screen) {
++                ScreenContextService.isOrdinaryWord($0, languages: ["en"])
++            }
++            .map { "\($0.dictated)→\($0.screen)" }
+         }
+ 
+         XCTAssertEqual(hints("See you soon, Linda. Thanks, Steven and Ryan."), ["Linda→Lynda", "Steven→Stephen"])
+         XCTAssertEqual(hints("I asked Mr. Steven about it."), ["Steven→Stephen"])
+         XCTAssertEqual(hints("Thanks, Herr Meier."), ["Meier→Mayer"])
+         // Other vowels make other names, and Cyrillic names have no sound key to compare.
+         XCTAssertEqual(hints("Please ask Tim, Jane and Анна about it."), [])
+-        // Speech recognition capitalizes every sentence start, so it is no sign of a name.
+-        XCTAssertEqual(hints("Mark my words. Linda will reply."), [])
++        // Speech recognition capitalizes every sentence start, so there only a name that is
++        // no ordinary word counts: "linda" is none in English, "mark" is one.
++        XCTAssertEqual(hints("Mark my words. Linda will reply."), ["Linda→Lynda"])
+         // Lowercase words and spellings that are on screen already need no hint.
+         XCTAssertEqual(hints("I'll mark it and see you soon, Lynda."), [])
+     }
+ 
++    func testScreenContextSpellingHintsPairNamesAtASentenceStartButNotOrdinaryWords() {
++        // Vision's text of a chat window with the conversation with Sofya open; it read the
++        // selected chat in the list as "Sotya".
++        let screen = """
++            Search or start a new chat
++            Sotya
++            Perfect, see you on Monday then
++            12:41
++            Marc Dubois
++            Can you send me the invoice again?
++            Sofya
++            last seen today at 12:41
++            Hi! Did you have a chance to look at the contract draft? 12:30
++            Type a message
++            """
++        func hints(_ dictation: String) -> [String] {
++            ScreenContextService.spellingHints(dictation: dictation, screenText: screen) {
++                ScreenContextService.isOrdinaryWord($0, languages: ["en"])
++            }
++            .map { "\($0.dictated)→\($0.screen)" }
++        }
++
++        XCTAssertEqual(hints("Sofia, I'll go through the contract tonight."), ["Sofia→Sofya"])
++        XCTAssertEqual(hints("Thanks. Sofia, see you on Monday."), ["Sofia→Sofya"])
++        XCTAssertEqual(hints("I'll send the draft to Sofia tonight."), ["Sofia→Sofya"])
++        // Whisper mostly writes the name as "Sophia"; ph and f are one sound.
++        XCTAssertEqual(hints("Sophia, I'll go through the contract tonight."), ["Sophia→Sofya"])
++        XCTAssertEqual(hints("Mark my words, they will sign it."), [])
++        XCTAssertEqual(hints("Sure. Mark the date in the calendar."), [])
++        // The OpenAI API reports the detected language as a lowercase name.
++        XCTAssertEqual(
++            ScreenContextService.ordinaryWordLanguages(dictationLanguage: "french"),
++            ScreenContextService.ordinaryWordLanguages(dictationLanguage: "fr")
++        )
++        XCTAssertTrue(
++            WorkflowTextProcessingService.screenContextInstruction(
++                screen,
++                dictation: "Sofia, can you send me the signed contract?",
++                dictationLanguage: "en"
++            ).contains("\n- \"Sofia\" → \"Sofya\"")
++        )
++    }
++
+     func testScreenContextPromptKeepsTheWindowEndAndListsNameSpellings() async throws {
+         let workflow = Workflow(
+             name: "Clean",
+```
+
+---
+
+### Incident Patch 3: `58e6c922` (2026-11-27)
+**Commit Message**: (bug) Restore Han numerals after numbered-list prefixes (#2038)
+
+* fix: restore Han numerals after numbered-list prefixes
+
+Co-Authored-By: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
+
+* Fix digit-led Han numerals after list prefixes
+
+---------
+
+Co-authored-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
+
+**File**: `TypeWhisper/Services/NumberWordNormalizer.swift` (modified, +20/-9)
+```diff
+@@ -15,8 +15,10 @@ enum NumberWordNormalizer {
+     private static let hanApproximationPrefixes: Set<Character> = [
+         "幾", "几", "數", "数", "上", "成",
      ]
-+    private static let hanLexicalNumberWords: Set<String> = [
-+        "萬能", "万能", "萬一", "万一", "萬分", "万分",
-+        "百般", "百姓",
-+    ]
-+    private static let hanApproximationPrefixes: Set<Character> = [
-+        "幾", "几", "數", "数", "上", "成",
-+    ]
-+    private static let hanUnitCharacters: Set<Character> = [
-+        "十", "百", "千", "万", "萬", "亿", "億",
-+    ]
+-    private static let hanUnitCharacters: Set<Character> = [
+-        "十", "百", "千", "万", "萬", "亿", "億",
++    private static let hanLargeUnitCharacters: Set<Character> = ["万", "萬", "亿", "億"]
++    private static let hanUnitCharacters = hanLargeUnitCharacters.union(["十", "百", "千"])
++    private static let hanFractionalDigitCharacters: Set<Character> = [
++        "零", "〇", "一", "二", "两", "兩", "三", "四", "五", "六", "七", "八", "九",
+     ]
      private static let cjkNumberCharacters = Set("零〇一二两兩三四五六七八九十百千万萬亿億点點負负".map { $0 })
  
-     static func supports(language: String?) -> Bool {
-@@ -244,6 +254,23 @@ enum NumberWordNormalizer {
-             parsed = wordParser.parse(normalized)
-         } else {
-             let wordTexts = words.map(\.text)
-+            if languageCode == "zh" || languageCode == "ja" {
-+                if isHanLexicalNumberWord(startingAt: index, text: wordTexts[0], in: tokens) {
-+                    return nil
-+                }
-+                if index > 1,
-+                   tokens[index - 1].kind == .other,
-+                   tokens[index - 1].text == ".",
-+                   tokens[index - 2].kind == .digit {
-+                    // A merged numeric run directly preceded by "<digits>."
-+                    // belongs to a decimal fraction (1.5万, 2.3亿), not to
-+                    // the large unit. The Han parsers cannot represent
-+                    // fractional unit scaling yet, so leave the text
-+                    // unchanged rather than producing a plausible-looking
-+                    // wrong value such as 1.50000元.
-+                    return nil
-+                }
-+            }
-             switch languageCode {
-             case "zh":
-                 parsed = ChineseNumberWordParser.parse(wordTexts)
-@@ -306,7 +333,107 @@ enum NumberWordNormalizer {
-             tokens.append(Token(text: current, kind: currentKind))
-         }
- 
--        return tokens
-+        return mergingAdjacentNumericRuns(tokens)
-+    }
-+
-+    private static func mergingAdjacentNumericRuns(_ tokens: [Token]) -> [Token] {
-+        var result: [Token] = []
-+        var index = 0
-+
-+        while index < tokens.count {
-+            guard tokens[index].kind == .digit || tokens[index].kind == .cjkNumber else {
-+                result.append(tokens[index])
-+                index += 1
-+                continue
-+            }
-+
-+            var endIndex = index
-+            var text = ""
-+            var containsCJKNumber = false
-+            var stoppedAtLexicalWord = false
-+            while endIndex < tokens.count,
-+                  (tokens[endIndex].kind == .digit || tokens[endIndex].kind == .cjkNumber) {
-+                if tokens[endIndex].kind == .digit,
-+                   !text.isEmpty,
-+                   let lexical = hanLexicalNumberWords.first(where: { text.hasSuffix($0) }) {
-+                    // A digit run must not merge into a lexical word: in
-+                    // 万一5个人都来了 the 万一 is "in case", not a number.
-+                    // Mixed numbers such as 1万5 keep merging because 万
-+                    // alone is never lexical. Merging resumes after the
-+                    // protected word so later numerals still combine.
-+                    if text.count > lexical.count {
-+                        let numberPart = String(text.dropLast(lexical.count))
-+                        result.append(Token(text: numberPart, kind: .cjkNumber))
-+                    }
-+                    result.append(Token(text: lexical, kind: .cjkNumber))
-+                    index = endIndex
-+                    stoppedAtLexicalWord = true
-+                    break
-+                }
-+                text += tokens[endIndex].text
-+                containsCJKNumber = containsCJKNumber || tokens[endIndex].kind == .cjkNumber
-+                endIndex += 1
-+            }
-+
-+            if stoppedAtLexicalWord {
-+                // The loop above stopped at a protected lexical word and
-+                // already emitted it; continue merging at the digit run.
-+                continue
-+            }
-+
-+            if containsCJKNumber {
-+                result.append(Token(text: text, kind: .cjkNumber))
-+            } else {
-+                result.append(contentsOf: tokens[index..<endIndex])
-+            }
-+            index = endIndex
-+        }
-+
-+        return result
-+    }
-+
-+    private static func isHanLexicalNumberWord(
-+        startingAt index: Int,
-+        text: String,
-+        in tokens: [Token]
-+    ) -> Bool {
-+        if hanLexicalNumberWords.contains(text) {
-+            return true
-+        }
-+
-+        if index > 0,
-+           tokens[index - 1].kind == .word,
-+           let left = tokens[index - 1].text.last {
-+            // Approximations attach the prefix directly to bare units
-+            // (幾千, 數百, 成千上萬). Count-label suffixes such as 总数, 人数
-+            // and 訂單數 end in the same character, so only tr
-```
-
-**File**: `TypeWhisperTests/NumberWordNormalizerTests.swift` (modified, +117/-0)
-```diff
-@@ -343,9 +343,126 @@ final class NumberWordNormalizerTests: XCTestCase {
-         XCTAssertEqual(NumberWordNormalizer.normalize(text: "负二点五", language: "zh"), "-2.5")
-     }
- 
-+    func testChineseMixedASCIIDigitsAndLargeUnitsNormalize() {
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "10万", language: "zh"), "100000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "100万", language: "zh"), "1000000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1億", language: "zh"), "100000000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万2千", language: "zh"), "12000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "十萬", language: "zh"), "100000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "負二點五", language: "zh"), "-2.5")
-+    }
-+
-+    func testChineseSpokenTailNumbersNormalize() {
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一萬五", language: "zh"), "15000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "兩萬三", language: "zh"), "23000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "千二", language: "zh"), "1200")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一百二", language: "zh"), "120")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一百零二", language: "zh"), "102")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一千零二", language: "zh"), "1002")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一千二百三十四", language: "zh"), "1234")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一萬五千", language: "zh"), "15000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一萬零五", language: "zh"), "10005")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一萬零二", language: "zh"), "10002")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万5", language: "zh"), "15000")
-+    }
-+
-+    func testChineseSpokenTailDoesNotScaleMultiDigitTails() {
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万05", language: "zh"), "10005")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万005", language: "zh"), "10005")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万2345", language: "zh"), "12345")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万23", language: "zh"), "10023")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "2千345", language: "zh"), "2345")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "10万5", language: "zh"), "105000")
-+    }
-+
-+    func testChineseHanNumberOverflowIsPreserved() {
-+        let oversized = "万9223372036854775807"
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: oversized, language: "zh"), oversized)
-+        let overflowingUnit = "9223372036854775807万"
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: overflowingUnit, language: "zh"), overflowingUnit)
-+        let overflowingLargeUnit = "922337203685477580億"
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: overflowingLargeUnit, language: "zh"), overflowingLargeUnit)
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "10万", language: "zh"), "100000")
-+    }
-+
-+    func testChineseAscendingLargeUnitsComposeMultiplicatively() {
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万亿", language: "zh"), "1000000000000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一万亿", language: "zh"), "1000000000000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "万亿", language: "zh"), "1000000000000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一万二千亿", language: "zh"), "1200000000000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "一千二百万亿", language: "zh"), "1200000000000000")
-+        // Descending large units stay additive.
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1亿2万", language: "zh"), "100020000")
-+    }
-+
-+    func testChineseLexicalWordsStayIntactBeforeASCIIDigits() {
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "万一5个人都来了", language: "zh"), "万一5个人都来了")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "萬一5個人都來了", language: "zh"), "萬一5個人都來了")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "萬能5", language: "zh"), "萬能5")
-+        // Mixed numerals that do not form lexical words keep merging.
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1万5", language: "zh"), "15000")
-+        // Numerals after a protected lexical word still merge and normalize.
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "万一5个人，10万", language: "zh"), "万一5个人，100000")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "萬一5個人，10萬", language: "zh"), "萬一5個人，100000")
-+    }
-+
-+    func testChineseCountLabelSuffixesStillNormalize() {
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text: "总数一百", language: "zh"), "总数100")
-+        XCTAssertEqual(NumberWordNormalizer.normalize(text
-```
-
----
-
-### Incident Patch 2: `2c9949f0` (2026-11-24)
-**Commit Message**: (bug) Mix the Recorder's microphone without ducking when it doesn't pick up the call (#2018)
-
-* (bug) Mix the Recorder's microphone without ducking when it doesn't pick up the call
-
-Echo handling lowers the microphone to 18 % (aggressive) or 42 %
-(medium) whenever the system audio has sound, so a call on loudspeakers
-isn't heard twice in the mixed recording. On headphones there is no
-echo to remove, and the ducking only pushed the user's voice under
-whatever else the system audio carried: another voice on the line,
-noise, or the other person talking over them. The transcript then lost
-the user's words or showed the other sound instead.
-
-At stop the Recorder now measures the echo from the recording with
-SpeakerChannelAttribution's echo model. Without an echo at least a
-tenth as loud as the system audio and above the microphone's activity
-level, the file and the final buffer are mixed without ducking. With
-too little system audio to measure, the setting applies as before.
-
-* Keep the ducking decision open when the echo can't be measured
-
-The echo search returned no delay both when the microphone doesn't
-follow the system audio and when the system audio's loudness doesn't
-vary, which 
-
-**File**: `TypeWhisper/Services/AudioRecorderService.swift` (modified, +30/-3)
-```diff
-@@ -735,12 +735,15 @@ final class AudioRecorderService: ObservableObject, @unchecked Sendable {
- 
-     /// Thread-safe snapshot of the current 16kHz mono buffer for streaming transcription.
-     func getCurrentBuffer() -> [Float] {
-+        currentBuffer(micDuckingMode: micDuckingMode)
-+    }
-+
-+    private func currentBuffer(micDuckingMode: MicDuckingMode) -> [Float] {
-         if let currentBufferOverride {
-             return currentBufferOverride()
-         }
-         let micEnabled = self.micEnabled
-         let systemAudioEnabled = self.systemAudioEnabled
--        let micDuckingMode = self.micDuckingMode
-         return transcriptionBufferLock.withLock { buffer in
-             buffer.currentBuffer(
-                 micEnabled: micEnabled,
-@@ -934,7 +937,6 @@ final class AudioRecorderService: ObservableObject, @unchecked Sendable {
-         let stoppedFinalOutputURL = finalOutputURL
-         let stoppedOutputFormat = outputFormat
-         let stoppedTrackMode = trackMode
--        let stoppedMicDuckingMode = micDuckingMode
- 
-         // Test overrides own their capture lifecycle. Production capture must be fully
-         // stopped before any live-session or file finalization work begins.
-@@ -970,7 +972,12 @@ final class AudioRecorderService: ObservableObject, @unchecked Sendable {
-             micFileLock.withLock { $0 = nil }
-         }
- 
--        let transcriptionSamples = includeTranscriptionSamples ? getCurrentBuffer() : []
-+        let stoppedMicDuckingMode = stoppedTrackMode == .mixed && stoppedMicEnabled && stoppedSystemAudioEnabled
-+            ? effectiveMicDuckingMode(micDuckingMode)
-+            : micDuckingMode
-+        let transcriptionSamples = includeTranscriptionSamples
-+            ? currentBuffer(micDuckingMode: stoppedMicDuckingMode)
-+            : []
-         let ownSpeech = includeTranscriptionSamples && stoppedMicEnabled && stoppedSystemAudioEnabled
-             ? transcriptionBufferLock.withLock { buffer in
-                 SpeakerChannelAttribution.ownSpeechRanges(
-@@ -1664,6 +1671,26 @@ final class AudioRecorderService: ObservableObject, @unchecked Sendable {
-         }
-     }
- 
-+    /// The ducking a mixed recording gets: none when the microphone didn't
-+    /// pick up the system audio. Ducking keeps a call on loudspeakers from
-+    /// being heard twice, but on headphones it only lowered the user's voice
-+    /// whenever the system audio had sound, such as another voice or noise
-+    /// on the line, and the transcript lost the user's words there.
-+    private func effectiveMicDuckingMode(_ mode: MicDuckingMode) -> MicDuckingMode {
-+        guard mode != .off else { return mode }
-+        let hearsSystemAudio = transcriptionBufferLock.withLock { buffer in
-+            SpeakerChannelAttribution.microphoneHearsSystemAudio(
-+                microphone: buffer.micSamples,
-+                system: buffer.systemSamples,
-+                sampleRate: Self.transcriptionSampleRate
-+            )
-+        }
-+        // Without enough audio to measure, the setting applies as it is.
-+        guard hearsSystemAudio == false else { return mode }
-+        logger.info("Microphone didn't pick up the system audio; mixing without ducking")
-+        return .off
-+    }
-+
-     private func createDirectoryIfNeeded(_ url: URL) throws {
-         if !FileManager.default.fileExists(atPath: url.path) {
-             try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-```
-
-**File**: `TypeWhisper/Services/SpeakerChannelAttribution.swift` (modified, +95/-15)
-```diff
-@@ -59,8 +59,7 @@ enum SpeakerChannelAttribution {
-         let systemLevels = levels(of: system, frameLength: frameLength)
- 
-         let microphoneReference = percentile(microphoneLevels, 0.95)
--        let microphoneFloor = percentile(microphoneLevels, 0.10)
--        let threshold = max(minimumLevel, microphoneFloor * 3, microphoneReference * 0.12)
-+        let threshold = activityThreshold(microphoneLevels)
-         guard microphoneReference > threshold else { return [] }
-         let echo = expectedEcho(microphone: microphoneLevels, system: systemLevels)
-         let systemReference = max(percentile(systemLevels, 0.95), minimumLevel)
-@@ -88,6 +87,50 @@ enum SpeakerChannelAttribution {
-             .map { max(0, $0.start - padding)...min(duration, $0.end + padding) }
-     }
- 
-+    /// An echo this much quieter than the system audio isn't heard twice in a mix.
-+    static let audibleEchoGain: Float = 0.1
-+
-+    /// Whether the microphone picks up the system audio, as on a call on
-+    /// loudspeakers: the echo measured from the recording comes back at least
-+    /// `audibleEchoGain` as loud as the system audio and above the level
-+    /// that counts as microphone activity. On headphones there is no such
-+    /// echo. Nil when there is nothing to measure: less than a second of
-+    /// system audio, or system audio too steady for the echo search.
-+    static func microphoneHearsSystemAudio(
-+        microphone: [Float],
-+        system: [Float],
-+        sampleRate: Double = 16_000
-+    ) -> Bool? {
-+        let frameLength = max(1, Int(frameDuration * sampleRate))
-+        let microphoneLevels = levels(of: microphone, frameLength: frameLength)
-+        let systemLevels = levels(of: system, frameLength: frameLength)
-+        guard !microphoneLevels.isEmpty, !systemLevels.isEmpty else { return nil }
-+        // Any sound counts, playback without a pause too.
-+        guard Double(systemLevels.filter { $0 > minimumLevel }.count) * frameDuration >= 1 else { return nil }
-+        switch echo(microphone: microphoneLevels, system: systemLevels) {
-+        case .unmeasurable:
-+            return nil
-+        case .absent:
-+            return false
-+        case let .measured(_, _, systemThreshold, delay):
-+            // Against the system level at the echo's delay, not the widened
-+            // one own speech uses: that overstates the system audio where its
-+            // level changes quickly, so an audible echo would look faint.
-+            let pairs = microphoneLevels.indices.compactMap { index -> (microphone: Float, system: Float)? in
-+                let systemIndex = index - delay
-+                guard systemLevels.indices.contains(systemIndex), systemLevels[systemIndex] > systemThreshold else {
-+                    return nil
-+                }
-+                return (microphoneLevels[index], systemLevels[systemIndex])
-+            }
-+            guard Double(pairs.count) * frameDuration >= 1 else { return nil }
-+            let loudest = pairs.sorted { $0.system > $1.system }.prefix(max(1, pairs.count / 4))
-+            let gain = percentile(loudest.map { $0.microphone / $0.system }, 0.25)
-+            guard gain >= audibleEchoGain else { return false }
-+            return percentile(pairs.map { $0.system * gain }, 0.5) > activityThreshold(microphoneLevels)
-+        }
-+    }
-+
-     /// Diarizer turns with the user's own speech cut out of them and added
-     /// as turns of `ownSpeakerLabel`.
-     ///
-@@ -152,7 +195,30 @@ enum SpeakerChannelAttribution {
-     /// its lower quarter: the echo is there whenever the system audio is
-     /// loud, the user's voice only now and then.
-     private static func expectedEcho(microphone: [Float], system: [Float]) -> [Float]? {
--        guard let delay = echoDelay(microphone: microphone, system: system) else { return nil }
-+        guard case let .measured(source, gain, _, _) = echo(microphone: microphone, system: system) else { return nil }
-+        return source.map { $0 * gain }
-+    }
-+
-+    /// What the recording tells about the echo.
-+    private enum EchoMeasurement {
-+        /// The system level held over the echo's delay and reverberation,
-+        /// how loud it comes back on the microphone, the level from which
-+        /// the system audio counts as sound, and the delay in frames; see
-+        /// `expectedEcho`.
-+        case measured(source: [Float], gain: Float, systemThreshold: Float, delay: Int)
-+        /// The microphone doesn't follow the system audio at any delay.
-+        case absent
-+        /// The system audio doesn't vary, or has too little loud sound, to tell.
-+        case unmeasurable
-+    }
-+
-+    private static func echo(microphone: [Float], system: [Float]) -> EchoMeasurement {
-+        let delay: Int
-+        switch echoDelay(microphone: microphone, system: system) {
-+        case .found(let found): delay = found
-+        case .absent: return .absent
-+        case .unmeasurable: return .unmeasurable
-+        }
-         va
-```
-
-**File**: `TypeWhisperTests/SpeakerTranscriptCoordinatorTests.swift` (modified, +97/-0)
-```diff
-@@ -1177,6 +1177,103 @@ final class SpeakerChannelAttributionTests: XCTestCase {
-         XCTAssertTrue(SpeakerChannelAttribution.ownSpeechRanges(microphone: [], system: system).isEmpty)
-     }
- 
-+    /// On headphones the microphone only hears the user, even while another
-+    /// voice talks on the system audio, so the Recorder mixes it without ducking.
-+    func testMicrophoneOnHeadphonesDoesNotHearTheSystemAudio() {
-+        let remote = words(from: 1, count: 6, variant: 1) + words(from: 13, count: 6, variant: 3)
-+        let background = words(from: 4, count: 14, variant: 2)
-+        let user = words(from: 4.2, count: 5, variant: 4) + words(from: 7.5, count: 5, variant: 5)
-+        let system = zip(
-+            track(duration: 18, words: remote, level: 0.3),
-+            track(duration: 18, words: background, level: 0.1, noise: 0)
-+        ).map { $0 + $1 }
-+        let microphone = track(duration: 18, words: user, level: 0.05)
-+
-+        XCTAssertEqual(SpeakerChannelAttribution.microphoneHearsSystemAudio(microphone: microphone, system: system), false)
-+    }
-+
-+    /// Near loudspeakers the remote voice comes back on the microphone, which
-+    /// ducking keeps from being heard twice; a faint echo doesn't need it.
-+    func testMicrophoneNearLoudspeakersHearsTheSystemAudio() {
-+        let remote = words(from: 1, count: 6, variant: 1) + words(from: 7, count: 6, variant: 2)
-+            + words(from: 13, count: 6, variant: 3)
-+        let user = words(from: 4.2, count: 5, variant: 4) + words(from: 10.2, count: 5, variant: 5)
-+        let system = track(duration: 18, words: remote, level: 0.3)
-+        let speech = track(duration: 18, words: user, level: 0.05)
-+        for (echoLevel, hears) in [(Float(0.05), true), (0.012, false)] {
-+            let echo = track(duration: 18, words: remote, level: echoLevel, delay: 0.24, noise: 0)
-+            let microphone = zip(speech, echo).map { $0 + $1 }
-+
-+            XCTAssertEqual(
-+                SpeakerChannelAttribution.microphoneHearsSystemAudio(microphone: microphone, system: system),
-+                hears,
-+                "echo level \(echoLevel)"
-+            )
-+        }
-+    }
-+
-+    /// Playback without a pause still counts as system audio: the
-+    /// microphone on headphones doesn't follow it, so there is no echo.
-+    func testPlaybackWithoutPausesOnHeadphonesIsNoEcho() {
-+        let system = (0..<Int(5 * sampleRate)).map { index -> Float in
-+            let time = Double(index) / sampleRate
-+            let level = 0.2 * Float(1 + 0.25 * sin(2 * .pi * time / 1.3))
-+            return index % 2 == 0 ? level : -level
-+        }
-+        let microphone = track(duration: 5, speech: [], level: 0)
-+
-+        XCTAssertEqual(SpeakerChannelAttribution.microphoneHearsSystemAudio(microphone: microphone, system: system), false)
-+    }
-+
-+    /// System audio of steady loudness gives the echo search nothing to
-+    /// correlate, even with its copy on the microphone, so the decision stays
-+    /// open. Where the tone starts and stops, those edges show the echo.
-+    func testSteadySystemAudioLeavesTheDuckingDecisionOpen() {
-+        let delay = Int(0.24 * sampleRate)
-+        func microphone(hearing system: [Float]) -> [Float] {
-+            system.indices.map { $0 >= delay ? 0.2 * system[$0 - delay] : 0 }
-+        }
-+        let steady = (0..<Int(10 * sampleRate)).map { index -> Float in index % 2 == 0 ? 0.3 : -0.3 }
-+        let toneWithEdges = steady.indices.map { index -> Float in
-+            (3...6).contains(Double(index) / sampleRate) ? steady[index] : 0
-+        }
-+
-+        XCTAssertNil(SpeakerChannelAttribution.microphoneHearsSystemAudio(
-+            microphone: microphone(hearing: steady),
-+            system: steady
-+        ))
-+        XCTAssertEqual(SpeakerChannelAttribution.microphoneHearsSystemAudio(
-+            microphone: microphone(hearing: toneWithEdges),
-+            system: toneWithEdges
-+        ), true)
-+    }
-+
-+    /// System audio whose level changes from frame to frame comes back on
-+    /// the microphone at an eighth: an echo to duck, although the widened
-+    /// level own speech uses would put it at a sixteenth.
-+    func testAnEchoOfQuicklyChangingSystemAudioCountsAtItsTrueGain() {
-+        let frame = Int(SpeakerChannelAttribution.frameDuration * sampleRate)
-+        let system = (0..<(180 * frame)).map { index -> Float in
-+            let frameIndex = index / frame
-+            guard (40..<140).contains(frameIndex) else { return 0 }
-+            let level: Float = frameIndex % 2 == 0 ? 0.25 : 0.125
-+            return index % 2 == 0 ? level : -level
-+        }
-+        let microphone = system.map { $0 * 0.125 }
-+
-+        XCTAssertEqual(SpeakerChannelAttribution.microphoneHearsSystemAudio(microphone: microphone, system: system), true)
-+    }
-+
-+    func testTooLittleSystemAudioLeavesTheDuckingDecisionOpen() {
-+        let microphone = track(duration: 5, speech: [1...3], level: 0.2)
-+
-+        XCTAssertNil(SpeakerCha
-```
-
----
-
-### Incident Patch 3: `50ec2567` (2026-11-25)
-**Commit Message**: (bug) Fix automatic iCloud sync when the Mac has not downloaded the iCloud folder yet (#2030)
-
-* Fetch dataless iCloud folders before the bridge looks into them
-
-iCloud Drive keeps a container folder that another device created, or
-that macOS evicted, as a dataless placeholder. Plain FileManager calls
-inside it fail with EDEADLK, which Foundation reports as "couldn't be
-saved" (NSFileWriteUnknownError), and fileExists reports every item in
-it as missing. Automatic iCloud sync on a Mac could therefore never
-create typewhisper-sync when the iPhone had created the container
-first, and a mirror pass could count the iCloud package as empty.
-
-The iCloud side of the mirror now fetches a dataless folder's listing
-with a coordinated read before it lists, looks up or creates items in
-it, treats failed lookups as errors, and creates and removes items
-through file coordination. The helper replies with the cause, so the
-app shows what to do for iCloud off, a folder that is not available
-yet, full iCloud storage and a full Mac disk. Uploads refused for a
-full iCloud are reported while the pass completes. Switching the sync location
-clears the device list of the previous one.
-
-* Keep checking iCl
-
-**File**: `AppStore/Sources/AppStoreICloudMirror.swift` (modified, +17/-7)
-```diff
-@@ -30,7 +30,8 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
-         )
-     }
- 
--    func synchronize() async throws {
-+    @discardableResult
-+    func synchronize() async throws -> PremiumICloudBridgeReport {
-         try await perform { local, remote in
-             try PremiumICloudBridgeFileMirror.synchronize(localRoot: local, remoteRoot: remote)
-         }
-@@ -39,6 +40,7 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
-     func deleteRemotePackage() async throws {
-         try await perform { local, remote in
-             try PremiumICloudBridgeFileMirror.deletePackages(localRoot: local, remoteRoot: remote)
-+            return PremiumICloudBridgeReport()
-         }
-     }
- 
-@@ -55,12 +57,17 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
-                     )
-                 }
-             )
-+            return PremiumICloudBridgeReport()
-         }
-     }
- 
-     /// Runs `operation` on a serial background queue: resolving the ubiquity
--    /// container can block, and mirror passes must not overlap.
--    private func perform(_ operation: @escaping @Sendable (URL, URL) throws -> Void) async throws {
-+    /// container can block, and mirror passes must not overlap. Failures are
-+    /// reported as the cause the user can act on, as the helper does.
-+    @discardableResult
-+    private func perform(
-+        _ operation: @escaping @Sendable (URL, URL) throws -> PremiumICloudBridgeReport
-+    ) async throws -> PremiumICloudBridgeReport {
-         guard let local = localFolderURL else {
-             throw PremiumICloudBridgeError.appGroupUnavailable
-         }
-@@ -69,18 +76,21 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
-         }
-         let containerIdentifier = containerIdentifier
-         let fileManager = fileManager
--        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-+        return try await withCheckedThrowingContinuation {
-+            (continuation: CheckedContinuation<PremiumICloudBridgeReport, Error>) in
-             queue.async {
-                 do {
-                     guard let container = fileManager.url(
-                         forUbiquityContainerIdentifier: containerIdentifier
-                     ) else {
-                         throw PremiumICloudBridgeError.iCloudUnavailable
-                     }
--                    try operation(local, container.appendingPathComponent("Documents", isDirectory: true))
--                    continuation.resume()
-+                    continuation.resume(returning: try operation(
-+                        local,
-+                        container.appendingPathComponent("Documents", isDirectory: true)
-+                    ))
-                 } catch {
--                    continuation.resume(throwing: error)
-+                    continuation.resume(throwing: PremiumICloudBridgeError.classify(error))
+@@ -261,13 +263,8 @@ enum NumberWordNormalizer {
+                 if index > 1,
+                    tokens[index - 1].kind == .other,
+                    tokens[index - 1].text == ".",
+-                   tokens[index - 2].kind == .digit {
+-                    // A merged numeric run directly preceded by "<digits>."
+-                    // belongs to a decimal fraction (1.5万, 2.3亿), not to
+-                    // the large unit. The Han parsers cannot represent
+-                    // fractional unit scaling yet, so leave the text
+-                    // unchanged rather than producing a plausible-looking
+-                    // wrong value such as 1.50000元.
++                   tokens[index - 2].kind == .digit,
++                   shouldPreserveHanRunAfterPeriod(wordTexts[0]) {
+                     return nil
                  }
              }
-         }
+@@ -432,6 +429,20 @@ enum NumberWordNormalizer {
+         return false
+     }
+ 
++    private static func shouldPreserveHanRunAfterPeriod(_ text: String) -> Bool {
++        guard let first = text.first else { return false }
++        // Don't rewrite fractional scaling (1.5万) or create a second
++        // decimal point in compact text such as 1.二點五.
++        if first.isASCII && first.isNumber { return true }
++        if text.contains("点") || text.contains("點") { return true }
++        guard hanFractionalDigitCharacters.contains(first) else { return false }
++
++        // Preserve possible fractional scaling (五万), but not Han
++        // cardinals with internal place values (二十, 一萬二千).
++        return text.drop(while: { hanFractionalDigitCharacters.contains($0) || ($0.isASCII && $0.isNumber) })
++            .allSatisfy { hanLargeUnitCharacters.contains($0) }
++    }
++
+     private static func isBareHanUnitRun(_ text: String) -> Bool {
+         !text.isEmpty && text.allSatisfy { hanUnitCharacters.contains($0) }
+     }
 ```
 
-**File**: `TypeWhisper/Resources/Localizable.xcstrings` (modified, +146/-0)
+**File**: `TypeWhisperTests/NumberWordNormalizerTests.swift` (modified, +25/-0)
 ```diff
-@@ -29,6 +29,90 @@
-         }
-       }
-     },
-+    "The private iCloud sync helper is unavailable." : {
-+      "localizations" : {
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Die private iCloud-Sync-Hilfe ist nicht verfügbar."
-+          }
-+        },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "El asistente privado de sincronización de iCloud no está disponible."
-+          }
-+        },
-+        "ja" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "プライベートiCloud同期ヘルパーを利用できません。"
-+          }
-+        },
-+        "zh-Hans" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "私有 iCloud 同步辅助程序不可用。"
-+          }
-+        }
-+      }
-+    },
-+    "The shared TypeWhisper container is unavailable." : {
-+      "localizations" : {
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Der gemeinsame TypeWhisper-Container ist nicht verfügbar."
-+          }
-+        },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "El contenedor compartido de TypeWhisper no está disponible."
-+          }
-+        },
-+        "ja" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "TypeWhisperの共有コンテナを利用できません。"
-+          }
-+        },
-+        "zh-Hans" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "TypeWhisper 共享容器不可用。"
-+          }
-+        }
-+      }
-+    },
-+    "This Mac is out of storage space, so TypeWhisper can't sync. Free up space and TypeWhisper tries again automatically." : {
-+      "localizations" : {
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Auf diesem Mac ist kein Speicherplatz mehr frei, daher kann TypeWhisper nicht synchronisieren. Gib Speicherplatz frei, dann versucht es TypeWhisper automatisch erneut."
-+          }
-+        },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Este Mac no tiene espacio de almacenamiento disponible, así que TypeWhisper no puede sincronizar. Libera espacio y TypeWhisper lo volverá a intentar automáticamente."
-+          }
-+        },
-+        "ja" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "このMacのストレージ容量が不足しているため、TypeWhisperは同期できません。空き容量を確保すると、TypeWhisperが自動的に再試行します。"
-+          }
-+        },
-+        "zh-Hans" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "这台 Mac 的储存空间不足，TypeWhisper 无法同步。请释放空间，TypeWhisper 会自动重试。"
-+          }
-+        }
-+      }
-+    },
-     "TypeWhisper pastes dictations into terminal apps and does not report “No text field detected” for them, because a terminal often shows pasted text only once the shell echoes it. Terminal, iTerm2, WezTerm, Warp, Ghostty, cmux and agterm are always included. Add another terminal if dictating into it ends with that message." : {
-       "localizations" : {
-         "de" : {
-@@ -57,6 +141,34 @@
-         }
-       }
-     },
-+    "Your iCloud storage is full. TypeWhisper keeps your changes on this Mac and uploads them once iCloud has space again." : {
-+      "localizations" : {
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Dein iCloud-Speicher ist voll. TypeWhisper behält deine Änderungen auf diesem Mac und lädt sie hoch, sobald in iCloud wieder Platz ist."
-+          }
-+        },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Tu almacenamiento de iCloud está lleno. TypeWhisper conserva tus cambios en este Mac y los sube cuando vuelva a haber espacio en iCloud."
-+          }
-+        },
-+        "ja" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "iCloudのストレージがいっぱいです。TypeWhisperは変更をこのMacに保持し、iCloudに空きができたらアップロードします。"
-+          }
-+        },
-+        "zh-Hans" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "你的 iCloud 储存空间已满。TypeWhisper 会将更改保留在这台 Mac 上，并在 iCloud 有可用空间后上传。"
-+          }
-+        }
-+      }
-+    },
-     "askHistory.answer.omitted" : {
-       "localizations" : {
-         "de" : {
-@@ -2707,6 +2819,34 @@
-         }
-       }
-     },
-+    "iCloud Drive hasn't made the TypeWhisper sync folder available on this Mac yet. TypeWhisper tries again automatically. Check that this Mac is online." : {
-+      "localizations" : {
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "iCloud Drive hat den TypeWhisper-Sync-Ordner auf diesem Mac noch nicht bereitgestellt. TypeWhisper versucht es automatisch erneut. Prüfe, ob dieser Mac online ist."
-+          }
-+        },
-```
-
-**File**: `TypeWhisper/Services/Sync/CloudFolderSyncSettingsView.swift` (modified, +27/-2)
-```diff
-@@ -1143,6 +1143,12 @@ final class CloudFolderSyncController: ObservableObject {
-         pendingChanges = 0
-         statusMessage = nil
-         errorMessage = nil
-+        if newMode != .off {
-+            // The list shows the devices of the previous sync location until a sync in the
-+            // new one replaces it; a failing first sync would leave them on screen.
-+            devices = []
-+            deviceCount = 0
-+        }
-         updateICloudObservation()
-         lastSyncDate = state(for: newMode)?.lastSyncAt
-         if isConfigured { await syncNow() }
-@@ -1281,6 +1287,7 @@ final class CloudFolderSyncController: ObservableObject {
-         }
- 
-         do {
-+            var iCloudStorageFull = false
-             if syncMode == .automaticICloud {
-                 try await automaticICloudBridge.synchronize()
-             }
-@@ -1295,7 +1302,7 @@ final class CloudFolderSyncController: ObservableObject {
-             )
-             setState(syncState, for: syncMode)
-             if syncMode == .automaticICloud {
--                try await automaticICloudBridge.synchronize()
-+                iCloudStorageFull = try await automaticICloudBridge.synchronize().iCloudStorageFull
-             }
-             let audioDiagnostics = await installPendingSynchronizedAudio(in: folderURL)
-             guard mode == syncMode else { return }
-@@ -1321,11 +1328,23 @@ final class CloudFolderSyncController: ObservableObject {
-                     Int64(synchronizedChanges), Int64(diagnostics.count)
-                 )
-             }
-+            showICloudStorageFull(iCloudStorageFull)
-         } catch {
-             errorMessage = error.localizedDescription
-         }
-     }
- 
-+    /// A pass still completes while iCloud is full: this Mac's changes wait in the iCloud
-+    /// container on disk until iCloud has space, and files already in iCloud still download.
-+    private func showICloudStorageFull(_ isFull: Bool) {
-+        let message = PremiumICloudBridgeError.iCloudStorageFull.localizedDescription
-+        if isFull {
-+            errorMessage = message
-+        } else if errorMessage == message {
-+            errorMessage = nil
-+        }
+@@ -429,7 +429,32 @@ final class NumberWordNormalizerTests: XCTestCase {
+         // The Han parser cannot represent fractional unit scaling, so leave
+         // the decimal text unchanged instead of producing a wrong value.
+         XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.5万元", language: "zh"), "1.5万元")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.五万元", language: "zh"), "1.五万元")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.五万", language: "zh"), "1.五万")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.二五萬億", language: "zh"), "1.二五萬億")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.2千円", language: "ja"), "1.2千円")
+         XCTAssertEqual(NumberWordNormalizer.normalize(text: "2.3亿", language: "zh"), "2.3亿")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "2.三亿", language: "zh"), "2.三亿")
 +    }
 +
-     private func selectCustomFolder(_ url: URL) async {
-         guard !isSyncing else { return }
-         let bookmark: Data
-@@ -1473,9 +1492,10 @@ final class CloudFolderSyncController: ObservableObject {
- 
-         isCheckingForChanges = true
-         defer { isCheckingForChanges = false }
-+        var iCloudStorageFull: Bool?
-         if syncMode == .automaticICloud {
-             do {
--                try await automaticICloudBridge.synchronize()
-+                iCloudStorageFull = try await automaticICloudBridge.synchronize().iCloudStorageFull
-             } catch {
-                 // Let a full sync report the bridge failure, as the unconditional poll did.
-                 await syncNow()
-@@ -1495,6 +1515,11 @@ final class CloudFolderSyncController: ObservableObject {
-             folderURL.stopAccessingSecurityScopedResource()
-         }
-         guard mode == syncMode else { return true }
-+        // Only after the mode check: deleting the sync folder meanwhile turns sync off and
-+        // clears the message, and the check's answer must not bring it back.
-+        if let iCloudStorageFull {
-+            showICloudStorageFull(iCloudStorageFull)
-+        }
-         guard !isSyncing else {
-             // A sync started meanwhile; compare again once it has recorded its package state.
-             needsChangeCheck = true
-```
-
-**File**: `TypeWhisper/Services/Sync/PremiumICloudBridgeClient.swift` (modified, +17/-14)
-```diff
-@@ -4,7 +4,9 @@ protocol PremiumICloudBridging: Sendable {
-     var isAvailable: Bool { get }
-     var localFolderURL: URL? { get }
- 
--    func synchronize() async throws
-+    /// Mirrors the local sync package and the iCloud container.
-+    @discardableResult
-+    func synchronize() async throws -> PremiumICloudBridgeReport
-     func deleteRemotePackage() async throws
-     func removeDevice(_ deviceID: String) async throws
- }
-@@ -21,13 +23,13 @@ enum PremiumICloudBridgeFactory {
- 
- private final class PremiumICloudBridgeReplyGate: @unchecked Sendable {
-     private let lock = NSLock()
--    private var continuation: CheckedContinuation<Void, Error>?
-+    private var continuation: CheckedContinuation<PremiumICloudBridgeReport, Error>?
- 
--    init(continuation: CheckedContinuation<Void, Error>) {
-+    init(continuation: CheckedContinuation<PremiumICloudBridgeReport, Error>) {
-         self.continuation = continuation
-     }
- 
--    func finish(with result: Result<Void, Error>) {
-+    func finish(with result: Result<PremiumICloudBridgeReport, Error>) {
-         let pendingContinuation = lock.withLock {
-             let pendingContinuation = continuation
-             self.continuation = nil
-@@ -61,7 +63,8 @@ final class PremiumICloudBridgeClient: PremiumICloudBridging, @unchecked Sendabl
-         )
-     }
- 
--    func synchronize() async throws {
-+    @discardableResult
-+    func synchronize() async throws -> PremiumICloudBridgeReport {
-         try await perform { proxy, reply in
-             proxy.synchronize(reply: reply)
-         }
-@@ -79,16 +82,17 @@ final class PremiumICloudBridgeClient: PremiumICloudBridging, @unchecked Sendabl
-         }
-     }
- 
-+    @discardableResult
-     private func perform(
-         _ operation: @escaping (
-             PremiumICloudBridgeXPCProtocol,
--            @escaping (String?) -> Void
-+            @escaping (Data) -> Void
-         ) -> Void
--    ) async throws {
-+    ) async throws -> PremiumICloudBridgeReport {
-         guard isAvailable else {
-             throw PremiumICloudBridgeError.serviceUnavailable
-         }
--        try await withCheckedThrowingContinuation { continuation in
-+        return try await withCheckedThrowingContinuation { continuation in
-             let gate = PremiumICloudBridgeReplyGate(continuation: continuation)
-             let connection = NSXPCConnection(serviceName: serviceName)
-             connection.remoteObjectInterface = NSXPCInterface(
-@@ -110,13 +114,12 @@ final class PremiumICloudBridgeClient: PremiumICloudBridging, @unchecked Sendabl
-                 connection.invalidate()
-                 return
-             }
--            operation(proxy) { message in
--                if let message {
--                    gate.finish(with: .failure(
--                        PremiumICloudBridgeError.operationFailed(message)
--                    ))
-+            operation(proxy) { data in
-+                let reply = PremiumICloudBridgeReply.decoded(from: data)
-+                if let failure = reply.failure {
-+                    gate.finish(with: .failure(failure))
-                 } else {
--                    gate.finish(with: .success(()))
-+                    gate.finish(with: .success(reply.report))
-                 }
-                 connection.invalidate()
-             }
-```
-
-**File**: `TypeWhisperICloudBridge/PremiumICloudBridgeService.swift` (modified, +50/-38)
-```diff
-@@ -1,58 +1,70 @@
- import Foundation
-+import OSLog
- 
- final class PremiumICloudBridgeService: NSObject, PremiumICloudBridgeXPCProtocol {
-+    private static let logger = Logger(
-+        subsystem: Bundle.main.bundleIdentifier ?? "typewhisper-icloud-bridge",
-+        category: "ICloudBridge"
-+    )
-     private let operationLock = NSLock()
- 
--    func synchronize(reply: @escaping (String?) -> Void) {
--        reply(operationLock.withLock {
--            do {
--                let roots = try bridgeRoots()
--                try PremiumICloudBridgeFileMirror.synchronize(
--                    localRoot: roots.local,
--                    remoteRoot: roots.remote
--                )
--                return nil
--            } catch {
--                return error.localizedDescription
-+    func synchronize(reply: @escaping (Data) -> Void) {
-+        reply(perform("synchronize") { roots in
-+            let report = try PremiumICloudBridgeFileMirror.synchronize(
-+                localRoot: roots.local,
-+                remoteRoot: roots.remote
-+            )
-+            if report.iCloudStorageFull {
-+                Self.logger.notice("iCloud refuses uploads because its storage is full")
-             }
-+            return report
-         })
-     }
- 
--    func deleteRemotePackage(reply: @escaping (String?) -> Void) {
--        reply(operationLock.withLock {
--            do {
--                let roots = try bridgeRoots()
--                try PremiumICloudBridgeFileMirror.deletePackages(
--                    localRoot: roots.local,
--                    remoteRoot: roots.remote
--                )
--                return nil
--            } catch {
--                return error.localizedDescription
--            }
-+    func deleteRemotePackage(reply: @escaping (Data) -> Void) {
-+        reply(perform("deleteRemotePackage") { roots in
-+            try PremiumICloudBridgeFileMirror.deletePackages(
-+                localRoot: roots.local,
-+                remoteRoot: roots.remote
-+            )
-+            return PremiumICloudBridgeReport()
-         })
-     }
- 
-     /// Removes the record from the mirror and from iCloud; the mirror would
-     /// otherwise copy it back on the next pass.
--    func removeDevice(_ deviceID: String, reply: @escaping (String?) -> Void) {
--        reply(operationLock.withLock {
-+    func removeDevice(_ deviceID: String, reply: @escaping (Data) -> Void) {
-+        reply(perform("removeDevice") { roots in
-+            try PremiumSyncDeviceRemoval.removeRecords(
-+                of: deviceID,
-+                inPackages: [roots.local, roots.remote].map {
-+                    $0.appendingPathComponent(
-+                        PremiumICloudBridgeConstants.packageDirectoryName,
-+                        isDirectory: true
-+                    )
-+                }
-+            )
-+            return PremiumICloudBridgeReport()
-+        })
++    func testHanNumberedListPrefixDoesNotBlockUnitFirstNumerals() {
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.十个人", language: "zh"), "1.10个人")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.十個人", language: "zh"), "1.10個人")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "2.百名參與者", language: "zh"), "2.100名參與者")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.十人", language: "ja"), "1.10人")
 +    }
 +
-+    /// Runs one request at a time and answers with an encoded `PremiumICloudBridgeReply`.
-+    /// Failures are logged with their error codes, which the app does not show for every cause.
-+    private func perform(
-+        _ request: String,
-+        _ body: ((local: URL, remote: URL)) throws -> PremiumICloudBridgeReport
-+    ) -> Data {
-+        operationLock.withLock {
-             do {
--                let roots = try bridgeRoots()
--                try PremiumSyncDeviceRemoval.removeRecords(
--                    of: deviceID,
--                    inPackages: [roots.local, roots.remote].map {
--                        $0.appendingPathComponent(
--                            PremiumICloudBridgeConstants.packageDirectoryName,
--                            isDirectory: true
--                        )
--                    }
--                )
--                return nil
-+                return PremiumICloudBridgeReply(report: try body(bridgeRoots())).encoded()
-             } catch {
--                return error.localizedDescription
-+                let failure = PremiumICloudBridgeError.classify(error)
-+                Self.logger.error(
-+                    "\(request, privacy: .public) failed: \(PremiumICloudBridgeError.technicalSummary(of: error), privacy: .public)"
-+                )
-+                return PremiumICloudBridgeReply(failure: failure).encoded()
-             }
--        })
-+        }
++    func testHanNumberedListPrefixDoesNotBlockDigitFirstNumerals() {
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.二十個人", language: "zh"), "1.20個人")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "2.兩百名參與者", language: "zh"), "2.200名參與者")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "3.一萬二千人", language: "zh"), "3.12000人")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.二十人", language: "ja"), "1.20人")
++    }
++
++    func testHanDecimalAfterPeriodDoesNotCreateAnExtraDecimalPoint() {
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.二點五公尺", language: "zh"), "1.二點五公尺")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1.十点五公尺", language: "zh"), "1.十点五公尺")
++        XCTAssertEqual(NumberWordNormalizer.normalize(text: "1. 二點五公尺", language: "zh"), "1. 2.5公尺")
      }
  
-     private func bridgeRoots() throws -> (local: URL, remote: URL) {
-```
-
-**File**: `TypeWhisperICloudBridge/PremiumICloudBridgeShared.swift` (modified, +534/-142)
-```diff
-@@ -98,50 +98,339 @@ enum PremiumICloudBridgeConstants {
- 
- @objc(PremiumICloudBridgeXPCProtocol)
- protocol PremiumICloudBridgeXPCProtocol: NSObjectProtocol {
--    func synchronize(reply: @escaping (String?) -> Void)
--    func deleteRemotePackage(reply: @escaping (String?) -> Void)
--    func removeDevice(_ deviceID: String, reply: @escaping (String?) -> Void)
-+    /// Every reply is an encoded `PremiumICloudBridgeReply`.
-+    func synchronize(reply: @escaping (Data) -> Void)
-+    func deleteRemotePackage(reply: @escaping (Data) -> Void)
-+    func removeDevice(_ deviceID: String, reply: @escaping (Data) -> Void)
- }
- 
--enum PremiumICloudBridgeError: LocalizedError, Equatable, Sendable {
-+enum PremiumICloudBridgeError: LocalizedError, Codable, Equatable, Sendable {
-     case serviceUnavailable
-     case appGroupUnavailable
-     case iCloudUnavailable
-+    /// iCloud Drive could not provide a folder of the container, usually while it still
-+    /// fetches the folder from another device or while the Mac is offline.
-+    case iCloudFolderNotReady
-+    case iCloudStorageFull
-+    case macStorageFull
-     case operationFailed(String)
- 
-     var errorDescription: String? {
-         switch self {
-         case .serviceUnavailable:
--            "The private iCloud sync helper is unavailable."
-+            String(localized: "The private iCloud sync helper is unavailable.")
-         case .appGroupUnavailable:
--            "The shared TypeWhisper container is unavailable."
-+            String(localized: "The shared TypeWhisper container is unavailable.")
-         case .iCloudUnavailable:
--            "Sign in to iCloud and enable iCloud Drive to use automatic sync."
-+            String(localized: "Sign in to iCloud and enable iCloud Drive to use automatic sync.")
-+        case .iCloudFolderNotReady:
-+            String(localized: "iCloud Drive hasn't made the TypeWhisper sync folder available on this Mac yet. TypeWhisper tries again automatically. Check that this Mac is online.")
-+        case .iCloudStorageFull:
-+            String(localized: "Your iCloud storage is full. TypeWhisper keeps your changes on this Mac and uploads them once iCloud has space again.")
-+        case .macStorageFull:
-+            String(localized: "This Mac is out of storage space, so TypeWhisper can't sync. Free up space and TypeWhisper tries again automatically.")
-         case let .operationFailed(message):
-             message
-         }
-     }
-+
-+    private static let fileProviderErrorDomain = "NSFileProviderErrorDomain"
-+
-+    /// What a failed file operation means for the user. An error without a known cause keeps
-+    /// its system description and gains its error codes, so a screenshot of the message is
-+    /// enough to tell the cause apart.
-+    static func classify(_ error: any Error) -> PremiumICloudBridgeError {
-+        if let error = error as? PremiumICloudBridgeError {
-+            return error
-+        }
-+        if let failure = error as? PremiumSyncDeviceRemoval.Failure {
-+            return .operationFailed(failure.localizedDescription)
-+        }
-+        let chain = errorChain(of: error)
-+        func matches(_ domain: String, _ codes: Int...) -> Bool {
-+            chain.contains { $0.domain == domain && codes.contains($0.code) }
-+        }
-+        // Foundation reports EDQUOT and ENOSPC both as NSFileWriteOutOfSpaceError, so the
-+        // POSIX code decides between iCloud and the Mac.
-+        if matches(NSCocoaErrorDomain, NSUbiquitousFileNotUploadedDueToQuotaError)
-+            || matches(fileProviderErrorDomain, -1003) // insufficient quota
-+            || matches(NSPOSIXErrorDomain, Int(EDQUOT)) {
-+            return .iCloudStorageFull
-+        }
-+        if matches(NSCocoaErrorDomain, NSFileWriteOutOfSpaceError)
-+            || matches(NSPOSIXErrorDomain, Int(ENOSPC)) {
-+            return .macStorageFull
-+        }
-+        // Not signed in, iCloud Drive turned off, no iCloud Drive domain.
-+        if matches(fileProviderErrorDomain, -1000, -2011, -2013) {
-+            return .iCloudUnavailable
-+        }
-+        // A folder iCloud Drive has not fetched yet (EDEADLK), or iCloud cannot be reached.
-+        if matches(NSPOSIXErrorDomain, Int(EDEADLK))
-+            || matches(NSCocoaErrorDomain, NSUbiquitousFileUbiquityServerNotAvailable)
-+            || matches(fileProviderErrorDomain, -1004, -2012) {
-+            return .iCloudFolderNotReady
-+        }
-+        return .operationFailed("\(error.localizedDescription) (\(technicalSummary(of: error)))")
-+    }
-+
-+    /// The domain and code of an error and of the errors beneath it, outermost first.
-+    static func technicalSummary(of error: any Error) -> String {
-+        errorChain(of: error).map { "\($0.domain) \($0.code)" }.joined(separator: ", ")
-+    }
-+
-+    private static func errorChain(of error: any Error) -> [NSError] {
-+        var chain: [NSError] = []
-+        var next: NSError? = error as NSError
-+        while let current = next, chain.count < 8 {
-```
-
-**File**: `TypeWhisperTests/CloudFolderSyncTests.swift` (modified, +482/-5)
-```diff
-@@ -368,9 +368,34 @@ private final class RecordingPremiumICloudBridge: PremiumICloudBridging, @unchec
-         self.localFolderURL = localFolderURL
-     }
- 
--    func synchronize() async throws {
--        lock.withLock { storedSynchronizeCount += 1 }
-+    /// Thrown by every mirror pass while set.
-+    var synchronizeError: PremiumICloudBridgeError? {
-+        get { lock.withLock { storedSynchronizeError } }
-+        set { lock.withLock { storedSynchronizeError = newValue } }
-     }
-+    /// Reported by every completed mirror pass.
-+    var report: PremiumICloudBridgeReport {
-+        get { lock.withLock { storedReport } }
-+        set { lock.withLock { storedReport = newValue } }
-+    }
-+    private var storedSynchronizeError: PremiumICloudBridgeError?
-+    private var storedReport = PremiumICloudBridgeReport()
-+
-+    @discardableResult
-+    func synchronize() async throws -> PremiumICloudBridgeReport {
-+        let (error, report) = lock.withLock {
-+            storedSynchronizeCount += 1
-+            return (storedSynchronizeError, storedReport)
-+        }
-+        if let synchronizeGate {
-+            await synchronizeGate.wait()
-+        }
-+        if let error { throw error }
-+        return report
-+    }
-+
-+    /// Holds mirror passes until opened, to act while one is running.
-+    var synchronizeGate: RemovalGate?
- 
-     func deleteRemotePackage() async throws {
-         lock.withLock { storedDeleteCount += 1 }
-@@ -387,6 +412,43 @@ private final class RecordingPremiumICloudBridge: PremiumICloudBridging, @unchec
-     var removalGate: RemovalGate?
- }
- 
-+/// iCloud access for tests: preparing a folder unlocks it, standing in for iCloud Drive
-+/// fetching the listing of a dataless folder, and every prepared folder is recorded.
-+private final class LockedFolderAccess: @unchecked Sendable {
-+    private let lock = NSLock()
-+    private var storedPrepared: [String] = []
-+
-+    var prepared: Set<String> { lock.withLock { Set(storedPrepared) } }
-+
-+    func access(
-+        unlocks: Bool = true,
-+        uploadStatus: @escaping @Sendable (URL) -> PremiumICloudBridgeUploadStatus = { _ in .uploaded }
-+    ) -> PremiumICloudBridgeFolderAccess {
-+        PremiumICloudBridgeFolderAccess(
-+            prepareDirectory: { [self] url in
-+                lock.withLock { storedPrepared.append(url.standardizedFileURL.path) }
-+                let permissions = try? FileManager.default.attributesOfItem(atPath: url.path)[.posixPermissions]
-+                if unlocks, (permissions as? NSNumber)?.intValue == 0 {
-+                    try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: url.path)
-+                }
-+            },
-+            coordinatesChanges: true,
-+            uploadStatus: uploadStatus
-+        )
-+    }
-+}
-+
-+/// A flag shared with an upload status closure.
-+private final class UploadedFlag: @unchecked Sendable {
-+    private let lock = NSLock()
-+    private var storedIsUploaded = false
-+
-+    var isUploaded: Bool {
-+        get { lock.withLock { storedIsUploaded } }
-+        set { lock.withLock { storedIsUploaded = newValue } }
-+    }
-+}
-+
- private actor RemovalGate {
-     private var isOpen = false
-     private var waiters: [CheckedContinuation<Void, Never>] = []
-@@ -1562,6 +1624,129 @@ final class CloudFolderSyncTests: XCTestCase {
-         XCTAssertNil(controller.errorMessage)
-     }
- 
-+    @MainActor
-+    func testAutomaticSyncCompletesAndReportsFullICloudStorage() async throws {
-+        let suiteName = "PremiumSyncICloudFull-\(UUID().uuidString)"
-+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
-+        defer { defaults.removePersistentDomain(forName: suiteName) }
-+        let folder = try TestSupport.makeTemporaryDirectory(prefix: "PremiumSyncICloudFull")
-+        defer { TestSupport.remove(folder) }
-+        let bridge = RecordingPremiumICloudBridge(localFolderURL: folder)
-+        bridge.report = PremiumICloudBridgeReport(iCloudStorageFull: true)
-+        let controller = try Self.makeAutomaticSyncController(
-+            suiteName: suiteName,
-+            defaults: defaults,
-+            folder: folder,
-+            store: InMemoryUserDataSyncStore(dictionaryEntries: [
-+                Self.dictionaryEntry(original: "Full", updatedAt: Self.date(10)),
-+            ]),
-+            bridge: bridge
-+        )
-+        defer { controller.deactivate() }
-+        try await XCTUnwrap(controller.initialSyncTask).value
-+
-+        // The pass completed; only the upload waits for space in iCloud.
-+        XCTAssertEqual(bridge.synchronizeCount, 2)
-+        XCTAssertNotNil(controller.lastSyncDate)
-+        XCTAssertEqual(controller.deviceCount, 1)
-+        XCTAssertEqual(
-+            controller.errorMessage,
-+            PremiumICloudBridgeError.iCloudStorageFull.localizedDescription
-+        )
-+
-+        bridge.report = PremiumICloudBridgeReport()
-+        await controller.syncIfNeeded()
-+
-+        XCTAssertNil(controller.errorMessage)
-+    }
-+
-+    
+     func testChineseUnitCharactersInsideWordsArePreserved() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2037** (2026-11-25): (bug) Stop reporting a missed text field in Safari editors without a text role (@SeoFood)
-- **PR #2036** (2026-11-25): (bug) Show Safari in the app pickers (@SeoFood)
-- **PR #2034** (2026-11-25): (chore) Bump the release-tools-minor-patch group in /.github/release-tools with 2 updates (@dependabot[bot])
-- **PR #2033** (2026-11-25): (chore) Bump the actions-minor-patch group with 3 updates (@dependabot[bot])
-- **PR #2030** (2026-11-25): (bug) Fix automatic iCloud sync when the Mac has not downloaded the iCloud folder yet (@SeoFood)
-- **PR #2029** (2026-11-25): (feature) Show processing time and highlight differences when comparing History versions (@SeoFood)
+- **PR #2051** (closed): (bug) Stop Cohere Transcribe from inventing a sentence when speech starts right away (@SeoFood)
+- **PR #2050** (2026-11-28): (feature) Show a guide beside System Settings while granting Accessibility (@SeoFood)
+- **PR #2049** (2026-11-27): (feature) Send ElevenLabs dictionary terms to Scribe v3 Live instead of a second batch upload (@SeoFood)
+- **PR #2048** (2026-11-27): (feature) Sync plugin API keys with TypeWhisper for iOS through iCloud Keychain (@SeoFood)
+- **PR #2047** (2026-11-27): (bug) Spell names from the screen at the start of a sentence too (@SeoFood)
+- **PR #2046** (2026-11-27): (feature) Show recording time in Statistics and the time from stop to transcript in History (@SeoFood)
 
 ---
 
@@ -3350,31 +2650,37 @@ clears the device list of the previous one.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. (bug) Fix Chinese number normalization for mixed numerals and spoken tails
+## X. (feature) Show a guide beside System Settings while granting Accessibility
 
 **RULE**:
-When implementing operations in `TypeWhisper/Services/NumberNormalization/ChineseNumberWordParser.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AppStore/Sources/AppStoreInputAccess.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c636d716`: (bug) Fix Chinese number normalization for mixed numerals and spoken tails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e35bfec`: (feature) Show a guide beside System Settings while granting Accessibility. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `TypeWhisper/Services/NumberNormalization/ChineseNumberWordParser.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `AppStore/Sources/AppStoreInputAccess.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        HanNumberWordParser.parse(words, spokenTailEnabled: true)
+    /// Asks for PostEvent access. macOS 27 does not prompt inside the app. It may
+    /// show its own alert and list the app with the switch off, or leave the app
+    /// out of the list, so System Settings opens with a guide that also offers
+    /// the icon to drag in. The guide cannot see the grant and offers a restart.
+        PermissionGuideController.shared.begin(kind: .accessibility, isGranted: nil)
+        PermissionGuideController.shared.begin(kind: .inputMonitoring, isGranted: nil)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-        HanNumberWordParser.parse(words)
+    /// Asks for PostEvent access. macOS 27 neither prompts for it nor lists a
+    /// sandboxed app, so System Settings opens with a guide to drag the app in.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c636d716` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e35bfec` are properly handled with clean fallback behavior.
 
 
 ## Consequences

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source**: github ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
-> **Source Version**: `99a394b3`  
+> **Source Version**: `8b30c334`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T12:32:34.595Z  
+> **Timestamp**: 2026-11-28T15:19:19.707Z  
 > **Learning ID**: `learn-github-tuist-tuist`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T12:32:34.348Z  
+> **Harvest Timestamp**: 2026-11-28T15:19:19.599Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -460,595 +460,603 @@ struct PreviewsEmptyStateView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f32edc45` (2026-11-27)
-**Commit Message**: docs: send security and incident reports to [REDACTED_EMAIL]
+### Incident Patch 1: `82fcb16e` (2026-11-28)
+**Commit Message**: fix(sandboxd): cap template builds and prebuild only with room
 
-SECURITY.md, the handbook security pages, and the public security pages
-still pointed reporters at [REDACTED_EMAIL] (SECURITY.md's link even
-targeted [REDACTED_EMAIL]). The v3.0 policies name [REDACTED_EMAIL]
-as the reporting address.
+A template build ran in the vmm container's cgroup with no limit of its
+own. When a template tag rolled out, the daemon prebuilt the new tag's
+shapes (16x8192, 16x4096) right away, often while the server had shrunk
+the carve-out to its 1 GiB floor or a running sandbox filled it. The
+build pushed vmm past its limit, and the kubelet's memory.oom.group
+killed every VM in the container (four vmm OOMKills on Nov 26-27, one
+of which surfaced as a sandbox's "lost vmm: EOF").
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a21c2d-a221-7654-8c24-a1f7e713cd5f
-Co-authored-by: Pedro Piñera Buendía <[REDACTED_EMAIL]>
+Each build now runs in its own vm-tmpl-* cgroup whose memory.max is its
+guest memory plus 512 MiB, lowered to the container's remaining room
+less 256 MiB, so an OOM kills only the build. Prebuilds at startup and
+on a tag change run only when the container has room for the shape plus
+768 MiB (inactive page cache counted free); otherwise the first create
+builds the shape after the server grew the carve-out, and the tag
+switch does not wait on it.
 
-**File**: `SECURITY.md` (modified, +1/-1)
+Amp-Thread-ID: https://ampcode.com/threads/T-01a22133-b1aa-7491-bb8c-d18e691196a4
+Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
+
+**File**: `infra/sandboxd/AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -11,7 +11,7 @@ The Tuist repo is scanned frequently for code and dependency vulnerabilities. No
- 
- If you discover a potential security issue, do let us know as soon as possible. We'll work toward a resolution as quickly as possible, so please provide us with a reasonable amount of time before disclosure to the public or a third-party.
- 
--Contact us at [contact@tuist.dev](mailto:security@tuist.dev)
-+Contact us at [incidents@tuist.dev](mailto:incidents@tuist.dev)
- 
- Thank you for helping improve Tuist security!
- 
+@@ -801,7 +801,7 @@ agent so the manager runs end to end without KVM).
+ | `FIRECRACKER_BIN`, `JAILER_BIN` | `/usr/local/bin/{firecracker,jailer}` | |
+ | `JAILER_ENABLED` | `true` | `false` runs Firecracker directly under `ip netns exec` with absolute paths (debug only). |
+ | `JAIL_UID_BASE` | `10000` | Jail uid/gid = base + slot index. |
+-| `PREBUILD_SHAPES` | | Comma-separated shapes to build at startup, e.g. `2x4096,4x8192`. Must be a subset of `ALLOWED_SHAPES` when that is set. |
++| `PREBUILD_SHAPES` | | Comma-separated shapes to build at startup and for each new template tag, e.g. `2x4096,4x8192`. Must be a subset of `ALLOWED_SHAPES` when that is set. With per-VM memory cgroups, a prebuild runs only when the VMs' container has room for the shape's guest memory plus 768 MiB (`memory.max` less `memory.current`, inactive page cache counted free); otherwise the first create that needs the shape builds it, after the server grew the carve-out, and a new tag is switched to without it. Every template build runs in its own `vm-tmpl-*` cgroup with `memory.max` at its guest memory plus 512 MiB, lowered to the container's room less 256 MiB, so a build that outgrows it fails alone: the kubelet's `memory.oom.group` on the container kills every VM when the container's own limit is hit (the Nov 26–27 production vmm OOMKills). |
+ | `ALLOWED_SHAPES` | | The only shapes `create` and template builds accept. Empty accepts any valid shape. |
+ | `DISK_BUDGET_GIB` | `0` | Share of the data filesystem sandboxes may reserve, reported as `disk.budget_bytes`; the server reserves each sandbox's ceiling against it. `0` reports no budget. |
+ | `DIRECT_EXEC_ADDR` | | Listen address for claims of claimed execs, e.g. `$(POD_IP):7071`. Empty disables claims. |
 ```
 
-**File**: `handbook/handbook/security/human-and-incident-management/incident-response-management.md` (modified, +1/-1)
+**File**: `infra/sandboxd/cmd/sandboxd/main.go` (modified, +12/-3)
 ```diff
-@@ -12,7 +12,7 @@
- 
- ## Contact information
- 
--In case of an incident, urgently report it to [contact@tuist.dev](mailto:contact@tuist.dev). The incident response team will take it from there.
-+In case of an incident, urgently report it to [incidents@tuist.dev](mailto:incidents@tuist.dev). The incident response team will take it from there.
- 
- ## Vulnerability remediation SLAs
- 
+@@ -378,6 +378,11 @@ func main() {
+ 			}
+ 		},
+ 	}
++	// Each build gets its own capped cgroup, so a build the container has
++	// no room for fails alone instead of OOMing every VM with it.
++	if vmCgroups != nil {
++		builder.Cgroups = vmCgroups
++	}
+ 	// The node's runner-cache agent seeds workers' repositories from its
+ 	// checkout masters and takes their exports. It authorizes this Pod by
+ 	// name and address; without either, workers clone as before.
+@@ -526,7 +531,7 @@ func main() {
+ 			if ctx.Err() != nil {
+ 				return
+ 			}
+-			if _, err := builder.Ensure(ctx, defaultTemplate, shape); err != nil {
++			if _, err := builder.Prebuild(ctx, defaultTemplate, shape); err != nil {
+ 				logger.Error("prebuilding template shape", "shape", shape.String(), "error", err)
+ 			}
+ 		}
+@@ -854,7 +859,9 @@ var (
+ // installer completed last. The prebuilt shapes are built first, so the
+ // first sandbox on the new tag does not wait for a template boot, and the
+ // switch happens only once they are ready; until then creates keep using the
+-// previous tag. Sandboxes already created keep their own tag. Tags nothing
++// previous tag. A shape the VMs' container has no room to build
++// (Builder.Prebuild) does not hold the switch back: the first create that
++// needs it builds it. Sandboxes already created keep their own tag. Tags nothing
+ // uses any longer are removed after each switch, and report announces the
+ // new default to the server.
+ func followTemplate(ctx context.Context, logger *slog.Logger, store *template.Store, builder *template.Builder, manager *sandbox.Manager,
+@@ -892,7 +899,9 @@ func followTemplate(ctx context.Context, logger *slog.Logger, store *template.St
+ 		tmpl, err := store.Get(name, tag)
+ 		if err == nil {
+ 			for _, shape := range prebuild {
+-				if _, err = builder.Ensure(ctx, tmpl, shape); err != nil {
++				// A shape the container has no room for is left to its
++				// first create on the new tag.
++				if _, err = builder.Prebuild(ctx, tmpl, shape); err != nil {
+ 					break
+ 				}
+ 			}
 ```
 
-**File**: `handbook/handbook/security/information-security-framework/information-security-policy.md` (modified, +1/-1)
+**File**: `infra/sandboxd/internal/hostinfo/cgroups.go` (modified, +58/-0)
 ```diff
-@@ -32,7 +32,7 @@ This policy applies to employees, contractors, consultants, temporaries, and oth
+@@ -196,6 +196,64 @@ func (c *VMCgroups) Open(id string, guaranteeMilli, lowBytes uint64) (*os.File,
+ 	return os.Open(dir)
+ }
  
- ## Security incident reporting
- 
--All users are required to report known or suspected security events or incidents, including policy violations and observed security weaknesses. Incidents shall be reported immediately or as soon as possible by sending email to [contact@tuist.dev](mailto:contact@tuist.dev).
-+All users are required to report known or suspected security events or incidents, including policy violations and observed security weaknesses. Incidents shall be reported immediately or as soon as possible by sending email to [incidents@tuist.dev](mailto:incidents@tuist.dev).
- 
- In your report, please describe the incident or observation along with any relevant details.
- 
++// OpenCapped creates (or reuses) a cgroup for a VM that holds nobody's
++// sandbox, a template build, and limits it to maxBytes (memory.max). The
++// kubelet sets memory.oom.group on the container's cgroup, so an OOM the
++// container's limit drives kills every VM in it; one this cgroup's own
++// limit drives kills only its processes. The caller keeps maxBytes below
++// what the container has left (MemoryRoom). It fails without the memory
++// controller, since the VM could not be held to its cap.
++func (c *VMCgroups) OpenCapped(id string, maxBytes uint64) (*os.File, error) {
++	if !c.memory {
++		return nil, errors.New("per-VM memory limits need the memory controller")
++	}
++	dir := filepath.Join(c.dir, vmCgroupPrefix+id)
++	if err := os.Mkdir(dir, 0o755); err != nil && !errors.Is(err, os.ErrExist) {
++		return nil, err
++	}
++	if err := os.WriteFile(filepath.Join(dir, "memory.max"), []byte(strconv.FormatUint(maxBytes, 10)), 0o644); err != nil {
++		return nil, fmt.Errorf("limiting the memory of %s: %w", filepath.Base(dir), err)
++	}
++	return os.Open(dir)
++}
++
++// MemoryRoom is what the container's cgroup can still charge before its
++// limit: memory.max less memory.current, with the inactive page cache
++// (memory.stat inactive_file) counted as free, since reclaim drops it
++// before anything OOMs. False when the container has no limit or it cannot
++// be read.
++func (c *VMCgroups) MemoryRoom() (uint64, bool) {
++	if c == nil {
++		return 0, false
++	}
++	return memoryRoom(c.dir)
++}
++
++func memoryRoom(dir string) (uint64, bool) {
++	limit, ok := ReadCgroupValue(dir, "", "memory.max", false)
++	if !ok {
++		return 0, false
++	}
++	used, ok := ReadCgroupValue(dir, "", "memory.current", false)
++	if !ok {
++		return 0, false
++	}
++	if data, err := os.ReadFile(filepath.Join(dir, "memory.stat")); err == nil {
++		for _, line := range strings.Split(string(data), "\n") {
++			if value, found := strings.CutPrefix(line, "inactive_file "); found {
++				if inactive, err := strconv.ParseUint(strings.TrimSpace(value), 10, 64); err == nil {
++					used -= min(inactive, used)
++				}
++				break
++			}
++		}
++	}
++	if used >= limit {
++		return 0, true
++	}
++	return limit - used, true
++}
++
+ // MemoryCurrent is everything charged to the VM's cgroup (memory.current):
+ // the guest memory its process touched plus the page cache its disk I/O
+ // filled. False without per-VM memory accounting or a readable cgroup.
 ```
 
-**File**: `handbook/handbook/security/shared-responsibility-model.md` (modified, +1/-1)
+**File**: `infra/sandboxd/internal/hostinfo/hostinfo_test.go` (modified, +60/-0)
 ```diff
-@@ -132,4 +132,4 @@ If a control in one of these areas is not performed by us, it is not performed a
- 
- This document is reviewed annually and whenever a provider is added or removed.
- 
--If you have questions about this model, please reach out to the security team at [contact@tuist.dev](mailto:contact@tuist.dev).
-+If you have questions about this model, please email [incidents@tuist.dev](mailto:incidents@tuist.dev).
+@@ -316,3 +316,63 @@ func TestAdoptVMCgroupsRefusesACgroupWithoutCPU(t *testing.T) {
+ 		t.Fatal("adopted a cgroup that delegates no cpu controller")
+ 	}
+ }
++
++// Room is the limit less usage, with inactive page cache counted free;
++// a cgroup at or over its limit has none.
++func TestMemoryRoomCountsInactivePageCacheAsFree(t *testing.T) {
++	for _, tc := range []struct {
++		name, max, current, stat string
++		want                     uint64
++		ok                       bool
++	}{
++		{"cache counted free", "10000", "8000", "anon 5000\ninactive_file 3000\nactive_file 0\n", 5000, true},
++		{"no stat", "10000", "8000", "", 2000, true},
++		{"over the limit", "10000", "12000", "inactive_file 1000\n", 0, true},
++		{"no limit", "max", "8000", "", 0, false},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			dir := t.TempDir()
++			files := map[string]string{"memory.max": tc.max, "memory.current": tc.current}
++			if tc.stat != "" {
++				files["memory.stat"] = tc.stat
++			}
++			for name, content := range files {
++				if err := os.WriteFile(filepath.Join(dir, name), []byte(content), 0o644); err != nil {
++					t.Fatal(err)
++				}
++			}
++			got, ok := memoryRoom(dir)
++			if got != tc.want || ok != tc.ok {
++				t.Fatalf("room = %d, %v; want %d, %v", got, ok, tc.want, tc.ok)
++			}
++		})
++	}
++}
++
++// A capped VM cgroup gets memory.max; without the memory controller it
++// cannot be capped and is refused.
++func TestOpenCappedSetsMemoryMax(t *testing.T) {
++	root := fakeCgroup(t, "cpu memory")
++	cgroups, err := setupVMCgroups(root, "/pod/container", daemonCgroup, 250)
++	if err != nil {
++		t.Fatal(err)
++	}
++	file, err := cgroups.OpenCapped("tmpl-x", 4<<30)
++	if err != nil {
++		t.Fatal(err)
++	}
++	file.Close()
++	data, _ := os.ReadFile(filepath.Join(root, "pod", "container", "vm-tmpl-x", "memory.max"))
++	if string(data) != strconv.FormatUint(4<<30, 10) {
++		t.Fatalf("memory.max = %q", data)
++	}
++
++	root = fakeCgroup(t, "cpu")
++	cgroups, err = setupVMCgroups(root, "/pod/container", daemonCgroup, 250)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if _, err := cgroups.OpenCapped("tmpl-x", 4<<30); err == nil {
++		t.Fatal("capped a VM without the memory controller")
++	}
++}
 ```
 
-**File**: `server/priv/marketing/agents/security.md` (modified, +1/-1)
+**File**: `infra/sandboxd/internal/template/builder.go` (modified, +89/-2)
 ```diff
-@@ -16,4 +16,4 @@ Tuist's [trust center](https://security.tuist.dev/) lists a SOC 2 Type II report
+@@ -24,8 +24,29 @@ const (
+ 	// TemplateHostname is the hostname baked into the snapshot; configure
+ 	// replaces it in every sandbox.
+ 	TemplateHostname = "sandbox"
++	// BuildOverheadBytes is what a build may hold beyond its guest's memory:
++	// Firecracker and the jailer, and the snapshot's page cache not yet
++	// written back.
++	BuildOverheadBytes = 512 << 20
++	// BuildMarginBytes stays free in the VMs' container next to a build's
++	// cap, for vmm and the running guests while the build runs, so the
++	// build's own limit is reached before the container's.
++	BuildMarginBytes = 256 << 20
++	// MinBuildBytes is the smallest cap a build is started with; below it
++	// the build fails without booting.
++	MinBuildBytes = 256 << 20
+ )
  
- ## Reporting vulnerabilities
++// BuildCgroups holds template builds to a memory cap below what the VMs'
++// container has left (hostinfo.VMCgroups). The kubelet makes an OOM of the
++// container kill every VM in it, so a build that outgrew the room left by
++// running sandboxes used to take them down with it; capped, it fails alone.
++type BuildCgroups interface {
++	MemoryRoom() (uint64, bool)
++	OpenCapped(id string, maxBytes uint64) (*os.File, error)
++	Remove(id string) error
++}
++
+ // Builder boots a template with a shape and snapshots it. Builds are
+ // serialized per (template, shape); concurrent Ensure calls wait for the
+ // running build.
+@@ -57,6 +78,9 @@ type Builder struct {
+ 	// Balloon gives every shape snapshot firecracker.ReportingBalloon, so
+ 	// guests restored from it return their free memory to the host.
+ 	Balloon bool
++	// Cgroups, when set, spawns every build into its own capped cgroup and
++	// lets Prebuild skip a shape the container has no room for.
++	Cgroups BuildCgroups
  
--Email [contact@tuist.dev](mailto:contact@tuist.dev) with a description, reproduction steps, and relevant evidence. Give Tuist reasonable time to investigate before public disclosure, and avoid accessing other users' data or disrupting the service. Do not include credentials or unnecessary customer data. There is no paid bug bounty; valid reports can be acknowledged publicly on request.
-+Email [incidents@tuist.dev](mailto:incidents@tuist.dev) with a description, reproduction steps, and relevant evidence. Give Tuist reasonable time to investigate before public disclosure, and avoid accessing other users' data or disrupting the service. Do not include credentials or unnecessary customer data. There is no paid bug bounty; valid reports can be acknowledged publicly on request.
+ 	mu     sync.Mutex
+ 	builds map[string]*build
+@@ -109,6 +133,47 @@ func (b *Builder) Ensure(ctx context.Context, t Template, shape Shape) (Artifact
+ 	return t.Artifacts(shape)
+ }
+ 
++// Prebuild is Ensure for a build nothing waits on (PREBUILD_SHAPES, a new
++// template tag): with Cgroups set it builds only when the VMs' container
++// has room for the shape's guest memory, the build overhead and the margin,
++// and otherwise answers false and leaves the shape to the first create that
++// needs it, for which the server grows the container first. Room is read
++// once; a sandbox placed meanwhile can still take it, and the cap then
++// fails the build rather than the container.
++func (b *Builder) Prebuild(ctx context.Context, t Template, shape Shape) (bool, error) {
++	if b.Cgroups != nil && !t.ShapeReady(shape) {
++		need := shapeBytes(shape) + BuildOverheadBytes + BuildMarginBytes
++		if room, ok := b.Cgroups.MemoryRoom(); ok && room < need {
++			b.logger().Info("leaving a template shape for its first create; the VMs' container has no room to build it",
++				"template", t.Name, "tag", t.Tag, "shape", shape.String(), "room_bytes", room, "needed_bytes", need)
++			return false, nil
++		}
++	}
++	if _, err := b.Ensure(ctx, t, shape); err != nil {
++		return false, err
++	}
++	return true, nil
++}
++
++func shapeBytes(shape Shape) uint64 {
++	return uint64(shape.MemoryMB) << 20 //nolint:gosec // Validated positive.
++}
++
++// buildCap is a build's memory.max: its guest memory plus the overhead,
++// lowered to what the container has left less the margin. It fails when
++// the container is too full to start one.
++func (b *Builder) buildCap(shape Shape) (uint64, error) {
++	limit := shapeBytes(shape) + BuildOverheadBytes
++	room, ok := b.Cgroups.MemoryRoom()
++	if !ok {
++		return limit, nil
++	}
++	if room < MinBuildBytes+BuildMarginBytes {
++		return 0, fmt.Errorf("the VMs' container has %d bytes left, too few for a template build", room)
++	}
++	return min(limit, room-BuildMarginBytes), nil
++}
++
+ func (b *Builder) run(t Template, shape Shape, key string, bld *build) {
+ 	timeout := b.BootTimeout
+ 	if timeout == 0 {
+@@ -211,10 +276,32 @@ func (b *Builder) build(ctx context.Context, t Template, shape Shape) (err error
+ 		}
+ 	}()
+ 
+-	inst, err := b.Launcher.Launch(ctx, vm.Spec{
++	spec := vm.Spec{
+ 		ID: id, JailBase: b.JailBase, FirecrackerBin: b.FirecrackerBin, JailerBin: b.JailerBin,
+ 		JailerEnabled: b.JailerEnabled, UID: uid, GID: uid, NetNS: ns,
+-	})
++	}
++	if b.Cgroups != nil {
++		limit, err := b.buildCap(shape)
++		if err != nil {
++			return err
++		}
++		// Without a cap (no memory controller) the build runs in the
++		// container's cgroup, as before.
++		if cgroup, err := b.Cgroups.OpenCapped(id, limit); err != nil {
++			log.Warn("capping the template build's memory failed; it runs uncapped", "error", err)
++		} else {
++			defer cgroup.Close()
++			spec.Cgroup = cgroup
++			// Registered before the kill below, so it runs after it.
++			defer func() {
++				if rmErr := b.Cgroups.Remove(id); rmErr != nil {
++					log.Warn("removing the template build's cgroup failed", "error", rmErr)
++				}
++			}()
++			log.Info("template build capped", "memory_max", limit)
++		}
++	}
++	inst, err := b.Launcher.Launch(ctx, spec)
+ 	if err != nil {
+ 		return fmt.Errorf("launching 
 ```
 
-**File**: `server/priv/marketing/pages/security.md` (modified, +1/-1)
+**File**: `infra/sandboxd/internal/template/template_test.go` (modified, +113/-0)
 ```diff
-@@ -35,7 +35,7 @@ Tuist has a robust incident response process to handle security incidents effici
- ## Reporting vulnerabilities
- If you discover a security vulnerability, we encourage you to report it to us responsibly. Here’s how to proceed:
- 
--1. **Email**: Contact us at [contact@tuist.dev](mailto:contact@tuist.dev).
-+1. **Email**: Contact us at [incidents@tuist.dev](mailto:incidents@tuist.dev).
- 2. **Details**: Provide a detailed description of the issue, including reproduction steps, screenshots, and relevant logs if applicable.
- 
- We prioritize all security reports and work diligently to address them. Valid reports can be publicly acknowledged on this page, upon request.
+@@ -537,3 +537,116 @@ func TestPreviousTagIsTheOtherTagTheNodeRanLast(t *testing.T) {
+ 		t.Fatalf("previous tag of rolled-back %q %v, want current", tag, err)
+ 	}
+ }
++
++// buildCgroups stands in for hostinfo.VMCgroups: a fixed room and the caps
++// builds were opened with.
++type buildCgroups struct {
++	mu      sync.Mutex
++	dir     string
++	room    uint64
++	known   bool
++	caps    map[string]uint64
++	removed []string
++}
++
++func (c *buildCgroups) MemoryRoom() (uint64, bool) { return c.room, c.known }
++
++func (c *buildCgroups) OpenCapped(id string, maxBytes uint64) (*os.File, error) {
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	if c.caps == nil {
++		c.caps = map[string]uint64{}
++	}
++	c.caps[id] = maxBytes
++	return os.Open(c.dir)
++}
++
++func (c *buildCgroups) Remove(id string) error {
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	c.removed = append(c.removed, id)
++	return nil
++}
++
++// A build is capped at its guest memory plus overhead when the container
++// has room, and lowered to the room less the margin when it has less, so
++// the build's own limit, not the container's, is what it hits.
++func TestBuilderCapsEachBuildBelowTheContainersRoom(t *testing.T) {
++	shape := Shape{VCPUs: 2, MemoryMB: 4096}
++	full := uint64(4096)<<20 + BuildOverheadBytes
++	for _, tc := range []struct {
++		name string
++		room uint64
++		want uint64
++	}{
++		{"plenty of room", 64 << 30, full},
++		{"less room than the build", 3 << 30, 3<<30 - BuildMarginBytes},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			dataDir := t.TempDir()
++			tmpl := seedTemplate(t, filepath.Join(dataDir, "templates"), "default", "t1")
++			b := newBuilder(t, dataDir, &fakevm.Launcher{}, &fakevm.Network{}, &eventSink{})
++			cg := &buildCgroups{dir: dataDir, room: tc.room, known: true}
++			b.Cgroups = cg
++			if _, err := b.Ensure(context.Background(), tmpl, shape); err != nil {
++				t.Fatal(err)
++			}
++			id := BuildID(tmpl, shape)
++			if got := cg.caps[id]; got != tc.want {
++				t.Fatalf("memory.max = %d, want %d", got, tc.want)
++			}
++			if len(cg.removed) != 1 || cg.removed[0] != id {
++				t.Fatalf("removed cgroups %v", cg.removed)
++			}
++		})
++	}
++}
++
++// A container too full for any build fails the build without booting a VM.
++func TestBuilderRefusesABuildTheContainerHasNoRoomFor(t *testing.T) {
++	dataDir := t.TempDir()
++	tmpl := seedTemplate(t, filepath.Join(dataDir, "templates"), "default", "t1")
++	launcher := &fakevm.Launcher{}
++	b := newBuilder(t, dataDir, launcher, &fakevm.Network{}, &eventSink{})
++	b.Cgroups = &buildCgroups{dir: dataDir, room: MinBuildBytes + BuildMarginBytes - 1, known: true}
++	shape := Shape{VCPUs: 2, MemoryMB: 4096}
++	if _, err := b.Ensure(context.Background(), tmpl, shape); err == nil {
++		t.Fatal("expected the build to be refused")
++	}
++	if len(launcher.Instances()) != 0 || tmpl.ShapeReady(shape) {
++		t.Fatal("a refused build booted a VM or marked the shape ready")
++	}
++}
++
++// Prebuild leaves a shape for its first create when the container cannot
++// hold the guest, the overhead and the margin, and builds it when it can.
++func TestPrebuildWaitsForRoom(t *testing.T) {
++	shape := Shape{VCPUs: 16, MemoryMB: 8192}
++	need := uint64(8192)<<20 + BuildOverheadBytes + BuildMarginBytes
++	for _, tc := range []struct {
++		name  string
++		room  uint64
++		known bool
++		built bool
++	}{
++		{"1 GiB floor, as in the production OOMs", 1 << 30, true, false},
++		{"one byte short", need - 1, true, false},
++		{"exactly enough", need, true, true},
++		{"no limit to read", 0, false, true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			dataDir := t.TempDir()
++			tmpl := seedTemplate(t, filepath.Join(dataDir, "templates"), "default", "t1")
++			launcher := &fakevm.Launcher{}
++			b := newBuilder(t, dataDir, launcher, &fakevm.Network{}, &eventSink{})
++			b.Cgroups = &buildCgroups{dir: dataDir, room: tc.room, known: tc.known}
++			built, err := b.Prebuild(context.Background(), tmpl, shape)
++			if err != nil {
++				t.Fatal(err)
++			}
++			if built != tc.built || tmpl.ShapeReady(shape) != tc.built || (len(launcher.Instances()) > 0) != tc.built {
++				t.Fatalf("built=%v ready=%v launches=%d, want built=%v", built, tmpl.ShapeReady(shape), len(launcher.Instances()), tc.built)
++			}
++		})
++	}
++}
 ```
 
 ---
 
-### Incident Patch 2: `df2df0a5` (2026-11-27)
-**Commit Message**: fix(infra): hold runner pools on images their hosts were never told to stage
+### Incident Patch 2: `cf9413eb` (2026-11-28)
+**Commit Message**: fix(infra): stop taking diff snapshots when production sandboxes pause
 
-A runner image release retried after a failed run announced the tags that
-run had left behind, stopped resolving them, and gave up waiting an hour
-after that first announcement. The retry then rebuilt some images and moved
-their tags, so the deploy rolled every macOS pool to digests no host had
-staged, and jobs waited 20 to 45 minutes on the rack image cache.
+Since the readiness ping logging went in, both node-local resumes after a
+failed pre-pause guest sync were of Diff images (generations 2 and 3),
+and both guests never answered within BOOT_TIMEOUT: every ping timed out,
+the restore cold booted, and the guest lost what it had not synced.
+Earlier failures predate diff snapshots, so Diff is not the only cause,
+but it is the one we can switch off. Pauses take full snapshots again; a
+VM restored with tracking keeps it until its next restore.
 
-- The staging gate times each image's hour from when its key first named
-  that digest (tuist.dev/runner-image-announced-at-by-image), and when no
-  announcement names the deployed image it announces it and holds the pool
-  instead of moving it.
-- The release's announce step resolves every tag on each pass, stamps each
-  key when its digest changes, and finishes only once every build and
-  re-tag job of the attempt has finished.
-
-Amp-Thread-ID: https://ampcode.com/threads/T-01a21cbe-07a6-77b5-a2c2-f43c7cbfdd92
+Amp-Thread-ID: https://ampcode.com/threads/T-01a2139d-e501-7641-9d1f-be0eae549a5f
 Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 
-**File**: `.github/scripts/runner-image-staging-gate.sh` (modified, +54/-11)
+**File**: `infra/helm/tuist/values-managed-production.yaml` (modified, +4/-3)
 ```diff
-@@ -9,18 +9,27 @@
- # golden it holds as the Node label `tuist.dev/golden-<first 16 hex of
- # sha256(image ref)>` (infra/tart-kubelet). A pool moves once every Ready,
- # schedulable Node holding its current image's golden also holds the new one,
--# so no job waits on the pull. It moves regardless once the announcement is
--# older than RUNNER_IMAGE_STAGING_TIMEOUT_SECONDS (an hour), or when the
--# announcement says `tuist.dev/runner-image-staging: skip`, does not name the
--# new image, or no host holds the current one.
-+# so no job waits on the pull. It moves regardless once the new image was
-+# announced more than RUNNER_IMAGE_STAGING_TIMEOUT_SECONDS (an hour) ago, when
-+# the announcement says `tuist.dev/runner-image-staging: skip`, or when no host
-+# holds the current image.
-+#
-+# The hour counts from when the announcement first named the new image
-+# (`tuist.dev/runner-image-announced-at-by-image`, one time per key), falling
-+# back to the ConfigMap's `tuist.dev/runner-image-announced-at`. When no
-+# announcement names the new image (a release overwrote a tag after
-+# announcing it, a release's announce job failed, a rollback), the gate
-+# announces it itself into the pool's namespace and holds the pool, so the
-+# hosts stage it and a later deploy moves the pool within the hour.
- #
- # Usage: runner-image-staging-gate.sh <digests-json> <stacked-digests-json>
- #   Both map an Xcode version to a manifest digest, as the deploy passes them
- #   to `runnersFleet.runnerImageDigests` and
- #   `runnersFleet.runnerImageStackedDigests`. Prints
- #   {"digests": {...}, "stacked": {...}} with each held Xcode set back to the
- #   digest its pools run now, and says on stderr what it held and why.
--#   Reads the cluster through kubectl's current context.
-+#   Reads the cluster through kubectl's current context, and patches the
-+#   announcement ConfigMap when it announces an image.
- set -euo pipefail
- 
- digests="${1:?usage: runner-image-staging-gate.sh <digests-json> <stacked-digests-json>}"
-@@ -42,8 +51,38 @@ golden_label() {
-   echo "tuist.dev/golden-${sum:0:16}"
- }
- 
-+announcement_name=tuist-upcoming-runner-images
-+announced_by_image=tuist.dev/runner-image-announced-at-by-image
-+
-+# Names $3 under key $2 in namespace $1's announcement ConfigMap, stamped with
-+# the gate's time, and records the write in $announcements so later keys of
-+# this run merge with it. A merge patch leaves the release's keys and field
-+# ownership alone; the release's next server-side apply takes these keys over.
-+announce() {
-+  local namespace="$1" key="$2" image="$3" existing times patch
-+  existing="$(jq -c --arg ns "$namespace" --arg name "$announcement_name" \
-+    '[.items[] | select(.metadata.namespace == $ns and .metadata.name == $name)] | first' <<< "$announcements")"
-+  times="$(jq -c --arg ann "$announced_by_image" --arg key "$key" --argjson now "$now" '
-+    ((.metadata.annotations[$ann] // "{}") | try fromjson catch {}) + {($key): ($now | todate)}' <<< "$existing")"
-+  patch="$(jq -cn --arg ann "$announced_by_image" --arg times "$times" --arg key "$key" --arg image "$image" '{
-+    metadata: {labels: {"tuist.dev/upcoming-runner-images": "true"}, annotations: {($ann): $times}},
-+    data: {($key): $image}}')"
-+  if [ "$existing" = "null" ]; then
-+    jq -c --arg ns "$namespace" --arg name "$announcement_name" \
-+      '. + {apiVersion: "v1", kind: "ConfigMap"} | .metadata += {namespace: $ns, name: $name}' <<< "$patch" |
-+      kubectl --request-timeout=30s create -f - >/dev/null
-+    existing="$(jq -c --arg ns "$namespace" --arg name "$announcement_name" '.metadata += {namespace: $ns, name: $name}' <<< "$patch")"
-+  else
-+    kubectl --request-timeout=30s --namespace "$namespace" patch configmap "$announcement_name" --type merge -p "$patch" >/dev/null
-+  fi
-+  announcements="$(jq -c --arg ns "$namespace" --arg name "$announcement_name" --argjson existing "$existing" --argjson patch "$patch" '
-+    .items = ([.items[] | select(.metadata.namespace != $ns or .metadata.name != $name)]
-+      + [$existing * $patch])' <<< "$announcements")"
-+}
-+
- transitions="$(jq -r --argjson standalone "$digests" --argjson stacked "$stacked" '
-   [.items[] | {
-+    namespace: .metadata.namespace,
-     xcode: .metadata.labels["tuist.dev/xcode-version"],
-     variant: .metadata.labels["tuist.dev/runner-image-variant"],
-     current: .spec.image
-@@ -54,22 +93,26 @@ transitions="$(jq -r --argjson standalone "$digests" --argjson stacked "$stacked
-   | select(.digest != "")
-   | .next = (.current | sub("@sha256:[a-f0-9]{64}$"; "")) + "@" + .digest
-   | select(.next != .current)
--  | [.xcode, .variant, .current, .next] | @tsv' <<< "$pools")"
-+  | [.namespace, .xcode, .variant, .current, .next] | @tsv' <<< "$pools")"
- 
- holds='[]'
--while IFS=$'\t' read -r xcode variant current next; do
-+while IFS=$'\t' read -r namespace xcode variant current next; do
-   [ -n "$xcode" ] || continue
--  announcement="$(jq -r --arg key "${xcode}.${variant}" --arg next "$next" '
-+ 
-```
-
-**File**: `.github/scripts/runner-image-staging-gate.test.sh` (modified, +56/-12)
-```diff
-@@ -25,31 +25,40 @@ golden() {
-   echo "tuist.dev/golden-${sum:0:16}"
- }
- 
-+# Reads come from the fixtures; writes are appended to writes.log as
-+# "<verb> <namespace> <object or patch JSON>".
- cat > "$scratch/kubectl" <<BASH
- #!/usr/bin/env bash
- case " \$* " in
--  *" runnerpools.tuist.dev "*) cat "$scratch/pools.json" ;;
--  *" nodes "*) cat "$scratch/nodes.json" ;;
--  *" configmaps "*) cat "$scratch/announcements.json" ;;
-+  *" get runnerpools.tuist.dev "*) cat "$scratch/pools.json" ;;
-+  *" get nodes "*) cat "$scratch/nodes.json" ;;
-+  *" get configmaps "*) cat "$scratch/announcements.json" ;;
-+  *" patch configmap tuist-upcoming-runner-images "*)
-+    ns="\$(sed -n 's/.*--namespace \\([^ ]*\\).*/\\1/p' <<< "\$*")"
-+    echo "patch \$ns \${@: -1}" >> "$scratch/writes.log" ;;
-+  *" create -f - "*) echo "create - \$(cat)" >> "$scratch/writes.log" ;;
-   *) exit 1 ;;
- esac
- BASH
- chmod +x "$scratch/kubectl"
- 
- cat > "$scratch/pools.json" <<JSON
- {"items": [
--  {"metadata": {"labels": {"tuist.dev/xcode-version": "26.6", "tuist.dev/runner-image-variant": "standalone"}}, "spec": {"image": "$repo@$old"}},
--  {"metadata": {"labels": {"tuist.dev/xcode-version": "26.6", "tuist.dev/runner-image-variant": "standalone"}}, "spec": {"image": "$repo@$old"}},
--  {"metadata": {"labels": {"tuist.dev/xcode-version": "26.6", "tuist.dev/runner-image-variant": "stacked"}}, "spec": {"image": "$repo@$old_stacked"}}
-+  {"metadata": {"namespace": "tuist-runners", "labels": {"tuist.dev/xcode-version": "26.6", "tuist.dev/runner-image-variant": "standalone"}}, "spec": {"image": "$repo@$old"}},
-+  {"metadata": {"namespace": "tuist-runners", "labels": {"tuist.dev/xcode-version": "26.6", "tuist.dev/runner-image-variant": "standalone"}}, "spec": {"image": "$repo@$old"}},
-+  {"metadata": {"namespace": "tuist-runners", "labels": {"tuist.dev/xcode-version": "26.6", "tuist.dev/runner-image-variant": "stacked"}}, "spec": {"image": "$repo@$old_stacked"}}
- ]}
- JSON
- 
--# $1 staging annotation, $2 announced-at.
-+# $1 staging annotation, $2 announced-at, optional $3 the
-+# announced-at-by-image JSON, optional $4 the stacked digest it names.
- announce() {
--  cat > "$scratch/announcements.json" <<JSON
--{"items": [{"metadata": {"annotations": {"tuist.dev/runner-image-staging": "$1", "tuist.dev/runner-image-announced-at": "$2"}},
--  "data": {"26.6.standalone": "$repo@$new", "26.6.stacked": "$repo@$new_stacked"}}]}
--JSON
-+  jq -cn --arg staging "$1" --arg at "$2" --arg by_image "${3:-}" \
-+    --arg standalone "$repo@$new" --arg stacked "$repo@${4:-$new_stacked}" '{items: [{
-+      metadata: {namespace: "tuist-runners", name: "tuist-upcoming-runner-images", annotations: ({
-+        "tuist.dev/runner-image-staging": $staging, "tuist.dev/runner-image-announced-at": $at}
-+        + if $by_image == "" then {} else {"tuist.dev/runner-image-announced-at-by-image": $by_image} end)},
-+      data: {"26.6.standalone": $standalone, "26.6.stacked": $stacked}}]}' > "$scratch/announcements.json"
- }
- 
- # Each argument is "<name>:<ready>:<unschedulable>:<image>,<image>…", the
-@@ -72,6 +81,7 @@ hosts() {
- # optional $4 seconds since the announcement.
- expect() {
-   local actual
-+  : > "$scratch/writes.log"
-   actual="$(PATH="$scratch:$PATH" NOW=$((announced_epoch + ${4:-600})) bash "$SCRIPT" \
-     "{\"26.6\": \"$new\"}" "{\"26.6\": \"$new_stacked\"}" 2>/dev/null)"
-   local want
-@@ -82,6 +92,26 @@ expect() {
-   fi
- }
- 
-+# $1 verb, $2 namespace, $3 key, $4 image, $5 epoch the key's time names.
-+expect_write() {
-+  if ! grep "^$1 $2 " "$scratch/writes.log" | cut -d' ' -f3- | jq -e --arg key "$3" --arg image "$4" --argjson at "$5" '
-+    .data[$key] == $image
-+    and .metadata.labels["tuist.dev/upcoming-runner-images"] == "true"
-+    and (.metadata.annotations["tuist.dev/runner-image-announced-at-by-image"] | fromjson | .[$key]) == ($at | todate)' \
-+    >/dev/null 2>&1; then
-+    echo "Expected a $1 in $2 naming $3=$4 at $5, got: $(cat "$scratch/writes.log")" >&2
-+    exit 1
-+  fi
-+}
-+
-+# $1 description.
-+expect_no_writes() {
-+  if [ -s "$scratch/writes.log" ]; then
-+    echo "Expected no announcement for $1, got: $(cat "$scratch/writes.log")" >&2
-+    exit 1
-+  fi
-+}
-+
- announce wait "$announced_at"
- 
- hosts "b03:True:false:$repo@$old,$repo@$new" "b04:True:false:$repo@$old" "b05:True:false:$repo@$old_stacked"
-@@ -99,14 +129,28 @@ expect "$new" "$new_stacked" "no host holding the current images"
- hosts "b04:True:false:$repo@$old" "b05:True:false:$repo@$old_stacked"
- expect "$new" "$new_stacked" "an announcement older than the timeout" 3600
- 
-+# The hour counts from when each key named its digest, not from the
-+# ConfigMap's latest write.
-+announce wait "$announced_at" "{\"26.6.stacked\": \"2026-10-22T12:50:00Z\"}"
-+expect "$new" "$old_stacked" "a stacked image named 50 minutes ago and a standalone one an hour ago" 3600
-+expect_no_writes "keys every announcement already names"
-+
-+# A release that announced one digest and then moved its tag to another
-+# (2026-11-26): the 
-```
-
-**File**: `.github/workflows/runner-image-release.yml` (modified, +52/-36)
-```diff
-@@ -444,9 +444,10 @@ jobs:
-   # waits until they hold them before the deploy below is dispatched. Deploys
-   # hold each pool on its current image until then
-   # (.github/scripts/runner-image-staging-gate.sh), so the first job of a new
--  # image on a host does not wait 6 to 7 minutes for the pull. Both give up an
--  # hour after the latest announcement, and `skip_staging` moves the pools at
--  # once. A failure here dispatches the deploy, which moves the pools.
-+  # image on a host does not wait 6 to 7 minutes for the pull. Both give up on
-+  # an image an hour after it was first announced, and `skip_staging` moves
-+  # the pools at once. A failure here dispatches the deploy, whose gate
-+  # announces any image this job did not and holds its pools.
-   announce:
-     name: Announce upcoming runner images (${{ matrix.environment }})
-     needs: plan
-@@ -492,10 +493,17 @@ jobs:
-         # Keys are `<xcode>.<variant>`, as tart-kubelet looks them up from a
-         # RunnerPool's `tuist.dev/xcode-version` and
-         # `tuist.dev/runner-image-variant` labels; values are the image by the
--        # digest the deploy will resolve for the same tag. Each write names the
--        # images published so far and moves `announced-at` to its own time; a
--        # failed or cancelled build fails this step, so re-running the failed
--        # jobs announces again.
-+        # digest the deploy will resolve for the same tag. Every pass
-+        # resolves every tag again, because a tag can exist before this run
-+        # builds it (an earlier run of the same version pushed it, then
-+        # failed) and the build then moves it to a new digest. Each write
-+        # names the images published so far, records in
-+        # `announced-at-by-image` when each key first named its current
-+        # digest (the staging gate's hour counts from there), and moves
-+        # `announced-at` to its own time. The step ends once every tag
-+        # resolves and every build and re-tag job of this attempt has
-+        # finished; a failed or cancelled build fails it, so re-running the
-+        # failed jobs announces again.
-         run: |
-           set -euo pipefail
-           namespace="$(kubectl get runnerpools.tuist.dev -A -l tuist.dev/runner-image-variant \
-@@ -508,55 +516,63 @@ jobs:
-           digests='{}'
-           stacked_digests='{}'
-           announced=''
-+          announced_at='{}'
-           while :; do
-+            # Whether every build and re-tag job has finished, read before
-+            # the tags so a job that finishes in between is resolved again on
-+            # the next pass instead of ending the loop on its old digest.
-+            jobs="$(gh api --paginate \
-+              "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/attempts/${GITHUB_RUN_ATTEMPT}/jobs" \
-+              --jq '.jobs[] | select(.name | test("^(Build (stacked )?runner image|Re-tag unchanged runner images)"))
-+                | [.name, .status, (.conclusion // "")] | @tsv')"
-+            failed="$(awk -F'\t' '$3 == "failure" || $3 == "cancelled" { print $1 }' <<< "$jobs")"
-+            if [ -n "$failed" ]; then
-+              echo "::error::This release will not publish every image; failed builds: ${failed//$'\n'/, }"
-+              exit 1
-+            fi
-+            running="$(awk -F'\t' '$2 != "completed" { n++ } END { print n + 0 }' <<< "$jobs")"
-+
-             pending=0
-             for xcode in $profiles; do
-               tag="macos-${xcode//./-}-${VERSION}"
--              if [ "$(jq -r --arg xcode "$xcode" '.[$xcode] // ""' <<< "$digests")" = "" ]; then
--                if digest="$(.github/scripts/ghcr-manifest-digest.sh tuist/tuist-runner "$tag" 2>/dev/null)"; then
--                  digests="$(jq -c --arg xcode "$xcode" --arg digest "$digest" '. + {($xcode): $digest}' <<< "$digests")"
--                else
--                  pending=$((pending + 1))
--                fi
-+              if digest="$(.github/scripts/ghcr-manifest-digest.sh tuist/tuist-runner "$tag" 2>/dev/null)"; then
-+                digests="$(jq -c --arg xcode "$xcode" --arg digest "$digest" '. + {($xcode): $digest}' <<< "$digests")"
-+              else
-+                pending=$((pending + 1))
-               fi
--              if [ "$(jq -r --arg xcode "$xcode" '.[$xcode] // ""' <<< "$stacked_digests")" = "" ]; then
--                if digest="$(.github/scripts/ghcr-manifest-digest.sh tuist/tuist-runner "${tag}-stacked" 2>/dev/null)"; then
--                  stacked_digests="$(jq -c --arg xcode "$xcode" --arg digest "$digest" '. + {($xcode): $digest}' <<< "$stacked_digests")"
--                else
--                  pending=$((pending + 1))
--                fi
-+              if digest="$(.github/scripts/ghcr-manifest-digest.sh tuist/tuist-runner "${tag}-stacked" 2>/dev/null)"; then
-+                stacked_digests="$(jq -c --arg xcode "$xcode" --arg digest "$digest" '. + {($xcode): $digest}' <<< "$stacked_digests")"
-+              else
-+                pen
-```
-
-**File**: `.github/workflows/server-deployment.yml` (modified, +6/-4)
-```diff
-@@ -1232,10 +1232,12 @@ jobs:
-       - name: Hold runner pools on images their hosts have not staged
-         # A runner image release announces its images and the macOS hosts
-         # pull them in the background (infra/tart-kubelet/AGENTS.md). Until
--        # the hosts serving a pool hold its new image, or an hour after the
--        # announcement, the pool keeps the digest it runs now, so no job
--        # waits on the pull. A gate that cannot read the cluster moves the
--        # pools as before, and a checkout predating the gate has none.
-+        # the hosts serving a pool hold its new image, or an hour after that
-+        # image was first announced, the pool keeps the digest it runs now,
-+        # so no job waits on the pull. The gate announces an image no
-+        # announcement names and holds its pools. A gate that cannot read or
-+        # write the cluster moves the pools as before, and a checkout
-+        # predating the gate has none.
-         # Canary qualifies the release, as for Linux: it waits for staging,
-         # never accepts the announcement's age, and fails closed, so runners
-         # acceptance runs on the images production will move to.
-```
-
-**File**: `infra/runner-image/AGENTS.md` (modified, +10/-6)
-```diff
-@@ -635,12 +635,16 @@ CI:
-      as soon as its tag is published, so their macOS hosts pull the
-      images their pools move to while the other builds run, and once
-      every image is named it waits until the hosts hold them (see
--     "stages" in `infra/tart-kubelet/AGENTS.md`). Every deploy holds a
--     pool on its current image until then, for up to an hour after the
--     latest announcement; dispatch the release with `skip_staging` to
--     move the pools at once. A failed or cancelled build fails
--     `announce`, and a failure in `announce` does not hold the deploy.
--     Hosts can stage images of a release that then fails to publish.
-+     "stages" in `infra/tart-kubelet/AGENTS.md`). It resolves every tag
-+     again on each pass until every build and re-tag job has finished,
-+     because a failed run of the same version may have pushed a tag this
-+     run then moves. Every deploy holds a pool on its current image until
-+     then, for up to an hour after that image was first announced, and
-+     announces an image no announcement names before holding on it;
-+     dispatch the release with `skip_staging` to move the pools at once.
-+     A failed or cancelled build fails `announce`, and a failure in
-+     `announce` does not block the deploy. Hosts can stage images of a
-+     release that then fails to publish.
-   6. `deploy` dispatches `server-production-deployment.yml`, which
-      rolls the fleet through canary.
- 
-```
-
-**File**: `infra/tart-kubelet/AGENTS.md` (modified, +10/-5)
-```diff
-@@ -121,11 +121,16 @@ workflow code runs in the guest. Never expose host credentials or masters.
-   current image's golden label also
-   holds the new one (`.github/scripts/runner-image-staging-gate.sh`, run by
-   `server-deployment.yml` before the chart upgrade), and `announce` waits for
--  the same before it dispatches the release's deploy. Both give up an hour
--  after the latest announcement (`tuist.dev/runner-image-announced-at`), and a
--  release dispatched with `skip_staging` moves the pools at once
--  (`tuist.dev/runner-image-staging: skip`). Canary's deploy instead waits up
--  to 30 minutes for staging, ignoring the hour, and fails closed, so runners
-+  the same before it dispatches the release's deploy. Both give up on an
-+  image an hour after it was first announced
-+  (`tuist.dev/runner-image-announced-at-by-image`, per key, falling back to
-+  `tuist.dev/runner-image-announced-at`), and a release dispatched with
-+  `skip_staging` moves the pools at once
-+  (`tuist.dev/runner-image-staging: skip`). A deploy moving a pool to an
-+  image no announcement names announces it itself and holds the pool, so a
-+  tag moved after its announcement (2026-11-26) cannot reach jobs unstaged.
-+  Canary's deploy instead waits up to 30 minutes for staging, ignoring the
-+  hour, and fails closed, so runners
-   acceptance qualifies the images production moves to. A pool is
-   matched by its `tuist.dev/xcode-version` and `tuist.dev/runner-image-variant`
-   (`standalone` or `stacked`) labels, which the chart renders only on catalog
+@@ -2496,9 +2496,10 @@ sandboxes:
+   # Memory bursting: guests return the memory they free (and, once idle,
+   # their page cache) to the host, and pauses punch zeros out of images.
+   balloonFreePageReporting: true
+-  # Pauses of a VM restored from its own memory image write only the pages
+-  # it changed, merged onto a clone of that image.
+-  diffSnapshots: true
++  # Off: resumes of Diff images whose pre-pause guest sync failed hung past
++  # BOOT_TIMEOUT (2 of 2 on 2026-11-27) and cold booted, losing unsynced
++  # data. Pauses take full snapshots until that is understood.
++  diffSnapshots: false
+   # What the daemons were started with, so raising maxCpu (read by the
+   # server) restarts none of them.
+   daemonMaxCpu: "250m"
 ```
 
 ---
 
-### Incident Patch 3: `6a3d5d26` (2026-11-27)
-**Commit Message**: fix(server): stop failing the scheduled pause while an exec still runs
+### Incident Patch 3: `8bfa7e37` (2026-11-28)
+**Commit Message**: fix(server): count a tracked-file fallback's tests on its tracked files
 
-An Amp Orb's bootstrap exec that timed out on the server ended the Orb's
-turn while sandboxd still ran the exec: the server waited timeout_ms + 10 s,
-but sandboxd holds an exec for timeout_ms + 10 s and then up to 5 s more to
-kill the guest process. On a shared node the idle pause runs at once, so
-PauseSandboxWorker reached the node mid-exec, got "sandbox has a worker or
-exec running" and raised, and a refusal lasting all three attempts would
-drop the pause.
+A tracked_file_changed fallback decides no test one by one, so it stores
+no decision rows, and the Changed files tab read each file's selected
+tests only from those rows: every file, the tracked ones included,
+showed 0. Each tracked changed file is now credited with the tests the
+run selected, since any one of them alone runs them all; the run only
+records the first in path order.
 
-The server now waits timeout_ms + 20 s for an exec, outlasting the node's
-whole hold, and PauseSandboxWorker snoozes 15 s on that refusal instead of
-spending its retries, as it already does while a restore's disks load.
+Co-authored-by: Eduardo Nunes <[REDACTED_EMAIL]>
+Amp-Thread-ID: https://ampcode.com/threads/T-01a2204e-98a2-719a-aef4-2e831fd5b587
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a21ca3-bbc1-7688-add2-c351eba683bc
-Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
-
-**File**: `server/lib/tuist/sandboxes.ex` (modified, +6/-1)
+**File**: `server/docs/coverage-test-selection.md` (modified, +1/-1)
 ```diff
-@@ -58,7 +58,12 @@ defmodule Tuist.Sandboxes do
-   @macos_restore_timeout to_timeout(minute: 31)
-   @exec_default_timeout_ms 60_000
-   @exec_max_timeout_ms 600_000
--  @exec_timeout_slack_ms 10_000
-+  # sandboxd ends an exec `timeout_ms` plus 10 s after it starts, then
-+  # takes up to 5 s more to kill the guest process (a macOS host 5 s in
-+  # all), so the server waits longer: giving up first left the exec in
-+  # flight on the node, and an Orb's failed bootstrap then ended its turn
-+  # and had its immediate pause refused.
-+  @exec_timeout_slack_ms 20_000
-   @exec_output_limit_bytes 1_048_576
-   @transient_node_errors [:not_connected, :node_disconnected, :timeout]
-   # A row still `creating` or `resuming` this long after its last update
+@@ -344,7 +344,7 @@ There's no separate accuracy measurement. Default-branch runs are the safety net
+ | Test run page, Selective Testing tab (`TuistWeb.TestSelection.RunTab`) | Outcome, counts and baseline, then the Tests, Modules, Changed files and Debug sub-tabs. A sharded run's shards are on the Overview tab, and the Tests tab shows each test's shard. The rest of the invocation (scheme, destination, commit) is on the run's Overview tab. The counts are the selected tests out of requested and the skipped tests; the skip rate as on the Test Selection page; the skipped modules (the keys of `skipped_modules`) out of all requested modules; and the estimated time saved, from the baseline durations of every skipped test, in skipped modules too. The test run's overview card, Selective Testing, shows the selected tests out of requested and the skipped tests for a run with a baseline, the skip rate as on the Test Selection page, and the modules hashing skipped out of all requested modules. Whether a run shows as a selection depends only on its baseline (`Selections.has_baseline?/1`): a run with a reason and a baseline (`tracked_file_changed`, for one) shows its counts, baseline and sub-tabs, its Tests the tests that ran under its reason. A run without a baseline shows the reason, titled Coverage not applied, followed by the run page's existing selective testing table when the run has default selective testing data. The tab shows for a run with a `test_impact_run_id`, or when the run has default selective testing data, which alone shows only that table. A run without a baseline also shows only that table when it has one: coverage decided nothing to show. Once the impact run expired, the tab says so instead of hiding. | The run's impact run |
+ | &nbsp;&nbsp;Tests | Every requested test, its decision and the rule, and its shard, filterable by decision, reason and shard; the outcome is on the Overview tab | The stored decision's bitmaps (`test_impact_run_decisions`), expanded only for the page shown and named through the checkpoint's tests (`test_impact_snapshot_tests`); a decision that's incomplete or expired lists none. The baseline's tests in the keys of `skipped_modules` follow, with reason `module_skipped`. For a run with a reason that found its baseline, nothing is stored: the baseline's tests in `requested_modules` are selected under the run's reason. The rows name the rule, not the file that triggered it; a test case run's tab shows the file |
+ | &nbsp;&nbsp;Modules | Per module left to decide, tests selected of requested, skip rate within the module, why it runs and estimated time saved, then the modules hashing found not changed, each with its number of tests in the baseline. A test run with module-level selective testing data shows the run page's existing selective testing table here instead. | The Tests rows grouped by module, then `test_impact_runs.skipped_modules`; the replacement reads Xcode's `xcode_targets` (`Xcode.has_selective_testing_data?/1`) |
+-| &nbsp;&nbsp;Changed files | Path and status, the tracked-file pattern that matches it, and how many tests it selected, filterable by tracked; a note when the diff was capped at 5,000 files. For a dirty checkout it lists only the uncommitted changes, saying so, from `test_impact_runs.dirty_files`. Without any stored files the tab shows no count and says why: a dirty checkout whose client didn't mark its changes, or a diff past retention | `test_impact_diffs`, and the selected bitmaps' cardinality per `matched_path` |
++| &nbsp;&nbsp;Changed files | Path and status, the tracked-file pattern that matches it, and how many tests it selected (in a `tracked_file_changed` fallback, which stores no decision, each tracked file is credited with every test the run selected, since any one of them alone runs them all), filterable by tracked; a note when the diff was capped at 5,000 files. For a dirty checkout it lists only the uncommitted changes, saying so, from `test_impact_runs.dirty_files`. Without any stored files the tab shows no count and says why: a dirty checkout whose client didn't mark its changes, or a diff past retention | `test_impact_diffs`, and the selected bitmaps' cardinality per `matched_path` (a tracked-file fallback's `selected_count`) |
+ | &nbsp;&nbsp;Config | The run's tracked-file patterns, 20 a page with the one a fallback matched first, each with its source (a Tuist default or the build system's configuration file) and the file it matched; the only tab of a fallback without a baseline | `Selections.tracked_patterns/3`: the defaults and the run's `tracked_files` |
+ | &nbsp;&nbsp;Debug | Tuist operators only (`Accounts.tuist_operator?/1`): the rule trace (selected, skipped and verdict per rule, aborts highlighted), then the reason coverage evidence wasn't applied and its matched path and pattern, when there is one | `test_impact_runs` |
+ | Test case run page, Selective Testing tab (`TuistWeb.TestSelection.TestCaseRunTab`, `?tab=selective-testing`
 ```
 
-**File**: `server/lib/tuist/sandboxes/AGENTS.md` (modified, +7/-0)
+**File**: `server/lib/tuist/tests/selections.ex` (modified, +9/-1)
 ```diff
-@@ -690,6 +690,13 @@ See [the rollout and recovery contract](../../../../infra/sandbox-image/remote-e
-   the epoch and the pending job does nothing. A node refuses to pause a
-   warm restore whose lazy disks still load, which can outlast the job's
-   retries, so its `memory_loaded` event schedules the idle pause again.
-+  A node also refuses while an exec runs, so the job snoozes 15 s on that
-+  refusal instead of spending its retries. The server waits for an exec
-+  20 s past its `timeout_ms`, longer than the node keeps it (sandboxd's
-+  10 s deadline slack plus up to 5 s to kill the guest process; 5 s on
-+  macOS): when the server gave up first, an Orb's timed-out
-+  bootstrap ended its turn while the exec was still in flight, and the
-+  immediate pause of a shared node was refused (2026-11).
+@@ -408,7 +408,7 @@ defmodule Tuist.Tests.Selections do
+       Map.merge(file, %{
+         tracked: not is_nil(match),
+         matched_pattern: match && match.pattern,
+-        selected_tests_count: Map.get(counts, file.path, 0)
++        selected_tests_count: selected_tests_count(run, counts, file.path, match)
+       })
+     end)
+     |> Enum.filter(
+@@ -429,6 +429,14 @@ defmodule Tuist.Tests.Selections do
  
- Shared-fleet admission requires a fresh controller allocation on `sandbox_nodes`.
- CI reservation revocation, zero extra warm memory, timestamp ordering and resize
-```
-
-**File**: `server/lib/tuist/sandboxes/workers/pause_sandbox_worker.ex` (modified, +11/-0)
-```diff
-@@ -20,6 +20,7 @@ defmodule Tuist.Sandboxes.Workers.PauseSandboxWorker do
-   require Logger
+   defp tracked_matcher(project, run), do: TrackedFiles.matcher(project, run.tracked_files)
  
-   @disks_loading_snooze_seconds 60
-+  @busy_snooze_seconds 15
- 
-   @impl Oban.Worker
-   def perform(%Oban.Job{args: %{"sandbox_id" => sandbox_id, "residency_epoch" => epoch}}) do
-@@ -39,6 +40,16 @@ defmodule Tuist.Sandboxes.Workers.PauseSandboxWorker do
-         Logger.info("sandboxes: scheduled pause waits for a restore's disks", sandbox_id: sandbox_id)
-         {:snooze, @disks_loading_snooze_seconds}
- 
-+      # The node refuses to pause while an exec is in flight. An exec takes no
-+      # residency, and its caller can give up before the node does (an Amp
-+      # Orb's bootstrap timing out ends the turn and pauses at once on a shared
-+      # node while the node still runs the exec), so retrying soon pauses it.
-+      # Failing instead spent the job's three attempts and could leave the
-+      # sandbox running with nothing left to pause it.
-+      {:error, "sandbox has a worker or exec running" <> _id} ->
-+        Logger.info("sandboxes: scheduled pause waits for an exec to end", sandbox_id: sandbox_id)
-+        {:snooze, @busy_snooze_seconds}
++  # A tracked-file fallback decides no test, so it stores no decision rows to
++  # count: every test it ran is down to its tracked files, any one of which
++  # alone runs them all (the run records only the first, in path order).
++  defp selected_tests_count(%Run{reason: "tracked_file_changed"} = run, _counts, path, match)
++       when not is_nil(match) or path == run.matched_path, do: run.selected_count
 +
-       {:error, reason} ->
-         Logger.warning("sandboxes: scheduled pause failed", sandbox_id: sandbox_id, reason: inspect(reason))
-         {:error, reason}
++  defp selected_tests_count(_run, counts, path, _match), do: Map.get(counts, path, 0)
++
+   # Read off the decision's bitmaps, keyed by the path that selected them.
+   defp selected_counts_by_path(%Run{} = run) do
+     from(d in decision_rows(run),
 ```
 
-**File**: `server/test/tuist/sandboxes/workers/pause_sandbox_worker_test.exs` (modified, +19/-2)
+**File**: `server/test/tuist/tests/selections_test.exs` (modified, +32/-0)
 ```diff
-@@ -45,12 +45,29 @@ defmodule Tuist.Sandboxes.Workers.PauseSandboxWorkerTest do
- 
-   test "returns the node error so the job retries" do
-     sandbox = sandbox_fixture(state: :running, node_name: "node-a", residency_epoch: 1)
--    expect(Nodes, :call, fn "node-a", "pause", _args, _opts -> {:error, "exec running"} end)
-+    expect(Nodes, :call, fn "node-a", "pause", _args, _opts -> {:error, "snapshot failed"} end)
- 
--    assert {:error, "exec running"} = perform_job(PauseSandboxWorker, %{sandbox_id: sandbox.id, residency_epoch: 1})
-+    assert {:error, "snapshot failed"} = perform_job(PauseSandboxWorker, %{sandbox_id: sandbox.id, residency_epoch: 1})
-     assert %Sandbox{state: :running} = Repo.reload!(sandbox)
+@@ -468,6 +468,38 @@ defmodule Tuist.Tests.SelectionsTest do
+       assert {[%{path: "docs/README.md"}], _meta} = Selections.changed_files(project, run, diff, search: "readme")
+       assert Selections.get_diff(%{run | baseline_sha: nil}) == nil
+     end
++
++    test "credit a tracked-file fallback's tests to each tracked file, which stores no decision", %{
++      project: project
++    } do
++      %{run: run} =
++        run(project,
++          outcome: "fallback",
++          reason: "tracked_file_changed",
++          matched_path: "App/Project.swift",
++          selected: [],
++          requested_count: 7,
++          selected_count: 3,
++          skipped_count: 4
++        )
++
++      TestSelectionFixtures.diff_fixture(
++        project_id: project.id,
++        changed_files: [
++          %{path: "App/Project.swift"},
++          %{path: "Sources/Search/Search.swift"},
++          %{path: "Tuist/Package.swift"}
++        ]
++      )
++
++      {rows, _meta} = Selections.changed_files(project, run, Selections.get_diff(run))
++
++      assert Enum.map(rows, &{&1.path, &1.tracked, &1.selected_tests_count}) == [
++               {"App/Project.swift", true, 3},
++               {"Tuist/Package.swift", true, 3},
++               {"Sources/Search/Search.swift", false, 0}
++             ]
++    end
    end
  
-+  test "snoozes while the node still runs an exec, then pauses once it ended" do
-+    sandbox = sandbox_fixture(state: :running, node_name: "node-a", residency_epoch: 5)
-+    args = %{sandbox_id: sandbox.id, residency_epoch: 5}
-+
-+    expect(Nodes, :call, fn "node-a", "pause", _args, _opts ->
-+      {:error, "sandbox has a worker or exec running: #{sandbox.id}"}
-+    end)
-+
-+    assert {:snooze, 15} = perform_job(PauseSandboxWorker, args)
-+    assert %Sandbox{state: :running} = Repo.reload!(sandbox)
-+
-+    expect(Nodes, :call, fn "node-a", "pause", _args, _opts -> {:ok, %{}} end)
-+
-+    assert :ok = perform_job(PauseSandboxWorker, args)
-+    assert %Sandbox{state: :paused} = Repo.reload!(sandbox)
-+  end
-+
-   test "snoozes while a restore's disks still load, then pauses once they are whole" do
-     sandbox = sandbox_fixture(state: :running, node_name: "node-a", residency_epoch: 2)
-     args = %{sandbox_id: sandbox.id, residency_epoch: 2}
-```
-
-**File**: `server/test/tuist/sandboxes_test.exs` (modified, +3/-1)
-```diff
-@@ -603,7 +603,9 @@ defmodule Tuist.SandboxesTest do
- 
-       expect(Nodes, :call, fn "node-a", "exec", args, opts ->
-         assert %{sandbox_id: ^sandbox_id, cmd: ["/bin/bash", "-lc", "ls"], cwd: "/workspace", timeout_ms: 5_000} = args
--        assert opts[:timeout] == 15_000
-+        # Outlasts sandboxd's hold on the exec: its deadline, `timeout_ms`
-+        # plus 10 s, and up to 5 s to kill the guest process.
-+        assert opts[:timeout] > 5_000 + 10_000 + 5_000
-         opts[:on_stream].({:stdout, "a\n"})
-         opts[:on_stream].({:stderr, "warn\n"})
-         opts[:on_stream].({:stdout, "b\n"})
+   describe "counted_by_module?/1 and module_counts/1" do
 ```
 
 #### Recent Merged Pull Requests:
@@ -1077,28 +1085,28 @@ Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: send security and incident reports to [REDACTED_EMAIL]
+## X. sandboxd): cap template builds and prebuild only with room
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `infra/sandboxd/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f32edc45`: docs: send security and incident reports to [REDACTED_EMAIL]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `82fcb16e`: sandboxd): cap template builds and prebuild only with room. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/sandboxd/AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```elixir
 // Verified production-grade fix pattern:
-Contact us at [incidents@tuist.dev](mailto:incidents@tuist.dev)
+| `PREBUILD_SHAPES` | | Comma-separated shapes to build at startup and for each new template tag, e.g. `2x4096,4x8192`. Must be a subset of `ALLOWED_SHAPES` when that is set. With per-VM memory cgroups, a prebuild runs only when the VMs' container has room for the shape's guest memory plus 768 MiB (`memory.max` less `memory.current`, inactive page cache counted free); otherwise the first create that needs the shape builds it, after the server grew the carve-out, and a new tag is switched to without it. Every template build runs in its own `vm-tmpl-*` cgroup with `memory.max` at its guest memory plus 512 MiB, lowered to the container's room less 256 MiB, so a build that outgrows it fails alone: the kubelet's `memory.oom.group` on the container kills every VM when the container's own limit is hit (the Nov 26–27 production vmm OOMKills). |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```elixir
 // Induced defect failure mode:
-Contact us at [contact@tuist.dev](mailto:security@tuist.dev)
+| `PREBUILD_SHAPES` | | Comma-separated shapes to build at startup, e.g. `2x4096,4x8192`. Must be a subset of `ALLOWED_SHAPES` when that is set. |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f32edc45` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `82fcb16e` are properly handled with clean fallback behavior.

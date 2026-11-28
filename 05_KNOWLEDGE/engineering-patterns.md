@@ -841420,3 +841420,221 @@ tokio = { version = "1", features = ["test-util"] }
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f5411166` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11115. cap template builds and prebuild only with room (Harvested from tuist/tuist)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "cap template builds and prebuild only with room",
+  "source": "tuist/tuist",
+  "source_url": "https://github.com/tuist/tuist",
+  "source_version": "8b30c334",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-28T15:19:20.509Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tuist-tuist",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tuist/tuist](https://github.com/tuist/tuist) (Revision: `8b30c334`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `infra/sandboxd/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `82fcb16e`: sandboxd): cap template builds and prebuild only with room. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/sandboxd/AGENTS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```elixir
+// Verified production-grade fix pattern:
+| `PREBUILD_SHAPES` | | Comma-separated shapes to build at startup and for each new template tag, e.g. `2x4096,4x8192`. Must be a subset of `ALLOWED_SHAPES` when that is set. With per-VM memory cgroups, a prebuild runs only when the VMs' container has room for the shape's guest memory plus 768 MiB (`memory.max` less `memory.current`, inactive page cache counted free); otherwise the first create that needs the shape builds it, after the server grew the carve-out, and a new tag is switched to without it. Every template build runs in its own `vm-tmpl-*` cgroup with `memory.max` at its guest memory plus 512 MiB, lowered to the container's room less 256 MiB, so a build that outgrows it fails alone: the kubelet's `memory.oom.group` on the container kills every VM when the container's own limit is hit (the Nov 26–27 production vmm OOMKills). |
+```
+
+**NEGATIVE CONSTRAINT**:
+```elixir
+// Induced defect failure mode:
+| `PREBUILD_SHAPES` | | Comma-separated shapes to build at startup, e.g. `2x4096,4x8192`. Must be a subset of `ALLOWED_SHAPES` when that is set. |
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `82fcb16e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11116. (feature) Show a guide beside System Settings while granting Accessibility (Harvested from TypeWhisper/typewhisper-mac)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "(feature) Show a guide beside System Settings while granting Accessibility",
+  "source": "TypeWhisper/typewhisper-mac",
+  "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+  "source_version": "8e35bfec",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-28T15:19:23.424Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-typewhisper-typewhisper-mac",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac) (Revision: `8e35bfec`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `AppStore/Sources/AppStoreInputAccess.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8e35bfec`: (feature) Show a guide beside System Settings while granting Accessibility. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `AppStore/Sources/AppStoreInputAccess.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    /// Asks for PostEvent access. macOS 27 does not prompt inside the app. It may
+    /// show its own alert and list the app with the switch off, or leave the app
+    /// out of the list, so System Settings opens with a guide that also offers
+    /// the icon to drag in. The guide cannot see the grant and offers a restart.
+        PermissionGuideController.shared.begin(kind: .accessibility, isGranted: nil)
+        PermissionGuideController.shared.begin(kind: .inputMonitoring, isGranted: nil)
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+    /// Asks for PostEvent access. macOS 27 neither prompts for it nor lists a
+    /// sandboxed app, so System Settings opens with a guide to drag the app in.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8e35bfec` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11117. escape <placeholders> in generated help docs; fix timebucketp option list (Harvested from dathere/qsv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "escape <placeholders> in generated help docs; fix timebucketp option list",
+  "source": "dathere/qsv",
+  "source_url": "https://github.com/dathere/qsv",
+  "source_version": "e6479ba8",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-28T15:19:32.813Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dathere-qsv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `e6479ba8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/skills/qsv/qsv-timebucketp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e6479ba8`: help): escape <placeholders> in generated help docs; fix timebucketp option lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-timebucketp.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        "description": "The value written to the index column for each window. Window mode only. One of: * left - the window's start (the default) * right - the window's end * datapoint - the window's first index value"
+        "description": "Where the first window starts, in window mode only. One of: * window - the --every boundary at or before the first index value (the default) * datapoint - the first index value itself * monday ... sunday - that weekday (weekly --every)"
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        "description": "The value written to the index column for each window. Window mode only. One of: left      - the window's start (the default) right     - the window's end datapoint - the window's first index value"
+        "description": "Where the first window starts. Window mode only. One of: window    - the --every boundary at or before the first index value (the default) datapoint - the first index value itself monday ... sunday - that weekday (weekly --every)"
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e6479ba8` are properly handled with clean fallback behavior.

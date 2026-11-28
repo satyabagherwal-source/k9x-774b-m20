@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T15:05:58.187Z",
+  "last_updated": "2026-11-28T15:19:33.624Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "605727ce53f4f6a599cefdedcc0de4bf1533895756f8235a26b89edc9024a028",
-      "verified_at": "2026-11-28T14:29:36.488Z",
+      "content_hash": "61162dd8751c2baeebd496b0b4f51cb7a05e326b896b63f8735a5d602ede909e",
+      "verified_at": "2026-11-28T15:19:33.623Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-28T14:29:36.488Z"
+      "last_updated": "2026-11-28T15:19:33.623Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -15201,14 +15201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typewhisper-typewhisper-mac",
-      "content_hash": "4d93c3df5990a65eb3484c66425b2730e78a89fde3fa30fdc0ce79d3cf159524",
-      "verified_at": "2026-11-26T09:47:57.862Z",
+      "content_hash": "5a9042499d2a97266f8c83054550f0757ce3fe4e8ade16d265188669450ef502",
+      "verified_at": "2026-11-28T15:19:24.262Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T09:47:57.862Z"
+      "last_updated": "2026-11-28T15:19:24.262Z"
     },
     "vitest-dev/vitest": {
       "repository": "vitest-dev/vitest",
@@ -18741,14 +18741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tuist-tuist",
-      "content_hash": "38a06a565ef4567059baa80735b9fda78f33b0ec43c875931cd41b95af7c501d",
-      "verified_at": "2026-11-27T12:32:36.112Z",
+      "content_hash": "12a832986e77cdcf6ab2ae026549d7f5d348939c86bf27543e5284789e457845",
+      "verified_at": "2026-11-28T15:19:21.344Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T12:32:36.112Z"
+      "last_updated": "2026-11-28T15:19:21.344Z"
     },
     "mixelpixx/KiCAD-MCP-Server": {
       "repository": "mixelpixx/KiCAD-MCP-Server",

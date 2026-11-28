@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T15:05:58.183Z",
-  "total_cycles_completed": 13344,
-  "total_learnings_persisted": 13344,
-  "total_rules_promoted": 12040,
+  "last_updated": "2026-11-28T15:19:33.619Z",
+  "total_cycles_completed": 13347,
+  "total_learnings_persisted": 13347,
+  "total_rules_promoted": 12043,
   "history": [
-    {
-      "timestamp": "2026-11-27T19:18:15.480Z",
-      "repository": "maziyarpanahi/openmed",
-      "learningId": "learn-github-maziyarpanahi-openmed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T19:18:17.213Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T19:26:55.521Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T19:35:34.264Z",
       "repository": "llamaindex/OCRia-nano-1",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T15:05:58.183Z",
       "repository": "yyjeqhc/webcodex",
       "learningId": "learn-github-yyjeqhc-webcodex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T15:19:21.341Z",
+      "repository": "tuist/tuist",
+      "learningId": "learn-github-tuist-tuist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T15:19:24.258Z",
+      "repository": "TypeWhisper/typewhisper-mac",
+      "learningId": "learn-github-typewhisper-typewhisper-mac",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T15:19:33.619Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

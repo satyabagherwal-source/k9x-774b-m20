@@ -14105,3 +14105,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-ea0b2006` | `project://rmax-scrapy-redis` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md` | 2026-11-28T14:57:07.184Z |
 | `learn-huggingface-memtensor-memt-1-0-pro` | `https://huggingface.co/MemTensor/MemT-1.0-Pro` | `hf-memtens` | Multi-dimensional audit evidence | 2026-11-28T15:05:55.475Z |
 | `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `f5411166` | Multi-dimensional audit evidence | 2026-11-28T15:05:58.177Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `8b30c334` | Multi-dimensional audit evidence | 2026-11-28T15:19:21.334Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `8e35bfec` | Multi-dimensional audit evidence | 2026-11-28T15:19:24.251Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e6479ba8` | Multi-dimensional audit evidence | 2026-11-28T15:19:33.612Z |

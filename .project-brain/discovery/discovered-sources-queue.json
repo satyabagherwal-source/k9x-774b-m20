@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T14:57:08.350Z",
+  "updated_at": "2026-11-28T15:19:43.200Z",
   "stats": {
-    "total_discovered": 10989,
-    "approved_pending_harvest": 10437,
+    "total_discovered": 10997,
+    "approved_pending_harvest": 10445,
     "harvested_count": 0,
     "rejected_count": 552,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10447,
-      "OFFICIAL_DOCUMENTATION": 299,
+      "COMMUNITY_AND_EXPERT": 10454,
+      "OFFICIAL_DOCUMENTATION": 300,
       "STANDARDS_AND_SPECIFICATIONS": 166,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 59,
@@ -237921,6 +237921,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/exyte-chat-learnings.md",
         "fileName": "exyte-chat-learnings.md"
+      }
+    },
+    "SRC-C352ED567A3C": {
+      "id": "SRC-C352ED567A3C",
+      "url": "https://ampcode.com/threads/T-01a22133-b1aa-7491-bb8c-d18e691196a4",
+      "title": "https://ampcode.com/threads/T-01a22133-b1aa-7491-bb8c-d18e691196a4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T15:19:38.524Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-4CCFBE257FD6": {
+      "id": "SRC-4CCFBE257FD6",
+      "url": "https://ampcode.com/threads/T-01a2139d-e501-7641-9d1f-be0eae549a5f",
+      "title": "https://ampcode.com/threads/T-01a2139d-e501-7641-9d1f-be0eae549a5f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T15:19:38.640Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-86573FABEB8C": {
+      "id": "SRC-86573FABEB8C",
+      "url": "https://ampcode.com/threads/T-01a2204e-98a2-719a-aef4-2e831fd5b587",
+      "title": "https://ampcode.com/threads/T-01a2204e-98a2-719a-aef4-2e831fd5b587",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T15:19:38.756Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-457F3F402D28": {
+      "id": "SRC-457F3F402D28",
+      "url": "https://github.com/dathere/qsv/pull/5132",
+      "title": "https://github.com/dathere/qsv/pull/5132",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T15:19:42.540Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-B74C59DDFCD0": {
+      "id": "SRC-B74C59DDFCD0",
+      "url": "https://daringfireball.net/2008/05/title_case",
+      "title": "https://daringfireball.net/2008/05/title_case",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T15:19:42.878Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-642B28ED71C6": {
+      "id": "SRC-642B28ED71C6",
+      "url": "https://github.com/greyblake/whatlang-rs/blob/master/SUPPORTED_LANGUAGES.md",
+      "title": "https://github.com/greyblake/whatlang-rs/blob/master/SUPPORTED_LANGUAGES.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T15:19:42.983Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-E35473526994": {
+      "id": "SRC-E35473526994",
+      "url": "https://docs.rs/cpc",
+      "title": "https://docs.rs/cpc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T15:19:43.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-5C94D128C1D7": {
+      "id": "SRC-5C94D128C1D7",
+      "url": "https://github.com/dathere/qsv/blob/master/src/cmd/behead.rs",
+      "title": "https://github.com/dathere/qsv/blob/master/src/cmd/behead.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T15:19:43.200Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

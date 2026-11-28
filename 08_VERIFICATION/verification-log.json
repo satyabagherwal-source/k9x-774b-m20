@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-F2D1",
-    "timestamp": "2026-11-26T19:37:18.517Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "9a84341c30ac424e13d18fd98a9d42a280e97ad22c600031b53df826172709da",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-F5WZ",
-    "timestamp": "2026-11-26T19:37:23.123Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "d6129c26a8b5897893a854e9d465066929875dbc597ba6897a3b1fb9d378268d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-PVVL",
-    "timestamp": "2026-11-26T19:45:43.329Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "f8e6e397b50d53ff1c47ceebde042d831b5f6dddd8611ab850402e416bdfc84e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-1SOV",
     "timestamp": "2026-11-26T19:54:59.071Z",
     "repository": "openai/gpt-oss-120b",
@@ -7490,6 +7445,51 @@
     "repository": "yyjeqhc/webcodex",
     "learningId": "learn-github-yyjeqhc-webcodex",
     "contentHash": "86562dd74c4f458516414587195a6014dea85b389ddec973a1ad949bd2402713",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-31F4",
+    "timestamp": "2026-11-28T15:19:21.328Z",
+    "repository": "tuist/tuist",
+    "learningId": "learn-github-tuist-tuist",
+    "contentHash": "12a832986e77cdcf6ab2ae026549d7f5d348939c86bf27543e5284789e457845",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-33O5",
+    "timestamp": "2026-11-28T15:19:24.245Z",
+    "repository": "TypeWhisper/typewhisper-mac",
+    "learningId": "learn-github-typewhisper-typewhisper-mac",
+    "contentHash": "5a9042499d2a97266f8c83054550f0757ce3fe4e8ade16d265188669450ef502",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-3AW7",
+    "timestamp": "2026-11-28T15:19:33.607Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "61162dd8751c2baeebd496b0b4f51cb7a05e326b896b63f8735a5d602ede909e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
