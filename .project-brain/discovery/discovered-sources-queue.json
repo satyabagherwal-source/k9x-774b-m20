@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T16:35:29.492Z",
+  "updated_at": "2026-11-28T17:10:30.343Z",
   "stats": {
-    "total_discovered": 11021,
-    "approved_pending_harvest": 10462,
+    "total_discovered": 11023,
+    "approved_pending_harvest": 10464,
     "harvested_count": 0,
     "rejected_count": 559,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10478,
+      "COMMUNITY_AND_EXPERT": 10480,
       "OFFICIAL_DOCUMENTATION": 300,
       "STANDARDS_AND_SPECIFICATIONS": 166,
       "ENGINEERING_BLOGS": 7,
@@ -238576,6 +238576,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
         "fileName": "sweetpad-dev-sweetpad-learnings.md"
+      }
+    },
+    "SRC-EE250F0E3D66": {
+      "id": "SRC-EE250F0E3D66",
+      "url": "https://github.com/callstack/react-native-builder-bob",
+      "title": "https://github.com/callstack/react-native-builder-bob",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:10:30.255Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md",
+        "fileName": "callstack-react-native-builder-bob-learnings.md"
+      }
+    },
+    "SRC-E13358DA85FF": {
+      "id": "SRC-E13358DA85FF",
+      "url": "https://github.com/callstack/react-native-builder-bob/blob/13309bc9da7d3d413d7cc171e230d36c32f3bbe3/packages/create-react-native-library/src/exampleApp/generateExampleApp.ts",
+      "title": "https://github.com/callstack/react-native-builder-bob/blob/13309bc9da7d3d413d7cc171e230d36c32f3bbe3/packages/create-react-native-library/src/exampleApp/generateExampleApp.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:10:30.343Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md",
+        "fileName": "callstack-react-native-builder-bob-learnings.md"
       }
     }
   }

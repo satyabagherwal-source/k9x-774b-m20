@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T17:00:17.994Z",
+  "last_updated": "2026-11-28T17:09:57.570Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3141,14 +3141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastify-fastify",
-      "content_hash": "a89065c5a8dbeaaae690fc92f25af5254c977f5b277e0b62e9f1518e6e8dfa57",
-      "verified_at": "2026-11-25T03:36:49.554Z",
+      "content_hash": "a8842084266e4d34e166d1de7c943ce5627140301a77cfd264780cf4645f4687",
+      "verified_at": "2026-11-28T17:09:55.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T03:36:49.554Z"
+      "last_updated": "2026-11-28T17:09:55.110Z"
     },
     "expressjs/express": {
       "repository": "expressjs/express",
@@ -12696,14 +12696,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-react-native-builder-bob",
-      "content_hash": "6976497b125bc4354824d92e0064bc2dea65725260241a603f30010354cfec1e",
-      "verified_at": "2026-10-25T21:53:22.214Z",
+      "content_hash": "39ea963371c309a95022c4a34c491a67af3b88a45ec85b93fad647d42e59f68b",
+      "verified_at": "2026-11-28T17:09:57.569Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T21:53:22.215Z"
+      "last_updated": "2026-11-28T17:09:57.569Z"
     },
     "electron/electron": {
       "repository": "electron/electron",

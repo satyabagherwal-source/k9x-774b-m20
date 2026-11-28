@@ -14118,3 +14118,6 @@ Every entry in this ledger must capture:
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `4bb74f4c` | Multi-dimensional audit evidence | 2026-11-28T16:35:24.077Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `caa24586` | Multi-dimensional audit evidence | 2026-11-28T17:00:17.923Z |
 | `learn-dom-h-77e7eef6` | `project://wcandillon-react-native-skia` | `caa24586` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md` | 2026-11-28T17:00:59.560Z |
+| `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `c38830f1` | Multi-dimensional audit evidence | 2026-11-28T17:09:55.102Z |
+| `learn-github-callstack-react-native-builder-bob` | `https://github.com/callstack/react-native-builder-bob` | `5961f36d` | Multi-dimensional audit evidence | 2026-11-28T17:09:57.561Z |
+| `learn-dom-h-f654669c` | `project://callstack-react-native-builder-bob` | `5961f36d` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md` | 2026-11-28T17:10:30.208Z |

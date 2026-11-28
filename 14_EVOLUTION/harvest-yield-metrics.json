@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T17:00:17.989Z",
-  "total_cycles_completed": 13355,
-  "total_learnings_persisted": 13355,
-  "total_rules_promoted": 12048,
+  "last_updated": "2026-11-28T17:09:57.567Z",
+  "total_cycles_completed": 13357,
+  "total_learnings_persisted": 13357,
+  "total_rules_promoted": 12050,
   "history": [
-    {
-      "timestamp": "2026-11-27T20:10:04.368Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T20:19:43.632Z",
-      "repository": "OpenUncensored/Inkling-2-Mini-Uncensored",
-      "learningId": "learn-huggingface-openuncensored-inkling-2-mini-uncensored",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T20:19:54.514Z",
       "repository": "Kong/kubernetes-ingress-controller",
@@ -1403,6 +1389,20 @@
       "repository": "wcandillon/react-native-skia",
       "learningId": "learn-github-wcandillon-react-native-skia",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T17:09:55.108Z",
+      "repository": "fastify/fastify",
+      "learningId": "learn-github-fastify-fastify",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T17:09:57.567Z",
+      "repository": "callstack/react-native-builder-bob",
+      "learningId": "learn-github-callstack-react-native-builder-bob",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

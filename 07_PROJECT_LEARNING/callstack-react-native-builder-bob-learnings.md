@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md`  
 > **Source**: github ([https://github.com/callstack/react-native-builder-bob](https://github.com/callstack/react-native-builder-bob))  
-> **Source Version**: `a73fd95b`  
+> **Source Version**: `5961f36d`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T21:53:21.824Z  
+> **Timestamp**: 2026-11-28T17:09:56.277Z  
 > **Learning ID**: `learn-github-callstack-react-native-builder-bob`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/react-native-builder-bob](https://github.com/callstack/react-native-builder-bob))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T21:53:21.817Z  
+> **Harvest Timestamp**: 2026-11-28T17:09:56.272Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Simple set of CLIs to scaffold and build React Native libraries for different targets
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3232 stars
+- **Stars / Engagement**: 3229 stars
 
 ---
 
@@ -615,638 +615,54 @@ export default defineConfig(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d120d24` (2026-10-21)
-**Commit Message**: fix: skip the generated package.json when the root type matches (#957)
+### Incident Patch 1: `5961f36d` (2026-11-25)
+**Commit Message**: docs: update guidance on platform specific code with node resolution
 
-### Summary
-
-With `esm: true`, Bob writes `{"type": "module"}` to
-`lib/module/package.json` and `lib/typescript/package.json`, and
-`{"type": "commonjs"}` for CommonJS output. Node.js, TypeScript and
-Metro read the `imports` field from the closest package.json, so a
-library that uses subpath imports breaks after it's built:
-
-- Node.js: `ERR_PACKAGE_IMPORT_NOT_DEFINED: Package import specifier
-"#internal/helper" is not defined in package
-.../lib/module/package.json`
-- TypeScript: `TS2307: Cannot find module '#internal/helper' or its
-corresponding type declarations.`
-- Metro: `The path for #internal/helper could not be resolved.`
-
-Setting `"type": "module"` in the root package.json doesn't help today
-because Bob writes the file anyway. With this change, Bob skips it when
-the root `type` has the same value and the output folder is inside the
-project, since the built files already get that module type from the
-root. If Bob still has to write the file and the root package.json has a
-non-empty `imports` field, it prints a warning.
-
-Copying `imports` into the generated file isn't a general fix: targets
-outside the outp
-
-**File**: `docs/pages/esm.md` (modified, +21/-0)
+**File**: `docs/pages/esm.md` (modified, +13/-19)
 ```diff
-@@ -140,6 +140,27 @@ Additionally, the `import.meta` syntax is currently not supported in [Metro](htt
+@@ -358,29 +358,23 @@ There are still a few things to keep in mind if you want your library to be ESM-
+   const { foo } = require('my-library');
+   ```
  
- So be careful when using properties from `import.meta`, as relying on properties only available in specific tools may lock your library into supporting only those specific tools. Also, since this is an ESM-only feature, you should avoid using it if you compile your library to CommonJS as well.
+-  Alternatively, if you want to be able to use the library in Node.js with `import` syntax, there are a few options:
+-  - Use `Platform.select` instead of platform-specific extensions:
++  Alternatively, if you want to be able to use the library in Node.js with `import` syntax, use `Platform.select` or `Platform.OS` checks instead of platform-specific extensions:
  
-+### Subpath imports
-+
-+Bob adds a `package.json` file with the `type` field to the output folders (e.g. `lib/module/package.json`) so that tools know which module system the files use. Node.js, TypeScript and Metro read [subpath imports](https://nodejs.org/api/packages.html#subpath-imports) from the closest `package.json` file, so the `imports` field in your `package.json` won't apply to the files in these folders.
-+
-+Bob skips this file when the `type` field in your `package.json` has the same value. So to use the `imports` field, set `type` to `module` in your `package.json`:
-+
-+```json
-+"type": "module",
-+"imports": {
-+  "#internal/*": {
-+    "my-library-source": "./src/internal/*.ts",
-+    "types": "./lib/typescript/src/internal/*.d.ts",
-+    "default": "./lib/module/internal/*.js"
-+  }
-+}
-+```
-+
-+Node.js will then treat all `.js` files in your library as ES modules, including published files such as `react-native.config.js`. So config files in the project root need to use ESM syntax (e.g. `export default` instead of `module.exports`). This is especially important for `react-native.config.js`, since React Native CLI ignores a CommonJS version without showing an error, and Expo autolinking doesn't read `react-native.config.cjs`.
-+
-+In a [dual package setup](#dual-package-setup), the CommonJS build still gets a `package.json` with `"type": "commonjs"`, so subpath imports won't work in the CommonJS build.
-+
- ## Dual package setup
+-    ```js
+-    import { Platform } from 'react-native';
+-
+-    const foo = Platform.select({
+-      android: require('./fooAndroid.js'),
+-      ios: require('./fooIOS.js'),
+-      default: require('./fooFallback.js'),
+-    });
+-    ```
+-
+-  - Use `require` to import code with platform-specific extensions in your library:
++  ```js
++  import { Platform } from 'react-native';
  
- The previously mentioned setup only works with tools that support ES modules. If you want to support tools that don't support ESM and use the CommonJS module system, you can configure a dual package setup.
-```
-
-**File**: `packages/create-react-native-library/templates/common/babel.config.js` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--module.exports = {
-+export default {
-   overrides: [
-     {
-       exclude: /\/node_modules\//,
-```
-
-**File**: `packages/create-react-native-library/templates/tools/eslint/eslint.config.mjs` (modified, +1/-1)
-```diff
-@@ -24,6 +24,6 @@ export default defineConfig([
-     },
-   },
-   {
--    ignores: ['node_modules/', 'lib/'],
-+    ignores: ['node_modules/', 'lib/', 'example/dist/'],
-   },
- ]);
-```
-
-**File**: `packages/react-native-builder-bob/src/__fixtures__/babel.config.js` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+export default (api) => ({
-+  presets: [
-+    [
-+      '@babel/preset-env',
-+      {
-+        targets: { node: 'current' },
-+        modules: api.caller((caller) => caller?.supportsStaticESM)
-+          ? false
-+          : 'commonjs',
-+      },
-+    ],
-+    '@babel/preset-typescript',
-+  ],
-+});
-```
-
-**File**: `packages/react-native-builder-bob/src/__tests__/compile.test.ts` (added, +230/-0)
-```diff
-@@ -0,0 +1,230 @@
-+import os from 'node:os';
-+import path from 'node:path';
-+import fs from 'fs-extra';
-+import { beforeEach, expect, test, vi } from 'vitest';
-+import buildCommonJS from '../targets/commonjs.ts';
-+import buildModule from '../targets/module.ts';
-+import type { Report } from '../types.ts';
-+import { spawn } from '../utils/spawn.ts';
-+
-+const report: Report = {
-+  info: vi.fn(),
-+  warn: vi.fn(),
-+  success: vi.fn(),
-+  error: vi.fn(),
-+};
-+
-+beforeEach(() => {
-+  vi.mocked(report.warn).mockClear();
-+});
-+
-+const buildLibrary = async (
-+  root: string,
-+  {
-+    files,
-+    packageJson,
-+    targets,
-+    output = path.join(root, 'lib'),
-+  }: {
-+    files: Record<string, string>;
-+    packageJson?: Record<string, unknown>;
-+    targets: ('commonjs' | 'module')[];
-+    output?: string;
-+  }
-+) => {
-+  await fs.writeJSON(path.join(root, 'package.json'), {
-+    name: 'library',
-+    version: '1.0.0',
-+    ...packageJson,
+-    ```js
+-    // will import `foo.native.js`, `foo.ios.js`, `foo.js` etc.
+-    const { foo } = require('./foo');
+-    ```
++  import { foo as fooAndroid } from './fooAndroid.js';
++  import { foo as fooIOS } from './fooIOS.js';
++  import { foo as fooFallback } from './fooFallback.js';
+ 
+-    Make sure to have a file without any platform-specific extensions that will be loaded by Node.js.
++  const foo = Platform.select({
++    android: fooAndroid,
++    ios: fooIOS,
++    default: fooFallback,
 +  });
-+
-+  await Promise.all(
-+    Object.entries(files).map(async ([name, content]) =>
-+      fs.outputFile(path.join(root, name), content)
-+    )
-+  );
-+
-+  const variants = {
-+    commonjs: targets.includes('commonjs'),
-+    module: targets.includes('module'),
-+  };
-+
-+  for (const target of targets) {
-+    const build = target === 'commonjs' ? buildCommonJS : buildModule;
-+
-+    await build({
-+      root,
-+      source: path.join(root, 'src'),
-+      output: path.join(output, target),
-+      exclude: '**/{__tests__,__fixtures__,__mocks__}/**',
-+      options: {
-+        esm: true,
-+        // The default preset loads the babel plugin from the built files
-+        // So it can't be used when running tests against the source code
-+        configFile: path.resolve(
-+          import.meta.dirname,
-+          '../__fixtures__/babel.config.js'
-+        ),
-+      },
-+      variants,
-+      report,
-+    });
-+  }
-+};
-+
-+const getImportsWarnings = () =>
-+  vi
-+    .mocked(report.warn)
-+    .mock.calls.map(([message]) => message)
-+    .filter((message) => message.includes("won't apply to the files in"));
-+
-+const readPackageJson = async (output: string): Promise<unknown> => {
-+  const packageJsonPath = path.join(output, 'package.json');
-+
-+  return (await fs.pathExists(packageJsonPath))
-+    ? fs.readJSON(packageJsonPath)
-+    : undefined;
-+};
-+
-+test.each([
-+  ['module', undefined, { type: 'module' }],
-+  ['module', 'commonjs', { type: 'module' }],
-+  ['module', 'module', undefined],
-+  ['commonjs', undefined, { type: 'commonjs' }],
-+  ['commonjs', 'module', { type: 'commonjs' }],
-+  ['commonjs', 'commonjs', undefined],
-+] as const)(
-+  'writes package.json for %s output when the root type is %s',
-+  async (target, type, expected) => {
-+    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-compile-'));
-+
-+    try {
-+      await buildLibrary(root, {
-+        packageJson: { type },
-+        files: { 'src/index.ts': 'export const foo = 42;\n' },
-+        targets: [target],
-+      });
-+
-+      expect(await readPackageJson(path.join(root, 'lib', target))).toEqual(
-+        expected
-+      );
-+    } finally {
-+      await fs.remove(root);
-+    }
-+  }
-+);
-+
-+test.each(['module', 'commonjs'] as const)(
-+  'resolves package imports in %s output when package.json has the same type',
-+  async (target) => {
-+    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-compile-'));
-+
-+    try {
-+      await buildLibrary(root, {
-+        packageJson: {
-+          type: target,
-+          imports: {
-+            '#internal/*': `./lib/${target}/internal/*.js`,
-+          },
-+        },
-+        files: {
-+          'src/index.ts': [
-+            "import { foo } from '#internal/foo';",
-+            '',
-+            'console.log(foo);',
-+          ].join('\n'),
-+          'src/internal/foo.ts': "export const foo = 'bar';\n",
-+        },
-+        targets: [target],
-+      });
-+
-+      expect(getImportsWarnings()).toEqual([]);
-+
-+      const stdout = await spawn(
-+        process.execPath,
-+        [path.join(root, 'lib', target, 'index.js')],
-+        { cwd: root }
-+      );
-+
-+      expect(stdout).toBe('bar');
-+    } finally {
-+      await fs.remove(root);
-+    }
-+  }
-+);
-+
-+test.each([
-+  [['module', 'commonjs'], 'module'],
-+  [['commonjs'], 'commonjs'],
-+] as const)(
-+  'warns about package imports for %j targets only in %s output',
-+  async (targets, warned) => {
-+    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-compile-'));
-+
-+    try {
-+      await buildLibrary(root, {
-+        packageJson: { imports: { '#internal/*': './src/internal/*.ts' } },
-+        files: { 'src/index.ts': 'export const foo = 42;\n' },
-+        targets: [...targets],
-+      });
-+
-+      expect(getImportsWarnings()).toEqual([
-+        expect.stringContaining(path.join('lib', warned)),
-+      ]);
-+    } finally {
-+      await fs.remove(root);
-+    }
-+  }
-+);
-+
-+test('does not warn about an empty imports field', async () => {
-+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-compile-'));
-+
-+  try
-```
-
-**File**: `packages/react-native-builder-bob/src/__tests__/typescript.test.ts` (modified, +101/-3)
-```diff
-@@ -2,9 +2,9 @@ import os from 'node:os';
- import path from 'node:path';
- import { decode } from '@jridgewell/sourcemap-codec';
- import fs from 'fs-extra';
--import { expect, test, vi } from 'vitest';
-+import { beforeEach, expect, test, vi } from 'vitest';
- import build from '../targets/typescript.ts';
--import type { Report } from '../types.ts';
-+import type { Report, Variants } from '../types.ts';
- import { spawn } from '../utils/spawn.ts';
++  ```
  
- const tsc = path.resolve(
-@@ -20,6 +20,10 @@ const report: Report = {
-   error: vi.fn(),
- };
+-    Also note that if your module (e.g. `foo.js` in this case) contains ESM syntax, it will only work on a recent Node.js version. See [Compatibility](#compatibility) section for more information.
++  Note that code in all of these files will be included in the bundle for every platform unlike platform-specific extensions.
  
-+beforeEach(() => {
-+  vi.mocked(report.warn).mockClear();
-+});
-+
- const readDeclarationMap = async (filepath: string) => {
-   const value: unknown = await fs.readJSON(filepath);
- 
-@@ -47,10 +51,12 @@ const buildLibrary = async (
-     files,
-     compilerOptions,
-     packageJson,
-+    variants = { module: true },
-   }: {
-     files: Record<string, string>;
-     compilerOptions?: Record<string, unknown>;
-     packageJson?: Record<string, unknown>;
-+    variants?: Variants;
-   }
- ) => {
-   await fs.writeJSON(path.join(root, 'package.json'), {
-@@ -90,7 +96,7 @@ const buildLibrary = async (
-     report,
-     options: { project: 'tsconfig.json', tsc },
-     esm: true,
--    variants: { module: true },
-+    variants,
-   });
- };
- 
-@@ -267,3 +273,95 @@ test('keeps platform-specific declaration imports extensionless', async () => {
-     await fs.remove(root);
-   }
- });
-+
-+test('resolves package imports when package.json has the same type', async () => {
-+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-typescript-'));
-+
-+  try {
-+    await buildLibrary(root, {
-+      compilerOptions: { customConditions: ['library-source'] },
-+      packageJson: {
-+        imports: {
-+          '#internal/*': {
-+            'library-source': './src/internal/*.ts',
-+            types: './lib/typescript/src/internal/*.d.ts',
-+          },
-+        },
-+      },
-+      files: {
-+        'src/index.ts': "export { type Foo } from '#internal/foo';\n",
-+        'src/internal/foo.ts': 'export type Foo = { value: string };\n',
-+      },
-+    });
-+
-+    expect(
-+      await fs.pathExists(path.join(root, 'lib/typescript/package.json'))
-+    ).toBe(false);
-+
-+    expect(report.warn).not.toHaveBeenCalled();
-+
-+    const stdout = await typeCheckConsumer(
-+      root,
-+      ["import type { Foo } from 'library';", '', 'type Test = Foo;'].join('\n')
-+    );
-+
-+    expect(stdout).toBeUndefined();
-+  } finally {
-+    await fs.remove(root);
-+  }
-+});
-+
-+test('warns about package imports when package.json has a different type', async () => {
-+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-typescript-'));
-+
-+  try {
-+    await buildLibrary(root, {
-+      packageJson: {
-+        type: undefined,
-+        imports: { '#internal/*': './src/internal/*.ts' },
-+      },
-+      files: { 'src/index.ts': 'export type Foo = string;\n' },
-+    });
-+
-+    expect(
-+      await fs.readJSON(path.join(root, 'lib/typescript/package.json'))
-+    ).toEqual({ type: 'module' });
-+
-+    expect(report.warn).toHaveBeenCalledWith(
-+      expect.stringContaining("won't apply to the files in")
-+    );
-+  } finally {
-+    await fs.remove(root);
-+  }
-+});
-+
-+test('keeps package.json for commonjs declarations in a dual package setup', async () => {
-+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'bob-typescript-'));
-+
-+  try {
-+    await buildLibrary(root, {
-+      packageJson: {
-+        exports: {
-+          '.': {
-+            types: './lib/typescript/module/src/index.d.ts',
-+          },
-+        },
-+        imports: { '#internal/*': './src/internal/*.ts' },
-+      },
-+      files: { 'src/index.ts': 'export type Foo = string;\n' },
-+      variants: { commonjs: true, module: true },
-+    });
-+
-+    expect(
-+      await fs.pathExists(path.join(root, 'lib/typescript/module/package.json'))
-+    ).toBe(false);
-+
-+    expect(
-+      await fs.readJSON(path.join(root, 'lib/typescript/commonjs/package.json'))
-+    ).toEqual({ type: 'commonjs' });
-+
-+    expect(report.warn).not.toHaveBeenCalled();
-+  } finally {
-+    await fs.remove(root);
-+  }
-+});
-```
-
-**File**: `packages/react-native-builder-bob/src/targets/typescript.ts` (modified, +20/-13)
-```diff
-@@ -16,6 +16,7 @@ import {
- } from '../utils/resolveModuleSpecifier.ts';
- import { spawn } from '../utils/spawn.ts';
- import { type Replacement, updateSourceMap } from '../utils/updateSourceMap.ts';
-+import { writePackageType } from '../utils/writePackageType.ts';
- 
- type Options = Input & {
-   options?: {
-@@ -357,25 +358,31 @@ export default async function build({
-     if (esm) {
-       if (outputs?.commonjs && outputs?.module) {
-         // When ESM compatible output is enabled and commonjs build is present, we need to generate 2 builds for commonjs and esm
--        // In this case we copy the already generated types, and add `package.json` with `type` field
-+        // In this case we copy the already generated types
-         await fs.copy(outputs.commonjs, outputs.module);
--        await fs.writeJSON(path.join(outputs.commonjs, 'package.json'), {
--          type: 'commonjs',
--        });
--        await fs.writeJSON(path.join(outputs.module, 'package.json'), {
--          type: 'module',
--        });
--      } else if (outputs?.commonjs) {
--        await fs.writeJSON(path.join(outputs.commonjs, 'package.json'), {
-+      }
-+
-+      if (outputs.commonjs) {
-+        await writePackageType({
-+          root,
-+          output: outputs.commonjs,
-           type: 'commonjs',
--        });
--      } else if (outputs?.module) {
--        await fs.writeJSON(path.join(outputs.module, 'package.json'), {
--          type: 'module',
-+          pkg,
-+          variants,
-+          report,
-         });
-       }
- 
-       if (outputs.module) {
-+        await writePackageType({
-+          root,
-+          output: outputs.module,
-+          type: 'module',
-+          pkg,
-+          variants,
-+          report,
-+        });
-+
-         await rewriteDeclarationImports(
-           outputs.module,
-           source,
-```
-
-**File**: `packages/react-native-builder-bob/src/utils/compile.ts` (modified, +7/-1)
-```diff
-@@ -6,6 +6,7 @@ import * as babel from '@babel/core';
- import { glob } from 'glob';
- import type { Input, Variants } from '../types.ts';
- import { isCodegenSpec } from './isCodegenSpec.ts';
-+import { writePackageType } from './writePackageType.ts';
- 
- const require = createRequire(import.meta.url);
- 
-@@ -89,8 +90,13 @@ export default async function compile({
-   // So we skip generating `package.json` if `esm` is not enabled and `modules` is not `commonjs`
-   // This means that user can't use `type: 'module'` in root `package.json` without enabling `esm` for `module` target
-   if (esm || modules === 'commonjs') {
--    await fs.writeJSON(path.join(output, 'package.json'), {
-+    await writePackageType({
-+      root,
-+      output,
-       type: modules === 'commonjs' ? 'commonjs' : 'module',
-+      pkg,
-+      variants,
-+      report,
-     });
-   }
- 
-```
-
----
-
-### Incident Patch 2: `c68693e1` (2026-10-21)
-**Commit Message**: fix: use latest Community CLI when generating example (#959)
-
-Closes #958
-
-## Summary
-Updated vanilla example generation to use
-`@react-native-community/cli@latest`.
-Added a behavioral regression test for the generated `npx` command.
-Lint and typecheck pass; the full suite passes 30/30 with an extended
-timeout.
-
-## Changed files
--
-`packages/create-react-native-library/src/exampleApp/generateExampleApp.ts`
--
-`packages/create-react-native-library/src/exampleApp/generateExampleApp.test.ts`
-
-## Verification
-- `yarn install --immutable` passed
-- `yarn run test` passed
-- `yarn run lint` passed
-- `yarn run typecheck` passed
-
----
-Code was written with Codex, reviewed and guided by me.
-
----------
-
-Co-authored-by: Satyajit Sahoo <[REDACTED_EMAIL]>
-
-**File**: `packages/create-react-native-library/src/exampleApp/generateExampleApp.ts` (modified, +2/-2)
-```diff
-@@ -138,9 +138,9 @@ export default async function generateExampleApp({
-         );
-       }
- 
--      // `npx @react-native-community/cli init <projectName> --directory example --skip-install`
-+      // `npx @react-native-community/cli@latest init <projectName> --directory example --skip-install`
-       args = [
--        `@react-native-community/cli`,
-+        `@react-native-community/cli@latest`,
-         'init',
-         `${config.project.name}Example`,
-         '--package-name',
-```
-
----
-
-### Incident Patch 3: `1dfdfdff` (2026-10-21)
-**Commit Message**: fix: keep generated gitignore in example apps (#952)
-
-## Problem
-
-`create-react-native-library` generates the example app with
-`@react-native-community/cli`, `react-native-test-app` or
-`create-expo-app`, then removes the generated `.gitignore`. That loses
-the app-specific rules for generated local artifacts, such as
-`.xcode.env` and `*.xcworkspace/` for the test app.
-
-## Fix
-
-Keep the generated `.gitignore` for all example types. For Expo examples
-of native libraries, append the `android/` and `ios/` rules instead of
-overwriting the file, so the Expo rules stay. Older Expo SDK templates
-(e.g. SDK 52) don't ignore the native folders, so the rules are still
-needed.
-
-## Validation
-
-- Generated the test-app from the pre-change and current code. Only the
-current output retains `example/.gitignore`.
-- Verified the retained file includes `.xcode.env` and `*.xcworkspace/`
-rules.
-- Ran ESLint, TypeScript build, and `git diff --check`.
-
----------
-
-Co-authored-by: Satyajit Sahoo <[REDACTED_EMAIL]>
-
-**File**: `packages/create-react-native-library/src/exampleApp/generateExampleApp.ts` (modified, +8/-7)
-```diff
-@@ -18,7 +18,6 @@ const FILES_TO_DELETE = [
-   '.eslintrc.js',
-   '.flowconfig',
-   '.git',
--  '.gitignore',
-   '.prettierrc.js',
-   'App.js',
-   'App.tsx',
-@@ -367,13 +366,15 @@ export default async function generateExampleApp({
-       scripts.android = 'expo run:android';
-       scripts.ios = 'expo run:ios';
- 
--      await fs.writeFile(
-+      await fs.appendFile(
-         path.join(directory, '.gitignore'),
--        dedent`
--        # These folders are generated with prebuild (CNG)
--        android/
--        ios/
--        `
-+        '\n' +
-+          dedent`
-+          # These folders are generated with prebuild (CNG)
-+          android/
-+          ios/
-+          ` +
-+          '\n'
-       );
-     }
- 
+ - Avoid using `.cjs`, `.mjs`, `.cts` or `.mts` extensions. Metro always requires file extensions in import statements when using `.cjs` or `.mjs` which breaks platform-specific extension resolution.
+ - Avoid using `"moduleResolution": "node16"` or `"moduleResolution": "nodenext"` in your `tsconfig.json` file. They require file extensions in import statements which breaks platform-specific extension resolution.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1275,13 +691,13 @@ Co-authored-by: Satyajit Sahoo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skip the generated package.json when the root type matches (#957)
+## X. docs: update guidance on platform specific code with node resolution
 
 **RULE**:
 When implementing operations in `docs/pages/esm.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-builder-bob. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d120d24`: skip the generated package.json when the root type matches (#957). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5961f36d`: docs: update guidance on platform specific code with node resolution. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/pages/esm.md`.
@@ -1289,31 +705,44 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-### Subpath imports
-
-Bob adds a `package.json` file with the `type` field to the output folders (e.g. `lib/module/package.json`) so that tools know which module system the files use. Node.js, TypeScript and Metro read [subpath imports](https://nodejs.org/api/packages.html#subpath-imports) from the closest `package.json` file, so the `imports` field in your `package.json` won't apply to the files in these folders.
-
-Bob skips this file when the `type` field in your `package.json` has the same value. So to use the `imports` field, set `type` to `module` in your `package.json`:
-
-```json
-"type": "module",
-"imports": {
-  "#internal/*": {
-    "my-library-source": "./src/internal/*.ts",
-    "types": "./lib/typescript/src/internal/*.d.ts",
-    "default": "./lib/module/internal/*.js"
-  }
-}
-```
-
-Node.js will then treat all `.js` files in your library as ES modules, including published files such as `react-native.config.js`. So config files in the project root need to use ESM syntax (e.g. `export default` instead of `module.exports`). This is especially important for `react-native.config.js`, since React Native CLI ignores a CommonJS version without showing an error, and Expo autolinking doesn
+  Alternatively, if you want to be able to use the library in Node.js with `import` syntax, use `Platform.select` or `Platform.OS` checks instead of platform-specific extensions:
+  ```js
+  import { Platform } from 'react-native';
+  import { foo as fooAndroid } from './fooAndroid.js';
+  import { foo as fooIOS } from './fooIOS.js';
+  import { foo as fooFallback } from './fooFallback.js';
+  const foo = Platform.select({
+    android: fooAndroid,
+    ios: fooIOS,
+    default: fooFallback,
+  });
+  ```
+  Note that code in all of these files will be included in the bundle for every platform unlike platform-specific extensions.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+  Alternatively, if you want to be able to use the library in Node.js with `import` syntax, there are a few options:
+  - Use `Platform.select` instead of platform-specific extensions:
+    ```js
+    import { Platform } from 'react-native';
+
+    const foo = Platform.select({
+      android: require('./fooAndroid.js'),
+      ios: require('./fooIOS.js'),
+      default: require('./fooFallback.js'),
+    });
+    ```
+
+  - Use `require` to import code with platform-specific extensions in your library:
+    ```js
+    // will import `foo.native.js`, `foo.ios.js`, `foo.js` etc.
+    const { foo } = require('./foo');
+    ```
+    Make sure to have a file without any platform-specific extensions that will be loaded by Node.js.
+    Also note that if your module (e.g. `foo.js` in this case) contains ESM syntax, it will only work on a recent Node.js version. See [Compatibility](#compatibility) section for more information.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d120d24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5961f36d` are properly handled with clean fallback behavior.

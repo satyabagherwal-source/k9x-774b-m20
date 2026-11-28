@@ -14085,3 +14085,6 @@
 | `CYCLE-20261128-SU20` | `2026-11-28T16:35:24.072Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`74a16c8d...`) |
 | `CYCLE-20261128-OUPQ` | `2026-11-28T17:00:17.918Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md` | Yes (`3467d973...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T17:00:59.560Z` | `wcandillon-react-native-skia` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-77E7EEF6` [Domain H] | Yes (`3dc935f0...`) |
+| `CYCLE-20261128-182I` | `2026-11-28T17:09:55.098Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11123` | Yes (`a8842084...`) |
+| `CYCLE-20261128-19YT` | `2026-11-28T17:09:57.557Z` | `callstack/react-native-builder-bob` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11124` | Yes (`39ea9633...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T17:10:30.208Z` | `callstack-react-native-builder-bob` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F654669C` [Domain H] | Yes (`5b39b3cd...`) |

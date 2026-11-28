@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T17:01:04.109Z",
+  "last_updated": "2026-11-28T17:10:32.526Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-28T15:54:30.394Z",
+      "processed_at": "2026-11-28T17:10:31.311Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3308,7 +3308,7 @@
       "staged_for_review": 1
     },
     "fastify-fastify-learnings.md": {
-      "processed_at": "2026-11-25T03:36:56.207Z",
+      "processed_at": "2026-11-28T17:10:02.223Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4081,9 +4081,14 @@
       "processed_at": "2026-11-28T14:57:08.295Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "callstack-react-native-builder-bob-learnings.md": {
+      "processed_at": "2026-11-28T17:10:30.208Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 5394,
-  "total_canonical_promoted": 608,
-  "total_staged_for_review": 4111
+  "total_dossiers_evaluated": 5397,
+  "total_canonical_promoted": 609,
+  "total_staged_for_review": 4113
 }

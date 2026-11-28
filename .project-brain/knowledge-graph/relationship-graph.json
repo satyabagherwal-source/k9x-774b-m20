@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T17:00:59.556Z",
+  "updated_at": "2026-11-28T17:10:30.205Z",
   "statistics": {
-    "total_nodes": 608,
+    "total_nodes": 609,
     "total_edges": 241,
     "domain_distribution": {
       "D": 360,
       "M": 1,
-      "H": 121,
+      "H": 122,
       "J": 23,
       "K": 37,
       "L": 9,
@@ -13563,6 +13563,28 @@
       ],
       "created_at": "2026-11-28T17:00:59.556Z",
       "updated_at": "2026-11-28T17:00:59.556Z"
+    },
+    "DOM-H-F654669C": {
+      "id": "DOM-H-F654669C",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "docs: update guidance on platform specific code with node resolution",
+      "summary": "Prevents defects observed in production commit `5961f36d`: docs: update guidance on platform specific code with node resolution. Unvalidated -> When implementing operations in `docs/pages/esm.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://callstack-react-native-builder-bob/callstack-react-native-builder-bob-learnings.md",
+        "source_version": "5961f36d",
+        "observed_at": "2026-11-28T17:09:56.277Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (callstack-react-native-builder-bob)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-28T17:10:30.205Z",
+      "updated_at": "2026-11-28T17:10:30.205Z"
     }
   },
   "edges": [

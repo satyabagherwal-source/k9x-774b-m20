@@ -4,24 +4,24 @@
 {
   "source_repository": "fastify/fastify",
   "source_url": "https://github.com/fastify/fastify",
-  "source_version": "f5757f12",
+  "source_version": "c38830f1",
   "license": "MIT",
-  "timestamp": "2026-11-25T03:36:49.781Z",
+  "timestamp": "2026-11-28T17:09:55.341Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-fastify-fastify",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [fastify/fastify](https://github.com/fastify/fastify) (Revision: `f5757f12`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T03:36:49.781Z`  
+> **Provenance**: Harvested from [fastify/fastify](https://github.com/fastify/fastify) (Revision: `c38830f1`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T17:09:55.341Z`  
 > **Learning ID**: `learn-github-fastify-fastify`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 82%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from fastify/fastify:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T03:36:48.287Z  
+> **Harvest Timestamp**: 2026-11-28T17:09:53.662Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Fast and low overhead web framework, for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 37456 stars
+- **Stars / Engagement**: 37473 stars
 
 ---
 
@@ -1318,621 +1318,141 @@ fastify.listen({ port: 3000 }, (err, address) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb087582` (2026-11-23)
-**Commit Message**: fix(logger): route all internal log lines through LogController (#7243)
+### Incident Patch 1: `c38830f1` (2026-11-28)
+**Commit Message**: fix(server): do not crash when the interface list cannot be enumerated (#7270)
 
-Some internal log lines skipped the `logController` and called
-`*.log.<level>()` directly with the pino `(obj, msg)` signature. A
-custom controller could not take over those lines. This mattered most
-for users with a non-pino `loggerInstance`, such as winston, which
-expects `(msg, meta)`.
-
-This PR adds an overridable `LogController` method for each of those
-lines and routes the call sites through `server[kLogController]`.
-
-#### New methods
-
-| Method | Replaces | Level |
-|---|---|---|
-| `onRequestAbortError(error, request, reply, metadata)` |
-`lib/route.js` onRequestAbort hook failure | error |
-| `replyAlreadySent(error, request, reply, metadata)` | `lib/reply.js`
-`reply.send()` called twice | warn |
-| `headersAlreadySent(error, request, reply, metadata)` | `lib/reply.js`
-"did you forget to `return reply`" | warn |
-| `replyThenRejection(error, request, reply, metadata)` | `lib/reply.js`
-`reply.then` with no reject callback | warn |
-| `streamHeadersAlreadySent(request, reply, metadata)` | `lib/reply.js`
-stream after `res.writeHead` (node and web streams) | warn |
-| `streamPayloadNotClosable(request, reply, metad
-
-**File**: `docs/Reference/Server.md` (modified, +24/-3)
+**File**: `lib/server.js` (modified, +12/-1)
 ```diff
-@@ -446,12 +446,19 @@ The error-related methods share a unified signature:
- `(error, request, reply, metadata)`, where `metadata` carries any extra
- per-method data (for example, the `statusCode` passed to `serializerError`).
- `incomingRequest` and `routeNotFound` omit the `error` argument, since they fire
--at lifecycle points where no error exists. `serviceUnavailable` is a further
--exception, since no route — and therefore no `request`/`reply` — is formed.
-+at lifecycle points where no error exists. Server-scoped methods
-+(`serviceUnavailable`, `onListenHookError`, `clientError` and
-+`serverListening`) receive `(logger, server, ...)` instead, since no route —
-+and therefore no `request`/`reply` — is formed.
-+
-+The request-lifecycle methods (`incomingRequest` through `serializerError`)
-+are gated by `disableRequestLogging`. All other methods are always emitted by
-+default, because they report misuse, failed hooks or possible Fastify bugs
-+rather than routine request traffic.
- 
- | Method | Signature | Description |
- |--------|-----------|-------------|
--| `isLogDisabled` | `(request)` | Checks whether request logging is disabled for the given request. It impacts all other log methods. |
-+| `isLogDisabled` | `(request)` | Checks whether request logging is disabled for the given request. Used by the request-lifecycle methods below. |
- | `incomingRequest` | `(request, reply, metadata)` | Logs an incoming request at `info` level. |
- | `requestCompleted` | `(error, request, reply, metadata)` | Logs the outcome of a completed request. Uses `error` level when an error is present, `info` otherwise. |
- | `defaultErrorLog` | `(error, request, reply, metadata)` | Logs an error handled by the default error handler. Uses `error` for 5xx, `info` for 4xx. |
-@@ -460,6 +467,20 @@ exception, since no route — and therefore no `request`/`reply` — is formed.
- | `writeHeadError` | `(error, request, reply, metadata)` | Logs a warning when `writeHead` fails during error handling. |
- | `serializerError` | `(error, request, reply, metadata)` | Logs an error when the serializer for a given status code fails. The triggering status code is available as `metadata.statusCode`. |
- | `serviceUnavailable` | `(logger, server)` | Logs a 503 when the server is closing. Always emitted, not gated by `disableRequestLogging`. |
-+| `onRequestAbortError` | `(error, request, reply, metadata)` | Logs at `error` level an error thrown by an `onRequestAbort` hook. Always emitted. |
-+| `replyAlreadySent` | `(error, request, reply, metadata)` | Logs at `warn` level a `FST_ERR_REP_ALREADY_SENT` error when `reply.send()` is called twice. Always emitted. |
-+| `headersAlreadySent` | `(error, request, reply, metadata)` | Logs at `warn` level a "did you forget to `return reply`" hint when `writeHead` throws `ERR_HTTP_HEADERS_SENT`. Always emitted. |
-+| `replyThenRejection` | `(error, request, reply, metadata)` | Logs at `warn` level a response error awaited through `reply.then()` without a reject callback. Always emitted. |
-+| `streamHeadersAlreadySent` | `(request, reply, metadata)` | Logs at `warn` level when a stream is sent after `res.writeHead()` was called. Always emitted. |
-+| `streamPayloadNotClosable` | `(request, reply, metadata)` | Logs at `warn` level when a stream payload has no `destroy`, `close` or `abort` method. Always emitted. |
-+| `trailerError` | `(error, request, reply, metadata)` | Logs at `debug` level an error returned by a trailer function. The trailer name is available as `metadata.trailerName`. Always emitted. |
-+| `notFoundInNotFoundHandler` | `(request, reply, metadata)` | Logs at `warn` level when `reply.callNotFound()` is called inside a 404 handler. Always emitted. |
-+| `fourOhFourFallback` | `(request, reply, metadata)` | Logs two `warn` lines when the 404 router fallback is reached (a likely Fastify bug): a bug report request and `metadata.router.prettyPrint()`. Always emitted. |
-+| `promiseRejectedAfterSent` | `(error, request, reply, metadata)` | Logs at `error` level when an async handler rejects after the reply was sent. Always emitted. |
-+| `headStreamError` | `(error, request, reply, metadata)` | Logs at `error` level a stream error in an automatically created `HEAD` route. Always emitted. |
-+| `onListenHookError` | `(logger, server, error)` | Logs at `error` level an error thrown by an `onListen` hook. `server` is the instance that registered the hook. |
-+| `clientError` | `(logger, server, error, label)` | Logs at `trace` level a client error handled by the default `clientErrorHandler`. `label` is `timeout`, `header_overflow` or `error`. Not called when a custom `clientErrorHandler` is set. |
-+| `serverListening` | `(logger, server, address, listenTextResolver)` | Logs at `info` level `listenTextResolver(address)` once per listening address. |
- 
- **Note:** When you override a method, you take full control of it — the
- default `disableRequestLogging` check is **not** automatically applied.
+@@ -361,7 +361,18 @@ function getServerInstance (options, httpHandler) {
+  */
+ function getAddresses (address) {
+   if (address.address === '0.0.0.0') {
+-    return Object.values(os.networkInterfaces()).flatMap((iface) => {
++    let interfaces
++    try {
++      interfaces = os.networkInterfaces()
++    } catch {
++      // The interface list cannot be enumerated on this platform. This happens
++      // on Android, where getifaddrs() fails with EACCES, and in sandboxes
++      // that forbid reading it. Fall back to the address we bound to instead
++      // of letting the exception escape the 'listening' event handler, where it
++      // would take the whole process down.
++      return [address.address]
++    }
++    return Object.values(interfaces).flatMap((iface) => {
+       return iface.filter((iface) => iface.family === 'IPv4')
+     }).sort((iface) => {
+       /* c8 ignore next 2 */
 ```
 
-**File**: `fastify.js` (modified, +1/-1)
+**File**: `test/listen.1.test.js` (modified, +20/-0)
 ```diff
-@@ -1006,7 +1006,7 @@ function defaultClientErrorHandler (err, socket) {
-   // Most devs do not know what to do with this error.
-   // In the vast majority of cases, it's a network error and/or some
-   // config issue on the load balancer side.
--  this.log.trace({ err }, `client ${errorLabel}`)
-+  this[kLogController].clientError(this.log, this, err, errorLabel)
-   // Copying standard node behavior
-   // https://github.com/nodejs/node/blob/6ca23d7846cb47e84fd344543e394e50938540be/lib/_http_server.js#L666
- 
-```
-
-**File**: `lib/four-oh-four.js` (modified, +2/-3)
-```diff
-@@ -171,9 +171,8 @@ function fourOhFour (options) {
- 
-     fourOhFourContext.server[kLogController].incomingRequest(request, reply)
- 
--    // Since this could be a bug, we log it without checking if the logging is disabled
--    request.log.warn('the default handler for 404 did not catch this, this is likely a fastify bug, please report it')
--    request.log.warn(router.prettyPrint())
-+    // Since this could be a bug, the default controller logs it without checking if the logging is disabled
-+    fourOhFourContext.server[kLogController].fourOhFourFallback(request, reply, { router })
-     reply.code(404).send(new FST_ERR_NOT_FOUND())
-   }
- }
-```
-
-**File**: `lib/head-route.js` (modified, +5/-2)
-```diff
-@@ -1,4 +1,7 @@
+@@ -1,5 +1,6 @@
  'use strict'
-+
-+const { kLogController } = require('./symbols')
-+
- function headRouteOnSendHandler (req, reply, payload, done) {
-   // If payload is undefined
-   if (payload === undefined) {
-@@ -10,7 +13,7 @@ function headRouteOnSendHandler (req, reply, payload, done) {
-   // node:stream
-   if (typeof payload.resume === 'function') {
-     payload.on('error', (err) => {
--      reply.log.error({ err }, 'Error on Stream found for HEAD route')
-+      reply.server[kLogController].headStreamError(err, req, reply)
-     })
-     payload.resume()
-     done(null, null)
-@@ -20,7 +23,7 @@ function headRouteOnSendHandler (req, reply, payload, done) {
-   // node:stream/web
-   if (typeof payload.getReader === 'function') {
-     payload.cancel('Stream cancelled by HEAD route').catch((err) => {
--      reply.log.error({ err }, 'Error on Stream found for HEAD route')
-+      reply.server[kLogController].headStreamError(err, req, reply)
-     })
-     done(null, null)
-     return
-```
-
-**File**: `lib/hooks.js` (modified, +3/-2)
-```diff
-@@ -34,7 +34,8 @@ const {
- const {
-   kChildren,
-   kHooks,
--  kRequestPayloadStream
-+  kRequestPayloadStream,
-+  kLogController
- } = require('./symbols')
  
- function Hooks () {
-@@ -190,7 +191,7 @@ function onListenHookRunner (server) {
-   next()
- 
-   function next (err) {
--    err && server.log.error(err)
-+    err && server[kLogController].onListenHookError(server.log, server, err)
- 
-     if (
-       i === hooksLen
-```
-
-**File**: `lib/log-controller.js` (modified, +191/-0)
-```diff
-@@ -162,6 +162,197 @@ class LogController {
-   serviceUnavailable (logger, server) {
-     logger.info({ res: { statusCode: 503 } }, 'request aborted - refusing to accept new requests as server is closing')
-   }
-+
-+  /**
-+   * Logs an error thrown by an `onRequestAbort` hook.
-+   * Always emitted (not gated by `disableRequestLogging`).
-+   *
-+   * @param {Error} error         The error thrown by the hook.
-+   * @param {object} request      Fastify request object.
-+   * @param {object} reply        Fastify reply object.
-+   * @param {object} [metadata]   Extra contextual data (unused).
-+   */
-+  onRequestAbortError (error, request, reply, metadata) {
-+    reply.log.error({ err: error }, 'onRequestAborted hook failed')
-+  }
-+
-+  /**
-+   * Logs a warning when `reply.send()` is called on a reply already sent.
-+   * Always emitted (not gated by `disableRequestLogging`).
-+   *
-+   * @param {Error} error         A `FST_ERR_REP_ALREADY_SENT` error.
-+   * @param {object} request      Fastify request object.
-+   * @param {object} reply        Fastify reply object.
-+   * @param {object} [metadata]   Extra contextual data (unused).
-+   */
-+  replyAlreadySent (error, request, reply, metadata) {
-+    reply.log.warn({ err: error })
-+  }
-+
-+  /**
-+   * Logs a warning when `writeHead` fails because headers were already sent,
-+   * usually caused by a missing `return reply` in an async handler.
-+   * Always emitted (not gated by `disableRequestLogging`).
-+   *
-+   * @param {Error} error         The `ERR_HTTP_HEADERS_SENT` error thrown by writeHead.
-+   * @param {object} request      Fastify request object.
-+   * @param {object} reply        Fastify reply object.
-+   * @param {object} [metadata]   Extra contextual data (unused).
-+   */
-+  // eslint-disable-next-line n/handle-callback-err -- the default line does not include the error
-+  headersAlreadySent (error, request, reply, metadata) {
-+    reply.log.warn(`Reply was already sent, did you forget to "return reply" in the "${request.raw.url}" (${request.raw.method}) route?`)
-+  }
-+
-+  /**
-+   * Logs a warning when the response stream errors while awaiting `reply.then()`
-+   * and no rejection callback was provided.
-+   * Always emitted (not gated by `disableRequestLogging`).
-+   *
-+   * @param {Error} error         The response stream error.
-+   * @param {object} request      Fastify request object.
-+   * @param {object} reply        Fastify reply object.
-+   * @param {object} [metadata]   Extra contextual data (unused).
-+   */
-+  // eslint-disable-next-line n/handle-callback-err -- the default line does not include the error
-+  replyThenRejection (error, request, reply, metadata) {
-+    reply.log.warn('unhandled rejection on reply.then')
-+  }
-+
-+  /**
-+   * Logs a warning when a stream payload is sent after `res.writeHead()`
-+   * was already called, so Fastify can no longer set the reply headers.
-+   * Always emitted (not gated by `disableRequestLogging`).
-+   *
-+   * @param {object} request      Fastify request object.
-+   * @param {object} reply        Fastify reply object.
-+   * @param {object} [metadata]   Extra contextual data (unused).
-+   */
-+  streamHeadersAlreadySent (request, reply, metadata) {
-+    reply.log.warn('response will send, but you shouldn\'t use res.writeHead in stream mode')
-+  }
-+
-+  /**
-+   * Logs a warning when a stream payload has no `destroy`, `close` or `abort`
-+   * method, so Fastify cannot release it after the response terminates.
-+   * Always emitted (not gated by `disableRequestLogging`).
-+   *
-+   * @param {object} request      Fastify request object.
-+   * @param {object} reply        Fastify reply object.
-+   * @param {object} [metadata]   Extra contextual data (unused).
-+   */
-+  streamPayloadNotClosable (request, reply, metadata) {
-+    reply.log.warn('stream payload does not end properly')
-+  }
-+
-+  /**
-+   * Logs at `debug` level an error returned by a trailer function.
-+   * The trailer is skipped; the response is not affected.
-+   * Always emitted (not gated by `disableRequestLogging`).
-+   *
-+   * @param {Error} error         The error passed to the trailer callback.
-+   * @param {object} request      Fastify request object.
-+   * @param {object} reply        Fastify reply object.
-+   * @param {object} metadata     Extra contextual data.
-+   * @param {string} metadata.trailerName The name of the failed trailer.
-+   */
-+  trailerError (error, request, reply, metadata) {
-+    reply.log.debug(error)
-+  }
-+
-+  /**
-+   * Logs a warning when `reply.callNotFound()` is called inside a 404 handler.
-+   * Always emitted (not gated by `disableRequestLogging`).
-+   *
-+   * @param {object} request      Fastify request object.
-+   * @param {object} reply        Fastify reply object.
-+   * @param {object} [metadata]   Extra contextual data (unused).
-+   */
-+  notFoundInNotFoundHandler (request, reply, metadata) {
-+    reply.log.warn('Trying to send a NotFound error inside a 404 handler. Sending basic 404 response.')
-+  }
-+
-+  /**
-+   * Logs two
-```
-
-**File**: `lib/reply.js` (modified, +9/-8)
-```diff
-@@ -159,7 +159,8 @@ Reply.prototype.send = function (payload) {
-   }
- 
-   if (this.sent === true) {
--    this.log.warn({ err: new FST_ERR_REP_ALREADY_SENT(this.request.url, this.request.method) })
-+    const err = new FST_ERR_REP_ALREADY_SENT(this.request.url, this.request.method)
-+    this.server[kLogController].replyAlreadySent(err, this.request, this)
-     return this
-   }
- 
-@@ -500,7 +501,7 @@ Reply.prototype.then = function (fulfilled, rejected) {
-       if (rejected) {
-         rejected(err)
-       } else {
--        this.log && this.log.warn('unhandled rejection on reply.then')
-+        this.log && this.server[kLogController].replyThenRejection(err, this.request, this)
-       }
-     } else {
-       fulfilled()
-@@ -590,7 +591,7 @@ function safeWriteHead (reply, statusCode) {
-     res.writeHead(statusCode, reply[kReplyHeaders])
-   } catch (err) {
-     if (err.code === 'ERR_HTTP_HEADERS_SENT') {
--      reply.log.warn(`Reply was already sent, did you forget to "return reply" in the "${reply.request.raw.url}" (${reply.request.raw.method}) route?`)
-+      reply.server[kLogController].headersAlreadySent(err, reply.request, reply)
-     }
-     throw err
-   }
-@@ -791,7 +792,7 @@ function sendWebStream (payload, res, reply) {
-       res.setHeader(key, reply[kReplyHeaders][key])
-     }
-   } else {
--    reply.log.warn('response will send, but you shouldn\'t use res.writeHead in stream mode')
-+    reply.server[kLogController].streamHeadersAlreadySent(reply.request, reply)
-   }
- 
-   function onRead (result) {
-@@ -876,7 +877,7 @@ function sendStream (payload, res, reply) {
-       } else if (typeof payload.abort === 'function') {
-         payload.abort()
-       } else {
--        reply.log.warn('stream payload does not end properly')
-+        reply.server[kLogController].streamPayloadNotClosable(reply.request, reply)
-       }
-     }
-   })
-@@ -890,7 +891,7 @@ function sendStream (payload, res, reply) {
-       res.setHeader(key, reply[kReplyHeaders][key])
-     }
-   } else {
--    reply.log.warn('response will send, but you shouldn\'t use res.writeHead in stream mode')
-+    reply.server[kLogController].streamHeadersAlreadySent(reply.request, reply)
-   }
-   // trailers set: the eos listener above ends the response, not pipe
-   if (reply[kReplyTrailers] !== null) {
-@@ -937,7 +938,7 @@ function sendTrailer (payload, res, reply) {
-       // we can safely ignore error for trailer
-       // since it does affect the client
-       // we log in here only for debug usage
--      if (err) reply.log.debug(err)
-+      if (err) reply.server[kLogController].trailerError(err, reply.request, reply, { trailerName })
-       else trailers[trailerName] = value
- 
-       // we push the check to the end of event
-@@ -1052,7 +1053,7 @@ function buildReply (R) {
- 
- function notFound (reply) {
-   if (reply[kRouteContext][kFourOhFourContext] === null) {
--    reply.log.warn('Trying to send a NotFound error inside a 404 handler. Sending basic 404 response.')
-+    reply.server[kLogController].notFoundInNotFoundHandler(reply.request, reply)
-     reply.code(404).send('404 Not Found')
-     return
-   }
-```
-
-**File**: `lib/route.js` (modified, +1/-1)
-```diff
-@@ -620,7 +620,7 @@ function buildRouting (options) {
- 
- function handleOnRequestAbortHooksErrors (reply, err) {
-   if (err) {
--    reply.log.error({ err }, 'onRequestAborted hook failed')
-+    reply.server[kLogController].onRequestAbortError(err, reply.request, reply)
-   }
- }
- 
-```
-
----
-
-### Incident Patch 2: `2ada4bea` (2026-11-24)
-**Commit Message**: fix: reject a handlerTimeout above the Node.js timer limit (#7217)
-
-Fixes #7216
-
-Node.js runs a timer whose delay is above 2147483647 ms after 1 ms
-instead, so a `handlerTimeout` above that limit made the route time out
-almost at once. Such values are now rejected before the server starts:
-
-- **Route level:** `validateHandlerTimeoutOption` also rejects values
-above 2147483647, with the existing
-`FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT` code. The message now
-states the range: "must be an integer between 1 and 2147483647".
-- **Server level:** the init-options schema has `maximum: 2147483647`,
-so `Fastify({ handlerTimeout: 2147483648 })` throws
-`FST_ERR_INIT_OPTS_INVALID`. `lib/config-validator.js` is regenerated
-with `npm run build:validation`.
-- **Docs:** `Routes.md`, `Server.md` and `Errors.md` state the range.
-
-Routes without an explicit `handlerTimeout` still inherit the
-server-level value.
-
-Tests in `test/handler-timeout.test.js` cover both levels: `2147483648`
-is rejected and `2147483647` is accepted. No test waits for a timer.
-
-#### Checklist
-
-- [x] run `npm run test` (the benchmark was not run: the change only
-touches validation at registration, not the request path)
-- [
-
-**File**: `build/build-validation.js` (modified, +1/-1)
-```diff
-@@ -67,7 +67,7 @@ const schema = {
-     },
-     maxRequestsPerSocket: { type: 'integer', default: defaultInitOptions.maxRequestsPerSocket, nullable: true },
-     requestTimeout: { type: 'integer', default: defaultInitOptions.requestTimeout },
--    handlerTimeout: { type: 'integer', default: defaultInitOptions.handlerTimeout },
-+    handlerTimeout: { type: 'integer', maximum: 2147483647, default: defaultInitOptions.handlerTimeout },
-     bodyLimit: { type: 'integer', default: defaultInitOptions.bodyLimit },
-     http2: { type: 'boolean' },
-     https: {
-```
-
-**File**: `docs/Reference/Errors.md` (modified, +1/-1)
-```diff
-@@ -456,7 +456,7 @@ Below is a table with all the error codes used by Fastify.
- | <a id="fst_err_route_body_validation_schema_not_supported">FST_ERR_ROUTE_BODY_VALIDATION_SCHEMA_NOT_SUPPORTED</a> | Body validation schema route is not supported. | Use a different different method for the route. | [#4554](https://github.com/fastify/fastify/pull/4554) |
- | <a id="fst_err_route_body_limit_option_not_int">FST_ERR_ROUTE_BODY_LIMIT_OPTION_NOT_INT</a> | `bodyLimit` option must be an integer. | Use an integer for the `bodyLimit` option. | [#4554](https://github.com/fastify/fastify/pull/4554) |
- | <a id="fst_err_handler_timeout">FST_ERR_HANDLER_TIMEOUT</a> | Request timed out. | Increase the `handlerTimeout` option or optimize the handler. | - |
--| <a id="fst_err_route_handler_timeout_option_not_int">FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT</a> | `handlerTimeout` option must be a positive integer. | Use a positive integer for the `handlerTimeout` option. | - |
-+| <a id="fst_err_route_handler_timeout_option_not_int">FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT</a> | `handlerTimeout` option must be an integer between 1 and 2147483647. | Use an integer between 1 and 2147483647 for the `handlerTimeout` option. | - |
- | <a id="fst_err_route_rewrite_not_str">FST_ERR_ROUTE_REWRITE_NOT_STR</a> | `rewriteUrl` needs to be of type `string`. | Use a string for the `rewriteUrl`. | [#4554](https://github.com/fastify/fastify/pull/4554) |
- | <a id="fst_err_route_missing_content_type">FST_ERR_ROUTE_MISSING_CONTENT_TYPE</a> | `Content-Type` header is required for the request. | Send request with `Content-Type` header. | [#6832](https://github.com/fastify/fastify/pull/6832) |
- | <a id="fst_err_reopened_close_server">FST_ERR_REOPENED_CLOSE_SERVER</a> | Fastify has already been closed and cannot be reopened. | - | [#2415](https://github.com/fastify/fastify/pull/2415) |
-```
-
-**File**: `docs/Reference/Routes.md` (modified, +4/-3)
-```diff
-@@ -117,9 +117,10 @@ fastify.route(options)
-   `fastify(options)`. Defaults to `1048576` (1 MiB).
- * `handlerTimeout`: maximum number of milliseconds for the route's full
-   lifecycle. Overrides the server-level
--  [`handlerTimeout`](./Server.md#factory-handler-timeout). Must be a positive
--  integer. When the timeout fires, `request.signal` is aborted and a 503 error
--  is sent through the error handler (which can be customized per-route).
-+  [`handlerTimeout`](./Server.md#factory-handler-timeout). Must be an integer
-+  between `1` and `2147483647`, the longest delay a Node.js timer supports.
-+  When the timeout fires, `request.signal` is aborted and a 503 error is sent
-+  through the error handler (which can be customized per-route).
- * `logLevel`: set log level for this route. See below.
- * `logSerializers`: set serializers to log for this route.
- * `config`: object used to store custom configuration.
-```
-
-**File**: `docs/Reference/Server.md` (modified, +2/-1)
-```diff
-@@ -234,7 +234,8 @@ Defines the maximum number of milliseconds allowed for processing a request
- through the entire route lifecycle (from routing through onRequest, parsing,
- validation, handler execution, and serialization). If the response is not sent
- within this time, a `503 Service Unavailable` error is returned and
--`request.signal` is aborted.
-+`request.signal` is aborted. The value must be at most `2147483647`, the longest
-+delay a Node.js timer supports.
- 
- Unlike `connectionTimeout` and `requestTimeout` (which operate at the socket
- level), `handlerTimeout` is an application-level timeout that works correctly
-```
-
-**File**: `lib/config-validator.js` (modified, +9/-1)
-```diff
-@@ -3,7 +3,7 @@
- "use strict";
- module.exports = validate10;
- module.exports.default = validate10;
--const schema11 = {"type":"object","additionalProperties":false,"properties":{"connectionTimeout":{"type":"integer","default":0},"keepAliveTimeout":{"type":"integer","default":72000},"forceCloseConnections":{"oneOf":[{"type":"string","pattern":"idle"},{"type":"boolean"}]},"maxRequestsPerSocket":{"type":"integer","default":0,"nullable":true},"requestTimeout":{"type":"integer","default":0},"handlerTimeout":{"type":"integer","default":0},"bodyLimit":{"type":"integer","default":1048576},"http2":{"type":"boolean"},"https":{"if":{"not":{"oneOf":[{"type":"boolean"},{"type":"null"},{"type":"object","additionalProperties":false,"required":["allowHTTP1"],"properties":{"allowHTTP1":{"type":"boolean"}}}]}},"then":{"setDefaultValue":true}},"ignoreTrailingSlash":{"type":"boolean"},"ignoreDuplicateSlashes":{"type":"boolean"},"onProtoPoisoning":{"type":"string","default":"error"},"onConstructorPoisoning":{"type":"string","default":"error"},"pluginTimeout":{"type":"integer","default":10000},"requestIdHeader":{"anyOf":[{"type":"boolean"},{"type":"string"}],"default":false},"http2SessionTimeout":{"type":"integer","default":72000},"exposeHeadRoutes":{"type":"boolean","default":true},"routerOptions":{"type":"object","additionalProperties":false,"properties":{"allowUnsafeRegex":{"type":"boolean","default":false},"caseSensitive":{"type":"boolean","default":true},"compile":{"type":"boolean","default":false},"constraints":{"type":"object","additionalProperties":{"type":"object","required":["name","storage","validate","deriveConstraint"],"additionalProperties":true,"properties":{"name":{"type":"string"},"storage":{},"validate":{},"deriveConstraint":{}}}},"ignoreTrailingSlash":{"type":"boolean","default":false},"ignoreDuplicateSlashes":{"type":"boolean","default":false},"maxParamLength":{"type":"integer","default":100},"useSemicolonDelimiter":{"type":"boolean","default":false}}}}};
-+const schema11 = {"type":"object","additionalProperties":false,"properties":{"connectionTimeout":{"type":"integer","default":0},"keepAliveTimeout":{"type":"integer","default":72000},"forceCloseConnections":{"oneOf":[{"type":"string","pattern":"idle"},{"type":"boolean"}]},"maxRequestsPerSocket":{"type":"integer","default":0,"nullable":true},"requestTimeout":{"type":"integer","default":0},"handlerTimeout":{"type":"integer","maximum":2147483647,"default":0},"bodyLimit":{"type":"integer","default":1048576},"http2":{"type":"boolean"},"https":{"if":{"not":{"oneOf":[{"type":"boolean"},{"type":"null"},{"type":"object","additionalProperties":false,"required":["allowHTTP1"],"properties":{"allowHTTP1":{"type":"boolean"}}}]}},"then":{"setDefaultValue":true}},"ignoreTrailingSlash":{"type":"boolean"},"ignoreDuplicateSlashes":{"type":"boolean"},"onProtoPoisoning":{"type":"string","default":"error"},"onConstructorPoisoning":{"type":"string","default":"error"},"pluginTimeout":{"type":"integer","default":10000},"requestIdHeader":{"anyOf":[{"type":"boolean"},{"type":"string"}],"default":false},"http2SessionTimeout":{"type":"integer","default":72000},"exposeHeadRoutes":{"type":"boolean","default":true},"routerOptions":{"type":"object","additionalProperties":false,"properties":{"allowUnsafeRegex":{"type":"boolean","default":false},"caseSensitive":{"type":"boolean","default":true},"compile":{"type":"boolean","default":false},"constraints":{"type":"object","additionalProperties":{"type":"object","required":["name","storage","validate","deriveConstraint"],"additionalProperties":true,"properties":{"name":{"type":"string"},"storage":{},"validate":{},"deriveConstraint":{}}}},"ignoreTrailingSlash":{"type":"boolean","default":false},"ignoreDuplicateSlashes":{"type":"boolean","default":false},"maxParamLength":{"type":"integer","default":100},"useSemicolonDelimiter":{"type":"boolean","default":false}}}}};
- const func2 = Object.prototype.hasOwnProperty;
- const pattern0 = new RegExp("idle", "u");
- 
-@@ -298,6 +298,14 @@ data["handlerTimeout"] = coerced6;
- }
- }
- }
-+if(errors === _errs17){
-+if((typeof data5 == "number") && (isFinite(data5))){
-+if(data5 > 2147483647 || isNaN(data5)){
-+validate10.errors = [{instancePath:instancePath+"/handlerTimeout",schemaPath:"#/properties/handlerTimeout/maximum",keyword:"maximum",params:{comparison: "<=", limit: 2147483647},message:"must be <= 2147483647"}];
-+return false;
-+}
-+}
-+}
- var valid0 = _errs17 === errors;
- if(valid0){
- let data6 = data.bodyLimit;
-```
-
-**File**: `lib/errors.js` (modified, +1/-1)
-```diff
-@@ -457,7 +457,7 @@ const codes = {
-   ),
-   FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT: createError(
-     'FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT',
--    "'handlerTimeout' option must be an integer > 0. Got '%s'",
-+    "'handlerTimeout' option must be an integer between 1 and 2147483647. Got '%s'",
-     500,
-     TypeError
-   ),
-```
-
-**File**: `lib/route.js` (modified, +4/-1)
-```diff
-@@ -58,6 +58,9 @@ const {
- const { buildErrorHandler } = require('./error-handler')
- const { createChildLogger, defaultChildLoggerFactory } = require('./logger-factory.js')
- const { getGenReqId } = require('./req-id-gen-factory.js')
-+// Node.js runs a timer with a longer delay after 1 ms instead
-+const MAX_TIMEOUT = 0x7FFFFFFF
-+
- const routerKeys = [
-   'allowUnsafeRegex',
-   'buildPrettyMeta',
-@@ -662,7 +665,7 @@ function validateBodyLimitOption (bodyLimit) {
- 
- function validateHandlerTimeoutOption (handlerTimeout) {
-   if (handlerTimeout === undefined) return
--  if (!Number.isInteger(handlerTimeout) || handlerTimeout <= 0) {
-+  if (!Number.isInteger(handlerTimeout) || handlerTimeout <= 0 || handlerTimeout > MAX_TIMEOUT) {
-     throw new FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT(handlerTimeout)
-   }
- }
-```
-
-**File**: `test/handler-timeout.test.js` (modified, +18/-0)
-```diff
-@@ -41,6 +41,24 @@ test('route-level handlerTimeout rejects invalid values', async t => {
-   }, { code: 'FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT' })
++const os = require('node:os')
+ const { networkInterfaces } = require('node:os')
+ const { test, before } = require('node:test')
+ const Fastify = require('..')
+@@ -117,3 +118,22 @@ test('listen works with null host', async t => {
+   t.assert.ok(address.port > 0)
+   await fastify.close()
  })
- 
-+test('route-level handlerTimeout rejects values above the Node.js timer limit', async t => {
++
++test('listen works when the interface list cannot be enumerated', async t => {
++  assertNoWarning(t)
++
++  const original = os.networkInterfaces
++  os.networkInterfaces = () => {
++    throw Object.assign(
++      new Error('uv_interface_addresses returned Unknown system error 13'),
++      { code: 'ERR_SYSTEM_ERROR' }
++    )
++  }
++  t.after(() => { os.networkInterfaces = original })
++
 +  const fastify = Fastify()
 +
-+  t.assert.throws(() => {
-+    fastify.get('/too-long', { handlerTimeout: 2147483648 }, async () => 'ok')
-+  }, { code: 'FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT' })
-+
-+  fastify.get('/longest', { handlerTimeout: 2147483647 }, async () => 'ok')
-+  await fastify.ready()
-+  t.assert.strictEqual(fastify.hasRoute({ method: 'GET', url: '/longest' }), true)
++  await fastify.listen({ port: 0, host: '0.0.0.0' })
++  t.assert.ok(fastify.server.address().port > 0)
++  await fastify.close()
 +})
-+
-+test('server-level handlerTimeout rejects values above the Node.js timer limit', t => {
-+  t.plan(2)
-+  t.assert.throws(() => Fastify({ handlerTimeout: 2147483648 }), { code: 'FST_ERR_INIT_OPTS_INVALID' })
-+  t.assert.strictEqual(Fastify({ handlerTimeout: 2147483647 }).initialConfig.handlerTimeout, 2147483647)
-+})
-+
- // --- Lazy signal without handlerTimeout ---
- 
- test('when handlerTimeout is 0 (default), request.signal is lazily created', async t => {
 ```
 
 ---
 
-### Incident Patch 3: `6de5abed` (2026-11-21)
-**Commit Message**: fix: use "URI Too Long" as the error label for FST_ERR_MAX_PARAM_LENGTH (#7233)
+### Incident Patch 2: `a94dc370` (2026-11-26)
+**Commit Message**: fix: configure the router with the validated boolean router options (#7250)
 
-**File**: `docs/Reference/Server.md` (modified, +9/-1)
+**File**: `fastify.js` (modified, +16/-0)
 ```diff
-@@ -742,7 +742,15 @@ possible to override one or more of those handlers with custom code using this
- option.
+@@ -60,6 +60,15 @@ const {
  
- > ℹ️ Note:
--> Only `FST_ERR_BAD_URL` and `FST_ERR_ASYNC_CONSTRAINT` are implemented at present.
-+> Only `FST_ERR_BAD_URL`, `FST_ERR_MAX_PARAM_LENGTH` and
-+> `FST_ERR_ASYNC_CONSTRAINT` are implemented at present.
+ const { defaultInitOptions } = getSecuredInitialConfig
+ 
++const booleanRouterOptions = [
++  'allowUnsafeRegex',
++  'caseSensitive',
++  'compile',
++  'ignoreDuplicateSlashes',
++  'ignoreTrailingSlash',
++  'useSemicolonDelimiter'
++]
 +
-+These errors are raised by the router before a route is matched, so they are
-+handled outside the regular request lifecycle: hooks (such as `onRequest` and
-+`onSend`) and the handler set with
-+[`setErrorHandler`](#seterrorhandler) are not invoked for them. Use
-+`frameworkErrors` to customize the response, for example to add headers that
-+would otherwise be set by a hook.
+ const {
+   FST_ERR_ASYNC_CONSTRAINT,
+   FST_ERR_BAD_URL,
+@@ -949,6 +958,13 @@ function processOptions (options, defaultRoute, onBadUrl, onMaxParamLength) {
  
- ```js
- const fastify = require('fastify')({
+   const initialConfig = getSecuredInitialConfig(options)
+ 
++  // The validator coerces the boolean router options in initialConfig, where
++  // the string 'false' becomes false, while find-my-way treats any truthy
++  // value as on. Configure the router as initialConfig reports.
++  for (const key of booleanRouterOptions) {
++    options.routerOptions[key] = initialConfig.routerOptions[key]
++  }
++
+   // exposeHeadRoutes have its default set from the validator
+   options.exposeHeadRoutes = initialConfig.exposeHeadRoutes
+ 
 ```
 
-**File**: `fastify.js` (modified, +1/-1)
+**File**: `test/router-options.test.js` (modified, +20/-0)
 ```diff
-@@ -713,7 +713,7 @@ function fastify (serverOptions) {
-       return options.frameworkErrors(new FST_ERR_MAX_PARAM_LENGTH(path), request, reply)
-     }
-     const body = JSON.stringify({
--      error: 'Bad Request',
-+      error: 'URI Too Long',
-       code: 'FST_ERR_MAX_PARAM_LENGTH',
-       message: `'${path}' is exceeding the max param length`,
-       statusCode: 414
-```
-
-**File**: `test/router-options.test.js` (modified, +6/-0)
-```diff
-@@ -92,6 +92,12 @@ test('Should honor maxParamLength option', async (t) => {
-     url: '/test/123456789abcd'
-   })
-   t.assert.strictEqual(resError.statusCode, 414)
-+  t.assert.deepStrictEqual(resError.json(), {
-+    error: 'URI Too Long',
-+    code: 'FST_ERR_MAX_PARAM_LENGTH',
-+    message: '\'/test/123456789abcd\' is exceeding the max param length',
-+    statusCode: 414
-+  })
+@@ -849,3 +849,23 @@ test('Should not mutate user-provided routerOptions object', async t => {
+   t.assert.strictEqual(routerOptions.defaultRoute, undefined)
+   t.assert.strictEqual(routerOptions.onBadUrl, undefined)
  })
- 
- test('Should expose router options via getters on request and reply', (t, done) => {
++
++test('router is configured with the validated value of boolean router options', async t => {
++  for (const [options, url, statusCode] of [
++    [{ routerOptions: { ignoreDuplicateSlashes: 'false' } }, '//admin', 404],
++    [{ routerOptions: { ignoreDuplicateSlashes: 'true' } }, '//admin', 200],
++    [{ routerOptions: { useSemicolonDelimiter: 'false' } }, '/admin;x', 404],
++    [{ routerOptions: { ignoreTrailingSlash: 'false' } }, '/admin/', 404],
++    [{ ignoreDuplicateSlashes: 'false' }, '//admin', 404],
++    [{ ignoreDuplicateSlashes: 'false', routerOptions: { maxParamLength: 200 } }, '//admin', 404],
++    [{ ignoreDuplicateSlashes: true, routerOptions: { ignoreDuplicateSlashes: 'false' } }, '//admin', 404],
++    [{ caseSensitive: 'false' }, '/ADMIN', 200]
++  ]) {
++    const fastify = Fastify(options)
++    fastify.get('/admin', async () => 'admin')
++
++    const res = await fastify.inject(url)
++    t.assert.strictEqual(res.statusCode, statusCode, `${JSON.stringify(options)} ${url}`)
++    await fastify.close()
++  }
++})
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7262** (2026-11-24): [Backport 5.x] docs(ecosystem): remove plugins declared for Fastify ^3 or older (backport #7261) (@Tony133)
-- **PR #7261** (2026-11-24): docs(ecosystem): remove plugins declared for Fastify ^3 or older (@ilteoood)
-- **PR #7260** (2026-11-24): [Backport 5.x] docs(ecosystem): remove deprecated @thecodepace/fastify-http-query (@github-actions[bot])
-- **PR #7259** (2026-11-24): docs(ecosystem): remove deprecated @thecodepace/fastify-http-query (@Puppo)
-- **PR #7257** (2026-11-24): [Backport 5.x] fix: reject a handlerTimeout above the Node.js timer limit (backport #7217) (@Tony133)
-- **PR #7253** (closed): fix(route): validate handlerTimeout against 32-bit timer limit (@Ganesh1729-ui)
+- **PR #7277** (2026-11-28): [Backport 5.x] fix(server): do not crash when the interface list cannot be enumerated (@github-actions[bot])
+- **PR #7276** (2026-11-28): [Backport 5.x] docs(ecosystem): add validonce (backport #7272) (@Tony133)
+- **PR #7272** (2026-11-28): docs(ecosystem): add validonce (@nhunsaker)
+- **PR #7270** (2026-11-28): fix(server): do not crash when the interface list cannot be enumerated (@defaultuser233)
+- **PR #7269** (closed): fix: fall back to bound address when os.networkInterfaces() throws (@seragAhmed)
+- **PR #7266** (2026-11-26): fix: report deprecated top-level router options in initialConfig.routerOptions (5.x) (@mcollina)
 
 ---
 
@@ -1952,46 +1472,42 @@ touches validation at registration, not the request path)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. logger): route all internal log lines through LogController
+## X. server): do not crash when the interface list cannot be enumerated
 
 **RULE**:
-When implementing operations in `docs/Reference/Server.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/server.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb087582`: logger): route all internal log lines through LogController. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c38830f1`: server): do not crash when the interface list cannot be enumerated. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Reference/Server.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/server.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-at lifecycle points where no error exists. Server-scoped methods
-(`serviceUnavailable`, `onListenHookError`, `clientError` and
-`serverListening`) receive `(logger, server, ...)` instead, since no route —
-and therefore no `request`/`reply` — is formed.
-
-The request-lifecycle methods (`incomingRequest` through `serializerError`)
-are gated by `disableRequestLogging`. All other methods are always emitted by
-default, because they report misuse, failed hooks or possible Fastify bugs
-rather than routine request traffic.
-| `isLogDisabled` | `(request)` | Checks whether request logging is disabled for the given request. Used by the request-lifecycle methods below. |
-| `onRequestAbortError` | `(error, request, reply, metadata)` | Logs at `error` level an error thrown by an `onRequestAbort` hook. Always emitted. |
-| `replyAlreadySent` | `(error, request, reply, metadata)` | Logs at `warn` level a `FST_ERR_REP_ALREADY_SENT` error when `reply.send()` is called twice. Always emitted. |
-| `headersAlreadySent` | `(error, request, reply, metadata)` | Logs at `warn` level a "did you forget to `return reply`" hint when `writeHead` throws `ERR_HTTP_HEADERS_SENT`. Always emitted. |
-| `replyThenRejectio
+    let interfaces
+    try {
+      interfaces = os.networkInterfaces()
+    } catch {
+      // The interface list cannot be enumerated on this platform. This happens
+      // on Android, where getifaddrs() fails with EACCES, and in sandboxes
+      // that forbid reading it. Fall back to the address we bound to instead
+      // of letting the exception escape the 'listening' event handler, where it
+      // would take the whole process down.
+      return [address.address]
+    }
+    return Object.values(interfaces).flatMap((iface) => {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-at lifecycle points where no error exists. `serviceUnavailable` is a further
-exception, since no route — and therefore no `request`/`reply` — is formed.
-| `isLogDisabled` | `(request)` | Checks whether request logging is disabled for the given request. It impacts all other log methods. |
+    return Object.values(os.networkInterfaces()).flatMap((iface) => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb087582` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c38830f1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

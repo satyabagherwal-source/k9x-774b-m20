@@ -2003,10 +2003,10 @@
     "repository": "fastify/fastify",
     "platform": "github",
     "sourceUrl": "https://github.com/fastify/fastify",
-    "sourceVersion": "f5757f12",
+    "sourceVersion": "c38830f1",
     "license": "MIT",
-    "contentHash": "a89065c5a8dbeaaae690fc92f25af5254c977f5b277e0b62e9f1518e6e8dfa57",
-    "lastHarvestedAt": "2026-11-25T03:36:49.539Z",
+    "contentHash": "a8842084266e4d34e166d1de7c943ce5627140301a77cfd264780cf4645f4687",
+    "lastHarvestedAt": "2026-11-28T17:09:55.102Z",
     "learningId": "learn-github-fastify-fastify"
   },
   "expressjs-express": {
@@ -8433,10 +8433,10 @@
     "repository": "callstack/react-native-builder-bob",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/react-native-builder-bob",
-    "sourceVersion": "a73fd95b",
+    "sourceVersion": "5961f36d",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "6976497b125bc4354824d92e0064bc2dea65725260241a603f30010354cfec1e",
-    "lastHarvestedAt": "2026-10-25T21:53:22.207Z",
+    "contentHash": "39ea963371c309a95022c4a34c491a67af3b88a45ec85b93fad647d42e59f68b",
+    "lastHarvestedAt": "2026-11-28T17:09:57.561Z",
     "learningId": "learn-github-callstack-react-native-builder-bob"
   },
   "electron-electron": {

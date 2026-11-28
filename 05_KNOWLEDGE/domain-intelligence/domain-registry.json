@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T17:01:03.498Z",
-  "total_records": 2917,
+  "last_updated": "2026-11-28T17:10:32.096Z",
+  "total_records": 2920,
   "domains": {
     "A": {
       "total": 29,
@@ -1790,7 +1790,7 @@
       ]
     },
     "H": {
-      "total": 712,
+      "total": 715,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2503,7 +2503,10 @@
         "domain_intelligence-technical-construction-intelligence-gitroomhq-postiz-app-learnings-core-invarian",
         "domain_intelligence-technical-construction-intelligence-tuist-tuist-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tuist-tuist-learnings-core-invariants",
-        "DOM-H-77E7EEF6"
+        "DOM-H-77E7EEF6",
+        "domain_intelligence-technical-construction-intelligence-callstack-react-native-builder-bob-core-inva",
+        "DOM-H-F654669C",
+        "domain_intelligence-technical-construction-intelligence-callstack-react-native-builder-bob-learnings"
       ]
     },
     "I": {
@@ -28318,8 +28321,8 @@
       "title": "Technical Construction Intelligence: fastify/fastify Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-technical-construction-intelligence-fastify-fastify-core-invaria.md",
       "repository": "fastify/fastify",
-      "content_hash": "40f114f3818165edc485aa5b562f580039d8aad0777c2bc41fab7d3cdf2de034",
-      "created_at": "2026-11-25T03:36:49.969Z"
+      "content_hash": "97330bf3f3b8a672d740839353b294a92bfe2785bf325c9f453a92f38157c60e",
+      "created_at": "2026-11-28T17:09:55.553Z"
     },
     "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants",
@@ -28327,8 +28330,8 @@
       "title": "Technical Construction Intelligence: fastify-fastify-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-learnings-technical-construction-intelligence-fastify-fastify-le.md",
       "repository": "fastify-fastify-learnings",
-      "content_hash": "3aafeaddc75079ba14f6d781b6975e8b16a5985ff67a55826902bb5a40f2a771",
-      "created_at": "2026-11-25T03:36:57.076Z"
+      "content_hash": "76dcb527b5a73262d33171079961e2f90e121fc37d86ad5e1442d2692aefb706",
+      "created_at": "2026-11-28T17:10:02.936Z"
     },
     "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants",
@@ -46864,8 +46867,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "42609dd1488194666623de4294204d63fa0af51e9e98ad3d53a28f421204b3c0",
-      "created_at": "2026-11-28T15:54:31.188Z"
+      "content_hash": "d0c46db682040f7b9c4a5bd1d8171b811d512679382fc71030ed37af46c86310",
+      "created_at": "2026-11-28T17:10:32.096Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -49569,6 +49572,66 @@
       "confidence": 0.81,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-28T17:00:59.502Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-callstack-react-native-builder-bob-core-inva": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-callstack-react-native-builder-bob-core-inva",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: callstack/react-native-builder-bob Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-react-native-builder-bob-technical-construction-intelligence-callstack.md",
+      "repository": "callstack/react-native-builder-bob",
+      "content_hash": "53bf2a695ddf34e7ce45f1210eb7adff76220b996aa77d8de339bfa8d14007de",
+      "created_at": "2026-11-28T17:09:58.009Z"
+    },
+    "DOM-H-F654669C": {
+      "record_id": "DOM-H-F654669C",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "docs: update guidance on platform specific code with node resolution",
+      "content": "When implementing operations in `docs/pages/esm.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-builder-bob. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "5b39b3cdda63d005f5807d5ff546135be0961eec04c994acd2e4f19db67465e5",
+      "summary": "Prevents defects observed in production commit `5961f36d`: docs: update guidance on platform specific code with node resolution. Unvalidated -> When implementing operations in `docs/pages/esm.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory",
+      "provenance": {
+        "source_uri": "project://callstack-react-native-builder-bob/callstack-react-native-builder-bob-learnings.md",
+        "source_version": "5961f36d",
+        "observed_at": "2026-11-28T17:09:56.277Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (callstack-react-native-builder-bob)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of callstack-react-native-builder-bob"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T17:10:30.176Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-callstack-react-native-builder-bob-learnings": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-callstack-react-native-builder-bob-learnings",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: callstack-react-native-builder-bob-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-react-native-builder-bob-learnings-technical-construction-intelligence.md",
+      "repository": "callstack-react-native-builder-bob-learnings",
+      "content_hash": "7a2c2c656c1e5ae1fbc7ddeb6f835740dac15539b9e3b23a7df27d3f39d44fdc",
+      "created_at": "2026-11-28T17:10:30.864Z"
     }
   }
 }

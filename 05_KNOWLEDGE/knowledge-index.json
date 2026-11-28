@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T17:01:03.818Z",
-  "total_verified_learnings": 9153,
+  "last_updated": "2026-11-28T17:10:32.321Z",
+  "total_verified_learnings": 9154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27199,
+  "total_items": 27209,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "16480bef7e06c0e5c6a658678e6a6fe820ce3fd50acaef7bebd36132cf02c2cf",
+      "content_hash": "27d5ee7a009da5d0b3a392db46919cdf13bcb637240d4ca767a3e0bb51b0aaa1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T15:54:31.403Z"
+      "persisted_at": "2026-11-28T17:10:32.321Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -279418,8 +279418,8 @@
       "slug": "fastify-fastify",
       "platform": "github",
       "source_url": "https://github.com/fastify/fastify",
-      "source_version": "f5757f12",
-      "content_hash": "a89065c5a8dbeaaae690fc92f25af5254c977f5b277e0b62e9f1518e6e8dfa57",
+      "source_version": "c38830f1",
+      "content_hash": "a8842084266e4d34e166d1de7c943ce5627140301a77cfd264780cf4645f4687",
       "dossier_path": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "promoted_rules": [
@@ -279437,6 +279437,11 @@
           "number": 10445,
           "title": "route all internal log lines through LogController",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11123,
+          "title": "do not crash when the interface list cannot be enumerated",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -279444,7 +279449,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T03:36:49.311Z",
+      "verified_at": "2026-11-28T17:09:54.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -279486,10 +279491,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-technical-construction-intelligence-fastify-fastify-core-invaria.md",
       "title": "Technical Construction Intelligence: fastify/fastify Core Invariants",
       "repository": "fastify/fastify",
-      "source_version": "f5757f12",
-      "content_hash": "40f114f3818165edc485aa5b562f580039d8aad0777c2bc41fab7d3cdf2de034",
+      "source_version": "c38830f1",
+      "content_hash": "97330bf3f3b8a672d740839353b294a92bfe2785bf325c9f453a92f38157c60e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:36:49.969Z"
+      "persisted_at": "2026-11-28T17:09:55.553Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify",
@@ -279498,10 +279503,10 @@
       "relative_path": "08_VERIFICATION/fastify-fastify-verification-protocol-empirical-defect-shield-for-fastify-fastif.md",
       "title": "Verification Protocol: Empirical Defect Shield for fastify/fastify",
       "repository": "fastify/fastify",
-      "source_version": "f5757f12",
-      "content_hash": "792ceeae7ab0aad26291893983492adb619bd947368a0af7fe15cfcc2e9290ab",
+      "source_version": "c38830f1",
+      "content_hash": "18c0f4400ce1e97c1d8cdb52be88b09b3a3e02c9f03f8e0d0dd2fd3af070fb27",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:36:50.167Z"
+      "persisted_at": "2026-11-28T17:09:55.761Z"
     },
     "rule-8966": {
       "learning_id": "rule-8966",
@@ -279537,9 +279542,9 @@
       "title": "Technical Construction Intelligence: fastify-fastify-learnings Core Invariants",
       "repository": "fastify-fastify-learnings",
       "source_version": "HEAD",
-      "content_hash": "3aafeaddc75079ba14f6d781b6975e8b16a5985ff67a55826902bb5a40f2a771",
+      "content_hash": "76dcb527b5a73262d33171079961e2f90e121fc37d86ad5e1442d2692aefb706",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T03:36:57.076Z"
+      "persisted_at": "2026-11-28T17:10:02.936Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify-learnings",
@@ -279549,9 +279554,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fastify-fastify-learnings",
       "repository": "fastify-fastify-learnings",
       "source_version": "HEAD",
-      "content_hash": "848dc7e6dc0a23c8c9f81039d3c07b0455ee9685f545ffd75d9410b2eb52c1fe",
+      "content_hash": "26d00f699e291ac6816e66633e4d530c223d45f703c5de8eb93c0128c17435dd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:36:57.266Z"
+      "persisted_at": "2026-11-28T17:10:03.154Z"
     },
     "rule-8967": {
       "learning_id": "rule-8967",
@@ -359364,13 +359369,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-C97N-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-20G1-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b623df9a20ecb6e84b8e0cb437e8d5b8cfa491a54755fbc38a1f5ae9a57d9dcb",
+      "content_hash": "27e6402c8285a1e3f68eef7f42a09f02a9f330ac6d5503276ca4e6e2afe16bf0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T15:54:30.950Z"
+      "persisted_at": "2026-11-28T17:10:31.880Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -359380,9 +359385,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "42609dd1488194666623de4294204d63fa0af51e9e98ad3d53a28f421204b3c0",
+      "content_hash": "d0c46db682040f7b9c4a5bd1d8171b811d512679382fc71030ed37af46c86310",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T15:54:31.188Z"
+      "persisted_at": "2026-11-28T17:10:32.096Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -374016,6 +374021,151 @@
       "content_hash": "39f3fdc2bb3ecfc814aeae45abbdb68475e9c77f5f4e9e4d1b937ace85242915",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T17:01:00.133Z"
+    },
+    "rule-11123": {
+      "learning_id": "rule-11123",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11123,
+      "title": "do not crash when the interface list cannot be enumerated",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "c38830f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T17:09:54.844Z"
+    },
+    "candidate_directive-do-not-crash-when-the-interface-list-cannot-be-enumerated": {
+      "item_id": "candidate_directive-do-not-crash-when-the-interface-list-cannot-be-enumerated",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1898-do-not-crash-when-the-interface-list-cannot-be-enumerated.md",
+      "title": "do not crash when the interface list cannot be enumerated",
+      "repository": "fastify/fastify",
+      "source_version": "c38830f1",
+      "content_hash": "c864711625c46cec61d4308aed0b8982eba65f9aa17783471521a25c24aad036",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T17:09:55.341Z"
+    },
+    "learn-github-callstack-react-native-builder-bob": {
+      "learning_id": "learn-github-callstack-react-native-builder-bob",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "callstack/react-native-builder-bob",
+      "repository": "callstack/react-native-builder-bob",
+      "slug": "callstack-react-native-builder-bob",
+      "platform": "github",
+      "source_url": "https://github.com/callstack/react-native-builder-bob",
+      "source_version": "5961f36d",
+      "content_hash": "39ea963371c309a95022c4a34c491a67af3b88a45ec85b93fad647d42e59f68b",
+      "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-builder-bob-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 11124,
+          "title": "update guidance on platform specific code with node resolution",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-28T17:09:57.308Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-11124": {
+      "learning_id": "rule-11124",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11124,
+      "title": "update guidance on platform specific code with node resolution",
+      "source_url": "https://github.com/callstack/react-native-builder-bob",
+      "source_version": "5961f36d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T17:09:57.308Z"
+    },
+    "candidate_directive-update-guidance-on-platform-specific-code-with-node-resolution": {
+      "item_id": "candidate_directive-update-guidance-on-platform-specific-code-with-node-resolution",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1A5O-update-guidance-on-platform-specific-code-with-node-resolution.md",
+      "title": "update guidance on platform specific code with node resolution",
+      "repository": "callstack/react-native-builder-bob",
+      "source_version": "5961f36d",
+      "content_hash": "cf9319a2b2e8d5c7146fb7461d932f89ce05b9a317b5b9ad5404820f4f46e081",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T17:09:57.805Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-callstack-react-native-builder-bob-core-inva": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-callstack-react-native-builder-bob-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-react-native-builder-bob-technical-construction-intelligence-callstack.md",
+      "title": "Technical Construction Intelligence: callstack/react-native-builder-bob Core Invariants",
+      "repository": "callstack/react-native-builder-bob",
+      "source_version": "5961f36d",
+      "content_hash": "53bf2a695ddf34e7ce45f1210eb7adff76220b996aa77d8de339bfa8d14007de",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T17:09:58.009Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-builder": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-builder",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/callstack-react-native-builder-bob-learnings-verification-protocol-empirical-def.md",
+      "title": "Verification Protocol: Empirical Defect Shield for callstack-react-native-builder-bob-learnings",
+      "repository": "callstack-react-native-builder-bob-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d3c61a58d364c2d18f9127f060143116177784e9693372c8e50dc6993c00bf7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T17:10:31.087Z"
+    },
+    "candidate_directive-server-do-not-crash-when-the-interface-list-cannot-be-enumerated": {
+      "item_id": "candidate_directive-server-do-not-crash-when-the-interface-list-cannot-be-enumerated",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1DY9-server-do-not-crash-when-the-interface-list-cannot-be-enumerated.md",
+      "title": "server): do not crash when the interface list cannot be enumerated",
+      "repository": "fastify-fastify-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e1e398b1bbec1a4af4f0b0c73ae3bcfab2abf0d584d149fb990f294b948d56d0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T17:10:02.722Z"
+    },
+    "candidate_directive-docs-update-guidance-on-platform-specific-code-with-node-resolution": {
+      "item_id": "candidate_directive-docs-update-guidance-on-platform-specific-code-with-node-resolution",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1ZHO-docs-update-guidance-on-platform-specific-code-with-node-resolution.md",
+      "title": "docs: update guidance on platform specific code with node resolution",
+      "repository": "callstack-react-native-builder-bob-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d6458c0932d6c177b2e8485a8566126c3f37a807b358bbbe7afbc87185e0094d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T17:10:30.637Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-callstack-react-native-builder-bob-learnings": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-callstack-react-native-builder-bob-learnings",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-react-native-builder-bob-learnings-technical-construction-intelligence.md",
+      "title": "Technical Construction Intelligence: callstack-react-native-builder-bob-learnings Core Invariants",
+      "repository": "callstack-react-native-builder-bob-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7a2c2c656c1e5ae1fbc7ddeb6f835740dac15539b9e3b23a7df27d3f39d44fdc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T17:10:30.864Z"
     }
   },
   "ai-builder-brain": {
