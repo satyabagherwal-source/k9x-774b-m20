@@ -13985,3 +13985,4 @@
 | `CYCLE-20261128-UDKA` | `2026-11-28T05:24:45.226Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11042` | Yes (`25d5cb78...`) |
 | `CYCLE-20261128-UFGD` | `2026-11-28T05:24:47.677Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11043` | Yes (`9eab1b78...`) |
 | `CYCLE-20261128-UNKQ` | `2026-11-28T05:24:58.202Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11044` | Yes (`c15faa17...`) |
+| `CYCLE-20261128-5W1J` | `2026-11-28T05:33:42.391Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11045` | Yes (`1dedc67e...`) |

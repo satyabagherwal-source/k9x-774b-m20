@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T05:48:26.084Z",
+  "timestamp": "2026-11-28T05:33:51.629Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-restatedev-restate-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [restatedev-restate-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T05:48:26.084Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T05:33:51.629Z`  
 > **Learning ID**: `LEARN-EVO-restatedev-restate-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `a2d478d0`  
+> **Source Version**: `85c63335`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T05:48:14.418Z  
+> **Timestamp**: 2026-11-28T05:33:41.030Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T05:48:14.412Z  
+> **Harvest Timestamp**: 2026-11-28T05:33:40.890Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4751 stars
+- **Stars / Engagement**: 4752 stars
 
 ---
 
@@ -1663,223 +1663,1062 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c36866b1` (2026-11-26)
-**Commit Message**: [PartitionStore] Build entry indexes and statistics only after the vqueues migration
+### Incident Patch 1: `e667b46a` (2026-11-16)
+**Commit Message**: [PartitionStore] Restore partitions lacking required features from a snapshot
 
-The entry indexes (`entry_by_created/1`, `entry_by_status_created/1`,
-`entry_by_status_transitioned/1`) and the status gauges behind the statistics
-tables are computed from the virtual queues' entries. Those hold every
-invocation only once the partition has fully migrated to vqueues, the
-`vqueues` state-machine feature, applied by the processor at a log position.
+When a partition processor opens its store, a local store that lacks
+one of the required partition features is replaced by the newest
+retained snapshot that has them, as recorded in the snapshot's
+compatibility metadata. Snapshots without that metadata never qualify.
+If no snapshot has the features, the local store is opened as it is:
+a store that has applied no version barrier yet may still get them
+from its log, and the processor refuses any other one.
 
-Until now `experimental-enable-indexes` alone decided. A partition opened
-before its migration, for example an old partition catching up, registered
-the indexes and gauges, walked an empty entry table and marked them Complete.
-Invocation reads through the entry indexes already refused such a partition,
-but the statistics tables didn't: they summed only the entries that existed and
-silently undercounted, and `/version` reported `stats_tables: true`.
+Without a usable local store, the newest snapshot that meets the
+target LSN is restored as before, whether it has the features or not,
+so that a partition blocks on its missing features rather than on a
+trim gap.
 
-Now:
+Each PartitionFeatureChange now names the feature it enables, and
+PersistedFeatures::enabled_names is derived from these names.
 
-- **The registry stays tied to the option.** With `experimental-enable-indexes`
-  on, opening a partition fences the store and pins its 1.8.2 version floor,
-  even before anything registers. A fenced store always has a registry record,
-  and every open flushes it, so a retry after a fai
+The list of required features is still empty, so nothing changes yet.
 
-**File**: `crates/admin-rest-model/src/version.rs` (modified, +3/-2)
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `crates/partition-store/src/partition_store_manager.rs` (modified, +57/-14)
 ```diff
-@@ -106,8 +106,9 @@ pub struct QueryEngineInformation {
-     /// Whether the statistics tables (`sys_service_stats`, `sys_deployment_stats` and
-     /// `sys_virtual_object_stats`) answer queries. `false` while queries don't read indexes,
-     /// because the tables aren't shown then. Otherwise `true`, from the admin node's start, unless
--    /// its last check found a partition whose leader answered and lacks a complete status gauge.
--    /// Partitions without a known leader, leaders that are down or don't answer, and leaders whose
-+    /// its last check found a partition whose leader answered with its store open and lacks a
-+    /// complete status gauge, as before the partition has fully migrated to vqueues. Partitions
-+    /// without a known leader, leaders that are down or don't answer, and leaders whose
-     /// partition store isn't open (no registry rows) don't count. The admin node checks every
-     /// `admin.query-engine.index-catalog-refresh-interval`.
-     pub stats_tables: bool,
-```
-
-**File**: `crates/distributed-datafusion/src/catalog/tests.rs` (modified, +6/-4)
-```diff
-@@ -641,6 +641,7 @@ async fn migration_tables_serve_the_default_engine_rows() {
-             .open(&Partition::new(PartitionId::from(id), KeyRange::FULL), None)
+@@ -28,7 +28,7 @@ use restate_storage_api::fsm_table::ReadFsmTable;
+ use restate_types::config::{Configuration, RocksDbCompaction};
+ use restate_types::identifiers::{PartitionId, SnapshotId};
+ use restate_types::logs::{Lsn, SequenceNumber};
+-use restate_types::partitions::Partition;
++use restate_types::partitions::{Partition, PartitionFeatureChange};
+ use restate_types::protobuf::common::DatabaseKind;
+ 
+ use crate::SnapshotError;
+@@ -342,56 +342,99 @@ impl PartitionStoreManager {
+         partition: &Partition,
+         target_lsn: Option<Lsn>,
+     ) -> Result<PartitionStore, OpenError> {
+-        self.open_cancellable(partition, target_lsn, &CancellationToken::new())
++        self.open_cancellable(partition, target_lsn, &[], &CancellationToken::new())
              .await
-             .unwrap();
-+        store.mark_fully_migrated_to_vqueues().await;
-         store
-             .verify_and_run_migrations(Default::default(), &config)
-             .await
-@@ -694,14 +695,15 @@ async fn migration_tables_serve_the_default_engine_rows() {
-             ..Default::default()
-         })
-         .unwrap();
--    for (sql, expected) in [
--        ("SELECT * FROM cluster.registry", &legacy[0]),
--        ("SELECT * FROM cluster.migration_jobs", &legacy[1]),
-+    // The registry has one more row per replica: the registry's own.
-+    for (sql, expected, len) in [
-+        ("SELECT * FROM cluster.registry", &legacy[0], 14),
-+        ("SELECT * FROM cluster.migration_jobs", &legacy[1], 12),
-     ] {
-         let mut actual = rows(session.as_ref(), sql).await;
-         actual.sort();
-         assert_eq!(&actual, expected, "{sql}");
--        assert_eq!(actual.len(), 12, "{sql}");
-+        assert_eq!(actual.len(), len, "{sql}");
      }
-     // Index sizes are estimated when the query selects them; completed jobs
-     // aren't blocked.
+ 
+     /// Like [`Self::open`], but aborts an in-progress snapshot download and returns
+     /// [`OpenError::Cancelled`] once `cancellation` fires.
++    ///
++    /// If the local store lacks one of `required_features`, it is replaced by the newest snapshot
++    /// that has them. If no snapshot has them, the local store is opened as it is. Without a
++    /// local store to fall back to, the newest snapshot is restored whether it has them or not.
++    /// The caller decides what to do with a store that lacks them.
+     #[instrument(level = "error", skip_all, fields(partition_id = %partition.partition_id, cf_name = %partition.cf_name()))]
+     pub async fn open_cancellable(
+         &self,
+         partition: &Partition,
+         target_lsn: Option<Lsn>,
++        required_features: &[PartitionFeatureChange],
+         cancellation: &CancellationToken,
+     ) -> Result<PartitionStore, OpenError> {
+         let database = self.open_rocksdb(partition).await?;
+ 
+-        // If we already have the partition locally and we don't have a fast-forward target, or the
+-        // store already meets the target LSN requirement, then we simply return it.
++        // If we already have the partition locally and it meets the fast-forward target and has the
++        // required features, then we simply return it.
+         let cell = self.state.get_or_open(partition, &database).await;
+ 
+         let mut state_guard = cell.inner.write().await;
+ 
++        // A local store that meets the target LSN but lacks required features. It is used if no
++        // snapshot has the features either.
++        let mut local_store = None;
+         if let Some(db) = state_guard.get_or_reopen().await? {
+-            // we have a database, but perhaps it doesn't meet the min_applied_lsn requirement?
+             let mut partition_store = PartitionStore::from(db);
+-            match target_lsn {
+-                None => return Ok(partition_store),
++            let meets_target_lsn = match target_lsn {
++                None => true,
+                 Some(min_applied_lsn) => {
+                     let my_applied_lsn = partition_store.get_applied_lsn().await?;
+-                    if my_applied_lsn.unwrap_or(Lsn::INVALID) >= min_applied_lsn {
+-                        // We have an initialized partition store, and no fast-forward target - go on and open it.
+-                        return Ok(partition_store);
+-                    }
++                    my_applied_lsn.unwrap_or(Lsn::INVALID) >= min_applied_lsn
++                }
++            };
++            if meets_target_lsn {
++                if required_features.is_empty() {
++                    return Ok(partition_store);
++                }
++                let enabled = partition_store.get_state_machine_features().await?;
++                if required_features.iter().all(|f| enabled.is_enabled(*f)) {
++                    return Ok(partition_store);
+                 }
++                info!(
++                    ?required_features,
++                    "Local partition store lacks required partition features, looking for a snapshot that has them"
++                );
++                local_store = Some(partition_store);
+             }
+         }
+ 
+         // **
+         // We either don't have an existing local partition store initialized - or we have a
+-        // target-lsn target higher than our local state (probably due to seeing a log trim-gap).
++        // target-lsn target higher than our local state (probably due to seeing a log trim-gap),
++        // or our local state lacks required features.
+         // **
+ 
+-        // Attempt to get a suitable snapshot from the repository:
++        // Attempt to get a suitable snapshot from the repository. Only a snapshot that has the
++        // required features is worth replacing a usable local store with. Without one, any
++        // snapshot that meets the target LSN is better than no store.
++        let snapshot_features = if local_store.is_some() {
++            required_features
++        } else {
++            &[]
++        };
+         let snapshot_result = self
+             .snapshots
+-            .download_snapshot(partition.partition_id, target_lsn, cancellation)
++   
 ```
 
-**File**: `crates/distributed-datafusion/src/distributed/index_access_tests.rs` (modified, +1/-0)
+**File**: `crates/partition-store/src/snapshots.rs` (modified, +41/-17)
 ```diff
-@@ -379,6 +379,7 @@ async fn workflow_page_reads_the_entry_index_across_partitions_and_owners() {
-         } else {
-             &tracking
+@@ -32,6 +32,7 @@ use tracing::{debug, error, info, instrument, warn};
+ use restate_types::config::{Configuration, SnapshotsOptions};
+ use restate_types::identifiers::{PartitionId, SnapshotId};
+ use restate_types::logs::Lsn;
++use restate_types::partitions::PartitionFeatureChange;
+ 
+ /// Asks a partition processor to hold back its commits during a snapshot export. It replies with
+ /// the fence, or `None` if another export already holds its commits back.
+@@ -173,6 +174,7 @@ impl Snapshots {
+         &self,
+         partition_id: PartitionId,
+         target_lsn: Option<Lsn>,
++        required_features: &[PartitionFeatureChange],
+         cancellation: &CancellationToken,
+     ) -> anyhow::Result<Option<LocalPartitionSnapshot>> {
+         use crate::metric_definitions::{SNAPSHOT_DOWNLOAD_DURATION, SNAPSHOT_DOWNLOAD_FAILED};
+@@ -183,8 +185,14 @@ impl Snapshots {
          };
-+        store.mark_fully_migrated_to_vqueues().await;
-         store
-             .verify_and_run_migrations(Default::default(), config)
-             .await
+ 
+         let start = std::time::Instant::now();
+-        let result =
+-            Self::download_snapshot_inner(repository, partition_id, target_lsn, cancellation).await;
++        let result = Self::download_snapshot_inner(
++            repository,
++            partition_id,
++            target_lsn,
++            required_features,
++            cancellation,
++        )
++        .await;
+         metrics::histogram!(SNAPSHOT_DOWNLOAD_DURATION).record(start.elapsed().as_secs_f64());
+         if result.is_err() && !cancellation.is_cancelled() {
+             metrics::counter!(SNAPSHOT_DOWNLOAD_FAILED).increment(1);
+@@ -196,6 +204,7 @@ impl Snapshots {
+         repository: &SnapshotRepository,
+         partition_id: PartitionId,
+         target_lsn: Option<Lsn>,
++        required_features: &[PartitionFeatureChange],
+         cancellation: &CancellationToken,
+     ) -> anyhow::Result<Option<LocalPartitionSnapshot>> {
+         use crate::metric_definitions::SNAPSHOT_DOWNLOAD_FALLBACK;
+@@ -205,29 +214,44 @@ impl Snapshots {
+         let retained = repository.get_snapshot_candidates(partition_id).await?;
+ 
+         // When a target LSN is required, only snapshots at or above it can satisfy a fast-forward.
+-        let candidates: Vec<&SnapshotReference> = retained
++        let reaching_lsn: Vec<&SnapshotReference> = retained
+             .iter()
+             .filter(|c| target_lsn.is_none_or(|min_lsn| c.min_applied_lsn >= min_lsn))
+             .collect();
++        // When features are required, only snapshots known to have them qualify.
++        let candidates: Vec<&SnapshotReference> = reaching_lsn
++            .iter()
++            .copied()
++            .filter(|c| {
++                required_features.is_empty()
++                    || c.compatibility
++                        .as_ref()
++                        .is_some_and(|c| c.has_partition_features(required_features))
++            })
++            .collect();
+         let candidate_count = candidates.len();
+ 
+         if candidate_count == 0 {
+             // No usable snapshot. With a target LSN this is a failure (the caller cannot
+             // fast-forward); without one it simply means a fresh partition store is provisioned.
+-            match target_lsn {
+-                Some(min_lsn) => match retained.first() {
+-                    Some(newest) => warn!(
+-                        target_lsn = %min_lsn,
+-                        newest_retained_lsn = %newest.min_applied_lsn,
+-                        retained_count = retained.len(),
+-                        "No retained snapshot reaches the required LSN; the log was trimmed past all available snapshots"
+-                    ),
+-                    None => warn!(
+-                        target_lsn = %min_lsn,
+-                        "A snapshot is required but none is present in the repository for this partition"
+-                    ),
+-                },
+-                None => debug!("No snapshot present in the repository for this partition"),
++            match (target_lsn, retained.first()) {
++                // Only the feature filter can have left these out.
++                _ if !reaching_lsn.is_empty() => warn!(
++                    ?required_features,
++                    snapshot_count = reaching_lsn.len(),
++                    "No retained snapshot has the required partition features"
++                ),
++                (Some(min_lsn), Some(newest)) => warn!(
++                    target_lsn = %min_lsn,
++                    newest_retained_lsn = %newest.min_applied_lsn,
++                    retained_count = retained.len(),
++                    "No retained snapshot reaches the required LSN; the log was trimmed past all available snapshots"
++                ),
++                (Some(min_lsn), None) => warn!(
++                    target_lsn = %min_lsn,
++                    "A snapshot is required but none is present in the repository for this partition"
++                ),
++                (None, _) => debug!("No snapshot present in the repository for this partition"),
+             }
+             return Ok(None);
+         }
 ```
 
-**File**: `crates/distributed-datafusion/src/distributed/stats_tests.rs` (modified, +1/-0)
+**File**: `crates/partition-store/src/snapshots/metadata.rs` (modified, +12/-0)
 ```diff
-@@ -70,6 +70,7 @@ pub(super) fn register_scanners(
- async fn reopen(store: &mut PartitionStore, configure: impl FnOnce(&mut Configuration)) {
-     let mut config = Configuration::pinned().as_ref().clone();
-     configure(&mut config);
-+    store.mark_fully_migrated_to_vqueues().await;
-     store
-         .verify_and_run_migrations(Default::default(), &config)
-         .await
+@@ -20,6 +20,7 @@ use restate_memory::ByteCount;
+ use restate_types::identifiers::{PartitionId, SnapshotId};
+ use restate_types::logs::{LogId, Lsn};
+ use restate_types::nodes_config::ClusterFingerprint;
++use restate_types::partitions::PartitionFeatureChange;
+ use restate_types::sharding::KeyRange;
+ use restate_types::{GenerationalNodeId, SemanticRestateVersion};
+ use restate_util_string::ReString;
+@@ -48,6 +49,17 @@ pub struct SnapshotCompatibility {
+     pub partition_features: Vec<ReString>,
+ }
+ 
++impl SnapshotCompatibility {
++    /// Whether the snapshot's data has all of `features` enabled.
++    pub fn has_partition_features(&self, features: &[PartitionFeatureChange]) -> bool {
++        features.iter().all(|feature| {
++            self.partition_features
++                .iter()
++                .any(|name| name.as_str() == feature.enabled_name())
++        })
++    }
++}
++
+ /// A partition store snapshot. Metadata object which is published alongside with the partition
+ /// store RocksDB SST files that make up a particular checkpoint for a given partition. Snapshots
+ /// from older servers can record an applied LSN smaller than the actual LSN of their data, which
 ```
 
-**File**: `crates/distributed-datafusion/src/tables/invocation_status/tests.rs` (modified, +11/-0)
+**File**: `crates/partition-store/src/snapshots/repository.rs` (modified, +39/-6)
 ```diff
-@@ -263,10 +263,19 @@ async fn invocations_read_through_the_entry_index_match_v1() {
-         .unwrap();
-     let mut config = Configuration::default();
-     config.common.experimental.set_indexes(true);
-+    // The indexes register on a migrated partition; the read checks the
-+    // migration again in its own snapshot, which the test then takes back to
-+    // show the scan.
-+    store.mark_fully_migrated_to_vqueues().await;
-     store
-         .verify_and_run_migrations(CancellationToken::new(), &config)
-         .await
-         .unwrap();
-+    let mut tx = store.transaction();
-+    tx.put_state_machine_features(&PersistedFeatures::default())
-+        .unwrap();
-+    tx.commit().await.unwrap();
-+    drop(tx);
-     // The planner reads the index only where it's maintained.
-     Configuration::set(config.clone());
+@@ -1358,6 +1358,7 @@ mod tests {
+     use restate_types::config::{ObjectStoreOptions, SnapshotsOptions};
+     use restate_types::identifiers::{PartitionId, SnapshotId};
+     use restate_types::logs::{LogId, Lsn, SequenceNumber};
++    use restate_types::partitions::PartitionFeatureChange;
+     use restate_types::retries::RetryPolicy;
+     use restate_types::sharding::KeyRange;
+     use restate_types::{GenerationalNodeId, SemanticRestateVersion};
+@@ -1923,15 +1924,22 @@ mod tests {
+         // An empty repository is "no snapshot present", not an error.
+         assert!(
+             snapshots
+-                .download_snapshot(PartitionId::MIN, None, &CancellationToken::new())
++                .download_snapshot(PartitionId::MIN, None, &[], &CancellationToken::new())
+                 .await?
+                 .is_none()
+         );
  
-@@ -1117,6 +1126,7 @@ async fn status_follows_the_entry() {
-         .unwrap();
-     let mut config = Configuration::default();
-     config.common.experimental.set_indexes(true);
-+    store.mark_fully_migrated_to_vqueues().await;
-     store
-         .verify_and_run_migrations(CancellationToken::new(), &config)
-         .await
-@@ -1421,6 +1431,7 @@ async fn partitions_sharing_a_lane_bound_their_fallback() {
-     let mut page = Vec::new();
-     for ((_, partition), (count, migrated)) in partitions.iter().zip([(61u64, false), (30, true)]) {
-         let mut store = manager.open(partition, None).await.unwrap();
-+        store.mark_fully_migrated_to_vqueues().await;
-         store
-             .verify_and_run_migrations(CancellationToken::new(), &config)
-             .await
+         // Older snapshot A (LSN 2000) then latest B (LSN 3000).
+         let (snapshot_a, dir_a) = mock_snapshot(b"snapshot-A", Lsn::new(2000)).await?;
+         repository.put(&snapshot_a, SnapshotDir::new(dir_a)).await?;
+-        let (snapshot_b, dir_b) = mock_snapshot(b"snapshot-B", Lsn::new(3000)).await?;
++        // B doesn't have the partition feature journal_v2, unlike A.
++        let (mut snapshot_b, dir_b) = mock_snapshot(b"snapshot-B", Lsn::new(3000)).await?;
++        snapshot_b
++            .compatibility
++            .as_mut()
++            .expect("mock snapshots record their compatibility")
++            .partition_features
++            .clear();
+         repository.put(&snapshot_b, SnapshotDir::new(dir_b)).await?;
+         let sst_path = |snapshot: &PartitionSnapshotMetadata| {
+             snapshots_destination
+@@ -1943,7 +1951,7 @@ mod tests {
+ 
+         // Happy path: the latest snapshot is restored.
+         let restored = snapshots
+-            .download_snapshot(PartitionId::MIN, None, &CancellationToken::new())
++            .download_snapshot(PartitionId::MIN, None, &[], &CancellationToken::new())
+             .await?
+             .expect("a snapshot is available");
+         assert_eq!(restored.min_applied_lsn, Lsn::new(3000));
+@@ -1953,18 +1961,43 @@ mod tests {
+             .download_snapshot(
+                 PartitionId::MIN,
+                 Some(Lsn::new(2500)),
++                &[],
+                 &CancellationToken::new(),
+             )
+             .await?
+             .expect("latest snapshot satisfies the target LSN");
+         assert_eq!(restored.min_applied_lsn, Lsn::new(3000));
+ 
++        // Required partition features select only snapshots known to have them.
++        let restored = snapshots
++            .download_snapshot(
++                PartitionId::MIN,
++                None,
++                &[PartitionFeatureChange::EnableJournalV2],
++                &CancellationToken::new(),
++            )
++            .await?
++            .expect("snapshot A has journal_v2");
++        assert_eq!(restored.min_applied_lsn, Lsn::new(2000));
++        assert!(
++            snapshots
++                .download_snapshot(
++                    PartitionId::MIN,
++                    None,
++                    &[PartitionFeatureChange::EnableByteOffsets],
++                    &CancellationToken::new(),
++                )
++                .await?
++                .is_none()
++        );
++
+         // A target above every retained snapshot yields no suitable candidate (Ok(None)).
+         assert!(
+             snapshots
+                 .download_snapshot(
+                     PartitionId::MIN,
+                     Some(Lsn::new(5000)),
++                    &[],
+                     &CancellationToken::new()
+                 )
+                 .await?
+@@ -1981,7 +2014,7 @@ mod tests {
+             std::os::unix::fs::symlink(&sst, &sst)?;
+             assert!(
+                 snapshots
+-                    .download_snapshot(PartitionId::MIN, None, &CancellationToken::new())
++                    .download_snapshot(PartitionId::MIN, None, &[], &CancellationToken::new())
+                     .await
+                     .is_err()
+             );
+@@ -1992,7 +2025,7 @@ mod tests {
+         // Corrupt the latest by removing its data file; the download must fall back to A.
+         std::fs::remove_file(sst_path(&snapshot_b))?;
+         let restored = snapshots
+-            .download_snapshot(PartitionId::MIN, None, &CancellationToken::new())
++            .download_snapshot(PartitionId::MIN, None, &[], &CancellationToken::new())
+             .await?
+             .expect("falls back to the older snapshot");
+         assert_eq!(restored.min_applied_lsn, Lsn::new(2000));
+@@ -2001,7 +2034,7 @@ mod tests {
+         std::fs::remove_file(sst_path(&snapshot_a))?;
+         assert!(
+             snapshots
+-                .download_snapshot(PartitionId::MIN, None, &CancellationToken::new())
++                .download_snapshot(PartitionId::MIN, None, &[], &CancellationToken::new())
+                 .await
+                 .is_err()
+         );
 ```
 
-**File**: `crates/distributed-datafusion/src/tables/stats/tests.rs` (modified, +1/-0)
+**File**: `crates/types/src/partitions/features.rs` (modified, +53/-23)
 ```diff
-@@ -158,6 +158,7 @@ async fn stats_tables_aggregate_filter_and_follow_lifecycle_across_stores() {
-     let mut stores = Vec::new();
-     for (_, partition) in &partitions.0 {
-         let mut store = manager.open(partition, None).await.unwrap();
-+        store.mark_fully_migrated_to_vqueues().await;
-         store
-             .verify_and_run_migrations(Default::default(), &config)
-             .await
+@@ -9,6 +9,7 @@
+ // by the Apache License, Version 2.0.
+ 
+ use bytes::BytesMut;
++use strum::IntoEnumIterator;
+ 
+ use restate_encoding::NetSerde;
+ 
+@@ -41,6 +42,7 @@ use crate::{
+     Eq,
+     Hash,
+     strum::FromRepr,
++    strum::EnumIter,
+     strum::EnumString,
+     strum::IntoStaticStr,
+     strum::Display,
+@@ -162,6 +164,28 @@ impl PartitionFeatureChange {
+         }
+     }
+ 
++    /// The name of the feature that this change enables, as [`PersistedFeatures::enabled_names`]
++    /// lists it.
++    ///
++    /// Snapshots record these names to tell which features their data has, so a name must never
++    /// change.
++    pub fn enabled_name(self) -> &'static str {
++        match self {
++            Self::EnableJournalV2 => "journal_v2",
++            Self::EnableVqueues => "vqueues",
++            Self::EnableUniqueRandomSeeds => "unique_random_seeds",
++            Self::EnableVqueuesSkipCompleted => "vqueues_skip_completed",
++            Self::EnablePreflightInvocationTerminationRetention => {
++                "preflight_invocation_termination_retention"
++            }
++            Self::EnableInconsistentStateMutationCleanup => "inconsistent_state_mutation_cleanup",
++            Self::EnablePreflightSignalRecording => "preflight_signal_recording",
++            Self::EnableByteOffsets => "byte_offsets",
++            Self::EnableVqLifecycleRefined => "vq_lifecycle_refined",
++            Self::EnableInvocationStatusOutputBlob => "invocation_status_output_blob",
++        }
++    }
++
+     /// Apply this change to the persisted feature set. Returns true if the feature
+     /// change had an effect on the state machine features.
+     pub fn apply_to(self, features: &mut PersistedFeatures) -> bool {
+@@ -208,8 +232,7 @@ impl PartitionFeatureChange {
+ /// `false`).
+ ///
+ /// # Important
+-/// When adding new fields to this struct, update [`PersistedFeatures::enabled_names`]
+-/// accordingly.
++/// When adding new fields to this struct, add the [`PartitionFeatureChange`] that enables them.
+ ///
+ /// *Since v1.7.0*
+ #[derive(
+@@ -291,29 +314,36 @@ pub struct PersistedFeatures {
+ }
+ 
+ impl PersistedFeatures {
++    /// Whether the feature that `change` enables is enabled.
++    #[inline]
++    pub fn is_enabled(&self, change: PartitionFeatureChange) -> bool {
++        match change {
++            PartitionFeatureChange::EnableJournalV2 => self.journal_v2,
++            PartitionFeatureChange::EnableVqueues => self.vqueues,
++            PartitionFeatureChange::EnableUniqueRandomSeeds => self.unique_random_seeds,
++            PartitionFeatureChange::EnableVqueuesSkipCompleted => self.vqueues_skip_completed,
++            PartitionFeatureChange::EnablePreflightInvocationTerminationRetention => {
++                self.preflight_invocation_termination_retention
++            }
++            PartitionFeatureChange::EnableInconsistentStateMutationCleanup => {
++                self.inconsistent_state_mutation_cleanup
++            }
++            PartitionFeatureChange::EnablePreflightSignalRecording => {
++                self.preflight_signal_recording
++            }
++            PartitionFeatureChange::EnableByteOffsets => self.byte_offsets,
++            PartitionFeatureChange::EnableVqLifecycleRefined => self.vq_lifecycle_refined,
++            PartitionFeatureChange::EnableInvocationStatusOutputBlob => {
++                self.invocation_status_output_blob
++            }
++        }
++    }
++
+     /// Names of features currently enabled, in declaration order.
+-    ///
+-    /// Adding a new feature requires adding one entry here.
+     pub fn enabled_names(&self) -> impl Iterator<Item = &'static str> + '_ {
+-        [
+-            self.journal_v2.then_some("journal_v2"),
+-            self.vqueues.then_some("vqueues"),
+-            self.unique_random_seeds.then_some("unique_random_seeds"),
+-            self.vqueues_skip_completed
+-                .then_some("vqueues_skip_completed"),
+-            self.preflight_invocation_termination_retention
+-                .then_some("preflight_invocation_termination_retention"),
+-            self.inconsistent_state_mutation_cleanup
+-                .then_some("inconsistent_state_mutation_cleanup"),
+-            self.preflight_signal_recording
+-                .then_some("preflight_signal_recording"),
+-            self.byte_offsets.then_some("byte_offsets"),
+-            self.vq_lifecycle_refined.then_some("vq_lifecycle_refined"),
+-            self.invocation_status_output_blob
+-                .then_some("invocation_status_output_blob"),
+-        ]
+-        .into_iter()
+-        .flatten()
++        PartitionFeatureChange::iter()
++            .filter(move |change| self.is_enabled(*change))
++            .map(PartitionFeatureChange::enabled_name)
+     }
+ }
+ 
 ```
 
-**File**: `crates/distributed-datafusion/src/tables/vqueue_entry_status/tests.rs` (modified, +2/-0)
+**File**: `crates/worker-api/src/processor/features.rs` (modified, +1/-20)
 ```diff
-@@ -656,6 +656,7 @@ async fn finished_entries_read_through_the_transition_index_match_the_scan() {
-         .unwrap();
-     let mut config = Configuration::default();
-     config.common.experimental.set_indexes(true);
-+    store.mark_fully_migrated_to_vqueues().await;
-     store
-         .verify_and_run_migrations(CancellationToken::new(), &config)
-         .await
-@@ -1176,6 +1177,7 @@ async fn active_entries_read_through_the_status_index_match_the_scan() {
-         .unwrap();
-     let mut config = Configuration::default();
-     config.common.experimental.set_indexes(true);
-+    store.mark_fully_migrated_to_vqueues().await;
-     store
-         .verify_and_run_migrations(CancellationToken::new(), &config)
-         .await
+@@ -138,26 +138,7 @@ pub trait PartitionFeatures {
+ impl PartitionFeatures for PersistedFeatures {
+     #[inline]
+     fn has_feature(&self, feature: PartitionFeatureChange) -> bool {
+-        match feature {
+-            PartitionFeatureChange::EnableJournalV2 => self.journal_v2,
+-            PartitionFeatureChange::EnableVqueues => self.vqueues,
+-            PartitionFeatureChange::EnableUniqueRandomSeeds => self.unique_random_seeds,
+-            PartitionFeatureChange::EnableVqueuesSkipCompleted => self.vqueues_skip_completed,
+-            PartitionFeatureChange::EnablePreflightInvocationTerminationRetention => {
+-                self.preflight_invocation_termination_retention
+-            }
+-            PartitionFeatureChange::EnableInconsistentStateMutationCleanup => {
+-                self.inconsistent_state_mutation_cleanup
+-            }
+-            PartitionFeatureChange::EnablePreflightSignalRecording => {
+-                self.preflight_signal_recording
+-            }
+-            PartitionFeatureChange::EnableByteOffsets => self.byte_offsets,
+-            PartitionFeatureChange::EnableVqLifecycleRefined => self.vq_lifecycle_refined,
+-            PartitionFeatureChange::EnableInvocationStatusOutputBlob => {
+-                self.invocation_status_output_blob
+-            }
+-        }
++        self.is_enabled(feature)
+     }
+ 
+     #[inline]
 ```
 
-**File**: `crates/partition-store/README.md` (modified, +21/-5)
+**File**: `crates/worker/src/partition_processor_manager/spawn_processor_task.rs` (modified, +2/-2)
 ```diff
-@@ -91,7 +91,16 @@ key kind (`src/registry/records.rs`), so a slice writes only the records it
- changes.
+@@ -21,7 +21,7 @@ use restate_partition_store::{MigrationError, PartitionStoreManager};
+ use restate_platform::prelude::ReString;
+ use restate_types::cluster::cluster_state::PartitionProcessorStatus;
+ use restate_types::logs::Lsn;
+-use restate_types::partitions::Partition;
++use restate_types::partitions::{Partition, REQUIRED_PARTITION_FEATURES};
+ use restate_wal_protocol::v2::{Envelope, Raw};
  
- **Definition families.** Definitions released together are grouped in a
--*family*, switched on by the same configuration options.
-+*family*, switched on by the same configuration options. A family over the
-+virtual queues' entries registers only once the partition has fully migrated
-+to vqueues: the `vqueues` state-machine feature, applied by the processor at a
-+log position; a migration that skipped completed invocations is not enough.
-+Until then the entries don't hold every invocation, so no walk starts and no
-+index exists to read. The store registers such a family at the open after the
-+migration, or when the processor applies the migration: the version barrier
-+asks for it (`PartitionDb::request_vqueue_indexes`), which wakes the walk
-+driver, and the driver's next step, after the barrier's batch is committed,
-+registers the family and starts its walk.
+ use crate::PartitionProcessorBuilder;
+@@ -159,7 +159,7 @@ where
+                     // replacement processor cannot race the abandoned open. Snapshot downloads
+                     // observe the cancellation token and stop early.
+                     let partition_store = partition_store_manager
+-                        .open_cancellable(&partition, fast_forward_lsn, &cancellation)
++                        .open_cancellable(&partition, fast_forward_lsn, REQUIRED_PARTITION_FEATURES, &cancellation)
+                         .await;
  
- **Migration job.** The general unit of maintenance work: building an index or
- running a one-time migration. Each index and each migration in progress has a
-@@ -143,11 +152,13 @@ are their foundation.
-    change meaning. The registry, walks and jobs are stored under `rg` keys
-    (`src/registry/records.rs`); their key layout and record kinds are
-    append-only too. Rename in code freely; never renumber.
--9. **The `registry` storage feature fences older binaries.** It is set with
--   the first index registration and records a minimum Restate version, so an
-+9. **The `registry` storage feature fences older binaries.** It is set at
-+   open whenever indexes are enabled, even before any family registers, or with
-+   the first index registration, and records a minimum Restate version, so an
-    older binary, which doesn't know tokens and index keys, refuses to open the
--   store because of that version floor rather than ignoring them. Migrations
--   register only on a store that has it, and never set it.
-+   store because of that version floor rather than ignoring them. A fenced store
-+   always has a registry record. Migrations register only on a store that has
-+   it, and never set it.
- 10. **Every definition declares the Restate version that introduced it**
-     (`introduced:` next to `definition:`). A node of an older version can't
-     maintain or read the definition's indexes, so a query coordinator must
-@@ -162,6 +173,11 @@ are their foundation.
-     never visits rows written behind its cursor or after its end. Each replica
-     migrates at its own pace, so what a command does must never depend on
-     whether a row is migrated yet.
-+12. **Indexes over the vqueue entries wait for the full vqueues migration.**
-+    Their families register only on a partition whose `vqueues` feature is
-+    applied, and a read of invocations through them also checks it in its own
-+    snapshot (`ReadSnapshot::fully_migrated_to_vqueues`): before the migration,
-+    an invocation has no entry, and an index would silently miss it.
+                     if cancellation.is_cancelled() {
+```
+
+---
+
+### Incident Patch 2: `806fe4d5` (2026-11-16)
+**Commit Message**: [Worker] Apply only control commands while a required feature is missing
+
+While a partition lacks a required feature, the processor applies only
+AnnounceLeader and VersionBarrier records and stops with
+MissingRequiredFeatures at any other one. The barrier that enables the
+feature has to come before any command that may need the logic the
+feature retires. A log whose first barrier lacks the feature still
+replays, as long as a later barrier enables it before other commands.
+
+Required features stay enabled, so the check is done once the first
+other command has passed it. From then on, and whenever the partition
+starts with the features, applying a record costs one branch.
+
+A partition that passes the check is no longer blocked, so passing it
+clears the blocked flare. This covers a partition whose store was
+replaced by a snapshot that has the features, and one that got them
+from its log.
+
+The list of required features is still empty, so nothing changes yet.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `crates/types/src/partitions/features.rs` (modified, +2/-1)
+```diff
+@@ -111,7 +111,8 @@ pub enum PartitionFeatureChange {
+ /// command other than `AnnounceLeader` or `VersionBarrier` before then.
+ ///
+ /// A release may only add a feature here once the previous release enables it on every
+-/// partition, so that a rolling upgrade or a rollback never runs a partition without it.
++/// partition, so that a rolling upgrade or a rollback never runs a partition without it. Only
++/// features that nothing disables again can be required.
+ ///
+ /// *Since v1.8.2*
+ pub const REQUIRED_PARTITION_FEATURES: &[PartitionFeatureChange] = &[];
+```
+
+**File**: `crates/worker/src/partition/mod.rs` (modified, +17/-1)
+```diff
+@@ -83,7 +83,7 @@ use restate_types::net::partition_processor::{
+     PurgeInvocationRpcRequest, PurgeJournalRpcRequest, RestartAsNewInvocationRpcRequest,
+     ResumeInvocationRpcRequest,
+ };
+-use restate_types::partitions::PartitionFeatureChange;
++use restate_types::partitions::{PartitionFeatureChange, REQUIRED_PARTITION_FEATURES};
+ use restate_types::protobuf::cluster::DetailedRunMode;
+ use restate_types::retries::RetryPolicy;
+ use restate_types::schema::Schema;
+@@ -107,6 +107,7 @@ use self::processor::commands::{
+     AnnounceLeaderContext, ApplyPartitionCommand, NextStep, TruncateOutboxContext,
+     UpdateDurabilityContext, UpsertRuleBookContext, UpsertSchemaContext, VersionBarrierContext,
+ };
++use self::processor::required_features::CommandCheck;
+ use self::processor::*;
+ use self::state_machine::StateMachine;
+ use crate::metric_definitions::{
+@@ -264,6 +265,12 @@ impl PartitionProcessorBuilder {
+         let leadership_state =
+             LeadershipState::new(ctx.partition_id(), ingestion_client, leader_query_tx);
  
- ## Don'ts
++        let required_features = CommandCheck::new(
++            ctx.partition_id(),
++            ctx.enabled_features(),
++            REQUIRED_PARTITION_FEATURES,
++        );
++
+         Ok(PartitionProcessor {
+             query_reads,
+             partition_store,
+@@ -277,6 +284,7 @@ impl PartitionProcessorBuilder {
+             commit_fence_rx,
+             encoding_arena: BytesMut::new(),
+             read_stream_tags: None,
++            required_features,
+         })
+     }
+ }
+@@ -296,6 +304,8 @@ pub struct PartitionProcessor<T> {
+     encoding_arena: BytesMut,
+     /// Shows the processor's leadership on its read stream in `bifrost_read_streams`.
+     read_stream_tags: Option<ReadStreamTags>,
++    /// Checks that the partition has the required features before a command is applied.
++    required_features: CommandCheck,
+ }
  
+ #[derive(Debug, thiserror::Error)]
+@@ -1267,6 +1277,12 @@ where
+             return Ok(NextStep::SkipUntil(lsn));
+         }
+ 
++        self.required_features.check(
++            envelope.as_ref().kind(),
++            self.ctx.enabled_features(),
++            REQUIRED_PARTITION_FEATURES,
++        )?;
++
+         let scope = envelope.as_ref().scope();
+         match scope {
+             CommandScope::PartitionScoped => {
+```
+
+**File**: `crates/worker/src/partition/processor/required_features.rs` (modified, +111/-9)
+```diff
+@@ -11,21 +11,27 @@
+ //! Checks that a partition has the features this server requires
+ //! ([`REQUIRED_PARTITION_FEATURES`](restate_types::partitions::REQUIRED_PARTITION_FEATURES)).
+ 
++use metrics::gauge;
++
+ use restate_types::partitions::{PartitionFeatureChange, PersistedFeatures};
++use restate_types::sharding::PartitionId;
++use restate_wal_protocol::v2::CommandKind;
+ use restate_worker_api::processor::PartitionFeatures;
+ 
++use crate::metric_definitions::{
++    FLARE_REASON_MISSING_REQUIRED_FEATURES, PARTITION_BLOCKED_FLARE, PARTITION_LABEL, REASON_LABEL,
++};
+ use crate::partition::ProcessorError;
+ 
+ /// The features in `required` that `features` lacks, in the order of `required`.
+-pub fn missing_features(
++fn missing_features(
+     features: &PersistedFeatures,
+     required: &[PartitionFeatureChange],
+-) -> Vec<PartitionFeatureChange> {
++) -> impl Iterator<Item = PartitionFeatureChange> {
+     required
+         .iter()
+         .copied()
+         .filter(|feature| !features.has_feature(*feature))
+-        .collect()
+ }
+ 
+ /// Checks a partition's features before the processor reads its log.
+@@ -45,23 +51,90 @@ pub fn check_on_startup(
+     check(features, required)
+ }
+ 
++/// Checks a partition's features before the processor applies a command.
++///
++/// While a required feature is missing, only `AnnounceLeader` and `VersionBarrier` apply: the
++/// barrier that enables the feature has to come before any other command, since those may need
++/// the logic that the feature retires. A required feature stays enabled once it is, so the check
++/// is done as soon as one command has found all of them.
++///
++/// A partition that passes the check is no longer blocked on a required feature, which clears the
++/// flare that an earlier attempt to run it may have raised.
++#[derive(Debug)]
++pub struct CommandCheck {
++    passed: bool,
++    partition_id: PartitionId,
++}
++
++impl CommandCheck {
++    pub fn new(
++        partition_id: PartitionId,
++        features: &PersistedFeatures,
++        required: &[PartitionFeatureChange],
++    ) -> Self {
++        let passed = missing_features(features, required).next().is_none();
++        // Nothing raises the flare if nothing is required.
++        if passed && !required.is_empty() {
++            clear_blocked_flare(partition_id);
++        }
++        Self {
++            passed,
++            partition_id,
++        }
++    }
++
++    /// Checks the partition's features before the processor applies a command of `kind`.
++    #[inline]
++    pub fn check(
++        &mut self,
++        kind: CommandKind,
++        features: &PersistedFeatures,
++        required: &[PartitionFeatureChange],
++    ) -> Result<(), ProcessorError> {
++        if self.passed
++            || matches!(
++                kind,
++                CommandKind::AnnounceLeader | CommandKind::VersionBarrier
++            )
++        {
++            return Ok(());
++        }
++        check(features, required)?;
++        self.passed = true;
++        clear_blocked_flare(self.partition_id);
++        Ok(())
++    }
++}
++
++fn clear_blocked_flare(partition_id: PartitionId) {
++    gauge!(
++        PARTITION_BLOCKED_FLARE,
++        PARTITION_LABEL => partition_id.to_string(),
++        REASON_LABEL => FLARE_REASON_MISSING_REQUIRED_FEATURES
++    )
++    .set(0);
++}
++
+ fn check(
+     features: &PersistedFeatures,
+     required: &[PartitionFeatureChange],
+ ) -> Result<(), ProcessorError> {
+-    let missing = missing_features(features, required);
+-    if missing.is_empty() {
+-        Ok(())
+-    } else {
+-        Err(ProcessorError::MissingRequiredFeatures { missing })
++    let mut missing = missing_features(features, required).peekable();
++    if missing.peek().is_none() {
++        return Ok(());
+     }
++    Err(ProcessorError::MissingRequiredFeatures {
++        missing: missing.collect(),
++    })
+ }
+ 
+ #[cfg(test)]
+ mod tests {
+     use restate_types::partitions::{PartitionFeatureChange, PersistedFeatures};
++    use restate_types::sharding::PartitionId;
++    use restate_wal_protocol::v2::CommandKind;
+ 
+-    use super::check_on_startup;
++    use super::{CommandCheck, check_on_startup};
+     use crate::partition::ProcessorError;
+ 
+     #[test]
+@@ -89,4 +162,33 @@ mod tests {
+         // Nothing is required.
+         assert!(check_on_startup(&features, &[]).is_ok());
+     }
++
++    #[test]
++    fn only_control_commands_apply_while_a_required_feature_is_missing() {
++        let required = [PartitionFeatureChange::EnableByteOffsets];
++        let mut features = PersistedFeatures::default();
++        let mut check = CommandCheck::new(PartitionId::MIN, &features, &required);
++
++        for kind in [CommandKind::AnnounceLeader, CommandKind::VersionBarrier] {
++            assert!(check.check(kind, &features, &required).is_ok());
++        }
++        assert!(matches!(
++            check.check(CommandKind::Invoke, &features, &required),
++            Err(ProcessorError::MissingRequiredFeatures { missing })
++                if missing == required
++        ));
+```
+
+---
+
+### Incident Patch 3: `ee44eb6a` (2026-11-16)
+**Commit Message**: [Worker] Refuse to start partitions that lack required features
+
+Add REQUIRED_PARTITION_FEATURES, the partition features a server
+requires because it no longer has the logic they retire. A partition
+processor whose store has applied a version barrier but lacks one of
+them now refuses to start with MissingRequiredFeatures. The manager
+raises a blocked flare and retries at maximum backoff. Dropping the
+local partition store clears the flare.
+
+The list is empty, so nothing changes yet. A later release adds a
+feature to it once the previous release enables it everywhere.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `crates/types/src/partitions/features.rs` (modified, +11/-0)
+```diff
+@@ -105,6 +105,17 @@ pub enum PartitionFeatureChange {
+     EnableInvocationStatusOutputBlob = 10,
+ }
+ 
++/// The partition features this server requires. Each one retires logic this server no longer
++/// has, such as commands, command variants or state formats. A partition processor that lacks one
++/// of them refuses to start once it has applied a version barrier, and refuses to apply any
++/// command other than `AnnounceLeader` or `VersionBarrier` before then.
++///
++/// A release may only add a feature here once the previous release enables it on every
++/// partition, so that a rolling upgrade or a rollback never runs a partition without it.
++///
++/// *Since v1.8.2*
++pub const REQUIRED_PARTITION_FEATURES: &[PartitionFeatureChange] = &[];
++
+ impl PartitionFeatureChange {
+     /// The raw ID used on the wire.
+     pub fn id(self) -> u16 {
+```
+
+**File**: `crates/worker/src/metric_definitions.rs` (modified, +1/-0)
+```diff
+@@ -31,6 +31,7 @@ pub const FLARE_REASON_VERSION_BARRIER: &str = "version_barrier";
+ pub const FLARE_REASON_AHEAD_OF_LOG: &str = "ahead_of_log";
+ pub const FLARE_REASON_MIGRATION_BARRIER: &str = "migration_barrier";
+ pub const FLARE_REASON_SNAPSHOT_UNAVAILABLE: &str = "snapshot-unavailable";
++pub const FLARE_REASON_MISSING_REQUIRED_FEATURES: &str = "missing_required_features";
+ 
+ pub const PARTITION_APPLY_COMMAND: &str = "restate.partition.apply_command_duration.seconds";
+ pub const PARTITION_WRITE_BATCH_SIZE_BYTES: &str = "restate.partition.write_batch_size.bytes";
+```
+
+**File**: `crates/worker/src/partition/mod.rs` (modified, +9/-0)
+```diff
+@@ -366,6 +366,15 @@ pub enum ProcessorError {
+         "partition is blocked; restate-server cannot perform data migration. reason='{reason}'"
+     )]
+     MigrationBarrier { reason: String },
++    /// *Since v1.8.2*
++    #[error(
++        "partition is blocked; restate-server requires partition features {missing:?} that the \
++         partition has not enabled; restore the partition from a snapshot that has them, or run \
++         the previous restate-server version until it has enabled them"
++    )]
++    MissingRequiredFeatures {
++        missing: Vec<PartitionFeatureChange>,
++    },
+     #[error(transparent)]
+     Leadership(#[from] leadership::Error),
+     #[error(transparent)]
+```
+
+**File**: `crates/worker/src/partition/processor.rs` (modified, +1/-0)
+```diff
+@@ -28,6 +28,7 @@ mod dedup;
+ mod fsm;
+ pub mod leadership;
+ mod outbox;
++pub mod required_features;
+ mod status;
+ 
+ // Re-exports
+```
+
+**File**: `crates/worker/src/partition/processor/context.rs` (modified, +7/-1)
+```diff
+@@ -20,7 +20,7 @@ use restate_storage_api::fsm_table::FsmPosition;
+ use restate_types::cluster::cluster_state::PartitionProcessorStatus;
+ use restate_types::identifiers::LeaderEpoch;
+ use restate_types::logs::{LogId, Lsn};
+-use restate_types::partitions::{Partition, PersistedFeatures};
++use restate_types::partitions::{Partition, PersistedFeatures, REQUIRED_PARTITION_FEATURES};
+ use restate_types::sharding::{KeyRange, PartitionId};
+ use restate_types::{SemanticRestateVersion, Version};
+ use restate_util_time::DurationExt;
+@@ -36,6 +36,7 @@ use crate::partition::leadership::trim_queue::{HasTrimQueue, TrimQueue};
+ 
+ use super::dedup::Dedup;
+ use super::outbox::Outbox;
++use super::required_features;
+ use super::status::{HasStatus, HasStatusMut, Status};
+ use super::{DedupAccess, DedupMut, Fsm, HasDedup, HasDedupMut};
+ 
+@@ -84,6 +85,11 @@ impl ProcessorRawContext {
+             });
+         }
+ 
++        required_features::check_on_startup(
++            fsm_cache.enabled_features(),
++            REQUIRED_PARTITION_FEATURES,
++        )?;
++
+         let dedup_cache = Dedup::create(partition_store).await?;
+ 
+         let outbox = Outbox::create(partition_store).await?;
+```
+
+**File**: `crates/worker/src/partition/processor/required_features.rs` (added, +92/-0)
+```diff
+@@ -0,0 +1,92 @@
++// Copyright (c) 2023 - 2026 Restate Software, Inc., Restate GmbH.
++// All rights reserved.
++//
++// Use of this software is governed by the Business Source License
++// included in the LICENSE file.
++//
++// As of the Change Date specified in that file, in accordance with
++// the Business Source License, use of this software will be governed
++// by the Apache License, Version 2.0.
++
++//! Checks that a partition has the features this server requires
++//! ([`REQUIRED_PARTITION_FEATURES`](restate_types::partitions::REQUIRED_PARTITION_FEATURES)).
++
++use restate_types::partitions::{PartitionFeatureChange, PersistedFeatures};
++use restate_worker_api::processor::PartitionFeatures;
++
++use crate::partition::ProcessorError;
++
++/// The features in `required` that `features` lacks, in the order of `required`.
++pub fn missing_features(
++    features: &PersistedFeatures,
++    required: &[PartitionFeatureChange],
++) -> Vec<PartitionFeatureChange> {
++    required
++        .iter()
++        .copied()
++        .filter(|feature| !features.has_feature(*feature))
++        .collect()
++}
++
++/// Checks a partition's features before the processor reads its log.
++///
++/// A partition stores features only once it applies a version barrier that enables one, so a
++/// partition without any has applied no barrier yet. It may still enable the required features
++/// with its first barrier; until then, the processor refuses every command other than
++/// `AnnounceLeader` and `VersionBarrier`. A partition with features but without a required one
++/// has applied a barrier without it, and may hold state this server can no longer process.
++pub fn check_on_startup(
++    features: &PersistedFeatures,
++    required: &[PartitionFeatureChange],
++) -> Result<(), ProcessorError> {
++    if *features == PersistedFeatures::default() {
++        return Ok(());
++    }
++    check(features, required)
++}
++
++fn check(
++    features: &PersistedFeatures,
++    required: &[PartitionFeatureChange],
++) -> Result<(), ProcessorError> {
++    let missing = missing_features(features, required);
++    if missing.is_empty() {
++        Ok(())
++    } else {
++        Err(ProcessorError::MissingRequiredFeatures { missing })
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use restate_types::partitions::{PartitionFeatureChange, PersistedFeatures};
++
++    use super::check_on_startup;
++    use crate::partition::ProcessorError;
++
++    #[test]
++    fn startup_requires_features_once_a_barrier_was_applied() {
++        let required = [
++            PartitionFeatureChange::EnableJournalV2,
++            PartitionFeatureChange::EnableByteOffsets,
++        ];
++
++        // No barrier applied yet: the first barrier may still enable the required features.
++        assert!(check_on_startup(&PersistedFeatures::default(), &required).is_ok());
++
++        // A barrier was applied without one of the required features.
++        let mut features = PersistedFeatures::default();
++        PartitionFeatureChange::EnableJournalV2.apply_to(&mut features);
++        assert!(matches!(
++            check_on_startup(&features, &required),
++            Err(ProcessorError::MissingRequiredFeatures { missing })
++                if missing == [PartitionFeatureChange::EnableByteOffsets]
++        ));
++
++        PartitionFeatureChange::EnableByteOffsets.apply_to(&mut features);
++        assert!(check_on_startup(&features, &required).is_ok());
++
++        // Nothing is required.
++        assert!(check_on_startup(&features, &[]).is_ok());
++    }
++}
+```
+
+**File**: `crates/worker/src/partition_processor_manager.rs` (modified, +13/-5)
+```diff
+@@ -89,11 +89,12 @@ use restate_worker_api::{PartitionReadError, ProcessorsManagerCommand, Processor
+ 
+ use crate::metric_definitions::{
+     ERROR_STOP, FLARE_REASON_AHEAD_OF_LOG, FLARE_REASON_MIGRATION_BARRIER,
+-    FLARE_REASON_SNAPSHOT_UNAVAILABLE, FLARE_REASON_VERSION_BARRIER, GAP_STOP, NORMAL_STOP,
+-    NUM_ACTIVE_PARTITION_LEADERS, NUM_ACTIVE_PARTITIONS, NUM_PARTITIONS, PARTITION_APPLIED_LSN_LAG,
+-    PARTITION_BLOCKED_FLARE, PARTITION_LABEL, PARTITION_NUM_UNKNOWN_APPLIED_LSN_LAG,
+-    PARTITION_START, PARTITION_STOP, PARTITION_TIME_SINCE_LAST_STATUS_UPDATE, REASON_LABEL,
+-    SNAPSHOT_AGE, STARTUP_ERROR_STOP, TYPE_LABEL,
++    FLARE_REASON_MISSING_REQUIRED_FEATURES, FLARE_REASON_SNAPSHOT_UNAVAILABLE,
++    FLARE_REASON_VERSION_BARRIER, GAP_STOP, NORMAL_STOP, NUM_ACTIVE_PARTITION_LEADERS,
++    NUM_ACTIVE_PARTITIONS, NUM_PARTITIONS, PARTITION_APPLIED_LSN_LAG, PARTITION_BLOCKED_FLARE,
++    PARTITION_LABEL, PARTITION_NUM_UNKNOWN_APPLIED_LSN_LAG, PARTITION_START, PARTITION_STOP,
++    PARTITION_TIME_SINCE_LAST_STATUS_UPDATE, REASON_LABEL, SNAPSHOT_AGE, STARTUP_ERROR_STOP,
++    TYPE_LABEL,
+ };
+ use crate::partition::{LeadershipInfo, NodeContext, ProcessorError};
+ use crate::partition_processor_manager::processor_state::{
+@@ -703,6 +704,12 @@ where
+                                     error!(%partition_id, "Partition processor start error: {e}");
+                                     PostStopAction::Restart(RestartDelay::MaxBackoff)
+                                 }
++                                Err(e @ ProcessorError::MissingRequiredFeatures { .. }) => {
++                                    counter!(PARTITION_STOP, PARTITION_LABEL => partition_id.to_string(), TYPE_LABEL => ERROR_STOP).increment(1);
++                                    gauge!(PARTITION_BLOCKED_FLARE, PARTITION_LABEL => partition_id.to_string(), REASON_LABEL => FLARE_REASON_MISSING_REQUIRED_FEATURES).set(1);
++                                    error!(%partition_id, "Partition processor start error: {e}");
++                                    PostStopAction::Restart(RestartDelay::MaxBackoff)
++                                }
+                                 Err(e @ ProcessorError::PartitionAheadOfLog { .. }) => {
+                                     counter!(PARTITION_STOP, PARTITION_LABEL => partition_id.to_string(), TYPE_LABEL => ERROR_STOP).increment(1);
+                                     gauge!(PARTITION_BLOCKED_FLARE, PARTITION_LABEL => partition_id.to_string(), REASON_LABEL => FLARE_REASON_AHEAD_OF_LOG).set(1);
+@@ -1694,6 +1701,7 @@ where
+         if result.is_ok() {
+             // the partition can only have been blocked on data we just deleted
+             gauge!(PARTITION_BLOCKED_FLARE, PARTITION_LABEL => partition_id.to_string(), REASON_LABEL => FLARE_REASON_AHEAD_OF_LOG).set(0);
++            gauge!(PARTITION_BLOCKED_FLARE, PARTITION_LABEL => partition_id.to_string(), REASON_LABEL => FLARE_REASON_MISSING_REQUIRED_FEATURES).set(0);
+         }
+ 
+         if let Some(pending) = pending {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1908,34 +2747,64 @@ Now:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PartitionStore] Build entry indexes and statistics only after the vqueues migra
+## X. [PartitionStore] Restore partitions lacking required features from a snapshot
 
 **RULE**:
-When implementing operations in `crates/admin-rest-model/src/version.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/partition-store/src/partition_store_manager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c36866b1`: [PartitionStore] Build entry indexes and statistics only after the vqueues migration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e667b46a`: [PartitionStore] Restore partitions lacking required features from a snapshot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/admin-rest-model/src/version.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/partition-store/src/partition_store_manager.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// its last check found a partition whose leader answered with its store open and lacks a
-    /// complete status gauge, as before the partition has fully migrated to vqueues. Partitions
-    /// without a known leader, leaders that are down or don't answer, and leaders whose
+use restate_types::partitions::{Partition, PartitionFeatureChange};
+        self.open_cancellable(partition, target_lsn, &[], &CancellationToken::new())
+    ///
+    /// If the local store lacks one of `required_features`, it is replaced by the newest snapshot
+    /// that has them. If no snapshot has them, the local store is opened as it is. Without a
+    /// local store to fall back to, the newest snapshot is restored whether it has them or not.
+    /// The caller decides what to do with a store that lacks them.
+        required_features: &[PartitionFeatureChange],
+        // If we already have the partition locally and it meets the fast-forward target and has the
+        // required features, then we simply return it.
+        // A local store that meets the target LSN but lacks required features. It is used if no
+        // snapshot has the features either.
+        let mut local_store = None;
+            let meets_target_lsn = match target_lsn {
+                None => true,
+                    my_applied_lsn.unwrap_or(Lsn::INVALID) >= min_applied_lsn
+                }
+            };
+            if meets_target_lsn {
+                if required_features.is_empty() {
+             
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    /// its last check found a partition whose leader answered and lacks a complete status gauge.
-    /// Partitions without a known leader, leaders that are down or don't answer, and leaders whose
+use restate_types::partitions::Partition;
+        self.open_cancellable(partition, target_lsn, &CancellationToken::new())
+        // If we already have the partition locally and we don't have a fast-forward target, or the
+        // store already meets the target LSN requirement, then we simply return it.
+            // we have a database, but perhaps it doesn't meet the min_applied_lsn requirement?
+            match target_lsn {
+                None => return Ok(partition_store),
+                    if my_applied_lsn.unwrap_or(Lsn::INVALID) >= min_applied_lsn {
+                        // We have an initialized partition store, and no fast-forward target - go on and open it.
+                        return Ok(partition_store);
+                    }
+        // target-lsn target higher than our local state (probably due to seeing a log trim-gap).
+        // Attempt to get a suitable snapshot from the repository:
+            .download_snapshot(partition.partition_id, target_lsn, cancellation)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c36866b1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e667b46a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T05:25:07.539Z",
+  "last_updated": "2026-11-28T05:33:54.374Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26975,
+  "total_items": 26977,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b47cc7f47c99ab2fae74723a6c97b54bb1f4e6ce2bd5fe8cc4d701919283408",
+      "content_hash": "cb2254de73af38abd1ca0f70977a59f590cad1966df10c03cb070d2162640977",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T05:07:11.034Z"
+      "persisted_at": "2026-11-28T05:33:54.151Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "19ed1829120db5fc9c284f27113a3f188a6322e8f34fbb41c9b31303e7f89759",
+      "content_hash": "7e5a2110ee97a75c192668af5c7800eb32ad4ebf62715250637fcc17fca40a23",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T05:07:11.288Z"
+      "persisted_at": "2026-11-28T05:33:54.374Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219807,9 +219807,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "20187e59bcb2c1bc872bd17c73ce59d88aa06a7db907841f55d882c9edf1f2db",
+      "content_hash": "5a94bc5ccf287250318ca96d5aeaa10d849d399daf0d16e7d69fba46bb99c40f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T04:12:31.777Z"
+      "persisted_at": "2026-11-28T05:33:53.106Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219819,9 +219819,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b69070705226e50ca7c55aa19c557a8a3773d4117800e1ca771d1fc37932657",
+      "content_hash": "a02ff77018eb029e6355f34ea26144071ecc6a8a95485955bdee88643da5b42c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T04:12:31.973Z"
+      "persisted_at": "2026-11-28T05:33:53.332Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -226862,8 +226862,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "a2d478d0",
-      "content_hash": "085e0684a2e0962c7f93f2016a596ab72a9d9c1a30e7052af862cba6658ec9e3",
+      "source_version": "85c63335",
+      "content_hash": "1dedc67ed333f66876787e9aa49f699499130574dd68fa5705b84e556e2e1a3c",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -226926,6 +226926,11 @@
           "number": 10839,
           "title": "[PartitionStore] Build entry indexes and statistics only after the vqueues migra",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11045,
+          "title": "[PartitionStore] Restore partitions lacking required features from a snapshot",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226933,7 +226938,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T05:48:15.392Z",
+      "verified_at": "2026-11-28T05:33:42.093Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227027,10 +227032,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "repository": "restatedev/restate",
-      "source_version": "a2d478d0",
-      "content_hash": "abb800a0b6839a6cb036b5d803a1698938d67a1866521a16425e7dd8f26e101e",
+      "source_version": "85c63335",
+      "content_hash": "74b576f5cb0c5af5e2f35c9842bb67d733cd7946c53db67b7e04f1153df59bf7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T05:48:16.110Z"
+      "persisted_at": "2026-11-28T05:33:42.931Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate",
@@ -227051,10 +227056,10 @@
       "relative_path": "08_VERIFICATION/restatedev-restate-verification-protocol-empirical-defect-shield-for-restatedev-.md",
       "title": "Verification Protocol: Empirical Defect Shield for restatedev/restate",
       "repository": "restatedev/restate",
-      "source_version": "a2d478d0",
-      "content_hash": "5a38ba9c63194ff44f74d27beefe2a341c027eb1fe722bc2851558615611fd5c",
+      "source_version": "85c63335",
+      "content_hash": "38aaf9bf1e8077ac1396ba8ecac2c246c9b1dac998c629276e1f1f39b7c7441d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T05:48:16.305Z"
+      "persisted_at": "2026-11-28T05:33:43.171Z"
     },
     "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants",
@@ -227064,9 +227069,9 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "565afac42dd507e0ec2c062f62c9f78db97e33fcb9baa9badaa7595e9a4eaf60",
+      "content_hash": "39669693b9fc2d2de6c12cefaaad99caf83ef8bede12db8408c4cdd10505ab6a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T05:48:26.423Z"
+      "persisted_at": "2026-11-28T05:33:52.028Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings",
@@ -227088,9 +227093,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for restatedev-restate-learnings",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "d10ea9738c2f6b40c39622f442db13553b8aee38b04554891858c8068433a13f",
+      "content_hash": "dd71bc582544aa2791d1994701c069ad12faa85e43ff99bab1c9cbe9c5225ce8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T05:48:26.632Z"
+      "persisted_at": "2026-11-28T05:33:52.256Z"
     },
     "candidate_directive-dual-ar-state-decoupling-invariant": {
       "item_id": "candidate_directive-dual-ar-state-decoupling-invariant",
@@ -350966,13 +350971,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9HOZ-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-644O-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7e36f0137801a5d964a5e519f288cce91abc02bcf3783b68f34d20ae5df7b5c",
+      "content_hash": "7aba4bdc66a14f27ac6592b78064bbb9cd6a854775f90f8a577339a2fe0717b2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T04:12:31.572Z"
+      "persisted_at": "2026-11-28T05:33:52.872Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -361884,13 +361889,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7RX5-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-64XU-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c5baba48aa228c3090ade1c8cee82e76078cfbdb5731da2935d4cdc7e84b0c07",
+      "content_hash": "fa7aca0b2f21fad2ce3697c58b32e4ef53ab4f46b9f5c2697bd969c0b22d39a1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T05:07:10.748Z"
+      "persisted_at": "2026-11-28T05:33:53.925Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -370698,6 +370703,32 @@
       "content_hash": "373d94bea0b37a7507069f613a0e87f217f7f051d6ef4b159698252afb39a689",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T05:25:07.156Z"
+    },
+    "rule-11045": {
+      "learning_id": "rule-11045",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11045,
+      "title": "[PartitionStore] Restore partitions lacking required features from a snapshot",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "85c63335",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T05:33:42.093Z"
+    },
+    "candidate_directive-partitionstore-restore-partitions-lacking-required-features-from-a-snapshot": {
+      "item_id": "candidate_directive-partitionstore-restore-partitions-lacking-required-features-from-a-snapshot",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-63AE-partitionstore-restore-partitions-lacking-required-features-from-a-snapshot.md",
+      "title": "[PartitionStore] Restore partitions lacking required features from a snapshot",
+      "repository": "restatedev-restate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "27e947069b627f12f6f3556eba9bc4526f768d338c9ecd491c2d05968f0b6676",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T05:33:51.786Z"
     }
   },
   "ai-builder-brain": {

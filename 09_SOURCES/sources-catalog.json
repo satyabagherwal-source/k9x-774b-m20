@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "a2d478d0",
+    "sourceVersion": "85c63335",
     "license": "NOASSERTION",
-    "contentHash": "085e0684a2e0962c7f93f2016a596ab72a9d9c1a30e7052af862cba6658ec9e3",
-    "lastHarvestedAt": "2026-11-27T05:48:15.665Z",
+    "contentHash": "1dedc67ed333f66876787e9aa49f699499130574dd68fa5705b84e556e2e1a3c",
+    "lastHarvestedAt": "2026-11-28T05:33:42.405Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T05:24:58.211Z",
-  "total_cycles_completed": 13270,
-  "total_learnings_persisted": 13270,
-  "total_rules_promoted": 11964,
+  "last_updated": "2026-11-28T05:33:42.411Z",
+  "total_cycles_completed": 13271,
+  "total_learnings_persisted": 13271,
+  "total_rules_promoted": 11965,
   "history": [
-    {
-      "timestamp": "2026-11-27T11:33:45.883Z",
-      "repository": "nguyenphutrong/quotio",
-      "learningId": "learn-github-nguyenphutrong-quotio",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T11:44:31.310Z",
       "repository": "weaviate/weaviate",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T05:24:58.211Z",
       "repository": "VectifyAI/PageIndex",
       "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T05:33:42.411Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

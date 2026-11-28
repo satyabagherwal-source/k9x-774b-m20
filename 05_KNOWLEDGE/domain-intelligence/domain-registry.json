@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T05:25:07.359Z",
+  "last_updated": "2026-11-28T05:33:54.151Z",
   "total_records": 2877,
   "domains": {
     "A": {
@@ -9610,8 +9610,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "4b47cc7f47c99ab2fae74723a6c97b54bb1f4e6ce2bd5fe8cc4d701919283408",
-      "created_at": "2026-11-28T05:07:11.034Z"
+      "content_hash": "cb2254de73af38abd1ca0f70977a59f590cad1966df10c03cb070d2162640977",
+      "created_at": "2026-11-28T05:33:54.151Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12268,8 +12268,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "20187e59bcb2c1bc872bd17c73ce59d88aa06a7db907841f55d882c9edf1f2db",
-      "created_at": "2026-11-28T04:12:31.777Z"
+      "content_hash": "5a94bc5ccf287250318ca96d5aeaa10d849d399daf0d16e7d69fba46bb99c40f",
+      "created_at": "2026-11-28T05:33:53.106Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -14335,8 +14335,8 @@
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "repository": "restatedev/restate",
-      "content_hash": "abb800a0b6839a6cb036b5d803a1698938d67a1866521a16425e7dd8f26e101e",
-      "created_at": "2026-11-27T05:48:16.110Z"
+      "content_hash": "74b576f5cb0c5af5e2f35c9842bb67d733cd7946c53db67b7e04f1153df59bf7",
+      "created_at": "2026-11-28T05:33:42.931Z"
     },
     "DOM-H-948029CF": {
       "record_id": "DOM-H-948029CF",
@@ -14412,8 +14412,8 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-learnings-architecture-intelligence-restatedev-restate-learni.md",
       "repository": "restatedev-restate-learnings",
-      "content_hash": "565afac42dd507e0ec2c062f62c9f78db97e33fcb9baa9badaa7595e9a4eaf60",
-      "created_at": "2026-11-27T05:48:26.423Z"
+      "content_hash": "39669693b9fc2d2de6c12cefaaad99caf83ef8bede12db8408c4cdd10505ab6a",
+      "created_at": "2026-11-28T05:33:52.028Z"
     },
     "DOM-H-C33FF226": {
       "record_id": "DOM-H-C33FF226",
