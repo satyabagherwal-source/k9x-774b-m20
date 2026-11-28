@@ -13953,3 +13953,4 @@
 | `CYCLE-20261128-MYRF` | `2026-11-28T02:59:01.371Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11021` | Yes (`8a4d765c...`) |
 | `CYCLE-20261128-N8NO` | `2026-11-28T02:59:14.196Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11022` | Yes (`2231db6c...`) |
 | `CYCLE-20261128-NAZH` | `2026-11-28T02:59:17.213Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11023` | Yes (`ec5dafaa...`) |
+| `CYCLE-20261128-YO8Q` | `2026-11-28T03:08:07.610Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11024` | Yes (`8f79c2b3...`) |

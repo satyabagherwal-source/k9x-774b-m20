@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T02:59:24.078Z",
+  "last_updated": "2026-11-28T03:08:13.835Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-BTO1",
+      "id": "CD-YS5W",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-BTO1-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-YS5W-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -69127,11 +69127,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-BUIR",
+      "id": "CD-YT1N",
       "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-BUIR-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-YT1N-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -74197,6 +74197,44 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-709D79-draft-nuc-156-output-counts-of-reasoning.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-YRB1",
+      "directive_title": "V2 C API: streaming operator, and table in-out functions built on it",
+      "source_repo": "duckdb-duckdb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YRB1-v2-c-api-streaming-operator-and-table-in-out-functions-built-on-it.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-AEFF80",
+      "directive_title": "V2 C API: streaming operator, and table in-out functions built on it",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "duckdb-duckdb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AEFF80-v2-c-api-streaming-operator-and-table-in.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-19421F",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-19421F-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-E138DA",
+      "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E138DA-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
       "staged_date": "2026-11-28"
     }
   ]

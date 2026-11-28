@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-KNXV",
-    "timestamp": "2026-11-26T14:33:43.987Z",
-    "repository": "jithin-sabu/purge-app",
-    "learningId": "learn-github-jithin-sabu-purge-app",
-    "contentHash": "fa4cf232c4d5209c8946f6d2d9c096d6547400c00f9f874cb3dc2acc8e67f3ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-KRV5",
     "timestamp": "2026-11-26T14:33:49.073Z",
     "repository": "skyhook-io/radar",
@@ -7490,6 +7475,21 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "ec5dafaaef312c4c408b2e3f42526d9d89a2479b3f513baceba94965ced7ec4b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-YO8Q",
+    "timestamp": "2026-11-28T03:08:07.610Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "8f79c2b3311c441102b2a69e8e82f7d5106576a4de2ef917b03bc92d05c792ff",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T02:41:31.800Z",
+  "updated_at": "2026-11-28T03:08:11.315Z",
   "stats": {
-    "total_discovered": 10707,
-    "approved_pending_harvest": 10166,
+    "total_discovered": 10708,
+    "approved_pending_harvest": 10167,
     "harvested_count": 0,
     "rejected_count": 541,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10175,
+      "COMMUNITY_AND_EXPERT": 10176,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -231794,6 +231794,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
         "fileName": "dicklesworthstone-destructive_command_guard-learnings.md"
+      }
+    },
+    "SRC-BEC25C46050C": {
+      "id": "SRC-BEC25C46050C",
+      "url": "https://github.com/duckdb/duckdb/commit/ff8a2085126052a88f75843585ef80dc89ac1fda",
+      "title": "https://github.com/duckdb/duckdb/commit/ff8a2085126052a88f75843585ef80dc89ac1fda",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T03:08:11.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
+        "fileName": "duckdb-duckdb-learnings.md"
       }
     }
   }

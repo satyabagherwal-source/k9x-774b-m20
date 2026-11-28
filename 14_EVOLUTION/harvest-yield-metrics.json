@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T02:59:17.230Z",
-  "total_cycles_completed": 13241,
-  "total_learnings_persisted": 13241,
-  "total_rules_promoted": 11942,
+  "last_updated": "2026-11-28T03:08:07.629Z",
+  "total_cycles_completed": 13242,
+  "total_learnings_persisted": 13242,
+  "total_rules_promoted": 11943,
   "history": [
-    {
-      "timestamp": "2026-11-27T09:17:29.529Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T09:17:32.942Z",
       "repository": "codewhale-hq/Codewhale",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T02:59:17.230Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T03:08:07.629Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

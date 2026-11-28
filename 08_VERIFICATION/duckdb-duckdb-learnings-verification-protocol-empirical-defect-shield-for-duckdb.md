@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T12:39:31.077Z",
+  "timestamp": "2026-11-28T03:08:11.449Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-duckdb-duckdb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [duckdb-duckdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T12:39:31.077Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T03:08:11.449Z`  
 > **Learning ID**: `LEARN-EVO-duckdb-duckdb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `bdc96af9`  
+> **Source Version**: `07c9a117`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T12:39:22.745Z  
+> **Timestamp**: 2026-11-28T03:08:06.391Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T12:39:22.735Z  
+> **Harvest Timestamp**: 2026-11-28T03:08:06.279Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43334 stars
+- **Stars / Engagement**: 43434 stars
 
 ---
 
@@ -238,7 +238,7 @@ FINISH_BENCHMARK(ConcurrentCommits32Threads10ms)
 #include "duckdb/common/types/decimal.hpp"
 #include "duckdb/common/types/hugeint.hpp"
 #include "duckdb/common/types/time.hpp"
-#include "duckdb/common/vector/struct_vector.hpp"
+#include "duckdb/function/aggregate/bignum_aggregates.hpp"
 #include "duckdb/common/exception.hpp"
 #include "duckdb/common/likely.hpp"
 #include "duckdb/function/function_set.hpp"
@@ -514,7 +514,7 @@ struct TimestampNSAverageOperation : public DiscreteAverageOperation {
 	static void RepeatedCombine(const STATE &source, STATE &target, AggregateInputData &input, idx_t count) {
 		if (source.count == INFINITE_COUNT) {
 			if (count > 0) {
-				AddInfinities(targe
+				AddInfinit
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/algebraic/corr.cpp`
@@ -1996,11 +1996,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29353** (2026-11-25): **Keep the V2 crypto provider test's destroy flags alive past the test**
-  *Symptoms*: The `V2 crypto provider: registration rules` test from #29088 pointed `ProviderStats::destroyed` at a local `bool`. The registered provider frees its user data only when the instance is destroyed, after that local is gone, so `DestroyStats` wrote to stack memory that was no longer valid. ASan aborts on it in the OSX Debug job. Because the instance outlives the test, the abort is reported under another test of the same batch, `V2 crypto: hashing and HMAC`. For example, job 139123340434 on #29314 aborts in `DestroyStats` from `~CV2EncryptionUtil` / `~DBConfig`.  The flag is now a `std::shared_ptr<bool>` that the stats co-own, so the write stays valid however long the instance lives. The test checks it through the pointer.  `[crypto]` (9 cases) and `[capi_v2]` (641 cases) pass. I couldn't run ASan on my machine, so the OSX Debug job here is the check. 
+- **Issue #29505** (2026-11-27): **Prune NOT IN filters containing NULL constants**
+  *Symptoms*: A literal `NOT IN` list containing NULL cannot pass a filter, but mixed lists currently retain a scan and its fallback cardinality estimate. Extend the existing filter-statistics proof to recognize these lists, allowing scan elimination and a zero-row bound.  The proof applies to a direct column and constant list. Projected membership keeps its three-valued result, and NULL-free membership estimates retain their current policy. 
 
-- **Issue #29337** (2026-11-25): **Adapt the order of scan conjunction filters**
-  *Symptoms*: Scan predicates on the same column currently execute in a fixed cost-based order. A join against a few widely spaced keys can produce broad range checks alongside a selective runtime `IN` filter. Running the range checks first does unnecessary work on rows the `IN` filter rejects.  Reuse `AdaptiveFilter` to learn the order of these AND predicates during execution. The scan executor and its predicate caches share the learned order. Constant and all-accepting cached batches keep using that order without collecting timing samples.  For example, using a persisted database:  ```sql CREATE TABLE facts AS SELECT ((i * 48271) % 1000000)::INTEGER AS k FROM range(20000000) t(i);  CREATE TABLE selected_keys(k INTEGER); INSERT INTO selected_keys VALUES (1000), (890000); CHECKPOINT;  SELECT count(*) FROM facts JOIN selected_keys USING (k); ```  Four threads, median of five warm query executions, optimized sanitizer build; setup excluded:  | Query | Base | This PR | Change | | --- | ---: | ---: | ---: | | Join 20M rows to two keys | 666 ms | 396 ms | −40.5% | 
+- **Issue #29504** (2026-11-27): **Bump aws ec414ba main**
+  *Symptoms*: Also brings in @Tishj's https://github.com/duckdb/duckdb/commit/ff8a2085126052a88f75843585ef80dc89ac1fda that made it into `v2.0.1` but not `main` yet.  Then re-align what has happened on `v2.0-cyanoptera` with the aws extension.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2017,225 +2017,919 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d3d8a8f5` (2026-11-24)
-**Commit Message**: Keep the type of the constant when constant_or_null has an untyped NULL child (#29304)
+### Incident Patch 1: `42cae313` (2026-11-27)
+**Commit Message**: V2 C API: streaming operator, and table in-out functions built on it (#29493)
 
-While testing DuckDB with untrusted SQL under a restricted configuration
-(`enable_external_access = false`, locked configuration) we found a
-short statement that ends in an internal error and invalidates the
-database instance. The configuration is not needed to reproduce it.
-
-### What a user sees
+Adds a streaming **operator** to the V2 C API, and lets a table function
+run one. This makes it possible to define table in-out functions
+(`summary((SELECT ...))`, `unnest(t.x)`, ...) from an extension:
+functions that take a stream of input chunks and turn each into output
+chunks, rather than only producing rows from nothing.
 
 ```sql
-CREATE TABLE x AS SELECT array_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1);
+-- my_double is a table function backed by an operator
+SELECT * FROM my_double((SELECT x FROM t));
 ```
 
-```
-INTERNAL Error: Expected unified vector format of type INT8, but found type INT32
-```
+<details>
+<summary>Details</summary>
 
-and every later statement fails with `FATAL Error: Failed: database has
-been invalidated because of a previous fatal error`. Other forms of the
-same defect:
+## API
 
-- `WITH c AS MATERIALIZED (SELECT array_contains([NULL], c1) AS l FROM
-(VALUES (NULL), (NULL)) t(c1)) SELECT * FROM c;` and `SELECT
-list_contains([NULL], c1) AND true FROM ...` give `INTERNAL Error:
-Vector::Reference used on vector of different type (source BOOLEAN
-referenced "NULL")`;
-- `... UNION ALL SELECT true` gives `Invalid Input Error: Type mismatch
-for SET OPERATION`;
-- on an assertion build the plain `SELECT list_contains([NULL], c1) FROM
-(VALUES
+New module `api_spec/v2/function/operator.yaml`:
 
-**File**: `src/optimizer/expression_rewriter.cpp` (modified, +6/-0)
+- `duckdb_v2_operator_create` / `_destroy`, `_set_user_data`
+- `_set_init_global_callback` (global state, `max_threads`),
+`_set_init_local_callback` (per-thread state)
+- `_set_execute_callback` (required): reads
+`operator_execute_get_input_chunk`, writes
+`operator_execute_get_output_chunk`, and reports
+`OPERATOR_RESULT_{NEED_MORE_INPUT, HAVE_MORE_OUTPUT, FINISHED}` via
+`operator_execute_set_result`
+- `_set_finalize_callback` (optional): flushes held-back output once the
+thread's input is exhausted, repeating while
+`operator_finalize_set_have_more_output(true)`
+- getters for user
+
+**File**: `api_spec/v2/function/operator.yaml` (added, +749/-0)
 ```diff
-@@ -160,6 +160,12 @@ unique_ptr<Expression> ExpressionRewriter::ConstantOrNull(ClientContext &context
+@@ -0,0 +1,749 @@
++module: operator
++#
++# A custom streaming operator: it receives its input as a stream of chunks and produces chunks of output, the way
++# DuckDB's own physical operators do. An operator is defined once and then handed to the object that places it in a
++# query plan; today that is a table function (see table_function_set_operator), which turns the function into a
++# table in-out function.
++#
++#-----------------------------------------------------------------------------------------------------------------------
++# Enums
++#-----------------------------------------------------------------------------------------------------------------------
++enums:
++  OPERATOR_RESULT:
++    description: |
++      What an operator's execute callback reports about the input chunk it was given, set with
++      `[[operator_execute_set_result]]`.
++    values:
++      OPERATOR_RESULT_NEED_MORE_INPUT:
++        value: 0
++        description: |
++          The operator is done with the input chunk: the engine calls the execute callback again with the next input
++          chunk. The default.
++      OPERATOR_RESULT_HAVE_MORE_OUTPUT:
++        value: 1
++        description: |
++          The output chunk is full but the operator is not done with the input chunk: the engine calls the execute
++          callback again with the same input chunk once it has consumed the output.
++      OPERATOR_RESULT_FINISHED:
++        value: 2
++        description: |
++          The operator needs no more input at all, e.g. because it has produced every row it ever will. The engine
++          stops feeding it input, and calls the finalize callback if one is set.
++
++#-----------------------------------------------------------------------------------------------------------------------
++# Handles
++#-----------------------------------------------------------------------------------------------------------------------
++handles:
++  operator:
++    description: |
++      An owned opaque handle to a custom streaming operator being built. Created with `[[operator_create]]`,
++      configured with the setter functions (e.g. `[[operator_set_execute_callback]]`), handed to the object that runs
++      it (e.g. with `[[table_function_set_operator]]`), and destroyed with `[[operator_destroy]]`.
++
++      An operator transforms a stream of input chunks into a stream of output chunks. The engine may run it on
++      several threads at once: every thread processes a part of the input with a "local state" of its own, next to a
++      "global state" all threads share.
++
++  operator_init_global_info:
++    description: |
++      A borrowed opaque handle to the arguments supplied to an operator during the global state initialization
++      "init global" phase. The "init global" callback receives this handle and can use it to set up the state shared
++      by every thread running the operator, and to declare how many threads may run it.
++
++  operator_init_local_info:
++    description: |
++      A borrowed opaque handle to the arguments supplied to an operator during the local state initialization
++      "init local" phase. The "init local" callback receives this handle and can use it to set up the state of one
++      thread running the operator.
++
++  operator_execute_info:
++    description: |
++      A borrowed opaque handle to the arguments supplied to an operator during the "execute" phase. The "execute"
++      callback receives this handle and uses it to read the input chunk, write the output chunk, and report whether
++      it is done with the input chunk.
++
++  operator_finalize_info:
++    description: |
++      A borrowed opaque handle to the arguments supplied to an operator during the "finalize" phase, after the
++      thread's input is exhausted. The "finalize" callback receives this handle and uses it to write the output the
++      operator held back, and to report whether it has more of it.
++
++#-----------------------------------------------------------------------------------------------------------------------
++# Callbacks
++#-----------------------------------------------------------------------------------------------------------------------
++callbacks:
++  operator_init_global_callback:
++    parameters:
++      info:
++        type: operator_init_global_info
++        description: Borrowed opaque handle providing access to the information available to the callback.
++      context:
++        type: context
++        description: Borrowed handle to the context of the query currently executing the callback.
++      err:
++        type: error_info
++        indirection: 1
++        description: Borrowed error info handle to use to report errors that occur during the callback.
++    return_type: void
++
++  operator_init_local_callback:
++    parameters:
++      info:
++        type: operator_init_local_info
++        description: Borrowed opaque handle providing access to the information available to the callback.
++      context:
++        type: context
++        description: Borrowe
+```
+
+**File**: `api_spec/v2/function/table.yaml` (modified, +152/-2)
+```diff
+@@ -35,6 +35,26 @@ enums:
+           from 0. A function that reads a single file produces it when it is wrapped in a multi-file function (see
+           `[[multi_file_function_create]]`), which is where the name of the file comes from.
  
- unique_ptr<Expression> ExpressionRewriter::ConstantOrNull(ClientContext &context,
-                                                           vector<unique_ptr<Expression>> children, Value value) {
-+	for (auto &child : children) {
-+		if (child->GetReturnType().id() == LogicalTypeId::SQLNULL) {
-+			// an untyped NULL child folds the call before its types are resolved: keep the type of the constant
-+			return make_uniq<BoundConstantExpression>(Value(value.type()));
-+		}
-+	}
- 	children.insert(children.begin(), make_uniq<BoundConstantExpression>(std::move(value)));
- 	// constant_or_null has the type of the leading constant, also when a typed NULL child folds the call
- 	return BindBuiltinScalarExpression(context, ConstantOrNullFun::Name, std::move(children));
++  TABLE_OPERATOR_INPUT:
++    description: |
++      Where the input of a table function's operator comes from: what the rows of the input chunks the operator
++      receives are. Chosen with `[[table_function_set_operator]]`.
++    values:
++      TABLE_OPERATOR_INPUT_ARGUMENTS:
++        value: 0
++        description: |
++          The positional arguments of a call of the function are the columns of the operator's input, one row per
++          set of arguments. Called with constant arguments, e.g. `f(1, 'a')`, the operator receives a single input
++          row. Called with arguments that reference the columns of a table that precedes the call in the `FROM`
++          clause, e.g. `FROM t, f(t.x)` (an implicit `LATERAL` join), it receives one input row per row of that
++          table, one at a time, and every row it produces is joined to the row of `t` it was produced for.
++      TABLE_OPERATOR_INPUT_TABLE:
++        value: 1
++        description: |
++          The function takes a table as its first argument, written as a subquery, e.g. `f((SELECT * FROM t))`, and
++          the operator receives the rows of that table as its input, chunk by chunk, possibly on several threads. The
++          columns of its input are the columns of the table.
++
+ #-----------------------------------------------------------------------------------------------------------------------
+ # Handles
+ #-----------------------------------------------------------------------------------------------------------------------
+@@ -862,6 +882,93 @@ functions:
+         description: Optional. On failure, receives an opaque info handle the caller must destroy via `[[error_info_destroy]]`.
+     return_type: ERROR
+ 
++  table_function_bind_get_input_column_count:
++    lifecycle:
++      - [ "unstable", "v2.0.0", "2026-11-25" ]
++    description: |
++      Returns the number of columns of the input of the function's operator (see `[[table_function_set_operator]]`).
++
++      These are the vectors of the input chunks the operator's execute callback receives: the positional arguments of
++      the call for `TABLE_OPERATOR_INPUT_ARGUMENTS`, or the columns of the table argument for
++      `TABLE_OPERATOR_INPUT_TABLE`. A bind callback typically derives the function's result columns from them. Unlike
++      `[[function_bind_get_arg_value]]`, this also describes arguments that are not constant. 0 for a function without
++      an operator.
++    parameters:
++      info:
++        type: table_function_bind_info
++        description: The bind info handle.
++      count:
++        type: idx
++        indirection: 1
++        kind: OUT
++        description: Receives the number of input columns.
++      err:
++        type: error_info
++        indirection: 1
++        description: Optional. On failure, receives an opaque info handle the caller must destroy via `[[error_info_destroy]]`.
++    return_type: ERROR
++
++  table_function_bind_get_input_column_type:
++    lifecycle:
++      - [ "unstable", "v2.0.0", "2026-11-25" ]
++    description: |
++      Retrieves the type of the operator's input column at the given index (see
++      `[[table_function_bind_get_input_column_count]]`).
++
++      Fails if the index is out of bounds. The returned type is owned by the caller and must be destroyed via
++      `[[logical_type_destroy]]`.
++    parameters:
++      info:
++        type: table_function_bind_info
++        description: The bind info handle.
++      index:
++        type: idx
++        description: The index of the input column.
++      type:
++        type: logical_type
++        indirection: 1
++        kind: OUT
++        description: Receives the column type. Owned by the caller; destroy via `[[logical_type_destroy]]`.
++      err:
++        type: error_info
++        indirection: 1
++        description: Optional. On failure, receives an opaque info handle the caller must destroy via `[[error_info_destroy]]`.
++    return_type: ERROR
++
++  table_function_bind_get_input_column_name:
++    lifecycle:
++      - [ "unstable", "v2.0.0", "2026-11-25" ]
++    description: |
++      Retrieves the name of the operator's input column at the given index (see
++      `[[table_function_bind_get_input_column_count]]`).
++
++      For `TABLE_OPERATOR_INPUT_TABLE` this is the name of the column of the table argument. The arguments of
++      `TABLE_OPERATOR_INPUT_ARGUMENTS` have no names, and yield an empty name. Fails if the index is out of bounds.
++      The name is borrowed and valid only for the duration of the callback.
++    parameters:
++      info:
++        type: table_function_bind_info
++        description: The bind info handle.
++      index:
++        type: idx
++        description: The index of the input column.
++      name:
++        type: char
++        indirection: 2
++      
 ```
 
-**File**: `test/optimizer/constant_or_null_untyped_null.test` (added, +68/-0)
+**File**: `src/execution/physical_plan/plan_get.cpp` (modified, +5/-0)
 ```diff
-@@ -0,0 +1,68 @@
-+# name: test/optimizer/constant_or_null_untyped_null.test
-+# description: A rewrite to constant_or_null keeps the type of the constant when its child is an untyped NULL
-+# group: [optimizer]
+@@ -97,6 +97,11 @@ PhysicalOperator &PhysicalPlanGenerator::CreatePlan(LogicalGet &op) {
+ 				break;
+ 			}
+ 		}
++		if (!op.projected_input.empty() && op.function.in_out_function_final) {
++			throw NotImplementedException("Table in-out function %s has a finalize step, which is not supported for "
++			                              "input that is correlated with an outer query",
++			                              op.function.GetName());
++		}
+ 		auto &table_in_out = Make<PhysicalTableInOutFunction>(
+ 		    op.types, op.function, std::move(op.bind_data), column_ids, std::move(projection_indices),
+ 		    std::move(table_filters), op.estimated_cardinality, std::move(op.projected_input));
+```
+
+**File**: `src/include/duckdb/main/capi_v2/capi_v2_function_internal.hpp` (modified, +107/-0)
+```diff
+@@ -9,6 +9,7 @@
+ #pragma once
+ 
+ #include "duckdb/main/capi_v2/capi_v2_internal.hpp"
++#include "duckdb/common/enums/operator_result_type.hpp"
+ #include "duckdb/common/named_parameter_map.hpp"
+ #include "duckdb/function/function.hpp"
+ #include "duckdb/function/table_function.hpp"
+@@ -184,4 +185,110 @@ inline auto Convert(CV2FunctionBindInfo *info) -> duckdb_v2_function_bind_info_h
+ 	return reinterpret_cast<duckdb_v2_function_bind_info_handle>(info);
+ }
+ 
++//----------------------------------------------------------------------------------------------------------------------
++// Operators
++//----------------------------------------------------------------------------------------------------------------------
++//! The callbacks and user data of a custom streaming operator. Copied into what runs it, which shares the user data.
++class CV2OperatorInfo {
++public:
++	void *GetUserData() const {
++		return user_data ? user_data->GetData() : nullptr;
++	}
 +
-+# the needle is a column of type "NULL": list_contains over a list without non-NULL elements is rewritten to
-+# constant_or_null(false, needle), which must stay a BOOLEAN
-+query I
-+SELECT list_contains([NULL], c1) FROM (VALUES (NULL), (NULL)) t(c1);
++public:
++	duckdb_v2_operator_init_global_callback_fn init_global_cb = nullptr;
++	duckdb_v2_operator_init_local_callback_fn init_local_cb = nullptr;
++	duckdb_v2_operator_execute_callback_fn execute_cb = nullptr;
++	duckdb_v2_operator_finalize_callback_fn finalize_cb = nullptr;
++	shared_ptr<CV2UserData> user_data;
++};
++
++//! An operator being built through the C API
++class CV2Operator {
++public:
++	explicit CV2Operator(DatabaseInstance &db) : db(db) {
++	}
++
++public:
++	//! The database it was created for: the only one whose objects can run it.
++	DatabaseInstance &db;
++	CV2OperatorInfo info;
++};
++
++inline auto Convert(duckdb_v2_operator_handle op) -> CV2Operator * {
++	return reinterpret_cast<CV2Operator *>(op);
++}
++inline auto Convert(CV2Operator *op) -> duckdb_v2_operator_handle {
++	return reinterpret_cast<duckdb_v2_operator_handle>(op);
++}
++
++class CV2OperatorInitGlobalInfo {
++public:
++	void *in_user_data = nullptr;
++	void *in_bind_data = nullptr;
++
++	duckdb_v2_opaque out_global_state = {};
++	optional_idx out_max_threads;
++};
++
++inline auto Convert(duckdb_v2_operator_init_global_info_handle info) -> CV2OperatorInitGlobalInfo * {
++	return reinterpret_cast<CV2OperatorInitGlobalInfo *>(info);
++}
++inline auto Convert(CV2OperatorInitGlobalInfo *info) -> duckdb_v2_operator_init_global_info_handle {
++	return reinterpret_cast<duckdb_v2_operator_init_global_info_handle>(info);
++}
++
++class CV2OperatorInitLocalInfo {
++public:
++	void *in_user_data = nullptr;
++	void *in_bind_data = nullptr;
++	void *in_global_state = nullptr;
++
++	duckdb_v2_opaque out_local_state = {};
++};
++
++inline auto Convert(duckdb_v2_operator_init_local_info_handle info) -> CV2OperatorInitLocalInfo * {
++	return reinterpret_cast<CV2OperatorInitLocalInfo *>(info);
++}
++inline auto Convert(CV2OperatorInitLocalInfo *info) -> duckdb_v2_operator_init_local_info_handle {
++	return reinterpret_cast<duckdb_v2_operator_init_local_info_handle>(info);
++}
++
++class CV2OperatorExecuteInfo {
++public:
++	void *in_user_data = nullptr;
++	void *in_bind_data = nullptr;
++	void *in_global_state = nullptr;
++	void *in_local_state = nullptr;
++	optional_ptr<DataChunk> input;
++	optional_ptr<DataChunk> output;
++
++	OperatorResultType out_result = OperatorResultType::NEED_MORE_INPUT;
++};
++
++inline auto Convert(duckdb_v2_operator_execute_info_handle info) -> CV2OperatorExecuteInfo * {
++	return reinterpret_cast<CV2OperatorExecuteInfo *>(info);
++}
++inline auto Convert(CV2OperatorExecuteInfo *info) -> duckdb_v2_operator_execute_info_handle {
++	return reinterpret_cast<duckdb_v2_operator_execute_info_handle>(info);
++}
++
++class CV2OperatorFinalizeInfo {
++public:
++	void *in_user_data = nullptr;
++	void *in_bind_data = nullptr;
++	void *in_global_state = nullptr;
++	void *in_local_state = nullptr;
++	optional_ptr<DataChunk> output;
++
++	bool out_have_more_output = false;
++};
++
++inline auto Convert(duckdb_v2_operator_finalize_info_handle info) -> CV2OperatorFinalizeInfo * {
++	return reinterpret_cast<CV2OperatorFinalizeInfo *>(info);
++}
++inline auto Convert(CV2OperatorFinalizeInfo *info) -> duckdb_v2_operator_finalize_info_handle {
++	return reinterpret_cast<duckdb_v2_operator_finalize_info_handle>(info);
++}
++
+ } // namespace duckdb::capiv2
+```
+
+**File**: `src/include/duckdb/main/capi_v2/extension_api_v2.hpp` (modified, +101/-0)
+```diff
+@@ -1670,9 +1670,78 @@ typedef struct {
+ 	 duckdb_v2_error_info_handle *err);
+ 	DUCKDB_V2_ERROR(*duckdb_v2_data_source_set_user_data)
+ 	(duckdb_v2_data_source_handle source, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_create)
++	(duckdb_v2_factory_handle factory, duckdb_v2_operator_handle *op, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR (*duckdb_v2_operator_destroy)(duckdb_v2_operator_handle *op);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_bind_data)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_global_state)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_input_chunk)
++	(duckdb_v2_operator_execute_info_handle info, duckdb_v2_data_chunk_handle *chunk, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_local_state)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_output_chunk)
++	(duckdb_v2_operator_execute_info_handle info, duckdb_v2_data_chunk_handle *chunk, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_user_data)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_set_result)
++	(duckdb_v2_operator_execute_info_handle info, DUCKDB_V2_OPERATOR_RESULT result, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_bind_data)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_global_state)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_local_state)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_output_chunk)
++	(duckdb_v2_operator_finalize_info_handle info, duckdb_v2_data_chunk_handle *chunk,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_user_data)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_set_have_more_output)
++	(duckdb_v2_operator_finalize_info_handle info, bool have_more_output, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_get_bind_data)
++	(duckdb_v2_operator_init_global_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_get_user_data)
++	(duckdb_v2_operator_init_global_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_set_global_state)
++	(duckdb_v2_operator_init_global_info_handle info, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_set_max_threads)
++	(duckdb_v2_operator_init_global_info_handle info, idx_t max_threads, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_bind_data)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_global_state)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_user_data)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_set_local_state)
++	(duckdb_v2_operator_init_local_info_handle info, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_execute_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_execute_callback_fn callback, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_finalize_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_finalize_callback_fn callback, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_init_global_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_init_global_callback_fn callback,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_init_local_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_init_local_callback_fn callback,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_user_data)
++	(duckdb_v2_operator_handle op, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_table_function_bind_get_input_column_count)
++	(duckdb_v2_table_function_bind_info_handle info, idx_t *coun
+```
+
+**File**: `src/include/duckdb_extension_v2.h` (modified, +168/-0)
+```diff
+@@ -1744,9 +1744,78 @@ typedef struct {
+ 	 duckdb_v2_error_info_handle *err);
+ 	DUCKDB_V2_ERROR(*duckdb_v2_data_source_set_user_data)
+ 	(duckdb_v2_data_source_handle source, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_create)
++	(duckdb_v2_factory_handle factory, duckdb_v2_operator_handle *op, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR (*duckdb_v2_operator_destroy)(duckdb_v2_operator_handle *op);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_bind_data)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_global_state)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_input_chunk)
++	(duckdb_v2_operator_execute_info_handle info, duckdb_v2_data_chunk_handle *chunk, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_local_state)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_output_chunk)
++	(duckdb_v2_operator_execute_info_handle info, duckdb_v2_data_chunk_handle *chunk, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_user_data)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_set_result)
++	(duckdb_v2_operator_execute_info_handle info, DUCKDB_V2_OPERATOR_RESULT result, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_bind_data)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_global_state)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_local_state)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_output_chunk)
++	(duckdb_v2_operator_finalize_info_handle info, duckdb_v2_data_chunk_handle *chunk,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_user_data)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_set_have_more_output)
++	(duckdb_v2_operator_finalize_info_handle info, bool have_more_output, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_get_bind_data)
++	(duckdb_v2_operator_init_global_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_get_user_data)
++	(duckdb_v2_operator_init_global_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_set_global_state)
++	(duckdb_v2_operator_init_global_info_handle info, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_set_max_threads)
++	(duckdb_v2_operator_init_global_info_handle info, idx_t max_threads, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_bind_data)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_global_state)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_user_data)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_set_local_state)
++	(duckdb_v2_operator_init_local_info_handle info, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_execute_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_execute_callback_fn callback, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_finalize_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_finalize_callback_fn callback, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_init_global_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_init_global_callback_fn callback,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_init_local_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_init_local_callback_fn callback,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_user_data)
++	(duckdb_v2_operator_handle op, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_table_function_bind_get_input_column_count)
++	(duckdb_v2_table_function_bind_info_handle info, idx_t *coun
+```
+
+**File**: `src/include/duckdb_v2.h` (modified, +800/-10)
+```diff
+@@ -5212,6 +5212,662 @@ DUCKDB_C_API DUCKDB_V2_ERROR duckdb_v2_object_cache_entry_destroy(duckdb_v2_obje
+ 
+ /* --- Struct definitions for object cache --- */
+ 
++/* ============================================================================
++ * MODULE: operator
++ * ============================================================================ */
++
++/* --- Enums for operator --- */
++
++/*!
++ * What an operator's execute callback reports about the input chunk it was given, set with
++ * `duckdb_v2_operator_execute_set_result()`.
++ */
++typedef enum DUCKDB_V2_OPERATOR_RESULT {
++	/*!
++	 * The operator is done with the input chunk: the engine calls the execute callback again with the next input chunk.
++	 * The default.
++	 */
++	DUCKDB_V2_OPERATOR_RESULT_NEED_MORE_INPUT = 0,
++
++	/*!
++	 * The output chunk is full but the operator is not done with the input chunk: the engine calls the execute callback
++	 * again with the same input chunk once it has consumed the output.
++	 */
++	DUCKDB_V2_OPERATOR_RESULT_HAVE_MORE_OUTPUT = 1,
++
++	/*!
++	 * The operator needs no more input at all, e.g. because it has produced every row it ever will. The engine stops
++	 * feeding it input, and calls the finalize callback if one is set.
++	 */
++	DUCKDB_V2_OPERATOR_RESULT_FINISHED = 2,
++	DUCKDB_V2_OPERATOR_RESULT_MAX_ENUM = 0x7FFFFFFF,
++} DUCKDB_V2_OPERATOR_RESULT;
++
++/* --- Struct forward declarations for operator --- */
++
++/* --- Types for operator --- */
++
++/*!
++ * An owned opaque handle to a custom streaming operator being built. Created with `duckdb_v2_operator_create()`,
++ * configured with the setter functions (e.g. `duckdb_v2_operator_set_execute_callback()`), handed to the object that
++ * runs it (e.g. with `duckdb_v2_table_function_set_operator()`), and destroyed with `duckdb_v2_operator_destroy()`.
++ *
++ * An operator transforms a stream of input chunks into a stream of output chunks. The engine may run it on several
++ * threads at once: every thread processes a part of the input with a "local state" of its own, next to a "global state"
++ * all threads share.
++ */
++typedef struct _duckdb_v2_operator {
++	void *internal_ptr;
++} * duckdb_v2_operator_handle;
++
++/*!
++ * A borrowed opaque handle to the arguments supplied to an operator during the global state initialization "init
++ * global" phase. The "init global" callback receives this handle and can use it to set up the state shared by every
++ * thread running the operator, and to declare how many threads may run it.
++ */
++typedef struct _duckdb_v2_operator_init_global_info {
++	void *internal_ptr;
++} * duckdb_v2_operator_init_global_info_handle;
++
++/*!
++ * A borrowed opaque handle to the arguments supplied to an operator during the local state initialization "init local"
++ * phase. The "init local" callback receives this handle and can use it to set up the state of one thread running the
++ * operator.
++ */
++typedef struct _duckdb_v2_operator_init_local_info {
++	void *internal_ptr;
++} * duckdb_v2_operator_init_local_info_handle;
++
++/*!
++ * A borrowed opaque handle to the arguments supplied to an operator during the "execute" phase. The "execute" callback
++ * receives this handle and uses it to read the input chunk, write the output chunk, and report whether it is done with
++ * the input chunk.
++ */
++typedef struct _duckdb_v2_operator_execute_info {
++	void *internal_ptr;
++} * duckdb_v2_operator_execute_info_handle;
++
++/*!
++ * A borrowed opaque handle to the arguments supplied to an operator during the "finalize" phase, after the thread's
++ * input is exhausted. The "finalize" callback receives this handle and uses it to write the output the operator held
++ * back, and to report whether it has more of it.
++ */
++typedef struct _duckdb_v2_operator_finalize_info {
++	void *internal_ptr;
++} * duckdb_v2_operator_finalize_info_handle;
++
++/* --- Constants for operator --- */
++
++/* --- Function pointer typedefs for operator --- */
++
++typedef void (*duckdb_v2_operator_init_global_callback_fn)(duckdb_v2_operator_init_global_info_handle info,
++                                                           duckdb_v2_context_handle context,
++                                                           duckdb_v2_error_info_handle *err);
++
++typedef void (*duckdb_v2_operator_init_local_callback_fn)(duckdb_v2_operator_init_local_info_handle info,
++                                                          duckdb_v2_context_handle context,
++                                                          duckdb_v2_error_info_handle *err);
++
++typedef void (*duckdb_v2_operator_execute_callback_fn)(duckdb_v2_operator_execute_info_handle info,
++                                                       duckdb_v2_context_handle context,
++                                                       duckdb_v2_error_info_handle *err);
++
++typedef void (*duckdb_v2_operator_finalize_callback_fn)(duckdb_v2_operator_finalize_info_handle info,
++                                                        duckdb_v2_context_handle context,
++          
+```
+
+**File**: `src/main/capi/v2/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -36,6 +36,7 @@ add_library_unity(
+   capi_v2_log_sink.cpp
+   capi_v2_logging.cpp
+   capi_v2_logical_type.cpp
++  capi_v2_operator.cpp
+   capi_v2_option.cpp
+   capi_v2_prepared_statement.cpp
+   capi_v2_qname.cpp
+```
+
+---
+
+### Incident Patch 2: `12ee556a` (2026-11-27)
+**Commit Message**: fix(decimal): ignore leading fractional zeros when capping decimal cast width (#29448)
+
+Fixes #29395.
+
+### Root Cause
+In `DecimalCastOperation::HandleDecimal`, the storage-width overflow
+guard checked `state.digit_count + state.decimal_count >=
+DecimalWidth<StoreType>::max` (4, 9, or 18). Because
+`state.decimal_count` counts leading fractional zeros before the first
+non-zero digit while `state.result == 0`, inputs like
+`'0.0000000001234e10'::DECIMAL(5,2)` exhausted the cap before reaching
+the significant digits and dropped them, returning `0.00`.
+
+Additionally, in `DecimalCastOperation::HandleExponent`,
+positive-exponent scaling appended trailing zeros by calling
+`HandleDigit(0)`, which rejected valid results when trailing scale
+positions pushed `digit_count` to `width - scale` (e.g.,
+`'0.0000000001e10'::DECIMAL(3,2)` or `'0.01e2'::DECIMAL(3,2)`), and
+`TruncateExcessiveDecimals` always looped across all
+`excessive_decimals` even after `state.result` truncated to `0`.
+
+### Changes
+- Track `leading_decimal_zeros` in `DecimalCastData` while `state.result
+== 0 && digit == 0` in `HandleDecimal`, and subtract it from the
+`DecimalWidth<StoreType>::max` digit guard so leading fractional ze
+
+**File**: `src/include/duckdb/common/operator/decimal_cast_operators.hpp` (modified, +19/-4)
+```diff
+@@ -743,9 +743,18 @@ struct DecimalCastOperation {
+ 			return true;
+ 		} else {
+ 			// positive exponent: append 0's
+-			for (idx_t i = 0; i < idx_t(exponent); i++) {
+-				if (!HandleDigit<T, NEGATIVE>(state, 0)) {
+-					return false;
++			if (state.result != 0) {
++				for (idx_t i = 0; i < idx_t(exponent); i++) {
++					if (NEGATIVE) {
++						if (state.result < DecimalCastLimits<typename T::StoreType>::MinimumDiv10) {
++							return false;
++						}
++					} else {
++						if (state.result > DecimalCastLimits<typename T::StoreType>::MaximumDiv10) {
++							return false;
++						}
++					}
++					state.result *= 10;
+ 				}
+ 			}
+ 			// decimals moved before the decimal point by the exponent do not count towards the digit count
+@@ -766,9 +775,15 @@ struct DecimalCastOperation {
+ 			// we just truncate the decimal
+ 			return true;
+ 		}
++		if (state.result == 0 && digit == 0) {
++			// leading zeros after the decimal point still advance decimal_count
++			state.decimal_count++;
++			return true;
++		}
+ 		//! If we expect an exponent, we need to preserve the decimals
+ 		//! But we don't want to overflow, so we prevent overflowing the result with this check
+-		if (state.digit_count + state.decimal_count >= DecimalWidth<decltype(state.result)>::max) {
++		if (NEGATIVE ? state.result <= DecimalCastLimits<typename T::StoreType>::MinimumDiv10
++		             : state.result >= DecimalCastLimits<typename T::StoreType>::MaximumDiv10) {
+ 			return true;
+ 		}
+ 		state.decimal_count++;
+```
+
+**File**: `test/sql/types/decimal/decimal_exponent.test` (modified, +56/-0)
+```diff
+@@ -264,3 +264,59 @@ query IIIIII
+ SELECT '0.2e4'::DECIMAL(4,0), '-0.2e4'::DECIMAL(4,0), '0.9999e4'::DECIMAL(4,0), '0.1234e3'::DECIMAL(4,1), '218.91127e7'::DECIMAL(12,2), '0.99e38'::DECIMAL(38,0)
+ ----
+ 2000	-2000	9999	123.4	2189112700.00	99000000000000000000000000000000000000
++
++# leading zeros after decimal point should not exhaust storage width before exponent shifts digits
++query IIII
++SELECT '0.0000000001234e10'::DECIMAL(5,2), '0.000000000123456e12'::DECIMAL(9,2), '0.000000000000000000123e20'::DECIMAL(18,2), '0.000000000000000000123e20'::DECIMAL(19,2)
 +----
-+NULL
-+NULL
++1.23	123.46	12.30	12.30
 +
-+query I
-+SELECT typeof(list_contains([NULL], c1)) FROM (VALUES (NULL), (NULL)) t(c1);
++query IIII
++SELECT '0.000001234e6'::DECIMAL(4,2), '-0.000001234e6'::DECIMAL(4,2), '0.000001235e6'::DECIMAL(4,2), '-0.000001235e6'::DECIMAL(4,2)
 +----
-+BOOLEAN
-+BOOLEAN
++1.23	-1.23	1.24	-1.24
 +
-+query I
-+SELECT list_contains([NULL], c1) AND true FROM (VALUES (NULL), (NULL)) t(c1);
++query IIIII
++SELECT '0.0000000001e10'::DECIMAL(5,2), '0.0000000001e10'::DECIMAL(3,2), '0.01e2'::DECIMAL(3,2), '0.00000123e6'::DECIMAL(6,5), '0.00000000055e8'::DECIMAL(5,2)
 +----
-+NULL
-+NULL
++1.00	1.00	1.00	1.23000	0.06
 +
-+statement ok
-+CREATE TABLE contains_null AS SELECT array_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1);
-+
-+query II
-+SELECT l, typeof(l) FROM contains_null;
++query IIII
++SELECT '0.0000000001234567898e10'::DECIMAL(5,2), '0.0000000001234567898e19'::DECIMAL(18,2), '1.0000000002e5'::DECIMAL(18,2), '1.0000000006e10'::DECIMAL(18,2)
 +----
-+NULL	BOOLEAN
-+NULL	BOOLEAN
-+
-+query I
-+WITH c AS MATERIALIZED (SELECT array_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1)) SELECT * FROM c;
-+----
-+NULL
-+NULL
-+
-+query I
-+SELECT list_contains([NULL], c1) AS l FROM (VALUES (NULL), (NULL)) t(c1) UNION ALL SELECT true;
-+----
-+NULL
-+NULL
-+true
++1.23	1234567898.00	100000.00	10000000006.00
 +
 +query III
-+SELECT list_has([NULL, NULL], c1), array_has([NULL], c1), contains([NULL], c1) FROM (VALUES (NULL)) t(c1);
++SELECT '0.000000000000000000123e5'::DECIMAL(5,2), '0.000000000000000000123e-5'::DECIMAL(5,2), '0.000000000000000000123'::DECIMAL(5,2)
 +----
-+NULL	NULL	NULL
++0.00	0.00	0.00
 +
-+query I
-+SELECT count(*) FROM (VALUES (NULL), (NULL)) t(c1) WHERE list_contains([NULL], c1) IS NULL;
-+----
-+2
-+
-+# a typed needle goes through constant_or_null itself
 +query II
-+SELECT list_contains([NULL], c1), typeof(list_contains([NULL], c1)) FROM (VALUES (1), (NULL)) t(c1);
++SELECT '0.001'::DECIMAL(5,3), '-0.001'::DECIMAL(5,3)
 +----
-+false	BOOLEAN
-+NULL	BOOLEAN
++0.001	-0.001
 +
-+# the connection is still usable
++statement error
++SELECT '0.32769e3'::DECIMAL(4,2)
++----
++Conversion Error
++
++statement error
++SELECT '-0.32769e3'::DECIMAL(4,2)
++----
++Conversion Error
++
++statement error
++SELECT '0.000000000123e13'::DECIMAL(4,2)
++----
++Conversion Error
++
++statement error
++SELECT '-0.000000000123e13'::DECIMAL(4,2)
++----
++Conversion Error
++
 +query I
-+SELECT 42;
++SELECT TRY_CAST('0.000000000123e13' AS DECIMAL(4,2))
++----
++NULL
+```
+
+---
+
+### Incident Patch 3: `8eedd21a` (2026-11-27)
+**Commit Message**: Prune NOT IN filters containing NULL constants (#29505)
+
+A literal `NOT IN` list containing NULL cannot pass a filter, but mixed
+lists currently retain a scan and its fallback cardinality estimate.
+Extend the existing filter-statistics proof to recognize these lists,
+allowing scan elimination and a zero-row bound.
+
+The proof applies to a direct column and constant list. Projected
+membership keeps its three-valued result, and NULL-free membership
+estimates retain their current policy.
+
+**File**: `src/planner/filter/expression_filter.cpp` (modified, +13/-0)
+```diff
+@@ -857,6 +857,19 @@ static FilterPropagateResult CheckNotOperatorStatistics(optional_ptr<ClientConte
+ 		    children[1]->Cast<BoundConstantExpression>().GetValue().IsNull()) {
+ 			return FilterPropagateResult::FILTER_FALSE_OR_NULL;
+ 		}
++		if (children.size() > 2 && ExpressionFilter::IsSimpleFilterColumnRef(*children[0])) {
++			bool has_null = false;
++			for (idx_t i = 1; i < children.size(); i++) {
++				if (children[i]->GetExpressionType() != ExpressionType::VALUE_CONSTANT) {
++					return FilterPropagateResult::NO_PRUNING_POSSIBLE;
++				}
++				has_null |= children[i]->Cast<BoundConstantExpression>().GetValue().IsNull();
++			}
++			if (has_null) {
++				// A match is false and a non-match is NULL after NOT; neither passes a filter.
++				return FilterPropagateResult::FILTER_FALSE_OR_NULL;
++			}
++		}
+ 	}
+ 	auto bool_ref = CheckBoolRefStatistics(child, input_stats, true);
+ 	if (bool_ref != FilterPropagateResult::NO_PRUNING_POSSIBLE) {
+```
+
+**File**: `test/sql/optimizer/not_in_null_pruning.test` (added, +85/-0)
+```diff
+@@ -0,0 +1,85 @@
++# name: test/sql/optimizer/not_in_null_pruning.test
++# description: A constant NOT IN list containing NULL cannot pass a filter
++# group: [optimizer]
++
++statement ok
++CREATE TABLE not_in_null AS
++SELECT i::INTEGER AS k FROM range(100) t(i) UNION ALL SELECT NULL;
++
++statement ok
++ANALYZE not_in_null;
++
++query I
++SELECT count(*) FROM not_in_null WHERE k NOT IN (42, 84, NULL, 23, 57);
++----
++0
++
++query II
++EXPLAIN SELECT * FROM not_in_null WHERE k NOT IN (42, 84, NULL, 23, 57);
++----
++physical_plan	<REGEX>:.*Empty Result.*
++
++# The location of NULL and duplicate constants do not change the proof.
++query II
++EXPLAIN SELECT * FROM not_in_null WHERE k NOT IN (NULL, 42, 42);
++----
++physical_plan	<REGEX>:.*Empty Result.*
++
++query II
++EXPLAIN SELECT * FROM not_in_null WHERE NOT (k IN (42, 84, NULL));
++----
++physical_plan	<REGEX>:.*Empty Result.*
++
++# Inclusion still admits matching values; exclusion without NULL admits non-matches.
++query I
++SELECT k FROM not_in_null WHERE k IN (42, 84, NULL) ORDER BY k;
 +----
 +42
-```
-
----
-
-### Incident Patch 2: `8cbfc3f2` (2026-11-24)
-**Commit Message**: Fix the MSVC build of the mode aggregate states (#29311)
-
-Fixes the Windows (MSVC) build of `core_functions`, which fails in
-`mode.cpp` since the mode states moved into the aggregate arena.
-
-```
-mode.cpp(162): note: see reference to function template instantiation 'T *duckdb::ArenaAllocator::Make<duckdb::string_t,int,int>(int &&,int &&)' being compiled
-arena_allocator.hpp(160): error C2665: 'duckdb::string_t::string_t': no overloaded function could convert all the argument types
-```
-
-<details><summary>Details</summary>
-
-`Make<string_t>(nullptr, 0)` forwards its arguments to a `string_t`
-constructor, and MSVC 19.44 does not accept it. Both call sites assign
-the state right after creating it (`*mode = key;` and `*mode =
-string_t(ptr, len);`), so the arguments are never used. They now call
-`Make<string_t>()`, which value-initializes the string exactly as
-`string_t(nullptr, 0)` did.
-
-Found while building duckdb-encodings against DuckDB main on Windows
-(https://github.com/duckdb/duckdb-encodings/pull/37), where the build
-stops in this file. I could not reproduce with MSVC locally, so this
-relies on the Windows job of this PR. On Linux, `test_mode`,
-`mode_rewrite`, `mode_rewrite_memory`,
-
-**File**: `extension/core_functions/aggregate/holistic/mode.cpp` (modified, +2/-2)
-```diff
-@@ -159,7 +159,7 @@ struct ModeString {
- 	                        AggregateInputData &aggr_input_data) {
- 		if (key.IsInlined()) {
- 			if (!mode) {
--				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
-+				mode = aggr_input_data.allocator.Make<string_t>();
- 			}
- 			*mode = key;
- 			alloc_size = 0;
-@@ -177,7 +177,7 @@ struct ModeString {
- 			alloc_size = NextPowerOfTwo(len);
- 			ptr = char_ptr_cast(aggr_input_data.allocator.Allocate(alloc_size));
- 			if (!mode) {
--				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
-+				mode = aggr_input_data.allocator.Make<string_t>();
- 			}
- 		}
- 		memcpy(ptr, key.GetData(), len);
-```
-
----
-
-### Incident Patch 3: `bdc96af9` (2026-11-25)
-**Commit Message**: Fix executable path assignment after readlink  (#29321)
-
-`readlink()` does not append a null terminator. If it fills the entire
-`exe_target` buffer, the preceding `memset()` leaves no terminating
-zero.
-Assigning that buffer as a C++ string can then read past its end.
-
-```
-char exe_target[PATH_MAX];
-		memset(exe_target, '\0', PATH_MAX);
-		auto proc_exe_link = StringUtil::Format("/proc/%d/exe", pid);
-		auto readlink_n = readlink(proc_exe_link.c_str(), exe_target, PATH_MAX);
-		if (readlink_n > 0) {
-			process_name = exe_target;
-        }
-```
-
-Use `std::string::assign()` with the length returned by `readlink()` so
-that constructing the process description does not depend on null
-termination.
-
-Found using the svace static analyzer
-Reporter: Guschin Egor ([REDACTED_EMAIL])
-
-**File**: `src/common/process_util.cpp` (modified, +1/-1)
-```diff
-@@ -120,7 +120,7 @@ string ProcessUtil::GetProcessDescription(int64_t pid) {
- 		auto proc_exe_link = StringUtil::Format("/proc/%d/exe", pid);
- 		auto readlink_n = readlink(proc_exe_link.c_str(), exe_target, PATH_MAX);
- 		if (readlink_n > 0) {
--			process_name = exe_target;
-+			process_name.assign(exe_target, static_cast<size_t>(readlink_n));
- 		}
- 	}
- 
++84
++
++query I
++SELECT count(*) FROM not_in_null WHERE k NOT IN (42, 84);
++----
++98
++
++# Filter pruning must not replace a projected NULL with false.
++query II
++SELECT k, k NOT IN (42, 84, NULL, 23, 57) FROM not_in_null
++WHERE k IS NULL OR k IN (1, 42, 84) ORDER BY k NULLS FIRST;
++----
++NULL	NULL
++1	NULL
++42	false
++84	false
++
++query II
++EXPLAIN SELECT k NOT IN (42, 84, NULL, 23, 57) FROM not_in_null;
++----
++physical_plan	<REGEX>:.*Join Type: MARK.*
++
++query I
++SELECT k FROM not_in_null WHERE k NOT IN (42, 84, NULL) OR k = 1;
++----
++1
++
++# Equality ANTI joins keep non-matches, including a NULL probe value.
++query I
++SELECT count(*) FROM not_in_null ANTI JOIN (VALUES (42), (84), (NULL)) rhs(k) USING (k);
++----
++99
++
++statement ok
++CREATE TABLE not_in_null_strings AS SELECT * FROM (VALUES ('a'), ('b'), ('z'), (NULL)) t(s);
++
++query II
++EXPLAIN SELECT * FROM not_in_null_strings WHERE s NOT IN ('a', 'z', NULL);
++----
++physical_plan	<REGEX>:.*Empty Result.*
++
++query TT
++SELECT s, s NOT IN ('a', 'z', NULL) FROM not_in_null_strings ORDER BY s NULLS FIRST;
++----
++NULL	NULL
++a	false
++b	NULL
++z	false
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29353** (2026-11-25): Keep the V2 crypto provider test's destroy flags alive past the test (@Robinho-MR)
-- **PR #29337** (2026-11-25): Adapt the order of scan conjunction filters (@lnkuiper)
-- **PR #29327** (2026-11-25): Issue #29325: C++ Zero Nanos (@hawkfish)
-- **PR #29321** (2026-11-25): Fix executable path assignment after readlink  (@guschin058)
-- **PR #29311** (2026-11-24): Fix the MSVC build of the mode aggregate states (@Robinho-MR)
-- **PR #29308** (2026-11-24): Preserve projection bindings across child join reordering (@lnkuiper)
+- **PR #29505** (2026-11-27): Prune NOT IN filters containing NULL constants (@lnkuiper)
+- **PR #29504** (2026-11-27): Bump aws ec414ba main (@carlopi)
+- **PR #29502** (2026-11-27): Bump duckdb-aws to ec414ba (@carlopi)
+- **PR #29500** (2026-11-27): Reduce thread and address sanitizer CI test time (@smvv)
+- **PR #29499** (2026-11-27): Inherit the search path in transaction connections, let V2 table functions declare their stability (@Robinho-MR)
+- **PR #29498** (2026-11-27): Count independent equality connections in join estimates (@lnkuiper)
 
 ---
 
@@ -2255,26 +2949,45 @@ Reporter: Guschin Egor ([REDACTED_EMAIL])
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep the type of the constant when constant_or_null has an untyped NULL child
+## X. V2 C API: streaming operator, and table in-out functions built on it
 
 **RULE**:
-When implementing operations in `src/optimizer/expression_rewriter.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api_spec/v2/function/operator.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d3d8a8f5`: Keep the type of the constant when constant_or_null has an untyped NULL child. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42cae313`: V2 C API: streaming operator, and table in-out functions built on it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/optimizer/expression_rewriter.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `api_spec/v2/function/operator.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	for (auto &child : children) {
-		if (child->GetReturnType().id() == LogicalTypeId::SQLNULL) {
-			// an untyped NULL child folds the call before its types are resolved: keep the type of the constant
-			return make_uniq<BoundConstantExpression>(Value(value.type()));
-		}
-	}
+module: operator
+#
+# A custom streaming operator: it receives its input as a stream of chunks and produces chunks of output, the way
+# DuckDB's own physical operators do. An operator is defined once and then handed to the object that places it in a
+# query plan; today that is a table function (see table_function_set_operator), which turns the function into a
+# table in-out function.
+#
+#-----------------------------------------------------------------------------------------------------------------------
+# Enums
+#-----------------------------------------------------------------------------------------------------------------------
+enums:
+  OPERATOR_RESULT:
+    description: |
+      What an operator's execute callback reports about the input chunk it was given, set with
+      `[[operator_execute_set_result]]`.
+    values:
+      OPERATOR_RESULT_NEED_MORE_INPUT:
+        value: 0
+        description: |
+          The operator is done with the input chunk: the engine calls the execute callback again with the next input
+          chunk. The default.
+      OPERATOR_RESULT_HAVE_MORE_OUTPUT:
+        value: 1
+        description: |
+          The output chunk is full but the operator is not done
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2284,7 +2997,7 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d3d8a8f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42cae313` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

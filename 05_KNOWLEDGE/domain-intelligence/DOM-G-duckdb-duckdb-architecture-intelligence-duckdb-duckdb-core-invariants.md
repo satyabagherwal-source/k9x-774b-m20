@@ -4,24 +4,24 @@
 {
   "source_repository": "duckdb/duckdb",
   "source_url": "https://github.com/duckdb/duckdb",
-  "source_version": "b1ae457e",
+  "source_version": "07c9a117",
   "license": "MIT",
-  "timestamp": "2026-11-27T07:49:01.443Z",
+  "timestamp": "2026-11-28T03:08:07.874Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-duckdb-duckdb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [duckdb/duckdb](https://github.com/duckdb/duckdb) (Revision: `b1ae457e`).  
-> **License**: MIT | **Timestamp**: `2026-11-27T07:49:01.443Z`  
+> **Provenance**: Harvested from [duckdb/duckdb](https://github.com/duckdb/duckdb) (Revision: `07c9a117`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T03:08:07.874Z`  
 > **Learning ID**: `learn-github-duckdb-duckdb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 85%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from duckdb/duckdb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T07:48:59.604Z  
+> **Harvest Timestamp**: 2026-11-28T03:08:06.279Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43397 stars
+- **Stars / Engagement**: 43434 stars
 
 ---
 
@@ -227,7 +227,7 @@ FINISH_BENCHMARK(ConcurrentCommits32Threads10ms)
 #include "duckdb/common/types/decimal.hpp"
 #include "duckdb/common/types/hugeint.hpp"
 #include "duckdb/common/types/time.hpp"
-#include "duckdb/common/vector/struct_vector.hpp"
+#include "duckdb/function/aggregate/bignum_aggregates.hpp"
 #include "duckdb/common/exception.hpp"
 #include "duckdb/common/likely.hpp"
 #include "duckdb/function/function_set.hpp"
@@ -503,7 +503,7 @@ struct TimestampNSAverageOperation : public DiscreteAverageOperation {
 	static void RepeatedCombine(const STATE &source, STATE &target, AggregateInputData &input, idx_t count) {
 		if (source.count == INFINITE_COUNT) {
 			if (count > 0) {
-				AddInfinities(targe
+				AddInfinit
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/algebraic/corr.cpp`
@@ -1985,11 +1985,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29452** (2026-11-26): **Propagate more filter constraints to join inputs**
-  *Symptoms*: Filter pullup can lose useful predicates at projections, aggregates, windows, and set operations even when those predicates remain true for the output rows. This prevents enclosing joins from applying static filters to other inputs.  Export guaranteed constraints through these boundaries while retaining the original predicates. Projections reuse existing columns and safe computed outputs. Aggregates use keys present in every grouping set; windows use partition keys common to all windows. `UNION` exports predicates shared by every branch after coercion, `EXCEPT` uses left-input constraints, and `INTERSECT` can use constraints from either input.  Also derive constraints through hidden equality keys. For example, `SELECT x FROM t WHERE x = hidden AND hidden IN (2, 8)` can expose `x IN (2, 8)` to an enclosing join. Hidden intermediary join keys can similarly establish equalities between existing outputs.  Share the key-constraint proof with the filter combiner and connect visible equality-class members through one representative, bounding inferred copies without adding projection columns. Preserve comparison structure, constant representation, output bindings, and guards around throwing or volatile expressions.
+- **Issue #29505** (2026-11-27): **Prune NOT IN filters containing NULL constants**
+  *Symptoms*: A literal `NOT IN` list containing NULL cannot pass a filter, but mixed lists currently retain a scan and its fallback cardinality estimate. Extend the existing filter-statistics proof to recognize these lists, allowing scan elimination and a zero-row bound.  The proof applies to a direct column and constant list. Projected membership keeps its three-valued result, and NULL-free membership estimates retain their current policy. 
 
-- **Issue #29450** (2026-11-26): **Cache common-subplan signatures and cost summaries**
-  *Symptoms*: Common-subplan discovery repeatedly hashes and compares entire subtrees and recomputes their materialization statistics. Intern immutable signatures with cached hashes, and compute per-operator cost summaries bottom-up for candidate filtering.  Preserve exact matching when hashes collide, and discard filtering summaries before extraction changes the tree.  Follow-up to #29442.
+- **Issue #29504** (2026-11-27): **Bump aws ec414ba main**
+  *Symptoms*: Also brings in @Tishj's https://github.com/duckdb/duckdb/commit/ff8a2085126052a88f75843585ef80dc89ac1fda that made it into `v2.0.1` but not `main` yet.  Then re-align what has happened on `v2.0-cyanoptera` with the aws extension.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2006,1167 +2006,919 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d1508f3a` (2026-11-26)
-**Commit Message**: Spill top-N heap aggregate states under memory pressure (#29335)
+### Incident Patch 1: `42cae313` (2026-11-27)
+**Commit Message**: V2 C API: streaming operator, and table in-out functions built on it (#29493)
 
-`min(x,n)`/`max(x,n)` and `arg_min(x, y, n)`/`arg_max(x, y, n)` keep
-their top-N values in a heap in the aggregate's arena. These states
-could not be exported, so the hash aggregate could not spill them, and
-queries such as [h2o
-q08](https://github.com/duckdb/duckdb/blob/0a784852e33/benchmark/h2oai/group/queries/q08.sql)
-ran out of memory under a memory limit.
+Adds a streaming **operator** to the V2 C API, and lets a table function
+run one. This makes it possible to define table in-out functions
+(`summary((SELECT ...))`, `unnest(t.x)`, ...) from an extension:
+functions that take a stream of input chunks and turn each into output
+chunks, rather than only producing rows from nothing.
 
-This PR lets these states be exported and imported, so the hash
-aggregate can spill them, as it already does for `list()` and string
-`min/max`. A state is written as a struct with n and a list of the
-values it currently keeps. As a side effect, `EXPORT_STATE`,
-`combine_aggr` and `finalize` now work for these functions, running
-top-N windows use the streaming window operator, and
-`ROLLUP`/`CUBE`/`GROUPING SETS` with top-N aggregates cascade through
-exported states. A non-constant n keeps the old behavior, meaning that
-those states are not exported and don't use the streaming window,
-because states with different n cannot be combined.
-
-h2o q08 (1e8 rows, 32 threads) now finishes with a 1 GB `memory_limit`,
-where main runs out of memory at 2 GB already. At 4 GB i
-
-**File**: `extension/core_functions/aggregate/distributive/arg_min_max.cpp` (modified, +59/-4)
-```diff
-@@ -683,6 +683,41 @@ class ArgMinMaxNState {
- 		heap.Initialize(allocator, nval);
- 		is_initialized = true;
- 	}
-+
-+	void ExportSlot(Vector &entries, idx_t entry_idx, idx_t slot, bool nulls_last) const {
-+		auto &children = StructVector::GetEntries(entries);
-+		auto &entry = heap.GetSlot(slot);
-+		VAL_TYPE::Assign(children[0], entry_idx, entry.second.value, nulls_last);
-+		ARG_TYPE::Assign(children[1], entry_idx, entry.first.value, nulls_last);
-+	}
-+
-+	struct ImportData {
-+		ImportData(const Vector &entries, idx_t count, bool nulls_last)
-+		    : validity(entries.Validity()), val_extra_state(VAL_TYPE::CreateExtraState(count)),
-+		      arg_extra_state(ARG_TYPE::CreateExtraState(count)) {
-+			auto &children = StructVector::GetEntries(entries);
-+			VAL_TYPE::PrepareData(children[0], val_extra_state, val_format, nulls_last);
-+			ARG_TYPE::PrepareData(children[1], arg_extra_state, arg_format, nulls_last);
-+		}
-+
-+		VectorValidityIterator validity;
-+		typename VAL_TYPE::EXTRA_STATE val_extra_state;
-+		typename ARG_TYPE::EXTRA_STATE arg_extra_state;
-+		UnifiedVectorFormat val_format;
-+		UnifiedVectorFormat arg_format;
-+	};
-+
-+	void ImportSlot(ArenaAllocator &allocator, const ImportData &entries, idx_t entry_idx, bool reject_nulls) {
-+		const auto val_idx = entries.val_format.sel->get_index(entry_idx);
-+		const auto arg_idx = entries.arg_format.sel->get_index(entry_idx);
-+		if (!entries.validity.IsValid(entry_idx) ||
-+		    (reject_nulls &&
-+		     (!entries.val_format.validity.RowIsValid(val_idx) || !entries.arg_format.validity.RowIsValid(arg_idx)))) {
-+			throw InvalidInputException("Invalid arg_min/arg_max state - the entries cannot be NULL");
-+		}
-+		heap.AppendSlot(allocator, ARG_TYPE::Create(entries.arg_format, arg_idx),
-+		                VAL_TYPE::Create(entries.val_format, val_idx));
-+	}
- };
- 
- //------------------------------------------------------------------------------
-@@ -703,8 +738,8 @@ void ArgMinMaxNUpdate(Vector inputs[], AggregateInputData &aggr_input, idx_t inp
- 	UnifiedVectorFormat n_format;
- 	UnifiedVectorFormat state_format;
- 
--	auto val_extra_state = STATE::VAL_TYPE::CreateExtraState();
--	auto arg_extra_state = STATE::ARG_TYPE::CreateExtraState();
-+	auto val_extra_state = STATE::VAL_TYPE::CreateExtraState(count);
-+	auto arg_extra_state = STATE::ARG_TYPE::CreateExtraState(count);
- 
- 	STATE::VAL_TYPE::PrepareData(val_vector, val_extra_state, val_format, bind_data.nulls_last);
- 	STATE::ARG_TYPE::PrepareData(arg_vector, arg_extra_state, arg_format, bind_data.nulls_last);
-@@ -773,7 +808,8 @@ void SpecializeArgMinMaxNFunction(BoundAggregateFunction &function) {
- 	function.SetStateSizeCallback(AggregateFunction::StateSize<STATE>);
- 	function.SetStateInitCallback(AggregateFunction::StateInitialize<STATE, OP, AggregateDestructorType::LEGACY>);
- 	function.SetStateCombineCallback(AggregateFunction::StateCombine<STATE, OP>);
--	function.SetStateDestructorCallback(AggregateFunction::StateDestroy<STATE, OP>);
-+	function.SetExportAggregateStateCallback(MinMaxNOperation::ExportState<STATE>);
-+	function.SetImportAggregateStateCallback(MinMaxNOperation::ImportState<STATE>);
- 
- 	function.SetStateFinalizeCallback(MinMaxNOperation::Finalize<STATE>);
- 	function.SetStateUpdateCallback(ArgMinMaxNUpdate<STATE>);
-@@ -840,7 +876,8 @@ void SpecializeArgMinMaxNullNFunction(BoundAggregateFunction &function) {
- 	function.SetStateSizeCallback(AggregateFunction::StateSize<STATE>);
- 	function.SetStateInitCallback(AggregateFunction::StateInitialize<STATE, OP, AggregateDestructorType::LEGACY>);
- 	function.SetStateCombineCallback(AggregateFunction::StateCombine<STATE, OP>);
--	function.SetStateDestructorCallback(AggregateFunction::StateDestroy<STATE, OP>);
-+	function.SetExportAggregateStateCallback(MinMaxNOperation::ExportState<STATE>);
-+	function.SetImportAggregateStateCallback(MinMaxNOperation::ImportState<STATE>);
- 	function.SetStateFinalizeCallback(MinMaxNOperation::Finalize<STATE>);
- 	function.SetStateUpdateCallback(ArgMinMaxNUpdate<STATE>);
- }
-@@ -912,6 +949,8 @@ unique_ptr<FunctionData> ArgMinMaxNBind(BindAggregateFunctionInput &input) {
- 		}
- 	}
- 	ExpressionBinder::PushCollation(context, arguments[1], arguments[1]->GetReturnType(), input.GetCollationType());
-+	function.GetArguments()[0] = arguments[0]->GetReturnType();
-+	function.GetArguments()[1] = arguments[1]->GetReturnType();
- 
- 	const auto val_type = arguments[0]->GetReturnType().InternalType();
- 	const auto arg_type = arguments[1]->GetReturnType().InternalType();
-@@ -924,10 +963,24 @@ unique_ptr<FunctionData> ArgMinMaxNBind(BindAggregateFunctionInput &input) {
- 	} else {
- 		SpecializeArgMinMaxNFunction<COMPARATOR>(val_type, arg_type, function);
- 	}
-+	if (arguments[2]->HasParameter()) {
-+		// n is constant per execution: bind again once its value is known
-+		throw ParameterNotResolvedException();
-+	}
-+	if (!arguments[2]->IsFoldable()) {
-+		MinMaxNOperation::BindPerRowN(function);
-+	}
- 
- 	return unique_ptr<FunctionData>(std::move(function_data));
- }
- 
-+AggregateState
+```sql
+-- my_double is a table function backed by an operator
+SELECT * FROM my_double((SELECT x FROM t));
 ```
 
-**File**: `src/execution/aggregate_state_spilling.cpp` (modified, +22/-20)
+<details>
+<summary>Details</summary>
+
+## API
+
+New module `api_spec/v2/function/operator.yaml`:
+
+- `duckdb_v2_operator_create` / `_destroy`, `_set_user_data`
+- `_set_init_global_callback` (global state, `max_threads`),
+`_set_init_local_callback` (per-thread state)
+- `_set_execute_callback` (required): reads
+`operator_execute_get_input_chunk`, writes
+`operator_execute_get_output_chunk`, and reports
+`OPERATOR_RESULT_{NEED_MORE_INPUT, HAVE_MORE_OUTPUT, FINISHED}` via
+`operator_execute_set_result`
+- `_set_finalize_callback` (optional): flushes held-back output once the
+thread's input is exhausted, repeating while
+`operator_finalize_set_have_more_output(true)`
+- getters for user
+
+**File**: `api_spec/v2/function/operator.yaml` (added, +749/-0)
 ```diff
-@@ -44,27 +44,30 @@ unique_ptr<AggregateStateSpillPlan> AggregateStateSpilling::TryCreateSpillPlan(c
- 		return nullptr;
- 	}
- 	auto plan = make_uniq<AggregateStateSpillPlan>();
--	plan->state_layouts.reserve(aggregates.size());
-+	plan->serializers.reserve(aggregates.size());
- 	for (auto &aggr : aggregates) {
- 		if (aggr.function.HasStateDestructorCallback()) {
- 			// the state owns resources beyond the arena
- 			return nullptr;
- 		}
--		AggregateStateLayout state_layout;
- 		if (aggr.function.HasGetStateTypeCallback()) {
--			state_layout = aggr.function.GetStateType(aggr.GetFunctionData());
--		} else if (!ExportAggregateFunction::TryGetCombinedStateLayout(aggr.function, aggr.GetFunctionData(),
--		                                                               state_layout)) {
--			// the aggregate cannot describe its state, and it is not a combine_aggr over states that can: the
--			// states combine_aggr accumulates have the layout of the aggregate that exported them
-+			plan->serializers.emplace_back(aggr.function.GetStateType(aggr.GetFunctionData()), aggr.function,
-+			                               aggr.GetFunctionData());
-+			continue;
-+		}
-+		// the states combine_aggr accumulates have the layout of the aggregate that exported them
-+		auto combined = ExportAggregateFunction::TryGetCombinedStateSerializer(aggr.function, aggr.GetFunctionData());
-+		if (!combined) {
-+			// the aggregate cannot describe its state, and it is not a combine_aggr over states that can
- 			return nullptr;
- 		}
--		plan->state_layouts.push_back(std::move(state_layout));
-+		plan->serializers.push_back(std::move(*combined));
- 	}
- 	// only layouts whose states can reference the arena benefit from spilling
- 	bool arena_backed = false;
--	for (auto &state_layout : plan->state_layouts) {
--		if (FieldHasArenaReferences(state_layout.type, state_layout.field)) {
-+	for (auto &serializer : plan->serializers) {
-+		auto &state_layout = serializer.layout;
-+		if (state_layout.spill_opaque_arena_memory || FieldHasArenaReferences(state_layout.type, state_layout.field)) {
- 			arena_backed = true;
- 			break;
- 		}
-@@ -73,8 +76,8 @@ unique_ptr<AggregateStateSpillPlan> AggregateStateSpilling::TryCreateSpillPlan(c
- 		return nullptr;
- 	}
- 	plan->exported_types = layout.GetTypes();
--	for (auto &state_layout : plan->state_layouts) {
--		plan->exported_types.push_back(state_layout.type);
-+	for (auto &serializer : plan->serializers) {
-+		plan->exported_types.push_back(serializer.layout.type);
- 	}
- 	return plan;
- }
-@@ -83,7 +86,6 @@ void AggregateStateSpilling::ExportStates(ClientContext &context, const TupleDat
-                                           const AggregateStateSpillPlan &plan, TupleDataCollection &source,
-                                           vector<unique_ptr<ColumnDataCollection>> &exported, idx_t exported_radix_bits,
-                                           ArenaAllocator &allocator) {
--	auto &state_layouts = plan.state_layouts;
- 	auto &exported_types = plan.exported_types;
- 	if (source.Count() == 0) {
- 		return;
-@@ -121,7 +123,8 @@ void AggregateStateSpilling::ExportStates(ClientContext &context, const TupleDat
- 				state_address_data[i] = row_locations[i] + aggr_offset;
- 			}
- 			auto &result = exported_chunk.data[column_count + aggr_idx];
--			AggregateStateSerialization::SerializeStates(aggr.function, aggr.GetFunctionData(), state_layouts[aggr_idx],
-+			auto &serializer = plan.serializers[aggr_idx];
-+			AggregateStateSerialization::SerializeStates(serializer.function, serializer.bind_data, serializer.layout,
- 			                                             state_addresses, count, result, allocator, 0);
- 			aggr_offset += aggr.payload_size;
- 		}
-@@ -171,7 +174,6 @@ void AggregateStateSpilling::ImportStates(ClientContext &context, const shared_p
-                                           const AggregateStateSpillPlan &plan, ColumnDataCollection &exported,
-                                           ArenaAllocator &allocator,
-                                           const std::function<void(TupleDataCollection &)> &combine) {
--	auto &state_layouts = plan.state_layouts;
- 	if (exported.Count() == 0) {
- 		return;
- 	}
-@@ -185,8 +187,8 @@ void AggregateStateSpilling::ImportStates(ClientContext &context, const shared_p
- 
- 	// scratch buffer holding one vector of deserialized states, packed consecutively
- 	idx_t max_state_size = 0;
--	for (auto &state_layout : state_layouts) {
--		max_state_size = MaxValue(max_state_size, state_layout.total_state_size);
-+	for (auto &serializer : plan.serializers) {
-+		max_state_size = MaxValue(max_state_size, serializer.layout.total_state_size);
- 	}
- 	auto state_buffer = make_unsafe_uniq_array<data_t>(max_state_size * STANDARD_VECTOR_SIZE);
- 	Vector state_addresses(LogicalType::POINTER);
-@@ -211,8 +213,8 @@ void AggregateStateSpilling::ImportStates(ClientContext &context, const shared_p
- 		idx_t aggr_offset = layout->GetAggrOffset();
- 		for (idx_t aggr_idx = 0; aggr_idx < aggregates.size(); aggr_idx++) {
- 			auto &agg
+@@ -0,0 +1,749 @@
++module: operator
++#
++# A custom streaming operator: it receives its input as a stream of chunks and produces chunks of output, the way
++# DuckDB's own physical operators do. An operator is defined once and then handed to the object that places it in a
++# query plan; today that is a table function (see table_function_set_operator), which turns the function into a
++# table in-out function.
++#
++#-----------------------------------------------------------------------------------------------------------------------
++# Enums
++#-----------------------------------------------------------------------------------------------------------------------
++enums:
++  OPERATOR_RESULT:
++    description: |
++      What an operator's execute callback reports about the input chunk it was given, set with
++      `[[operator_execute_set_result]]`.
++    values:
++      OPERATOR_RESULT_NEED_MORE_INPUT:
++        value: 0
++        description: |
++          The operator is done with the input chunk: the engine calls the execute callback again with the next input
++          chunk. The default.
++      OPERATOR_RESULT_HAVE_MORE_OUTPUT:
++        value: 1
++        description: |
++          The output chunk is full but the operator is not done with the input chunk: the engine calls the execute
++          callback again with the same input chunk once it has consumed the output.
++      OPERATOR_RESULT_FINISHED:
++        value: 2
++        description: |
++          The operator needs no more input at all, e.g. because it has produced every row it ever will. The engine
++          stops feeding it input, and calls the finalize callback if one is set.
++
++#-----------------------------------------------------------------------------------------------------------------------
++# Handles
++#-----------------------------------------------------------------------------------------------------------------------
++handles:
++  operator:
++    description: |
++      An owned opaque handle to a custom streaming operator being built. Created with `[[operator_create]]`,
++      configured with the setter functions (e.g. `[[operator_set_execute_callback]]`), handed to the object that runs
++      it (e.g. with `[[table_function_set_operator]]`), and destroyed with `[[operator_destroy]]`.
++
++      An operator transforms a stream of input chunks into a stream of output chunks. The engine may run it on
++      several threads at once: every thread processes a part of the input with a "local state" of its own, next to a
++      "global state" all threads share.
++
++  operator_init_global_info:
++    description: |
++      A borrowed opaque handle to the arguments supplied to an operator during the global state initialization
++      "init global" phase. The "init global" callback receives this handle and can use it to set up the state shared
++      by every thread running the operator, and to declare how many threads may run it.
++
++  operator_init_local_info:
++    description: |
++      A borrowed opaque handle to the arguments supplied to an operator during the local state initialization
++      "init local" phase. The "init local" callback receives this handle and can use it to set up the state of one
++      thread running the operator.
++
++  operator_execute_info:
++    description: |
++      A borrowed opaque handle to the arguments supplied to an operator during the "execute" phase. The "execute"
++      callback receives this handle and uses it to read the input chunk, write the output chunk, and report whether
++      it is done with the input chunk.
++
++  operator_finalize_info:
++    description: |
++      A borrowed opaque handle to the arguments supplied to an operator during the "finalize" phase, after the
++      thread's input is exhausted. The "finalize" callback receives this handle and uses it to write the output the
++      operator held back, and to report whether it has more of it.
++
++#-----------------------------------------------------------------------------------------------------------------------
++# Callbacks
++#-----------------------------------------------------------------------------------------------------------------------
++callbacks:
++  operator_init_global_callback:
++    parameters:
++      info:
++        type: operator_init_global_info
++        description: Borrowed opaque handle providing access to the information available to the callback.
++      context:
++        type: context
++        description: Borrowed handle to the context of the query currently executing the callback.
++      err:
++        type: error_info
++        indirection: 1
++        description: Borrowed error info handle to use to report errors that occur during the callback.
++    return_type: void
++
++  operator_init_local_callback:
++    parameters:
++      info:
++        type: operator_init_local_info
++        description: Borrowed opaque handle providing access to the information available to the callback.
++      context:
++        type: context
++        description: Borrowe
 ```
 
-**File**: `src/execution/operator/aggregate/physical_streaming_window.cpp` (modified, +1/-1)
+**File**: `api_spec/v2/function/table.yaml` (modified, +152/-2)
 ```diff
-@@ -197,7 +197,7 @@ bool PhysicalStreamingWindow::IsStreamingFunction(ClientContext &client, BoundWi
- 	}
- 	if (wexpr.GetExpressionType() == ExpressionType::WINDOW_AGGREGATE) {
- 		// Aggregates with destructors (e.g., quantile) are too slow to repeatedly update/finalize
--		if (wexpr.AggregateFunction()->HasStateDestructorCallback()) {
-+		if (wexpr.AggregateFunction()->HasStateDestructorCallback() || !wexpr.AggregateFunction()->CanStream()) {
- 			return false;
- 		}
- 		// We can stream aggregates if they are "running totals"
+@@ -35,6 +35,26 @@ enums:
+           from 0. A function that reads a single file produces it when it is wrapped in a multi-file function (see
+           `[[multi_file_function_create]]`), which is where the name of the file comes from.
+ 
++  TABLE_OPERATOR_INPUT:
++    description: |
++      Where the input of a table function's operator comes from: what the rows of the input chunks the operator
++      receives are. Chosen with `[[table_function_set_operator]]`.
++    values:
++      TABLE_OPERATOR_INPUT_ARGUMENTS:
++        value: 0
++        description: |
++          The positional arguments of a call of the function are the columns of the operator's input, one row per
++          set of arguments. Called with constant arguments, e.g. `f(1, 'a')`, the operator receives a single input
++          row. Called with arguments that reference the columns of a table that precedes the call in the `FROM`
++          clause, e.g. `FROM t, f(t.x)` (an implicit `LATERAL` join), it receives one input row per row of that
++          table, one at a time, and every row it produces is joined to the row of `t` it was produced for.
++      TABLE_OPERATOR_INPUT_TABLE:
++        value: 1
++        description: |
++          The function takes a table as its first argument, written as a subquery, e.g. `f((SELECT * FROM t))`, and
++          the operator receives the rows of that table as its input, chunk by chunk, possibly on several threads. The
++          columns of its input are the columns of the table.
++
+ #-----------------------------------------------------------------------------------------------------------------------
+ # Handles
+ #-----------------------------------------------------------------------------------------------------------------------
+@@ -862,6 +882,93 @@ functions:
+         description: Optional. On failure, receives an opaque info handle the caller must destroy via `[[error_info_destroy]]`.
+     return_type: ERROR
+ 
++  table_function_bind_get_input_column_count:
++    lifecycle:
++      - [ "unstable", "v2.0.0", "2026-11-25" ]
++    description: |
++      Returns the number of columns of the input of the function's operator (see `[[table_function_set_operator]]`).
++
++      These are the vectors of the input chunks the operator's execute callback receives: the positional arguments of
++      the call for `TABLE_OPERATOR_INPUT_ARGUMENTS`, or the columns of the table argument for
++      `TABLE_OPERATOR_INPUT_TABLE`. A bind callback typically derives the function's result columns from them. Unlike
++      `[[function_bind_get_arg_value]]`, this also describes arguments that are not constant. 0 for a function without
++      an operator.
++    parameters:
++      info:
++        type: table_function_bind_info
++        description: The bind info handle.
++      count:
++        type: idx
++        indirection: 1
++        kind: OUT
++        description: Receives the number of input columns.
++      err:
++        type: error_info
++        indirection: 1
++        description: Optional. On failure, receives an opaque info handle the caller must destroy via `[[error_info_destroy]]`.
++    return_type: ERROR
++
++  table_function_bind_get_input_column_type:
++    lifecycle:
++      - [ "unstable", "v2.0.0", "2026-11-25" ]
++    description: |
++      Retrieves the type of the operator's input column at the given index (see
++      `[[table_function_bind_get_input_column_count]]`).
++
++      Fails if the index is out of bounds. The returned type is owned by the caller and must be destroyed via
++      `[[logical_type_destroy]]`.
++    parameters:
++      info:
++        type: table_function_bind_info
++        description: The bind info handle.
++      index:
++        type: idx
++        description: The index of the input column.
++      type:
++        type: logical_type
++        indirection: 1
++        kind: OUT
++        description: Receives the column type. Owned by the caller; destroy via `[[logical_type_destroy]]`.
++      err:
++        type: error_info
++        indirection: 1
++        description: Optional. On failure, receives an opaque info handle the caller must destroy via `[[error_info_destroy]]`.
++    return_type: ERROR
++
++  table_function_bind_get_input_column_name:
++    lifecycle:
++      - [ "unstable", "v2.0.0", "2026-11-25" ]
++    description: |
++      Retrieves the name of the operator's input column at the given index (see
++      `[[table_function_bind_get_input_column_count]]`).
++
++      For `TABLE_OPERATOR_INPUT_TABLE` this is the name of the column of the table argument. The arguments of
++      `TABLE_OPERATOR_INPUT_ARGUMENTS` have no names, and yield an empty name. Fails if the index is out of bounds.
++      The name is borrowed and valid only for the duration of the callback.
++    parameters:
++      info:
++        type: table_function_bind_info
++        description: The bind info handle.
++      index:
++        type: idx
++        description: The index of the input column.
++      name:
++        type: char
++        indirection: 2
++      
 ```
 
-**File**: `src/function/aggregate/distributive/minmax.cpp` (modified, +40/-2)
+**File**: `src/execution/physical_plan/plan_get.cpp` (modified, +5/-0)
 ```diff
-@@ -468,6 +468,28 @@ class MinMaxNState {
- 	static T GetValue(T val) {
- 		return val;
- 	}
-+
-+	void ExportSlot(Vector &entries, idx_t entry_idx, idx_t slot, bool nulls_last) const {
-+		VAL_TYPE::Assign(entries, entry_idx, heap.GetSlot(slot).value, nulls_last);
-+	}
-+
-+	struct ImportData {
-+		ImportData(const Vector &entries, idx_t count, bool nulls_last)
-+		    : extra_state(VAL_TYPE::CreateExtraState(count)) {
-+			VAL_TYPE::PrepareData(entries, extra_state, format, nulls_last);
-+		}
-+
-+		typename VAL_TYPE::EXTRA_STATE extra_state;
-+		UnifiedVectorFormat format;
-+	};
-+
-+	void ImportSlot(ArenaAllocator &allocator, const ImportData &entries, idx_t entry_idx, bool reject_nulls) {
-+		const auto idx = entries.format.sel->get_index(entry_idx);
-+		if (reject_nulls && !entries.format.validity.RowIsValid(idx)) {
-+			throw InvalidInputException("Invalid min/max state - the entries cannot be NULL");
-+		}
-+		heap.AppendSlot(allocator, VAL_TYPE::Create(entries.format, idx));
-+	}
- };
- 
- template <class STATE>
-@@ -480,7 +502,7 @@ void MinMaxNUpdate(Vector inputs[], AggregateInputData &aggr_input, idx_t input_
- 	UnifiedVectorFormat n_format;
- 	UnifiedVectorFormat state_format;
- 
--	auto val_extra_state = STATE::VAL_TYPE::CreateExtraState();
-+	auto val_extra_state = STATE::VAL_TYPE::CreateExtraState(count);
- 
- 	STATE::VAL_TYPE::PrepareData(val_vector, val_extra_state, val_format, true);
- 
-@@ -528,10 +550,11 @@ void SpecializeMinMaxNFunction(BoundAggregateFunction &function) {
- 	function.GetCallbacks().SetStateInitCallback(
- 	    AggregateFunction::StateInitialize<STATE, OP, AggregateDestructorType::LEGACY>);
- 	function.GetCallbacks().SetStateCombineCallback(AggregateFunction::StateCombine<STATE, OP>);
--	function.GetCallbacks().SetStateDestructorCallback(AggregateFunction::StateDestroy<STATE, OP>);
- 
- 	function.GetCallbacks().SetStateFinalizeCallback(MinMaxNOperation::Finalize<STATE>);
- 	function.GetCallbacks().SetStateUpdateCallback(MinMaxNUpdate<STATE>);
-+	function.SetExportAggregateStateCallback(MinMaxNOperation::ExportState<STATE>);
-+	function.SetImportAggregateStateCallback(MinMaxNOperation::ImportState<STATE>);
- }
- 
- template <class COMPARATOR>
-@@ -600,17 +623,32 @@ unique_ptr<FunctionData> MinMaxNBind(BindAggregateFunctionInput &input) {
- 
- 	// Specialize the function based on the input types
- 	SpecializeMinMaxNFunction<COMPARATOR>(val_type, function);
-+	function.GetArguments()[0] = arguments[0]->GetReturnType();
-+	if (arguments[1]->HasParameter()) {
-+		// n is constant per execution: bind again once its value is known
-+		throw ParameterNotResolvedException();
-+	}
-+	if (!arguments[1]->IsFoldable()) {
-+		MinMaxNOperation::BindPerRowN(function);
-+	}
- 
- 	function.SetReturnType(LogicalType::LIST(arguments[0]->GetReturnType()));
- 	return nullptr;
- }
- 
-+AggregateStateLayout MinMaxNGetStateType(AggregateLayoutInput &input) {
-+	// EXPORT_STATE rewrites the return type, so derive the entry type from the (bind-resolved) argument instead
-+	return MinMaxNOperation::GetStateType(input, input.function.GetArguments()[0]);
-+}
-+
- template <class COMPARATOR>
- AggregateFunction GetMinMaxNFunction() {
- 	AggregateFunction fun({}, LogicalType::LIST(LogicalType::ANY), nullptr, nullptr, nullptr, nullptr, nullptr,
- 	                      FunctionNullHandling::DEFAULT_NULL_HANDLING, nullptr, MinMaxNBind<COMPARATOR>, nullptr);
- 	fun.GetSignature().AddParameter("arg", LogicalTypeId::ANY).AddParameter("n", LogicalType::BIGINT);
- 	fun.SetUnbindCallback(MinMaxUnbind);
-+	fun.SetStructStateExport(MinMaxNGetStateType);
-+	fun.SetCombineSourceRetention(AggregateCombineSourceRetention::NEVER_RETAINS);
- 	fun.SetFallible(); // the update callback rejects NULL and out-of-range n values at runtime
- 	return fun;
- }
-```
-
-**File**: `src/function/aggregate_function.cpp` (modified, +6/-1)
-```diff
-@@ -48,6 +48,10 @@ AggregateInputData::AggregateInputData(const AggregateObject &aggr, ArenaAllocat
-                          allocator_p, combine_type_p) {
- }
- 
-+bool AggregateExecutor::CombineNeverRetainsSource(const AggregateInputData &aggr_input_data) {
-+	return aggr_input_data.function.GetCombineSourceRetention() == AggregateCombineSourceRetention::NEVER_RETAINS;
-+}
-+
- AggregateFinalizeInputData::AggregateFinalizeInputData(const BoundAggregateFunction &function_p,
-                                                        optional_ptr<const FunctionData> bind_data_p,
-                                                        ArenaAllocator &allocator_p,
-@@ -84,7 +88,8 @@ void AggregateFinalizeInputData::InitializeLocalState() {
- bool AggregateFunctionProperties::operator==(const AggregateFunctionProperties &rhs) const {
- 	return FunctionProperties::operator==(rhs) && order_dependent == rhs.order_dependent &&
- 	       distinct_dependent == rhs.distinct_dependent && single_value_identity == rhs.single_value_identity &&
--	       is_holistic == rhs.is_holistic && combine_source_retention == rhs.combine_source_retention;
-+	       is_holistic == rhs.is_holistic && combine_source_retention == rhs.combine_source_retention &&
-+	       can_stream == rhs.can_stream;
- }
- bool AggregateFunctionProperties::operator!=(const AggregateFunctionProperties &rhs) const {
- 	return !(*this == rhs);
-```
-
-**File**: `src/function/aggregate_state_serialization.cpp` (modified, +2/-1)
-```diff
-@@ -336,12 +336,13 @@ static void DeserializeField(const LogicalType &type, const AggregateStateField
- } // namespace
- 
- void AggregateStateSerialization::DeserializeStates(const BoundAggregateFunction &aggr,
-+                                                    optional_ptr<const FunctionData> bind_data,
-                                                     const AggregateStateLayout &layout, const Vector &input_vec,
-                                                     idx_t count, data_ptr_t dest_buffer, ArenaAllocator &allocator,
-                                                     StateMemoryOwnership ownership) {
- 	if (aggr.HasImportAggregateStateCallback()) {
- 		// the aggregate explicitly deserializes its own states, copying all variable size data
--		AggregateImportInputData import_input(layout, input_vec, dest_buffer, allocator);
-+		AggregateImportInputData import_input(layout, input_vec, dest_buffer, allocator, bind_data);
- 		aggr.GetImportAggregateStateCallback()(import_input);
- 		return;
- 	}
-```
-
-**File**: `src/function/scalar/system/aggregate_export.cpp` (modified, +17/-18)
-```diff
-@@ -145,8 +145,8 @@ void AggregateStateFinalize(DataChunk &input, ExpressionState &state_p, Vector &
- 		state_vec_writer.WriteValue(state_ptr);
- 	}
- 
--	AggregateStateSerialization::DeserializeStates(bind_data.aggr, layout, input.data[0], count,
--	                                               local_state.state_buffer.get(), local_state.allocator,
-+	AggregateStateSerialization::DeserializeStates(bind_data.aggr, bind_data.bind_data.get(), layout, input.data[0],
-+	                                               count, local_state.state_buffer.get(), local_state.allocator,
- 	                                               StateMemoryOwnership::BORROWED);
- 
- 	AggregateFinalizeInputData aggr_input_data(bind_data.aggr, bind_data.bind_data.get(), local_state.allocator);
-@@ -197,11 +197,11 @@ void AggregateStateCombine(DataChunk &input, ExpressionState &state_p, Vector &r
- 	}
- 
- 	// Deserialize both inputs — null rows are skipped by LoadOp, keeping the initialized empty state
--	AggregateStateSerialization::DeserializeStates(bind_data.aggr, layout, input.data[0], count,
--	                                               local_state.state_buffer0.get(), local_state.allocator,
-+	AggregateStateSerialization::DeserializeStates(bind_data.aggr, bind_data.bind_data.get(), layout, input.data[0],
-+	                                               count, local_state.state_buffer0.get(), local_state.allocator,
- 	                                               StateMemoryOwnership::BORROWED);
--	AggregateStateSerialization::DeserializeStates(bind_data.aggr, layout, input.data[1], count,
--	                                               local_state.state_buffer1.get(), local_state.allocator,
-+	AggregateStateSerialization::DeserializeStates(bind_data.aggr, bind_data.bind_data.get(), layout, input.data[1],
-+	                                               count, local_state.state_buffer1.get(), local_state.allocator,
- 	                                               StateMemoryOwnership::BORROWED);
- 
- 	AggregateInputData aggr_input_data(bind_data.aggr, bind_data.bind_data.get(), local_state.allocator,
-@@ -555,8 +555,9 @@ void CombineAggrUpdate(Vector inputs[], AggregateInputData &aggr_input_data, idx
- 	}
- 	auto &source_allocator = scratch ? *scratch : aggr_input_data.allocator;
- 	try {
--		AggregateStateSerialization::DeserializeStates(underlying_aggr, layout, inputs[0], count, temp_state_buf.get(),
--		                                               source_allocator, StateMemoryOwnership::BORROWED);
-+		AggregateStateSerialization::DeserializeStates(underlying_aggr, bind_data.bind_data.get(), layout, inputs[0],
-+		                                               count, temp_state_buf.get(), source_allocator,
-+		                                               StateMemoryOwnership::BORROWED);
- 		AggregateInputData combine_input(bind_data.aggr, bind_data.bind_data.get(), aggr_input_data.allocator,
- 		                                 AggregateCombineType::ALLOW_DESTRUCTIVE);
- 		if (input_count == 2) {
-@@ -941,21 +942,19 @@ void ExportAggregateFunction::GetSortedStateOrders(const LogicalType &state_type
- 	ParseOrderBys(order_entry->second, StructType::GetChildTypes(buffer_struct).size(), orders);
- }
- 
--bool ExportAggregateFunction::TryGetCombinedStateLayout(const BoundAggregateFunction &function,
--                                                        optional_ptr<const FunctionData> bind_data,
--                                                        AggregateStateLayout &layout) {
-+unique_ptr<AggregateStateSerializer>
-+ExportAggregateFunction::TryGetCombinedStateSerializer(const BoundAggregateFunction &function,
-+                                                       optional_ptr<const FunctionData> bind_data) {
- 	if (!bind_data || function.GetStateCombineCallback() != CombineAggrStateCombine) {
--		return false;
-+		return nullptr;
- 	}
- 	auto &combine_data = bind_data->Cast<ExportAggregateBindData>();
- 	auto &aggr = combine_data.aggr;
--	// states with explicit export / import callbacks are not described by their field layout alone
--	if (!aggr.HasGetStateTypeCallback() || aggr.HasExportAggregateStateCallback() ||
--	    aggr.HasImportAggregateStateCallback()) {
--		return false;
-+	if (!aggr.HasGetStateTypeCallback()) {
-+		return nullptr;
- 	}
--	layout = aggr.GetStateType(combine_data.bind_data.get());
--	return true;
-+	return make_uniq<AggregateStateSerializer>(aggr.GetStateType(combine_data.bind_data.get()), aggr,
-+	                                           combine_data.bind_data.get());
- }
- 
- void ExportAggregateFunction::SetStateExport(BoundAggregateExpression &aggregate, LogicalType state_layout) {
-```
-
-**File**: `src/include/duckdb/common/vector_operations/aggregate_executor.hpp` (modified, +33/-7)
-```diff
-@@ -935,6 +935,10 @@ class AggregateExecutor {
- 			return *reinterpret_cast<STATE_TYPE *>(storage);
- 		}
- 
-+		AggregateInputData &GetInput() {
-+			return aggr_input_data;
-+		}
-+
- 		void Initialize() {
- 			D_ASSERT(!initialized);
- 			InitializeState<STATE_TYPE, OP>(Get());
-@@ -955,34 +959,56 @@ class AggregateExecutor {
- 		bool initialized = false;
- 	};
- 
-+	//! Whether the aggregate's combine never leaves the target referencing the source's memory
-+	DUCKDB_API static bool CombineNeverRetainsSource(const AggregateInputData &aggr_input_data);
-+
- 	template <class STATE_TYPE, class OP>
- 	static void GenericRepeatedCombine(const STATE_TYPE &source, STATE_TYPE &target,
- 	                                   AggregateInputData &aggr_input_data, idx_t multiplicity) {
- 		AggregateInputData combine_input(aggr_input_data.function, aggr_input_data.bind_data, aggr_input_data.allocator,
- 		                                 AggregateCombineType::PRESERVE_INPUT);
-+		// if the final combine copies what the target keeps, each intermediate state gets a scratch arena, which is
-+		// reset when the state is replaced
-+		const bool scratch = CombineNeverRetainsSource(aggr_input_data);
-+		auto &underlying_allocator = aggr_input_data.allocator.GetUnderlyingAllocator();
-+		ArenaAllocator result_arena(underlying_allocator);
-+		ArenaAllocator power_arena_a(underlying_allocator);
-+		ArenaAllocator power_arena_b(underlying_allocator);
-+		AggregateInputData result_input(aggr_input_data.function, aggr_input_data.bind_data,
-+		                                scratch ? result_arena : aggr_input_data.allocator,
-+		                                AggregateCombineType::PRESERVE_INPUT);
-+		AggregateInputData power_input_a(aggr_input_data.function, aggr_input_data.bind_data,
-+		                                 scratch ? power_arena_a : aggr_input_data.allocator,
-+		                                 AggregateCombineType::PRESERVE_INPUT);
-+		AggregateInputData power_input_b(aggr_input_data.function, aggr_input_data.bind_data,
-+		                                 scratch ? power_arena_b : aggr_input_data.allocator,
-+		                                 AggregateCombineType::PRESERVE_INPUT);
- 
--		AggregateStateGuard<STATE_TYPE, OP> result(combine_input);
--		AggregateStateGuard<STATE_TYPE, OP> power_a(combine_input);
--		AggregateStateGuard<STATE_TYPE, OP> power_b(combine_input);
-+		AggregateStateGuard<STATE_TYPE, OP> result(result_input);
-+		AggregateStateGuard<STATE_TYPE, OP> power_a(power_input_a);
-+		AggregateStateGuard<STATE_TYPE, OP> power_b(power_input_b);
- 
- 		result.Initialize();
- 		power_a.Initialize();
--		OP::template Combine<STATE_TYPE, OP>(source, power_a.Get(), combine_input);
-+		OP::template Combine<STATE_TYPE, OP>(source, power_a.Get(), power_input_a);
- 
- 		auto power = &power_a;
- 		auto next_power = &power_b;
- 		while (multiplicity > 0) {
- 			if (multiplicity & 1) {
--				OP::template Combine<STATE_TYPE, OP>(power->Get(), result.Get(), combine_input);
-+				OP::template Combine<STATE_TYPE, OP>(power->Get(), result.Get(), result_input);
- 			}
- 			multiplicity >>= 1;
- 			if (multiplicity == 0) {
+@@ -97,6 +97,11 @@ PhysicalOperator &PhysicalPlanGenerator::CreatePlan(LogicalGet &op) {
  				break;
  			}
- 			next_power->Initialize();
--			OP::template Combine<STATE_TYPE, OP>(power->Get(), next_power->Get(), combine_input);
--			OP::template Combine<STATE_TYPE, OP>(power->Get(), next_power->Get(), combine_input);
-+			OP::template Combine<STATE_TYPE, OP>(power->Get(), next_power->Get(), next_power->GetInput());
-+			OP::template Combine<STATE_TYPE, OP>(power->Get(), next_power->Get(), next_power->GetInput());
- 			power->Destroy();
-+			if (scratch) {
-+				power->GetInput().allocator.Reset();
-+			}
- 			std::swap(power, next_power);
  		}
- 		OP::template Combine<STATE_TYPE, OP>(result.Get(), target, combine_input);
++		if (!op.projected_input.empty() && op.function.in_out_function_final) {
++			throw NotImplementedException("Table in-out function %s has a finalize step, which is not supported for "
++			                              "input that is correlated with an outer query",
++			                              op.function.GetName());
++		}
+ 		auto &table_in_out = Make<PhysicalTableInOutFunction>(
+ 		    op.types, op.function, std::move(op.bind_data), column_ids, std::move(projection_indices),
+ 		    std::move(table_filters), op.estimated_cardinality, std::move(op.projected_input));
 ```
 
----
-
-### Incident Patch 2: `5a60beb0` (2026-11-26)
-**Commit Message**: Avoid signed integer overflow in Chinese calendar month calculation (#29347)
-
-ChineseCalendar::ComputeMonthStart() uses the result of NewYear() before
-checking whether the calendar calculation failed:
-
-```
-const auto new_year = NewYear(eyear);
-auto new_moon = NewMoonNear(new_year + month * 29, true);
-if (HasFailedInternal()) {
-	return 0;
-}
-```
-
-Both new_year and month are int32_t. The addition is therefore evaluated
-using integer arithmetic before its result is converted to the double
-parameter of NewMoonNear().
-
-The overflow was reproduced by setting these calendar fields and calling
-GetTime():
-
-```
-calendar.Set(CAL_EXTENDED_YEAR, 0);
-calendar.Set(CAL_MONTH, 70578965);
-calendar.Set(CAL_DATE, 1);
-calendar.GetTime();
-
-```
-Month normalization produces eyear = 5881580 and month = 5. NewYear()
-sets the failure flag but returns 2147483513. The subsequent addition
-evaluates to 2147483513 + 145, exceeding INT32_MAX. UBSan reports signed
-integer overflow at this expression.
-
-Check the failure flag immediately after NewYear() and perform the
-addition in floating-point arithmetic, matching the argument type of
-NewMoonNear():
-```
-const auto new_year = NewYear(eyear);
-if (HasFailedInternal()) 
-
-**File**: `extension/icu/datetime/chinese.cpp` (modified, +10/-1)
+**File**: `src/include/duckdb/main/capi_v2/capi_v2_function_internal.hpp` (modified, +107/-0)
 ```diff
-@@ -221,7 +221,13 @@ int32_t ChineseCalendar::NewYear(int32_t gyear) const {
- 	}
+@@ -9,6 +9,7 @@
+ #pragma once
  
- 	const auto solstice_before = WinterSolstice(gyear - 1);
-+	if (HasFailedInternal()) {
-+		return 0;
+ #include "duckdb/main/capi_v2/capi_v2_internal.hpp"
++#include "duckdb/common/enums/operator_result_type.hpp"
+ #include "duckdb/common/named_parameter_map.hpp"
+ #include "duckdb/function/function.hpp"
+ #include "duckdb/function/table_function.hpp"
+@@ -184,4 +185,110 @@ inline auto Convert(CV2FunctionBindInfo *info) -> duckdb_v2_function_bind_info_h
+ 	return reinterpret_cast<duckdb_v2_function_bind_info_handle>(info);
+ }
+ 
++//----------------------------------------------------------------------------------------------------------------------
++// Operators
++//----------------------------------------------------------------------------------------------------------------------
++//! The callbacks and user data of a custom streaming operator. Copied into what runs it, which shares the user data.
++class CV2OperatorInfo {
++public:
++	void *GetUserData() const {
++		return user_data ? user_data->GetData() : nullptr;
 +	}
- 	const auto solstice_after = WinterSolstice(gyear);
-+	if (HasFailedInternal()) {
-+		return 0;
++
++public:
++	duckdb_v2_operator_init_global_callback_fn init_global_cb = nullptr;
++	duckdb_v2_operator_init_local_callback_fn init_local_cb = nullptr;
++	duckdb_v2_operator_execute_callback_fn execute_cb = nullptr;
++	duckdb_v2_operator_finalize_callback_fn finalize_cb = nullptr;
++	shared_ptr<CV2UserData> user_data;
++};
++
++//! An operator being built through the C API
++class CV2Operator {
++public:
++	explicit CV2Operator(DatabaseInstance &db) : db(db) {
 +	}
- 	const auto new_moon1 = NewMoonNear(solstice_before + 1, true);
- 	const auto new_moon2 = NewMoonNear(new_moon1 + SYNODIC_GAP, true);
- 	const auto new_moon11 = NewMoonNear(solstice_after + 1, false);
-@@ -370,7 +376,10 @@ int64_t ChineseCalendar::ComputeMonthStart(int32_t eyear, int32_t month, bool is
- 	}
- 
- 	const auto new_year = NewYear(eyear);
--	auto new_moon = NewMoonNear(new_year + month * 29, true);
-+	if (HasFailedInternal()) {
-+		return 0;
-+	}
-+	auto new_moon = NewMoonNear(double(new_year) + month * 29, true);
- 	if (HasFailedInternal()) {
- 		return 0;
- 	}
-```
-
-**File**: `test/sql/timezone/test_icu_calendar_failed_year_cache.test` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+# name: test/sql/timezone/test_icu_calendar_failed_year_cache.test
-+# description: Failed lunisolar year calculations must not be cached
-+# group: [timezone]
 +
-+require icu
++public:
++	//! The database it was created for: the only one whose objects can run it.
++	DatabaseInstance &db;
++	CV2OperatorInfo info;
++};
 +
-+statement ok
-+SET threads=1;
-+
-+statement ok
-+SET TimeZone='UTC';
-+
-+foreach calendar chinese dangi
-+
-+statement ok
-+SET Calendar='{calendar}';
-+
-+# Repeated requests must fail even when the calendar instance changes.
-+loop iteration 0 2
-+
-+statement error
-+SELECT make_timestamptz(2000, 2147483647, 1, 0, 0, 0);
-+----
-+<REGEX>:.*(out of range|overflow).*
-+
-+statement error
-+SELECT make_timestamptz(2000, -2147483647, 1, 0, 0, 0);
-+----
-+<REGEX>:.*(out of range|overflow).*
-+
-+endloop
-+
-+query I
-+SELECT year(TIMESTAMPTZ '2024-01-10 00:00:00+00') > 0;
-+----
-+true
-+
-+endloop
-```
-
----
-
-### Incident Patch 3: `76099c5a` (2026-11-26)
-**Commit Message**: Fix-29121 Infer transitive group keys for inner expression joins (#29267)
-
-Fixes #29121.
-
-Ranks repeat across groups in the reported self-join. When the first
-rank hash join lacks a group key, it pairs rows across groups and can
-exhaust the temporary-directory limit before a later join checks `grp`.
-
-Filter pullup now carries hidden columns through projections so that
-`FilterCombiner` can infer the transitive group equality before join
-ordering. This replaces the PR’s join-order-specific inference and
-covers both integer and VARCHAR keys. Projections containing fallible or
-volatile expressions block pullup across that boundary. A pulled filter
-bundle containing a fallible or volatile predicate stays below the
-projection, preserving its evaluation boundary and any guarding
-predicates. [Reviewer
-feedback](https://github.com/duckdb/duckdb/pull/29267#pullrequestreview-6059493786)
-
-### Verification
-
-The original 200-group fixture and a VARCHAR variant were run with four
-threads, a 3 GB memory limit, and a 1 GB spill cap. The table reports
-medians from five measured runs after a warmup.
-
-| Group key | Previous PR head `9654e2e2e16` | Updated build |
-| --- | ---: | ---: |
-| BIGINT | 410.1
-
-**File**: `src/include/duckdb/optimizer/filter_pullup.hpp` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@ class FilterPullup {
- 	// only pull up filters when there is a fork
- 	bool can_pullup = false;
- 
--	// identify case the branch is a set operation (INTERSECT or EXCEPT)
-+	// Whether a projection can carry additional columns needed by pulled filters.
- 	bool can_add_column = false;
- 
- private:
-```
-
-**File**: `src/optimizer/filter_pullup.cpp` (modified, +69/-0)
-```diff
-@@ -3,15 +3,81 @@
- #include "duckdb/common/enum_util.hpp"
- #include "duckdb/optimizer/filter_pushdown.hpp"
- #include "duckdb/planner/expression/bound_comparison_expression.hpp"
-+#include "duckdb/planner/expression/bound_function_expression.hpp"
- #include "duckdb/planner/operator/logical_any_join.hpp"
- #include "duckdb/planner/operator/logical_comparison_join.hpp"
- #include "duckdb/planner/operator/logical_cross_product.hpp"
- #include "duckdb/planner/operator/logical_join.hpp"
- #include "duckdb/planner/operator/logical_window.hpp"
-+#include "duckdb/planner/subquery/column_binding_layout.hpp"
- 
- namespace duckdb {
- 
-+static bool HasComputedJoinOperands(const Expression &lhs, const Expression &rhs) {
-+	return !lhs.IsScalar() && !rhs.IsScalar() &&
-+	       (lhs.GetExpressionType() != ExpressionType::BOUND_COLUMN_REF ||
-+	        rhs.GetExpressionType() != ExpressionType::BOUND_COLUMN_REF);
++inline auto Convert(duckdb_v2_operator_handle op) -> CV2Operator * {
++	return reinterpret_cast<CV2Operator *>(op);
++}
++inline auto Convert(CV2Operator *op) -> duckdb_v2_operator_handle {
++	return reinterpret_cast<duckdb_v2_operator_handle>(op);
 +}
 +
-+static bool NeedsEarlyJoinKeys(LogicalOperator &op) {
-+	if (op.type == LogicalOperatorType::LOGICAL_COMPARISON_JOIN) {
-+		auto &join = op.Cast<LogicalComparisonJoin>();
-+		if (join.join_type != JoinType::INNER) {
-+			return false;
-+		}
-+		for (auto &condition : join.conditions) {
-+			if (condition.IsComparison() && condition.GetComparisonType() == ExpressionType::COMPARE_EQUAL &&
-+			    HasComputedJoinOperands(condition.GetLHS(), condition.GetRHS())) {
-+				return true;
-+			}
-+		}
-+		return false;
-+	}
-+	if (op.type != LogicalOperatorType::LOGICAL_FILTER ||
-+	    op.children[0]->type != LogicalOperatorType::LOGICAL_CROSS_PRODUCT) {
-+		return false;
-+	}
-+	auto &cross = *op.children[0];
-+	unordered_set<TableIndex> left_bindings, right_bindings;
-+	for (auto &expression : op.expressions) {
-+		if (expression->GetExpressionType() != ExpressionType::COMPARE_EQUAL) {
-+			continue;
-+		}
-+		auto &comparison = expression->Cast<BoundFunctionExpression>();
-+		auto &lhs = BoundComparisonExpression::Left(comparison);
-+		auto &rhs = BoundComparisonExpression::Right(comparison);
-+		if (!HasComputedJoinOperands(lhs, rhs)) {
-+			continue;
-+		}
-+		if (left_bindings.empty() && right_bindings.empty()) {
-+			LogicalJoin::GetTableReferences(*cross.children[0], left_bindings);
-+			LogicalJoin::GetTableReferences(*cross.children[1], right_bindings);
-+		}
-+		auto lhs_side = JoinSide::GetCurrentJoinSide(lhs, left_bindings, right_bindings);
-+		auto rhs_side = JoinSide::GetCurrentJoinSide(rhs, left_bindings, right_bindings);
-+		if ((lhs_side == JoinSide::LEFT && rhs_side == JoinSide::RIGHT) ||
-+		    (lhs_side == JoinSide::RIGHT && rhs_side == JoinSide::LEFT)) {
++class CV2OperatorInitGlobalInfo {
++public:
++	void *in_user_data = nullptr;
++	void *in_bind_data = nullptr;
++
++	duckdb_v2_opaque out_global_state = {};
++	optional_idx out_max_threads;
++};
++
++inline auto Convert(duckdb_v2_operator_init_global_info_handle info) -> CV2OperatorInitGlobalInfo * {
++	return reinterpret_cast<CV2OperatorInitGlobalInfo *>(info);
++}
++inline auto Convert(CV2OperatorInitGlobalInfo *info) -> duckdb_v2_operator_init_global_info_handle {
++	return reinterpret_cast<duckdb_v2_operator_init_global_info_handle>(info);
++}
++
++class CV2OperatorInitLocalInfo {
++public:
++	void *in_user_data = nullptr;
++	void *in_bind_data = nullptr;
++	void *in_global_state = nullptr;
++
++	duckdb_v2_opaque out_local_state = {};
++};
++
++inline auto Convert(duckdb_v2_operator_init_local_info_handle info) -> CV2OperatorInitLocalInfo * {
++	return reinterpret_cast<CV2OperatorInitLocalInfo *>(info);
++}
++inline auto Convert(CV2OperatorInitLocalInfo *info) -> duckdb_v2_operator_init_local_info_handle {
++	return reinterpret_cast<duckdb_v2_operator_init_local_info_handle>(info);
++}
++
++class CV2OperatorExecuteInfo {
++public:
++	void *in_user_data = nullptr;
++	void *in_bind_data = nullptr;
++	void *in_global_state = nullptr;
++	void *in_local_state = nullptr;
++	optional_ptr<DataChunk> input;
++	optional_ptr<DataChunk> output;
++
++	OperatorResultType out_result = OperatorResultType::NEED_MORE_INPUT;
++};
++
++inline auto Convert(duckdb_v2_operator_execute_info_handle info) -> CV2OperatorExecuteInfo * {
++	return reinterpret_cast<CV2OperatorExecuteInfo *>(info);
++}
++inline auto Convert(CV2OperatorExecuteInfo *info) -> duckdb_v2_operator_execute_info_handle {
++	return reinterpret_cast<duckdb_v2_operator_execute_info_handle>(info);
++}
++
++class CV2OperatorFinalizeInfo {
++public:
++	void *in_user_data = nullptr;
++	void *in_bind_data = nullptr;
++	void *in_global_state = nullptr;
++	void *in_local_state = nullptr;
++	optional_ptr<DataChunk> output;
++
++	bool out_have_more_output = false;
++};
++
++inline auto Convert(duckdb_v2_operator_finalize_info_handle info) -> CV2OperatorFinalizeInfo * {
++	return reinterpret_cast<CV2OperatorFinalizeInfo *>(info);
++}
++inline auto Convert(CV2OperatorFinalizeInfo *info) -> duckdb_v2_operator_finalize_info_handle {
++	return reinterpret_cast<duckdb_v2_operator_finalize_info_handle>(info);
++}
++
+ } // namespace duckdb::capiv2
+```
+
+**File**: `src/include/duckdb/main/capi_v2/extension_api_v2.hpp` (modified, +101/-0)
+```diff
+@@ -1670,9 +1670,78 @@ typedef struct {
+ 	 duckdb_v2_error_info_handle *err);
+ 	DUCKDB_V2_ERROR(*duckdb_v2_data_source_set_user_data)
+ 	(duckdb_v2_data_source_handle source, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_create)
++	(duckdb_v2_factory_handle factory, duckdb_v2_operator_handle *op, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR (*duckdb_v2_operator_destroy)(duckdb_v2_operator_handle *op);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_bind_data)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_global_state)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_input_chunk)
++	(duckdb_v2_operator_execute_info_handle info, duckdb_v2_data_chunk_handle *chunk, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_local_state)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_output_chunk)
++	(duckdb_v2_operator_execute_info_handle info, duckdb_v2_data_chunk_handle *chunk, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_user_data)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_set_result)
++	(duckdb_v2_operator_execute_info_handle info, DUCKDB_V2_OPERATOR_RESULT result, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_bind_data)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_global_state)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_local_state)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_output_chunk)
++	(duckdb_v2_operator_finalize_info_handle info, duckdb_v2_data_chunk_handle *chunk,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_user_data)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_set_have_more_output)
++	(duckdb_v2_operator_finalize_info_handle info, bool have_more_output, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_get_bind_data)
++	(duckdb_v2_operator_init_global_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_get_user_data)
++	(duckdb_v2_operator_init_global_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_set_global_state)
++	(duckdb_v2_operator_init_global_info_handle info, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_set_max_threads)
++	(duckdb_v2_operator_init_global_info_handle info, idx_t max_threads, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_bind_data)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_global_state)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_user_data)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_set_local_state)
++	(duckdb_v2_operator_init_local_info_handle info, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_execute_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_execute_callback_fn callback, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_finalize_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_finalize_callback_fn callback, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_init_global_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_init_global_callback_fn callback,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_init_local_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_init_local_callback_fn callback,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_user_data)
++	(duckdb_v2_operator_handle op, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_table_function_bind_get_input_column_count)
++	(duckdb_v2_table_function_bind_info_handle info, idx_t *coun
+```
+
+**File**: `src/include/duckdb_extension_v2.h` (modified, +168/-0)
+```diff
+@@ -1744,9 +1744,78 @@ typedef struct {
+ 	 duckdb_v2_error_info_handle *err);
+ 	DUCKDB_V2_ERROR(*duckdb_v2_data_source_set_user_data)
+ 	(duckdb_v2_data_source_handle source, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_create)
++	(duckdb_v2_factory_handle factory, duckdb_v2_operator_handle *op, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR (*duckdb_v2_operator_destroy)(duckdb_v2_operator_handle *op);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_bind_data)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_global_state)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_input_chunk)
++	(duckdb_v2_operator_execute_info_handle info, duckdb_v2_data_chunk_handle *chunk, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_local_state)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_output_chunk)
++	(duckdb_v2_operator_execute_info_handle info, duckdb_v2_data_chunk_handle *chunk, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_get_user_data)
++	(duckdb_v2_operator_execute_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_execute_set_result)
++	(duckdb_v2_operator_execute_info_handle info, DUCKDB_V2_OPERATOR_RESULT result, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_bind_data)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_global_state)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_local_state)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_output_chunk)
++	(duckdb_v2_operator_finalize_info_handle info, duckdb_v2_data_chunk_handle *chunk,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_get_user_data)
++	(duckdb_v2_operator_finalize_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_finalize_set_have_more_output)
++	(duckdb_v2_operator_finalize_info_handle info, bool have_more_output, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_get_bind_data)
++	(duckdb_v2_operator_init_global_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_get_user_data)
++	(duckdb_v2_operator_init_global_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_set_global_state)
++	(duckdb_v2_operator_init_global_info_handle info, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_global_set_max_threads)
++	(duckdb_v2_operator_init_global_info_handle info, idx_t max_threads, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_bind_data)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_global_state)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_get_user_data)
++	(duckdb_v2_operator_init_local_info_handle info, void **data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_init_local_set_local_state)
++	(duckdb_v2_operator_init_local_info_handle info, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_execute_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_execute_callback_fn callback, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_finalize_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_finalize_callback_fn callback, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_init_global_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_init_global_callback_fn callback,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_init_local_callback)
++	(duckdb_v2_operator_handle op, duckdb_v2_operator_init_local_callback_fn callback,
++	 duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_operator_set_user_data)
++	(duckdb_v2_operator_handle op, duckdb_v2_opaque *data, duckdb_v2_error_info_handle *err);
++	DUCKDB_V2_ERROR(*duckdb_v2_table_function_bind_get_input_column_count)
++	(duckdb_v2_table_function_bind_info_handle info, idx_t *coun
+```
+
+**File**: `src/include/duckdb_v2.h` (modified, +800/-10)
+```diff
+@@ -5212,6 +5212,662 @@ DUCKDB_C_API DUCKDB_V2_ERROR duckdb_v2_object_cache_entry_destroy(duckdb_v2_obje
+ 
+ /* --- Struct definitions for object cache --- */
+ 
++/* ============================================================================
++ * MODULE: operator
++ * ============================================================================ */
++
++/* --- Enums for operator --- */
++
++/*!
++ * What an operator's execute callback reports about the input chunk it was given, set with
++ * `duckdb_v2_operator_execute_set_result()`.
++ */
++typedef enum DUCKDB_V2_OPERATOR_RESULT {
++	/*!
++	 * The operator is done with the input chunk: the engine calls the execute callback again with the next input chunk.
++	 * The default.
++	 */
++	DUCKDB_V2_OPERATOR_RESULT_NEED_MORE_INPUT = 0,
++
++	/*!
++	 * The output chunk is full but the operator is not done with the input chunk: the engine calls the execute callback
++	 * again with the same input chunk once it has consumed the output.
++	 */
++	DUCKDB_V2_OPERATOR_RESULT_HAVE_MORE_OUTPUT = 1,
++
++	/*!
++	 * The operator needs no more input at all, e.g. because it has produced every row it ever will. The engine stops
++	 * feeding it input, and calls the finalize callback if one is set.
++	 */
++	DUCKDB_V2_OPERATOR_RESULT_FINISHED = 2,
++	DUCKDB_V2_OPERATOR_RESULT_MAX_ENUM = 0x7FFFFFFF,
++} DUCKDB_V2_OPERATOR_RESULT;
++
++/* --- Struct forward declarations for operator --- */
++
++/* --- Types for operator --- */
++
++/*!
++ * An owned opaque handle to a custom streaming operator being built. Created with `duckdb_v2_operator_create()`,
++ * configured with the setter functions (e.g. `duckdb_v2_operator_set_execute_callback()`), handed to the object that
++ * runs it (e.g. with `duckdb_v2_table_function_set_operator()`), and destroyed with `duckdb_v2_operator_destroy()`.
++ *
++ * An operator transforms a stream of input chunks into a stream of output chunks. The engine may run it on several
++ * threads at once: every thread processes a part of the input with a "local state" of its own, next to a "global state"
++ * all threads share.
++ */
++typedef struct _duckdb_v2_operator {
++	void *internal_ptr;
++} * duckdb_v2_operator_handle;
++
++/*!
++ * A borrowed opaque handle to the arguments supplied to an operator during the global state initialization "init
++ * global" phase. The "init global" callback receives this handle and can use it to set up the state shared by every
++ * thread running the operator, and to declare how many threads may run it.
++ */
++typedef struct _duckdb_v2_operator_init_global_info {
++	void *internal_ptr;
++} * duckdb_v2_operator_init_global_info_handle;
++
++/*!
++ * A borrowed opaque handle to the arguments supplied to an operator during the local state initialization "init local"
++ * phase. The "init local" callback receives this handle and can use it to set up the state of one thread running the
++ * operator.
++ */
++typedef struct _duckdb_v2_operator_init_local_info {
++	void *internal_ptr;
++} * duckdb_v2_operator_init_local_info_handle;
++
++/*!
++ * A borrowed opaque handle to the arguments supplied to an operator during the "execute" phase. The "execute" callback
++ * receives this handle and uses it to read the input chunk, write the output chunk, and report whether it is done with
++ * the input chunk.
++ */
++typedef struct _duckdb_v2_operator_execute_info {
++	void *internal_ptr;
++} * duckdb_v2_operator_execute_info_handle;
++
++/*!
++ * A borrowed opaque handle to the arguments supplied to an operator during the "finalize" phase, after the thread's
++ * input is exhausted. The "finalize" callback receives this handle and uses it to write the output the operator held
++ * back, and to report whether it has more of it.
++ */
++typedef struct _duckdb_v2_operator_finalize_info {
++	void *internal_ptr;
++} * duckdb_v2_operator_finalize_info_handle;
++
++/* --- Constants for operator --- */
++
++/* --- Function pointer typedefs for operator --- */
++
++typedef void (*duckdb_v2_operator_init_global_callback_fn)(duckdb_v2_operator_init_global_info_handle info,
++                                                           duckdb_v2_context_handle context,
++                                                           duckdb_v2_error_info_handle *err);
++
++typedef void (*duckdb_v2_operator_init_local_callback_fn)(duckdb_v2_operator_init_local_info_handle info,
++                                                          duckdb_v2_context_handle context,
++                                                          duckdb_v2_error_info_handle *err);
++
++typedef void (*duckdb_v2_operator_execute_callback_fn)(duckdb_v2_operator_execute_info_handle info,
++                                                       duckdb_v2_context_handle context,
++                                                       duckdb_v2_error_info_handle *err);
++
++typedef void (*duckdb_v2_operator_finalize_callback_fn)(duckdb_v2_operator_finalize_info_handle info,
++                                                        duckdb_v2_context_handle context,
++          
+```
+
+**File**: `src/main/capi/v2/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -36,6 +36,7 @@ add_library_unity(
+   capi_v2_log_sink.cpp
+   capi_v2_logging.cpp
+   capi_v2_logical_type.cpp
++  capi_v2_operator.cpp
+   capi_v2_option.cpp
+   capi_v2_prepared_statement.cpp
+   capi_v2_qname.cpp
+```
+
+---
+
+### Incident Patch 2: `12ee556a` (2026-11-27)
+**Commit Message**: fix(decimal): ignore leading fractional zeros when capping decimal cast width (#29448)
+
+Fixes #29395.
+
+### Root Cause
+In `DecimalCastOperation::HandleDecimal`, the storage-width overflow
+guard checked `state.digit_count + state.decimal_count >=
+DecimalWidth<StoreType>::max` (4, 9, or 18). Because
+`state.decimal_count` counts leading fractional zeros before the first
+non-zero digit while `state.result == 0`, inputs like
+`'0.0000000001234e10'::DECIMAL(5,2)` exhausted the cap before reaching
+the significant digits and dropped them, returning `0.00`.
+
+Additionally, in `DecimalCastOperation::HandleExponent`,
+positive-exponent scaling appended trailing zeros by calling
+`HandleDigit(0)`, which rejected valid results when trailing scale
+positions pushed `digit_count` to `width - scale` (e.g.,
+`'0.0000000001e10'::DECIMAL(3,2)` or `'0.01e2'::DECIMAL(3,2)`), and
+`TruncateExcessiveDecimals` always looped across all
+`excessive_decimals` even after `state.result` truncated to `0`.
+
+### Changes
+- Track `leading_decimal_zeros` in `DecimalCastData` while `state.result
+== 0 && digit == 0` in `HandleDecimal`, and subtract it from the
+`DecimalWidth<StoreType>::max` digit guard so leading fractional ze
+
+**File**: `src/include/duckdb/common/operator/decimal_cast_operators.hpp` (modified, +19/-4)
+```diff
+@@ -743,9 +743,18 @@ struct DecimalCastOperation {
+ 			return true;
+ 		} else {
+ 			// positive exponent: append 0's
+-			for (idx_t i = 0; i < idx_t(exponent); i++) {
+-				if (!HandleDigit<T, NEGATIVE>(state, 0)) {
+-					return false;
++			if (state.result != 0) {
++				for (idx_t i = 0; i < idx_t(exponent); i++) {
++					if (NEGATIVE) {
++						if (state.result < DecimalCastLimits<typename T::StoreType>::MinimumDiv10) {
++							return false;
++						}
++					} else {
++						if (state.result > DecimalCastLimits<typename T::StoreType>::MaximumDiv10) {
++							return false;
++						}
++					}
++					state.result *= 10;
+ 				}
+ 			}
+ 			// decimals moved before the decimal point by the exponent do not count towards the digit count
+@@ -766,9 +775,15 @@ struct DecimalCastOperation {
+ 			// we just truncate the decimal
+ 			return true;
+ 		}
++		if (state.result == 0 && digit == 0) {
++			// leading zeros after the decimal point still advance decimal_count
++			state.decimal_count++;
 +			return true;
 +		}
-+	}
-+	return false;
-+}
-+
- unique_ptr<LogicalOperator> FilterPullup::Rewrite(unique_ptr<LogicalOperator> op) {
-+	if (can_add_column && op->HasProjectionMap()) {
-+		return FinishPullup(std::move(op));
-+	}
-+	if (!can_pullup && !can_add_column && !op->HasProjectionMap() && NeedsEarlyJoinKeys(*op)) {
-+		// Carry hidden keys within this join region and keep its output bindings unchanged.
-+		auto output = op->GetColumnBindings();
-+		FilterPullup join_pullup(context, false, true);
-+		auto rewritten = join_pullup.Rewrite(std::move(op));
-+		ColumnBindingLayout layout(rewritten->GetColumnBindings());
-+		if (layout.HasSameLayout(output)) {
-+			return rewritten;
-+		}
-+		return LogicalJoin::PromoteJoinSide(std::move(rewritten), layout.CreateProjectionMap(output));
-+	}
- 	switch (op->type) {
- 	case LogicalOperatorType::LOGICAL_FILTER:
- 		return PullupFilter(std::move(op));
-@@ -44,6 +110,9 @@ unique_ptr<LogicalOperator> FilterPullup::PullupJoin(unique_ptr<LogicalOperator>
- 	         op->type == LogicalOperatorType::LOGICAL_ASOF_JOIN || op->type == LogicalOperatorType::LOGICAL_ANY_JOIN ||
- 	         op->type == LogicalOperatorType::LOGICAL_DELIM_JOIN);
- 	auto &join = op->Cast<LogicalJoin>();
-+	if (can_add_column && (join.join_type != JoinType::INNER || op->type == LogicalOperatorType::LOGICAL_ASOF_JOIN)) {
-+		return FinishPullup(std::move(op));
-+	}
- 
- 	switch (join.join_type) {
- 	case JoinType::INNER:
+ 		//! If we expect an exponent, we need to preserve the decimals
+ 		//! But we don't want to overflow, so we prevent overflowing the result with this check
+-		if (state.digit_count + state.decimal_count >= DecimalWidth<decltype(state.result)>::max) {
++		if (NEGATIVE ? state.result <= DecimalCastLimits<typename T::StoreType>::MinimumDiv10
++		             : state.result >= DecimalCastLimits<typename T::StoreType>::MaximumDiv10) {
+ 			return true;
+ 		}
+ 		state.decimal_count++;
 ```
 
-**File**: `src/optimizer/pullup/pullup_projection.cpp` (modified, +10/-3)
+**File**: `test/sql/types/decimal/decimal_exponent.test` (modified, +56/-0)
 ```diff
-@@ -65,12 +65,19 @@ void FilterPullup::ProjectSetOperation(LogicalProjection &proj) {
- 
- unique_ptr<LogicalOperator> FilterPullup::PullupProjection(unique_ptr<LogicalOperator> op) {
- 	D_ASSERT(op->type == LogicalOperatorType::LOGICAL_PROJECTION);
-+	auto &proj = op->Cast<LogicalProjection>();
-+	// Pulling filters above a projection can evaluate its expressions on additional rows.
-+	for (auto &expr : proj.expressions) {
-+		if (expr->CanThrow() || expr->IsVolatile()) {
-+			return FinishPullup(std::move(op));
-+		}
-+	}
+@@ -264,3 +264,59 @@ query IIIIII
+ SELECT '0.2e4'::DECIMAL(4,0), '-0.2e4'::DECIMAL(4,0), '0.9999e4'::DECIMAL(4,0), '0.1234e3'::DECIMAL(4,1), '218.91127e7'::DECIMAL(12,2), '0.99e38'::DECIMAL(38,0)
+ ----
+ 2000	-2000	9999	123.4	2189112700.00	99000000000000000000000000000000000000
 +
- 	op->children[0] = Rewrite(std::move(op->children[0]));
- 	if (!filters_expr_pullup.empty()) {
--		auto &proj = op->Cast<LogicalProjection>();
- 		for (auto &expr : filters_expr_pullup) {
--			if (expr->CanThrow()) {
--				// Keep fallible predicates and their guards below the projection.
-+			if (expr->CanThrow() || expr->IsVolatile()) {
-+				// Keep fallible or volatile predicates and their guards below the projection.
- 				RevertFilterPullup(proj, filters_expr_pullup);
- 				return op;
- 			}
++# leading zeros after decimal point should not exhaust storage width before exponent shifts digits
++query IIII
++SELECT '0.0000000001234e10'::DECIMAL(5,2), '0.000000000123456e12'::DECIMAL(9,2), '0.000000000000000000123e20'::DECIMAL(18,2), '0.000000000000000000123e20'::DECIMAL(19,2)
++----
++1.23	123.46	12.30	12.30
++
++query IIII
++SELECT '0.000001234e6'::DECIMAL(4,2), '-0.000001234e6'::DECIMAL(4,2), '0.000001235e6'::DECIMAL(4,2), '-0.000001235e6'::DECIMAL(4,2)
++----
++1.23	-1.23	1.24	-1.24
++
++query IIIII
++SELECT '0.0000000001e10'::DECIMAL(5,2), '0.0000000001e10'::DECIMAL(3,2), '0.01e2'::DECIMAL(3,2), '0.00000123e6'::DECIMAL(6,5), '0.00000000055e8'::DECIMAL(5,2)
++----
++1.00	1.00	1.00	1.23000	0.06
++
++query IIII
++SELECT '0.0000000001234567898e10'::DECIMAL(5,2), '0.0000000001234567898e19'::DECIMAL(18,2), '1.0000000002e5'::DECIMAL(18,2), '1.0000000006e10'::DECIMAL(18,2)
++----
++1.23	1234567898.00	100000.00	10000000006.00
++
++query III
++SELECT '0.000000000000000000123e5'::DECIMAL(5,2), '0.000000000000000000123e-5'::DECIMAL(5,2), '0.000000000000000000123'::DECIMAL(5,2)
++----
++0.00	0.00	0.00
++
++query II
++SELECT '0.001'::DECIMAL(5,3), '-0.001'::DECIMAL(5,3)
++----
++0.001	-0.001
++
++statement error
++SELECT '0.32769e3'::DECIMAL(4,2)
++----
++Conversion Error
++
++statement error
++SELECT '-0.32769e3'::DECIMAL(4,2)
++----
++Conversion Error
++
++statement error
++SELECT '0.000000000123e13'::DECIMAL(4,2)
++----
++Conversion Error
++
++statement error
++SELECT '-0.000000000123e13'::DECIMAL(4,2)
++----
++Conversion Error
++
++query I
++SELECT TRY_CAST('0.000000000123e13' AS DECIMAL(4,2))
++----
++NULL
 ```
 
-**File**: `src/optimizer/pushdown/pushdown_filter.cpp` (modified, +14/-1)
+---
+
+### Incident Patch 3: `8eedd21a` (2026-11-27)
+**Commit Message**: Prune NOT IN filters containing NULL constants (#29505)
+
+A literal `NOT IN` list containing NULL cannot pass a filter, but mixed
+lists currently retain a scan and its fallback cardinality estimate.
+Extend the existing filter-statistics proof to recognize these lists,
+allowing scan elimination and a zero-row bound.
+
+The proof applies to a direct column and constant list. Projected
+membership keeps its three-valued result, and NULL-free membership
+estimates retain their current policy.
+
+**File**: `src/planner/filter/expression_filter.cpp` (modified, +13/-0)
 ```diff
-@@ -10,7 +10,20 @@ unique_ptr<LogicalOperator> FilterPushdown::PushdownFilter(unique_ptr<LogicalOpe
- 	D_ASSERT(op->type == LogicalOperatorType::LOGICAL_FILTER);
- 	auto &filter = op->Cast<LogicalFilter>();
- 	if (filter.HasProjectionMap()) {
--		return FinishPushdown(std::move(op));
-+		if (!filter.expressions.empty()) {
-+			return FinishPushdown(std::move(op));
-+		}
-+		vector<unique_ptr<Expression>> remain_expressions;
-+		for (idx_t i = 0; i < filters.size(); i++) {
-+			if (!filters[i]->filter->CanThrow() && !filters[i]->filter->IsVolatile()) {
-+				continue;
+@@ -857,6 +857,19 @@ static FilterPropagateResult CheckNotOperatorStatistics(optional_ptr<ClientConte
+ 		    children[1]->Cast<BoundConstantExpression>().GetValue().IsNull()) {
+ 			return FilterPropagateResult::FILTER_FALSE_OR_NULL;
+ 		}
++		if (children.size() > 2 && ExpressionFilter::IsSimpleFilterColumnRef(*children[0])) {
++			bool has_null = false;
++			for (idx_t i = 1; i < children.size(); i++) {
++				if (children[i]->GetExpressionType() != ExpressionType::VALUE_CONSTANT) {
++					return FilterPropagateResult::NO_PRUNING_POSSIBLE;
++				}
++				has_null |= children[i]->Cast<BoundConstantExpression>().GetValue().IsNull();
 +			}
-+			remain_expressions.push_back(std::move(filters[i]->filter));
-+			filters.erase_at(i--);
++			if (has_null) {
++				// A match is false and a non-match is NULL after NOT; neither passes a filter.
++				return FilterPropagateResult::FILTER_FALSE_OR_NULL;
++			}
 +		}
-+		// Preserve the output layout and the evaluation boundary of unsafe predicates.
-+		RewriteChild(*op, 0);
-+		return AddLogicalFilter(std::move(op), std::move(remain_expressions));
  	}
- 	// filter: gather the filters and remove the filter from the set of operations
- 	for (auto &expression : filter.expressions) {
+ 	auto bool_ref = CheckBoolRefStatistics(child, input_stats, true);
+ 	if (bool_ref != FilterPropagateResult::NO_PRUNING_POSSIBLE) {
 ```
 
-**File**: `test/configs/verify_statement_explain_sql.json` (modified, +2/-1)
+**File**: `test/sql/optimizer/not_in_null_pruning.test` (added, +85/-0)
 ```diff
-@@ -13,7 +13,8 @@
-     {
-       "reason": "The generated SQL is planned differently, which changes how often the volatile expressions the fixture counts are evaluated",
-       "paths": [
--        "test/optimizer/join_to_semi_join_volatile.test"
-+        "test/optimizer/join_to_semi_join_volatile.test",
-+        "test/optimizer/pushdown/filter_projection_map.test"
-       ]
-     },
-     {
-```
-
-**File**: `test/optimizer/filter_pullup_projection_safety.test` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+# name: test/optimizer/filter_pullup_projection_safety.test
-+# description: Keep fallible and volatile expressions at their original evaluation boundary during filter pullup
+@@ -0,0 +1,85 @@
++# name: test/sql/optimizer/not_in_null_pruning.test
++# description: A constant NOT IN list containing NULL cannot pass a filter
 +# group: [optimizer]
 +
 +statement ok
-+SET threads = 1;
-+
-+# Exercise filter pullup without a later pass that can restore the filter's location.
-+statement ok
-+SET disabled_optimizers = 'filter_pushdown';
++CREATE TABLE not_in_null AS
++SELECT i::INTEGER AS k FROM range(100) t(i) UNION ALL SELECT NULL;
 +
 +statement ok
-+CREATE TABLE items(grp INTEGER, value VARCHAR);
-+
-+statement ok
-+INSERT INTO items VALUES (1, '42'), (2, 'bad'), (NULL, 'also_bad');
-+
-+statement ok
-+CREATE TABLE chosen AS SELECT 1 AS grp;
-+
-+statement ok
-+CREATE TABLE singleton AS SELECT 43 AS cast_key, 2 AS sequence_key;
++ANALYZE not_in_null;
 +
 +query I
-+SELECT p.value
-+FROM (SELECT items.value::INTEGER AS value FROM items JOIN chosen USING (grp)) p
-+JOIN singleton s ON p.value + 1 = s.cast_key;
-+----
-+42
-+
-+statement ok
-+CREATE SEQUENCE probe_seq;
-+
-+query I
-+SELECT p.seq
-+FROM (SELECT nextval('probe_seq') AS seq FROM items JOIN chosen USING (grp)) p
-+JOIN singleton s ON p.seq + 1 = s.sequence_key;
-+----
-+1
-+
-+query I
-+SELECT currval('probe_seq');
-+----
-+1
-+
-+statement ok
-+CREATE TABLE inputs AS SELECT i, 0.5::DOUBLE AS threshold, 1 AS k FROM range(4) t(i);
-+
-+statement ok
-+CREATE TABLE copies AS SELECT i, 2 AS k FROM range(10) t(i);
-+
-+statement ok
-+SELECT setseed(0.42);
-+
-+# A source row either survives the volatile filter once and yields all ten copies, or is excluded.
-+query I
-+SELECT count(*)
-+FROM (
-+    SELECT p.i
-+    FROM (SELECT i, k FROM inputs WHERE random() < threshold) p
-+    JOIN copies c ON p.k + 1 = c.k
-+    GROUP BY p.i
-+    HAVING count(*) <> 10
-+);
++SELECT count(*) FROM not_in_null WHERE k NOT IN (42, 84, NULL, 23, 57);
 +----
 +0
-```
-
-**File**: `test/optimizer/joins/implied_key_on_expression_join.test` (added, +129/-0)
-```diff
-@@ -0,0 +1,129 @@
-+# name: test/optimizer/joins/implied_key_on_expression_join.test
-+# description: Pulling up hidden join keys exposes transitive group equalities for rank joins
-+# group: [joins]
-+
-+foreach group_type BIGINT VARCHAR
-+
-+statement ok
-+CREATE OR REPLACE TABLE sales AS
-+SELECT g::{group_type} AS grp, p // 12 AS year, p % 12 AS moy, (g * 7 + p * 3 + i) % 50 AS price
-+FROM range(4) a(g), range(14) b(p), range(8) c(i);
-+
-+statement ok
-+CREATE OR REPLACE VIEW monthly_total AS SELECT grp, year, moy, sum(price) AS total FROM sales GROUP BY ALL;
-+
-+statement ok
-+CREATE OR REPLACE VIEW monthly_max AS SELECT grp, year, moy, max(price) AS max_price FROM sales GROUP BY ALL;
-+
-+statement ok
-+CREATE OR REPLACE VIEW enriched AS
-+SELECT grp, year, moy, total, max_price
-+FROM sales JOIN monthly_total USING (grp, year, moy) JOIN monthly_max USING (grp, year, moy);
-+
-+statement ok
-+CREATE OR REPLACE VIEW ranked AS
-+SELECT grp, year, moy, rn
-+FROM enriched JOIN (
-+  SELECT *, row_number() OVER (PARTITION BY grp ORDER BY year, moy) AS rn
-+  FROM (SELECT DISTINCT * FROM enriched)
-+) USING (grp, year, moy, total, max_price);
-+
-+statement ok
-+CREATE OR REPLACE VIEW ranked_neighbors AS
-+SELECT count(*), sum(cur.grp::BIGINT * 100 + cur.rn), sum(lag.year * 100 + lag.moy)
-+FROM ranked cur, ranked lag, ranked lead
-+WHERE cur.rn = lag.rn + 1 AND cur.rn = lead.rn - 1 AND cur.grp = lag.grp AND cur.grp = lead.grp;
-+
-+query III
-+FROM ranked_neighbors;
-+----
-+24576	3870720	135168
-+
-+# Both rank joins include the group key with the default optimizer pipeline.
-+query II
-+EXPLAIN (FORMAT JSON) FROM ranked_neighbors;
-+----
-+physical_plan	<REGEX>:(.*"Conditions":\s*\[[^\]]*(\brn\b[^\]]*grp = grp|grp = grp[^\]]*\brn\b)[^\]]*\]){2}.*
-+
-+statement ok
-+CREATE OR REPLACE VIEW ranked_neighbors AS
-+SELECT count(*), sum(cur.grp::BIGINT * 100 + cur.rn), sum(lag.year * 100 + lag.moy)
-+FROM ranked cur
-+JOIN ranked lag ON cur.rn = lag.rn + 1 AND cur.grp = lag.grp
-+JOIN ranked lead ON cur.rn = lead.rn - 1 AND cur.grp = lead.grp;
-+
-+query III
-+FROM ranked_neighbors;
-+----
-+24576	3870720	135168
 +
 +query II
-+EXPLAIN (FORMAT JSON) FROM ranked_neighbors;
++EXPLAIN SELECT * FROM not_in_null WHERE k NOT IN (42, 84, NULL, 23, 57);
 +----
-+physical_plan	<REGEX>:(.*"Conditions":\s*\[[^\]]*(\brn\b[^\]]*grp = grp|grp = grp[^\]]*\brn\b)[^\]]*\]){2}.*
++physical_plan	<REGEX>:.*Empty Result.*
 +
-+# Group predicates above the joins must pass through the restored output projection.
-+statement ok
-+CREATE OR REPLACE VIEW ranked_neighbors AS
-+SELECT count(*), sum(cur.grp::BIGINT * 100 + cur.rn), sum(lag.year * 100 + lag.moy)
-+FROM ranked cur
-+JOIN ranked lag ON cur.rn = lag.rn + 1
-+JOIN ranked lead ON cur.rn = lead.rn - 1
-+WHERE cur.grp = lag.grp AND cur.grp = lead.grp;
-+
-+query III
-+FROM ranked_neighbors;
++# The location of NULL and duplicate constants do not change the proof.
++query II
++EXPLAIN SELECT * FROM not_in_null WHERE k NOT IN (NULL, 42, 42);
 +----
-+24576	3870720	135168
++physical_plan	<REGEX>:.*Empty Result.*
 +
 +query II
-+EXPLAIN (FORMAT JSON) FROM ranked_neighbors;
++EXPLAIN SELECT * FROM not_in_null WHERE NOT (k IN (42, 84, NULL));
 +----
-+physical_plan	<REGEX>:(.*"Conditions":\s*\[[^\]]*(\brn\b[^\]]*grp = grp|grp = grp[^\]]*\brn\b)[^\]]*\]){2}.*
++physical_plan	<REGEX>:.*Empty Result.*
 +
-+endloop
-+
-+statement ok
-+CREATE TABLE lhs(g INTEGER, r INTEGER);
-+
-+statement ok
-+INSERT INTO lhs VALUES (1, 2), (2, 2), (NULL, 2);
-+
-+statement ok
-+CREATE TABLE rhs AS SELECT g, r - 1 AS r FROM lhs;
-+
-+statement ok
-+CREATE TABLE bridge(g INTEGER);
-+
-+statement ok
-+INSERT INTO bridge VALUES (1), (2), (2), (NULL);
++# Inclusion still admits matching values; exclusion without NULL admits non-matches.
++query I
++SELECT k FROM not_in_null WHERE k IN (42, 84, NULL) ORDER BY k;
++----
++42
++84
 +
 +query I
-+SELECT count(*) FROM lhs a JOIN rhs b ON a.r = b.r + 1 JOIN bridge c ON a.g = c.g AND b.g = c.g;
++SELECT count(*) FROM not_in_null WHERE k NOT IN (42, 84);
 +----
-+3
++98
 +
-+query I
-+SELECT count(*) FROM lhs a JOIN rhs b ON a.r = b.r + 1 JOIN bridge c ON a.g = c.g;
++# Filter pruning must not replace a projected NULL with false.
++query II
++SELECT k, k NOT IN (42, 84, NULL, 23, 57) FROM not_in_null
++WHERE k IS NULL OR k IN (1, 42, 84) ORDER BY k NULLS FIRST;
 +----
-+9
-+
-+query I
-+SELECT count(*) FROM lhs a JOIN rhs b ON a.r = b.r + 1
-+JOIN bridge c ON a.g IS NOT DISTINCT FROM c.g AND b.g IS NOT DISTINCT FROM c.g;
-+----
-+4
-+
-+query I
-+SELECT count(*) FROM lhs a JOIN rhs b ON a.r = b.r + 1 LEFT JOIN bridge c ON a.g = c.g AND b.g = c.g;
-+----
-+10
-+
-+# Distinct BIGINTs can compare equal after a lossy cast.
-+query I
-+SELECT count(*)
-+FROM (VALUES (9007199254740992::BIGINT, 2)) a(g, r)
-+JOIN (VALUES (9007199254740993::BIGINT, 1)) b(g, r) ON a.r = b.r + 1
-+JOIN (VALUES (9007199254740992::DOUBLE)) c(g) ON a.g::DOUBLE = c.g AND b.g::DOUBLE = c.g;
-+----
-+1
-```
-
-**File**: `test/optimizer/pushdown/filter_projection_map.test` (added, +102/-0)
-```diff
-@@ -0,0 +1,102 @@
-+# name: test/optimizer/pushdown/filter_projection_map.test
-+# description: Push predicates through filters that restore the output layout after hidden-column pullup
-+# group: [pushdown]
-+
-+statement ok
-+CREATE TABLE a AS SELECT i::INTEGER AS k, i::INTEGER AS v FROM range(1000) t(i);
-+
-+statement ok
-+CREATE TABLE b AS SELECT i::INTEGER AS k FROM range(1000) t(i);
-+
-+statement ok
-+CREATE TABLE c AS SELECT i::INTEGER AS v FROM range(1000) t(i);
-+
-+statement ok
-+CREATE VIEW selective_join AS
-+SELECT p.v, c.v AS other
-+FROM (SELECT a.v FROM a JOIN b ON a.k = b.k) p
-+JOIN c ON p.v = c.v + 1
-+WHERE p.v = 42;
++NULL	NULL
++1	NULL
++42	false
++84	false
 +
 +query II
-+FROM selective_join;
++EXPLAIN SELECT k NOT IN (42, 84, NULL, 23, 57) FROM not_in_null;
 +----
-+42	41
++physical_plan	<REGEX>:.*Join Type: MARK.*
 +
-+# The selective predicate reaches the table scan despite the hidden join column.
-+query II
-+EXPLAIN (FORMAT JSON) FROM selective_join;
-+----
-+physical_plan	<REGEX>:.*"Table": "[^"]*\.a"[^}]*"Filters": "\(v = 42\)".*
-+
-+# Preserve projected values, duplicate columns, NULLs, and row multiplicity.
-+statement ok
-+INSERT INTO a VALUES (42, 42), (42, NULL);
-+
-+query IIII rowsort
-+SELECT p.v, p.k, p.v, c.v
-+FROM (SELECT a.v, a.k FROM a JOIN b ON a.k = b.k) p
-+JOIN c ON p.k = c.v + 1
-+WHERE p.k = 42;
-+----
-+42	42	42	41
-+42	42	42	41
-+NULL	42	NULL	41
-+
-+query II
-+SELECT p.v, c.v
-+FROM (SELECT a.v FROM a JOIN b ON a.k = b.k) p
-+JOIN c ON p.v = c.v + 1
-+WHERE p.v = 42 AND c.v = 42;
-+----
-+
-+statement ok
-+CREATE TABLE copies(k INTEGER);
-+
-+statement ok
-+INSERT INTO copies VALUES (1), (1);
-+
-+statement ok
-+CREATE TABLE targets(v INTEGER);
-+
-+statement ok
-+INSERT INTO targets VALUES (0), (0);
-+
-+statement ok
-+CREATE SEQUENCE probe_seq;
-+
-+# Evaluate the volatile predicate after both joins have duplicated the source row.
 +query I
-+SELECT count(*)
-+FROM (SELECT a.v FROM a JOIN copies ON a.k = copies.k) p
-+JOIN targets ON p.v = targets.v + 1
-+WHERE nextval('probe_seq') <= p.v;
++SELECT k FROM not_in_null WHERE k NOT IN (42, 84, NULL) OR k = 1;
 +----
 +1
 +
++# Equality ANTI joins keep non-matches, including a NULL probe value.
 +query I
-+SELECT currval('probe_seq');
++SELECT count(*) FROM not_in_null ANTI JOIN (VALUES (42), (84), (NULL)) rhs(k) USING (k);
 +----
-+4
++99
 +
 +statement ok
-+CREATE TABLE fallible(k INTEGER, value VARCHAR);
++CREATE TABLE not_in_null_strings AS SELECT * FROM (VALUES ('a'), ('b'), ('z'), (NULL)) t(s);
 +
-+statement ok
-+INSERT INTO fallible VALUES (1, '42'), (2, 'bad');
-+
-+statement ok
-+INSERT INTO targets VALUES (10);
-+
-+# Isolate filter pushdown from later join reordering and dynamic join filters.
-+statement ok
-+SET disabled_optimizers = 'join_filter_pushdown,join_order';
-+
-+query T rowsort
-+SELECT p.value
-+FROM (SELECT fallible.k, fallible.value FROM fallible JOIN b ON fallible.k = b.k) p
-+JOIN targets ON p.k = targets.v + 1
-+WHERE p.value::INTEGER = 42;
++query II
++EXPLAIN SELECT * FROM not_in_null_strings WHERE s NOT IN ('a', 'z', NULL);
 +----
-+42
-+42
++physical_plan	<REGEX>:.*Empty Result.*
++
++query TT
++SELECT s, s NOT IN ('a', 'z', NULL) FROM not_in_null_strings ORDER BY s NULLS FIRST;
++----
++NULL	NULL
++a	false
++b	NULL
++z	false
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29452** (2026-11-26): Propagate more filter constraints to join inputs (@lnkuiper)
-- **PR #29450** (2026-11-26): Cache common-subplan signatures and cost summaries (@lnkuiper)
-- **PR #29445** (2026-11-26): Propagate list length statistics through list functions and casts (@Robinho-MR)
-- **PR #29444** (2026-11-26): Make `ParquetSchemaRecursive` iterative, rename to `ParquetSchemaTree` (@xproblematique)
-- **PR #29442** (2026-11-26): Batch common-subplan binding rewrites and CTE placement (@lnkuiper)
-- **PR #29440** (2026-11-26): Purge trimmed cached allocations at the bulk deallocation threshold (@RecurseAndDesist)
+- **PR #29505** (2026-11-27): Prune NOT IN filters containing NULL constants (@lnkuiper)
+- **PR #29504** (2026-11-27): Bump aws ec414ba main (@carlopi)
+- **PR #29502** (2026-11-27): Bump duckdb-aws to ec414ba (@carlopi)
+- **PR #29500** (2026-11-27): Reduce thread and address sanitizer CI test time (@smvv)
+- **PR #29499** (2026-11-27): Inherit the search path in transaction connections, let V2 table functions declare their stability (@Robinho-MR)
+- **PR #29498** (2026-11-27): Count independent equality connections in join estimates (@lnkuiper)
 
 ---
 
@@ -3186,60 +2938,55 @@ medians from five measured runs after a warmup.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Spill top-N heap aggregate states under memory pressure
+## X. V2 C API: streaming operator, and table in-out functions built on it
 
 **RULE**:
-When implementing operations in `extension/core_functions/aggregate/distributive/arg_min_max.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api_spec/v2/function/operator.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d1508f3a`: Spill top-N heap aggregate states under memory pressure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42cae313`: V2 C API: streaming operator, and table in-out functions built on it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `extension/core_functions/aggregate/distributive/arg_min_max.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `api_spec/v2/function/operator.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-
-	void ExportSlot(Vector &entries, idx_t entry_idx, idx_t slot, bool nulls_last) const {
-		auto &children = StructVector::GetEntries(entries);
-		auto &entry = heap.GetSlot(slot);
-		VAL_TYPE::Assign(children[0], entry_idx, entry.second.value, nulls_last);
-		ARG_TYPE::Assign(children[1], entry_idx, entry.first.value, nulls_last);
-	}
-
-	struct ImportData {
-		ImportData(const Vector &entries, idx_t count, bool nulls_last)
-		    : validity(entries.Validity()), val_extra_state(VAL_TYPE::CreateExtraState(count)),
-		      arg_extra_state(ARG_TYPE::CreateExtraState(count)) {
-			auto &children = StructVector::GetEntries(entries);
-			VAL_TYPE::PrepareData(children[0], val_extra_state, val_format, nulls_last);
-			ARG_TYPE::PrepareData(children[1], arg_extra_state, arg_format, nulls_last);
-		}
-
-		VectorValidityIterator validity;
-		typename VAL_TYPE::EXTRA_STATE val_extra_state;
-		typename ARG_TYPE::EXTRA_STATE arg_extra_state;
-		UnifiedVectorFormat val_format;
-		UnifiedVectorFormat arg_format;
-	};
-
-	void ImportSlot(ArenaAllocator &allocator, const ImportData &entries, idx_t entry_idx, bool reject_nulls) {
-		const auto val_idx = entries.val_format.sel->get_index(entry_idx);
-		const auto arg_idx =
+module: operator
+#
+# A custom streaming operator: it receives its input as a stream of chunks and produces chunks of output, the way
+# DuckDB's own physical operators do. An operator is defined once and then handed to the object that places it in a
+# query plan; today that is a table function (see table_function_set_operator), which turns the function into a
+# table in-out function.
+#
+#-----------------------------------------------------------------------------------------------------------------------
+# Enums
+#-----------------------------------------------------------------------------------------------------------------------
+enums:
+  OPERATOR_RESULT:
+    description: |
+      What an operator's execute callback reports about the input chunk it was given, set with
+      `[[operator_execute_set_result]]`.
+    values:
+      OPERATOR_RESULT_NEED_MORE_INPUT:
+        value: 0
+        description: |
+          The operator is done with the input chunk: the engine calls the execute callback again with the next input
+          chunk. The default.
+      OPERATOR_RESULT_HAVE_MORE_OUTPUT:
+        value: 1
+        description: |
+          The output chunk is full but the operator is not done
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-	auto val_extra_state = STATE::VAL_TYPE::CreateExtraState();
-	auto arg_extra_state = STATE::ARG_TYPE::CreateExtraState();
-	function.SetStateDestructorCallback(AggregateFunction::StateDestroy<STATE, OP>);
-	function.SetStateDestructorCallback(AggregateFunction::StateDestroy<STATE, OP>);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d1508f3a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42cae313` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

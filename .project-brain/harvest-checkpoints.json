@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T02:59:17.234Z",
+  "last_updated": "2026-11-28T03:08:07.632Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "6365bb385efd09dba1ead524dd5d7648a662da2ed667eac338551ef9041f3637",
-      "verified_at": "2026-11-27T07:49:01.124Z",
+      "content_hash": "8f79c2b3311c441102b2a69e8e82f7d5106576a4de2ef917b03bc92d05c792ff",
+      "verified_at": "2026-11-28T03:08:07.632Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T07:49:01.124Z"
+      "last_updated": "2026-11-28T03:08:07.632Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",

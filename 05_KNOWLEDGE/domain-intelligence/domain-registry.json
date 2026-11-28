@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T02:59:24.347Z",
+  "last_updated": "2026-11-28T03:08:14.034Z",
   "total_records": 2870,
   "domains": {
     "A": {
@@ -8766,8 +8766,8 @@
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "repository": "duckdb/duckdb",
-      "content_hash": "7f3e3cba41b156e441edb40adca56319e39af95b35c70e65a3e74af00722d1ad",
-      "created_at": "2026-11-27T07:49:01.722Z"
+      "content_hash": "de506734ca8fde134d29efb7842b2662bbbc831246bd6b45f6841858780d4abe",
+      "created_at": "2026-11-28T03:08:08.084Z"
     },
     "DOM-D-A827EB1D": {
       "record_id": "DOM-D-A827EB1D",
@@ -19043,8 +19043,8 @@
       "title": "Architecture Intelligence: duckdb-duckdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-learnings-architecture-intelligence-duckdb-duckdb-learnings-core-i.md",
       "repository": "duckdb-duckdb-learnings",
-      "content_hash": "acf7a25a9136d24c96b5349ab37fa351974380ad3f1100d9f591b364c7e88a2d",
-      "created_at": "2026-11-25T12:39:31.490Z"
+      "content_hash": "46b1d62f588c0f102b8ba22bf9db73d0023dad9a147d0128262648e36d472ed0",
+      "created_at": "2026-11-28T03:08:11.795Z"
     },
     "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants",
@@ -34000,8 +34000,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "c60b6a5eb40d0b4c5b66551eb40a45dff1b996c6997be4433c9a37b0789216a3",
-      "created_at": "2026-11-28T02:50:22.871Z"
+      "content_hash": "c9f65e6524c4f82b2594841dc88d30ac78d9cd4bb67c7b5966e875b3f6685efb",
+      "created_at": "2026-11-28T03:08:14.034Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -46817,8 +46817,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "89327721409a414e923725bfc13bcd85373486a470ba815927ec59506c2a157b",
-      "created_at": "2026-11-28T02:50:21.764Z"
+      "content_hash": "f4247af15b2c2ec11e0598f133ad49ad160c978c76b37391b4b421eba320367f",
+      "created_at": "2026-11-28T03:08:12.892Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
