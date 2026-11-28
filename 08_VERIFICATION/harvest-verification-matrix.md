@@ -13922,3 +13922,5 @@
 | `CYCLE-20261128-25KJ` | `2026-11-28T00:50:51.955Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11002` | Yes (`113b06f0...`) |
 | `CYCLE-20261128-EKFI` | `2026-11-28T01:00:31.086Z` | `indexable-inc/blaze` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11003` | Yes (`6fa6ec80...`) |
 | `CYCLE-20261128-QRXL` | `2026-11-28T01:10:00.681Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11004` | Yes (`af0506cc...`) |
+| `CYCLE-20261128-20RS` | `2026-11-28T01:18:45.352Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11005` | Yes (`45ee7bbf...`) |
+| `CYCLE-20261128-26Q0` | `2026-11-28T01:18:53.064Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11006` | Yes (`09e00446...`) |

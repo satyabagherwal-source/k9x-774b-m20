@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T01:10:00.701Z",
-  "total_cycles_completed": 13212,
-  "total_learnings_persisted": 13212,
-  "total_rules_promoted": 11919,
+  "last_updated": "2026-11-28T01:18:53.081Z",
+  "total_cycles_completed": 13214,
+  "total_learnings_persisted": 13214,
+  "total_rules_promoted": 11921,
   "history": [
-    {
-      "timestamp": "2026-11-27T07:03:52.517Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T07:13:34.919Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T07:21:51.762Z",
       "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T01:10:00.701Z",
       "repository": "lxml/lxml",
       "learningId": "learn-github-lxml-lxml",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T01:18:45.369Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T01:18:53.081Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

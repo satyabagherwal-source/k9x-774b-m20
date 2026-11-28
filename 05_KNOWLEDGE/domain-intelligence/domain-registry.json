@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T01:10:13.746Z",
+  "last_updated": "2026-11-28T01:18:59.702Z",
   "total_records": 2868,
   "domains": {
     "A": {
@@ -11596,8 +11596,8 @@
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "repository": "NVIDIA/cuda-rust",
-      "content_hash": "cdaf911e733d9a7a03c2cea098e7e74fccc27be48eb22a34ebeec5daad668905",
-      "created_at": "2026-11-27T01:06:47.571Z"
+      "content_hash": "031cb27ca4f4b7d286d3ea7678159d40d12aa44608af8df87e62c7195a1813da",
+      "created_at": "2026-11-28T01:18:45.822Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
@@ -11632,8 +11632,8 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-learnings-technical-construction-intelligence-nvidia-cuda-rust-.md",
       "repository": "nvidia-cuda-rust-learnings",
-      "content_hash": "081f04196ba30a45b19a31f4d2e5b561f0bbda78ad65daa0bfe9e56e8b719803",
-      "created_at": "2026-11-27T01:06:57.525Z"
+      "content_hash": "735f6eb7e949f7b81ea483e909d7923610c5f0507743118ac12edf516a5bc1d7",
+      "created_at": "2026-11-28T01:18:57.274Z"
     },
     "DOM-D-86956AB2": {
       "record_id": "DOM-D-86956AB2",
@@ -41898,8 +41898,8 @@
       "title": "Architecture Intelligence: kumahq/kuma Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kumahq-kuma-architecture-intelligence-kumahq-kuma-core-invariants.md",
       "repository": "kumahq/kuma",
-      "content_hash": "692d49fcdded6e7380f42ae9d624f4f16df43542fa25d95951caa89272ecc5f0",
-      "created_at": "2026-11-25T14:14:33.062Z"
+      "content_hash": "0dd375fa33a5ce077f89cd9c36aae50baed81a389ab8184d60defabcfe2a9135",
+      "created_at": "2026-11-28T01:18:53.504Z"
     },
     "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kumahq-kuma-learnings-core-invariants",
@@ -41907,8 +41907,8 @@
       "title": "Architecture Intelligence: kumahq-kuma-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kumahq-kuma-learnings-architecture-intelligence-kumahq-kuma-learnings-core-invar.md",
       "repository": "kumahq-kuma-learnings",
-      "content_hash": "853ce9eb71e72400b957cb47d0ebfcf0db59ee9210c4f3c2a3018c546dedcb2c",
-      "created_at": "2026-11-25T14:15:15.776Z"
+      "content_hash": "41bce4eb08f00e1e8963873aca46639d4f01edaaa9485bd9ea181db6a7a15f63",
+      "created_at": "2026-11-28T01:18:58.402Z"
     },
     "DOM-F-0B02F7F4": {
       "record_id": "DOM-F-0B02F7F4",
@@ -46815,8 +46815,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "e2052c9e3228b86ac592ff39bc5384215bb702a783d7ec10c32e7a07656e74eb",
-      "created_at": "2026-11-28T01:10:13.746Z"
+      "content_hash": "a41a592cdc1dd873bf36fa0f70a184e529cad6ad89f08b6d2584f20681fd52c4",
+      "created_at": "2026-11-28T01:18:59.702Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

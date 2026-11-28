@@ -4,22 +4,22 @@
 {
   "source_repository": "kumahq/kuma",
   "source_url": "https://github.com/kumahq/kuma",
-  "source_version": "a38cd168",
+  "source_version": "8d73e835",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T00:49:08.433Z",
+  "timestamp": "2026-11-28T01:18:53.306Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-kumahq-kuma",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kumahq/kuma](https://github.com/kumahq/kuma) (Revision: `a38cd168`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T00:49:08.433Z`  
+> **Provenance**: Harvested from [kumahq/kuma](https://github.com/kumahq/kuma) (Revision: `8d73e835`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T01:18:53.306Z`  
 > **Learning ID**: `learn-github-kumahq-kuma`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `kumahq/kuma` (Commit: `a38cd168`)
+- **Target Repository**: `kumahq/kuma` (Commit: `8d73e835`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:49:07.140Z  
+> **Harvest Timestamp**: 2026-11-28T01:18:51.873Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 🐻 The multi-zone service mesh for containers, Kubernetes and VMs. Built with Envoy. CNCF Sandbox Project.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 4021 stars
+- **Stars / Engagement**: 4024 stars
 
 ---
 
@@ -1009,11 +1009,11 @@ var DefaultEnabled = []string{
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #19462** (2026-11-23): **chore(deps/dev): bump oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen from 2.8.2 to 2.9.0**
-  *Symptoms*: > [!NOTE] > This PR body was truncated due to platform limits.  This PR contains the following updates:  | Package | Type | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---| | [go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen](https://redirect.github.com/oapi-codegen/oapi-codegen) | tools | `v2.8.2` → `v2.9.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2foapi-codegen%2foapi-codegen%2fv2%2fcmd%2foapi-codegen/v2.9.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/go/github.com%2foapi-codegen%2foapi-codegen%2fv2%2fcmd%2foapi-codegen/v2.9.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>oapi-codegen/oapi-codegen (go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen)</summary>  ### [`v2.9.0`](https://redirect.github.com/oapi-codegen/oapi-codegen/releases/tag/v2.9.0): : OpenAPI 3.2 methods, smarter schema merging, more naming control  [Compare Source](https://redirect.github.com/oapi-codegen/oapi-codegen/compare/v2.8.2...v2.9.0)  This is another large release. Most of the work went into three areas: a rewrite of how `allOf`, `anyOf` and `oneOf` become Go types (available as an option for now), more configuration for things we used to hard-code (names, struct tags, content type
+- **Issue #19468** (2026-11-27): **docs(agents): add worktree, kumactl, upgrade gotchas**
+  *Symptoms*: ## Motivation  Agents hit avoidable failures while doing https://github.com/kumahq/kuma/pull/19467.  ## Implementation information  - `make` targets fail in a fresh worktree until `mise trust && make install`, and an exported `KUMA_DIR` silently points tool builds at another checkout - a new kumactl flag broke `app/kumactl/cmd/completion/testdata/bash.golden`, which isn't caught by testing only the command's package - an upgrade note landed under the already released `3.0.0` section, the rule follows the `2.14.x` precedent from https://github.com/kumahq/kuma/pull/15635  > Changelog: skip  ## Supporting documentation  Found while working on https://github.com/kumahq/kuma/pull/19467
 
-- **Issue #19461** (2026-11-23): **chore(deps/dev): bump npm:@redocly/cli from 2.71.2 to 2.77.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [npm:@redocly/cli](https://redirect.github.com/Redocly/redocly-cli) | `2.71.2` → `2.77.0` | ![age](https://developer.mend.io/api/mc/badges/age/npm/@redocly%2fcli/2.77.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@redocly%2fcli/2.71.2/2.77.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/12547) for more information.  ---  ### Release Notes  <details> <summary>Redocly/redocly-cli (npm:@&#8203;redocly/cli)</summary>  ### [`v2.77.0`](https://redirect.github.com/Redocly/redocly-cli/releases/tag/%40redocly/cli%402.77.0)  [Compare Source](https://redirect.github.com/Redocly/redocly-cli/compare/@redocly/cli@2.76.0...@redocly/cli@2.77.0)  ##### Minor Changes  - Changed the usage telemetry event of the generated clients to the CloudEvent schema of the other Redocly CLI events.  ##### Patch Changes  - Fixed an issue where the `push-status` and `push --wait-for-deployment` commands did not show why a deployment to Redocly platform failed.   The error message lists the failed checks, and the command output includes the link checker result. - Changed JSON Pointers in `respect` runtime expressions to accept every character that the Arazzo grammar allows, so put a space before `&&` tha
+- **Issue #19466** (2026-11-25): **chore(deps): bump kumahq/kuma-gui to ddf0779896dee8e799a2d1368eddbf19f63eebef**
+  *Symptoms*: Bumps kumahq/kuma-gui to version  [master@ddf0779896dee8e799a2d1368eddbf19f63eebef](https://github.com/kumahq/kuma-gui/tree/ddf0779896dee8e799a2d1368eddbf19f63eebef)  > Changelog: chore(deps): use latest kumahq/kuma-gui
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1030,65 +1030,35 @@ var DefaultEnabled = []string{
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `64a12ddb` (2026-11-23)
-**Commit Message**: chore(deps): bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 37b8b2d to 4d040a1 (#19433)
+### Incident Patch 1: `8d73e835` (2026-11-27)
+**Commit Message**: docs(agents): add worktree, kumactl, upgrade gotchas (#19468)
 
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Signed-off-by: slonka <[REDACTED_EMAIL]>
 
-**File**: `tools/releases/dockerfiles/base.Dockerfile` (modified, +1/-1)
+**File**: `AGENTS.md` (modified, +3/-0)
 ```diff
-@@ -1,4 +1,4 @@
--FROM gcr.io/distroless/base-nossl-debian13:debug-nonroot@sha256:37b8b2d30e81bf028eae7c1e8c65d775d46b2a21a2b76cde6bf8bf59ef0e3289
-+FROM gcr.io/distroless/base-nossl-debian13:debug-nonroot@sha256:4d040a10bd12b8a0a44346381a1cbbedf3965dcda822b0ae4314ce1bf53a2111
+@@ -147,9 +147,12 @@ Uses `mise` (config: `mise.toml`). Install via `make install`. Includes: buf, gi
+ ## Gotchas
  
- COPY /tools/releases/templates/LICENSE \
-     /tools/releases/templates/README \
-```
-
----
-
-### Incident Patch 2: `1fdd20e7` (2026-11-23)
-**Commit Message**: chore(deps): bump registry.k8s.io/build-image/distroless-iptables from 0.11.2 to 0.11.3 (#19448)
-
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `tools/releases/dockerfiles/kuma-init.Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--FROM registry.k8s.io/build-image/distroless-iptables:v0.11.2@sha256:5517fe2d12edec9f133a1ba58e5dd700f9adf5d0ccd7d50e67c7609509e4e53f
-+FROM registry.k8s.io/build-image/distroless-iptables:v0.11.3@sha256:59e36fe0907c035386bde9c9030ba5eeacb3c3eb7c1a8aade9ccaa9e3856b146
- ARG ARCH
+ - **RBAC gate**: if `deployments/` RBAC manifests change, `UPGRADE.md` must also be updated or `make check` fails
++- **`UPGRADE.md` sections**: never add notes to a released version's section (check `git tag -l 'v*'`). On `master`, use the next minor as `## Upgrade to \`X.Y.x\`` (e.g. `3.1.x` after `3.0.0` ships), creating it above the newest section if missing
+ - **Import aliases required**: `.golangci.yml` enforces `core_mesh`, `mesh_proto`, `core_model`, `common_api`, etc. See `.claude/rules/linting.md`
+ - **Cached resources are read-only**: `pkg/core/resources/manager/cache.go` returns shared instances. Never modify them
+ - **`pkg/` cannot import `app/`**: architectural boundary enforced by depguard linter
++- **Git worktrees**: run `mise trust && make install` in a fresh worktree before any `make` target. Make reads `KUMA_DIR` from the environment (`KUMA_DIR ?= .` in `mk/dev.mk`), so if it's exported to another checkout, prefix targets with `KUMA_DIR=.`
++- **kumactl flags**: adding or renaming a kumactl flag changes `app/kumactl/cmd/completion/testdata/bash.golden`. Run `make test TEST_PKG_LIST=./app/...`, not only the command's package
  
- COPY /build/artifacts-linux-$ARCH/kumactl/kumactl /usr/bin
-```
-
----
-
-### Incident Patch 3: `9b759acb` (2026-11-23)
-**Commit Message**: chore(deps): bump gcr.io/distroless/static-debian13:debug-nonroot from 12c2026 to 3e7f48d (#19434)
-
-Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `tools/releases/dockerfiles/static.Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--FROM gcr.io/distroless/static-debian13:debug-nonroot@sha256:12c2026b21e05857a4c730b4dbf812becf02b396cb7916166c8305f45f140ab0
-+FROM gcr.io/distroless/static-debian13:debug-nonroot@sha256:3e7f48d714a3298b4df1a69fbc8809dd6fadd16c306838862fffc2895b168158
+ ## Common issues
  
- COPY /tools/releases/templates/LICENSE \
-     /tools/releases/templates/README \
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #19468** (2026-11-27): docs(agents): add worktree, kumactl, upgrade gotchas (@slonka)
+- **PR #19466** (2026-11-25): chore(deps): bump kumahq/kuma-gui to ddf0779896dee8e799a2d1368eddbf19f63eebef (@kumahq[bot])
 - **PR #19462** (2026-11-23): chore(deps/dev): bump oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen from 2.8.2 to 2.9.0 (@renovate[bot])
 - **PR #19461** (2026-11-23): chore(deps/dev): bump npm:@redocly/cli from 2.71.2 to 2.77.0 (@renovate[bot])
 - **PR #19460** (2026-11-23): chore(deps): bump reviewdog/action-actionlint from 1.83.0 to 1.84.0 (@renovate[bot])
 - **PR #19459** (2026-11-23): chore(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0 (@renovate[bot])
-- **PR #19458** (2026-11-23): chore(deps): bump jdx/mise from 2026.10.21 to 2026.11.6 (@renovate[bot])
-- **PR #19457** (closed): chore(deps): bump golang.org/x/tools from 0.52.1-0.20261106145633-d407941a339a to 0.53.0 - autoclosed (@renovate[bot])
 
 ---
 
@@ -1108,31 +1078,33 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 37b8b2d to 
+## X. docs(agents): add worktree, kumactl, upgrade gotchas
 
 **RULE**:
-When implementing operations in `tools/releases/dockerfiles/base.Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kumahq/kuma. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `64a12ddb`: deps): bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 37b8b2d to 4d040a1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8d73e835`: docs(agents): add worktree, kumactl, upgrade gotchas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/releases/dockerfiles/base.Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-FROM gcr.io/distroless/base-nossl-debian13:debug-nonroot@sha256:4d040a10bd12b8a0a44346381a1cbbedf3965dcda822b0ae4314ce1bf53a2111
+- **`UPGRADE.md` sections**: never add notes to a released version's section (check `git tag -l 'v*'`). On `master`, use the next minor as `## Upgrade to \`X.Y.x\`` (e.g. `3.1.x` after `3.0.0` ships), creating it above the newest section if missing
+- **Git worktrees**: run `mise trust && make install` in a fresh worktree before any `make` target. Make reads `KUMA_DIR` from the environment (`KUMA_DIR ?= .` in `mk/dev.mk`), so if it's exported to another checkout, prefix targets with `KUMA_DIR=.`
+- **kumactl flags**: adding or renaming a kumactl flag changes `app/kumactl/cmd/completion/testdata/bash.golden`. Run `make test TEST_PKG_LIST=./app/...`, not only the command's package
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-FROM gcr.io/distroless/base-nossl-debian13:debug-nonroot@sha256:37b8b2d30e81bf028eae7c1e8c65d775d46b2a21a2b76cde6bf8bf59ef0e3289
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `64a12ddb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8d73e835` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

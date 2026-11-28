@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T01:10:14.018Z",
+  "last_updated": "2026-11-28T01:18:59.903Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26868,
+  "total_items": 26875,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "fbf725215b2fe54c9460595a0b678d42aada19ac7967dbb4dde659641a7a477e",
+      "content_hash": "6bdc4d4fac40f01eb994d1496461a97658fc2f490904c7efdbe252936a4a7f17",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T01:10:14.018Z"
+      "persisted_at": "2026-11-28T01:18:59.903Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -217157,8 +217157,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "920720a2",
-      "content_hash": "472a9a9045fa5d60ee800bbccc3a94c99255a7023cbb6d2f1ce7d883126cac7d",
+      "source_version": "8b91bb75",
+      "content_hash": "45ee7bbf4709bf4a45baa30ec620c59cf74dd76f2c7970510fa94b02255e1181",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -217206,6 +217206,11 @@
           "number": 10806,
           "title": "model raw slice pointers via SlicePtr and fail closed on untagge",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11005,
+          "title": "allow Step 8 Or-splitting when iteFuel reaches zero",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217213,7 +217218,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T01:06:46.930Z",
+      "verified_at": "2026-11-28T01:18:45.099Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217255,10 +217260,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "920720a2",
-      "content_hash": "cdaf911e733d9a7a03c2cea098e7e74fccc27be48eb22a34ebeec5daad668905",
+      "source_version": "8b91bb75",
+      "content_hash": "031cb27ca4f4b7d286d3ea7678159d40d12aa44608af8df87e62c7195a1813da",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T01:06:47.571Z"
+      "persisted_at": "2026-11-28T01:18:45.822Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust",
@@ -217267,10 +217272,10 @@
       "relative_path": "08_VERIFICATION/nvidia-cuda-rust-verification-protocol-empirical-defect-shield-for-nvidia-cuda-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for NVIDIA/cuda-rust",
       "repository": "NVIDIA/cuda-rust",
-      "source_version": "920720a2",
-      "content_hash": "899321343a2ab9accf670f6d75eb33110e457fd0a7217df3e0d4d9d2f78aaf08",
+      "source_version": "8b91bb75",
+      "content_hash": "30fe698d8814d21b85996260b63f0d51ce1dc1c1e73cc30fe68c5d4ceedd28b2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T01:06:47.755Z"
+      "persisted_at": "2026-11-28T01:18:46.020Z"
     },
     "learn-github-infinitered-reactotron": {
       "learning_id": "learn-github-infinitered-reactotron",
@@ -217654,9 +217659,9 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "081f04196ba30a45b19a31f4d2e5b561f0bbda78ad65daa0bfe9e56e8b719803",
+      "content_hash": "735f6eb7e949f7b81ea483e909d7923610c5f0507743118ac12edf516a5bc1d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T01:06:57.525Z"
+      "persisted_at": "2026-11-28T01:18:57.274Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-cuda-rust-learnings",
@@ -217666,9 +217671,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nvidia-cuda-rust-learnings",
       "repository": "nvidia-cuda-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "baecb412679a662e403d3dfae2d8366b24fc5c6c754284e27bd1283447466037",
+      "content_hash": "145cb52e5802f5c4bf51dc35c4ab9b872af57e474e31d466726d15604b7aab59",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T01:06:57.708Z"
+      "persisted_at": "2026-11-28T01:18:57.486Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants",
@@ -230729,8 +230734,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "ce6a025c",
-      "content_hash": "ecad88ff0f1ae0876abba866d05399c08072c47187b609751c39b71478dfbd89",
+      "source_version": "8d73e835",
+      "content_hash": "09e004467f1e59470cfb2bc3e18456deb5e9a0f60ec42ff54394f774419d03ec",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -230758,6 +230763,11 @@
           "number": 10158,
           "title": "bump gcr.io/distroless/base-nossl-debian13:debug-nonroot from 37b8b2d to",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11006,
+          "title": "docs(agents): add worktree, kumactl, upgrade gotchas",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230765,7 +230775,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T14:14:32.347Z",
+      "verified_at": "2026-11-28T01:18:52.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230805,10 +230815,10 @@
       "relative_path": "08_VERIFICATION/kumahq-kuma-verification-protocol-empirical-defect-shield-for-kumahq-kuma.md",
       "title": "Verification Protocol: Empirical Defect Shield for kumahq/kuma",
       "repository": "kumahq/kuma",
-      "source_version": "a38cd168",
-      "content_hash": "2edbbfe819d10a06c2cef5e6691b8ffccad11129d22e8052d885806ff4650f48",
+      "source_version": "8d73e835",
+      "content_hash": "c918024237659ee2814eda630f6616a5a42cc704a4b24247670f4d4cc26cf2e3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:49:08.796Z"
+      "persisted_at": "2026-11-28T01:18:53.879Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-learnings-c",
@@ -270745,9 +270755,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kumahq-kuma-learnings",
       "repository": "kumahq-kuma-learnings",
       "source_version": "HEAD",
-      "content_hash": "e4feee330b2e5cca4cf9002d13ba4314e15299de8f45d5c906dd566a57577de2",
+      "content_hash": "a19391700fcc787262e3815954a7681eaaf62c68d0593db22a0d790b15756571",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:49:14.115Z"
+      "persisted_at": "2026-11-28T01:18:58.786Z"
     },
     "learn-github-scrapinghub-dateparser": {
       "learning_id": "learn-github-scrapinghub-dateparser",
@@ -335534,10 +335544,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kumahq-kuma-architecture-intelligence-kumahq-kuma-core-invariants.md",
       "title": "Architecture Intelligence: kumahq/kuma Core Invariants",
       "repository": "kumahq/kuma",
-      "source_version": "ce6a025c",
-      "content_hash": "692d49fcdded6e7380f42ae9d624f4f16df43542fa25d95951caa89272ecc5f0",
+      "source_version": "8d73e835",
+      "content_hash": "0dd375fa33a5ce077f89cd9c36aae50baed81a389ab8184d60defabcfe2a9135",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:14:33.062Z"
+      "persisted_at": "2026-11-28T01:18:53.504Z"
     },
     "candidate_directive-deps-bump-gcr-io-distroless-base-nossl-debian13-debug-nonroot-from-37b8b2d-to": {
       "item_id": "candidate_directive-deps-bump-gcr-io-distroless-base-nossl-debian13-debug-nonroot-from-37b8b2d-to",
@@ -335559,9 +335569,9 @@
       "title": "Architecture Intelligence: kumahq-kuma-learnings Core Invariants",
       "repository": "kumahq-kuma-learnings",
       "source_version": "HEAD",
-      "content_hash": "853ce9eb71e72400b957cb47d0ebfcf0db59ee9210c4f3c2a3018c546dedcb2c",
+      "content_hash": "41bce4eb08f00e1e8963873aca46639d4f01edaaa9485bd9ea181db6a7a15f63",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:15:15.776Z"
+      "persisted_at": "2026-11-28T01:18:58.402Z"
     },
     "rule-10159": {
       "learning_id": "rule-10159",
@@ -358766,13 +358776,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-R1SL-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2BO2-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "5857cac9cc4b1711b887c0b462413a0ebead7e973f5fdd04b6960a0900a17434",
+      "content_hash": "dffe1501df0d892a0328ce526d7e0e743b299e51f48ad24ebf815ccba5cd08fc",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T01:10:13.467Z"
+      "persisted_at": "2026-11-28T01:18:59.477Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358782,9 +358792,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e2052c9e3228b86ac592ff39bc5384215bb702a783d7ec10c32e7a07656e74eb",
+      "content_hash": "a41a592cdc1dd873bf36fa0f70a184e529cad6ad89f08b6d2584f20681fd52c4",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T01:10:13.746Z"
+      "persisted_at": "2026-11-28T01:18:59.702Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -369108,6 +369118,94 @@
       "content_hash": "e66b135799046687bff228b46930e66b7e65ab81b4ae4c9720f963d9713bac07",
       "domain_letter": "K",
       "persisted_at": "2026-11-28T01:10:10.916Z"
+    },
+    "rule-11005": {
+      "learning_id": "rule-11005",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11005,
+      "title": "allow Step 8 Or-splitting when iteFuel reaches zero",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "8b91bb75",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T01:18:45.099Z"
+    },
+    "candidate_directive-allow-step-8-or-splitting-when-itefuel-reaches-zero": {
+      "item_id": "candidate_directive-allow-step-8-or-splitting-when-itefuel-reaches-zero",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-20Z3-allow-step-8-or-splitting-when-itefuel-reaches-zero.md",
+      "title": "allow Step 8 Or-splitting when iteFuel reaches zero",
+      "repository": "NVIDIA/cuda-rust",
+      "source_version": "8b91bb75",
+      "content_hash": "8a5854ffec5447e89d06dea7d8089d3350a7e7f696c1c890a7889d6e07bebebb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T01:18:45.619Z"
+    },
+    "rule-11006": {
+      "learning_id": "rule-11006",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11006,
+      "title": "docs(agents): add worktree, kumactl, upgrade gotchas",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "8d73e835",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T01:18:52.821Z"
+    },
+    "candidate_directive-docs-agents-add-worktree-kumactl-upgrade-gotchas": {
+      "item_id": "candidate_directive-docs-agents-add-worktree-kumactl-upgrade-gotchas",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2AOK-docs-agents-add-worktree-kumactl-upgrade-gotchas.md",
+      "title": "docs(agents): add worktree, kumactl, upgrade gotchas",
+      "repository": "kumahq-kuma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3c6dd67d05b442cdd6985beac53f88020d7c396b7ab278620b0a3550caaf6a0b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T01:18:58.196Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kumahq-kuma": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kumahq-kuma",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-kumahq-kuma-adr-subsystem-boundary-modular-decoupling-in-kumahq-kuma.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in kumahq/kuma",
+      "repository": "kumahq/kuma",
+      "source_version": "8d73e835",
+      "content_hash": "d885cb9af98596c2747d0b75a14341a123b69469fb38f5aabe98a432312de440",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T01:18:53.703Z"
+    },
+    "candidate_directive-oxide-proofs-allow-step-8-or-splitting-when-itefuel-reaches-zero": {
+      "item_id": "candidate_directive-oxide-proofs-allow-step-8-or-splitting-when-itefuel-reaches-zero",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-29T2-oxide-proofs-allow-step-8-or-splitting-when-itefuel-reaches-zero.md",
+      "title": "oxide-proofs): allow Step 8 Or-splitting when iteFuel reaches zero",
+      "repository": "nvidia-cuda-rust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8ff3deac11bc88b1a135bbd2cfa488eb704128431a7492d1586b88840cb9761c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T01:18:57.066Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kumahq-kuma-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kumahq-kuma-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-kumahq-kuma-learnings-adr-subsystem-boundary-modular-decoupling-in-kumahq-kuma-l.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in kumahq-kuma-learnings",
+      "repository": "kumahq-kuma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "23ba9c565a8dbdd7c145464e5beadc8b764038c4e8ad6aee3699a7877bbe6e52",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T01:18:58.611Z"
     }
   },
   "ai-builder-brain": {

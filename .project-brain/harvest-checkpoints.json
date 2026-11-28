@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T01:10:00.706Z",
+  "last_updated": "2026-11-28T01:18:53.084Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "ecad88ff0f1ae0876abba866d05399c08072c47187b609751c39b71478dfbd89",
-      "verified_at": "2026-11-25T14:14:32.770Z",
+      "content_hash": "09e004467f1e59470cfb2bc3e18456deb5e9a0f60ec42ff54394f774419d03ec",
+      "verified_at": "2026-11-28T01:18:53.084Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T14:14:32.770Z"
+      "last_updated": "2026-11-28T01:18:53.084Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "472a9a9045fa5d60ee800bbccc3a94c99255a7023cbb6d2f1ce7d883126cac7d",
-      "verified_at": "2026-11-27T01:06:47.170Z",
+      "content_hash": "45ee7bbf4709bf4a45baa30ec620c59cf74dd76f2c7970510fa94b02255e1181",
+      "verified_at": "2026-11-28T01:18:45.371Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T01:06:47.170Z"
+      "last_updated": "2026-11-28T01:18:45.371Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",

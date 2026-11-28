@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T01:10:10.238Z",
+  "updated_at": "2026-11-28T01:18:57.909Z",
   "stats": {
-    "total_discovered": 10665,
-    "approved_pending_harvest": 10124,
+    "total_discovered": 10667,
+    "approved_pending_harvest": 10126,
     "harvested_count": 0,
     "rejected_count": 541,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10133,
+      "COMMUNITY_AND_EXPERT": 10135,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -230870,6 +230870,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
         "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-8E009FE1937A": {
+      "id": "SRC-8E009FE1937A",
+      "url": "https://github.com/kumahq/kuma/pull/19467",
+      "title": "https://github.com/kumahq/kuma/pull/19467",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:18:57.833Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-B5611023DD63": {
+      "id": "SRC-B5611023DD63",
+      "url": "https://github.com/kumahq/kuma/pull/15635",
+      "title": "https://github.com/kumahq/kuma/pull/15635",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:18:57.909Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
       }
     }
   }

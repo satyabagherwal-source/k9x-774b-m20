@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-68LI",
-    "timestamp": "2026-11-26T13:26:31.686Z",
-    "repository": "HemmingwayAI/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "198c968955b9cbdf5fe3b0325bb3f672621601d1732f812a913b22799df7434a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-6JQJ",
-    "timestamp": "2026-11-26T13:26:46.123Z",
-    "repository": "genkit-ai/genkit",
-    "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "f529789080e29ac9bdbdef4b31c6d47d232f234ec70abde0b53e235b119079c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-I8MG",
     "timestamp": "2026-11-26T13:35:51.592Z",
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "lxml/lxml",
     "learningId": "learn-github-lxml-lxml",
     "contentHash": "af0506cc0391105b3366df6a402a77b8551d6118994e8085b3cfdd6a65cfc81f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-20RS",
+    "timestamp": "2026-11-28T01:18:45.352Z",
+    "repository": "NVIDIA/cuda-rust",
+    "learningId": "learn-github-nvidia-cuda-rust",
+    "contentHash": "45ee7bbf4709bf4a45baa30ec620c59cf74dd76f2c7970510fa94b02255e1181",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-26Q0",
+    "timestamp": "2026-11-28T01:18:53.064Z",
+    "repository": "kumahq/kuma",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "09e004467f1e59470cfb2bc3e18456deb5e9a0f60ec42ff54394f774419d03ec",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

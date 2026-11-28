@@ -13955,3 +13955,5 @@ Every entry in this ledger must capture:
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `a7dd32bc` | Multi-dimensional audit evidence | 2026-11-28T00:50:51.969Z |
 | `learn-github-indexable-inc-blaze` | `https://github.com/indexable-inc/blaze` | `aa3ad7aa` | Multi-dimensional audit evidence | 2026-11-28T01:00:31.100Z |
 | `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `1bbb09aa` | Multi-dimensional audit evidence | 2026-11-28T01:10:00.694Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `8b91bb75` | Multi-dimensional audit evidence | 2026-11-28T01:18:45.363Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `8d73e835` | Multi-dimensional audit evidence | 2026-11-28T01:18:53.076Z |

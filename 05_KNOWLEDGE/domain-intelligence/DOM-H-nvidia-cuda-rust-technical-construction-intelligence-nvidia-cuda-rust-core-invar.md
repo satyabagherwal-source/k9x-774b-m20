@@ -4,24 +4,24 @@
 {
   "source_repository": "NVIDIA/cuda-rust",
   "source_url": "https://github.com/NVIDIA/cuda-rust",
-  "source_version": "920720a2",
+  "source_version": "8b91bb75",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T01:06:47.389Z",
+  "timestamp": "2026-11-28T01:18:45.616Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nvidia-cuda-rust",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust) (Revision: `920720a2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T01:06:47.389Z`  
+> **Provenance**: Harvested from [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust) (Revision: `8b91bb75`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T01:18:45.616Z`  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 92%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 91%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NVIDIA/cuda-rust:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T01:06:46.142Z  
+> **Harvest Timestamp**: 2026-11-28T01:18:43.981Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4105 stars
+- **Stars / Engagement**: 4112 stars
 
 ---
 
@@ -2269,11 +2269,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1878** (2026-11-26): **fix(cuda-oxide): support == requires, pure math intrinsics, and lake setup in #[verify]**
-  *Symptoms*: ## Summary  Closes three gaps in the `#[verify(...)]` formal-verification workflow:  | Area                           | Fix                                                                      | |:-------------------------------|:-------------------------------------------------------------------------| | `==`, `>`, `<` in `requires`   | Forwards slice-length relations to Lean (`==` emits both directions)     | | Pure math intrinsics (`.sin()`) | Admits the exact compiler allow-list of pure scalar/math placeholders    | | `lake build` setup & freshness | Runs `lake build` in `cargo oxide setup`/`update` and on stale `.olean`s |  ### Before vs. After  1. **Equal-length `requires` (`requires = (a.len() == c.len())`)**    ```text    Before: Checked on the host launcher, dropped before Lean (`requiresLenGe := []` -> FAIL)    After:  Emits both `a.len() >= c.len()` and `c.len() >= a.len()` to Lean (`>` and `<` weaken to `>=` and `<=`)    ```  2. **Scalar math intrinsics (`a[idx].sin()`, `b[idx].cos()`, `idx.count_ones()`)**    ```text    Before: `__cuda_oxide_rust_intrinsic_sinf32` missed the `core::` / `cuda_device::` check -> REJECTED    After:  `is_pure_total_scalar_placeholder` admits known pure math/bit intrinsics as `.unk` / `OpaqueUint`            (un-inlined user `f32 -> f32` helpers and UB unchecked intrinsics remain rejected)    ```  3. **Lean proof library build (`cargo oxide setup` / `update` and `runner.rs`)**    ```text    Before: `setup`/`update` skipped `lake build
+- **Issue #1885** (2026-11-27): **fix(cuda-oxide): enforce Blackwell cluster/tcgen05 fences in Lean 4 and support short-K GEMMs**
+  *Symptoms*: ## What This PR Does  Closes four Blackwell 2-CTA cluster, `mbarrier` scope, `tcgen05.fence`, and short-`K` pipeline gaps across `CudaOxide`, `lean-exporter`, and the Blackwell examples:  | Area                        | Fix                                                                                  | |:----------------------------|:-------------------------------------------------------------------------------------| | 2-CTA `tcgen05.alloc` sync  | Enforces `cluster_sync()` from kernel entry `0` in Lean; adds syncs in unsafe GEMM   | | Cross-CTA `mbarrier` waits  | Models `.ctaAcquire` / `.clusterAcquire` / `.clusterRelaxed` and switches peer waits | | `tcgen05.fence` handoffs    | Requires `fence::after` and warp-convergent `fence::before` in `CtaState` + kernels  | | Short-`K` (`64, 128, 192`)  | Clamps `CLC` prefetch (`k_iters.saturating_sub(4)`), adds `k >= 64` contract & tests |  ---  ### Before vs. After  1. **2-CTA `TMEM` allocation ordering (`tcgen05_alloc_cg2`)**    ```text    Before: [mbarrier_init] ──(cluster_sync)──► [alloc_cg2]   (skipped if no mbarrier_init; missing in gemm_sol_final)    After:  [Kernel Entry ] ──(cluster_sync)──► [alloc_cg2]   (enforced in Lean + added in gemm_sol_final)    ```  2. **Cross-CTA `mbarrier` wait scope (`mbarrier_try_wait_parity_cluster`)**    ```text    Before: try_wait(&BAR)         ──► mbarReady(BAR)                  ──► Accepted on peer-CTA barriers    After:  try_wait(&BAR)         ──► mbarReady(BAR, .ctaAcquire)     ──► 
 
-- **Issue #1866** (2026-11-25): **fix(cuda-oxide): support reverse indexing in writes_all_elems and harden write coverage**
-  *Symptoms*: ## Summary  Fixes `#[verify(writes_all_elems(...))]` for reverse and swapped 1D output indexing (`c[c.len() - 1 - idx]`, `c[idx ^ 1]`), and closes three gaps around `writes_all_elems` and `cargo oxide test` builds.  | Area                     | Fix                                                            | |:-------------------------|:---------------------------------------------------------------| | Reverse output indexing  | Picks the actual writer thread instead of assuming thread `i`  | | Panics before write      | Rejects `writes_all_elems` if an earlier bounds check can trap | | 1D launch check          | Rejects `writes_all_elems` on `domain = 2` kernels             | | `cargo oxide test`       | Handles uninlined `idx.get()` in unoptimized dev/test builds   |  ### Before vs. After  1. **Reverse output indexing (`c[c.len() - 1 - idx]`)**    ```text    Example (`c.len() = 4`): Thread 0 -> c[3], Thread 1 -> c[2], Thread 2 -> c[1], Thread 3 -> c[0]     Before: Always checked Thread `i` for `c[i]` (checked Thread 0 for `c[0]`, saw `c[3]` -> FAIL)    After:  Checks Thread `3 - i` for `c[i]` (checks Thread 3 for `c[0]`, sees `c[0]` -> PASS)    ```  2. **Trapping bounds check before an output write**    ```text    Before: `c[idx] = a[idx]` without `requires(a.len() >= c.len())` passed even though `a[idx]` traps when `a.len() == 0`    After:  Requires every `mir.assert` along the write path to pass, so unchecked `a[idx]` fails closed    ```  3. **2D domain mismatch & `cargo 
+- **Issue #1883** (2026-11-27): **fix(lean-exporter): preserve register identity across blocks**
+  *Symptoms*: Closes #1882.  ## What This PR Does  Fixes cross-block register clobbering in `lean-exporter` (`translate/program.rs`) where SSA values captured inside value aggregates (`struct`, `tuple`, `array`, `enum`) or `Barrier` array slot indices were assigned per-block recycled Tier-2 scratch IDs and overwritten in downstream blocks:  ```text BEFORE (`main`):   Block 1:  `x = index_1d()`        ──► recycled scratch slot #25             `pair = (x, 0)`         ──► `struct_fields[pair]` records slot #25   Block 2:  `dummy = 0`             ──► reuses slot #25 (OVERWRITES #25 with `0`!)             `idx = pair.0`          ──► reads slot #25 -> gets `0` instead of `index_1d()`!  AFTER (This PR):   • Promote aggregate operands (`construct_struct`, `construct_tuple`, `construct_array`,     `construct_enum`, `insert_field`), aggregate results, and `SharedArray<Barrier, N>` slot     indices into persistent Tier-1 registers (`0..local_base_vid`).   • Read canonical `insert_index` on `mir.insert_field` and evict Tier-2 slots from     `smem_desc_ready` at basic-block boundaries.   • Enforce `check_no_tier2_cross_block_escape` in both debug and release builds so any     upward-exposed Tier-2 register read fails closed. ```  ---  ## Verification  * **Lean 4 & Exporter Suite**: `CUDA_OXIDE_REQUIRE_LEAN=1 cargo test -p lean-exporter --all-targets`: **PASS** * **Lints & Guards**: `cargo clippy -p lean-exporter --all-targets -- -D warnings`, `rustdoc -D warnings`, `cargo oxide fmt --check`, and `check
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2290,439 +2290,89 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e969a765` (2026-11-26)
-**Commit Message**: fix(lean-exporter): model raw slice pointers via SlicePtr and fail closed on untagged accesses (#1862)
+### Incident Patch 1: `298736cf` (2026-11-27)
+**Commit Message**: fix(oxide-proofs): allow Step 8 Or-splitting when iteFuel reaches zero (#1868)
+
+Closes #1867.
 
 ## What This PR Does
 
-Fixes raw-pointer origin tracking in `lean-exporter` around two rules: **model 1-to-1 before rejecting**, and **never silently drop a verified pointer's origin tag**.
-
-1. **1-to-1 Raw Slice Pointer Transcription (`lean-exporter`)**: Transcribes `as_ptr` / `as_mut_ptr` / `get_unchecked` casts on verified slice parameters into `LocalTag::GlobalPtr(p)` + `MirRhs::SlicePtr(p)`, so Lean 4 verifies safe raw pointer offsets and rejects out-of-bounds offsets.
-2. **Sound Pointer Origin Guards (`lean-exporter`)**:
-   - Rejects stores through read-only `&[T]` slice parameters (`*(a.as_ptr() as *mut T) = ...`).
-   - Blocks `expose_provenance` on verified slice and `SharedArray` pointers (`BarrierPtr` 2-CTA peer-bit masking is the single verified exception), while tagging `usize -> ptr` (`null()`, `NonNull::dangling()`) as `UnverifiedPtr`.
-   - Requires `if / else` joins (`merge_local_tag`) to agree on pointer origin, marking mismatched branches (`GlobalPtr` vs `UnverifiedPtr`) as `ConflictingPtr` instead of letting the second branch overwrite the first.
-   - Fails close
-
-**File**: `cuda-oxide/crates/lean-exporter/src/runner.rs` (modified, +19/-8)
-```diff
-@@ -23,8 +23,13 @@ use std::{
-     io::Write,
-     path::{Path, PathBuf},
-     process::Command,
-+    sync::atomic::{AtomicU64, Ordering},
- };
- 
-+/// Monotonic per-process counter guaranteeing unique temp filenames when
-+/// `verify_module_kernels` checks multiple kernels concurrently in one process.
-+static NEXT_TEMP_SEQ: AtomicU64 = AtomicU64::new(0);
-+
- use dialect_mir::ops::MirFuncOp;
- use pliron::{
-     builtin::op_interfaces::SymbolOpInterface,
-@@ -237,20 +242,26 @@ pub fn check_generated_lean_in_cache(
-         return Ok(());
-     }
- 
-+    let seq = NEXT_TEMP_SEQ.fetch_add(1, Ordering::Relaxed);
-     let unique = std::time::SystemTime::now()
-         .duration_since(std::time::UNIX_EPOCH)
-         .unwrap_or_default()
-         .as_nanos();
-     let temp_path = env::temp_dir().join(format!(
--        "cuda_oxide_verified_{}_{unique}.lean",
-+        "cuda_oxide_verified_{}_{seq}_{unique}.lean",
-         std::process::id()
-     ));
--    fs::write(&temp_path, lean_source).map_err(|e| {
--        reject(
--            "lean verifier",
--            format!("cannot write temporary Lean file: {e}"),
--        )
--    })?;
-+    OpenOptions::new()
-+        .write(true)
-+        .create_new(true)
-+        .open(&temp_path)
-+        .and_then(|mut f| f.write_all(lean_source.as_bytes()))
-+        .map_err(|e| {
-+            reject(
-+                "lean verifier",
-+                format!("cannot write temporary Lean file: {e}"),
-+            )
-+        })?;
- 
-     let output = if use_direct_lean {
-         Command::new(&lean_bin)
-@@ -305,7 +316,7 @@ pub fn check_generated_lean_in_cache(
-         }
-     }
-     if let Some(marker) = cache_marker {
--        let tmp = marker.with_extension(format!("tmp.{}", std::process::id()));
-+        let tmp = marker.with_extension(format!("tmp.{}_{seq}", std::process::id()));
-         if fs::write(&tmp, b"ok\n").is_ok() {
-             let _ = fs::rename(&tmp, &marker);
-         }
-```
-
-**File**: `cuda-oxide/crates/lean-exporter/src/translate/program.rs` (modified, +216/-33)
-```diff
-@@ -12,7 +12,9 @@
- 
- use std::collections::{BTreeSet, HashMap, HashSet};
- 
--use dialect_mir::types::{MirDisjointSliceType, MirEnumType, MirSliceType, MirStructType};
-+use dialect_mir::types::{
-+    MirDisjointSliceType, MirEnumType, MirPtrType, MirSliceType, MirStructType,
-+};
- use pliron::{
-     basic_block::BasicBlock,
-     builtin::types::IntegerType,
-@@ -39,6 +41,7 @@ use crate::{
-         CfgBranchCond, CfgOpItem, GuardExpr, IdxExpr, TranscribedCfgBlock,
-         TranscribedControlFlowCfg,
-     },
-+    symbol_name,
- };
- 
- /// Parameter kind in a transcribed [`MirProgramData`].
-@@ -227,6 +230,22 @@ enum LocalTag {
-     Index1DWrapper(usize),
-     /// Thread-local stack slot (`mir.alloca`).
-     StackSlot,
-+    /// Join of incompatible pointer origins across predecessors; fails closed on load/store/call.
-+    ConflictingPtr,
-+}
-+
-+/// Join `incoming` into `dst`'s provenance tag, saturating to [`LocalTag::ConflictingPtr`]
-+/// whenever two control-flow predecessors disagree on a pointer's origin.
-+fn merge_local_tag(tags: &mut HashMap<Value, LocalTag>, dst: Value, incoming: LocalTag) {
-+    match tags.get(&dst).copied() {
-+        None => {
-+            tags.insert(dst, incoming);
-+        }
-+        Some(cur) if cur == incoming => {}
-+        Some(_) => {
-+            tags.insert(dst, LocalTag::ConflictingPtr);
-+        }
-+    }
- }
- 
- /// Candidate `mir.assert` instruction awaiting pairing with the subsequent `mir.ptr_offset`
-@@ -389,6 +408,14 @@ pub(super) fn translate_mir_program(
-             || spec.mutable_slice_params.contains(&p)
-             || spec.requires_len_ge.iter().any(|&(l, r)| l == p || r == p)
-     };
-+    // Parameters a `#[verify]` clause makes an access or coverage claim about.
-+    let is_claimed_param = |p: usize| -> bool {
-+        spec.no_oob_idx.contains(&p)
-+            || spec.disjoint_writes.contains(&p)
-+            || spec.writes_all_elems.contains(&p)
-+            || spec.mutable_slice_params.contains(&p)
-+    };
-+    let kernel_name = symbol_name(ctx, function).unwrap_or_else(|_| "<kernel>".to_string());
-     for (idx, arg) in graph.blocks[0].deref(ctx).arguments().enumerate() {
-         let arg_vid = *val_ids.entry(arg).or_insert_with(|| {
-             let id = next_var_id;
-@@ -414,9 +441,16 @@ pub(super) fn translate_mir_program(
-                 tags.insert(arg, LocalTag::ScalarWrapper(arg_vid));
-             } else {
-                 params.push(MirParamKind::Scalar(0));
-+                tags.insert(arg, LocalTag::UnverifiedPtr);
-             }
-         } else {
-             let w = mir_uint_width(ctx, ty);
-+            if w <= 1
-+                && (ty_ref.downcast_ref::<MirPtrType>().is_some()
-+                    || ty_ref.downcast_ref::<MirStructType>().is_some())
-+            {
-+                tags.insert(arg, LocalTag::UnverifiedPtr);
-+            }
-             params.push(MirParamKind::Scalar(if w <= 1 { 0 } else { w }));
-         }
-     }
-@@ -999,11 +1033,11 @@ pub(super) fn translate_mir_program(
-                     let (src, res) = (op.get_operand(0), op.get_result(0));
-                     let fi = attribute_field_index(&op.attributes, "index")
-                         .or_else(|| attribute_field_index(&op.attributes, "field_index"));
--                    if let Some(LocalTag::SliceParam(p, ver)) = tags.get(&src).copied() {
-+                    if let Some(LocalTag::SliceParam(p, _)) = tags.get(&src).copied() {
-                         if fi == Some(0) {
-                             tags.insert(
-                                 res,
--                                if ver {
-+                                if is_claimed_param(p) {
-                                     LocalTag::GlobalPtr(p)
-                                 } else {
-                                     LocalTag::UnverifiedPtr
-@@ -1031,14 +1065,51 @@ pub(super) fn translate_mir_program(
-                     && op.get_num_results() == 1
-                 {
-                     let cstr = format!("{:?}", op.attributes);
--                    if (cstr.contains("PtrToPtr")
-+                    if cstr.contains("PointerExposeAddress") {
-+                        if let Some(t @ (LocalTag::BarrierPtr { .. } | LocalTag::UnverifiedPtr)) =
-+                            tags.get(&op.get_operand(0)).copied()
-+                        {
-+                            tags.insert(op.get_result(0), t);
-+                        }
-+                    } else if cstr.contains("PointerWithExposedProvenance") {
-+                        let src_op = op.get_operand(0);
-+                        if let Some(t @ LocalTag::BarrierPtr { .. }) = tags.get(&src_op).copied() {
-+                            tags.insert(op.get_result(0), t);
-+                        } else {
-+                            tags.insert(op.get_result(0), LocalTag::UnverifiedPtr);
-+                        }
-+                    } else if (cstr.contains("PtrToPtr")
-                         || cstr.contains("StaticAddress")
--                        || cs
-```
-
-**File**: `cuda-oxide/crates/lean-exporter/tests/export.rs` (modified, +191/-0)
-```diff
-@@ -2392,3 +2392,194 @@ mir.func @vecadd_rev: builtin.function <(mir.slice <builtin.fp32 ,mutable:false,
-         "unexpected domain=2 error: {dom2_err}"
-     );
- }
-+
-+/// `a.as_ptr().add(idx + 1_000_000)` on a slice parameter named in `#[verify]`: slice -> raw slice
-+/// -> thin pointer casts, then `mir.ptr_offset` and `mir.load`. The model tracks no access on it.
-+fn with_raw_far_read(fixture: &str) -> String {
-+    fixture
-+        .replacen(
-+            "    b_ptr = mir.extract_field (b)",
-+            concat!(
-+                "    raw_slice = mir.cast (a) [] [cast_kind: mir.cast_kind PtrToPtr, pointer_kind_authority: mir.pointer_kind_authority RawAddress]: <(mir.slice <builtin.fp32 ,mutable:false,kind:SharedRef>) -> (mir.slice <builtin.fp32 ,mutable:false,kind:RawConst>)>;\n",
-+                "    raw_ptr = mir.cast (raw_slice) [] [cast_kind: mir.cast_kind PtrToPtr, pointer_kind_authority: mir.pointer_kind_authority RustCast]: <(mir.slice <builtin.fp32 ,mutable:false,kind:RawConst>) -> (mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:RawConst>)>;\n",
-+                "    far = mir.constant () [] [value: builtin.integer <1000000: ui64>]: <() -> (builtin.integer ui64)>;\n",
-+                "    far_idx = mir.add (idx, far) [] []: <(builtin.integer ui64, builtin.integer ui64) -> (builtin.integer ui64)>;\n",
-+                "    far_elem = mir.ptr_offset (raw_ptr, far_idx) [] []: <(mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:RawConst>, builtin.integer ui64) -> (mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:RawConst>)>;\n",
-+                "    far_val = mir.load (far_elem) [] []: <(mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:RawConst>) -> (builtin.fp32)>;\n",
-+                "    b_ptr = mir.extract_field (b)",
-+            ),
-+            1,
-+        )
-+        .replacen(
-+            "    mir.store (c_elem, sum) [] []:",
-+            "    sum_far = mir.add (sum, far_val) [] []: <(builtin.fp32, builtin.fp32) -> (builtin.fp32)>;\n    mir.store (c_elem, sum_far) [] []:",
-+            1,
-+        )
-+}
-+
-+/// Verify that `as_ptr` / `as_mut_ptr` casts on verified slice parameters transcribe
-+/// 1-to-1 into `MirRhs::SlicePtr`, so Lean 4 proves in-bounds raw pointer accesses and
-+/// rejects out-of-bounds raw pointer reads and stores.
-+#[test]
-+fn verifies_safe_raw_slice_pointers_and_rejects_oob_immutable_and_exposed_accesses() {
-+    let Some(lean_dir) = lean_package_dir_if_available() else {
-+        return;
-+    };
-+
-+    // 1. Positive: in-bounds `a.as_ptr().add(idx)` under `idx < c.len()` + `a.len() >= c.len()`
-+    //    transcribes to `MirRhs::SlicePtr(0)` + `MirRhs::PtrOffset` and verifies in Lean 4.
-+    let safe_raw_read = VECADD_FIXTURE.replacen(
-+        "    a_ptr = mir.extract_field (a) [] [index: mir.field_index 0]: <(mir.slice <builtin.fp32 ,mutable:false,kind:SharedRef>) -> (mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>)>;\n    a_elem = mir.ptr_offset (a_ptr, idx) [] []: <(mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>, builtin.integer ui64) -> (mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>)>;\n    a_val = mir.load (a_elem) [] []: <(mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:Erased>) -> (builtin.fp32)>;",
-+        concat!(
-+            "    a_raw_slice = mir.cast (a) [] [cast_kind: mir.cast_kind PtrToPtr, pointer_kind_authority: mir.pointer_kind_authority RawAddress]: <(mir.slice <builtin.fp32 ,mutable:false,kind:SharedRef>) -> (mir.slice <builtin.fp32 ,mutable:false,kind:RawConst>)>;\n",
-+            "    a_ptr = mir.cast (a_raw_slice) [] [cast_kind: mir.cast_kind PtrToPtr, pointer_kind_authority: mir.pointer_kind_authority RustCast]: <(mir.slice <builtin.fp32 ,mutable:false,kind:RawConst>) -> (mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:RawConst>)>;\n",
-+            "    a_elem = mir.ptr_offset (a_ptr, idx) [] []: <(mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:RawConst>, builtin.integer ui64) -> (mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:RawConst>)>;\n",
-+            "    a_val = mir.load (a_elem) [] []: <(mir.ptr <builtin.fp32 ,mutable:false,addrspace:0,kind:RawConst>) -> (builtin.fp32)>;",
-+        ),
-+        1,
-+    );
-+    let safe_lean = export_named_source(&safe_raw_read, "vecadd")
-+        .expect("safe raw-pointer read from verified slice exports cleanly");
-+    assert!(safe_lean.contains("(.slicePtr 0)"));
-+    lean_exporter::runner::check_generated_lean(&safe_lean, &lean_dir)
-+        .expect("Lean 4 proves in-bounds `a.as_ptr().add(idx)` read");
-+
-+    // 2. Negative: `a.as_ptr().add(idx + 1_000_000)` exports and fails `verify_no_oob_idx_param0` in Lean 4.
-+    let raw_far = with_raw_far_read(VECADD_FIXTURE);
-+    let raw_far_lean =
-+        export_named_source(&raw_far, "vecadd").expect("exports OOB raw-pointer read for Lean VC");
-+    let far_err = lean_exporter::runner::check_generated_lean(&raw_far_lean, &lean_dir)
-+        .expect_err("Lean 4 must
-```
-
----
-
-### Incident Patch 2: `acec7dac` (2026-11-26)
-**Commit Message**: fix(lean): step both arms on an unknown condition (#1860)
-
-## What This PR Does
-
-Closes a specification gap in `CudaOxide/Mir/Program.lean` where `Reachable` stopped at `.unk` branch conditions (`if xs[i] > 0.0`), leaving universal safety contracts blind inside float or memory-load branches:
-
-1. **Both-Arm `Reachable` on `.unk` (`CudaOxide/Mir/Program.lean`, `Proofs/Program/Invariant.lean`)**: Relaxes `Reachable.stepCondTrue` to `outRegs cond != .bool false` and `stepCondFalse` to `outRegs cond != .bool true` so unknown runtime guards step into both arms.
-2. **Definite Coverage Guard (`CudaOxide/Mir/Program.lean`, `tests/program/*`)**: Keeps `ReachableTrapFree` strict (`= .bool true` / `= .bool false`) for existential `MirWritesAllElems`, bridges `ReachableTrapFree.toReachable`, and adds both safety and write-coverage counterexamples to `check.py`.
-
----
-
-### 1. Why `Reachable` Needed Both Arms on `.unk` (While `ReachableTrapFree` Stays Strict)
-
-In `Mir/Program.lean`, float comparisons and memory loads evaluate to `Val.unk`. Previously, requiring exact `= .bool true` / `= .bool false` blocked both arms of an unknown `condBr` in `Reachable`:
+Fixes an indentation bug in
+`CudaOxide.Proofs.Program.Tactic.solveVcGoals` (`Tactic.lean`) where
+Step 8 (case-splitting `P ∨ Q` disjunction hypotheses in context) was
+nested inside Step 7's `if iteFuel > 0` guard:
 
 ```text
-BEFORE (`main`, `Reachable` stuck
+BEFORE (`main` - Step 8 indented inside `if iteFuel > 0`):
+  if iteFuel > 0 then
+    -- Step 7: split `if cond then a else b` subterms (consumes `iteFuel`)
+    -- Step 8: split `P ∨ Q` hypotheses  <-- skipped once 16 `ite` splits drain `iteFuel`!
 
-**File**: `cuda-oxide/oxide-proofs-preview/CudaOxide/Mir/Program.lean` (modified, +10/-6)
-```diff
-@@ -640,22 +640,24 @@ inductive Reachable (f : MirFunc) (env : InputEnv) (t : ThreadCtx) :
-       (hterm : (f.blockAt b).term = .goto target args)
-       (hdst : target < f.blocks.length) :
-       Reachable f env t target (bindBlockArgs outRegs outRegs (f.blockAt target).args args) outPhase
--  /-- Conditional `mir.cond_br` taking `thenBlk` when `outRegs cond = .bool true`. -/
-+  /-- Conditional `mir.cond_br` taking `thenBlk` unless `outRegs cond = .bool false`.
-+      A `.unk` condition, such as a comparison on a loaded value, may take either arm. -/
-   | stepCondTrue {b tBlk fBlk cond phase outPhase : Nat} {regs outRegs : RegFile}
-       {evs : List MemEvent} {tevs : List TmemEvent} {tArgs fArgs : List Nat}
-       (hreach : Reachable f env t b regs phase)
-       (hexec : execStmts f env t regs phase (f.blockAt b).term (f.blockAt b).stmts = (outRegs, outPhase, evs, tevs))
-       (hterm : (f.blockAt b).term = .condBr cond tBlk tArgs fBlk fArgs)
--      (hcond : outRegs cond = .bool true)
-+      (hcond : outRegs cond ≠ .bool false)
-       (hdst : tBlk < f.blocks.length) :
-       Reachable f env t tBlk (bindBlockArgs outRegs outRegs (f.blockAt tBlk).args tArgs) outPhase
--  /-- Conditional `mir.cond_br` taking `elseBlk` when `outRegs cond = .bool false`. -/
-+  /-- Conditional `mir.cond_br` taking `elseBlk` unless `outRegs cond = .bool true`.
-+      A `.unk` condition may take either arm. -/
-   | stepCondFalse {b tBlk fBlk cond phase outPhase : Nat} {regs outRegs : RegFile}
-       {evs : List MemEvent} {tevs : List TmemEvent} {tArgs fArgs : List Nat}
-       (hreach : Reachable f env t b regs phase)
-       (hexec : execStmts f env t regs phase (f.blockAt b).term (f.blockAt b).stmts = (outRegs, outPhase, evs, tevs))
-       (hterm : (f.blockAt b).term = .condBr cond tBlk tArgs fBlk fArgs)
--      (hcond : outRegs cond = .bool false)
-+      (hcond : outRegs cond ≠ .bool true)
-       (hdst : fBlk < f.blocks.length) :
-       Reachable f env t fBlk (bindBlockArgs outRegs outRegs (f.blockAt fBlk).args fArgs) outPhase
- 
-@@ -735,8 +737,10 @@ theorem ReachableTrapFree.toReachable {f : MirFunc} {env : InputEnv} {t : Thread
-   induction h with
-   | entry hpos => exact Reachable.entry hpos                 -- Base entry block `0`
-   | stepGoto _ _ hex hterm hdst ih => exact Reachable.stepGoto ih hex hterm hdst
--  | stepCondTrue _ _ hex hterm hc hdst ih => exact Reachable.stepCondTrue ih hex hterm hc hdst
--  | stepCondFalse _ _ hex hterm hc hdst ih => exact Reachable.stepCondFalse ih hex hterm hc hdst
-+  | stepCondTrue _ _ hex hterm hc hdst ih =>
-+      exact Reachable.stepCondTrue ih hex hterm (by rw [hc]; simp) hdst
-+  | stepCondFalse _ _ hex hterm hc hdst ih =>
-+      exact Reachable.stepCondFalse ih hex hterm (by rw [hc]; simp) hdst
- 
- /-- `MemEvent` `ev` is emitted on a trap-free execution path (every `Stmt.assertCond`
-     along predecessor blocks and inside the emitting block evaluates to `.bool true`). -/
+AFTER (This PR - un-indents Step 8 by 2 spaces):
+  if iteFuel > 0 then
+    -- Step 7: split `if cond then a else b` subterms (consumes `iteFuel`)
+  -- Step 8: split `P ∨ Q` hypotheses    <-- runs whenever structural `fuel > 0`!
 ```
 
-**File**: `cuda-oxide/oxide-proofs-preview/CudaOxide/Proofs/Program/Invariant.lean` (modified, +16/-12)
+---
+
+## Changes
+
+* **`CudaOxide/Proofs/Program/Tactic.lean`**: Un-indent Step 8 out of
+`if iteFuel > 0` while preserving structural `fuel - 1` recursion
+bounds.
+* **`tests/program/OrSplitAfterIteFuel.lean` & `check.py`**: Add two `0
+sorryAx` regression theorems covering both `iteFuel = 0` directly and
+`mir_solve_vc` after 16 `ite` splits exhaust `iteFuel`.
+
+---
+
+## Verificatio
+
+**File**: `cuda-oxide/oxide-proofs-preview/CudaOxide/Proofs/Program/Tactic.lean` (modified, +10/-10)
 ```diff
-@@ -831,11 +831,13 @@ theorem symReachable_sound {f : MirFunc} {tbl : List SymBlockInv}
-       have hcv := hmOut cond; dsimp only at hcv
-       cases hget : (symExecStmts f (tbl.getD b0 {}).effCond (tbl.getD b0 {}).regs (tbl.getD b0 {}).phaseSpec (.condBr cond tBlk tArgs fBlk fArgs) (f.blockAt b0).stmts).1.getVar cond with
-       | bool cSym =>                                      --   Tracked boolean guard: strengthen `effCond` with `cSym = true`
--          rw [hget] at hbrOk hcv
--          rw [hcond, SymVal.matchesVal] at hcv
--          injection hcv with hcTrue
--          simp only [Bool.and_eq_true] at hbrOk
--          have hec := symBool_conj_true hpc0 hcTrue.symm
-+          rw [hget] at hbrOk hcv                          --   Substitute `getVar cond = .bool cSym` into edge check & match
-+          rw [SymVal.matchesVal] at hcv                   --   Unpack `outR cond = .bool (cSym.eval env t havoc)`
-+          rw [hcv] at hcond                               --   Rewrite `outR cond ≠ .bool false` using `cSym.eval`
-+          have hcTrue : cSym.eval env t havoc = true := by --   A tracked boolean other than `false` evaluates to `true`
-+            simpa using hcond
-+          simp only [Bool.and_eq_true] at hbrOk           --   Split `validSymEdge` conjunction across both outgoing arms
-+          have hec := symBool_conj_true hpc0 hcTrue       --   Combine entry path condition `hpc0` with `cSym = true`
-           obtain ⟨hrDst, havoc', hpcDst, hpsDst, hmDst⟩ :=
-             validSymEdge_sound hvalidIn hbrOk.1 hec hmOut hpsOut
-           exact ⟨hdst, hrDst, havoc', hpcDst, hpsDst, hmDst⟩
-@@ -860,13 +862,15 @@ theorem symReachable_sound {f : MirFunc} {tbl : List SymBlockInv}
-       have hcv := hmOut cond; dsimp only at hcv
-       cases hget : (symExecStmts f (tbl.getD b0 {}).effCond (tbl.getD b0 {}).regs (tbl.getD b0 {}).phaseSpec (.condBr cond tBlk tArgs fBlk fArgs) (f.blockAt b0).stmts).1.getVar cond with
-       | bool cSym =>                                      --   Tracked boolean guard: strengthen `effCond` with `!cSym = true`
--          rw [hget] at hbrOk hcv
--          rw [hcond, SymVal.matchesVal] at hcv
--          injection hcv with hcFalse
--          simp only [Bool.and_eq_true] at hbrOk
--          have hnotTrue : (SymBool.not cSym).eval env t havoc = true := by
--            simp [SymBool.eval, hcFalse.symm]
--          have hec := symBool_conj_true hpc0 hnotTrue
-+          rw [hget] at hbrOk hcv                          --   Substitute `getVar cond = .bool cSym` into edge check & match
-+          rw [SymVal.matchesVal] at hcv                   --   Unpack `outR cond = .bool (cSym.eval env t havoc)`
-+          rw [hcv] at hcond                               --   Rewrite `outR cond ≠ .bool true` using `cSym.eval`
-+          have hcFalse : cSym.eval env t havoc = false := by -- A tracked boolean other than `true` evaluates to `false`
-+            simpa using hcond
-+          simp only [Bool.and_eq_true] at hbrOk           --   Split `validSymEdge` conjunction across both outgoing arms
-+          have hnotTrue : (SymBool.not cSym).eval env t havoc = true := by -- Negated guard `!cSym` evaluates to `true`
-+            simp [SymBool.eval, hcFalse]
-+          have hec := symBool_conj_true hpc0 hnotTrue     --   Combine entry path condition `hpc0` with `!cSym = true`
-           obtain ⟨hrDst, havoc', hpcDst, hpsDst, hmDst⟩ :=
-             validSymEdge_sound hvalidIn hbrOk.2 hec hmOut hpsOut
-           exact ⟨hdst, hrDst, havoc', hpcDst, hpsDst, hmDst⟩
+@@ -411,16 +411,16 @@ partial def solveVcGoals (fuel iteFuel : Nat) : TacticM Unit := do
+         solveVcGoals (fuel - 1) (iteFuel - 1)
+         setGoals []
+         return
+-      for d in (← getLCtx) do                             -- Step 8: Case-split any `P ∨ Q` disjunction hypothesis
+-        if !d.isImplementationDetail then
+-          let dTy ← whnfR (← instantiateMVars d.type)
+-          if dTy.isAppOfArity ``Or 2 then
+-            let subs ← (← getMainGoal).cases d.fvarId
+-            for sub in subs do
+-              setGoals [sub.mvarId]
+-              solveVcGoals (fuel - 1) iteFuel
+-            setGoals []
+-            return
++    for d in (← getLCtx) do                               -- Step 8: Case-split any `P ∨ Q` disjunction hypothesis
++      if !d.isImplementationDetail then
++        let dTy ← whnfR (← instantiateMVars d.type)
++        if dTy.isAppOfArity ``Or 2 then
++          let subs ← (← getMainGoal).cases d.fvarId
++          for sub in subs do
++            setGoals [sub.mvarId]
++            solveVcGoals (fuel - 1) iteFuel
++          setGoals []
++          return
+     if (← try evalTactic (← `(tactic| (mir_mul_mono; omega))); pure true catch _ => pure false) then return -- Step 9: Nonlinear bounds + `omega`
+     evalTactic (← `(tactic| omega))                       -- Final step: run `omega` directly so any failure prints a clean counterexample
+ 
 ```
 
-**File**: `cuda-oxide/oxide-proofs-preview/check.py` (modified, +5/-1)
+**File**: `cuda-oxide/oxide-proofs-preview/check.py` (modified, +1/-0)
 ```diff
-@@ -23,6 +23,8 @@
-     ("RejectedMutSliceRace.lean", "cross-thread &mut [T] read-write race"),
-     ("RejectedTrappingWrite.lean", "trapping mir.assert before writes_all_elems store"),
-     ("RejectedDivergentSharedRace.lean", "shared-memory race masked by divergent sync_threads"),
-+    ("tests/program/RejectedUnknownGuard.lean", "branch pruned on an untracked guard"),
-+    ("tests/program/RejectedUnknownWriteCoverage.lean", "write coverage claimed across an untracked guard"),
- )
- 
- 
-@@ -76,9 +78,11 @@ def main():
-     require_success("env", "lean", "tests/exporter/Scalar.lean")
+@@ -80,6 +80,7 @@ def main():
      require_success("env", "lean", "tests/vecadd/Accepted.lean")
      require_success("env", "lean", "tests/vecadd/Counterexamples.lean")
-+    require_success("env", "lean", "tests/program/UnknownGuard.lean")
+     require_success("env", "lean", "tests/program/UnknownGuard.lean")
++    require_success("env", "lean", "tests/program/OrSplitAfterIteFuel.lean")
      print("PASS: scalar semantics, vecadd access model, typed indices, and counterexamples.", flush=True)
      for filename, label in REJECTED:
--        result = run_lake("env", "lean", f"tests/vecadd/{filename}")
-+        rel_path = filename if "/" in filename else f"tests/vecadd/{filename}"
-+        result = run_lake("env", "lean", rel_path)
-         if result.returncode == 0:
-             raise RuntimeError(f"The false obligation unexpectedly passed: {filename}")
-         # Require a failed proof obligation, not an import or tool error.
+         rel_path = filename if "/" in filename else f"tests/vecadd/{filename}"
 ```
 
-**File**: `cuda-oxide/oxide-proofs-preview/tests/program/RejectedUnknownGuard.lean` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+/-
-+SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+SPDX-License-Identifier: Apache-2.0
-+-/
-+
-+import CudaOxide
-+
-+/-!
-+Block 0 branches on an opaque value. `Reachable` must reach both arms. A proof that
-+only block 0 is reachable must fail.
-+-/
-+open CudaOxide.Mir.Program
-+
-+/-- Block 0 branches on an opaque value. -/
-+def unknownGuard : MirFunc :=
-+  { domain := 1, blockDimX := 32, blockDimY := 1, params := [.slice false]
-+  , blocks := [
-+      { args := [⟨0, 0⟩], stmts := [.assign 2 .opaqueVal], term := .condBr 2 1 [] 2 [] },
-+      { stmts := [.assign 3 (.constBool false), .assertCond 0 3], term := .ret },
-+      { term := .ret } ] }
-+
-+-- This claim is false because a `.unk` condition prunes neither arm.
-+example {env t b regs phase} (h : Reachable unknownGuard env t b regs phase) : b = 0 := by
-+  induction h with                                          -- Induct over `Reachable` steps from block `0`
-+  | entry => rfl                                            -- Entry starts at block `0`
-+  | stepGoto _ _ hterm _ ih =>                              -- Block `0` ends in `condBr`, not `goto`
-+      subst ih; simp [unknownGuard, MirFunc.blockAt] at hterm
-+  | stepCondTrue _ hexec hterm hcond _ ih | stepCondFalse _ hexec hterm hcond _ ih =>
-+      subst ih                                              -- Substitute `b = 0` from induction hypothesis
-+      simp [unknownGuard, MirFunc.blockAt] at hterm         -- Unfold block `0`'s `condBr` terminator
-+      obtain ⟨rfl, -⟩ := hterm                              -- The branch condition is register `2`
-+      simp [unknownGuard, MirFunc.blockAt, execStmts, evalRhs] at hexec -- Execute block `0` statements
-+      obtain ⟨rfl, -⟩ := hexec                              -- Block 0 leaves `.unk` in register `2`
-+      simp [RegFile.set] at hcond <;> omega                 -- `.unk` excludes neither arm
-```
-
-**File**: `cuda-oxide/oxide-proofs-preview/tests/program/RejectedUnknownWriteCoverage.lean` (added, +39/-0)
+**File**: `cuda-oxide/oxide-proofs-preview/tests/program/OrSplitAfterIteFuel.lean` (added, +39/-0)
 ```diff
 @@ -0,0 +1,39 @@
 +/-
@@ -2730,45 +2380,451 @@ BEFORE (`main`, `Reachable` stuck
 +SPDX-License-Identifier: Apache-2.0
 +-/
 +
++import Lean
 +import CudaOxide
 +
 +/-!
-+Block 0 branches on an opaque runtime condition; only block 1 writes `out[bx]`, while block 2
-+returns without writing. `MirWritesAllElems` requires `EmitsTrapFreeEvent` (`ReachableTrapFree`),
-+so an angelic attempt to pick block 1 across `.unk` must fail.
++Regression tests for `CudaOxide.Proofs.Program.Tactic.solveVcGoals`:
++Step 8 must still case-split `Or` hypotheses in context when `iteFuel` reaches `0`.
 +-/
-+open CudaOxide.Mir.Program CudaOxide.Contracts.Program
++namespace OrSplitAfterIteFuelTests
++open CudaOxide.Proofs.Program
 +
-+/-- Kernel that writes `out[bx]` only on the `then` arm of an untracked `.opaqueVal` branch. -/
-+def conditionalWrite : MirFunc :=
-+  { domain := 1, blockDimX := 1, blockDimY := 1, params := [.disjointSlice]
-+  , blocks := [
-+      { args := [⟨0, 0⟩], stmts := [.assign 2 .opaqueVal], term := .condBr 2 1 [] 2 [] },
-+      { stmts := [ .assign 3 (.slicePtr 0)
-+                 , .assign 4 (.sreg .ctaidX)
-+                 , .assign 5 (.ptrOffset 3 4)
-+                 , .assign 6 (.constInt 32 1)
-+                 , .store 5 6 ], term := .ret },
-+      { term := .ret } ] }
++open Lean Elab Tactic in
++local elab "mir_solve_vc_ite0" : tactic => solveVcGoals 512 0
 +
-+-- This claim is false because `.unk` does not guarantee taking block 1 (`ReachableTrapFree` requires `.bool true`).
-+example : MirWritesAllElems conditionalWrite 0 := by
-+  intro env gridDimX gridDimY _ _ hgyPos _ hcov elemIdx helem -- Unpack launch & element bounds
-+  refine ⟨{ bx := elemIdx, by_ := 0, tx := 0, ty := 0 },      -- Propose witness thread `bx = elemIdx`
-+          { isWrite := true, space := .global, bufId := 0, index := elemIdx, phase := 0 }, ?_⟩
-+  have hbxLt : elemIdx < gridDimX := by                       -- `blockDimX = 1` gives `elemIdx < gridDimX`
-+    simp [conditionalWrite] at hcov; omega
-+  refine ⟨?_, hbxLt, hgyPos, ?_, rfl, rfl, rfl, rfl⟩          -- Split thread validity vs `EmitsTrapFreeEvent`
-+  · refine ⟨by decide, by decide, ?_, by decide, by simp [conditionalWrite], by simp [conditionalWrite]⟩
-+    omega                                                     -- `elemIdx < gridDimX <= 2^32`
-+  · refine ⟨1, 0, _, .stepCondTrue (.entry (by decide)) rfl rfl rfl ?_ (by decide), rfl, ?_⟩
-+    · simp [conditionalWrite, MirFunc.blockAt, execStmts, evalRhs, RegFile.set] <;> omega -- `.unk = .bool true` fails
-+    · simp [conditionalWrite, MirFunc.blockAt, execStmts, evalRhs, RegFile.set]           -- Block 1 emits the store
++/-- Disjunction hypothesis splitting still fires when `iteFuel = 0` on a nonlinear goal
++    that plain `omega` and `mir_mul_mono; omega` without `Or`-splitting cannot solve. -/
++theorem orSplit_zero_iteFuel (a b c d M : Nat)
++    (h : (a ≤ c ∧ c * b ≤ M) ∨ (a ≤ d ∧ d * b ≤ M)) : a * b ≤ M := by
++  mir_solve_vc_ite0
++
++/-- Public `mir_solve_vc` (`iteFuel = 16`) still splits `Or` hypotheses after 16 `ite`
++    splits exhaust `iteFuel`. -/
++theorem orSplit_after_iteFuel_exhausted (t a b c d M : Nat) (ht : 16 ≤ t)
++    (h : (a ≤ c ∧ c * b ≤ M) ∨ (a ≤ d ∧ d * b ≤ M))
++    (h16 : (if t = 0 then 0 else if t = 1 then 0 else if t = 2 then 0 else if t = 3 then 0 else
++            if t = 4 then 0 else if t = 5 then 0 else if t = 6 then 0 else if t = 7 then 0 else
++            if t = 8 then 0 else if t = 9 then 0 else if t = 10 then 0 else if t = 11 then 0 else
++            if t = 12 then 0 else if t = 13 then 0 else if t = 14 then 0 else if t = 15 then 0 else 1) = 1) :
++    a * b ≤ M := by
++  mir_solve_vc
++
++#print axioms orSplit_zero_iteFuel
++#print axioms orSplit_after_iteFuel_exhausted
++
++end OrSplitAfterIteFuelTests
 ```
 
-**File**: `cuda-oxide/oxide-proofs-preview/tests/program/UnknownGuard.lean` (added, +43/-0)
+---
+
+### Incident Patch 2: `8b91bb75` (2026-11-27)
+**Commit Message**: fix(lean-exporter): allocate OpaqueUint IDs from opaque_ids (#1881)
+
+Closes #1880.
+
+## What This PR Does
+
+Fixes an oracle-ID aliasing bug in `lean-exporter`
+(`translate/program.rs`) where `fallback_rhs_for` accepted an explicit
+ID map parameter and two call sites (`mir.extract_array_element` and
+`nvvm.clc_query_*`) passed the recycled register map `&val_ids` instead
+of the monotonic `&opaque_ids` map:
+
+```text
+BEFORE (`main`):
+  Block 1:  `ld0 = mir.load(...)`                  ──► `opaque_ids` #7  ──► `OpaqueUint(7, 32)`
+  Block 2:  `elem = mir.extract_array_element(..)` ──► `val_ids`    #7  ──► `OpaqueUint(7, 32)`  (COLLISION!)
+            Lean treated two unrelated runtime values as equal (`env.opaqueUint t 7`)!
+
+AFTER (This PR):
+  `fallback_rhs_for` captures `opaque_ids` directly (and `CtaUint1` on `clc_query_*` also reads
+  `opaque_ids`), so every opaque/CTA integer definition receives a strictly increasing ID.
+```
+
+---
+
+## Changes
+
+* **`crates/lean-exporter/src/translate/program.rs`**:
+* Capture `opaque_ids` directly inside `fallback_rhs_for` and allocate
+`clc_query_*` (`CtaUint1` / `OpaqueUint`) IDs from `opaque_ids`.
+  * Remove the shadowed duplicate `"mir.array_element_addr
+
+**File**: `cuda-oxide/crates/lean-exporter/src/translate/program.rs` (modified, +27/-66)
 ```diff
-@@ -0,0 +1,43 @@
+@@ -1592,7 +1592,10 @@ pub(super) fn translate_mir_program(
+ 
+     let mut pending_asserts: Vec<PendingAssert> = Vec::new();
+ 
+-    let fallback_rhs_for = |v: Value, opaque_ids: &HashMap<Value, usize>| -> MirRhs {
++    // Capture `opaque_ids` directly so every fallback oracle ID is allocated from the
++    // monotonic `opaque_ids` map (strictly increasing in RPO definition order) and can
++    // never alias per-block `val_ids`.
++    let fallback_rhs_for = |v: Value| -> MirRhs {
+         let w = mir_uint_width(ctx, v.get_type(ctx));
+         if w > 1 {
+             MirRhs::OpaqueUint(opaque_ids[&v], w)
+@@ -2278,25 +2281,24 @@ pub(super) fn translate_mir_program(
+                         span_elems,
+                     ));
+                 }
+-                "nvvm.clc_query_is_canceled" if op.get_num_results() == 1 => {
+-                    let res = op.get_result(0);
+-                    let rhs = match op.operands().next() {
+-                        Some(v) => MirRhs::CtaUnary(val_ids[&v]),
+-                        None => MirRhs::CtaConst,
+-                    };
+-                    stmts.push(MirStmt::Assign(val_ids[&res], rhs));
+-                }
+-                "nvvm.clc_query_get_first_ctaid_x"
++                "nvvm.clc_query_is_canceled"
++                | "nvvm.clc_query_get_first_ctaid_x"
+                 | "nvvm.clc_query_get_first_ctaid_y"
+                 | "nvvm.clc_query_get_first_ctaid_z"
+                     if op.get_num_results() == 1 =>
+                 {
+                     let res = op.get_result(0);
+                     let w = mir_uint_width(ctx, res.get_type(ctx));
+-                    let eff_w = if w > 1 { w } else { 32 };
+-                    let rhs = match op.operands().next() {
+-                        Some(v) => MirRhs::CtaUint1(val_ids[&res], eff_w, val_ids[&v]),
+-                        None => MirRhs::OpaqueUint(val_ids[&res], eff_w),
++                    let rhs = if w > 1 {
++                        match op.operands().next() {
++                            Some(v) => MirRhs::CtaUint1(opaque_ids[&res], w, val_ids[&v]),
++                            None => MirRhs::OpaqueUint(opaque_ids[&res], w),
++                        }
++                    } else {
++                        match op.operands().next() {
++                            Some(v) => MirRhs::CtaUnary(val_ids[&v]),
++                            None => MirRhs::CtaConst,
++                        }
+                     };
+                     stmts.push(MirStmt::Assign(val_ids[&res], rhs));
+                 }
+@@ -2528,10 +2530,7 @@ pub(super) fn translate_mir_program(
+                     for r_idx in 0..op.get_num_results() {
+                         let res = op.get_result(r_idx);
+                         tags.insert(res, LocalTag::TmemLoadedReg(ld_id));
+-                        stmts.push(MirStmt::Assign(
+-                            val_ids[&res],
+-                            fallback_rhs_for(res, &opaque_ids),
+-                        ));
++                        stmts.push(MirStmt::Assign(val_ids[&res], fallback_rhs_for(res)));
+                     }
+                 }
+                 "nvvm.tcgen05_load_wait" => {
+@@ -2817,10 +2816,7 @@ pub(super) fn translate_mir_program(
+                             pending_asserts.remove(pos);
+                         }
+                     }
+-                    stmts.push(MirStmt::Assign(
+-                        val_ids[&res],
+-                        fallback_rhs_for(res, &val_ids),
+-                    ));
++                    stmts.push(MirStmt::Assign(val_ids[&res], fallback_rhs_for(res)));
+                 }
+                 "mir.insert_field" if op.get_num_operands() == 2 && op.get_num_results() == 1 => {
+                     let (base_s, fv, res) =
+@@ -2884,19 +2880,6 @@ pub(super) fn translate_mir_program(
+                         stmts.push(MirStmt::Assign(val_ids[&res], MirRhs::OpaqueVal));
+                     }
+                 }
+-                "mir.array_element_addr"
+-                    if op.get_num_operands() >= 2 && op.get_num_results() == 1 =>
+-                {
+-                    let idx_v = op.get_operand(1);
+-                    if let Some(pos) = pending_asserts.iter().rposition(|p| p.idx_val == idx_v) {
+-                        pending_asserts.remove(pos);
+-                    }
+-                    let res = op.get_result(0);
+-                    if matches!(tags.get(&op.get_operand(0)), Some(LocalTag::StackSlot)) {
+-                        tags.insert(res, LocalTag::StackSlot);
+-                    }
+-                    stmts.push(MirStmt::Assign(val_ids[&res], MirRhs::OpaqueVal));
+-                }
+                 "mir.constant" | "builtin.constant" if op.get_num_results() == 1 => {
+                     let res = op.get_result(0);
+                     let w = mir_uint_width(ctx, res.get_type(ctx));
+@@ -2913,16 +2896,10 @@ pub(super) fn translate_mir_program(
+                             stmts
+                                 .push(Mi
+```
+
+**File**: `cuda-oxide/crates/lean-exporter/tests/export.rs` (modified, +138/-0)
+```diff
+@@ -2810,6 +2810,144 @@ fn accepts_raw_pointer_read_of_a_slice_parameter_no_verify_clause_names() {
+         .expect("raw read of a slice parameter that no verify clause names stays accepted");
+ }
+ 
++/// Collect all `(id, width)` pairs from [`lean_exporter::translate::program::MirRhs::OpaqueUint`]
++/// assignments in RPO block and statement emission order.
++fn collect_program_opaque_uints(
++    program: &lean_exporter::translate::program::MirProgramData,
++) -> Vec<(usize, u32)> {
++    use lean_exporter::translate::program::{MirRhs, MirStmt};
++
++    let mut out = Vec::new();
++    for blk in &program.blocks {
++        for stmt in &blk.stmts {
++            if let MirStmt::Assign(
++                _,
++                MirRhs::OpaqueUint(id, width) | MirRhs::CtaUint1(id, width, _),
++            ) = stmt
++            {
++                out.push((*id, *width));
++            }
++        }
++    }
++    out
++}
++
++/// Ensure `nvvm.clc_query_*`, `mir.extract_array_element`, and `mir.load` allocate
++/// globally distinct, strictly monotonic `OpaqueUint` IDs from `opaque_ids` across both a
++/// minimal multi-block synthetic kernel and all shipped `MirFunc` exporter fixtures.
++#[test]
++fn clc_query_and_array_element_use_distinct_opaque_ids() {
++    let collision_mir = r#"
++builtin.module @opaque_id_collision {
++  ^entry():
++    mir.func @opaque_id_collision_k: builtin.function <(mir.slice <builtin.integer ui32 ,mutable:false,kind:SharedRef>) -> ()>
++      [gpu_kernel: builtin.string "true", launch_contract_domain: builtin.integer <1: ui32>, reqntid_x: builtin.integer <32: ui32>, reqntid_y: builtin.integer <1: ui32>, reqntid_z: builtin.integer <1: ui32>, verify_no_oob_idx: builtin.string "0"]
++    {
++      ^entry(a: mir.slice <builtin.integer ui32 ,mutable:false,kind:SharedRef>):
++        z64 = mir.constant () [] [value: builtin.integer <0: ui64>]: <() -> (builtin.integer ui64)>;
++        a_ptr = mir.extract_field (a) [] [index: mir.field_index 0]: <(mir.slice <builtin.integer ui32 ,mutable:false,kind:SharedRef>) -> (mir.ptr <builtin.integer ui32 ,mutable:false,addrspace:0,kind:Erased>)>;
++        a_len = mir.extract_field (a) [] [index: mir.field_index 1]: <(mir.slice <builtin.integer ui32 ,mutable:false,kind:SharedRef>) -> (builtin.integer ui64)>;
++        ok = mir.lt (z64, a_len) [] []: <(builtin.integer ui64, builtin.integer ui64) -> (builtin.integer i1)>;
++        mir.cond_br (ok) [^blk0, ^exit] [builtin_operand_segment_sizes: builtin.operand_segment_sizes [1, 0, 0]]: <(builtin.integer i1) -> ()>
++
++      ^blk0():
++        p0 = mir.ptr_offset (a_ptr, z64) [] []: <(mir.ptr <builtin.integer ui32 ,mutable:false,addrspace:0,kind:Erased>, builtin.integer ui64) -> (mir.ptr <builtin.integer ui32 ,mutable:false,addrspace:0,kind:Erased>)>;
++        ld0 = mir.load (p0) [] []: <(mir.ptr <builtin.integer ui32 ,mutable:false,addrspace:0,kind:Erased>) -> (builtin.integer ui32)>;
++        p1 = mir.ptr_offset (a_ptr, z64) [] []: <(mir.ptr <builtin.integer ui32 ,mutable:false,addrspace:0,kind:Erased>, builtin.integer ui64) -> (mir.ptr <builtin.integer ui32 ,mutable:false,addrspace:0,kind:Erased>)>;
++        ld1 = mir.load (p1) [] []: <(mir.ptr <builtin.integer ui32 ,mutable:false,addrspace:0,kind:Erased>) -> (builtin.integer ui32)>;
++        mir.goto () [^blk1] []: <() -> ()>
++
++      ^blk1():
++        c_arr = mir.construct_array (ld0, ld1) [] []: <(builtin.integer ui32, builtin.integer ui32) -> (mir.array <builtin.integer ui32, 2>)>;
++        _elem_v = mir.extract_array_element (c_arr, z64) [] []: <(mir.array <builtin.integer ui32, 2>, builtin.integer ui64) -> (builtin.integer ui32)>;
++        _q_x = nvvm.clc_query_get_first_ctaid_x (z64, z64) [] []: <(builtin.integer ui64, builtin.integer ui64) -> (builtin.integer ui32)>;
++        _q_c = nvvm.clc_query_is_canceled (z64, z64) [] []: <(builtin.integer ui64, builtin.integer ui64) -> (builtin.integer ui32)>;
++        mir.return () [] []: <() -> ()>
++
++      ^exit():
++        mir.return () [] []: <() -> ()>
++    }
++}
++"#;
++    let prog = translate_named_mir_program(collision_mir, "opaque_id_collision_k");
++    let opaques = collect_program_opaque_uints(&prog);
++    assert_eq!(
++        opaques.len(),
++        5,
++        "expected 5 OpaqueUint values: {opaques:?}"
++    );
++    let unique: std::collections::HashSet<usize> = opaques.iter().map(|&(id, _)| id).collect();
++    assert_eq!(
++        unique.len(),
++        5,
++        "load, extract_array_element, and clc_query_* must have distinct OpaqueUint IDs: {opaques:?}"
++    );
++    assert!(
++        opaques.windows(2).all(|w| w[0].0 < w[1].0),
++        "OpaqueUint IDs must be strictly increasing in RPO emission order: {opaques:?}"
++    );
++    let lean = export_named_source(collision_mir, "opaque_id_collision_k")
++        .expect("transcribes opaque_id_collision_k");
++    if let Some(lean_dir) = lean_package_dir_if_available() {
++        lean_exporter::runner::check_generated_lean(&lean, &lean_dir)
++            .expect("Lean 4 accepts kerne
+```
+
+---
+
+### Incident Patch 3: `28a30056` (2026-11-27)
+**Commit Message**: fix(verify): refuse reads of a shared array while a TMA copy into it is pending (#1877)
+
+## What This PR Does
+
+Closes a soundness gap in `#[verify(uniform_barriers)]` /
+`#[verify(no_data_race)]` where replacing an `mbarrier_try_wait_parity`
+spin loop with `thread::sync_threads()` after an asynchronous
+`cp_async_bulk_tensor_*_g2s` copy was accepted even though no thread
+awaited TMA completion before reading the destination `SharedArray`:
+
+```rust
+if tid == 0 {
+    let _ = mbarrier_arrive_expect_tx(&raw const BAR, 1, TILE_BYTES);
+    cp_async_bulk_tensor_2d_g2s_cta(&raw mut TILE as *mut u8, tensor_map, tile_x, tile_y, &raw mut BAR);
+}
+thread::sync_threads(); // orders Thread 0's issue instruction, NOT TMA completion!
+let val = TILE[tid];    // reads `TILE` while the TMA copy is still in flight
+```
+
+```text
+BEFORE (`main`):
+  1. `MirNoSharedRace` only compares events in the same `sync_threads()` phase
+     (TMA copy in Phase 0 vs. `TILE[tid]` in Phase 1 -> skipped!)
+  2. `stepOp` blocked `.sharedWrite` and `.tmemAsyncIssue` while `sharedPendingTma[s]`
+     was non-empty, but allowed `.sharedRead s` -> kernel falsely stamped proved!
+
+AFTER (This PR):
+  • `stepOp` on `.sharedRead s` (`M
+
+**File**: `cuda-oxide/oxide-proofs-preview/CudaOxide/Mir/ControlFlow.lean` (modified, +6/-1)
+```diff
+@@ -750,7 +750,12 @@ def stepOp (cfg : ControlFlowCfg) (curBlk : Nat) (blkGuard : GuardExpr) (inCycle
+             | .needsFence => .clean
+             | other => other }
+   | .sharedRead s =>
+-      if s < st.sharedProxy.length then some st else none
++      if s ≥ st.sharedProxy.length || s ≥ st.sharedPendingTma.length then
++        none
++      else if !(st.sharedPendingTma.getD s []).isEmpty then
++        none
++      else
++        some st
+   | .dsmemAccess s =>
+       if cfg.clusterDimX ≤ 1 || s ≥ st.sharedClusterSynced.length then
+         none
+```
+
+**File**: `cuda-oxide/oxide-proofs-preview/CudaOxide/Proofs/ControlFlow/Lattice.lean` (modified, +13/-5)
+```diff
+@@ -358,12 +358,20 @@ theorem stepOp_mono (cfg : ControlFlowCfg) (curBlk : Nat) (blkGuard : GuardExpr)
+       exact ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨
+         listSubsumes_map proxyStepFence_mono hsp, hpt⟩, hsc⟩,
+         listSubsumes_map proxyStepFence_mono hbp⟩, hbs⟩, htp⟩, hcl⟩, hac⟩, hmh⟩, hmi⟩, hcb⟩, htcr⟩, htr⟩, hufw⟩, hufl⟩, hpl⟩, hss⟩, hcs⟩, hrp⟩, hvp⟩
+-  | sharedRead s =>                                       -- Case 4: Generic-proxy shared read
++  | sharedRead s =>                                       -- Case 4: Generic-proxy shared read requires no pending TMA on `s`
+       dsimp only [stepOp] at hstep ⊢
+-      rw [← hlenSP]
+-      by_cases hslt : s < abs.sharedProxy.length
+-      · rw [if_pos hslt] at hstep ⊢; injection hstep with hstep; subst hstep; exact ⟨conc, rfl, hsub⟩
+-      · rw [if_neg hslt] at hstep; contradiction
++      rw [← hlenSP, ← hlenPT]
++      by_cases hpre : (decide (s ≥ abs.sharedProxy.length) || decide (s ≥ abs.sharedPendingTma.length)) = true
++      · rw [if_pos hpre] at hstep; contradiction
++      · rw [if_neg hpre] at hstep ⊢
++        cases hemp : (abs.sharedPendingTma.getD s []).isEmpty
++        · rw [hemp] at hstep; contradiction
++        · rw [hemp] at hstep; simp only [Bool.not_true, Bool.false_eq_true, ↓reduceIte] at hstep
++          have hptS := listSubsumes_getD (sub := fun a c => natSubset c a) (d := []) (natSubset_refl []) s hpt
++          have hcEmp : (conc.sharedPendingTma.getD s []).isEmpty = true := natSubset_isEmpty hptS hemp
++          injection hstep with hstep; subst hstep
++          simp only [hcEmp, Bool.not_true, Bool.false_eq_true, ↓reduceIte]
++          exact ⟨conc, rfl, hsub⟩
+   | dsmemAccess s =>                                      -- Case 5: Cross-CTA DSMEM access requires `sharedClusterSynced[s]`
+       dsimp only [stepOp] at hstep ⊢
+       rw [← hlenSC]
+```
+
+**File**: `cuda-oxide/oxide-proofs-preview/check-exporter.py` (modified, +24/-0)
+```diff
+@@ -467,6 +467,30 @@ def main():
+             raise RuntimeError(f"Expected bypassing mbarrier_try_wait_parity to fail NoDataRace in Lean:\n{res_no_wait.stdout}")
+         print("REJECTED as expected: reading `TILE` without `mbarrier_try_wait_parity` fails `no_data_race`.", flush=True)
+ 
++        # Mutate async_copy_stage MIR by replacing the `mbarrier_try_wait_parity` loop with `sync_threads()`.
++        # The copy and the read then sit in different barrier phases, so only `uniform_barriers` can refuse it:
++        wait_loop = async_source[async_source.index("      ^wait_header():"):async_source.index("      ^consume_tile():")]
++        sync_for_wait_mir = temporary / "async_copy_sync_for_wait.mir"
++        sync_for_wait_mir.write_text(
++            async_source.replace(
++                wait_loop,
++                "      ^wait_header():\n"
++                "        nvvm.barrier0 () [] []: <() -> ()>;\n"
++                "        mir.goto () [^consume_tile] []: <() -> ()>\n\n",
++                1,
++            )
++        )
++        sync_for_wait_lean = require_export(sync_for_wait_mir, "async_copy_stage")
++        sync_for_wait_file = temporary / "AsyncCopySyncForWait.lean"
++        sync_for_wait_file.write_text(
++            "\n".join(line for line in sync_for_wait_lean.splitlines() if not line.startswith("#print axioms"))
++        )
++        res_sync_for_wait = run_lake("env", "lean", str(sync_for_wait_file))
++        if (res_sync_for_wait.returncode == 0 or "checkUniformBarriersWith" not in res_sync_for_wait.stdout
++                or "error: omega could not prove the goal:" in res_sync_for_wait.stdout):
++            raise RuntimeError(f"Expected sync_threads in place of the mbarrier wait to fail only UniformBarriers in Lean:\n{res_sync_for_wait.stdout}")
++        print("REJECTED as expected: `sync_threads()` in place of `mbarrier_try_wait_parity` before reading `TILE` fails `uniform_barriers`.", flush=True)
++
+         # Mutate async_copy_stage MIR with oversized 32 KB TMA byte count into 16 KB `TILE`:
+         oversized_tma_mir = temporary / "async_copy_oversized.mir"
+         oversized_tma_mir.write_text(
+```
+
+**File**: `cuda-oxide/oxide-proofs-preview/check.py` (modified, +13/-0)
+```diff
+@@ -27,6 +27,10 @@
+     ("tests/program/RejectedUnknownWriteCoverage.lean", "write coverage claimed across an untracked guard"),
+     ("tests/program/RejectedDivergentLoopUniformity.lean", "barrier loop bounded by a split-thread join"),
+ )
++# Refused by the CTA state machine: `decide` evaluates `checkUniformBarriersWith` to `false`.
++REJECTED_BARRIERS = (
++    ("RejectedTmaReadAfterSync.lean", "TMA destination read after sync_threads without an mbarrier wait"),
++)
+ 
+ 
+ def find_lake():
+@@ -91,6 +95,15 @@ def main():
+         if "error: omega could not prove the goal:" not in result.stdout:
+             raise RuntimeError(f"Unexpected failure in {filename}:\n{result.stdout}")
+         print(f"REJECTED as expected: {label}.", flush=True)
++    for filename, label in REJECTED_BARRIERS:
++        result = run_lake("env", "lean", f"tests/vecadd/{filename}")
++        if result.returncode == 0:
++            raise RuntimeError(f"The false obligation unexpectedly passed: {filename}")
++        # Require the barrier check itself to evaluate to `false`, not an import or tool error.
++        if ("error: Tactic `decide` proved that the proposition" not in result.stdout
++                or "checkUniformBarriersWith" not in result.stdout):
++            raise RuntimeError(f"Unexpected failure in {filename}:\n{result.stdout}")
++        print(f"REJECTED as expected: {label}.", flush=True)
+     print("Model checks passed. Rust/MIR extraction is not implemented by this checker.")
+ 
+ 
+```
+
+**File**: `cuda-oxide/oxide-proofs-preview/tests/vecadd/Accepted.lean` (modified, +20/-0)
+```diff
+@@ -77,10 +77,30 @@ theorem rev_writes_all_elems :
+   apply CudaOxide.Proofs.Program.vcWritesAllElems rfl (by mir_bind_writes)
+   mir_vc revMirFunc
+ 
++/-- Thread `0` arms `BAR` and starts a TMA copy into `TILE` (block `3`), every thread waits on `BAR`
++    (block `4`), then reads `TILE` (block `5`): the shape of `examples/safe_async_copy`.
++    `RejectedTmaReadAfterSync.lean` replaces the wait with `sync_threads()`. -/
++def tmaWaitCfg : ControlFlow.ControlFlowCfg :=
++  { blockDimX := 256, blockDimY := 1, numShared := 1, numBarriers := 1
++  , blocks := [
++      { succs := [(.coord (.eq .tx (.const 0)), 1), (.coord (.ne .tx (.const 0)), 2)] },
++      { ops := [.mbarInit 0 1, .proxyFenceAsyncShared], succs := [(.always, 2)] },
++      { ops := [.syncThreads]
++      , succs := [(.coord (.eq .tx (.const 0)), 3), (.coord (.ne .tx (.const 0)), 4)] },
++      { ops := [.mbarArriveExpectTx 0 16384, .tmaCopyG2S 0 0], succs := [(.always, 4)] },
++      { succs := [(.mbarSpin 0, 4), (.mbarReady 0 false, 5)] },
++      { ops := [.sharedRead 0], succs := [(.always, 6)] },
++      { isReturn := true } ] }
++
++theorem tma_read_after_wait : ControlFlow.UniformBarriersCfg tmaWaitCfg :=
++  CudaOxide.Proofs.ControlFlow.uniform_barriers_cfg_of_stateMap
++    (inv := CudaOxide.Proofs.ControlFlow.inferStateMap tmaWaitCfg) (by decide)
++
+ #print axioms no_oob_idx_all
+ #print axioms disjoint_writes_c
+ #print axioms writes_all_elems_c
+ #print axioms rev_writes_all_elems
++#print axioms tma_read_after_wait
+ #print axioms CudaOxide.Mir.Program.ReachableTrapFree.toReachable
+ #print axioms CudaOxide.Mir.Program.EmitsTrapFreeEvent.toEmitsEvent
+ #print axioms index_lt_of_guard
+```
+
+**File**: `cuda-oxide/oxide-proofs-preview/tests/vecadd/RejectedTmaReadAfterSync.lean` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
 +/-
 +SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 +SPDX-License-Identifier: Apache-2.0
@@ -2776,243 +2832,45 @@ BEFORE (`main`, `Reachable` stuck
 +
 +import CudaOxide
 +
-+/-! Checks that `Reachable` follows both arms of a branch whose condition is `.unk`. -/
-+namespace UnknownGuardTests
-+open CudaOxide.Mir.Program CudaOxide.Contracts.Program
++/-!
++Negative model test: thread `0` arms `BAR` and starts a TMA copy into `TILE` (block `3`), then every
++thread executes `sync_threads()` (block `4`) and reads `TILE` (block `5`). Nobody waits on `BAR`.
++A CTA barrier orders the instruction that starts the copy, not its completion, so the read can see
++stale data. This is `examples/safe_async_copy` with `thread::sync_threads()` in place of the
++`mbarrier` wait. `Accepted.tma_read_after_wait` is the same graph with the wait.
++-/
++open CudaOxide.Mir.ControlFlow
++open CudaOxide.Contracts.ControlFlow
++open CudaOxide.Proofs.ControlFlow
 +
-+/-- Block 0 branches on an opaque value. The then-arm asserts `false`. -/
-+def unknownGuard : MirFunc :=
-+  { domain := 1, blockDimX := 32, blockDimY := 1, params := [.slice false]
++namespace RejectedTmaReadAfterSync
++
++def cfg : ControlFlowCfg :=
++  { blockDimX := 256, blockDimY := 1, numShared := 1, numBarriers := 1
 +  , blocks := [
-+      { args := [⟨0, 0⟩], stmts := [.assign 2 .opaqueVal], term := .condBr 2 1 [] 2 [] },
-+      { stmts := [.assign 3 (.constBool false), .assertCond 0 3], term := .ret },
-+      { term := .ret } ] }
++      { succs := [(.coord (.eq .tx (.const 0)), 1), (.coord (.ne .tx (.const 0)), 2)] },
++      { ops := [.mbarInit 0 1, .proxyFenceAsyncShared], succs := [(.always, 2)] },
++      { ops := [.syncThreads]
++      , succs := [(.coord (.eq .tx (.const 0)), 3), (.coord (.ne .tx (.const 0)), 4)] },
++      { ops := [.mbarArriveExpectTx 0 16384, .tmaCopyG2S 0 0], succs := [(.always, 4)] },
++      { ops := [.syncThreads], succs := [(.always, 5)] },
++      { ops := [.sharedRead 0], succs := [(.always, 6)] },
++      { isReturn := true } ] }
 +
-+/-- The then-arm is reachable on every thread. -/
-+theorem then_arm_reachable (env : InputEnv) (t : ThreadCtx) :
-+    ∃ regs, Reachable unknownGuard env t 1 regs 0 :=
-+  ⟨_, .stepCondTrue (.entry (by decide)) rfl rfl (by simp [evalRhs, RegFile.set]) (by decide)⟩
++-- Intentionally false: the read in block `5` is refused while the copy on `BAR` is still pending.
++theorem false_claim : UniformBarriersCfg cfg :=
++  uniform_barriers_cfg_of_stateMap (cfg := cfg) (inv := inferStateMap cfg) (by decide)
 +
-+/-- The else-arm is reachable on every thread. -/
-+theorem else_arm_reachable (env : InputEnv) (t : ThreadCtx) :
-+    ∃ regs, Reachable unknownGuard env t 2 regs 0 :=
-+  ⟨_, .stepCondFalse (.entry (by decide)) rfl rfl (by simp [evalRhs, RegFile.set]) (by decide)⟩
-+
-+/-- The `assert(false)` in the then-arm of a `.unk` branch is not redundant. -/
-+theorem assert_not_redundant (env : InputEnv) (t : ThreadCtx)
-+    (henv : unknownGuard.validInput env) (ht : unknownGuard.validThread t) :
-+    ¬ MirAssertRedundant unknownGuard 0 := by
-+  intro h                                                          -- Assume `MirAssertRedundant unknownGuard 0` holds
-+  obtain ⟨regs, hr⟩ := then_arm_reachable env t                    -- Witness reachable `then`-arm state `(1, regs, 0)`
-+  have hcond := h env t 1 0 regs henv ht hr [.assign 3 (.constBool false)] [] 3 rfl -- Assert `0` reads register `3`
-+  simp [execStmts, evalRhs, RegFile.set] at hcond                  -- Register `3` evaluates to `.bool false`, contradiction
-+
-+#print axioms then_arm_reachable
-+#print axioms else_arm_reachable
-+#print axioms assert_not_redundant
-+
-+end UnknownGuardTests
-```
-
----
-
-### Incident Patch 3: `97f61aef` (2026-11-26)
-**Commit Message**: ci: build both `cargo oxide new` templates against the checkout (#1764)
-
-Closes #1763.
-
-The scaffold tests check what `cargo oxide new` writes as text, and
-nothing compiles it. This builds both templates on every
-examples-compile run.
-
-## How
-
-```text
-cargo build -p cargo-oxide (the tree's)
-  └─ cargo oxide new scaffold_sync / scaffold_async --async   (in a temp dir)
-       └─ append [patch."<the git URL the template names>"] → this checkout
-            (only the cuda-* crates the template depends on; its dependency lines stay as users get them)
-            └─ cargo oxide build
-                 └─ fail if Cargo.lock still has a `git+` CUDA source
-```
-
-The last check covers a patch that silently doesn't apply. In that case
-the build would quietly use GitHub's `main`, and the guard would test
-nothing.
-
-- **`cuda-oxide/scripts/check-scaffold-builds.sh`**: the new guard. It
-runs from anywhere in the repository and finds `cargo-oxide` through
-`cargo metadata`, so it honours `CARGO_TARGET_DIR`.
-- **`examples-compile`**: a new step after "Compile every example". It
-reuses that step's shared target dir, LLVM and `CARGO_INCREMENTAL=0`, so
-the backend and `cargo-oxide` are already built.
-
-##
-
-**File**: `.github/workflows/examples-compile.yml` (modified, +19/-3)
-```diff
-@@ -84,8 +84,8 @@ jobs:
-     # device codegen. Typically well under an hour with the shared
-     # CARGO_TARGET_DIR; the timeout leaves headroom for cold runners.
-     # Leave job-level headroom around the 50-minute full compile and the
--    # focused 10-minute materialization gate, plus toolkit/LLVM setup.
--    timeout-minutes: 75
-+    # focused 10-minute post-smoketest gates, plus toolkit/LLVM setup.
-+    timeout-minutes: 85
-     strategy:
-       fail-fast: false
-       # The baseline lane keeps its existing job name (empty suffix); the newer
-@@ -145,7 +145,7 @@ jobs:
-           opt-23 --version | head -2
- 
-       - name: Compile every example (smoketest --compile-only)
--        # Step-level timeout, below the job's 75: a job-level timeout
-+        # Step-level timeout, below the job's 85: a job-level timeout
-         # CANCELS the job and `if: failure()` never fires, losing the
-         # logs. A step timeout fails the step, so the upload still runs.
-         timeout-minutes: 50
-@@ -173,6 +173,22 @@ jobs:
- 
-           cuda-oxide/scripts/smoketest.sh --compile-only --no-color
- 
-+      # The scaffold tests read `cargo oxide new` output as text. This builds
-+      # both templates against this checkout, so an API change that breaks a
-+      # new user's first project fails here. Reuses the shared target dir.
-+      - name: Both `cargo oxide new` templates build
-+        timeout-minutes: 10
-+        env:
-+          CUDA_OXIDE_LLC: /usr/bin/llc-23
-+          CARGO_TARGET_DIR: ${{ runner.temp }}/examples-shared-target
-+          CARGO_INCREMENTAL: "0"
-+        run: |
-+          set -euo pipefail
-+          sysroot="$(rustc --print sysroot)"
-+          export LIBRARY_PATH="${sysroot}/lib:${LIBRARY_PATH:-}"
-+          export LD_LIBRARY_PATH="${sysroot}/lib:${LD_LIBRARY_PATH:-}"
-+          bash cuda-oxide/scripts/check-scaffold-builds.sh
-+
-       # Builds shared_static_names, then copies with added kernels, in
-       # release and full-debug, and requires the original kernels' PTX to be
-       # unchanged (#1477). Reuses the shared target dir, so it adds only the
-```
-
-**File**: `cuda-oxide/scripts/check-scaffold-builds.sh` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+#!/usr/bin/env bash
-+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-+# SPDX-License-Identifier: Apache-2.0
-+
-+# Build both `cargo oxide new` templates against this checkout.
-+#
-+# The scaffold tests in cargo-oxide read the generated files as text; nothing
-+# compiles them, so an API change in cuda-host or cuda-core can break the first
-+# project a new user creates while every check stays green. This generates the
-+# sync and the async project, redirects the template's git source to this
-+# checkout with a [patch] table (the dependency lines stay as users get them),
-+# and runs `cargo oxide build` on each.
-+#
-+# Needs the SIMT toolchain, LLVM tools and a CUDA toolkit, as any example
-+# build does. Run from anywhere in the repository.
-+
-+set -euo pipefail
-+
-+root="$(git rev-parse --show-toplevel)"
-+oxide="${root}/cuda-oxide"
-+work="$(mktemp -d "${TMPDIR:-/tmp}/scaffold-builds.XXXXXX")"
-+trap 'rm -rf "${work}"' EXIT
-+
-+(cd "${oxide}" && cargo build --quiet -p cargo-oxide)
-+target_dir="$(cd "${oxide}" && cargo metadata --format-version 1 --no-deps |
-+    python3 -c 'import json, sys; print(json.load(sys.stdin)["target_directory"])')"
-+cargo_oxide="${target_dir}/debug/cargo-oxide"
-+
-+ptxas_bin=""
-+for candidate in "${CUDA_OXIDE_PTXAS:-}" \
-+    "$(command -v ptxas 2>/dev/null || true)" \
-+    "${CUDA_TOOLKIT_PATH:+${CUDA_TOOLKIT_PATH}/bin/ptxas}" \
-+    "${CUDA_HOME:+${CUDA_HOME}/bin/ptxas}" \
-+    /usr/local/cuda/bin/ptxas; do
-+    if [[ -n "${candidate}" && -x "${candidate}" ]]; then
-+        ptxas_bin="${candidate}"
-+        break
-+    fi
-+done
-+
-+failed=0
-+for mode in sync async; do
-+    name="scaffold_${mode}"
-+    flags=()
-+    [[ "${mode}" == "async" ]] && flags+=(--async)
-+    (cd "${work}" && "${cargo_oxide}" oxide new "${name}" "${flags[@]}" >/dev/null)
-+    project="${work}/${name}"
-+
-+    # Patch exactly the git source the template names.
-+    source_url="$(sed -nE 's/^cuda-device = \{ git = "([^"]+)".*/\1/p' "${project}/Cargo.toml")"
-+    if [[ -z "${source_url}" ]]; then
-+        echo "error: the ${mode} template no longer takes cuda-device from git" >&2
-+        failed=1
-+        continue
-+    fi
-+    {
-+        echo
-+        echo "[patch.\"${source_url}\"]"
-+        for crate in cuda-device cuda-host cuda-core cuda-async; do
-+            grep -q "^${crate} = " "${project}/Cargo.toml" || continue
-+            case "${crate}" in
-+                cuda-device | cuda-host) path="${oxide}/crates/${crate}" ;;
-+                *) path="${root}/${crate}" ;;
-+            esac
-+            echo "${crate} = { path = \"${path}\" }"
-+        done
-+    } >>"${project}/Cargo.toml"
-+
-+    if ! (cd "${project}" && "${cargo_oxide}" oxide build) >"${work}/${name}.log" 2>&1; then
-+        echo "error: the ${mode} \`cargo oxide new\` template does not build:" >&2
-+        tail -n 80 "${work}/${name}.log" >&2
-+        failed=1
-+        continue
-+    fi
-+    # A patch that silently did not apply would have built GitHub's main.
-+    if grep -qE '^source = "git\+' "${project}/Cargo.lock"; then
-+        echo "error: the ${mode} project resolved a CUDA crate from git, not this checkout" >&2
-+        failed=1
-+        continue
-+    fi
-+    ptx="${project}/${name}.ptx"
-+    if [[ ! -s "${ptx}" ]]; then
-+        echo "error: the ${mode} project build produced no device PTX at ${ptx}" >&2
-+        failed=1
-+        continue
-+    fi
-+    if [[ -n "${ptxas_bin}" ]]; then
-+        ptx_arch="$(sed -nE 's/^\.target[[:space:]]+(sm_[0-9]+[af]?).*/\1/p' "${ptx}" | head -n 1)"
-+        if [[ -z "${ptx_arch}" ]]; then
-+            echo "error: ${ptx} has no .target directive" >&2
-+            failed=1
-+            continue
-+        fi
-+        if ! "${ptxas_bin}" -arch="${ptx_arch}" "${ptx}" -o "${work}/${name}.cubin" \
-+            >"${work}/${name}.ptxas.log" 2>&1; then
-+            echo "error: ptxas rejected ${mode} template PTX (${ptx_arch}):" >&2
-+            cat "${work}/${name}.ptxas.log" >&2
-+            failed=1
-+            continue
-+        fi
-+    fi
-+    echo "${mode} template: builds against this checkout"
-+done
-+
-+exit "${failed}"
++end RejectedTmaReadAfterSync
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1885** (2026-11-27): fix(cuda-oxide): enforce Blackwell cluster/tcgen05 fences in Lean 4 and support short-K GEMMs (@nihalpasham)
+- **PR #1884** (2026-11-27): perf(cuda-oxide): compact UniformBarriers certificates and IntToInt CTA uniformity (@nihalpasham)
+- **PR #1883** (2026-11-27): fix(lean-exporter): preserve register identity across blocks (@hs1167)
+- **PR #1881** (2026-11-27): fix(lean-exporter): allocate OpaqueUint IDs from opaque_ids (@hs1167)
 - **PR #1878** (2026-11-26): fix(cuda-oxide): support == requires, pure math intrinsics, and lake setup in #[verify] (@nihalpasham)
-- **PR #1874** (2026-11-26): feat(cuda-oxide): honor #[no_mangle]/#[export_name] on device statics and evaluate array lengths (@nihalpasham)
-- **PR #1873** (2026-11-26): feat(cuda-oxide): opt-in 64-bit pointers (CUDA_OXIDE_NO_SHORT_PTR) via ExportTarget (@nihalpasham)
-- **PR #1872** (2026-11-26): feat(cuda-oxide): add #[device(export)] to root .func exports alongside kernels (@nihalpasham)
-- **PR #1871** (2026-11-26): feat(cuda-oxide): ptx_asm! up to 256 inputs and #[constant(export_name)] (@nihalpasham)
-- **PR #1870** (2026-11-26): ci(cuda-oxide): add Windows MSVC compile and PTX/cubin verification lane (@nihalpasham)
+- **PR #1877** (2026-11-27): fix(verify): refuse reads of a shared array while a TMA copy into it is pending (@bastianhagedorn)
 
 ---
 
@@ -3032,56 +2890,49 @@ the backend and `cargo-oxide` are already built.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lean-exporter): model raw slice pointers via SlicePtr and fail closed on untagge
+## X. oxide-proofs): allow Step 8 Or-splitting when iteFuel reaches zero
 
 **RULE**:
-When implementing operations in `cuda-oxide/crates/lean-exporter/src/runner.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cuda-oxide/oxide-proofs-preview/CudaOxide/Proofs/Program/Tactic.lean`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e969a765`: lean-exporter): model raw slice pointers via SlicePtr and fail closed on untagged accesses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `298736cf`: oxide-proofs): allow Step 8 Or-splitting when iteFuel reaches zero. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/lean-exporter/src/runner.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/oxide-proofs-preview/CudaOxide/Proofs/Program/Tactic.lean`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    sync::atomic::{AtomicU64, Ordering},
-/// Monotonic per-process counter guaranteeing unique temp filenames when
-/// `verify_module_kernels` checks multiple kernels concurrently in one process.
-static NEXT_TEMP_SEQ: AtomicU64 = AtomicU64::new(0);
-
-    let seq = NEXT_TEMP_SEQ.fetch_add(1, Ordering::Relaxed);
-        "cuda_oxide_verified_{}_{seq}_{unique}.lean",
-    OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(&temp_path)
-        .and_then(|mut f| f.write_all(lean_source.as_bytes()))
-        .map_err(|e| {
-            reject(
-                "lean verifier",
-                format!("cannot write temporary Lean file: {e}"),
-            )
-        })?;
-        let tmp = marker.with_extension(format!("tmp.{}_{seq}", std::process::id()));
+    for d in (← getLCtx) do                               -- Step 8: Case-split any `P ∨ Q` disjunction hypothesis
+      if !d.isImplementationDetail then
+        let dTy ← whnfR (← instantiateMVars d.type)
+        if dTy.isAppOfArity ``Or 2 then
+          let subs ← (← getMainGoal).cases d.fvarId
+          for sub in subs do
+            setGoals [sub.mvarId]
+            solveVcGoals (fuel - 1) iteFuel
+          setGoals []
+          return
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        "cuda_oxide_verified_{}_{unique}.lean",
-    fs::write(&temp_path, lean_source).map_err(|e| {
-        reject(
-            "lean verifier",
-            format!("cannot write temporary Lean file: {e}"),
-        )
-    })?;
-        let tmp = marker.with_extension(format!("tmp.{}", std::process::id()));
+      for d in (← getLCtx) do                             -- Step 8: Case-split any `P ∨ Q` disjunction hypothesis
+        if !d.isImplementationDetail then
+          let dTy ← whnfR (← instantiateMVars d.type)
+          if dTy.isAppOfArity ``Or 2 then
+            let subs ← (← getMainGoal).cases d.fvarId
+            for sub in subs do
+              setGoals [sub.mvarId]
+              solveVcGoals (fuel - 1) iteFuel
+            setGoals []
+            return
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e969a765` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `298736cf` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

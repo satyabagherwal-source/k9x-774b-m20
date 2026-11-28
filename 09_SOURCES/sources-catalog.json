@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "ce6a025c",
+    "sourceVersion": "8d73e835",
     "license": "Apache-2.0",
-    "contentHash": "ecad88ff0f1ae0876abba866d05399c08072c47187b609751c39b71478dfbd89",
-    "lastHarvestedAt": "2026-11-25T14:14:32.671Z",
+    "contentHash": "09e004467f1e59470cfb2bc3e18456deb5e9a0f60ec42ff54394f774419d03ec",
+    "lastHarvestedAt": "2026-11-28T01:18:53.076Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "920720a2",
+    "sourceVersion": "8b91bb75",
     "license": "Apache-2.0",
-    "contentHash": "472a9a9045fa5d60ee800bbccc3a94c99255a7023cbb6d2f1ce7d883126cac7d",
-    "lastHarvestedAt": "2026-11-27T01:06:47.149Z",
+    "contentHash": "45ee7bbf4709bf4a45baa30ec620c59cf74dd76f2c7970510fa94b02255e1181",
+    "lastHarvestedAt": "2026-11-28T01:18:45.363Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {
