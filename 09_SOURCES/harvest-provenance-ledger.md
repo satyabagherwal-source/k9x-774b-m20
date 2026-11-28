@@ -13983,3 +13983,6 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `990d02a5` | Multi-dimensional audit evidence | 2026-11-28T02:41:14.957Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `6125d544` | Multi-dimensional audit evidence | 2026-11-28T02:41:25.754Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `14a608df` | Multi-dimensional audit evidence | 2026-11-28T02:50:16.706Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `96a37a15` | Multi-dimensional audit evidence | 2026-11-28T02:59:01.382Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `977dd16f` | Multi-dimensional audit evidence | 2026-11-28T02:59:14.207Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2eca620d` | Multi-dimensional audit evidence | 2026-11-28T02:59:17.224Z |

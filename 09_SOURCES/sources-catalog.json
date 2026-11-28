@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "ba332c5e",
+    "sourceVersion": "2eca620d",
     "license": "Apache-2.0",
-    "contentHash": "cbc55e53c6dbae6d6bc39b5fdbd1a312e4e51cab0bca09ed9b5b643c80210ced",
-    "lastHarvestedAt": "2026-11-27T23:48:53.750Z",
+    "contentHash": "ec5dafaaef312c4c408b2e3f42526d9d89a2479b3f513baceba94965ced7ec4b",
+    "lastHarvestedAt": "2026-11-28T02:59:17.224Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "cb5fcfa0",
+    "sourceVersion": "977dd16f",
     "license": "NOASSERTION",
-    "contentHash": "8ba9ecb975b18080f8663e49e759088e7dd7a04ade88397cbeb40b3ea6fed238",
-    "lastHarvestedAt": "2026-11-26T13:44:50.876Z",
+    "contentHash": "2231db6c4d3195db098f482eb0fbea7107e0831bcbd728d4d9521b886c61f9be",
+    "lastHarvestedAt": "2026-11-28T02:59:14.207Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "e7a78554",
+    "sourceVersion": "96a37a15",
     "license": "Apache-2.0",
-    "contentHash": "8e3362aa5d5c54d8c04dd279e6a56897f73f160fba287948545db8742710c7a1",
-    "lastHarvestedAt": "2026-11-24T19:19:10.144Z",
+    "contentHash": "8a4d765c99642ef24e3ac6f2f4369a6341a3b1febf241f19dd707c4088cbc37f",
+    "lastHarvestedAt": "2026-11-28T02:59:01.382Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {

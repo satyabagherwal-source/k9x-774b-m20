@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T17:23:16.840Z",
+  "timestamp": "2026-11-28T02:59:22.456Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dragonflydb-dragonfly-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dragonflydb-dragonfly-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T17:23:16.840Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T02:59:22.456Z`  
 > **Learning ID**: `LEARN-EVO-dragonflydb-dragonfly-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `c0b9d750`  
+> **Source Version**: `977dd16f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T17:23:09.415Z  
+> **Timestamp**: 2026-11-28T02:59:12.885Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:23:09.409Z  
+> **Harvest Timestamp**: 2026-11-28T02:59:12.879Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31920 stars
+- **Stars / Engagement**: 31951 stars
 
 ---
 
@@ -1148,6 +1148,7 @@ inline bool CollectionEntry::operator==(std::string_view sv) const {
 #pragma once
 
 #include <absl/base/internal/endian.h>
+#include <absl/types/span.h>
 
 #include <memory>
 #include <optional>
@@ -1490,13 +1491,12 @@ class CompactObj {
 
   void GetString(std::string* res) const;
 
+  // `str` must not point into the storage of this object.
   void SetString(std::string_view str);
   void ReserveString(size_t size);
   void AppendString(std::string_view str);
 
-  // Will set this to hold OBJ_JSON, after that it is safe to call GetJson
-  // NOTE: in order to avid copy which can be expensive in this case,
-  // y
+  // Will set this to hold OBJ_JSON, after that it is safe to c
 ```
 
 ### Core Architecture Module: `src/core/cuckoo.h`
@@ -2346,741 +2346,660 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9602dd5e` (2026-11-24)
-**Commit Message**: fix(server): bound RDB loader allocations by the source size (#8282)
+### Incident Patch 1: `ba5b2ddf` (2026-11-27)
+**Commit Message**: fix(search): evaluate and destroy FILTER/APPLY expressions without recursion (#8887)
 
-* fix(server): bound RDB loader allocations by the source size
+FT.AGGREGATE parses FILTER and APPLY expressions into a tree that gets one level deeper with every
+chained operator. Evaluating and destroying that tree recursed once per level, so a few thousand
+chained operators overflowed the fiber stack, even when the expression had a syntax error.
 
-File-based loads never set source_limit_, so every RemainingBytes()
-guard was dead code: a crafted snapshot with a huge declared length
-caused an uncaught bad_alloc in the load fiber. Take the size from the
-opened file; cloud readers resolve it only during the first read and
-are sequential, so the loader pulls the limit in right after the RDB
-header instead of reading ahead.
-
-Add the missing bounds to FetchGenericString, FetchLzfStringObject
-(ratio-bounded, no absolute cap: legit snapshots carry LZF blobs
-beyond 512MB, see #5313) and the stream consumer group/PEL/consumer
-counts, sized by the minimum wire bytes per entry per RDB type, so
-valid files - including legacy streams - are never rejected. Also
-return rdb_file_corrupted instead of tripping a ReadAtLeast DCHECK
-when a bounded source ends mid-entry.
-
-* fix(server): bound remaining RDB loader allocations
-
-Address review: bound the zstd/LZ4 frame content size by the protocol's
-largest segment (kMaxCompressedBlobSize, rdb_extensions.h) before
-Reserve(), reject nested/stray compressed blob opcodes 
-
-**File**: `src/server/detail/decompress.cc` (modified, +64/-39)
-```diff
-@@ -19,6 +19,8 @@ using io::IoBuf;
- using rdb::errc;
- using namespace std;
- 
-+constexpr size_t kInitialDecompressBuffer = 64 * 1024;
-+
- inline auto Unexpected(errc ev) {
-   return nonstd::make_unexpected(RdbError(ev));
- }
-@@ -32,13 +34,13 @@ class ZstdDecompress : public DecompressImpl {
-     ZSTD_freeDCtx(dctx_);
-   }
- 
--  io::Result<io::IoBuf*> Decompress(std::string_view str);
-+  io::Result<io::IoBuf*> Decompress(std::string_view str, size_t max_uncomp_size);
- 
-  private:
-   ZSTD_DCtx* dctx_;
- };
- 
--io::Result<io::IoBuf*> ZstdDecompress::Decompress(std::string_view str) {
-+io::Result<io::IoBuf*> ZstdDecompress::Decompress(std::string_view str, size_t max_uncomp_size) {
-   // Prepare membuf memory to uncompressed string.
-   auto uncomp_size = ZSTD_getFrameContentSize(str.data(), str.size());
-   if (uncomp_size == ZSTD_CONTENTSIZE_UNKNOWN) {
-@@ -49,31 +51,52 @@ io::Result<io::IoBuf*> ZstdDecompress::Decompress(std::string_view str) {
-     LOG(ERROR) << "Invalid ZSTD compressed string";
-     return Unexpected(errc::invalid_encoding);
-   }
--
--  uncompressed_mem_buf_.Reserve(uncomp_size + 1);
--
--  // Uncompress string to membuf
--  IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
--  if (dest.size() < uncomp_size) {
--    return Unexpected(errc::out_of_memory);
-+  if (uncomp_size > max_uncomp_size) {
-+    LOG(ERROR) << "Zstd frame content size " << uncomp_size << " exceeds the allowed maximum";
-+    return Unexpected(errc::rdb_file_corrupted);
-   }
--  size_t const d_size =
--      ZSTD_decompressDCtx(dctx_, dest.data(), dest.size(), str.data(), str.size());
--  if (d_size == 0 || d_size != uncomp_size) {
-+  if (uncomp_size == 0) {
-     LOG(ERROR) << "Invalid ZSTD compressed string";
-     return Unexpected(errc::rdb_file_corrupted);
-   }
--  uncompressed_mem_buf_.CommitWrite(d_size);
- 
--  // Add opcode of compressed blob end to membuf.
--  dest = uncompressed_mem_buf_.AppendBuffer();
--  if (dest.size() < 1) {
--    return Unexpected(errc::out_of_memory);
-+  uncompressed_mem_buf_.Reserve(std::min<size_t>(uncomp_size + 1, kInitialDecompressBuffer));
-+
-+  ZSTD_inBuffer in{str.data(), str.size(), 0};
-+  while (true) {
-+    IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
-+    if (dest.empty()) {
-+      if (!GrowBuffer(uncomp_size)) {
-+        LOG(ERROR) << "Zstd frame decoded past the declared content size";
-+        return Unexpected(errc::rdb_file_corrupted);
-+      }
-+      continue;
-+    }
-+
-+    ZSTD_outBuffer out{dest.data(), dest.size(), 0};
-+    size_t prev_in = in.pos;
-+    size_t ret = ZSTD_decompressStream(dctx_, &out, &in);
-+    if (ZSTD_isError(ret)) {
-+      LOG(ERROR) << "Invalid ZSTD compressed string: " << ZSTD_getErrorName(ret);
-+      return Unexpected(errc::rdb_file_corrupted);
-+    }
-+    uncompressed_mem_buf_.CommitWrite(out.pos);
-+
-+    if (out.pos == 0 && in.pos == prev_in) {
-+      LOG(ERROR) << "Zstd decompression stalled";
-+      return Unexpected(errc::rdb_file_corrupted);
-+    }
-+
-+    if (ret == 0)
-+      break;
-+  }
-+
-+  if (in.pos != in.size || uncompressed_mem_buf_.InputLen() != uncomp_size) {
-+    LOG(ERROR) << "Invalid ZSTD compressed string";
-+    return Unexpected(errc::rdb_file_corrupted);
-   }
--  dest[0] = RDB_OPCODE_COMPRESSED_BLOB_END;
--  uncompressed_mem_buf_.CommitWrite(1);
- 
--  return &uncompressed_mem_buf_;
-+  return AppendEndOpcode();
- }
- 
- class Lz4Decompress : public DecompressImpl {
-@@ -87,13 +110,13 @@ class Lz4Decompress : public DecompressImpl {
-     CHECK(!LZ4F_isError(result));
-   }
- 
--  io::Result<base::IoBuf*> Decompress(std::string_view str);
-+  io::Result<base::IoBuf*> Decompress(std::string_view str, size_t max_uncomp_size);
- 
-  private:
-   LZ4F_dctx* dctx_;
- };
- 
--io::Result<base::IoBuf*> Lz4Decompress::Decompress(std::string_view data) {
-+io::Result<base::IoBuf*> Lz4Decompress::Decompress(std::string_view data, size_t max_uncomp_size) {
-   LZ4F_frameInfo_t frame_info;
-   size_t frame_size = data.size();
- 
-@@ -103,29 +126,35 @@ io::Result<base::IoBuf*> Lz4Decompress::Decompress(std::string_view data) {
-   if (LZ4F_isError(res)) {
-     LOG(ERROR) << "LZ4F_getFrameInfo failed with error " << LZ4F_getErrorName(res);
-     return Unexpected(errc::rdb_file_corrupted);
--    ;
-   }
- 
-   if (frame_info.contentSize == 0) {
-     LOG(ERROR) << "Missing frame content size";
-     return Unexpected(errc::rdb_file_corrupted);
-   }
--
--  // reserve place for uncompressed data and end opcode
--  size_t reserve = frame_info.contentSize + 1;
--  uncompressed_mem_buf_.Reserve(reserve);
--  IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
--  if (dest.size() < reserve) {
--    return Unexpected(errc::out_of_memory);
-+  if (frame_info.contentSize > max_uncomp_size) {
-+    LOG(ERROR) << "LZ4 frame content size " << frame_info.contentSize
-+               << " exceeds the allowed maximum";
-+    return Unexpected(errc::rdb_file_corrupted);
-   }
- 
-+  uncompressed_mem_buf_.Reserve(
-+      std::min<size_t>(frame_info.contentSize + 1, kInitialDecompressBuffer));
-+
-   // Un
-```
-
-**File**: `src/server/detail/decompress.h` (modified, +16/-1)
-```diff
-@@ -3,10 +3,12 @@
- //
- #pragma once
- 
-+#include <algorithm>
- #include <memory>
- 
- #include "io/io.h"
- #include "io/io_buf.h"
-+#include "server/rdb_extensions.h"
- 
- namespace dfly {
- 
-@@ -22,10 +24,23 @@ class DecompressImpl {
-   virtual ~DecompressImpl() {
-   }
- 
--  virtual io::Result<io::IoBuf*> Decompress(std::string_view str) = 0;
-+  virtual io::Result<io::IoBuf*> Decompress(std::string_view str, size_t max_uncomp_size) = 0;
- 
-  protected:
-   io::IoBuf uncompressed_mem_buf_;
-+
-+  bool GrowBuffer(size_t declared_size) {
-+    if (uncompressed_mem_buf_.InputLen() >= declared_size)
-+      return false;
-+    uncompressed_mem_buf_.Reserve(uncompressed_mem_buf_.InputLen() + 1);
-+    return !uncompressed_mem_buf_.AppendBuffer().empty();
-+  }
-+
-+  io::IoBuf* AppendEndOpcode() {
-+    uint8_t op = RDB_OPCODE_COMPRESSED_BLOB_END;
-+    uncompressed_mem_buf_.WriteAndCommit(&op, 1);
-+    return &uncompressed_mem_buf_;
-+  }
- };
- 
- }  // namespace detail
-```
-
-**File**: `src/server/rdb_extensions.h` (modified, +2/-0)
-```diff
-@@ -52,6 +52,8 @@ constexpr uint8_t RDB_OPCODE_COMPRESSED_ZSTD_BLOB_START = 201;
- constexpr uint8_t RDB_OPCODE_COMPRESSED_LZ4_BLOB_START = 202;
- constexpr uint8_t RDB_OPCODE_COMPRESSED_BLOB_END = 203;
- 
-+constexpr size_t kMaxCompressedBlobSize = 2ULL << 30;
-+
- constexpr uint8_t RDB_OPCODE_JOURNAL_BLOB = 210;
- 
- // A full sync will continue to send information in journal blobs until the replica
-```
-
-**File**: `src/server/rdb_load.cc` (modified, +105/-11)
-```diff
-@@ -1255,6 +1255,9 @@ auto RdbLoaderBase::FetchBuf(size_t size, void* dest) -> Error {
- 
-   next += to_copy;
- 
-+  if (mem_buf_ != &origin_mem_buf_)
-+    return RdbError(errc::rdb_file_corrupted);
-+
-   if (size + bytes_read_ > source_limit_) {
-     return Fail(errc::rdb_file_corrupted)
-            << "out of bound read " << size + bytes_read_ << " > " << source_limit_;
-@@ -1318,6 +1321,19 @@ size_t RdbLoaderBase::StrLen(const RdbVariant& tset) {
-   return 0;
- }
- 
-+bool RdbLoaderBase::ExceedsRemainingInput(uint64_t n, std::string_view what,
-+                                          size_t min_entry_bytes) {
-+  DCHECK_GT(min_entry_bytes, 0u);
-+  size_t remaining = RemainingBytes();
-+  if (remaining == SIZE_MAX)
-+    return false;
-+  if (n > remaining / min_entry_bytes) {
-+    LOG(ERROR) << "Bad " << what << " " << n << ", exceeds remaining input " << remaining;
-+    return true;
-+  }
-+  return false;
-+}
-+
- auto RdbLoaderBase::FetchGenericString() -> io::Result<string> {
-   bool isencoded;
-   size_t len;
-@@ -1338,6 +1354,10 @@ auto RdbLoaderBase::FetchGenericString() -> io::Result<string> {
-     }
-   }
- 
-+  if (ExceedsRemainingInput(len, "string length")) {
-+    return Unexpected(errc::rdb_file_corrupted);
-+  }
-+
-   string res;
- 
-   if (len > 0) {
-@@ -1360,11 +1380,18 @@ auto RdbLoaderBase::FetchLzfStringObject() -> io::Result<string> {
-   SET_OR_UNEXPECT(LoadLen(NULL), clen);
-   SET_OR_UNEXPECT(LoadLen(NULL), len);
- 
--  // TODO serialization and deserialization for data > 512 MB should be done via chunks
-   if (len <= clen || clen == 0) {
-     LOG(ERROR) << "Bad compressed string";
-     return Unexpected(rdb::rdb_file_corrupted);
-   }
-+  constexpr uint64_t kMaxLzfExpansion = 128;
-+  if (len / kMaxLzfExpansion > clen) {
-+    LOG(ERROR) << "Bad uncompressed length " << len << " for compressed length " << clen;
-+    return Unexpected(errc::rdb_file_corrupted);
-+  }
-+  if (ExceedsRemainingInput(clen, "compressed length")) {
-+    return Unexpected(errc::rdb_file_corrupted);
-+  }
- 
-   if (mem_buf_->InputLen() >= clen) {
-     cbuf = mem_buf_->InputBuffer().data();
-@@ -2042,8 +2069,16 @@ auto RdbLoaderBase::ReadStreams(int rdbtype) -> io::Result<OpaqueObj> {
-   }
- 
-   /* Consumer groups loading */
-+  constexpr size_t kMinCgroupWireBytes = 5;
-+  constexpr size_t kMinPelWireBytes = 25;
-+  constexpr size_t kMinConsumerWireBytes = 10;
-+  constexpr size_t kMinNackWireBytes = 16;
-+
-   uint64_t cgroups_count;
-   SET_OR_UNEXPECT(LoadLen(nullptr), cgroups_count);
-+  if (ExceedsRemainingInput(cgroups_count, "stream cgroups count", kMinCgroupWireBytes)) {
-+    return Unexpected(errc::rdb_file_corrupted);
-+  }
-   load_trace->stream_trace->cgroup.resize(cgroups_count);
- 
-   for (size_t i = 0; i < cgroups_count; ++i) {
-@@ -2075,6 +2110,9 @@ auto RdbLoaderBase::ReadStreams(int rdbtype) -> io::Result<OpaqueObj> {
-     uint64_t pel_size;
-     SET_OR_UNEXPECT(LoadLen(nullptr), pel_size);
- 
-+    if (ExceedsRemainingInput(pel_size, "stream pel count", kMinPelWireBytes)) {
-+      return Unexpected(errc::rdb_file_corrupted);
-+    }
-     cgroup.pel_arr.resize(pel_size);
- 
-     for (size_t j = 0; j < pel_size; ++j) {
-@@ -2093,6 +2131,9 @@ auto RdbLoaderBase::ReadStreams(int rdbtype) -> io::Result<OpaqueObj> {
-      * consumers and their local PELs. */
-     uint64_t consumers_num;
-     SET_OR_UNEXPECT(LoadLen(nullptr), consumers_num);
-+    if (ExceedsRemainingInput(consumers_num, "stream consumers count", kMinConsumerWireBytes)) {
-+      return Unexpected(errc::rdb_file_corrupted);
-+    }
-     cgroup.cons_arr.resize(consumers_num);
- 
-     for (size_t j = 0; j < consumers_num; ++j) {
-@@ -2113,6 +2154,9 @@ auto RdbLoaderBase::ReadStreams(int rdbtype) -> io::Result<OpaqueObj> {
-       /* Load the PEL about entries owned by this specific
-        * consumer. */
-       SET_OR_UNEXPECT(LoadLen(nullptr), pel_size);
-+      if (ExceedsRemainingInput(pel_size, "stream consumer pel count", kMinNackWireBytes)) {
-+        return Unexpected(errc::rdb_file_corrupted);
-+      }
-       consumer.nack_arr.resize(pel_size);
-       for (size_t k = 0; k < pel_size; ++k) {
-         auto& nack = consumer.nack_arr[k];
-@@ -2286,6 +2330,9 @@ auto RdbLoaderBase::ReadSBFImpl(bool filter_is_chunked) -> io::Result<OpaqueObj>
-       SET_OR_UNEXPECT(LoadLen(nullptr), total_size);
-       if (total_size == 0)
-         return Unexpected(errc::rdb_file_corrupted);
-+      if (ExceedsRemainingInput(total_size, "sbf filter size")) {
-+        return Unexpected(errc::rdb_file_corrupted);
-+      }
- 
-       // This size is fixed and never changes. It acts as a limit of how much to read.
-       filter_data.resize(total_size);
-@@ -2361,6 +2408,8 @@ auto RdbLoaderBase::ReadTOPK() -> io::Result<OpaqueObj> {
-   // Validate heap size doesn't exceed k (max items we track)
-   if (heap_size > k)
-     return Unexpected(errc::rdb_file_corrupted);
-+  if (ExceedsRemainingInput(heap_size, "topk heap size", 2))
-+    return Unexpected(errc::rdb_file_corrupted);
- 
-   res.heap_items.reserve(heap_size);
-
-```
-
-**File**: `src/server/rdb_load.h` (modified, +9/-1)
-```diff
-@@ -3,6 +3,7 @@
- //
- #pragma once
- 
-+#include <functional>
- #include <source_location>
- #include <system_error>
- 
-@@ -286,7 +287,9 @@ class RdbLoaderBase {
- 
-   Error EnsureReadInternal(size_t min_to_read);
- 
--  // Upper bound on bytes a bounded source can still supply; SIZE_MAX when unbounded (file load).
-+  bool ExceedsRemainingInput(uint64_t n, std::string_view what, size_t min_entry_bytes = 1);
-+
-+  // Upper bound on bytes a bounded source can still supply; SIZE_MAX when no limit is set.
-   // Used to reject a declared length/count before allocating for it (a crafted RESTORE OOM).
-   size_t RemainingBytes() const {
-     if (source_limit_ == SIZE_MAX)
-@@ -325,6 +328,7 @@ class RdbLoaderBase {
- 
-   size_t bytes_read_ = 0;
-   size_t source_limit_ = SIZE_MAX;
-+  std::function<size_t()> size_provider_;
-   base::PODArray<uint8_t> compr_buf_;
-   std::unique_ptr<detail::DecompressImpl> decompress_impl_;
-   std::optional<uint64_t> journal_offset_ = std::nullopt;
-@@ -374,6 +378,10 @@ class RdbLoader : protected RdbLoaderBase {
-     source_limit_ = n;
-   }
- 
-+  void set_source_size_provider(std::function<size_t()> provider) {
-+    size_provider_ = std::move(provider);
-+  }
-+
-   ::io::Bytes Leftover() const {
-     return mem_buf_->InputBuffer();
-   }
-```
-
-**File**: `src/server/rdb_test.cc` (modified, +484/-9)
-```diff
-@@ -11,15 +11,19 @@ extern "C" {
- #include "redis/zmalloc.h"
- }
- 
-+#include <absl/cleanup/cleanup.h>
- #include <absl/flags/reflection.h>
-+#include <lz4frame.h>
- #include <mimalloc.h>
- #include <sys/resource.h>
-+#include <zstd.h>
- 
- #include <filesystem>
- #include <fstream>
- 
- #include "base/flags.h"
- #include "base/gtest.h"
-+#include "base/hash.h"
- #include "base/logging.h"
- #include "core/bloom.h"
- #include "core/cuckoo.h"
-@@ -127,6 +131,16 @@ class RdbTest : public BaseFamilyTest {
-       return loader.Load(&src);
-     });
-   }
-+
-+  std::error_code LoadRdbBounded(const std::string& rdb) {
-+    return pp_->at(0)->Await([&] {
-+      io::BytesSource src{io::Buffer(rdb)};
-+      RdbLoadContext load_context;
-+      RdbLoader loader(service_.get(), &load_context);
-+      loader.set_source_limit(rdb.size());
-+      return loader.Load(&src);
-+    });
-+  }
- };
- 
- void RdbTest::SetUp() {
-@@ -2207,6 +2221,476 @@ void AddKV(std::string* out, std::string_view key, std::string_view val) {
-   AppendString(out, val);
- }
- 
-+void AppendDbHeader(std::string* body) {
-+  body->push_back(static_cast<char>(RDB_OPCODE_SELECTDB));
-+  AppendLen(body, 0);
-+  body->push_back(static_cast<char>(RDB_OPCODE_RESIZEDB));
-+  AppendLen(body, 0);
-+  AppendLen(body, 0);
-+}
-+
-+void AppendBinaryDouble(std::string* out, double val) {
-+  uint64_t bits;
-+  memcpy(&bits, &val, sizeof(bits));
-+
-+  uint8_t buf[8];
-+  absl::little_endian::Store64(buf, bits);
-+  out->append(reinterpret_cast<const char*>(buf), sizeof(buf));
-+}
-+
-+TEST_F(RdbTest, LoadRejectsHugeDeclaredLength) {
-+  string body;
-+  AppendDbHeader(&body);
-+  body.push_back(static_cast<char>(RDB_TYPE_STRING));
-+  AppendLen(&body, 1ULL << 60);
-+
-+  const string rdb_file = absl::StrCat("rdb_sourcelimit_", getpid(), ".rdb");
-+  io::WriteStringToFileOrDie(WrapInRdb(body), rdb_file);
-+  auto cleanup = absl::MakeCleanup([&] { unlink(rdb_file.c_str()); });
-+
-+  auto fut = service_->server_family().Load(rdb_file, ServerFamily::LoadExistingKeys::kFail);
-+  ASSERT_TRUE(fut.has_value());
-+  auto err = static_cast<std::error_code>(fut->Get());
-+
-+  EXPECT_EQ(err, RdbError(rdb::errc::rdb_file_corrupted));
-+}
-+
-+TEST_F(RdbTest, LoadRejectsTruncatedFile) {
-+  string body;
-+  body.push_back(static_cast<char>(RDB_OPCODE_SELECTDB));
-+  AppendLen(&body, 0);
-+  string rdb = WrapInRdb(body);
-+  rdb.resize(rdb.size() - 9);
-+
-+  EXPECT_EQ(LoadRdbBounded(rdb), RdbError(rdb::errc::rdb_file_corrupted));
-+}
-+
-+TEST_F(RdbTest, LoadRejectsHugeLzfKey) {
-+  string body;
-+  AppendDbHeader(&body);
-+  body.push_back(static_cast<char>(RDB_TYPE_STRING));
-+  body.push_back(static_cast<char>((RDB_ENCVAL << 6) | RDB_ENC_LZF));
-+  AppendLen(&body, 1);
-+  AppendLen(&body, 1ULL << 60);
-+  body.push_back('\x00');
-+
-+  EXPECT_EQ(LoadRdbBounded(WrapInRdb(body)), RdbError(rdb::errc::rdb_file_corrupted));
-+}
-+
-+TEST_F(RdbTest, LoadRejectsHugeLzfCompressedLength) {
-+  string body;
-+  AppendDbHeader(&body);
-+  body.push_back(static_cast<char>(RDB_TYPE_STRING));
-+  body.push_back(static_cast<char>((RDB_ENCVAL << 6) | RDB_ENC_LZF));
-+  AppendLen(&body, 500);
-+  AppendLen(&body, 1000);
-+
-+  EXPECT_EQ(LoadRdbBounded(WrapInRdb(body)), RdbError(rdb::errc::rdb_file_corrupted));
-+}
-+
-+void AppendEmptyStreamValue(std::string* body) {
-+  AppendLen(body, 0);
-+  AppendLen(body, 0);
-+  AppendLen(body, 0);
-+  AppendLen(body, 0);
-+  AppendLen(body, 0);
-+  AppendLen(body, 0);
-+  AppendLen(body, 0);
-+  AppendLen(body, 0);
-+  AppendLen(body, 0);
-+}
-+
-+TEST_F(RdbTest, LoadRejectsHugeStreamCgroupsCount) {
-+  string body;
-+  AppendDbHeader(&body);
-+  body.push_back(static_cast<char>(RDB_TYPE_STREAM_LISTPACKS_3));
-+  AppendString(&body, "k");
-+  AppendEmptyStreamValue(&body);
-+  AppendLen(&body, 1ULL << 60);
-+
-+  EXPECT_EQ(LoadRdbBounded(WrapInRdb(body)), RdbError(rdb::errc::rdb_file_corrupted));
-+}
-+
-+TEST_F(RdbTest, LoadRejectsHugeStreamPelCount) {
-+  string body;
-+  AppendDbHeader(&body);
-+  body.push_back(static_cast<char>(RDB_TYPE_STREAM_LISTPACKS_3));
-+  AppendString(&body, "k");
-+  AppendEmptyStreamValue(&body);
-+  AppendLen(&body, 1);
-+  AppendString(&body, "");
-+  AppendLen(&body, 0);
-+  AppendLen(&body, 0);
-+  AppendLen(&body, 0);
-+  AppendLen(&body, 1ULL << 60);
-+
-+  EXPECT_EQ(LoadRdbBounded(WrapInRdb(body)), RdbError(rdb::errc::rdb_file_corrupted));
-+}
-+
-+void AppendInt64(std::string* out, int64_t val) {
-+  uint8_t buf[8];
-+  absl::little_endian::Store64(buf, static_cast<uint64_t>(val));
-+  out->append(reinterpret_cast<const char*>(buf), sizeof(buf));
-+}
-+
-+TEST_F(RdbTest, LoadAcceptsLegacyStream) {
-+  string body;
-+  AppendDbHeader(&body);
-+  body.push_back(static_cast<char>(RDB_TYPE_STREAM_LISTPACKS));
-+  AppendString(&body, "k");
-+  AppendLen(&body, 0);
-+  AppendLen(&body, 0);
-+  AppendLen(&body, 0);
-+  AppendLen(&body, 0);
-+  AppendLen(&body, 1);
-+  AppendString(&body, "g");
-+  AppendLen(&body, 0);
-+  AppendLen(&body, 0);
-+  AppendLen(&body, 0);
-+  AppendLen(&body, 2);
-+  AppendString(&body, "a");
-+  AppendInt64(&body, 0);
-+  AppendLen(&body, 0
-```
-
-**File**: `src/server/server_family.cc` (modified, +1/-0)
-```diff
-@@ -2188,6 +2188,7 @@ std::error_code ServerFamily::LoadRdb(const std::string& rdb_file, LoadExistingK
- 
-     RdbLoader loader{&service_, load_context, filt_snapshot_id};
-     loader.SetShardCount(load_opts->shard_count);
-+    loader.set_source_size_provider([file = res.value()] { return file->Size(); });
-     if (existing_keys == LoadExistingKeys::kOverride) {
-       loader.SetOverrideExistingKeys(true);
-     }
-```
-
----
-
-### Incident Patch 2: `a26b5651` (2026-11-24)
-**Commit Message**: fix: bump helio (#8873)
+- The expression nodes are a class hierarchy with a type tag, like the query AST, instead of a
+  variant. FilterExpr deletes through FilterExprDeleter, which detaches the children onto an
+  intrusive list and deletes the nodes one by one: constant stack, no allocation.
+- FilterExprEvaluator flattens the tree once per step into postfix code with jumps for && and ||
+  and runs it in a loop for every document; functions are resolved up front and get their
+  arguments as a span over the value stack.
+- The filter lexer reports byte offsets instead of rescanning the line for every token, which
+  made parsing quadratic in the expression length.
 
 Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-**File**: `helio` (modified, +1/-1)
+**File**: `src/server/search/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -1 +1 @@
--Subproject commit 59a4e2562c6a616e46c09c3342faeba3eeea44b8
-+Subproject commit 4a76e32aadc606344d37faa77f1b25bc0a593e0f
+@@ -13,6 +13,7 @@ else()
+   # (same pattern as src/core/search/CMakeLists.txt with dfly_search_core).
+   add_library(filter_parser_lib
+     filter_driver.cc
++    filter_expr.cc
+     ${gen_dir}/filter_lexer.cc
+     ${gen_dir}/filter_parser.cc)
+ 
+```
+
+**File**: `src/server/search/aggregator.cc` (modified, +4/-2)
+```diff
+@@ -254,7 +254,8 @@ AggregationStep MakeLimitStep(size_t offset, size_t num) {
+ 
+ void Aggregator::DoFilter(const FilterExprNode& expr) {
+   auto& values = result.values;
+-  std::erase_if(values, [&](const DocValues& doc) { return !IsTruthy(EvalFilterExpr(expr, doc)); });
++  FilterExprEvaluator eval{expr};
++  std::erase_if(values, [&](const DocValues& doc) { return !IsTruthy(eval.Eval(doc)); });
+ }
+ 
+ std::variant<AggregationStep, std::string> MakeFilterStep(std::string_view raw_expr) {
+@@ -275,8 +276,9 @@ std::variant<AggregationStep, std::string> MakeApplyStep(std::string_view raw_ex
+ 
+   auto shared = std::shared_ptr<FilterExprNode>(std::get<FilterExpr>(std::move(parsed)).release());
+   return AggregationStep{[shared, alias = std::move(alias)](Aggregator* agg) {
++    FilterExprEvaluator eval{*shared};
+     for (auto& doc : agg->result.values) {
+-      doc[alias] = EvalFilterExpr(*shared, doc);
++      doc[alias] = eval.Eval(doc);
+     }
+     agg->result.fields_to_print.insert(alias);
+   }};
+```
+
+**File**: `src/server/search/filter_eval.cc` (modified, +154/-65)
+```diff
+@@ -8,6 +8,7 @@
+ #include <variant>
+ #include <vector>
+ 
++#include "base/logging.h"
+ #include "server/search/filter_functions.h"
+ 
+ namespace dfly::aggregate {
+@@ -24,9 +25,6 @@ bool IsTruthy(const Value& v) {
+ 
+ namespace {
+ 
+-// Forward declaration for mutual recursion.
+-Value EvalNode(const FilterExprNode& node, const DocValues& doc);
+-
+ // Comparison evaluation
+ Value EvalCmp(CmpOp op, const Value& lhs, const Value& rhs) {
+   // Numeric comparison when both sides are doubles.
+@@ -101,81 +99,172 @@ Value EvalArith(ArithOp op, const Value& lhs, const Value& rhs) {
+   return {};
+ }
+ 
+-// Visitor
+-struct EvalVisitor {
+-  const DocValues& doc;
+-
+-  Value operator()(const FieldRef& n) const {
+-    auto it = doc.find(n.name);
+-    return it != doc.end() ? it->second : Value{};
+-  }
+-
+-  Value operator()(const NumLiteral& n) const {
+-    return n.value;
+-  }
+-
+-  Value operator()(const StrLiteral& n) const {
+-    return n.value;
+-  }
+-
+-  Value operator()(const NullLiteral& /*n*/) const {
+-    return {};
+-  }
++}  // namespace
+ 
+-  Value operator()(const CmpExpr& n) const {
+-    return EvalCmp(n.op, EvalNode(*n.lhs, doc), EvalNode(*n.rhs, doc));
+-  }
++FilterExprEvaluator::FilterExprEvaluator(const FilterExprNode& root) {
++  using Type = FilterExprNode::Type;
++  struct Pending {
++    const FilterExprNode* node;
++    uint32_t done;  // children already compiled
++    uint32_t jump;  // kAnd or kOr instruction to patch
++  };
+ 
+-  Value operator()(const ArithExpr& n) const {
+-    return EvalArith(n.op, EvalNode(*n.lhs, doc), EvalNode(*n.rhs, doc));
+-  }
++  std::vector<Pending> pending{{&root, 0, 0}};
++  while (!pending.empty()) {
++    Pending& p = pending.back();
++    const FilterExprNode* child = nullptr;
++    auto emit = [&](Op op, uint32_t arg = 0, const FuncImpl* fn = nullptr) {
++      code_.push_back({op, arg, p.node, fn});
++    };
++    auto binary = [&](const auto& n, Op op) {
++      if (p.done < 2)
++        child = p.done == 0 ? n.lhs.get() : n.rhs.get();
++      else
++        emit(op);
++    };
++    auto unary = [&](const auto& n, Op op) {
++      if (p.done == 0)
++        child = n.operand.get();
++      else
++        emit(op);
++    };
+ 
+-  Value operator()(const LogicExpr& n) const {
+-    if (n.op == LogicOp::AND) {
+-      // Short-circuit: don't evaluate RHS if LHS is false.
+-      if (!IsTruthy(EvalNode(*n.lhs, doc)))
+-        return 0.0;
+-      return IsTruthy(EvalNode(*n.rhs, doc)) ? 1.0 : 0.0;
++    switch (p.node->type()) {
++      case Type::FIELD_REF:
++        emit(Op::kField);
++        break;
++      case Type::NUM_LITERAL:
++        emit(Op::kNum);
++        break;
++      case Type::STR_LITERAL:
++        emit(Op::kStr);
++        break;
++      case Type::NULL_LITERAL:
++        emit(Op::kNull);
++        break;
++      case Type::CMP:
++        binary(static_cast<const CmpExpr&>(*p.node), Op::kCmp);
++        break;
++      case Type::ARITH:
++        binary(static_cast<const ArithExpr&>(*p.node), Op::kArith);
++        break;
++      case Type::NOT:
++        unary(static_cast<const NotExpr&>(*p.node), Op::kNot);
++        break;
++      case Type::NEGATE:
++        unary(static_cast<const NegateExpr&>(*p.node), Op::kNegate);
++        break;
++      case Type::LOGIC: {
++        const auto& n = static_cast<const LogicExpr&>(*p.node);
++        if (p.done == 0) {
++          child = n.lhs.get();
++        } else if (p.done == 1) {
++          p.jump = code_.size();
++          emit(n.op == LogicOp::AND ? Op::kAnd : Op::kOr);
++          child = n.rhs.get();
++        } else {
++          emit(Op::kToBool);
++          code_[p.jump].arg = code_.size();
++        }
++        break;
++      }
++      case Type::FUNC_CALL: {
++        const auto& n = static_cast<const FuncCallExpr&>(*p.node);
++        const FuncImpl* fn = FindFilterFunction(n.name);
++        if (!fn)
++          emit(Op::kNull);  // unknown function -> null, its arguments are not evaluated
++        else if (p.done < n.args.size())
++          child = n.args[p.done].get();
++        else
++          emit(Op::kCall, n.args.size(), fn);
++        break;
++      }
+     }
+-    // OR: short-circuit if LHS is true.
+-    if (IsTruthy(EvalNode(*n.lhs, doc)))
+-      return 1.0;
+-    return IsTruthy(EvalNode(*n.rhs, doc)) ? 1.0 : 0.0;
+-  }
+ 
+-  Value operator()(const NotExpr& n) const {
+-    return IsTruthy(EvalNode(*n.operand, doc)) ? 0.0 : 1.0;
+-  }
+-
+-  Value operator()(const NegateExpr& n) const {
+-    Value v = EvalNode(*n.operand, doc);
+-    if (!std::holds_alternative<double>(v))
+-      return {};
+-    return -std::get<double>(v);
++    if (child) {
++      ++p.done;
++      pending.push_back({child, 0, 0});
++    } else {
++      pending.pop_back();
++    }
+   }
++}
+ 
+-  Value operator()(const FuncCallExpr& n) const {
+-    const FuncImpl* fn = FindFilterFunction(n.name);
+-    if (!fn)
+-      return {};  // unknown function -> null
++Value FilterExprEvaluator::Eval(const DocValues& doc) {
++  stack_.clear();
+ 
+-    std::vector<Value> arg_vals;
+-    arg_vals.reserve(n.args.size());
+-    for (
+```
+
+**File**: `src/server/search/filter_eval.h` (modified, +37/-0)
+```diff
+@@ -4,8 +4,11 @@
+ 
+ #pragma once
+ 
++#include <vector>
++
+ #include "server/search/aggregator.h"
+ #include "server/search/filter_expr.h"
++#include "server/search/filter_functions.h"
+ 
+ namespace dfly::aggregate {
+ 
+@@ -15,6 +18,40 @@ namespace dfly::aggregate {
+ //   empty string     -> false,  non-empty string  -> true
+ bool IsTruthy(const Value& v);
+ 
++// Flattens the tree once into postfix code with jumps; the tree must outlive the evaluator.
++class FilterExprEvaluator {
++ public:
++  explicit FilterExprEvaluator(const FilterExprNode& root);
++
++  Value Eval(const DocValues& doc);
++
++ private:
++  enum class Op : uint8_t {
++    kField,
++    kNum,
++    kStr,
++    kNull,
++    kCmp,
++    kArith,
++    kAnd,
++    kOr,
++    kToBool,
++    kNot,
++    kNegate,
++    kCall
++  };
++
++  struct Instr {
++    Op op;
++    uint32_t arg;  // jump target of kAnd and kOr, argument count of kCall
++    const FilterExprNode* node;
++    const FuncImpl* fn;
++  };
++
++  std::vector<Instr> code_;
++  std::vector<Value> stack_;
++};
++
+ // Evaluate the filter expression AST against a single document.
+ // Returns a Value; use IsTruthy() to convert the result to a boolean for
+ // filtering purposes.
+```
+
+**File**: `src/server/search/filter_expr.cc` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++// Copyright 2026, DragonflyDB authors.  All rights reserved.
++// See LICENSE for licensing terms.
++//
++
++#include "server/search/filter_expr.h"
++
++namespace dfly::aggregate {
++
++void FilterExprDeleter::operator()(FilterExprNode* node) const noexcept {
++  if (!node)
++    return;
++
++  // Detach children before deleting their owner. The intrusive work list needs no allocation,
++  // even when a failed parse is being unwound after an allocation failure.
++  FilterExprNode* pending = node;
++  node->teardown_next_ = nullptr;
++  while (pending) {
++    node = pending;
++    pending = node->teardown_next_;
++    node->Destroy(pending);
++  }
++}
++
++}  // namespace dfly::aggregate
+```
+
+**File**: `src/server/search/filter_expr.h` (modified, +118/-24)
+```diff
+@@ -6,6 +6,7 @@
+ 
+ #include <memory>
+ #include <string>
++#include <utility>
+ #include <variant>
+ #include <vector>
+ 
+@@ -14,29 +15,113 @@ namespace dfly::aggregate {
+ // Forward declaration -- FilterExpr is a pointer to a node
+ struct FilterExprNode;
+ 
++// Keeps destruction of deeply nested expressions iterative and allocation-free.
++struct FilterExprDeleter {
++  FilterExprDeleter() = default;
++
++  // Allow nodes created with std::make_unique to transfer ownership into FilterExpr.
++  template <typename T> FilterExprDeleter(std::default_delete<T>) {
++  }
++
++  void operator()(FilterExprNode* node) const noexcept;
++};
++
+ // Owning pointer to a filter expression node.
+ // Enables recursive structures (nodes contain children of the same type).
+-using FilterExpr = std::unique_ptr<FilterExprNode>;
++using FilterExpr = std::unique_ptr<FilterExprNode, FilterExprDeleter>;
++
++// Nodes own their children through FilterExpr.
++struct FilterExprNode {
++  enum class Type {
++    FIELD_REF,
++    NUM_LITERAL,
++    STR_LITERAL,
++    NULL_LITERAL,
++    CMP,
++    ARITH,
++    LOGIC,
++    NOT,
++    NEGATE,
++    FUNC_CALL,
++  };
++
++  virtual ~FilterExprNode() = default;
++  FilterExprNode(const FilterExprNode&) = delete;
++  FilterExprNode& operator=(const FilterExprNode&) = delete;
++
++  Type type() const {
++    return type_;
++  }
++
++ protected:
++  explicit FilterExprNode(Type type) : type_{type} {
++  }
++
++  static void EnqueueChild(FilterExpr& child, FilterExprNode*& pending) noexcept {
++    if (auto* node = child.release()) {
++      node->teardown_next_ = pending;
++      pending = node;
++    }
++  }
++
++ private:
++  friend struct FilterExprDeleter;
++  virtual void Destroy(FilterExprNode*& pending) noexcept = 0;
++
++  const Type type_;
++  FilterExprNode* teardown_next_ = nullptr;
++};
++
++template <typename Derived, FilterExprNode::Type kNodeType>
++struct TypedFilterExprNode : FilterExprNode {
++ protected:
++  TypedFilterExprNode() : FilterExprNode(kNodeType) {
++  }
++
++ private:
++  void Destroy(FilterExprNode*& pending) noexcept final {
++    auto& self = static_cast<Derived&>(*this);
++    if constexpr (requires { self.rhs; }) {
++      EnqueueChild(self.lhs, pending);
++      EnqueueChild(self.rhs, pending);
++    } else if constexpr (requires { self.operand; }) {
++      EnqueueChild(self.operand, pending);
++    } else if constexpr (requires { self.args; }) {
++      for (auto& arg : self.args)
++        EnqueueChild(arg, pending);
++    }
++    delete &self;
++  }
++};
+ 
+ // Leaf nodes
+ 
+ // Reference to a pipeline field: @fieldname (stored without '@')
+-struct FieldRef {
++struct FieldRef final : TypedFilterExprNode<FieldRef, FilterExprNode::Type::FIELD_REF> {
++  explicit FieldRef(std::string name) : name{std::move(name)} {
++  }
++
+   std::string name;
+ };
+ 
+ // Numeric literal: 3.14, 1e5, inf
+-struct NumLiteral {
++struct NumLiteral final : TypedFilterExprNode<NumLiteral, FilterExprNode::Type::NUM_LITERAL> {
++  explicit NumLiteral(double value) : value{value} {
++  }
++
+   double value;
+ };
+ 
+ // String literal: 'hello' or "hello"
+-struct StrLiteral {
++struct StrLiteral final : TypedFilterExprNode<StrLiteral, FilterExprNode::Type::STR_LITERAL> {
++  explicit StrLiteral(std::string value) : value{std::move(value)} {
++  }
++
+   std::string value;
+ };
+ 
+ // NULL literal
+-struct NullLiteral {};
++struct NullLiteral final : TypedFilterExprNode<NullLiteral, FilterExprNode::Type::NULL_LITERAL> {};
+ 
+ // Operator enums
+ 
+@@ -46,52 +131,61 @@ enum class LogicOp { AND, OR };
+ 
+ // Composite nodes (children stored as FilterExpr / unique_ptr)
+ 
+-struct CmpExpr {
++struct CmpExpr final : TypedFilterExprNode<CmpExpr, FilterExprNode::Type::CMP> {
++  CmpExpr(CmpOp op, FilterExpr lhs, FilterExpr rhs)
++      : op{op}, lhs{std::move(lhs)}, rhs{std::move(rhs)} {
++  }
++
+   CmpOp op;
+   FilterExpr lhs, rhs;
+ };
+ 
+-struct ArithExpr {
++struct ArithExpr final : TypedFilterExprNode<ArithExpr, FilterExprNode::Type::ARITH> {
++  ArithExpr(ArithOp op, FilterExpr lhs, FilterExpr rhs)
++      : op{op}, lhs{std::move(lhs)}, rhs{std::move(rhs)} {
++  }
++
+   ArithOp op;
+   FilterExpr lhs, rhs;
+ };
+ 
+ // Logical AND / OR
+-struct LogicExpr {
++struct LogicExpr final : TypedFilterExprNode<LogicExpr, FilterExprNode::Type::LOGIC> {
++  LogicExpr(LogicOp op, FilterExpr lhs, FilterExpr rhs)
++      : op{op}, lhs{std::move(lhs)}, rhs{std::move(rhs)} {
++  }
++
+   LogicOp op;
+   FilterExpr lhs, rhs;
+ };
+ 
+ // Logical NOT: !operand
+-struct NotExpr {
++struct NotExpr final : TypedFilterExprNode<NotExpr, FilterExprNode::Type::NOT> {
++  explicit NotExpr(FilterExpr operand) : operand{std::move(operand)} {
++  }
++
+   FilterExpr operand;
+ };
+ 
+ // Unary minus: -operand
+-struct NegateExpr {
++struct NegateExpr final : TypedFilterExprNode<NegateExpr, FilterExprNode::Type::NEGATE> {
++  explicit NegateExpr(FilterExpr operand) : operand{std::move(operand)} {
++  }
++
+   FilterExpr operand;
+ };
+ 
+ // Function call: lower(@name), exists(@field), abs(@val), year(@ts), ...
+ // name is always lowercase.
+-struct FuncCallExpr {
+```
+
+**File**: `src/server/search/filter_expr_test.cc` (modified, +4/-0)
+```diff
+@@ -204,13 +204,17 @@ TEST(FilterExprTest, LogicalAnd) {
+   EXPECT_TRUE(EvalBool("@a == 'x' && @b < 1.0", doc));
+   EXPECT_FALSE(EvalBool("@a == 'x' && @b > 1.0", doc));
+   EXPECT_FALSE(EvalBool("@a == 'y' && @b < 1.0", doc));
++  EXPECT_EQ(Eval("1 && @a", doc), Value(1.0));
++  EXPECT_EQ(Eval("@c && 1", doc), Value(0.0));
+ }
+ 
+ TEST(FilterExprTest, LogicalOr) {
+   DocValues doc{{"a", "x"}, {"b", 2.0}};
+   EXPECT_TRUE(EvalBool("@a == 'x' || @b > 5.0", doc));
+   EXPECT_TRUE(EvalBool("@a == 'z' || @b > 1.0", doc));
+   EXPECT_FALSE(EvalBool("@a == 'z' || @b > 5.0", doc));
++  EXPECT_EQ(Eval("0 || @b", doc), Value(1.0));
++  EXPECT_EQ(Eval("@a || 0", doc), Value(1.0));
+ }
+ 
+ TEST(FilterExprTest, LogicalNot) {
+```
+
+**File**: `src/server/search/filter_parser.y` (modified, +22/-31)
+```diff
+@@ -44,6 +44,7 @@
+   #define yylex driver->scanner()->Lex
+ 
+   using namespace dfly::aggregate;
++  using std::make_unique;
+ 
+   static double ParseNumber(const std::string& s) {
+     if (s == "inf")
+@@ -53,11 +54,6 @@
+     DCHECK(ok) << "invalid number token: " << s;
+     return v;
+   }
+-
+-  template <typename T>
+-  static FilterExpr MakeNode(T val) {
+-    return std::make_unique<FilterExprNode>(std::move(val));
+-  }
+ }
+ 
+ %parse-param { FilterDriver* driver }
+@@ -120,33 +116,28 @@ final_expr:
+ ;
+ 
+ expr:
+-    expr OP_OR  expr  { $$ = MakeNode(LogicExpr{LogicOp::OR,  std::move($1), std::move($3)}); }
+-  | expr OP_AND expr  { $$ = MakeNode(LogicExpr{LogicOp::AND, std::move($1), std::move($3)}); }
+-  | OP_NOT expr       { $$ = MakeNode(NotExpr{std::move($2)}); }
+-  | expr OP_EQ  expr  { $$ = MakeNode(CmpExpr{CmpOp::EQ,  std::move($1), std::move($3)}); }
+-  | expr OP_NEQ expr  { $$ = MakeNode(CmpExpr{CmpOp::NEQ, std::move($1), std::move($3)}); }
+-  | expr OP_LT  expr  { $$ = MakeNode(CmpExpr{CmpOp::LT,  std::move($1), std::move($3)}); }
+-  | expr OP_LTE expr  { $$ = MakeNode(CmpExpr{CmpOp::LTE, std::move($1), std::move($3)}); }
+-  | expr OP_GT  expr  { $$ = MakeNode(CmpExpr{CmpOp::GT,  std::move($1), std::move($3)}); }
+-  | expr OP_GTE expr  { $$ = MakeNode(CmpExpr{CmpOp::GTE, std::move($1), std::move($3)}); }
+-  | expr OP_PLUS  expr { $$ = MakeNode(ArithExpr{ArithOp::ADD, std::move($1), std::move($3)}); }
+-  | expr OP_MINUS expr { $$ = MakeNode(ArithExpr{ArithOp::SUB, std::move($1), std::move($3)}); }
+-  | expr OP_MUL   expr { $$ = MakeNode(ArithExpr{ArithOp::MUL, std::move($1), std::move($3)}); }
+-  | expr OP_DIV   expr { $$ = MakeNode(ArithExpr{ArithOp::DIV, std::move($1), std::move($3)}); }
+-  | expr OP_MOD   expr { $$ = MakeNode(ArithExpr{ArithOp::MOD, std::move($1), std::move($3)}); }
+-  | expr OP_POW   expr { $$ = MakeNode(ArithExpr{ArithOp::POW, std::move($1), std::move($3)}); }
+-  | OP_MINUS expr %prec UMINUS { $$ = MakeNode(NegateExpr{std::move($2)}); }
+-  | NUMBER  { $$ = MakeNode(NumLiteral{ParseNumber($1)}); }
+-  | STRING  { $$ = MakeNode(StrLiteral{std::move($1)}); }
+-  | FIELD   { $$ = MakeNode(FieldRef{std::move($1)}); }
+-  | KW_NULL { $$ = MakeNode(NullLiteral{}); }
++    expr OP_OR  expr  { $$ = make_unique<LogicExpr>(LogicOp::OR,  std::move($1), std::move($3)); }
++  | expr OP_AND expr  { $$ = make_unique<LogicExpr>(LogicOp::AND, std::move($1), std::move($3)); }
++  | OP_NOT expr       { $$ = make_unique<NotExpr>(std::move($2)); }
++  | expr OP_EQ  expr  { $$ = make_unique<CmpExpr>(CmpOp::EQ,  std::move($1), std::move($3)); }
++  | expr OP_NEQ expr  { $$ = make_unique<CmpExpr>(CmpOp::NEQ, std::move($1), std::move($3)); }
++  | expr OP_LT  expr  { $$ = make_unique<CmpExpr>(CmpOp::LT,  std::move($1), std::move($3)); }
++  | expr OP_LTE expr  { $$ = make_unique<CmpExpr>(CmpOp::LTE, std::move($1), std::move($3)); }
++  | expr OP_GT  expr  { $$ = make_unique<CmpExpr>(CmpOp::GT,  std::move($1), std::move($3)); }
++  | expr OP_GTE expr  { $$ = make_unique<CmpExpr>(CmpOp::GTE, std::move($1), std::move($3)); }
++  | expr OP_PLUS  expr { $$ = make_unique<ArithExpr>(ArithOp::ADD, std::move($1), std::move($3)); }
++  | expr OP_MINUS expr { $$ = make_unique<ArithExpr>(ArithOp::SUB, std::move($1), std::move($3)); }
++  | expr OP_MUL   expr { $$ = make_unique<ArithExpr>(ArithOp::MUL, std::move($1), std::move($3)); }
++  | expr OP_DIV   expr { $$ = make_unique<ArithExpr>(ArithOp::DIV, std::move($1), std::move($3)); }
++  | expr OP_MOD   expr { $$ = make_unique<ArithExpr>(ArithOp::MOD, std::move($1), std::move($3)); }
++  | expr OP_POW   expr { $$ = make_unique<ArithExpr>(ArithOp::POW, std::move($1), std::move($3)); }
++  | OP_MINUS expr %prec UMINUS { $$ = make_unique<NegateExpr>(std::move($2)); }
++  | NUMBER  { $$ = make_unique<NumLiteral>(ParseNumber($1)); }
++  | STRING  { $$ = make_unique<StrLiteral>(std::move($1)); }
++  | FIELD   { $$ = make_unique<FieldRef>(std::move($1)); }
++  | KW_NULL { $$ = make_unique<NullLiteral>(); }
+   | IDENT LPAREN opt_arg_list RPAREN
+-      {
+-        FuncCallExpr fc;
+-        fc.name = std::move($1);
+-        fc.args = std::move($3);
+-        $$ = MakeNode(std::move(fc));
+-      }
++      { $$ = make_unique<FuncCallExpr>(std::move($1), std::move($3)); }
+   | LPAREN expr RPAREN { $$ = std::move($2); }
+ ;
+ 
 ```
 
 ---
 
-### Incident Patch 3: `101047d3` (2026-11-24)
-**Commit Message**: fix(lua): clear redis.call callback after EVAL and protect error handler (#8866)
+### Incident Patch 2: `e44ed29e` (2026-11-27)
+**Commit Message**: fix(search): reject a LOAD_FROM condition over a single index (#8888)
 
-* fix(lua): clear redis.call callback after EVAL and protect error handler
+FT.AGGREGATE accepted a LOAD_FROM condition whose both fields name the index being joined, for
+example "LOAD_FROM idx2 AS b 1 b.g1=b.g2". The join then looked for the foreign value in an
+index that is not joined yet: a debug build failed a DCHECK, a release build read out of
+bounds and crashed. Such a condition is now a syntax error.
 
-Clear the stale redis.call callback (which captures the request's
-CommandContext) when EVAL finishes, so __gc finalizers run later by
-SCRIPT FLUSH cannot reach a dead context. Move __redis__err__handler
-into the Lua registry so scripts can not replace it, and guard against
-a non-string error result in RunFunction.
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-Signed-off-by: Vladislav Oleshko <[REDACTED_EMAIL]>
-
-**File**: `src/core/interpreter.cc` (modified, +11/-4)
+**File**: `src/server/search/search_family.cc` (modified, +6/-0)
 ```diff
-@@ -290,6 +290,8 @@ bool RedisTranslator::HasError() {
-   return has_error_;
- }
+@@ -826,6 +826,12 @@ ParseResult<AggregateParams::JoinParams> ParseAggregatorJoinParams(
+                                             "'"));
+     }
  
-+constexpr const char kErrHandlerKey[] = "__dfly_err_handler";
++    if (l_index == r_index) {
++      return CreateSyntaxError(
++          absl::StrCat("bad arguments for LOAD_FROM: fields must be from different indexes. Got '",
++                       left, "' and '", right, "'"));
++    }
 +
- void RunSafe(lua_State* lua, string_view buf, const char* name) {
-   CHECK_EQ(0, luaL_loadbuffer(lua, buf.data(), buf.size(), name));
-   int err = lua_pcall(lua, 0, 0, 0);
-@@ -420,7 +422,7 @@ void InitLua(lua_State* lua) {
-   {
-     constexpr char errh_func[] =
-         "local dbg = debug\n"
--        "function __redis__err__handler(err)\n"
-+        "return function(err)\n"
-         "  local i = dbg.getinfo(2,'nSl')\n"
-         "  if i and i.what == 'C' then\n"
-         "    i = dbg.getinfo(3,'nSl')\n"
-@@ -431,7 +433,10 @@ void InitLua(lua_State* lua) {
-         "    return err\n"
-         "  end\n"
-         "end\n";
--    RunSafe(lua, errh_func, "@err_handler_def");
-+    // Keep the handler in the registry so scripts can not replace it.
-+    CHECK_EQ(0, luaL_loadbuffer(lua, errh_func, sizeof(errh_func) - 1, "@err_handler_def"));
-+    CHECK_EQ(0, lua_pcall(lua, 0, 1, 0));
-+    lua_setfield(lua, LUA_REGISTRYINDEX, kErrHandlerKey);
-   }
- 
-   {
-@@ -869,7 +874,7 @@ auto Interpreter::RunFunction(string_view sha, std::string* error) -> RunResult
- 
-   DCHECK_EQ(40u, sha.size());
- 
--  lua_getglobal(lua_, "__redis__err__handler");
-+  lua_getfield(lua_, LUA_REGISTRYINDEX, kErrHandlerKey);
-   char fname[43];
-   fname[0] = 'f';
-   fname[1] = '_';
-@@ -903,7 +908,8 @@ auto Interpreter::RunFunction(string_view sha, std::string* error) -> RunResult
-   }
- 
-   if (err) {
--    *error = lua_tostring(lua_, -1);
-+    const char* msg = lua_isstring(lua_, -1) ? lua_tostring(lua_, -1) : nullptr;
-+    *error = msg ? msg : "unknown script error";
-   }
- 
-   return err == 0 ? RUN_OK : RUN_ERR;
-@@ -1324,6 +1330,7 @@ inline __attribute__((always_inline)) auto Interpreter::SerializeResultInternal(
- 
- void Interpreter::ResetStack() {
-   lua_settop(lua_, 0);
-+  redis_func_ = nullptr;
- }
- 
- int64_t Interpreter::RunGC() {
+     if (l_index == join_params.index_alias) {
+       join_params.conditions.emplace_back(l_field, r_index, r_field);
+     } else if (r_index == join_params.index_alias) {
 ```
 
-**File**: `src/core/interpreter.h` (modified, +2/-0)
+**File**: `src/server/search/search_family_test.cc` (modified, +5/-0)
 ```diff
-@@ -155,6 +155,8 @@ class Interpreter {
-   // Same as above with a budget of max_elements.
-   void SerializeResult(ObjectExplorer* serializer, size_t max_elements);
+@@ -5979,6 +5979,11 @@ TEST_F(SearchFamilyTest, AggregateWithLoadFromSyntaxErrors) {
+       ErrArg("bad arguments for LOAD_FROM: one of the field must be from the current index 'idx3'. "
+              "Got 'idx2.str2' and 'idx1.str1'"));
  
-+  // Resets the stack and drops the redis.call callback, which captures per-request state
-+  // and must not outlive the script run (e.g. be invoked from __gc finalizers).
-   void ResetStack();
- 
-   // run gc and returns size of freed memory in bytes
-```
-
-**File**: `src/core/interpreter_test.cc` (modified, +14/-1)
-```diff
-@@ -1266,6 +1266,19 @@ TEST_F(InterpreterTest, ResetRetiresOnlyBorrowed) {
-   EXPECT_EQ(InterpreterManager::tl_stats().interpreter_cnt, before);
- }
- 
-+TEST_F(InterpreterTest, ErrorHandlerNotReplaceable) {
-+  EXPECT_FALSE(Execute("__redis__err__handler = function() return {} end return 1"));
-+  EXPECT_FALSE(Execute("error('boom')"));
-+  EXPECT_THAT(error_, testing::HasSubstr("boom"));
-+}
++  // Test when both fields are from the same index
++  EXPECT_THAT(Run({"ft.aggregate", "idx1", "*", "LOAD_FROM", "idx2", "1", "idx2.num2=idx2.str2"}),
++              ErrArg("bad arguments for LOAD_FROM: fields must be from different indexes. "
++                     "Got 'idx2.num2' and 'idx2.str2'"));
 +
-+TEST_F(InterpreterTest, ClearedRedisFunc) {
-+  intptr_.SetRedisFunc([](auto ca) { ca.translator->OnStatus("OK"); });
-+  intptr_.ResetStack();
-+  EXPECT_FALSE(Execute("return redis.call('get', 'x')"));
-+  EXPECT_THAT(error_, testing::HasSubstr("redis function not defined"));
-+}
-+
- TEST_F(InterpreterTest, UsedBytesDropsWithInterpreter) {
-   const uint64_t before = InterpreterManager::tl_stats().used_bytes;
-   InterpreterManager im(2);
-@@ -1367,7 +1380,6 @@ static void BM_LuaXReadReply(benchmark::State& state) {
-   script += ")";
- 
-   Interpreter intptr;
--  intptr.SetRedisFunc([&](Interpreter::CallArgs ca) { emit_reply(ca.translator); });
-   auto sha_buf = Interpreter::FuncSha1(script);
-   string_view sha{sha_buf.data(), sha_buf.size()};
-   string error;
-@@ -1376,6 +1388,7 @@ static void BM_LuaXReadReply(benchmark::State& state) {
-   CountingSerializer reply_size, ser;
-   emit_reply(&reply_size);
-   for (auto _ : state) {
-+    intptr.SetRedisFunc([&](Interpreter::CallArgs ca) { emit_reply(ca.translator); });
-     CHECK_EQ(Interpreter::RUN_OK, intptr.RunFunction(sha, &error)) << error;
-     intptr.SerializeResult(&ser);
-     intptr.ResetStack();  // RunFunction leaves the error handler on the stack
+   // Test when field of index does not exist
+   EXPECT_THAT(Run({"ft.aggregate", "idx1", "*", "LOAD", "2", "idx1.num1", "idx1.str1", "LOAD_FROM",
+                    "idx2", "1", "idx2.num2=idx1.nonexistent_field"}),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8873** (2026-11-24): fix: bump helio (@vyavdoshenko)
-- **PR #8871** (2026-11-23): chore: update helio to abseil 20260817.0 (@vyavdoshenko)
-- **PR #8870** (2026-11-23): fix(zset): handle lex sentinel bounds and unchanged scores in SortedMap (@romange)
-- **PR #8866** (2026-11-24): fix(lua): clear redis.call callback after EVAL and protect error handler (@dranikpg)
-- **PR #8865** (2026-11-23): fix(lua): port Valkey security fixes and lock the global environment (@romange)
-- **PR #8862** (2026-11-22): fix(tests): expect the bare user name from ACL WHOAMI in ExternalAuth (@vyavdoshenko)
+- **PR #8890** (2026-11-27): feat: make OAHMap compatible with StringMap (@BorysTheDev)
+- **PR #8888** (2026-11-27): fix(search): reject a LOAD_FROM condition over a single index (@vyavdoshenko)
+- **PR #8887** (2026-11-27): fix(search): evaluate and destroy FILTER/APPLY expressions without recursion (@vyavdoshenko)
+- **PR #8885** (2026-11-26): feat: store values inline for OAHMap (@BorysTheDev)
+- **PR #8884** (2026-11-27): feat: allow read commands during slot migration finalization (@BorysTheDev)
+- **PR #8883** (2026-11-26): fix(server): Treat nil-arrays as empty containers. (@abhijat)
 
 ---
 
@@ -3100,87 +3019,31 @@ Signed-off-by: Vladislav Oleshko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): bound RDB loader allocations by the source size
+## X. search): evaluate and destroy FILTER/APPLY expressions without recursion
 
 **RULE**:
-When implementing operations in `src/server/detail/decompress.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/search/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9602dd5e`: server): bound RDB loader allocations by the source size. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba5b2ddf`: search): evaluate and destroy FILTER/APPLY expressions without recursion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/detail/decompress.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/search/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-constexpr size_t kInitialDecompressBuffer = 64 * 1024;
-
-  io::Result<io::IoBuf*> Decompress(std::string_view str, size_t max_uncomp_size);
-io::Result<io::IoBuf*> ZstdDecompress::Decompress(std::string_view str, size_t max_uncomp_size) {
-  if (uncomp_size > max_uncomp_size) {
-    LOG(ERROR) << "Zstd frame content size " << uncomp_size << " exceeds the allowed maximum";
-    return Unexpected(errc::rdb_file_corrupted);
-  if (uncomp_size == 0) {
-  uncompressed_mem_buf_.Reserve(std::min<size_t>(uncomp_size + 1, kInitialDecompressBuffer));
-
-  ZSTD_inBuffer in{str.data(), str.size(), 0};
-  while (true) {
-    IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
-    if (dest.empty()) {
-      if (!GrowBuffer(uncomp_size)) {
-        LOG(ERROR) << "Zstd frame decoded past the declared content size";
-        return Unexpected(errc::rdb_file_corrupted);
-      }
-      continue;
-    }
-
-    ZSTD_outBuffer out{dest.data(), dest.size(), 0};
-    size_t prev_in = in.pos;
-    size_t ret = ZSTD_decompressStream(dctx_, &out, &in);
-    if (ZSTD_isError(ret)) {
-      LOG(ERROR) << "Invalid ZSTD compressed string: " << ZSTD_getErrorName(ret);
-      return Unexpected(errc::rdb_file_corrupted);
-    }
-    
+    filter_expr.cc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  io::Result<io::IoBuf*> Decompress(std::string_view str);
-io::Result<io::IoBuf*> ZstdDecompress::Decompress(std::string_view str) {
-
-  uncompressed_mem_buf_.Reserve(uncomp_size + 1);
-
-  // Uncompress string to membuf
-  IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
-  if (dest.size() < uncomp_size) {
-    return Unexpected(errc::out_of_memory);
-  size_t const d_size =
-      ZSTD_decompressDCtx(dctx_, dest.data(), dest.size(), str.data(), str.size());
-  if (d_size == 0 || d_size != uncomp_size) {
-  uncompressed_mem_buf_.CommitWrite(d_size);
-  // Add opcode of compressed blob end to membuf.
-  dest = uncompressed_mem_buf_.AppendBuffer();
-  if (dest.size() < 1) {
-    return Unexpected(errc::out_of_memory);
-  dest[0] = RDB_OPCODE_COMPRESSED_BLOB_END;
-  uncompressed_mem_buf_.CommitWrite(1);
-  return &uncompressed_mem_buf_;
-  io::Result<base::IoBuf*> Decompress(std::string_view str);
-io::Result<base::IoBuf*> Lz4Decompress::Decompress(std::string_view data) {
-    ;
-
-  // reserve place for uncompressed data and end opcode
-  size_t reserve = frame_info.contentSize + 1;
-  uncompressed_mem_buf_.Reserve(reserve);
-  IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
-  if (dest.s
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9602dd5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba5b2ddf` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

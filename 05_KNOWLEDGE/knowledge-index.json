@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T02:50:23.221Z",
+  "last_updated": "2026-11-28T02:59:24.576Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26912,
+  "total_items": 26920,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112245,10 +112245,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "cb5fcfa0",
-      "content_hash": "53d0e1491da031001d2f6d34f713ee37b8dc9ecfd7342519748c044245a44372",
+      "source_version": "977dd16f",
+      "content_hash": "19437f3bd1c7149f69f04ea39d597e45ccd6e3a09386a7f612dd0dd456b4e337",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T13:44:51.403Z"
+      "persisted_at": "2026-11-28T02:59:14.773Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly",
@@ -112257,10 +112257,10 @@
       "relative_path": "08_VERIFICATION/dragonflydb-dragonfly-verification-protocol-empirical-defect-shield-for-dragonfl.md",
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb/dragonfly",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "cb5fcfa0",
-      "content_hash": "607a0168601d49d1fc6181698b749a5c77e121d03bada18bf1e55b5dd30075cd",
+      "source_version": "977dd16f",
+      "content_hash": "835b06b4d3d3ad7dd2ad95c8aaa6d887aa9dad3e60b4ac19e7da84b1cdf0446b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T13:44:51.665Z"
+      "persisted_at": "2026-11-28T02:59:15.001Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -112282,9 +112282,9 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f631e3bfa82b15939dee51d82ccb7322a2de7db1dc3f245410866602da1ab50",
+      "content_hash": "9eb8e4adebc5cbd78d50330c9c6fdc9148d05dd3e87ac91007af0c41fa8cd6e5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T12:29:47.522Z"
+      "persisted_at": "2026-11-28T02:59:22.883Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning",
@@ -112294,9 +112294,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb-dragonfly-learnings",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f0db5f98e6e4ef5e71e470a4983a7b3049602ff6893dc6ac4bec3f9365874c2",
+      "content_hash": "c37c359629735b9196ac1d95b2f3e69c715cddd09a28cbefd227d3f0e0017574",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:23:17.328Z"
+      "persisted_at": "2026-11-28T02:59:23.113Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -221262,8 +221262,8 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "e7a78554",
-      "content_hash": "8e3362aa5d5c54d8c04dd279e6a56897f73f160fba287948545db8742710c7a1",
+      "source_version": "96a37a15",
+      "content_hash": "8a4d765c99642ef24e3ac6f2f4369a6341a3b1febf241f19dd707c4088cbc37f",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [
@@ -221281,6 +221281,11 @@
           "number": 10344,
           "title": "link the public COMPANIONS_LATER in install_runtime_and_enable",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11021,
+          "title": "3.12.8 public CI fixes, second round",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221288,7 +221293,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T19:19:09.932Z",
+      "verified_at": "2026-11-28T02:59:01.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221340,10 +221345,10 @@
       "relative_path": "08_VERIFICATION/yvgude-lean-ctx-verification-protocol-empirical-defect-shield-for-yvgude-lean-ct.md",
       "title": "Verification Protocol: Empirical Defect Shield for yvgude/lean-ctx",
       "repository": "yvgude/lean-ctx",
-      "source_version": "e7a78554",
-      "content_hash": "be4458aa8dcd30432706fd3e1cc0f02b38a3dc1ac7839a481f8f85b0948f0a21",
+      "source_version": "96a37a15",
+      "content_hash": "f804c8be44bab793467cfd58fce0e1b9c1c61e7bfaa3c2e3ff4aaac21f48fca7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:19:10.737Z"
+      "persisted_at": "2026-11-28T02:59:02.253Z"
     },
     "learn-github-invertase-react-native-firebase": {
       "learning_id": "learn-github-invertase-react-native-firebase",
@@ -221734,9 +221739,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yvgude-lean-ctx-learnings",
       "repository": "yvgude-lean-ctx-learnings",
       "source_version": "HEAD",
-      "content_hash": "716d85ddf56022c7a943f5c5e27fcffa49770df8ade6d8fc3e04e2b262749bfe",
+      "content_hash": "f4c59fa5dce8034d49df22954fbb572140ef11234ed08d6679aa8940075ff6e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:19:24.158Z"
+      "persisted_at": "2026-11-28T02:59:21.894Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core",
@@ -231566,8 +231571,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "ba332c5e",
-      "content_hash": "cbc55e53c6dbae6d6bc39b5fdbd1a312e4e51cab0bca09ed9b5b643c80210ced",
+      "source_version": "2eca620d",
+      "content_hash": "ec5dafaaef312c4c408b2e3f42526d9d89a2479b3f513baceba94965ced7ec4b",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231900,6 +231905,11 @@
           "number": 10991,
           "title": "Draft NUC 155 Reactive Reciprocal Square Root",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11023,
+          "title": "Draft NUC 156 Output Counts of Reasoning Selections",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231907,7 +231917,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T23:48:53.401Z",
+      "verified_at": "2026-11-28T02:59:16.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231949,10 +231959,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "ba332c5e",
-      "content_hash": "8008a394c4cd9221b4d39141bdb3706beb18ab4928ae71d7e70f37580e653c23",
+      "source_version": "2eca620d",
+      "content_hash": "0b579280b50f154a6c3404398ed813aac48839000d96de198e1102dc8896c53f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T23:48:54.393Z"
+      "persisted_at": "2026-11-28T02:59:17.742Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231961,10 +231971,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "ba332c5e",
-      "content_hash": "4a337fbd1daa19dc9b871a70423a540cc8516a772f34ea0fdea3a8ff0d814def",
+      "source_version": "2eca620d",
+      "content_hash": "9b441fb377fbf6d99e409a0c6a67659f844e98deff190f84f57912e13d01d8ac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T23:48:54.670Z"
+      "persisted_at": "2026-11-28T02:59:17.975Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -233147,9 +233157,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "de939f92b056495f04be0fccb7ba9286dbe1eaff8cd64fe3cf887c421debd533",
+      "content_hash": "e60fb82427e27a350fe4d191dca139e90a83b127c5f3ae06916699d3d9ef7b75",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T23:48:58.852Z"
+      "persisted_at": "2026-11-28T02:59:24.347Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -233159,9 +233169,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "d445087dd25965cdbe4c2a4114cdea98634780534db9fd9f6801ee828e0ab1eb",
+      "content_hash": "739b4bea2ddbb889f25e67d45be861a0eb31bb390e4b9a4ac46c3e3734b9f381",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T23:48:59.133Z"
+      "persisted_at": "2026-11-28T02:59:24.576Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -241894,8 +241904,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "cb5fcfa0",
-      "content_hash": "8ba9ecb975b18080f8663e49e759088e7dd7a04ade88397cbeb40b3ea6fed238",
+      "source_version": "977dd16f",
+      "content_hash": "2231db6c4d3195db098f482eb0fbea7107e0831bcbd728d4d9521b886c61f9be",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -241948,6 +241958,11 @@
           "number": 10694,
           "title": "Treat nil-arrays as empty containers.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11022,
+          "title": "evaluate and destroy FILTER/APPLY expressions without recursion",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241955,7 +241970,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T13:44:50.390Z",
+      "verified_at": "2026-11-28T02:59:13.917Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -332640,10 +332655,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yvgude-lean-ctx-technical-construction-intelligence-yvgude-lean-ctx-core-invaria.md",
       "title": "Technical Construction Intelligence: yvgude/lean-ctx Core Invariants",
       "repository": "yvgude/lean-ctx",
-      "source_version": "e7a78554",
-      "content_hash": "a658a32b6c0b43fc81c49464e62dbb6b8b6bf0205aac4df8e567fd48c423d19c",
+      "source_version": "96a37a15",
+      "content_hash": "c43b0010b89ed7c0312fbf6427fbd49a60a21ec7f89a8d25528cf83628bd7836",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:19:10.550Z"
+      "persisted_at": "2026-11-28T02:59:01.940Z"
     },
     "candidate_directive-release-prep-windows-and-linux-0-6-0-android-0-6-0": {
       "item_id": "candidate_directive-release-prep-windows-and-linux-0-6-0-android-0-6-0",
@@ -332703,9 +332718,9 @@
       "title": "Technical Construction Intelligence: yvgude-lean-ctx-learnings Core Invariants",
       "repository": "yvgude-lean-ctx-learnings",
       "source_version": "HEAD",
-      "content_hash": "6eea8b1b6c234a753d1b9c5c373963f90bcb8af716ca0bd61d507df322fe4d04",
+      "content_hash": "5714ab3ac6dac3f34f2f14a1e27bc913a1db88ce5f72a7c54ee6ce0ef3b0c1b9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:19:23.978Z"
+      "persisted_at": "2026-11-28T02:59:21.651Z"
     },
     "rule-10084": {
       "learning_id": "rule-10084",
@@ -369758,6 +369773,108 @@
       "content_hash": "98a2fe399a9d2ad5368940173745c0f3eca9ca98f412f7770a0f76a5db7a3c87",
       "domain_letter": "G",
       "persisted_at": "2026-11-28T02:50:20.509Z"
+    },
+    "rule-11021": {
+      "learning_id": "rule-11021",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11021,
+      "title": "3.12.8 public CI fixes, second round",
+      "source_url": "https://github.com/yvgude/lean-ctx",
+      "source_version": "96a37a15",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T02:59:01.015Z"
+    },
+    "candidate_directive-3-12-8-public-ci-fixes-second-round": {
+      "item_id": "candidate_directive-3-12-8-public-ci-fixes-second-round",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MYZP-3-12-8-public-ci-fixes-second-round.md",
+      "title": "3.12.8 public CI fixes, second round",
+      "repository": "yvgude/lean-ctx",
+      "source_version": "96a37a15",
+      "content_hash": "2a082bccf31aea45e6705f60ffbb811b2fe8c2b8b58e26ff6b81887006e90726",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T02:59:01.675Z"
+    },
+    "rule-11022": {
+      "learning_id": "rule-11022",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11022,
+      "title": "evaluate and destroy FILTER/APPLY expressions without recursion",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "977dd16f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T02:59:13.917Z"
+    },
+    "candidate_directive-evaluate-and-destroy-filter-apply-expressions-without-recursion": {
+      "item_id": "candidate_directive-evaluate-and-destroy-filter-apply-expressions-without-recursion",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N8W0-evaluate-and-destroy-filter-apply-expressions-without-recursion.md",
+      "title": "evaluate and destroy FILTER/APPLY expressions without recursion",
+      "repository": "dragonflydb/dragonfly",
+      "source_version": "977dd16f",
+      "content_hash": "d54f70d94f19e4192ac87607b939c51d3aa30c6ee23bde55b8314e45db02d920",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T02:59:14.502Z"
+    },
+    "rule-11023": {
+      "learning_id": "rule-11023",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11023,
+      "title": "Draft NUC 156 Output Counts of Reasoning Selections",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "2eca620d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T02:59:16.924Z"
+    },
+    "candidate_directive-draft-nuc-156-output-counts-of-reasoning-selections": {
+      "item_id": "candidate_directive-draft-nuc-156-output-counts-of-reasoning-selections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NGA0-draft-nuc-156-output-counts-of-reasoning-selections.md",
+      "title": "Draft NUC 156 Output Counts of Reasoning Selections",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "906b45756eb8fca999ee085f368e0925b9c2f0eac0c28fac6020ad9ee0e3b85b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T02:59:24.078Z"
+    },
+    "candidate_directive-release-3-12-8-public-ci-fixes-second-round": {
+      "item_id": "candidate_directive-release-3-12-8-public-ci-fixes-second-round",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NE6K-release-3-12-8-public-ci-fixes-second-round.md",
+      "title": "release): 3.12.8 public CI fixes, second round",
+      "repository": "yvgude-lean-ctx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e035d7e4ea87cb5b44cb73fff02443a42b659a8444b1497ddd9cfbdc74081960",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T02:59:21.363Z"
+    },
+    "candidate_directive-search-evaluate-and-destroy-filter-apply-expressions-without-recursion": {
+      "item_id": "candidate_directive-search-evaluate-and-destroy-filter-apply-expressions-without-recursion",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NF4U-search-evaluate-and-destroy-filter-apply-expressions-without-recursion.md",
+      "title": "search): evaluate and destroy FILTER/APPLY expressions without recursion",
+      "repository": "dragonflydb-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5c0f0013e63f39eefa816fa748ca237460b142fc863553e7af8f054e1ceb0398",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-28T02:59:22.595Z"
     }
   },
   "ai-builder-brain": {

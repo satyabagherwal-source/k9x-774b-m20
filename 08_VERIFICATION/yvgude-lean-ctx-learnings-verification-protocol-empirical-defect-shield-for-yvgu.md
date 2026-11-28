@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T19:19:23.658Z",
+  "timestamp": "2026-11-28T02:59:21.216Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-yvgude-lean-ctx-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [yvgude-lean-ctx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T19:19:23.658Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T02:59:21.216Z`  
 > **Learning ID**: `LEARN-EVO-yvgude-lean-ctx-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source**: github ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
-> **Source Version**: `e7a78554`  
+> **Source Version**: `96a37a15`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T19:19:09.070Z  
+> **Timestamp**: 2026-11-28T02:58:59.986Z  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T19:19:08.867Z  
+> **Harvest Timestamp**: 2026-11-28T02:58:59.863Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3961 stars
+- **Stars / Engagement**: 3963 stars
 
 ---
 
@@ -2471,36 +2471,227 @@ pub(crate) fn build(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c86edeeb` (2026-11-24)
-**Commit Message**: fix(docs): link the public COMPANIONS_LATER in install_runtime_and_enable
+### Incident Patch 1: `5bf6c0fd` (2026-11-26)
+**Commit Message**: chore(release): 3.12.8 public CI fixes, second round
 
-The Documentation job (rustdoc -D warnings) failed on a public doc comment
-linking a private path to COMPANIONS_LATER; it now links the public re-export.
+Re-export of release/3.12.8 after the second round of public CI fixes (private rustdoc links, product-claims contract after the formula move, shell cwd test in its own process, app key test not on Windows).
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Exported from the private source 54ff1c6562 (release/3.12.8).
+Exported from the private source 27ee606816b7165a9f622d9d5a8cce4366a1fc06 (release/3.12.8).
 
-**File**: `rust/src/core/intelligence_runtime/configuration.rs` (modified, +1/-1)
+**File**: `docs/contracts/public-product-claims-v1.md` (modified, +1/-1)
 ```diff
-@@ -146,7 +146,7 @@ impl SetupRuntime {
-     /// a terminal; the companions of a v4 package (hundreds of megabytes)
-     /// are left for [`load_companions`] in the background. The result's
-     /// `installation.semantic_models_reason` is then
--    /// [`COMPANIONS_LATER`](super::catalog::COMPANIONS_LATER).
-+    /// [`COMPANIONS_LATER`].
-     pub fn install_runtime_and_enable(&self) -> Result<serde_json::Value> {
-         self.install_and_enable_with(super::catalog::Companions::Later)
-     }
+@@ -73,7 +73,7 @@ outcome quality.
+   ],
+   "required_text": {
+     "README.md": ["Get started", "Real-world scenarios"],
+-    ".github/workflows/release.yml": ["desc \"Local engine for the LeanCTX Context Gateway for AI Systems\""],
++    "scripts/homebrew-formula.py": ["desc \"Local LeanCTX Context Gateway for AI systems\""],
+     "aur/lean-ctx/.SRCINFO": ["pkgdesc = LeanCTX | OSS — open-source Context Gateway for AI Systems. Context selection, supported controls, and evidence through local integration paths."]
+   },
+   "forbidden_text": {
+```
+
+**File**: `rust/crates/lean-ctx-proxy/src/compress.rs` (modified, +2/-2)
+```diff
+@@ -95,7 +95,7 @@ fn keeps_filtered_output(command: &str, output: &str) -> bool {
+ ///
+ /// One filtering segment exempts the whole command line (`cd x && rg …`,
+ /// `sed -n … | cut; ls`, but also `cargo build; wc -l f`). Deliberate: the
+-/// exemption is bounded by [`FILTERED_VERBATIM_MAX_BYTES`], and without it
++/// exemption is bounded by `FILTERED_VERBATIM_MAX_BYTES`, and without it
+ /// the result is compressed with its re-read hint, so either side is
+ /// lossless — a too-wide match costs tokens, never content, while a strict
+ /// every-segment rule would prune the bounded views the caller chained.
+@@ -191,7 +191,7 @@ pub fn compress_tool_result(content: &str, tool_name: Option<&str>) -> String {
+ ///
+ /// A result the policy leaves uncompressed (`compress_tool_output` off,
+ /// `log_compression_level` 0, code under `code_preserve`) leaves as every
+-/// funnel leaves a result it keeps whole ([`policy_whole`]): without its
++/// funnel leaves a result it keeps whole (`policy_whole`): without its
+ /// `<lc_safe>` markers, under protection on record under the lineage of its
+ /// original (bd M1 on !646).
+ pub fn compress_tool_result_with_policy(
+```
+
+**File**: `rust/crates/lean-ctx-server/src/server/call_tool/shell_cwd_tests.rs` (modified, +13/-2)
+```diff
+@@ -347,6 +347,16 @@ async fn a_worktree_cwd_notes_where_relative_paths_resolve() {
+ /// never from one call's `cwd` (another agent's checkout), and keeps it.
+ #[tokio::test(flavor = "multi_thread")]
+ async fn a_missing_root_is_learned_from_the_start_dir_not_a_calls_cwd() {
++    // The jail's runtime widenings (the roots-derived allow-list, the session
++    // read-only roots) are process-wide and never cleared: in one `cargo test`
++    // process another test can leave one that admits `other`, so the refusal
++    // this test is about would pass through. Run it in its own process.
++    if lean_ctx::test_env::run_in_own_process(
++        "server::call_tool::shell_cwd_tests::a_missing_root_is_learned_from_the_start_dir_not_a_calls_cwd",
++        &[],
++    ) {
++        return;
++    }
+     let _data = lean_ctx::core::data_dir::isolated_data_dir();
+     // The default `projects` scope also admits, for reading, any project below
+     // `$HOME`. Where the checkout lies below `$HOME` (GitHub runners:
+@@ -404,8 +414,9 @@ async fn a_missing_root_is_learned_from_the_start_dir_not_a_calls_cwd() {
+     .await;
+     assert!(
+         text(&second).contains("working directory rejected, command not run"),
+-        "{}",
+-        text(&second)
++        "{}\nsession read-only roots: {:?}",
++        text(&second),
++        lean_ctx::core::pathjail::session_read_only_roots()
+     );
+     assert!(
+         !text(&second)
+```
+
+**File**: `rust/crates/lean-ctx/src/cli/local_read/app_key.rs` (modified, +7/-0)
+```diff
+@@ -434,6 +434,13 @@ mod tests {
+     /// bd 38432 S3: [`checked_root`] as the command runs it, from the
+     /// variables, and the store opened from its root stays there whatever
+     /// changes after the gate.
++    ///
++    /// Not on Windows: there `dirs::home_dir()` asks the system for the
++    /// profile folder and ignores `HOME`, so the test cannot place the home
++    /// it checks against. The rule itself is covered on every platform by the
++    /// explicit-directory test above,
++    /// `app_only_flags_need_one_root_for_the_key_file_and_the_records`.
++    #[cfg(not(windows))]
+     #[test]
+     fn the_checked_root_follows_the_variables_once() {
+         use lean_ctx::test_env::{VarGuard, set_var};
+```
+
+**File**: `rust/src/core/tcc_guard_sandbox.rs` (modified, +5/-5)
+```diff
+@@ -13,7 +13,7 @@
+ //! hard, kernel-enforced backstop: at start-up a launchd-standalone process
+ //! re-execs itself under `sandbox-exec` with a profile that *denies* file access
+ //! under the three TCC-protected home directories
+-//! ([`reexec_under_seatbelt_if_needed`]). If any code path touches them anyway,
++//! (`reexec_under_seatbelt_if_needed`). If any code path touches them anyway,
+ //! the kernel refuses with `EPERM` silently — the TCC subsystem is never
+ //! consulted, so no prompt can appear. Everything else is permitted
+ //! (`allow default`), so the processes keep full functionality.
+@@ -41,7 +41,7 @@ const TCC_PROTECTED_SUBDIRS: [&str; 3] = ["Documents", "Desktop", "Downloads"];
+ 
+ /// Env sentinel marking that this process is already running under the
+ /// deny-`~/Documents` seatbelt. Set by the self re-exec
+-/// ([`reexec_under_seatbelt_if_needed`]) and inherited by its children, so the
++/// (`reexec_under_seatbelt_if_needed`) and inherited by its children, so the
+ /// re-exec can never loop. The LaunchAgent plists deliberately do *not* carry
+ /// it: its absence is what makes a launchd-started process re-exec itself.
+ pub const SEATBELT_SENTINEL: &str = "LEAN_CTX_SEATBELT";
+@@ -89,7 +89,7 @@ fn sbpl_escape(s: &str) -> String {
+ /// launchd `ProgramArguments` for a lean-ctx LaunchAgent: the plain
+ /// `[binary, args…]`. The binary must come first so macOS names the login item
+ /// after lean-ctx (rc2-2); the deny-`~/Documents` seatbelt (#356) is applied by
+-/// the process itself at start-up ([`reexec_under_seatbelt_if_needed`]).
++/// the process itself at start-up (`reexec_under_seatbelt_if_needed`).
+ pub fn launchd_program_args(binary: &str, args: &[&str]) -> Vec<String> {
+     let mut out = vec![binary.to_string()];
+     out.extend(args.iter().map(|a| (*a).to_string()));
+@@ -227,11 +227,11 @@ const ENV_BLOCK_KEY: &str = "    <key>EnvironmentVariables</key>\n";
+ const ENV_BLOCK_END: &str = "\n    </dict>\n";
+ const ENV_BLOCK_ANCHOR: &str = "    <key>RunAtLoad</key>";
+ 
+-/// `true` when the plist's `ProgramArguments` start with [`SANDBOX_EXEC`], i.e.
++/// `true` when the plist's `ProgramArguments` start with `SANDBOX_EXEC`, i.e.
+ /// launchd spawns the job inside the seatbelt the pre-rc2-2 installers rendered.
+ /// Only such a plist may carry the #356 sentinel: on any other (pre-#356, or a
+ /// `brew upgrade` install whose plist was never re-rendered) the sentinel would
+-/// suppress [`reexec_under_seatbelt_if_needed`] and leave the job unsandboxed.
++/// suppress `reexec_under_seatbelt_if_needed` and leave the job unsandboxed.
+ pub fn plist_runs_under_seatbelt(plist: &str) -> bool {
+     let Some(args) = plist
+         .find("<key>ProgramArguments</key>")
+```
+
+---
+
+### Incident Patch 2: `c1e04a3e` (2026-11-25)
+**Commit Message**: chore(release): 3.12.8 public CI fixes
+
+Re-export of release/3.12.8 after the public CI fixes (history policy pins, rustdoc link, jail scope in a shell cwd test).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+Exported from the private source e3af90ec5ec86a86f4ed8420de3119afac1fbd88 (release/3.12.8).
+
+**File**: `rust/crates/lean-ctx-cloud/src/auth.rs` (modified, +1/-1)
+```diff
+@@ -425,7 +425,7 @@ pub const CHAT_KEY_CLEARED: &str =
+ pub const CHAT_KEY_TOKEN_ENROLLMENT: &str = "This computer was connected with an enrollment token; pairing the chat key needs a connect from LeanCTX Code.";
+ 
+ /// The answers of a chat key re-pair that name why it was refused, kept by
+-/// [`CloudError::from_response`] as `Server { code }` (this protocol
++/// `CloudError::from_response` as `Server { code }` (this protocol
+ /// version does not name them).
+ pub const CHAT_KEY_REPAIR_REASONS: &[&str] =
+     &["chat_key_bound", "chat_key_cleared", "token_enrollment"];
+```
+
+**File**: `rust/crates/lean-ctx-server/src/server/call_tool/shell_cwd_tests.rs` (modified, +8/-1)
+```diff
+@@ -348,6 +348,12 @@ async fn a_worktree_cwd_notes_where_relative_paths_resolve() {
+ #[tokio::test(flavor = "multi_thread")]
+ async fn a_missing_root_is_learned_from_the_start_dir_not_a_calls_cwd() {
+     let _data = lean_ctx::core::data_dir::isolated_data_dir();
++    // The default `projects` scope also admits, for reading, any project below
++    // `$HOME`. Where the checkout lies below `$HOME` (GitHub runners:
++    // `/home/runner/work/…`) it would admit `other` without the learned root,
++    // so pin the scope to the project boundary this test is about. Held under
++    // the env lock `_data` took, restored on drop.
++    let _scope = lean_ctx::test_env::VarGuard::set("LEAN_CTX_PATH_JAIL_SCOPE", "project");
+     let f = fixture();
+     let server = server_for(&f);
+     {
+@@ -358,7 +364,8 @@ async fn a_missing_root_is_learned_from_the_start_dir_not_a_calls_cwd() {
+     let expected = lean_ctx::core::protocol::detect_project_root(&f.root.to_string_lossy());
+     assert!(expected.is_some());
+     // Another agent's checkout: a directory of a different repository that the
+-    // rootless jail admits (it lies under the process cwd, this crate).
++    // rootless jail admits (it lies under the process cwd, this crate), and
++    // only through that: the scope is pinned above.
+     let other = concat!(env!("CARGO_MANIFEST_DIR"), "/src");
+     assert_ne!(
+         lean_ctx::core::protocol::detect_project_root(other),
+```
+
+**File**: `security/history-policy-v1.json` (modified, +3/-3)
+```diff
+@@ -127,8 +127,8 @@
+     "scripts/history-policy-gate.py": "d018605b96d155293854985a1627da3bfc18e2721a7640b5530c9889ecfdb899",
+     "tests/security/test_history_policy_gate.py": "3aac0ee607d6968a9a0e755e2020be2a0fdfb2f44760cb91dba6fbc1aabb2f29",
+     "tests/security/test_security_check_workflow.py": "2d0c9b9a6ceb61c97379290d549bbdcf7812ce17db9794b5d1b067e2202c2844",
+-    "rust/crates/lean-ctx-proxy/src/anthropic.rs": "cfd755f17537a42ec421b3a0420c76dbe73060f90e2a3740401d5236dfdb2f12",
+-    "rust/crates/lean-ctx-proxy/src/anthropic_tests.rs": "d7fde182afeeee749896ea84fe615360981fe3962a80e3a0d6d8ad13b3c3b5e0",
++    "rust/crates/lean-ctx-proxy/src/anthropic.rs": "f84baec6112fbfe093c68822d7f20a979e9ae5d258fe5b652eedbb2387657605",
++    "rust/crates/lean-ctx-proxy/src/anthropic_tests.rs": "e81cda4291aca061912da0180e7e7a95e6dfdb2ee2fe824c18c60b589909f9cc",
+     "rust/crates/lean-ctx-protocol/src/credential_redaction.rs": "0adf3ddc9fe1416cf913518cb83649eea9bf4ad23c9cdc6c2e7c5c733e006ce5",
+     "rust/crates/lean-ctx-protocol/src/context_checkpoint.rs": "698433cd958541d830f5dde38598625dc323d28d5724c072cb4532c322d8c102",
+     "rust/crates/lean-ctx-protocol/src/context_checkpoint/tests_core.rs": "2aa83f250907035c82ea5ae56078d0077d539a5799b51b4ab2139940ea7630d0",
+@@ -138,6 +138,6 @@
+   "baseline": {
+     "commit": "b37ee3be11f2525cd785348d3e43ccdbb590fe94",
+     "report": "security/evidence/full-history-baseline-v1.json",
+-    "report_sha256": "1b0370ab26673c82e64200f85e9d5e475724d1fb7d5931019ac0b56aefda99ac"
++    "report_sha256": "68422ad4c4c6e7a830bc0de6373d4e347b0d0ec71162a15df3a91e877bb5b17c"
+   }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2274** (2026-11-27): chore(release): 3.12.8 (@yvgude)
 - **PR #2271** (2026-11-24): chore(release): 3.12.8 (@yvgude)
 - **PR #2266** (2026-11-22): chore(release): 3.12.7 (@yvgude)
 - **PR #2265** (closed): chore(release): 3.12.7 (@yvgude)
 - **PR #2257** (2026-11-16): fix: write-guard quoting, Copilot deny reason, nullable types, Pi read errors (#2254, #2255, #2256) (@yvgude)
 - **PR #2253** (2026-11-15): chore(release): 3.12.6 (@yvgude)
-- **PR #2251** (2026-11-14): Release 3.12.5 (@yvgude)
 
 ---
 
@@ -2520,31 +2711,31 @@ Exported from the private source 54ff1c6562 (release/3.12.8).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs): link the public COMPANIONS_LATER in install_runtime_and_enable
+## X. release): 3.12.8 public CI fixes, second round
 
 **RULE**:
-When implementing operations in `rust/src/core/intelligence_runtime/configuration.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/contracts/public-product-claims-v1.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c86edeeb`: docs): link the public COMPANIONS_LATER in install_runtime_and_enable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5bf6c0fd`: release): 3.12.8 public CI fixes, second round. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/src/core/intelligence_runtime/configuration.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/contracts/public-product-claims-v1.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// [`COMPANIONS_LATER`].
+    "scripts/homebrew-formula.py": ["desc \"Local LeanCTX Context Gateway for AI systems\""],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    /// [`COMPANIONS_LATER`](super::catalog::COMPANIONS_LATER).
+    ".github/workflows/release.yml": ["desc \"Local engine for the LeanCTX Context Gateway for AI Systems\""],
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c86edeeb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5bf6c0fd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

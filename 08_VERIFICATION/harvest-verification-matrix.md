@@ -13950,3 +13950,6 @@
 | `CYCLE-20261128-03WG` | `2026-11-28T02:41:14.944Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11019` | Yes (`6656ba8a...`) |
 | `CYCLE-20261128-0C8D` | `2026-11-28T02:41:25.741Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md` | Yes (`74d7d2a5...`) |
 | `CYCLE-20261128-BPX3` | `2026-11-28T02:50:16.695Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11020` | Yes (`dbe66d7a...`) |
+| `CYCLE-20261128-MYRF` | `2026-11-28T02:59:01.371Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11021` | Yes (`8a4d765c...`) |
+| `CYCLE-20261128-N8NO` | `2026-11-28T02:59:14.196Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11022` | Yes (`2231db6c...`) |
+| `CYCLE-20261128-NAZH` | `2026-11-28T02:59:17.213Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11023` | Yes (`ec5dafaa...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T02:50:22.871Z",
+  "last_updated": "2026-11-28T02:59:24.347Z",
   "total_records": 2870,
   "domains": {
     "A": {
@@ -8703,8 +8703,8 @@
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "repository": "dragonflydb/dragonfly",
-      "content_hash": "53d0e1491da031001d2f6d34f713ee37b8dc9ecfd7342519748c044245a44372",
-      "created_at": "2026-11-26T13:44:51.403Z"
+      "content_hash": "19437f3bd1c7149f69f04ea39d597e45ccd6e3a09386a7f612dd0dd456b4e337",
+      "created_at": "2026-11-28T02:59:14.773Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -8721,8 +8721,8 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-learnings-technical-construction-intelligence-dragonflydb-.md",
       "repository": "dragonflydb-dragonfly-learnings",
-      "content_hash": "9f631e3bfa82b15939dee51d82ccb7322a2de7db1dc3f245410866602da1ab50",
-      "created_at": "2026-11-25T12:29:47.522Z"
+      "content_hash": "9eb8e4adebc5cbd78d50330c9c6fdc9148d05dd3e87ac91007af0c41fa8cd6e5",
+      "created_at": "2026-11-28T02:59:22.883Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -15949,8 +15949,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "8008a394c4cd9221b4d39141bdb3706beb18ab4928ae71d7e70f37580e653c23",
-      "created_at": "2026-11-27T23:48:54.393Z"
+      "content_hash": "0b579280b50f154a6c3404398ed813aac48839000d96de198e1102dc8896c53f",
+      "created_at": "2026-11-28T02:59:17.742Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16399,8 +16399,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "de939f92b056495f04be0fccb7ba9286dbe1eaff8cd64fe3cf887c421debd533",
-      "created_at": "2026-11-27T23:48:58.852Z"
+      "content_hash": "e60fb82427e27a350fe4d191dca139e90a83b127c5f3ae06916699d3d9ef7b75",
+      "created_at": "2026-11-28T02:59:24.347Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -41300,8 +41300,8 @@
       "title": "Technical Construction Intelligence: yvgude/lean-ctx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yvgude-lean-ctx-technical-construction-intelligence-yvgude-lean-ctx-core-invaria.md",
       "repository": "yvgude/lean-ctx",
-      "content_hash": "a658a32b6c0b43fc81c49464e62dbb6b8b6bf0205aac4df8e567fd48c423d19c",
-      "created_at": "2026-11-24T19:19:10.550Z"
+      "content_hash": "c43b0010b89ed7c0312fbf6427fbd49a60a21ec7f89a8d25528cf83628bd7836",
+      "created_at": "2026-11-28T02:59:01.940Z"
     },
     "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants",
@@ -41309,8 +41309,8 @@
       "title": "Technical Construction Intelligence: yvgude-lean-ctx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yvgude-lean-ctx-learnings-technical-construction-intelligence-yvgude-lean-ctx-le.md",
       "repository": "yvgude-lean-ctx-learnings",
-      "content_hash": "6eea8b1b6c234a753d1b9c5c373963f90bcb8af716ca0bd61d507df322fe4d04",
-      "created_at": "2026-11-24T19:19:23.978Z"
+      "content_hash": "5714ab3ac6dac3f34f2f14a1e27bc913a1db88ce5f72a7c54ee6ce0ef3b0c1b9",
+      "created_at": "2026-11-28T02:59:21.651Z"
     },
     "domain_intelligence-architecture-intelligence-prometheus-prometheus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-prometheus-prometheus-core-invariants",

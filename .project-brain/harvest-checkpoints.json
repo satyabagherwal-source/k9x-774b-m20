@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T02:50:16.715Z",
+  "last_updated": "2026-11-28T02:59:17.234Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "cbc55e53c6dbae6d6bc39b5fdbd1a312e4e51cab0bca09ed9b5b643c80210ced",
-      "verified_at": "2026-11-27T23:48:53.760Z",
+      "content_hash": "ec5dafaaef312c4c408b2e3f42526d9d89a2479b3f513baceba94965ced7ec4b",
+      "verified_at": "2026-11-28T02:59:17.233Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T23:48:53.760Z"
+      "last_updated": "2026-11-28T02:59:17.233Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "8ba9ecb975b18080f8663e49e759088e7dd7a04ade88397cbeb40b3ea6fed238",
-      "verified_at": "2026-11-26T13:44:50.900Z",
+      "content_hash": "2231db6c4d3195db098f482eb0fbea7107e0831bcbd728d4d9521b886c61f9be",
+      "verified_at": "2026-11-28T02:59:14.217Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T13:44:50.900Z"
+      "last_updated": "2026-11-28T02:59:14.217Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "8e3362aa5d5c54d8c04dd279e6a56897f73f160fba287948545db8742710c7a1",
-      "verified_at": "2026-11-24T19:19:10.158Z",
+      "content_hash": "8a4d765c99642ef24e3ac6f2f4369a6341a3b1febf241f19dd707c4088cbc37f",
+      "verified_at": "2026-11-28T02:59:01.391Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T19:19:10.158Z"
+      "last_updated": "2026-11-28T02:59:01.391Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",

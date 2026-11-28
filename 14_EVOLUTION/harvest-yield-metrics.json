@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T02:50:16.712Z",
-  "total_cycles_completed": 13238,
-  "total_learnings_persisted": 13238,
-  "total_rules_promoted": 11939,
+  "last_updated": "2026-11-28T02:59:17.230Z",
+  "total_cycles_completed": 13241,
+  "total_learnings_persisted": 13241,
+  "total_rules_promoted": 11942,
   "history": [
-    {
-      "timestamp": "2026-11-27T08:58:14.727Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T09:08:04.612Z",
-      "repository": "black-forest-labs/flux-3-image-klein-comfy",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T09:08:06.871Z",
-      "repository": "abue-ammar/tinycast",
-      "learningId": "learn-github-abue-ammar-tinycast",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T09:17:29.529Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T02:50:16.712Z",
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T02:59:01.388Z",
+      "repository": "yvgude/lean-ctx",
+      "learningId": "learn-github-yvgude-lean-ctx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T02:59:14.213Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T02:59:17.230Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

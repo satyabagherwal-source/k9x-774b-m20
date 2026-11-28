@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-621X",
-    "timestamp": "2026-11-26T14:22:22.437Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "45be5df87da36fb967cf80e5207389fe86692ed66aa89abd7d5837d1d5fb3a19",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-KH42",
-    "timestamp": "2026-11-26T14:33:35.138Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-    "contentHash": "646a361117eae719fb9d1c58d8e8983bbb4e68ccd15e5cd5eb6111e7040f2e76",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-KL0R",
-    "timestamp": "2026-11-26T14:33:40.203Z",
-    "repository": "sharkdp/bat",
-    "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "3f9306a148303580e8ef3b203a17a52f128da71042f82f850d8653622e1fff26",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-KNXV",
     "timestamp": "2026-11-26T14:33:43.987Z",
     "repository": "jithin-sabu/purge-app",
@@ -7490,6 +7445,51 @@
     "repository": "RediSearch/RediSearch",
     "learningId": "learn-github-redisearch-redisearch",
     "contentHash": "dbe66d7ab4494d103b145db3f4ff32d21a528a9be27da0f807f2048e96b17fc4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-MYRF",
+    "timestamp": "2026-11-28T02:59:01.371Z",
+    "repository": "yvgude/lean-ctx",
+    "learningId": "learn-github-yvgude-lean-ctx",
+    "contentHash": "8a4d765c99642ef24e3ac6f2f4369a6341a3b1febf241f19dd707c4088cbc37f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-N8NO",
+    "timestamp": "2026-11-28T02:59:14.196Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "2231db6c4d3195db098f482eb0fbea7107e0831bcbd728d4d9521b886c61f9be",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-NAZH",
+    "timestamp": "2026-11-28T02:59:17.213Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "ec5dafaaef312c4c408b2e3f42526d9d89a2479b3f513baceba94965ced7ec4b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

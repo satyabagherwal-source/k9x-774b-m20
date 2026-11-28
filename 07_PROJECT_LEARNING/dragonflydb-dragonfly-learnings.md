@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `cb5fcfa0`  
+> **Source Version**: `977dd16f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T13:44:49.401Z  
+> **Timestamp**: 2026-11-28T02:59:12.885Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T13:44:49.394Z  
+> **Harvest Timestamp**: 2026-11-28T02:59:12.879Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31941 stars
+- **Stars / Engagement**: 31951 stars
 
 ---
 
@@ -2321,170 +2321,660 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b05bcb6` (2026-11-26)
-**Commit Message**: fix(server): Treat nil-arrays as empty containers. (#8883)
+### Incident Patch 1: `ba5b2ddf` (2026-11-27)
+**Commit Message**: fix(search): evaluate and destroy FILTER/APPLY expressions without recursion (#8887)
 
-fix(server): Reject nil-array on copy cmd args
+FT.AGGREGATE parses FILTER and APPLY expressions into a tree that gets one level deeper with every
+chained operator. Evaluating and destroying that tree recursed once per level, so a few thousand
+chained operators overflowed the fiber stack, even when the expression had a syntax error.
 
-A nil array does not have any elements but does return SIZE_MAX as a
-sentinel size. It passes any Empty() check and yet accessing its
-elements causes a segfault.
+- The expression nodes are a class hierarchy with a type tag, like the query AST, instead of a
+  variant. FilterExpr deletes through FilterExprDeleter, which detaches the children onto an
+  intrusive list and deletes the nodes one by one: constant stack, no allocation.
+- FilterExprEvaluator flattens the tree once per step into postfix code with jumps for && and ||
+  and runs it in a loop for every document; functions are resolved up front and get their
+  arguments as a span over the value stack.
+- The filter lexer reports byte offsets instead of rescanning the line for every token, which
+  made parsing quadratic in the expression length.
 
-Adjust the Empty() check to return empty for nil arrays.
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-Signed-off-by: Abhijat Malviya <[REDACTED_EMAIL]>
-
-**File**: `src/facade/resp_parser.h` (modified, +1/-1)
+**File**: `src/server/search/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -73,7 +73,7 @@ class RESPArray {
-   }
+@@ -13,6 +13,7 @@ else()
+   # (same pattern as src/core/search/CMakeLists.txt with dfly_search_core).
+   add_library(filter_parser_lib
+     filter_driver.cc
++    filter_expr.cc
+     ${gen_dir}/filter_lexer.cc
+     ${gen_dir}/filter_parser.cc)
  
-   bool Empty() const {
--    return Size() == 0;
-+    return Size() == 0 || Size() == SIZE_MAX;
-   }
- 
-   RESPObj operator[](size_t index) const {
 ```
 
----
-
-### Incident Patch 2: `a7d94f87` (2026-11-26)
-**Commit Message**: fix(facade): preallocate a bulk argument only when its data has arrived (#8882)
-
-* fix(facade): preallocate a bulk argument only when its data has arrived
-
-The parser allocated a declared bulk length of up to 1MB as soon as the "$<len>" header
-was parsed, before any of the data arrived: a 16-byte "*2\r\n\r\n" request held
-at least 1MB per connection. Preallocate a bulk only when it is already complete in the
-read buffer; otherwise grow it as the data arrives, as bulks above 1MB already did.
-kBulkEagerLimit is no longer needed.
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-* test: move the pending 1MB bulk case into its own parser test
-
-The case was added to HugeBulkNoEagerAlloc and reset the fixture by assigning a temporary
-BackedArguments. gcc 13.3 fails the Release build on that line with
--Werror=maybe-uninitialized: the move copies the inline buffer of the temporary, which was
-never written. A separate test starts from a fresh fixture, so no reset is needed, and
-HugeBulkNoEagerAlloc is back to its previous text.
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-**File**: `src/facade/resp_srv_parser.cc` (modified, +3/-6)
+**File**: `src/server/search/aggregator.cc` (modified, +4/-2)
 ```diff
-@@ -12,11 +12,6 @@
+@@ -254,7 +254,8 @@ AggregationStep MakeLimitStep(size_t offset, size_t num) {
  
- namespace facade {
- 
--namespace {
--// Above this declared bulk length the buffer grows as data arrives instead of upfront.
--constexpr size_t kBulkEagerLimit = 1u << 20;
--}  // namespace
--
- using namespace std;
- 
- auto RespSrvParser::Parse(Buffer str, uint32_t* consumed, cmn::BackedArguments* args) -> Result {
-@@ -272,7 +267,9 @@ auto RespSrvParser::ParseArg(Buffer str, cmn::BackedArguments* args) -> ResultCo
- 
-   bulk_len_ = len;
-   state_ = BULK_STR_S;
--  bulk_append_ = size_t(len) > kBulkEagerLimit;
-+
-+  // Preallocate only a bulk that has fully arrived: a declared length costs the client nothing.
-+  bulk_append_ = size_t(len) > str.size() - res.second;
-   args->PushArg(bulk_append_ ? size_t(0) : size_t(len));
- 
-   return {OK, res.second};
-```
-
-**File**: `src/facade/resp_srv_parser_test.cc` (modified, +6/-0)
-```diff
-@@ -220,6 +220,12 @@ TEST_F(RespSrvParserTest, HugeBulkNoEagerAlloc) {
-   EXPECT_LT(args_.HeapMemory() + parser_.UsedMemory(), 64u * 1024);
+ void Aggregator::DoFilter(const FilterExprNode& expr) {
+   auto& values = result.values;
+-  std::erase_if(values, [&](const DocValues& doc) { return !IsTruthy(EvalFilterExpr(expr, doc)); });
++  FilterExprEvaluator eval{expr};
++  std::erase_if(values, [&](const DocValues& doc) { return !IsTruthy(eval.Eval(doc)); });
  }
  
-+TEST_F(RespSrvParserTest, PendingBulkNoEagerAlloc) {
-+  // A bulk of any size is not allocated before its data arrives.
-+  ASSERT_EQ(RespSrvParser::INPUT_PENDING, Parse("*2\r\n$1048576\r\n"));
-+  EXPECT_LT(args_.HeapMemory() + parser_.UsedMemory(), 64u * 1024);
+ std::variant<AggregationStep, std::string> MakeFilterStep(std::string_view raw_expr) {
+@@ -275,8 +276,9 @@ std::variant<AggregationStep, std::string> MakeApplyStep(std::string_view raw_ex
+ 
+   auto shared = std::shared_ptr<FilterExprNode>(std::get<FilterExpr>(std::move(parsed)).release());
+   return AggregationStep{[shared, alias = std::move(alias)](Aggregator* agg) {
++    FilterExprEvaluator eval{*shared};
+     for (auto& doc : agg->result.values) {
+-      doc[alias] = EvalFilterExpr(*shared, doc);
++      doc[alias] = eval.Eval(doc);
+     }
+     agg->result.fields_to_print.insert(alias);
+   }};
+```
+
+**File**: `src/server/search/filter_eval.cc` (modified, +154/-65)
+```diff
+@@ -8,6 +8,7 @@
+ #include <variant>
+ #include <vector>
+ 
++#include "base/logging.h"
+ #include "server/search/filter_functions.h"
+ 
+ namespace dfly::aggregate {
+@@ -24,9 +25,6 @@ bool IsTruthy(const Value& v) {
+ 
+ namespace {
+ 
+-// Forward declaration for mutual recursion.
+-Value EvalNode(const FilterExprNode& node, const DocValues& doc);
+-
+ // Comparison evaluation
+ Value EvalCmp(CmpOp op, const Value& lhs, const Value& rhs) {
+   // Numeric comparison when both sides are doubles.
+@@ -101,81 +99,172 @@ Value EvalArith(ArithOp op, const Value& lhs, const Value& rhs) {
+   return {};
+ }
+ 
+-// Visitor
+-struct EvalVisitor {
+-  const DocValues& doc;
+-
+-  Value operator()(const FieldRef& n) const {
+-    auto it = doc.find(n.name);
+-    return it != doc.end() ? it->second : Value{};
+-  }
+-
+-  Value operator()(const NumLiteral& n) const {
+-    return n.value;
+-  }
+-
+-  Value operator()(const StrLiteral& n) const {
+-    return n.value;
+-  }
+-
+-  Value operator()(const NullLiteral& /*n*/) const {
+-    return {};
+-  }
++}  // namespace
+ 
+-  Value operator()(const CmpExpr& n) const {
+-    return EvalCmp(n.op, EvalNode(*n.lhs, doc), EvalNode(*n.rhs, doc));
+-  }
++FilterExprEvaluator::FilterExprEvaluator(const FilterExprNode& root) {
++  using Type = FilterExprNode::Type;
++  struct Pending {
++    const FilterExprNode* node;
++    uint32_t done;  // children already compiled
++    uint32_t jump;  // kAnd or kOr instruction to patch
++  };
+ 
+-  Value operator()(const ArithExpr& n) const {
+-    return EvalArith(n.op, EvalNode(*n.lhs, doc), EvalNode(*n.rhs, doc));
+-  }
++  std::vector<Pending> pending{{&root, 0, 0}};
++  while (!pending.empty()) {
++    Pending& p = pending.back();
++    const FilterExprNode* child = nullptr;
++    auto emit = [&](Op op, uint32_t arg = 0, const FuncImpl* fn = nullptr) {
++      code_.push_back({op, arg, p.node, fn});
++    };
++    auto binary = [&](const auto& n, Op op) {
++      if (p.done < 2)
++        child = p.done == 0 ? n.lhs.get() : n.rhs.get();
++      else
++        emit(op);
++    };
++    auto unary = [&](const auto& n, Op op) {
++      if (p.done == 0)
++        child = n.operand.get();
++      else
++        emit(op);
++    };
+ 
+-  Value operator()(const LogicExpr& n) const {
+-    if (n.op == LogicOp::AND) {
+-      // Short-circuit: don't evaluate RHS if LHS is false.
+-      if (!IsTruthy(EvalNode(*n.lhs, doc)))
+-        return 0.0;
+-      return IsTruthy(EvalNode(*n.rhs, doc)) ? 1.0 : 0.0;
++    switch (p.node->type()) {
++      case Type::FIELD_REF:
++        emit(Op::kField);
++        break;
++      case Type::NUM_LITERAL:
++        emit(Op::kNum);
++        break;
++      case Type::STR_LITERAL:
++        emit(Op::kStr);
++        break;
++      case Type::NULL_LITERAL:
++        emit(Op::kNull);
++        break;
++      case Type::CMP:
++        binary(static_cast<const CmpExpr&>(*p.node), Op::kCmp);
++        break;
++      case Type::ARITH:
++        binary(static_cast<const ArithExpr&>(*p.node), Op::kArith);
++        break;
++      case Type::NOT:
++        unary(static_cast<const NotExpr&>(*p.node), Op::kNot);
++        break;
++      case Type::NEGATE:
++        unary(static_cast<const NegateExpr&>(*p.node), Op::kNegate);
++        break;
++      case Type::LOGIC: {
++        const auto& n = static_cast<const LogicExpr&>(*p.node);
++        if (p.done == 0) {
++          child = n.lhs.get();
++        } else if (p.done == 1) {
++          p.jump = code_.size();
++          emit(n.op == LogicOp::AND ? Op::kAnd : Op::kOr);
++          child = n.rhs.get();
++        } else {
++          emit(Op::kToBool);
++          code_[p.jump].arg = code_.size();
++        }
++        break;
++      }
++      case Type::FUNC_CALL: {
++        const auto& n = static_cast<const FuncCallExpr&>(*p.node);
++        const FuncImpl* fn = FindFilterFunction(n.name);
++        if (!fn)
++          emit(Op::kNull);  // unknown function -> null, its arguments are not evaluated
++        else if (p.done < n.args.size())
++          child = n.args[p.done].get();
++        else
++          emit(Op::kCall, n.args.size(), fn);
++        break;
++      }
+     }
+-    // OR: short-circuit if LHS is true.
+-    if (IsTruthy(EvalNode(*n.lhs, doc)))
+-      return 1.0;
+-    return IsTruthy(EvalNode(*n.rhs, doc)) ? 1.0 : 0.0;
+-  }
+ 
+-  Value operator()(const NotExpr& n) const {
+-    return IsTruthy(EvalNode(*n.operand, doc)) ? 0.0 : 1.0;
+-  }
+-
+-  Value operator()(const NegateExpr& n) const {
+-    Value v = EvalNode(*n.operand, doc);
+-    if (!std::holds_alternative<double>(v))
+-      return {};
+-    return -std::get<double>(v);
++    if (child) {
++      ++p.done;
++      pending.push_back({child, 0, 0});
++    } else {
++      pending.pop_back();
++    }
+   }
++}
+ 
+-  Value operator()(const FuncCallExpr& n) const {
+-    const FuncImpl* fn = FindFilterFunction(n.name);
+-    if (!fn)
+-      return {};  // unknown function -> null
++Value FilterExprEvaluator::Eval(const DocValues& doc) {
++  stack_.clear();
+ 
+-    std::vector<Value> arg_vals;
+-    arg_vals.reserve(n.args.size());
+-    for (
+```
+
+**File**: `src/server/search/filter_eval.h` (modified, +37/-0)
+```diff
+@@ -4,8 +4,11 @@
+ 
+ #pragma once
+ 
++#include <vector>
++
+ #include "server/search/aggregator.h"
+ #include "server/search/filter_expr.h"
++#include "server/search/filter_functions.h"
+ 
+ namespace dfly::aggregate {
+ 
+@@ -15,6 +18,40 @@ namespace dfly::aggregate {
+ //   empty string     -> false,  non-empty string  -> true
+ bool IsTruthy(const Value& v);
+ 
++// Flattens the tree once into postfix code with jumps; the tree must outlive the evaluator.
++class FilterExprEvaluator {
++ public:
++  explicit FilterExprEvaluator(const FilterExprNode& root);
++
++  Value Eval(const DocValues& doc);
++
++ private:
++  enum class Op : uint8_t {
++    kField,
++    kNum,
++    kStr,
++    kNull,
++    kCmp,
++    kArith,
++    kAnd,
++    kOr,
++    kToBool,
++    kNot,
++    kNegate,
++    kCall
++  };
++
++  struct Instr {
++    Op op;
++    uint32_t arg;  // jump target of kAnd and kOr, argument count of kCall
++    const FilterExprNode* node;
++    const FuncImpl* fn;
++  };
++
++  std::vector<Instr> code_;
++  std::vector<Value> stack_;
++};
++
+ // Evaluate the filter expression AST against a single document.
+ // Returns a Value; use IsTruthy() to convert the result to a boolean for
+ // filtering purposes.
+```
+
+**File**: `src/server/search/filter_expr.cc` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++// Copyright 2026, DragonflyDB authors.  All rights reserved.
++// See LICENSE for licensing terms.
++//
++
++#include "server/search/filter_expr.h"
++
++namespace dfly::aggregate {
++
++void FilterExprDeleter::operator()(FilterExprNode* node) const noexcept {
++  if (!node)
++    return;
++
++  // Detach children before deleting their owner. The intrusive work list needs no allocation,
++  // even when a failed parse is being unwound after an allocation failure.
++  FilterExprNode* pending = node;
++  node->teardown_next_ = nullptr;
++  while (pending) {
++    node = pending;
++    pending = node->teardown_next_;
++    node->Destroy(pending);
++  }
 +}
 +
- TEST_F(RespSrvParserTest, BulkOverEagerLimitAssembled) {
-   const size_t kLen = 2'000'000;
-   ASSERT_EQ(RespSrvParser::INPUT_PENDING, Parse(absl::StrCat("*1\r\n$", kLen, "\r\n")));
++}  // namespace dfly::aggregate
+```
+
+**File**: `src/server/search/filter_expr.h` (modified, +118/-24)
+```diff
+@@ -6,6 +6,7 @@
+ 
+ #include <memory>
+ #include <string>
++#include <utility>
+ #include <variant>
+ #include <vector>
+ 
+@@ -14,29 +15,113 @@ namespace dfly::aggregate {
+ // Forward declaration -- FilterExpr is a pointer to a node
+ struct FilterExprNode;
+ 
++// Keeps destruction of deeply nested expressions iterative and allocation-free.
++struct FilterExprDeleter {
++  FilterExprDeleter() = default;
++
++  // Allow nodes created with std::make_unique to transfer ownership into FilterExpr.
++  template <typename T> FilterExprDeleter(std::default_delete<T>) {
++  }
++
++  void operator()(FilterExprNode* node) const noexcept;
++};
++
+ // Owning pointer to a filter expression node.
+ // Enables recursive structures (nodes contain children of the same type).
+-using FilterExpr = std::unique_ptr<FilterExprNode>;
++using FilterExpr = std::unique_ptr<FilterExprNode, FilterExprDeleter>;
++
++// Nodes own their children through FilterExpr.
++struct FilterExprNode {
++  enum class Type {
++    FIELD_REF,
++    NUM_LITERAL,
++    STR_LITERAL,
++    NULL_LITERAL,
++    CMP,
++    ARITH,
++    LOGIC,
++    NOT,
++    NEGATE,
++    FUNC_CALL,
++  };
++
++  virtual ~FilterExprNode() = default;
++  FilterExprNode(const FilterExprNode&) = delete;
++  FilterExprNode& operator=(const FilterExprNode&) = delete;
++
++  Type type() const {
++    return type_;
++  }
++
++ protected:
++  explicit FilterExprNode(Type type) : type_{type} {
++  }
++
++  static void EnqueueChild(FilterExpr& child, FilterExprNode*& pending) noexcept {
++    if (auto* node = child.release()) {
++      node->teardown_next_ = pending;
++      pending = node;
++    }
++  }
++
++ private:
++  friend struct FilterExprDeleter;
++  virtual void Destroy(FilterExprNode*& pending) noexcept = 0;
++
++  const Type type_;
++  FilterExprNode* teardown_next_ = nullptr;
++};
++
++template <typename Derived, FilterExprNode::Type kNodeType>
++struct TypedFilterExprNode : FilterExprNode {
++ protected:
++  TypedFilterExprNode() : FilterExprNode(kNodeType) {
++  }
++
++ private:
++  void Destroy(FilterExprNode*& pending) noexcept final {
++    auto& self = static_cast<Derived&>(*this);
++    if constexpr (requires { self.rhs; }) {
++      EnqueueChild(self.lhs, pending);
++      EnqueueChild(self.rhs, pending);
++    } else if constexpr (requires { self.operand; }) {
++      EnqueueChild(self.operand, pending);
++    } else if constexpr (requires { self.args; }) {
++      for (auto& arg : self.args)
++        EnqueueChild(arg, pending);
++    }
++    delete &self;
++  }
++};
+ 
+ // Leaf nodes
+ 
+ // Reference to a pipeline field: @fieldname (stored without '@')
+-struct FieldRef {
++struct FieldRef final : TypedFilterExprNode<FieldRef, FilterExprNode::Type::FIELD_REF> {
++  explicit FieldRef(std::string name) : name{std::move(name)} {
++  }
++
+   std::string name;
+ };
+ 
+ // Numeric literal: 3.14, 1e5, inf
+-struct NumLiteral {
++struct NumLiteral final : TypedFilterExprNode<NumLiteral, FilterExprNode::Type::NUM_LITERAL> {
++  explicit NumLiteral(double value) : value{value} {
++  }
++
+   double value;
+ };
+ 
+ // String literal: 'hello' or "hello"
+-struct StrLiteral {
++struct StrLiteral final : TypedFilterExprNode<StrLiteral, FilterExprNode::Type::STR_LITERAL> {
++  explicit StrLiteral(std::string value) : value{std::move(value)} {
++  }
++
+   std::string value;
+ };
+ 
+ // NULL literal
+-struct NullLiteral {};
++struct NullLiteral final : TypedFilterExprNode<NullLiteral, FilterExprNode::Type::NULL_LITERAL> {};
+ 
+ // Operator enums
+ 
+@@ -46,52 +131,61 @@ enum class LogicOp { AND, OR };
+ 
+ // Composite nodes (children stored as FilterExpr / unique_ptr)
+ 
+-struct CmpExpr {
++struct CmpExpr final : TypedFilterExprNode<CmpExpr, FilterExprNode::Type::CMP> {
++  CmpExpr(CmpOp op, FilterExpr lhs, FilterExpr rhs)
++      : op{op}, lhs{std::move(lhs)}, rhs{std::move(rhs)} {
++  }
++
+   CmpOp op;
+   FilterExpr lhs, rhs;
+ };
+ 
+-struct ArithExpr {
++struct ArithExpr final : TypedFilterExprNode<ArithExpr, FilterExprNode::Type::ARITH> {
++  ArithExpr(ArithOp op, FilterExpr lhs, FilterExpr rhs)
++      : op{op}, lhs{std::move(lhs)}, rhs{std::move(rhs)} {
++  }
++
+   ArithOp op;
+   FilterExpr lhs, rhs;
+ };
+ 
+ // Logical AND / OR
+-struct LogicExpr {
++struct LogicExpr final : TypedFilterExprNode<LogicExpr, FilterExprNode::Type::LOGIC> {
++  LogicExpr(LogicOp op, FilterExpr lhs, FilterExpr rhs)
++      : op{op}, lhs{std::move(lhs)}, rhs{std::move(rhs)} {
++  }
++
+   LogicOp op;
+   FilterExpr lhs, rhs;
+ };
+ 
+ // Logical NOT: !operand
+-struct NotExpr {
++struct NotExpr final : TypedFilterExprNode<NotExpr, FilterExprNode::Type::NOT> {
++  explicit NotExpr(FilterExpr operand) : operand{std::move(operand)} {
++  }
++
+   FilterExpr operand;
+ };
+ 
+ // Unary minus: -operand
+-struct NegateExpr {
++struct NegateExpr final : TypedFilterExprNode<NegateExpr, FilterExprNode::Type::NEGATE> {
++  explicit NegateExpr(FilterExpr operand) : operand{std::move(operand)} {
++  }
++
+   FilterExpr operand;
+ };
+ 
+ // Function call: lower(@name), exists(@field), abs(@val), year(@ts), ...
+ // name is always lowercase.
+-struct FuncCallExpr {
+```
+
+**File**: `src/server/search/filter_expr_test.cc` (modified, +4/-0)
+```diff
+@@ -204,13 +204,17 @@ TEST(FilterExprTest, LogicalAnd) {
+   EXPECT_TRUE(EvalBool("@a == 'x' && @b < 1.0", doc));
+   EXPECT_FALSE(EvalBool("@a == 'x' && @b > 1.0", doc));
+   EXPECT_FALSE(EvalBool("@a == 'y' && @b < 1.0", doc));
++  EXPECT_EQ(Eval("1 && @a", doc), Value(1.0));
++  EXPECT_EQ(Eval("@c && 1", doc), Value(0.0));
+ }
+ 
+ TEST(FilterExprTest, LogicalOr) {
+   DocValues doc{{"a", "x"}, {"b", 2.0}};
+   EXPECT_TRUE(EvalBool("@a == 'x' || @b > 5.0", doc));
+   EXPECT_TRUE(EvalBool("@a == 'z' || @b > 1.0", doc));
+   EXPECT_FALSE(EvalBool("@a == 'z' || @b > 5.0", doc));
++  EXPECT_EQ(Eval("0 || @b", doc), Value(1.0));
++  EXPECT_EQ(Eval("@a || 0", doc), Value(1.0));
+ }
+ 
+ TEST(FilterExprTest, LogicalNot) {
+```
+
+**File**: `src/server/search/filter_parser.y` (modified, +22/-31)
+```diff
+@@ -44,6 +44,7 @@
+   #define yylex driver->scanner()->Lex
+ 
+   using namespace dfly::aggregate;
++  using std::make_unique;
+ 
+   static double ParseNumber(const std::string& s) {
+     if (s == "inf")
+@@ -53,11 +54,6 @@
+     DCHECK(ok) << "invalid number token: " << s;
+     return v;
+   }
+-
+-  template <typename T>
+-  static FilterExpr MakeNode(T val) {
+-    return std::make_unique<FilterExprNode>(std::move(val));
+-  }
+ }
+ 
+ %parse-param { FilterDriver* driver }
+@@ -120,33 +116,28 @@ final_expr:
+ ;
+ 
+ expr:
+-    expr OP_OR  expr  { $$ = MakeNode(LogicExpr{LogicOp::OR,  std::move($1), std::move($3)}); }
+-  | expr OP_AND expr  { $$ = MakeNode(LogicExpr{LogicOp::AND, std::move($1), std::move($3)}); }
+-  | OP_NOT expr       { $$ = MakeNode(NotExpr{std::move($2)}); }
+-  | expr OP_EQ  expr  { $$ = MakeNode(CmpExpr{CmpOp::EQ,  std::move($1), std::move($3)}); }
+-  | expr OP_NEQ expr  { $$ = MakeNode(CmpExpr{CmpOp::NEQ, std::move($1), std::move($3)}); }
+-  | expr OP_LT  expr  { $$ = MakeNode(CmpExpr{CmpOp::LT,  std::move($1), std::move($3)}); }
+-  | expr OP_LTE expr  { $$ = MakeNode(CmpExpr{CmpOp::LTE, std::move($1), std::move($3)}); }
+-  | expr OP_GT  expr  { $$ = MakeNode(CmpExpr{CmpOp::GT,  std::move($1), std::move($3)}); }
+-  | expr OP_GTE expr  { $$ = MakeNode(CmpExpr{CmpOp::GTE, std::move($1), std::move($3)}); }
+-  | expr OP_PLUS  expr { $$ = MakeNode(ArithExpr{ArithOp::ADD, std::move($1), std::move($3)}); }
+-  | expr OP_MINUS expr { $$ = MakeNode(ArithExpr{ArithOp::SUB, std::move($1), std::move($3)}); }
+-  | expr OP_MUL   expr { $$ = MakeNode(ArithExpr{ArithOp::MUL, std::move($1), std::move($3)}); }
+-  | expr OP_DIV   expr { $$ = MakeNode(ArithExpr{ArithOp::DIV, std::move($1), std::move($3)}); }
+-  | expr OP_MOD   expr { $$ = MakeNode(ArithExpr{ArithOp::MOD, std::move($1), std::move($3)}); }
+-  | expr OP_POW   expr { $$ = MakeNode(ArithExpr{ArithOp::POW, std::move($1), std::move($3)}); }
+-  | OP_MINUS expr %prec UMINUS { $$ = MakeNode(NegateExpr{std::move($2)}); }
+-  | NUMBER  { $$ = MakeNode(NumLiteral{ParseNumber($1)}); }
+-  | STRING  { $$ = MakeNode(StrLiteral{std::move($1)}); }
+-  | FIELD   { $$ = MakeNode(FieldRef{std::move($1)}); }
+-  | KW_NULL { $$ = MakeNode(NullLiteral{}); }
++    expr OP_OR  expr  { $$ = make_unique<LogicExpr>(LogicOp::OR,  std::move($1), std::move($3)); }
++  | expr OP_AND expr  { $$ = make_unique<LogicExpr>(LogicOp::AND, std::move($1), std::move($3)); }
++  | OP_NOT expr       { $$ = make_unique<NotExpr>(std::move($2)); }
++  | expr OP_EQ  expr  { $$ = make_unique<CmpExpr>(CmpOp::EQ,  std::move($1), std::move($3)); }
++  | expr OP_NEQ expr  { $$ = make_unique<CmpExpr>(CmpOp::NEQ, std::move($1), std::move($3)); }
++  | expr OP_LT  expr  { $$ = make_unique<CmpExpr>(CmpOp::LT,  std::move($1), std::move($3)); }
++  | expr OP_LTE expr  { $$ = make_unique<CmpExpr>(CmpOp::LTE, std::move($1), std::move($3)); }
++  | expr OP_GT  expr  { $$ = make_unique<CmpExpr>(CmpOp::GT,  std::move($1), std::move($3)); }
++  | expr OP_GTE expr  { $$ = make_unique<CmpExpr>(CmpOp::GTE, std::move($1), std::move($3)); }
++  | expr OP_PLUS  expr { $$ = make_unique<ArithExpr>(ArithOp::ADD, std::move($1), std::move($3)); }
++  | expr OP_MINUS expr { $$ = make_unique<ArithExpr>(ArithOp::SUB, std::move($1), std::move($3)); }
++  | expr OP_MUL   expr { $$ = make_unique<ArithExpr>(ArithOp::MUL, std::move($1), std::move($3)); }
++  | expr OP_DIV   expr { $$ = make_unique<ArithExpr>(ArithOp::DIV, std::move($1), std::move($3)); }
++  | expr OP_MOD   expr { $$ = make_unique<ArithExpr>(ArithOp::MOD, std::move($1), std::move($3)); }
++  | expr OP_POW   expr { $$ = make_unique<ArithExpr>(ArithOp::POW, std::move($1), std::move($3)); }
++  | OP_MINUS expr %prec UMINUS { $$ = make_unique<NegateExpr>(std::move($2)); }
++  | NUMBER  { $$ = make_unique<NumLiteral>(ParseNumber($1)); }
++  | STRING  { $$ = make_unique<StrLiteral>(std::move($1)); }
++  | FIELD   { $$ = make_unique<FieldRef>(std::move($1)); }
++  | KW_NULL { $$ = make_unique<NullLiteral>(); }
+   | IDENT LPAREN opt_arg_list RPAREN
+-      {
+-        FuncCallExpr fc;
+-        fc.name = std::move($1);
+-        fc.args = std::move($3);
+-        $$ = MakeNode(std::move(fc));
+-      }
++      { $$ = make_unique<FuncCallExpr>(std::move($1), std::move($3)); }
+   | LPAREN expr RPAREN { $$ = std::move($2); }
+ ;
+ 
 ```
 
 ---
 
-### Incident Patch 3: `f39cbcdc` (2026-11-25)
-**Commit Message**: test: fix flaky ClientKillTest.Filters when two clients share a source port (#8879)
+### Incident Patch 2: `e44ed29e` (2026-11-27)
+**Commit Message**: fix(search): reject a LOAD_FROM condition over a single index (#8888)
 
-ClientKillTest.Filters rarely failed with a kill count one short, e.g. CLIENT KILL TYPE pubsub
-returned 3 instead of 4. The test runs CLIENT KILL ADDR with the address of its admin client.
-connect() picks a source port that is unique only per destination, so a client of the main
-listener could get the same address as the admin client. CLIENT KILL ADDR then killed that
-client too, and its reply "Killed 1 client(s), but unable to kill 1 admin client(s)." still
-contained the expected substring.
-
-- RawRespClient binds to an ephemeral port before it connects, so no two test clients share an
-  address.
-- The admin error checks expect the whole reply, so an unexpected kill fails at its own line.
+FT.AGGREGATE accepted a LOAD_FROM condition whose both fields name the index being joined, for
+example "LOAD_FROM idx2 AS b 1 b.g1=b.g2". The join then looked for the foreign value in an
+index that is not joined yet: a debug build failed a DCHECK, a release build read out of
+bounds and crashed. Such a condition is now a syntax error.
 
 Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-**File**: `src/server/dragonfly_connection_test.cc` (modified, +12/-6)
+**File**: `src/server/search/search_family.cc` (modified, +6/-0)
 ```diff
-@@ -58,9 +58,12 @@ class RawRespClient {
- 
-     sockaddr_in address{};
-     address.sin_family = AF_INET;
--    address.sin_port = htons(port);
-     address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
--    if (connect(fd_, reinterpret_cast<sockaddr*>(&address), sizeof(address)) != 0) {
-+
-+    // Bind first: a port picked by connect() can repeat for a client of another listener.
-+    const bool bound = ::bind(fd_, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == 0;
-+    address.sin_port = htons(port);
-+    if (!bound || connect(fd_, reinterpret_cast<sockaddr*>(&address), sizeof(address)) != 0) {
-       close(fd_);
-       fd_ = -1;
+@@ -826,6 +826,12 @@ ParseResult<AggregateParams::JoinParams> ParseAggregatorJoinParams(
+                                             "'"));
      }
-@@ -683,13 +686,16 @@ TEST_F(ClientKillTest, Filters) {
-               ErrArg("Killed 0 client(s), but unable to kill 1 admin client(s)."));
-   const std::vector<std::string> admin_info =
-       absl::StrSplit(Run({"CLIENT", "LIST", "ID", admin_id}).GetString(), absl::ByAnyChar(" ="));
--  EXPECT_THAT(Run({"CLIENT", "KILL", "ADDR", admin_info.at(3)}), ErrArg("unable to kill 1 admin"));
-+  EXPECT_THAT(Run({"CLIENT", "KILL", "ADDR", admin_info.at(3)}),
-+              ErrArg("Killed 0 client(s), but unable to kill 1 admin client(s)."));
-   EXPECT_THAT(Run({"CLIENT", "KILL", "LADDR", absl::StrCat("127.0.0.1:", admin_port_)}),
--              ErrArg("unable to kill 1 admin"));
-+              ErrArg("Killed 0 client(s), but unable to kill 1 admin client(s)."));
-   RawRespClient admin_replica{admin_port_};
-   ASSERT_TRUE(Call(admin_replica, "REPLCONF CAPA dragonfly"));
--  EXPECT_THAT(Run({"CLIENT", "KILL", "TYPE", "replica"}), ErrArg("unable to kill 1 admin client"));
--  EXPECT_THAT(Run({"CLIENT", "KILL", "TYPE", "slave"}), ErrArg("unable to kill 1 admin client"));
-+  EXPECT_THAT(Run({"CLIENT", "KILL", "TYPE", "replica"}),
-+              ErrArg("Killed 0 client(s), but unable to kill 1 admin client(s)."));
-+  EXPECT_THAT(Run({"CLIENT", "KILL", "TYPE", "slave"}),
-+              ErrArg("Killed 0 client(s), but unable to kill 1 admin client(s)."));
-   EXPECT_EQ(Call(admin, "CLIENT KILL TYPE replica"), ":1\r\n");
-   EXPECT_THAT(Run({"CLIENT", "KILL", "USER", "u1"}), IntArg(2));
-   EXPECT_TRUE(u1.ReadEof() && u1_other.ReadEof());
+ 
++    if (l_index == r_index) {
++      return CreateSyntaxError(
++          absl::StrCat("bad arguments for LOAD_FROM: fields must be from different indexes. Got '",
++                       left, "' and '", right, "'"));
++    }
++
+     if (l_index == join_params.index_alias) {
+       join_params.conditions.emplace_back(l_field, r_index, r_field);
+     } else if (r_index == join_params.index_alias) {
+```
+
+**File**: `src/server/search/search_family_test.cc` (modified, +5/-0)
+```diff
+@@ -5979,6 +5979,11 @@ TEST_F(SearchFamilyTest, AggregateWithLoadFromSyntaxErrors) {
+       ErrArg("bad arguments for LOAD_FROM: one of the field must be from the current index 'idx3'. "
+              "Got 'idx2.str2' and 'idx1.str1'"));
+ 
++  // Test when both fields are from the same index
++  EXPECT_THAT(Run({"ft.aggregate", "idx1", "*", "LOAD_FROM", "idx2", "1", "idx2.num2=idx2.str2"}),
++              ErrArg("bad arguments for LOAD_FROM: fields must be from different indexes. "
++                     "Got 'idx2.num2' and 'idx2.str2'"));
++
+   // Test when field of index does not exist
+   EXPECT_THAT(Run({"ft.aggregate", "idx1", "*", "LOAD", "2", "idx1.num1", "idx1.str1", "LOAD_FROM",
+                    "idx2", "1", "idx2.num2=idx1.nonexistent_field"}),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8890** (2026-11-27): feat: make OAHMap compatible with StringMap (@BorysTheDev)
+- **PR #8888** (2026-11-27): fix(search): reject a LOAD_FROM condition over a single index (@vyavdoshenko)
+- **PR #8887** (2026-11-27): fix(search): evaluate and destroy FILTER/APPLY expressions without recursion (@vyavdoshenko)
 - **PR #8885** (2026-11-26): feat: store values inline for OAHMap (@BorysTheDev)
+- **PR #8884** (2026-11-27): feat: allow read commands during slot migration finalization (@BorysTheDev)
 - **PR #8883** (2026-11-26): fix(server): Treat nil-arrays as empty containers. (@abhijat)
-- **PR #8882** (2026-11-26): fix(facade): preallocate a bulk argument only when its data has arrived (@vyavdoshenko)
-- **PR #8879** (2026-11-25): test: fix flaky ClientKillTest.Filters when two clients share a source port (@vyavdoshenko)
-- **PR #8878** (2026-11-25): fix(rdb): don't reject split collections by their element count (@vyavdoshenko)
-- **PR #8877** (2026-11-25): refactor(server): callers of Load() hold the LOADING state (@kostasrim)
 
 ---
 
@@ -2504,28 +2994,28 @@ Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): Treat nil-arrays as empty containers.
+## X. search): evaluate and destroy FILTER/APPLY expressions without recursion
 
 **RULE**:
-When implementing operations in `src/facade/resp_parser.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/search/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b05bcb6`: server): Treat nil-arrays as empty containers.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba5b2ddf`: search): evaluate and destroy FILTER/APPLY expressions without recursion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/facade/resp_parser.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/search/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    return Size() == 0 || Size() == SIZE_MAX;
+    filter_expr.cc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    return Size() == 0;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b05bcb6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba5b2ddf` are properly handled with clean fallback behavior.
