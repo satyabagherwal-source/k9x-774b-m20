@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T03:08:13.835Z",
+  "last_updated": "2026-11-28T03:18:00.878Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-C91K",
+      "id": "CD-BE0E",
       "directive_title": "Bump version number",
-      "source_repo": "zoontek-react-native-permissions-learnings",
+      "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-C91K-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-BE0E-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -74235,6 +74235,35 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E138DA-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-BCWS",
+      "directive_title": "Empirical Invariant Guard in AggregateFunctionCategoricalInformationValue.cpp",
+      "source_repo": "clickhouse-clickhouse-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BCWS-empirical-invariant-guard-in-aggregatefunctioncategoricalinformationvalue-cpp.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-5230CF",
+      "directive_title": "Empirical Invariant Guard in AggregateFunctionCategoricalInformationValue.cpp",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clickhouse-clickhouse",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5230CF-empirical-invariant-guard-in-aggregatefu.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-86964D",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-86964D-bump-version-number.md",
       "staged_date": "2026-11-28"
     }
   ]

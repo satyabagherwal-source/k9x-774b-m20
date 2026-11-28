@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "78fb5256",
+    "sourceVersion": "7ca0f9c3",
     "license": "Apache-2.0",
-    "contentHash": "83b85f00dda3223c03c4262884b143487f6abb69590754bc853713ac8f26bee4",
-    "lastHarvestedAt": "2026-11-27T07:58:35.016Z",
+    "contentHash": "9f45e10fa9c4b4b933958d95d5b4cec3dc32b74b73774e0b7041ccc2238f5007",
+    "lastHarvestedAt": "2026-11-28T03:17:53.653Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -13385,8 +13385,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF",
     "sourceVersion": "hf-atomicchat-inkling-2-mini-gguf",
     "license": "Open-Source",
-    "contentHash": "c5354480a39d73734be92fe7c3fec31ee178920986bd6bee7fabbf3ff776208e",
-    "lastHarvestedAt": "2026-11-24T18:34:15.015Z",
+    "contentHash": "ad8a5595a1dbb7019228b15e0209b5a66eb426c9dfc6451368790ffa519cd1e7",
+    "lastHarvestedAt": "2026-11-28T03:17:36.893Z",
     "learningId": "learn-huggingface-atomicchat-inkling-2-mini-gguf"
   },
   "hf-orcarouter-inkling-2-mini-abliterated-gguf": {

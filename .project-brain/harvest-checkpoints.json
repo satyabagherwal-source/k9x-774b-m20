@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T03:08:07.632Z",
+  "last_updated": "2026-11-28T03:17:53.665Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "83b85f00dda3223c03c4262884b143487f6abb69590754bc853713ac8f26bee4",
-      "verified_at": "2026-11-27T07:58:35.034Z",
+      "content_hash": "9f45e10fa9c4b4b933958d95d5b4cec3dc32b74b73774e0b7041ccc2238f5007",
+      "verified_at": "2026-11-28T03:17:53.664Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T07:58:35.034Z"
+      "last_updated": "2026-11-28T03:17:53.664Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -20196,14 +20196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-inkling-2-mini-gguf",
-      "content_hash": "c5354480a39d73734be92fe7c3fec31ee178920986bd6bee7fabbf3ff776208e",
-      "verified_at": "2026-11-24T18:34:15.031Z",
+      "content_hash": "ad8a5595a1dbb7019228b15e0209b5a66eb426c9dfc6451368790ffa519cd1e7",
+      "verified_at": "2026-11-28T03:17:36.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T18:34:15.031Z"
+      "last_updated": "2026-11-28T03:17:36.904Z"
     },
     "orcarouter/Inkling-2-Mini-abliterated-GGUF": {
       "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",

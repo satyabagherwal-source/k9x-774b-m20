@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-KRV5",
-    "timestamp": "2026-11-26T14:33:49.073Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "4a6c6b8566e61d02576f3b8aff5b3762af16098999d30872bdaa3d624a376b50",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-YHI5",
-    "timestamp": "2026-11-26T14:44:28.829Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "4f380e66b1f7345cf40dd579dc24e4ea7ac08c365a24f57c3e2e6752dcc6f075",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-YPFR",
     "timestamp": "2026-11-26T14:44:39.112Z",
     "repository": "okteto/okteto",
@@ -7490,6 +7460,36 @@
     "repository": "duckdb/duckdb",
     "learningId": "learn-github-duckdb-duckdb",
     "contentHash": "8f79c2b3311c441102b2a69e8e82f7d5106576a4de2ef917b03bc92d05c792ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-AVHS",
+    "timestamp": "2026-11-28T03:17:36.880Z",
+    "repository": "AtomicChat/Inkling-2-Mini-GGUF",
+    "learningId": "learn-huggingface-atomicchat-inkling-2-mini-gguf",
+    "contentHash": "ad8a5595a1dbb7019228b15e0209b5a66eb426c9dfc6451368790ffa519cd1e7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-B8FC",
+    "timestamp": "2026-11-28T03:17:53.640Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "9f45e10fa9c4b4b933958d95d5b4cec3dc32b74b73774e0b7041ccc2238f5007",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

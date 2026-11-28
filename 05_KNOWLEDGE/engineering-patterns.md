@@ -833511,3 +833511,90 @@ enums:
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `42cae313` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11025. Empirical Invariant Guard in AggregateFunctionCategoricalInformationValue.cpp (Harvested from ClickHouse/ClickHouse)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Empirical Invariant Guard in AggregateFunctionCategoricalInformationValue.cpp",
+  "source": "ClickHouse/ClickHouse",
+  "source_url": "https://github.com/ClickHouse/ClickHouse",
+  "source_version": "7ca0f9c3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-28T03:17:52.895Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-clickhouse-clickhouse",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `7ca0f9c3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/AggregateFunctions/AggregateFunctionCategoricalInformationValue.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c31c6ee4`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/AggregateFunctions/AggregateFunctionCategoricalInformationValue.cpp`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+#include <base/arithmeticOverflow.h>
+    extern const int ARGUMENT_OUT_OF_BOUND;
+        const auto add_counter = [&](Counter & lhs, Counter value)
+        {
+            Counter sum = 0;
+            if (common::addOverflow(lhs, value, sum))
+                throw Exception(
+                    ErrorCodes::ARGUMENT_OUT_OF_BOUND,
+                    "Cannot merge states of aggregate function {}: the number of rows ({} + {}) does not fit into UInt64",
+                    getName(),
+                    lhs,
+                    value);
+            lhs = sum;
+        };
+
+            add_counter(counter(place, i, false), counter(rhs, i, false));
+            add_counter(counter(place, i, true), counter(rhs, i, true));
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+            counter(place, i, false) += counter(rhs, i, false);
+            counter(place, i, true) += counter(rhs, i, true);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c31c6ee4` are properly handled with clean fallback behavior.

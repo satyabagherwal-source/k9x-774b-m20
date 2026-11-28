@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T03:08:11.315Z",
+  "updated_at": "2026-11-28T03:17:58.923Z",
   "stats": {
-    "total_discovered": 10708,
+    "total_discovered": 10712,
     "approved_pending_harvest": 10167,
     "harvested_count": 0,
-    "rejected_count": 541,
+    "rejected_count": 545,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10176,
+      "COMMUNITY_AND_EXPERT": 10180,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -231816,6 +231816,66 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
         "fileName": "duckdb-duckdb-learnings.md"
+      }
+    },
+    "SRC-7886B7E6BC74": {
+      "id": "SRC-7886B7E6BC74",
+      "url": "http://127.0.0.1:18400/api/2.1/unity-catalog",
+      "title": "http://127.0.0.1:18400/api/2.1/unity-catalog",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-28T03:17:58.622Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-A0D43F529E6B": {
+      "id": "SRC-A0D43F529E6B",
+      "url": "http://127.0.0.1:18300/v1",
+      "title": "http://127.0.0.1:18300/v1",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-28T03:17:58.724Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-B89BA05B41A5": {
+      "id": "SRC-B89BA05B41A5",
+      "url": "http://127.0.0.1:9002/warehouse-rest",
+      "title": "http://127.0.0.1:9002/warehouse-rest",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-28T03:17:58.824Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-03CA3D9E87E2": {
+      "id": "SRC-03CA3D9E87E2",
+      "url": "http://[::1/x",
+      "title": "http://[::1/x",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-28T03:17:58.923Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
       }
     }
   }

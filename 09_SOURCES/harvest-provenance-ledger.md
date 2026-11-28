@@ -13987,3 +13987,5 @@ Every entry in this ledger must capture:
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `977dd16f` | Multi-dimensional audit evidence | 2026-11-28T02:59:14.207Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2eca620d` | Multi-dimensional audit evidence | 2026-11-28T02:59:17.224Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `07c9a117` | Multi-dimensional audit evidence | 2026-11-28T03:08:07.624Z |
+| `learn-huggingface-atomicchat-inkling-2-mini-gguf` | `https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-28T03:17:36.893Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `7ca0f9c3` | Multi-dimensional audit evidence | 2026-11-28T03:17:53.653Z |

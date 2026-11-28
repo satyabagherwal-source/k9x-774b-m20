@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T03:08:14.411Z",
+  "last_updated": "2026-11-28T03:18:01.441Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26922,
+  "total_items": 26924,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112653,10 +112653,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "78fb5256",
-      "content_hash": "ef9bd0ee968d6907befd6188244a4c33da4d782b0d9c15236b2738835500c54a",
+      "source_version": "7ca0f9c3",
+      "content_hash": "58f3ac6c21712504c4009db6b77cb1076a0690caf302a38282718447a56fed17",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T07:58:35.612Z"
+      "persisted_at": "2026-11-28T03:17:54.269Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse",
@@ -112665,10 +112665,10 @@
       "relative_path": "08_VERIFICATION/clickhouse-clickhouse-verification-protocol-empirical-defect-shield-for-clickhou.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClickHouse/ClickHouse",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "78fb5256",
-      "content_hash": "63fa23eb7f823c84d789871483fa24c9f6090eff79d5db9cc04ac226799eaa04",
+      "source_version": "7ca0f9c3",
+      "content_hash": "17a73e97ecb92beada931f1402c8166c77169561d8f4aca1b5bad83155f0c89e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T07:58:35.878Z"
+      "persisted_at": "2026-11-28T03:17:54.537Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
@@ -230511,9 +230511,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "46319058df34231b7b4e2e6f76d9b9df0d18b9ab2c45128895833e16752093fa",
+      "content_hash": "7f98f38151b309c50745c767a4807b70a0345d31e988b964024ddeac969dc32a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T02:03:50.207Z"
+      "persisted_at": "2026-11-28T03:18:01.155Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230523,9 +230523,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "da9d845347fe8f8f5f5a855c34d37a71d2204cbcb2348cf50852174f6be1d6ad",
+      "content_hash": "57f141f5e8e00680a8dd1cfb1381d99eb8f94bd2367d6d1b64552987709cd3a0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T02:03:50.414Z"
+      "persisted_at": "2026-11-28T03:18:01.441Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -242393,8 +242393,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "78fb5256",
-      "content_hash": "83b85f00dda3223c03c4262884b143487f6abb69590754bc853713ac8f26bee4",
+      "source_version": "7ca0f9c3",
+      "content_hash": "9f45e10fa9c4b4b933958d95d5b4cec3dc32b74b73774e0b7041ccc2238f5007",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -242457,6 +242457,11 @@
           "number": 10859,
           "title": "Enforce the query memory limit on the glob walk's traversal state",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11025,
+          "title": "Empirical Invariant Guard in AggregateFunctionCategoricalInformationValue.cpp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242464,7 +242469,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T07:58:34.679Z",
+      "verified_at": "2026-11-28T03:17:53.310Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242558,9 +242563,9 @@
       "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
       "repository": "clickhouse-clickhouse-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e829d177ea44b0b815e72b509f141adf418d8c12873af0aade45491d4bf4803",
+      "content_hash": "aad6919a03a342cc5c93f73cfbca23da1124d359d19a614526f804c9cdc55378",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T12:48:09.952Z"
+      "persisted_at": "2026-11-28T03:17:59.734Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning",
@@ -242570,9 +242575,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clickhouse-clickhouse-learnings",
       "repository": "clickhouse-clickhouse-learnings",
       "source_version": "HEAD",
-      "content_hash": "ad42569a6bf7f390d05683866aec1766fbc61fde366ea787f909ba9e1823aafa",
+      "content_hash": "03b24ac3286a8823fc44777b071c01c6e4e837a6ea309d655cd476cdc8ebe81a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:48:10.140Z"
+      "persisted_at": "2026-11-28T03:18:00.016Z"
     },
     "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf": {
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
@@ -342448,7 +342453,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF",
       "source_version": "hf-atomicchat-inkling-2-mini-gguf",
-      "content_hash": "c5354480a39d73734be92fe7c3fec31ee178920986bd6bee7fabbf3ff776208e",
+      "content_hash": "ad8a5595a1dbb7019228b15e0209b5a66eb426c9dfc6451368790ffa519cd1e7",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md",
       "promoted_rules": [],
@@ -342457,7 +342462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T18:34:14.770Z",
+      "verified_at": "2026-11-28T03:17:36.534Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -342474,9 +342479,9 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/Inkling-2-Mini-GGUF Core Invariants",
       "repository": "AtomicChat/Inkling-2-Mini-GGUF",
       "source_version": "hf-atomicchat-inkling-2-mini-gguf",
-      "content_hash": "d3bc1340e0efa9b65ae2bf7b68fc566b677e7395ff4369da72bd79f435133503",
+      "content_hash": "895ea5bd2382497a5b226691deb8bfc4059b648fe432a9b538b215f27b3bfa6d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T18:34:15.240Z"
+      "persisted_at": "2026-11-28T03:17:37.223Z"
     },
     "rule-10329": {
       "learning_id": "rule-10329",
@@ -342538,9 +342543,9 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-inkling-2-mini-gguf-learnings Core Invariants",
       "repository": "hf-atomicchat-inkling-2-mini-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "75081701b7dc87dc2e46d177fcd614fcde3b869a04da2eeb5b7d671281ff528d",
+      "content_hash": "37e4fdba8cc0f4df68d8858eecd014b5034fefbe2c66ace0fa5c67dd432834e3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T18:35:06.649Z"
+      "persisted_at": "2026-11-28T03:17:57.910Z"
     },
     "candidate_directive-integer-make-encrypted-rotations-behavior-consistent": {
       "item_id": "candidate_directive-integer-make-encrypted-rotations-behavior-consistent",
@@ -350865,13 +350870,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-C91K-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BE0E-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a30861e2c6affada9496274f8eddb7533ae9736a6c193c01c4e3b25354b9276",
+      "content_hash": "ed432f2caa657b67f4143e2a4ec2a03fc26047cc7dc00938f6c7fc0308a2614d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T02:22:41.864Z"
+      "persisted_at": "2026-11-28T03:18:00.878Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -369906,6 +369911,32 @@
       "content_hash": "5e483ef6b22225b58589f0341fcd447d2751ed7f69cdaf65cd2f127ea8db939c",
       "domain_letter": "G",
       "persisted_at": "2026-11-28T03:08:11.582Z"
+    },
+    "rule-11025": {
+      "learning_id": "rule-11025",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11025,
+      "title": "Empirical Invariant Guard in AggregateFunctionCategoricalInformationValue.cpp",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "7ca0f9c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T03:17:53.310Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-aggregatefunctioncategoricalinformationvalue-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-aggregatefunctioncategoricalinformationvalue-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BCWS-empirical-invariant-guard-in-aggregatefunctioncategoricalinformationvalue-cpp.md",
+      "title": "Empirical Invariant Guard in AggregateFunctionCategoricalInformationValue.cpp",
+      "repository": "clickhouse-clickhouse-learnings",
+      "source_version": "HEAD",
+      "content_hash": "74a63843279000f82dfbbd6415e3bb719d4d2eccf8d37147f1cc042502e030a0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T03:17:59.453Z"
     }
   },
   "ai-builder-brain": {

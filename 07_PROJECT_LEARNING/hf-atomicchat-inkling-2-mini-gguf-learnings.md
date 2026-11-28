@@ -3,7 +3,7 @@
 > **Source Version**: `hf-atomiccha`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T18:34:14.484Z  
+> **Timestamp**: 2026-11-28T03:17:36.128Z  
 > **Learning ID**: `learn-huggingface-atomicchat-inkling-2-mini-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF](https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T18:34:14.352Z  
+> **Harvest Timestamp**: 2026-11-28T03:17:35.974Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 130629 downloads | 120 likes
+- **Stars / Engagement**: 216748 downloads | 208 likes
 
 ---
 

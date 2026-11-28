@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T03:08:07.629Z",
-  "total_cycles_completed": 13242,
-  "total_learnings_persisted": 13242,
-  "total_rules_promoted": 11943,
+  "last_updated": "2026-11-28T03:17:53.661Z",
+  "total_cycles_completed": 13244,
+  "total_learnings_persisted": 13244,
+  "total_rules_promoted": 11944,
   "history": [
-    {
-      "timestamp": "2026-11-27T09:17:32.942Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T09:17:43.844Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T09:32:51.424Z",
       "repository": "arkivanov/Decompose",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T03:08:07.629Z",
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T03:17:36.900Z",
+      "repository": "AtomicChat/Inkling-2-Mini-GGUF",
+      "learningId": "learn-huggingface-atomicchat-inkling-2-mini-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T03:17:53.661Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

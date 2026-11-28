@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T03:08:14.034Z",
+  "last_updated": "2026-11-28T03:18:01.155Z",
   "total_records": 2870,
   "domains": {
     "A": {
@@ -8871,8 +8871,8 @@
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "repository": "ClickHouse/ClickHouse",
-      "content_hash": "ef9bd0ee968d6907befd6188244a4c33da4d782b0d9c15236b2738835500c54a",
-      "created_at": "2026-11-27T07:58:35.612Z"
+      "content_hash": "58f3ac6c21712504c4009db6b77cb1076a0690caf302a38282718447a56fed17",
+      "created_at": "2026-11-28T03:17:54.269Z"
     },
     "DOM-D-303E5CE5": {
       "record_id": "DOM-D-303E5CE5",
@@ -15661,8 +15661,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "46319058df34231b7b4e2e6f76d9b9df0d18b9ab2c45128895833e16752093fa",
-      "created_at": "2026-11-28T02:03:50.207Z"
+      "content_hash": "7f98f38151b309c50745c767a4807b70a0345d31e988b964024ddeac969dc32a",
+      "created_at": "2026-11-28T03:18:01.155Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -19112,8 +19112,8 @@
       "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-learnings-technical-construction-intelligence-clickhouse-c.md",
       "repository": "clickhouse-clickhouse-learnings",
-      "content_hash": "7e829d177ea44b0b815e72b509f141adf418d8c12873af0aade45491d4bf4803",
-      "created_at": "2026-11-25T12:48:09.952Z"
+      "content_hash": "aad6919a03a342cc5c93f73cfbca23da1124d359d19a614526f804c9cdc55378",
+      "created_at": "2026-11-28T03:17:59.734Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-",
@@ -43312,8 +43312,8 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/Inkling-2-Mini-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-inkling-2-mini-gguf-research-knowledge-intelligence-atomicchat-ink.md",
       "repository": "AtomicChat/Inkling-2-Mini-GGUF",
-      "content_hash": "d3bc1340e0efa9b65ae2bf7b68fc566b677e7395ff4369da72bd79f435133503",
-      "created_at": "2026-11-24T18:34:15.240Z"
+      "content_hash": "895ea5bd2382497a5b226691deb8bfc4059b648fe432a9b538b215f27b3bfa6d",
+      "created_at": "2026-11-28T03:17:37.223Z"
     },
     "DOM-D-EBA58F46": {
       "record_id": "DOM-D-EBA58F46",
@@ -43363,8 +43363,8 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-inkling-2-mini-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-inkling-2-mini-gguf-learnings-research-knowledge-intelligence-hf-a.md",
       "repository": "hf-atomicchat-inkling-2-mini-gguf-learnings",
-      "content_hash": "75081701b7dc87dc2e46d177fcd614fcde3b869a04da2eeb5b7d671281ff528d",
-      "created_at": "2026-11-24T18:35:06.649Z"
+      "content_hash": "37e4fdba8cc0f4df68d8858eecd014b5034fefbe2c66ace0fa5c67dd432834e3",
+      "created_at": "2026-11-28T03:17:57.910Z"
     },
     "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-core-invariants",
