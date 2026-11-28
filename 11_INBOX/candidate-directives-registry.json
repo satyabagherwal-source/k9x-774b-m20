@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T06:40:39.103Z",
+  "last_updated": "2026-11-28T06:53:38.541Z",
   "directives": [
     {
       "id": "CD-001",
@@ -75145,6 +75145,46 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D8C1B4-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-0NZQ",
+      "directive_title": "Decode documents with a UTF-32 BOM correctly",
+      "source_repo": "miso-belica-justext-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0NZQ-decode-documents-with-a-utf-32-bom-correctly.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-0ORX",
+      "directive_title": "build(deps): bump yaml plugin to latest release",
+      "source_repo": "gocd-gocd-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0ORX-build-deps-bump-yaml-plugin-to-latest-release.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-AEBB90",
+      "directive_title": "Decode documents with a UTF-32 BOM correctly",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "miso-belica-justext",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AEBB90-decode-documents-with-a-utf-32-bom-corre.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-C5837D",
+      "directive_title": "build(deps): bump yaml plugin to latest release",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gocd-gocd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C5837D-build-deps-bump-yaml-plugin-to-latest-re.md",
       "staged_date": "2026-11-28"
     }
   ]

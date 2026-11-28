@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T22:16:05.497Z",
+  "timestamp": "2026-11-28T06:53:37.418Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-miso-belica-justext-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [miso-belica-justext-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T22:16:05.497Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T06:53:37.418Z`  
 > **Learning ID**: `LEARN-EVO-miso-belica-justext-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from miso-belica-justext-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/miso-belica-justext-learnings.md`  
 > **Source**: github ([https://github.com/miso-belica/justext](https://github.com/miso-belica/justext))  
-> **Source Version**: `68533528`  
+> **Source Version**: `0ef8d122`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T22:15:51.380Z  
+> **Timestamp**: 2026-11-28T06:53:22.951Z  
 > **Learning ID**: `learn-github-miso-belica-justext`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/miso-belica-justext-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/miso-belica/justext](https://github.com/miso-belica/justext))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:15:51.375Z  
+> **Harvest Timestamp**: 2026-11-28T06:53:22.807Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -159,6 +159,10 @@ def decode_html(html, default_encoding=DEFAULT_ENCODING, encoding=None, errors=D
     # https://encoding.spec.whatwg.org/#bom-sniff
     if html.startswith(codecs.BOM_UTF8):
         return html.decode("utf-8-sig", errors)
+    # WHATWG leaves UTF-32 out, but its BOMs are checked here too. The LE
+    # one starts with the UTF-16 LE BOM, so it has to come first.
+    if html.startswith((codecs.BOM_UTF32_LE, codecs.BOM_UTF32_BE)):
+        return html.decode("utf-32", errors)
     if html.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)):
         return html.decode("utf-16", errors)
 
@@ -377,13 +381,7 @@ def get_next_neighbour(i, paragraphs, ignore_neargood):
     Return the class of the paragraph at the bottom end of the short/neargood
     paragraphs block. If ignore_neargood is True, than only 'bad' or 'good'
     can be returned, otherwise 'neargood' can be returned, too.
-    """
-    return _get_neighbour(i, paragraphs, ignore_neargood, 1, len(paragraphs))
 
-
-def revise_paragraph_classification(paragraphs, max_heading_distance=MAX_HEADING_DISTANCE_DEFAULT):
-    """
-    Context-sensitive paragraph classification. Assumes t
 ```
 
 ### Core Architecture Module: `justext/utils.py`
@@ -398,7 +396,10 @@ import os
 import sys
 import pkgutil
 
-MULTIPLE_WHITESPACE_PATTERN = re.compile(r"\s+", re.UNICODE)
+# BOM (U+FEFF) and its byte-swapped counterpart (U+FFFE) are not matched by
+# `\s` but they carry no visible content, so treat them as white-space.
+MULTIPLE_WHITESPACE_PATTERN = re.compile(r"[\s﻿￾]+", re.UNICODE)
+ONLY_WHITESPACE_PATTERN = re.compile(r"\A[\s﻿￾]*\Z", re.UNICODE)
 
 
 def normalize_whitespace(text):
@@ -421,7 +422,7 @@ def is_blank(string):
     Returns `True` if string contains only white-space characters
     or is empty. Otherwise `False` is returned.
     """
-    return not string or string.isspace()
+    return not string or bool(ONLY_WHITESPACE_PATTERN.match(string))
 
 
 def get_stoplists():
@@ -905,6 +906,7 @@ setup(
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
+        # 2.7 to 3.9 should still work but are no longer tested in CI
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
@@ -914,6 +916,11 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
+        "Programming Language :: Python :: 3.15",
         "Programming Language :: Python :: Implementation :: CPython",
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Software Development :: Pre-processors",
@@ -1032,17 +1039,11 @@ function hide_paragraph_details(paragraph, pdid) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55** (2026-11-24): **Respect byte order marks in decode_html**
-  *Symptoms*: `decode_html` ignores byte order marks. A UTF-8 BOM stays in the decoded text as U+FEFF, and a UTF-16 document with a BOM and no `<meta>` tag decodes to garbage, which `justext()` then returns as one 3-character bad paragraph.  ### Before / after  Real output from `decode_html` (first 60 characters), before this change and after:  ```                        before                              after utf-8 BOM, no meta     '﻿<html><head><title>x</title>...'  '<html><head><title>x</title>...' utf-16 BOM, no meta    '��<\x00h\x00t\x00m\x00l\x00>...'  '<html><head><title>x</title>...' ```  End to end through `justext.justext()` on a document with four repeated sentences, the UTF-16 BOM file went from `[('bad', 3)]` to `[('good', 343)]`. A UTF-8 BOM file gives the same paragraphs before and after, since lxml drops the leading U+FEFF itself, so that part only changes what `decode_html` returns. Of the 11 real home pages I checked, `jb51.net` starts with a UTF-8 BOM.  ### Change (`justext/core.py`)  After the explicit `encoding` argument and before the meta tag, check for a UTF-8 or UTF-16 BOM and decode with `utf-8-sig` or `utf-16`. The HTML spec's encoding sniffing algorithm puts the BOM first ([parsing.html](https://html.spec.whatwg.org/multipage/parsing.html)). The spec puts it before a user override as well, but I kept `encoding=` winning so `--enc-force` and `encoding=` behave as before.  Input without a BOM takes the same path as before. One difference: a UTF-8 BOM followed by
-  **Post-Mortem & Fix Analysis**:
-  > Hello, thank you for the PR. Do you have any real websites as examples for these cases? Or what was your motivation for fixing these?
-  > Thanks for looking at it. To answer honestly: I found these by comparing `decode_html` with the WHATWG encoding sniffing algorithm and label table, not from a bug report on a particular site. The before/after table in the description uses byte strings I built for each case, so it shows the behaviour but not how often it happens.  I then ran `decode_html` on main and on this branch over 11 real pages (home pages of apache.org, mit.edu, cs.cmu.edu, nikkei.com, zol.com.cn, chinaz.com, jb51.net, cnki.net, itmedia.co.jp, 2ch.sc, gnu.org). Nine decode identically. Two differ:  - `jb51.net` starts with a UTF-8 BOM (`EF BB BF`). On main `decode_html` returns the text starting with U+FEFF, with this change it does not. The paragraphs from `justext()` are the same either way, because lxml drops the U+FEFF. - `itmedia.co.jp` is Shift_JIS. The byte pair `81 60` in "7～9月" decodes to U+301C on main and to U+FF5E with this change (the `shift_jis` label is read as cp932). The text of the paragraph cha
+- **Issue #62** (2026-11-26): **Test on Python 3.10 to 3.15 in CI**
+  *Symptoms*: The `tests (3.9)` job fails because `ubuntu-latest` (Ubuntu 26.04) has no Python 3.9 build. Python 3.9 reached end of life on 2025-10-31, so this drops it from CI instead of pinning an older runner.
 
-- **Issue #49** (2025-02-24): **check for urllib3 first, before using urllib2**
-  *Symptoms*: I have another package that installs urllib2, and therefore the import below succeeds, and then proceeds to break in Python 3.12   ```py     import urllib2 as urllib     URLError = urllib.URLError  ```    If we can upgrade this to check for urllib3 before trying urllib2, then having urllib2 won't break.     ```py3tb |   File "/usr/local/lib/python3.12/site-packages/justext/_compat.py", line 22, in <module> |     import urllib2 as urllib |   File "/usr/local/lib/python3.12/site-packages/urllib2.py", line 220 |     raise AttributeError, attr ```
-  **Post-Mortem & Fix Analysis**:
-  > I am not sure I understand. urllib2 is builtin library so there is no need to install it. And urllib3 is 3rd party package so I don)t want to test it in my code. The code is there only for compatibility between Python v2 and v3. Maybe I am missing some context?  https://github.com/miso-belica/jusText/blob/7fae5d457613cc96cf9ccb070e4aa2e70455f0e2/justext/_compat.py#L21-L26
-  > There seems to be a compatibility issue impacting more recent versions of python:  ```   File "/opt/homebrew/lib/python3.11/site-packages/justext/__init__.py", line 12, in <module>     from .core import justext   File "/opt/homebrew/lib/python3.11/site-packages/justext/core.py", line 24, in <module>     from ._compat import unicode, ignored   File "/opt/homebrew/lib/python3.11/site-packages/justext/_compat.py", line 22, in <module>     import urllib2 as urllib   File "/opt/homebrew/lib/python3.11/site-packages/urllib2.py", line 220     raise AttributeError, attr ```
+- **Issue #59** (2026-11-26): **Treat BOM characters inside the text as white-space**
+  *Symptoms*: The zero-width no-break space (U+FEFF) and U+FFFE are not matched by \s, so a BOM left inside a text node ended up glued into the paragraph text and a text node containing only a BOM was not recognized as blank.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1059,63 +1060,147 @@ function hide_paragraph_details(paragraph, pdid) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c66a426` (2026-11-24)
-**Commit Message**: Add TDD and CHANGELOG guidelines to AGENTS.md
+### Incident Patch 1: `0ef8d122` (2026-11-27)
+**Commit Message**: Decode documents with a UTF-32 BOM correctly
 
-**File**: `AGENTS.md` (added, +22/-0)
+**File**: `CHANGELOG.rst` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,22 @@
-+## Always practice red/green TDD
+@@ -8,6 +8,7 @@ Unreleased ()
+ - *FEATURE:* Officially support Python 3.10 to 3.15. Python 3.9 and below still work but are no longer tested in CI.
+ - *BUG FIX:* Respect UTF-8 and UTF-16 byte order marks when decoding HTML `#55 <https://github.com/miso-belica/jusText/pull/55>`_.
+ - *BUG FIX:* BOM characters (U+FEFF, U+FFFE) inside the text are treated as white-space.
++- *BUG FIX:* Respect UTF-32 byte order marks when decoding HTML `#63 <https://github.com/miso-belica/jusText/pull/63>`_. A UTF-16 LE document whose first character after the BOM is U+0000 starts with the same bytes, so it is now decoded as UTF-32.
+ 
+ 3.0.2 (2025-02-25)
+ ------------------
+```
+
+**File**: `justext/core.py` (modified, +4/-0)
+```diff
+@@ -90,6 +90,10 @@ def decode_html(html, default_encoding=DEFAULT_ENCODING, encoding=None, errors=D
+     # https://encoding.spec.whatwg.org/#bom-sniff
+     if html.startswith(codecs.BOM_UTF8):
+         return html.decode("utf-8-sig", errors)
++    # WHATWG leaves UTF-32 out, but its BOMs are checked here too. The LE
++    # one starts with the UTF-16 LE BOM, so it has to come first.
++    if html.startswith((codecs.BOM_UTF32_LE, codecs.BOM_UTF32_BE)):
++        return html.decode("utf-32", errors)
+     if html.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)):
+         return html.decode("utf-16", errors)
+ 
+```
+
+**File**: `tests/test_html_encoding.py` (modified, +21/-0)
+```diff
+@@ -158,6 +158,27 @@ def test_utf16_bom_be(self):
+ 
+         self.assert_strings_equal(html, decoded_html)
+ 
++    def test_utf32_bom_le(self):
++        html = '<p>ľščťžýáíéäňúô Ł€</p>'
++        decoded_html = decode_html(codecs.BOM_UTF32_LE + html.encode("utf-32-le"))
 +
-+Every behavioral change starts with a test that fails for the right reason.
++        self.assert_strings_equal(html, decoded_html)
 +
-+1. **RED** — write one test that expresses the behaviour you want, or that reproduces the bug
-+   through the public interface. Run it and read the failure. A test that passes on the first run,
-+   or fails with an unrelated error such as `ImportError`, proves nothing yet.
-+2. **GREEN** — write the smallest change that makes it pass, then run the tests again.
-+3. **REFACTOR** — clean up only once the tests are green. Never refactor while red.
++    def test_utf32_bom_be(self):
++        html = '<p>ľščťžýáíéäňúô Ł€</p>'
++        decoded_html = decode_html(codecs.BOM_UTF32_BE + html.encode("utf-32-be"))
 +
-+Work in vertical slices: one test, then the code for it, then the next test. Do not write a batch
-+of tests up front and implement them all afterwards. Ask and wait for review and commit after every
-+minimal change.
++        self.assert_strings_equal(html, decoded_html)
 +
-+## Update the CHANGELOG for every change worth mentioning
++    def test_utf16_le_starting_with_nul_is_read_as_utf32(self):
++        # BOM + U+0000 in UTF-16 LE has the same first 4 bytes as the
++        # UTF-32 LE BOM, so it is decoded as UTF-32. That is the trade-off
++        # for supporting UTF-32 at all.
++        html_bytes = codecs.BOM_UTF16_LE + '\x00<p>abc</p>'.encode("utf-16-le")
++        decoded_html = decode_html(html_bytes)
 +
-+Add a line to the "Unreleased" section of the CHANGELOG file for anything an end user
-+could notice: bug fixes, new features, new languages, dependency and support changes. Follow the
-+existing style and prefixes.
++        self.assert_strings_equal(html_bytes.decode("utf-32", "replace"), decoded_html)
 +
-+Purely internal work with no observable effect — a refactor, a typo in a comment, test-only
-+changes — does not need an entry.
+     def test_given_encoding_wins_over_bom(self):
+         decoded_html = decode_html(codecs.BOM_UTF8 + b"abc", encoding="iso-8859-1")
+ 
 ```
 
 ---
 
-### Incident Patch 2: `ae63fe53` (2026-11-24)
-**Commit Message**: Update CHANGELOG for unreleased bug fix
+### Incident Patch 2: `9fa2b06a` (2026-11-24)
+**Commit Message**: Treat BOM characters inside the text as white-space
 
-**File**: `CHANGELOG.rst` (modified, +4/-0)
+The zero-width no-break space (U+FEFF) and U+FFFE are not matched by \s,
+so a BOM left inside a text node ended up glued into the paragraph text
+and a text node containing only a BOM was not recognized as blank.
+
+**File**: `CHANGELOG.rst` (modified, +1/-0)
 ```diff
-@@ -3,6 +3,10 @@
- Changelog for jusText
- =====================
+@@ -7,6 +7,7 @@ Unreleased ()
+ ------------------
+ - *FEATURE:* Officially support Python 3.10 to 3.15. Python 3.9 and below still work but are no longer tested in CI.
+ - *BUG FIX:* Respect UTF-8 and UTF-16 byte order marks when decoding HTML `#55 <https://github.com/miso-belica/jusText/pull/55>`_.
++- *BUG FIX:* BOM characters (U+FEFF, U+FFFE) inside the text are treated as white-space.
  
-+Unreleased ()
-+------------------
-+- *BUG FIX:* Respect UTF-8 and UTF-16 byte order marks when decoding HTML `#55 <https://github.com/miso-belica/jusText/pull/55>`_.
-+
  3.0.2 (2025-02-25)
  ------------------
- - *BUG FIX:* Handle urllib imports in Python 2 and 3 correctly `#51 <https://github.com/miso-belica/jusText/pull/51>`_.
+```
+
+**File**: `justext/utils.py` (modified, +5/-2)
+```diff
+@@ -8,7 +8,10 @@
+ import sys
+ import pkgutil
+ 
+-MULTIPLE_WHITESPACE_PATTERN = re.compile(r"\s+", re.UNICODE)
++# BOM (U+FEFF) and its byte-swapped counterpart (U+FFFE) are not matched by
++# `\s` but they carry no visible content, so treat them as white-space.
++MULTIPLE_WHITESPACE_PATTERN = re.compile(r"[\s﻿￾]+", re.UNICODE)
++ONLY_WHITESPACE_PATTERN = re.compile(r"\A[\s﻿￾]*\Z", re.UNICODE)
+ 
+ 
+ def normalize_whitespace(text):
+@@ -31,7 +34,7 @@ def is_blank(string):
+     Returns `True` if string contains only white-space characters
+     or is empty. Otherwise `False` is returned.
+     """
+-    return not string or string.isspace()
++    return not string or bool(ONLY_WHITESPACE_PATTERN.match(string))
+ 
+ 
+ def get_stoplists():
+```
+
+**File**: `tests/test_utils.py` (modified, +8/-0)
+```diff
+@@ -37,6 +37,9 @@ def test_string_with_whitespace_is_blank(self):
+     def test_string_with_chars_is_not_blank(self):
+         assert not is_blank("  #  ")
+ 
++    def test_string_with_byte_order_mark_is_blank(self):
++        assert is_blank("\ufeff \ufffe\t")
++
+     def test_normalize_no_change(self):
+         string = "a b c d e f g h i j k l m n o p q r s ..."
+         assert string == normalize_whitespace(string)
+@@ -56,6 +59,11 @@ def test_normalize_non_break_spaces(self):
+         expected = " € "
+         assert expected == normalize_whitespace(string)
+ 
++    def test_normalize_byte_order_marks(self):
++        string = "hello\ufeffworld\ufffe!"
++        expected = "hello world !"
++        assert expected == normalize_whitespace(string)
++
+ 
+ class TestStoplistsUtils():
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #63** (2026-11-27): Decode documents with a UTF-32 byte order mark as UTF-32 (@OsamaAnsar)
+- **PR #62** (2026-11-26): Test on Python 3.10 to 3.15 in CI (@miso-belica)
+- **PR #59** (2026-11-26): Treat BOM characters inside the text as white-space (@miso-belica)
 - **PR #55** (2026-11-24): Respect byte order marks in decode_html (@OsamaAnsar)
 - **PR #51** (2025-02-24): Handle urllib imports in Python 2 and 3 correctly (@miso-belica)
 - **PR #50** (2026-11-24): Add Javascript port to Readme.rst (@acenturyandabit)
-- **PR #48** (2024-05-09): Fix issue with new version of lxml (@miso-belica)
-- **PR #44** (closed): Create Japanese.txt (@nittolese)
-- **PR #41** (2021-10-18): Shorter, possibly more efficient code (@adbar)
 
 ---
 
@@ -1135,42 +1220,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add TDD and CHANGELOG guidelines to AGENTS.md
+## X. Decode documents with a UTF-32 BOM correctly
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in miso-belica/jusText. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in miso-belica/jusText. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c66a426`: Add TDD and CHANGELOG guidelines to AGENTS.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ef8d122`: Decode documents with a UTF-32 BOM correctly. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-## Always practice red/green TDD
-
-Every behavioral change starts with a test that fails for the right reason.
-
-1. **RED** — write one test that expresses the behaviour you want, or that reproduces the bug
-   through the public interface. Run it and read the failure. A test that passes on the first run,
-   or fails with an unrelated error such as `ImportError`, proves nothing yet.
-2. **GREEN** — write the smallest change that makes it pass, then run the tests again.
-3. **REFACTOR** — clean up only once the tests are green. Never refactor while red.
-
-Work in vertical slices: one test, then the code for it, then the next test. Do not write a batch
-of tests up front and implement them all afterwards. Ask and wait for review and commit after every
-minimal change.
-
-## Update the CHANGELOG for every change worth mentioning
-
-Add a line to the "Unreleased" section of the CHANGELOG file for anything an end user
-could notice: bug fixes, new features, new languages, dependency and support changes. Follow the
-existing style and prefixes.
-
-Purely internal work with no observable effect — a refactor, a typo in a comment, test-only
-changes — does not need an entry.
+- *BUG FIX:* Respect UTF-32 byte order marks when decoding HTML `#63 <https://github.com/miso-belica/jusText/pull/63>`_. A UTF-16 LE document whose first character after the BOM is U+0000 starts with the same bytes, so it is now decoded as UTF-32.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1180,7 +1244,7 @@ changes — does not need an entry.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c66a426` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ef8d122` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

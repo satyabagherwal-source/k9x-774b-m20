@@ -13996,3 +13996,7 @@
 | `CYCLE-20261128-W6OZ` | `2026-11-28T06:22:08.867Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11052` | Yes (`6efeb35f...`) |
 | `CYCLE-20261128-7I52` | `2026-11-28T06:30:56.918Z` | `chroma-core/chroma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11053` | Yes (`bad7e45d...`) |
 | `CYCLE-20261128-JO6L` | `2026-11-28T06:40:24.621Z` | `str4d/rage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`5f324e01...`) |
+| `CYCLE-20261128-0DLP` | `2026-11-28T06:53:24.061Z` | `miso-belica/jusText` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11054` | Yes (`63644c5a...`) |
+| `CYCLE-20261128-0HDC` | `2026-11-28T06:53:28.944Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11055` | Yes (`04132e9d...`) |
+| `CYCLE-20261128-0L9A` | `2026-11-28T06:53:33.982Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md` | Yes (`b5519ce8...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T06:54:07.244Z` | `tursodatabase-turso` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5456C5F2` [Domain D] | Yes (`13d6369e...`) |

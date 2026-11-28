@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T12:21:29.040Z",
+  "timestamp": "2026-11-28T06:54:07.551Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tursodatabase-turso-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tursodatabase-turso-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T12:21:29.040Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T06:54:07.551Z`  
 > **Learning ID**: `LEARN-EVO-tursodatabase-turso-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 79%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tursodatabase-turso-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `df7ba30c`  
+> **Source Version**: `d4bbe58e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T12:21:21.983Z  
+> **Timestamp**: 2026-11-28T06:53:33.424Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T12:21:21.977Z  
+> **Harvest Timestamp**: 2026-11-28T06:53:33.420Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25383 stars
+- **Stars / Engagement**: 25389 stars
 
 ---
 
@@ -1460,11 +1460,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12597** (2026-11-27): **postgres/conformance: move the fixed boolean tests out of gaps**
-  *Symptoms*: PR #12428 made every condition a boolean in tursopg, and removed the gap markers of the tests it fixed. But these tests stayed in the files under `gaps/`, which hold the tests of differences from PostgreSQL.  This moves them to the files of their subject. Each commit moves the tests of one subject. The names, SQL, setups and expected answers do not change.  | Tests | From | To | | --- | --- | --- | | `is-true-is-not-true-on-bool-col`, `in-with-null-three-valued`, `boolean-comparison-output`, `exists-subquery-output` | `gaps/operators-functions.sqltest` | `types/bool.sqltest` | | `like-case-sensitive-literal`, `regex-classes-d-and-escapes`, `similar-to` | `gaps/operators-functions.sqltest` | `pattern-matching.sqltest` (new) | | `eq-any-int-array-literal`, `array-array-literal` | `gaps/operators-functions.sqltest` | `array-operators.sqltest` (new) | | `of-a-json-boolean-is-the-text-true` | `gaps/operators-functions.sqltest` | `jsonb-operators.sqltest` | | `gen-random-uuid-format`, `to-char-null-timestamptz-row` | `gaps/operators-functions.sqltest` | `functions.sqltest` | | `current-user-current-role` | `gaps/operators-functions.sqltest` | `roles/functions.sqltest` | | `omitted-nullable-uuid-column-stays-null` | `gaps/ddl-catalog.sqltest` | `table.sqltest` | | `timestamptz-equality-across-offsets` | `gaps/params-casts.sqltest` | `datetime-input.sqltest` |  These commits were the last eight commits of #12389. #12428 merged the other commits of that PR, so it is closed.  All the c
+- **Issue #12640** (2026-11-28): **dialect-definitions: move the SQLite dialect to a crate that both frontends use**
+  *Symptoms*: The PostgreSQL frontend depended on `turso_sqlite`. It used `SqliteDialect` to parse the statements that core and the frontend run for themselves, and to parse the generated catalog tables. Thus each PostgreSQL binary linked the crate of the SQLite frontend.  This PR adds the crate `turso_dialect_definitions`, which holds `SqliteDialect`.  - `turso_sqlite` exports `SqliteDialect` again, so the crates that use it do not change. - `turso_pg` depends on `turso_dialect_definitions` and no longer on `turso_sqlite`. - `scripts/publish-crates.sh` publishes the new crate before `turso_sqlite`.  No behavior changes.  The purpose is the NaN work of #12592. With this split, `turso_sqlite` is in each SQLite binary and in no PostgreSQL binary, and `turso_pg` is the opposite. Each of the two crates can then give core its own functions to read and write a REAL in a record, and the linker selects the correct pair for each binary.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #12593** (2026-11-27): **core: stop PRAGMA auto_vacuum on a new database from breaking checkpoints**
-  *Symptoms*: ## Problem  ``` fresh file, experimental autovacuum on  PRAGMA auto_vacuum=FULL          -> header written, dirty pages cleared,                                     then SetCookie marks page 1 dirty again (no transaction) PRAGMA page_count, step one row, drop the statement               -> read rollback panics:                                     "dirty pages should be empty for read txn" PRAGMA wal_checkpoint(TRUNCATE)  -> Busy: "cannot checkpoint while another statement is active" ```  `INCREMENTAL` failed the same way. `NONE` did not.  The auto_vacuum setter in `core/translate/pragma.rs` calls `Pager::persist_auto_vacuum_mode`. That function writes both auto-vacuum header fields of the new database and clears the dirty pages, because no transaction is open. The setter then also emitted `ReadCookie`, `If` and `SetCookie IncrementalVacuum` with `TransactionMode::None`. That `SetCookie` wrote the same value again and marked page 1 dirty, and no transaction committed or rolled back that change.  ## Fix  - Remove the `ReadCookie`/`If`/`Halt`/`SetCookie` block from the auto_vacuum setter. The setter returns early when page 1 exists, so the block only ran on new databases, where `persist_auto_vacuum_mode` has already written the value. - `op_set_cookie` now asserts that the pager holds the WAL write lock when MVCC (multi-version concurrency control) is off. In MVCC mode it already returned an error without a transaction. A program that emits `SetCookie` without a write transactio
+- **Issue #12639** (2026-11-28): **postgres: open only PostgreSQL databases in the frontend tests**
+  *Symptoms*: Three tests in `turso_pg` opened a database with the SQLite dialect. Thus a PostgreSQL test binary held databases of two dialects. This PR removes that, so that a binary opens databases of one dialect only. A rule that depends on the dialect, such as the NaN rule of #12592, can then be one value for the whole process.  - `test_postgres_tables_hidden_in_sqlite_mode` is removed. It tested that the SQLite dialect has no `pg_class` and no `pg_namespace`, which is a property of the SQLite frontend. - `reset_reports_frontend_errors` is removed. It used a deferred foreign key to make `reset` fail. The PostgreSQL frontend rejects `DEFERRABLE` with 0A000, so a PostgreSQL database cannot reach that state. - The foreign key test in `embedded_errors` compared the rows and the transaction state with a SQLite database. It now states the expected rows and the transaction state directly. The values are the same as before.  `turso_pg` still depends on `turso_sqlite`: the frontend uses the SQLite dialect as the parser for internal SQL. It no longer opens a SQLite database.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `4c34ca5eb65b` is [here](https://github.com/tursodatabase/turso/pull/12639#pullrequestreview-6095242095).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:ratings:eyJ2ZXJzaW9uIjoxLCJoZWFkU2hhIjoiNGMzNGNhNWViNjViZGQwZDU2MGJlZDAwMTA2NWIyMWExMDk1ODNiYSIsImltcGFjdCI6eyJjYXRlZ29yeSI6Ik9wZXJhdGlvbnMgYW5kIHRvb2xpbmciLCJyZWFjaCI6ImVkZ2UtY2FzZSJ9LCJyaXNrIjp7ImxldmVsIjoibG93IiwiYXJlYXMiOlt7ImFyZWEiOiJQb3N0Z3JlU1FMIGNvbXBhdGliaWxpdHkiLCJkb25lIjoxLCJvcGVuIjowfSx7ImFyZWEiOiJTUUxpdGUgb3IgUG9zdGdyZVNRTCBjb21wYXRpYmlsaXR5IiwiZG9uZSI6Miwib3BlbiI6MH0seyJhcmVhIjoid
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1481,751 +1483,410 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `71ae9708` (2026-11-27)
-**Commit Message**: Merge 'core/storage: fail WAL recovery on a short read' from Perfloop Agent
+### Incident Patch 1: `f1658dc4` (2026-11-28)
+**Commit Message**: Merge 'postgres: register the uuid type' from Glauber Costa
 
-Hey folks, a first-time contributor here. Perfloop has found an issue,
-but I have looked at it. Since I am not familiar with codebase, I can
-largely validate just symptoms; patch itself seems to make sense, but I
-defer to your thinking here.
+tursopg did not have a uuid type of its own. It used the uuid type of
+core, which has no INPUT and reads text with the Rust `uuid` crate. That
+crate accepts `urn:uuid:` and refuses some forms that PostgreSQL reads.
+The frontend also had two hand-written checks, and `auth.uid()` had its
+own parser. Each of them read uuid text a little differently. A cast
+between uuid and a type with no cast in PostgreSQL, such as `5::uuid`,
+gave 22P02 or stored a wrong value, where PostgreSQL gives 42846.
 
-A database whose write-ahead log (WAL) still holds committed
-transactions loses them without any error. This gets triggered if a read
-of the 32-byte WAL header or a WAL frame returns fewer bytes than
-requested while more bytes are available. I was able to reproduce this
-locally (also in the patch attached).
+This PR registers a uuid type in the frontend. It follows oid, the
+integer types and boolean, and it is part of the work that registers the
+types of `pg_type` explicitly. The INPUT is a line-by-line port of
+`string_to_uuid` from PostgreSQL 18, and DECODE is a port of `uuid_out`.
+So tursopg reads the same text as PostgreSQL does: braces, no hyphens, a
+hyphen after every four digits, upper case, and no surrounding space.
+The stored bytes sort as `uuid_cmp` orders the values, so the type needs
+no comparator.
 
-Write/prep files with SQLite, through the rusqlite crate, and then open
-them with Turso:
+## Commits, in order
 
-  - set a 512-byte page size, switch to WAL mode, and run CREATE TABLE
-t(x). SQLite records the new table in the WAL file source.db-wal.
-  - run `PRAGMA wal_checkpoint(TRUNCATE)`, which copies every WAL frame
-into the main database file `source.db`, then shrinks `source.db-wal` to
-0 bytes.
-  - `INSERT INTO t VALUES (1)` and `INSERT INTO t VALUES (2)`. db-wal
-grows to 1,104 bytes. Rows 1 and 2 now exist only in source.db-wal, and
-source.db still holds an empty table.
-  - open 
+1. `postgres: register a uuid type with its own INPUT`. The type, with
+the ports and unit tests.
+2. `postgres: 
 
-**File**: `core/storage/sqlite3_ondisk.rs` (modified, +41/-12)
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -1624,6 +1624,9 @@ impl BuildSharedWal {
-                     self.phase = BuildSharedWalPhase::AwaitHeader(c);
-                 }
-                 BuildSharedWalPhase::AwaitHeader(c) => {
-+                    if let Some(err) = c.get_error() {
-+                        return Err(err.into());
-+                    }
-                     if !c.succeeded() {
-                         io_yield_one!(c);
-                     }
-@@ -1651,6 +1654,9 @@ impl BuildSharedWal {
-                     };
-                 }
-                 BuildSharedWalPhase::AwaitChunk { completion, offset } => {
-+                    if let Some(err) = completion.get_error() {
-+                        return Err(err.into());
-+                    }
-                     if !completion.succeeded() {
-                         io_yield_one!(completion);
-                     }
-@@ -1742,8 +1748,7 @@ impl StreamingWalReader {
-         let reader = self.clone();
-         let completion: Box<ReadComplete> = Box::new(move |res| {
-             let _reader = reader.clone();
--            _reader.handle_header_read(res);
--            None
-+            _reader.handle_header_read(res)
-         });
-         let c = Completion::new_read(header_buf, completion);
-         self.file.pread(0, c)
-@@ -1777,22 +1782,31 @@ impl StreamingWalReader {
-         let completion: Box<ReadComplete> = Box::new(move |res| {
-             tracing::debug!("WAL chunk read complete");
-             let reader = me.clone();
--            reader.handle_chunk_read(res);
--            None
-+            reader.handle_chunk_read(offset, res)
-         });
-         let c = Completion::new_read(buf, completion);
-         let guard = self.file.pread(offset, c)?;
-         Ok((read_size, guard))
-     }
+@@ -7370,7 +7370,6 @@ dependencies = [
+  "turso_pg_catalog",
+  "turso_pg_parser",
+  "turso_sqlite",
+- "uuid",
+ ]
  
--    fn handle_header_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
-+    fn handle_header_read(
-+        self: Arc<Self>,
-+        res: Result<(Arc<Buffer>, i32), CompletionError>,
-+    ) -> Option<CompletionError> {
-         let Ok((buf, bytes_read)) = res else {
-             self.finalize_loading();
--            return;
-+            return None;
-         };
-+        // The file is at least as long as the header, so a read that returns
-+        // fewer bytes does not mean that the WAL has no header. If recovery
-+        // treated it that way, the committed frames would not be visible and
-+        // the next write would overwrite them.
-         if bytes_read != WAL_HEADER_SIZE as i32 {
--            self.finalize_loading();
--            return;
-+            return Some(CompletionError::ShortReadWalFrame {
-+                offset: 0,
-+                expected: WAL_HEADER_SIZE,
-+                actual: bytes_read as usize,
-+            });
-         }
- 
-         let (page_sz, c1, c2, use_native, ok) = {
-@@ -1836,7 +1850,7 @@ impl StreamingWalReader {
-         if PageSize::new(page_sz).is_none() || !ok {
-             *self.header.lock() = WalHeader::default();
-             self.finalize_loading();
--            return;
-+            return None;
-         }
-         {
-             let mut st = self.state.write();
-@@ -1849,14 +1863,28 @@ impl StreamingWalReader {
-         self.off_atomic
-             .store(WAL_HEADER_SIZE as u64, Ordering::Release);
-         self.page_atomic.store(page_sz as u64, Ordering::Release);
-+        None
-     }
- 
--    fn handle_chunk_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
-+    fn handle_chunk_read(
-+        self: Arc<Self>,
-+        offset: u64,
-+        res: Result<(Arc<Buffer>, i32), CompletionError>,
-+    ) -> Option<CompletionError> {
-         let Ok((buf, bytes_read)) = res else {
-             self.finalize_loading();
--            return;
-+            return None;
-         };
--        let buf_slice = &buf.as_slice()[..bytes_read as usize];
-+        // The requested bytes are all inside the file, so a read that returns
-+        // fewer bytes does not show where the valid frames end.
-+        if bytes_read as usize != buf.len() {
-+            return Some(CompletionError::ShortReadWalFrame {
-+                offset,
-+                expected: buf.len(),
-+                actual: bytes_read as usize,
-+            });
-+        }
-+        let buf_slice = buf.as_slice();
-         // Snapshot salts/endianness once to avoid per-frame header locks
-         let (header_copy, use_native) = {
-             let st = self.state.read();
-@@ -1870,6 +1898,7 @@ impl StreamingWalReader {
-         if consumed < buf_slice.len() || self.off_atomic.load(Ordering::Acquire) >= self.file_size {
-             self.finalize_loading();
-         }
-+        None
-     }
- 
-     // Processes frames from a buffer, returns bytes processed
+ [[package]]
 ```
 
-**File**: `tests/integration/queued_io.rs` (modified, +31/-1)
+**File**: `postgres/COMPAT.md` (modified, +2/-2)
 ```diff
-@@ -87,6 +87,7 @@ struct QueuedIoState {
-     owner: Mutex<String>,
-     ordinals: Mutex<HashMap<String, u32>>,
-     fail_next: Mutex<Option<QueuedIoOpKind>>,
-+    wal_read_limit: Mutex<Option<usize>>,
- }
- 
- impl QueuedIoState {
-@@ -99,6 +100,7 @@ impl QueuedIoState {
-             owner: Mutex::new("unowned".to_string()),
-             ordinals: Mutex::new(HashMap::new()),
-             fail_next: Mutex::new(None),
-+            wal_read_limit: Mutex::new(None),
-         }
-     }
- }
-@@ -120,6 +122,12 @@ impl QueuedIo {
-         }
-     }
- 
-+    #[cfg(not(feature = "checksum"))]
-+    pub(crate) fn limit_wal_reads(&self, bytes: usize) {
-+        assert!(bytes > 0);
-+        *self.state.wal_read_limit.lock().unwrap() = Some(bytes);
-+    }
-+
-     pub(crate) fn step_one(&self) -> turso_core::Result<Option<QueuedIoEvent>> {
-         self.step_at(0, false)
-     }
-@@ -429,9 +437,31 @@ impl File for QueuedFile {
-     fn pread(&self, pos: u64, completion: Completion) -> turso_core::Result<Completion> {
-         let inner = self.inner.clone();
-         let c = completion.clone();
-+        let limit = if self.path.ends_with("-wal") {
-+            *self.state.wal_read_limit.lock().unwrap()
-+        } else {
-+            None
-+        };
-         let len = completion.as_read().buf().len();
-         self.enqueue(QueuedIoOpKind::Pread, pos, len, completion, move || {
--            drop(inner.pread(pos, c)?);
-+            if let Some(limit) = limit {
-+                let len = c.as_read().buf().len().min(limit);
-+                let buf = Arc::new(Buffer::new_temporary(len));
-+                let read = Completion::new_read(buf, move |res| {
-+                    match res {
-+                        Ok((buf, n)) => {
-+                            c.as_read().buf().as_mut_slice()[..n as usize]
-+                                .copy_from_slice(&buf.as_slice()[..n as usize]);
-+                            c.complete(n);
-+                        }
-+                        Err(err) => c.error(err),
-+                    }
-+                    None
-+                });
-+                drop(inner.pread(pos, read)?);
-+            } else {
-+                drop(inner.pread(pos, c)?);
-+            }
-             Ok(())
-         })
-     }
+@@ -78,7 +78,7 @@ Basics not enumerated by the official feature matrix.
+ | TRUNCATE | 🟡 Partial | Lowered to DELETE of one table; several tables, CASCADE and RESTART IDENTITY rejected |
+ | BEGIN / COMMIT / ROLLBACK | ✅ Supported | Every transaction is snapshot isolation, i.e. REPEATABLE READ; `ISOLATION LEVEL REPEATABLE READ` is accepted, every other level, DEFERRABLE and AND CHAIN are rejected. READ ONLY and READ WRITE are enforced, on BEGIN and on SET TRANSACTION; switching a READ ONLY transaction to READ WRITE after its first query is rejected with SQLSTATE 25001 like PostgreSQL. A statement error aborts the transaction but keeps its savepoints, so ROLLBACK TO recovers it; a failed COMMIT rolls the transaction back and returns the connection to idle |
+ | LOCK TABLE | 🟡 Partial | ACCESS SHARE without NOWAIT is accepted as a no-op inside a transaction for pg_dump compatibility; table names are not checked, no locks are acquired, and no read snapshot is started; other modes are rejected |
+-| Casts (`expr::type`, CAST) | 🟡 Partial | Also `int4(x)`-style cast functions. Casts to and from int2, int4, int8, float4, float8, bool and text follow `pg_cast`, which lists them: a pair PostgreSQL has no cast for fails with 42846. A cast to uuid gives a value of the uuid type, and fails with 22P02 when the text is not a UUID. A value written to a column by INSERT, UPDATE, ON CONFLICT DO UPDATE, a default or a stored generated column is converted to the column type as an assignment cast, and fails with 42804 when PostgreSQL has no assignment cast. CREATE TABLE and ALTER TABLE ADD COLUMN refuse a column default with no assignment cast to the column type, with 42804 and PostgreSQL's message, which names a real or numeric column as double precision. ADD COLUMN writes a default of another type, converted, into the rows that exist. A value is converted before NOT NULL is checked. Floats round to an integer half to even. A numeric literal and a numeric with a type modifier round half away from zero, as in PostgreSQL. A numeric column without a type modifier and numeric arithmetic are REAL, so they round half to even: 4.5 in a `numeric` column cast or written to an integer is 4, where PostgreSQL gives 5. The range of the target is checked. A float8 cast or written to text is in PostgreSQL's form, such as `3` and `1e+20`. regclass casts from text by looking the name up as PostgreSQL does (schema, search path, quoting, digits as an oid) and to text by printing the name, with `42P01` for a relation that does not exist. It finds the relations that `pg_class` lists (tables, views, sequences and indexes under the name `pg_class` gives them, and the catalogs) and the other PostgreSQL catalog tables by their PostgreSQL oid. A catalog view that `pg_class` does not list does not exist here, so its name fails with `42P01`. A regclass column prints the name in a result and in COPY, as PostgreSQL does, and the binary format sends the oid; a binary regclass parameter is refused with 0A000. `regclass[]` and a column of another reg type are still integers, and so is a regclass that goes through an expression such as `min`, `max`, `CASE`, `||`, `concat`, `format` or an array constructor: the engine, not PostgreSQL's rules, gives the expression its type, so it can print the number where PostgreSQL prints the name (`||`, `concat`, `format`, arrays) or the name where PostgreSQL prints the oid (`min`, `max`). A regclass constant that a view, a default, a check, an index, a policy or a materialized view stores is read as the oid of its relation when the statement runs, as in PostgreSQL, so renaming the relation does not break it and a name with no relation fails the statement with `42P01`. This covers a string constant cast to regclass and a string default of a regclass column, and not a name that reaches regclass another way, such as the argument of `nextval`. A constant that names the table the same statement creates keeps its name, because the table has no oid yet. The object keeps no dependency on the relation, so `DROP TABLE` of that relation is not refused, and the oid then prints as a number. For the same reason pg_dump does not order a table before the table that its default names, so such a dump may not restore. A domain over regclass does not read or print relation names yet: a string default or a text value of the domain fails, and its values print as numbers. A quoted schema name in a regclass matches without regard to case. The casts of date, json, jsonb, uuid, bytea, inet, cidr, macaddr, the reg types other than regclass, arrays, enums and domains are not in `pg_cast` yet: the engine decides them by its own rules, which accept some casts PostgreSQL refuses (`types/cast-matrix.sqltest` has a gap test for each). A cast of another built-in type, such as point or xid, fails with 0A000. Not covered: bytea, which is not a registered type yet, so its casts are not in `pg_cast` and a text literal is not read as bytea input; casts to numeri
 ```
 
-**File**: `tests/integration/storage/short_read.rs` (modified, +114/-0)
+**File**: `postgres/conformance/pg-sqltests/auth.sqltest` (modified, +0/-15)
 ```diff
-@@ -234,3 +234,117 @@ fn test_zeroed_page_returns_corrupt_error() {
-             .contains("Invalid page type: 0");
-     }
+@@ -153,7 +153,6 @@ expect {
  }
-+
-+#[test]
-+fn test_wal_short_reads_fail_open_without_losing_rows() {
-+    use crate::common::ExecRows;
-+    use crate::queued_io::QueuedIo;
-+    use std::sync::Arc;
-+    use turso_core::{
-+        Buffer, Completion, CompletionError, Database, IOResult, LimboError, OpenFlags,
-+        OpenOptions, WalFileShared, IO,
-+    };
-+    use turso_sqlite::SqliteDialect;
-+
-+    let dir = tempfile::tempdir().unwrap();
-+    let source_path = dir.path().join("source.db");
-+    let source = rusqlite::Connection::open(&source_path).unwrap();
-+    source
-+        .execute_batch(
-+            "PRAGMA page_size=512;
-+             PRAGMA journal_mode=WAL;
-+             CREATE TABLE t(x);
-+             PRAGMA wal_checkpoint(TRUNCATE);
-+             INSERT INTO t VALUES (1);
-+             INSERT INTO t VALUES (2);
-+             INSERT INTO t VALUES (3);
-+             INSERT INTO t VALUES (4);",
-+        )
-+        .unwrap();
-+    let db_bytes = std::fs::read(&source_path).unwrap();
-+    let wal_bytes = std::fs::read(dir.path().join("source.db-wal")).unwrap();
-+
-+    for limit in (1..=32).chain([33, 100, 535, 536, 600, 1100, 2143]) {
-+        let io = Arc::new(QueuedIo::new());
-+        let path = dir.path().join(format!("short-{limit}.db"));
-+        let path = path.to_str().unwrap();
-+        for (name, bytes) in [
-+            (path.to_owned(), &db_bytes),
-+            (format!("{path}-wal"), &wal_bytes),
-+        ] {
-+            let file = io.open_file(&name, OpenFlags::Create, false).unwrap();
-+            let c = file
-+                .pwrite(
-+                    0,
-+                    Arc::new(Buffer::new(bytes.clone())),
-+                    Completion::new_write(|_| {}),
-+                )
-+                .unwrap();
-+            io.wait_for_completion(c).unwrap();
-+        }
-+        io.limit_wal_reads(limit);
-+        let recovery_io: Arc<dyn IO> = io.clone();
-+        let mut recovery = WalFileShared::open_shared_if_exists_begin(
-+            &recovery_io,
-+            &format!("{path}-wal"),
-+            OpenFlags::Create,
-+        )
-+        .unwrap();
-+        let err = 'recovery: {
-+            for _ in 0..100 {
-+                match recovery.poll() {
-+                    Err(err) => break 'recovery err,
-+                    Ok(IOResult::Done(_)) => panic!("WAL read limit {limit}: recovery succeeded"),
-+                    Ok(IOResult::IO(c)) => {
-+                        while !c.finished() {
-+                            io.step().unwrap();
-+                        }
-+                    }
-+                }
-+            }
-+            panic!("WAL read limit {limit}: recovery did not finish");
-+        };
-+        assert!(
-+            matches!(
-+                *err,
-+                LimboError::CompletionError(CompletionError::ShortReadWalFrame { .. })
-+            ),
-+            "WAL read limit {limit}: unexpected recovery error {err:?}"
-+        );
-+        match Database::open(io.clone(), path, OpenOptions::new(Arc::new(SqliteDialect))) {
-+            Err(LimboError::CompletionError(CompletionError::ShortReadWalFrame { .. })) => {}
-+            Err(err) => panic!("WAL read limit {limit}: unexpected open error {err:?}"),
-+            Ok(db) => {
-+                io.limit_wal_reads(usize::MAX);
-+                let conn = db
-+                    .connect(ConnectOpts::new(SessionRole::Superuser))
-+                    .unwrap();
-+                let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
-+                panic!("WAL read limit {limit}: open succeeded with rows {rows:?}");
-+            }
-+        }
-+        io.limit_wal_reads(usize::MAX);
-+        let db =
-+            Database::open(io.clone(), path, OpenOptions::new(Arc::new(SqliteDialect))).unwrap();
-+        let conn = db
-+            .connect(ConnectOpts::new(SessionRole::Superuser))
-+            .unwrap();
-+        let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
-+        assert_eq!(rows, vec![(1,), (2,), (3,), (4,)], "WAL read limit {limit}");
-+        if limit == 600 {
-+            conn.execute("INSERT INTO t VALUES (5)").unwrap();
-+            drop(conn);
-+            drop(db);
-+            let db = Database::open(io, path, OpenOptions::new(Arc::new(SqliteDialect))).unwrap();
-+            let conn = db
-+                .connect(ConnectOpts::new(SessionRole::Superuser))
-+                .unwrap();
-+            let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
-+            assert_eq!(
-+                rows,
-+                vec![(1,), (2,), (3,), (4,), (5,)],
-+                "rows after writing and reopening"
-+            );
-+        }
-+    }
-+}
+ 
+ @setup auth_functions
+-@compat-gap "type:uuid"
+ test auth-uid-of-a-uuid-with-a-hyphen-after-every-four-digits {
+     SELECT set_config('request.jwt.claim.sub', 'a0ee-bc99-9c0b-4ef8-bb6d-6bb9-bd38-0a11', false);
+     SELECT auth.uid();
+@@ -162,13 +161,8 @@ expect {
+     a0ee-bc99-9c0b-4ef8-bb6d-6bb9-bd38-0a11
+     a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+ }
+-@sqlstate 22P02
+-expect @tursopg error {
+-    invalid input syntax for type uuid: "a0ee-bc99-9c0b-4ef8-bb6d-6bb9-bd38-0a11"
+-}
+ 
+ @setup auth_functions
+-@compat-gap "type:uuid"
+ test auth-uid-of-32-digits-in-braces {
+     SELECT set_config('request.jwt.claim.sub', '{a0eebc999c0b4ef8bb6d6bb9bd380a11}', false);
+     SELECT auth.uid();
+@@ -177,13 +171,8 @@ expect {
+     {a0eebc999c0b4ef8bb6d6bb9bd380a11}
+     a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+ }
+-@sqlstate 22P02
+-expect @tursopg error {
+-    invalid input syntax for type uuid: ".a0eebc999c0b4ef8bb6d6bb9bd380a11."
+-}
+ 
+ @setup auth_functions
+-@compat-gap "type:uuid"
+ test auth-uid-of-a-urn {
+     SELECT set_config('request.jwt.claim.sub', 'urn:uuid:a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', false);
+     SELECT auth.uid();
+@@ -192,10 +181,6 @@ test auth-uid-of-a-urn {
+ expect error {
+     invalid input syntax for type uuid: "urn:uuid:a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+ }
+-expect @tursopg {
+-    urn:uuid:a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+-    a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+-}
+ 
+ @setup auth_functions
+ test auth-uid-of-text-that-is-not-a-uuid-errors {
 ```
 
----
-
-### Incident Patch 2: `df7ba30c` (2026-11-27)
-**Commit Message**: Merge 'postgres/conformance: move the fixed boolean tests out of gaps' from Pekka Enberg
-
-PR #12428 made every condition a boolean in tursopg, and removed the gap
-markers of the tests it fixed. But these tests stayed in the files under
-`gaps/`, which hold the tests of differences from PostgreSQL.
-
-This moves them to the files of their subject. Each commit moves the
-tests of one subject. The names, SQL, setups and expected answers do not
-change.
-
-| Tests | From | To |
-| --- | --- | --- |
-| `is-true-is-not-true-on-bool-col`, `in-with-null-three-valued`,
-`boolean-comparison-output`, `exists-subquery-output` | `gaps/operators-
-functions.sqltest` | `types/bool.sqltest` |
-| `like-case-sensitive-literal`, `regex-classes-d-and-escapes`,
-`similar-to` | `gaps/operators-functions.sqltest` | `pattern-
-matching.sqltest` (new) |
-| `eq-any-int-array-literal`, `array-array-literal` | `gaps/operators-
-functions.sqltest` | `array-operators.sqltest` (new) |
-| `of-a-json-boolean-is-the-text-true` | `gaps/operators-
-functions.sqltest` | `jsonb-operators.sqltest` |
-| `gen-random-uuid-format`, `to-char-null-timestamptz-row` |
-`gaps/operators-functions.sqltest` | `functions.sqltest` |
-| `current-user-curr
-
-**File**: `postgres/conformance/pg-sqltests/array-operators.sqltest` (added, +17/-0)
+**File**: `postgres/conformance/pg-sqltests/types/cast-matrix.sqltest` (modified, +0/-15)
 ```diff
-@@ -0,0 +1,17 @@
-+# The array operators = ANY, @>, <@ and &&.
+@@ -831,32 +831,23 @@ expect {
+     a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+ }
+ 
+-@compat-gap "cast:uuid -> int4"
+ test cast-uuid-to-int4 {
+     SELECT 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid::int4;
+ }
+ @sqlstate 42846
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+-@compat-gap "cast:int4 -> uuid"
+ test cast-int4-to-uuid {
+     SELECT 5::uuid;
+ }
+ @sqlstate 42846
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+-@compat-gap "cast:bool -> uuid"
+ test cast-bool-to-uuid {
+     SELECT true::uuid;
+ }
+ @sqlstate 42846
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+ @compat-gap "type:bytea"
+ test cast-text-literal-to-bytea {
+@@ -2358,27 +2349,21 @@ expect {
+     a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+ }
+ 
+-@compat-gap "cast:int4 -> uuid"
+ test assign-int4-to-uuid-column {
+     CREATE TABLE t (c uuid);
+     INSERT INTO t VALUES (5);
+     SELECT c FROM t;
+ }
+ @sqlstate 42804
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+-@compat-gap "cast:uuid -> int4"
+ test assign-uuid-to-int4-column {
+     CREATE TABLE t (c int);
+     INSERT INTO t VALUES ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid);
+     SELECT c FROM t;
+ }
+ @sqlstate 42804
+ expect error {}
+-@sqlstate 23000
+-expect @tursopg error {}
+ 
+ test assign-uuid-to-text-column {
+     CREATE TABLE t (c text);
+```
+
+**File**: `postgres/conformance/pg-sqltests/types/uuid.sqltest` (added, +356/-0)
+```diff
+@@ -0,0 +1,356 @@
++# The uuid type is 16 bytes. It reads text as PostgreSQL does, writes it in the
++# canonical form, and sorts by its bytes.
 +
 +@database :memory:
 +
-+test eq-any-int-array-literal {
-+    SELECT 1 = ANY('{1,2}'::int[]), 3 = ANY('{1,2}'::int[]);
++test uuid-reads-the-forms-that-postgres-reads {
++    SELECT
++        'A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11'::uuid,
++        '{a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11}'::uuid,
++        'a0eebc999c0b4ef8bb6d6bb9bd380a11'::uuid,
++        '{a0eebc999c0b4ef8bb6d6bb9bd380a11}'::uuid,
++        'a0ee-bc99-9c0b-4ef8-bb6d-6bb9-bd38-0a11'::uuid,
++        'a0eebc99-9c0b4ef8-bb6d6bb9-bd380a11'::uuid;
 +}
 +expect {
-+    t|f
++    a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
 +}
 +
-+test array-array-literal {
-+    SELECT ARRAY[1,2] @> ARRAY[1], ARRAY['a'] <@ ARRAY['a','b'], ARRAY[1] && ARRAY[2];
++test uuid-names-the-text-it-refuses {
++    SELECT 'nope'::uuid;
++}
++@sqlstate 22P02
++expect error {
++    invalid input syntax for type uuid: "nope"
++}
++
++test uuid-refuses-text-with-a-space-around-it {
++    SELECT ' a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid;
++}
++@sqlstate 22P02
++expect error {
++    invalid input syntax for type uuid: " a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
++}
++
++test uuid-refuses-a-urn {
++    SELECT 'urn:uuid:a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid;
++}
++@sqlstate 22P02
++expect error {}
++
++test uuid-refuses-a-hyphen-after-the-last-group {
++    SELECT 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11-'::uuid;
++}
++@sqlstate 22P02
++expect error {}
++
++test uuid-refuses-a-hyphen-inside-a-group {
++    SELECT 'a0eebc9-99c0b-4ef8-bb6d-6bb9bd380a11'::uuid;
++}
++@sqlstate 22P02
++expect error {}
++
++test uuid-refuses-unbalanced-braces {
++    SELECT (chr(123) || 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11')::uuid;
++}
++@sqlstate 22P02
++expect error {}
++
++test uuid-refuses-too-few-digits {
++    SELECT 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a1'::uuid;
++}
++@sqlstate 22P02
++expect error {}
++
++test uuid-refuses-empty-text {
++    SELECT ''::uuid;
++}
++@sqlstate 22P02
++expect error {
++    invalid input syntax for type uuid: ""
++}
++
++test uuid-column-keeps-the-canonical-form {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES ('{A0EEBC999C0B4EF8BB6D6BB9BD380A11}');
++    SELECT u, u::text FROM t;
 +}
 +expect {
-+    t|t|f
++    a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
 +}
-```
-
-**File**: `postgres/conformance/pg-sqltests/datetime-input.sqltest` (modified, +7/-0)
-```diff
-@@ -1137,3 +1137,10 @@ test cast-jsonb-to-numbers {
- expect {
-     1|1|1.5|1.5
- }
 +
-+test timestamptz-equality-across-offsets {
-+    SELECT '2026-10-08 14:00:00+02'::timestamptz = '2026-10-08 12:00:00Z'::timestamptz;
++test uuid-column-refuses-text-that-is-not-a-uuid {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a1');
++}
++@sqlstate 22P02
++expect error {
++    invalid input syntax for type uuid: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a1"
++}
++
++test uuid-column-takes-null {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES (NULL);
++    SELECT u IS NULL FROM t;
 +}
 +expect {
 +    t
 +}
-```
-
-**File**: `postgres/conformance/pg-sqltests/functions.sqltest` (modified, +16/-0)
-```diff
-@@ -3400,3 +3400,19 @@ expect {
-     f|f|f
-     t|t
- }
 +
-+test gen-random-uuid-format {
-+    SELECT gen_random_uuid()::text ~ '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
++test uuid-compares-equal-across-spellings {
++    SELECT
++        'A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11'::uuid = 'a0eebc999c0b4ef8bb6d6bb9bd380a11'::uuid,
++        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid <> 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12'::uuid;
 +}
 +expect {
-+    t
++    t|t
 +}
 +
-+test to-char-null-timestamptz-row {
-+    CREATE TABLE to_char_times (at timestamptz);
-+    INSERT INTO to_char_times VALUES (NULL);
-+    SELECT to_char(at, 'YYYY') IS NULL FROM to_char_times;
++test uuid-sorts-by-its-bytes {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES
++        ('ffffffff-ffff-ffff-ffff-ffffffffffff'),
++        ('00000000-0000-0000-0000-0000000000ff'),
++        ('80000000-0000-0000-0000-000000000000'),
++        ('00000000-0000-0000-0000-000000000001'),
++        ('7fffffff-ffff-ffff-ffff-ffffffffffff');
++    SELECT u FROM t ORDER BY u;
 +}
 +expect {
-+    t
++    00000000-0000-0000-0000-000000000001
++    00000000-0000-0000-0000-0000000000ff
++    7fffffff-ffff-ffff-ffff-ffffffffffff
++    80000000-0000-0000-0000-000000000000
++    ffffffff-ffff-ffff-ffff-ffffffffffff
 +}
-```
-
-**File**: `postgres/conformance/pg-sqltests/gaps/ddl-catalog.sqltest` (modified, +0/-10)
-```diff
-@@ -830,16 +830,6 @@ expect {
-     1
- }
- 
--# E-73: omitted nullable uuid column stays NULL
--test omitted-nullable-uuid-column-stays-null {
--    CREATE TABLE t (id int PRIMARY KEY, u uuid);
--    INSERT INTO t (id) VALUES (1);
--    SELECT id, u IS NULL FROM t;
--}
--expect {
--    1|t
--}
--
- # E-74: quoted identifier keeps its case in pg_class
- test quoted-identifier-keeps-its-case-in-pg-class {
-     CREATE TABLE "Todos" (id int);
-```
-
-**File**: `postgres/conformance/pg-sqltests/gaps/operators-functions.sqltest` (modified, +0/-111)
-```diff
-@@ -56,18 +56,6 @@ expect {
-     2
- }
- 
--# B-04: IS TRUE / IS NOT TRUE on bool col
--@setup t_id_s_n_arr_ia_j_ok_with_rows
--test is-true-is-not-true-on-bool-col {
--    SELECT id, ok IS TRUE, ok IS NOT TRUE FROM t ORDER BY id;
--}
--expect {
--    1|t|f
--    2|f|t
--    3|f|t
--    4|f|t
--}
--
- # B-05: IS UNKNOWN
- @setup t_id_s_n_arr_ia_j_ok_with_rows
- test is-unknown {
-@@ -87,14 +75,6 @@ expect {
-     2
- }
- 
--# B-07: LIKE case-sensitive literal
--test like-case-sensitive-literal {
--    SELECT 'ABC' LIKE 'abc', 'abc' LIKE 'a%', 'abc' LIKE 'A%';
--}
--expect {
--    f|t|f
--}
--
- # B-08: LIKE default escape \_
- @setup t_id_s_n_arr_ia_j_ok_with_rows
- test like-default-escape-underscore {
-@@ -222,38 +202,6 @@ expect {
-     4
- }
- 
--# B-21: regex classes \d and escapes
--test regex-classes-d-and-escapes {
--    SELECT 'a1' ~ '^a\d$', 'a.c' ~ '^a\.c$', 'abc' ~ '^a\.c$';
--}
--expect {
--    t|t|f
--}
--
--# B-22: SIMILAR TO
--test similar-to {
--    SELECT 'abc' SIMILAR TO 'a(b|x)c', 'abc' SIMILAR TO 'b';
--}
--expect {
--    t|f
--}
--
--# B-23: IN with NULL (three-valued)
--test in-with-null-three-valued {
--    SELECT 1 IN (1, NULL), 2 IN (1, NULL), 2 NOT IN (1, NULL);
--}
--expect {
--    t||
--}
--
--# B-25: = ANY('{..}'::int[])
--test eq-any-int-array-literal {
--    SELECT 1 = ANY('{1,2}'::int[]), 3 = ANY('{1,2}'::int[]);
--}
--expect {
--    t|f
--}
--
- # B-26: > ALL / < ANY (non-equality)
- @compat-gap "syntax:any-all"
- test all-any-non-equality {
-@@ -321,14 +269,6 @@ expect {
-     1
- }
- 
--# B-35: ARRAY @> ARRAY literal
--test array-array-literal {
--    SELECT ARRAY[1,2] @> ARRAY[1], ARRAY['a'] <@ ARRAY['a','b'], ARRAY[1] && ARRAY[2];
--}
--expect {
--    t|t|f
--}
--
- # B-36: array subscript 1-based + out of range
- @setup t_id_s_n_arr_ia_j_ok_with_rows
- test array-subscript-1-based-out-of-range {
-@@ -761,14 +701,6 @@ expect {
-     t
- }
- 
--# B-78: gen_random_uuid() format
--test gen-random-uuid-format {
--    SELECT gen_random_uuid()::text ~ '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
--}
--expect {
--    t
--}
--
- # B-79: set_config + current_setting
- test set-config-current-setting {
-     SELECT set_config('request.jwt.claims', '{"sub":"u1"}', true);
-@@ -970,14 +902,6 @@ expect {
-     1|2
- }
- 
--# B-97: current_user / current_role
--test current-user-current-role {
--    SELECT current_user = current_role;
--}
--expect {
--    t
--}
--
- # B-98: pg_catalog.-qualified function
- test pg-catalog-qualified-function {
-     SELECT pg_catalog.lower('A');
-@@ -1062,24 +986,6 @@ expect {
-     z|0
- }
- 
--# B-106: boolean comparison output
--@setup t_id_s_n_arr_ia_j_ok_with_rows
--test boolean-comparison-output {
--    SELECT id < 2, n IS NULL FROM t WHERE id = 1;
--}
--expect {
--    t|f
--}
--
--# B-107: EXISTS subquery output
--@setup t_id_s_n_arr_ia_j_ok_with_rows
--test exists-subquery-output {
--    SELECT EXISTS (SELECT 1 FROM t WHERE id = 1);
--}
--expect {
--    t
--}
--
- # B-117: VALUES list with column aliases v(x)
- test values-list-with-column-aliases-v-x {
-     SELECT x FROM (VALUES (1), (2)) v(x) ORDER BY x;
-@@ -1270,15 +1176,6 @@ expect @tursopg raw {
-  12
- }
- 
--test to-char-null-timestamptz-row {
--    CREATE TABLE to_char_times (at timestamptz);
--    INSERT INTO to_char_times VALUES (NULL);
--    SELECT to_char(at, 'YYYY') IS NULL FROM to_char_times;
--}
--expect {
--    t
--}
--
- # to_timestamp(double precision)
- @compat-gap "function:to_timestamp"
- test to-timestamp-epoch {
-@@ -1315,14 +1212,6 @@ expect {
- @sqlstate 42883
- expect @tursopg error {}
- 
--# B-127: ->> of a JSON boolean is the text true
--test of-a-json-boolean-is-the-text-true {
--    SELECT '{"a": true}'::jsonb ->> 'a', '{"a": true}'::jsonb ->> 'a' <> 'true';
--}
--expect {
--    true|f
--}
--
- # B-128: jsonb || concatenates two objects
- # B-122 also uses ||. After a fix, the output still differs because of A-45.
- @compat-gap "operator:jsonb || jsonb"
-```
-
-**File**: `postgres/conformance/pg-sqltests/gaps/params-casts.sqltest` (modified, +0/-8)
-```diff
-@@ -185,14 +185,6 @@ test invalid-timestamptz {
- @sqlstate 22007
- expect error {}
- 
--# A-36: timestamptz equality across offsets
--test timestamptz-equality-across-offsets {
--    SELECT '2026-10-08 14:00:00+02'::timestamptz = '2026-10-08 12:00:00Z'::timestamptz;
--}
--expect {
--    t
--}
--
- # A-37: timestamp drops offset
- test timestamp-drops-offset {
-     SELECT '2026-10-08 14:00:00+02'::timestamp;
-```
-
-**File**: `postgres/conformance/pg-sqltests/jsonb-operators.sqltest` (modified, +7/-0)
-```diff
-@@ -717,6 +717,13 @@ expect @tursopg {
-     -1
- }
- 
-+test of-a-json-boolean-is-the-text-true {
-+    SELECT '{"a": true}'::jsonb ->> 'a', '{"a": true}'::jsonb ->> 'a' <> 'true';
++
++test uuid-sorts-in-descending-order {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES
++        ('80000000-0000-0000-0000-000000000000'),
++        ('7fffffff-ffff-ffff-ffff-ffffffffffff'),
++        ('00000000-0000-0000-0000-000000000001');
++    SELECT u FROM t ORDER BY u DESC;
 +}
 +expect {
-+    true|f
++    80000000-0000-0000-0000-000000000000
++    7fffffff-ffff-ffff-ffff-ffffffffffff
++    00000000-0000-0000-0000-000000000001
 +}
 +
- # Known differences of @> and <@
++test uuid-comparison-operators-follow-the-bytes {
++    SELECT
++        '80000000-0000-0000-0000-000000000000'::uuid > '7fffffff-ffff-ffff-ffff-ffffffffffff'::uuid,
++        '00000000-0000-0000-0000-000000000001'::uuid < '00000000-0000-0000-0000-0000000000ff'::uuid,
++        '00000000-0000-0000-0000-000000000001'::uuid <= '00000000-0000-0000-0000-000000000001'::uuid,
++        '00000000-0000-0000-0000-000000000001'::uuid >= '00000000-0000-0000-0000-000000000002'::uuid;
++}
++expect {
++    t|t|t|f
++}
++
++test uuid-between-follows-the-bytes {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES
++        ('00000000-0000-0000-0000-000000000001'),
++        ('7fffffff-ffff-ffff-ffff-ffffffffffff'),
++        ('80000000-0000-0000-0000-000000000000'),
++        ('ffffffff-ffff-ffff-ffff-ffffffffffff');
++    SELECT u FROM t
++    WHERE u BETWEEN '7fffffff-ffff-ffff-ffff-ffffffffffff' AND '80000000-0000-0000-0000-000000000000'
++    ORDER BY u;
++}
++expect {
++    7f
+```
+
+**File**: `postgres/frontend/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -30,7 +30,6 @@ turso_ext = { workspace = true, features = ["core_only"] }
+ turso_pg_catalog = { workspace = true }
+ turso_pg_parser = { workspace = true }
+ turso_sqlite = { workspace = true }
+-uuid = "1.11.0"
  
- # tursopg compares a json or text value as jsonb, where PostgreSQL has @> only
+ [dev-dependencies]
+ turso_core = { workspace = true, features = ["io_memory_yield", "test_helper"] }
 ```
 
-**File**: `postgres/conformance/pg-sqltests/pattern-matching.sqltest` (added, +24/-0)
+**File**: `postgres/frontend/auth_functions.rs` (modified, +1/-14)
 ```diff
-@@ -0,0 +1,24 @@
-+# LIKE, the regular expression operators and SIMILAR TO.
-+
-+@database :memory:
-+
-+test like-case-sensitive-literal {
-+    SELECT 'ABC' LIKE 'abc', 'abc' LIKE 'a%', 'abc' LIKE 'A%';
-+}
-+expect {
-+    f|t|f
-+}
-+
-+test regex-classes-d-and-escapes {
-+    SELECT 'a1' ~ '^a\d$', 'a.c' ~ '^a\.c$', 'abc' ~ '^a\.c$';
-+}
-+expect {
-+    t|t|f
-+}
-+
-+test similar-to {
-+    SELECT 'abc' SIMILAR TO 'a(b|x)c', 'abc' SIMILAR TO 'b';
-+}
-+expect {
-+    t|f
-+}
-```
-
----
-
-### Incident Patch 3: `6c9e975d` (2026-11-24)
-**Commit Message**: postgres/conformance: move the test of an omitted uuid column to table.sqltest
-
-PR #12428 fixed the gap of the test `omitted-nullable-uuid-column-stays-null`: the result is a boolean, and tursopg prints it as t or f now. It is a plain test of a column that an INSERT leaves out now, and the tests of table columns are in `table.sqltest`.
-
-The names, SQL and expected answers do not change.
-
-**File**: `postgres/conformance/pg-sqltests/gaps/ddl-catalog.sqltest` (modified, +0/-10)
-```diff
-@@ -830,16 +830,6 @@ expect {
-     1
+@@ -1,8 +1,7 @@
+-use crate::error::sqlstate_error;
+ use crate::functions::{invalid_json, pg_scalar_function, unsupported_unicode_escape, Uuid};
++use crate::pg_type::canonical_uuid;
+ use turso_core::native_ext::FunctionArity;
+ use turso_core::{Connection, OpenOptions, Result};
+-use turso_pg_parser::sqlstate::SQLSTATE_INVALID_TEXT_REPRESENTATION;
+ 
+ pub(crate) fn register_functions(options: OpenOptions) -> OpenOptions {
+     options
+@@ -44,18 +43,6 @@ fn claim(conn: &Connection, setting_name: &str, claim_name: &str) -> Result<Opti
+     })
  }
  
--# E-73: omitted nullable uuid column stays NULL
--test omitted-nullable-uuid-column-stays-null {
--    CREATE TABLE t (id int PRIMARY KEY, u uuid);
--    INSERT INTO t (id) VALUES (1);
--    SELECT id, u IS NULL FROM t;
--}
--expect {
--    1|t
+-fn canonical_uuid(text: &str) -> Result<String> {
+-    uuid::Uuid::parse_str(text)
+-        .map(|uuid| uuid.hyphenated().to_string())
+-        .map_err(|_| {
+-            sqlstate_error(
+-                SQLSTATE_INVALID_TEXT_REPRESENTATION,
+-                format!("invalid input syntax for type uuid: \"{text}\""),
+-                None,
+-            )
+-        })
 -}
 -
- # E-74: quoted identifier keeps its case in pg_class
- test quoted-identifier-keeps-its-case-in-pg-class {
-     CREATE TABLE "Todos" (id int);
+ fn jwt(conn: &Connection) -> Result<Option<String>> {
+     let Some(claims) =
+         setting(conn, "request.jwt.claim").or_else(|| setting(conn, "request.jwt.claims"))
 ```
 
-**File**: `postgres/conformance/pg-sqltests/table.sqltest` (modified, +9/-0)
+**File**: `postgres/frontend/cast_planning.rs` (modified, +1/-1)
 ```diff
-@@ -1549,3 +1549,12 @@ test integer-primary-key-refuses-an-upsert-to-null {
- }
- @sqlstate 23502
- expect error {}
-+
-+test omitted-nullable-uuid-column-stays-null {
-+    CREATE TABLE t (id int PRIMARY KEY, u uuid);
-+    INSERT INTO t (id) VALUES (1);
-+    SELECT id, u IS NULL FROM t;
-+}
-+expect {
-+    1|t
-+}
+@@ -205,6 +205,7 @@ fn registered_cast_type(name: &str) -> Option<CastType> {
+         "boolean" => Bool,
+         "oid" => Oid,
+         "regclass" => RegClass,
++        "uuid" => Uuid,
+         "timestamp" => Timestamp,
+         "timestamptz" => TimestampTz,
+         // FIXME(pg-catalog): numeric is registered only with a type modifier. Without one it is REAL, which `is_lowered_type_name` leaves to the engine. A numeric type that needs no modifier lets every numeric go through CASTS.
+@@ -255,7 +256,6 @@ const ENGINE_RULE_TYPES: &[&str] = &[
+     "time",
+     "json",
+     "jsonb",
+-    "uuid",
+     "bytea",
+     "inet",
+     "cidr",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12597** (2026-11-27): postgres/conformance: move the fixed boolean tests out of gaps (@penberg)
-- **PR #12593** (2026-11-27): core: stop PRAGMA auto_vacuum on a new database from breaking checkpoints (@turso-github-handyman[bot])
-- **PR #12591** (closed): core: normalize sqlite nan values and generalize type ordering (@glommer)
-- **PR #12580** (2026-11-26): postgres/catalog: describe each catalog with a CatalogTable impl (@pedrocarlo)
-- **PR #12573** (2026-11-27): core/mvcc: return busy from a contended explicit checkpoint (@sAchin-680)
-- **PR #12569** (2026-11-26): postgres: make pg_type one table of the built-in types (@glommer)
+- **PR #12640** (closed): dialect-definitions: move the SQLite dialect to a crate that both frontends use (@glommer)
+- **PR #12639** (2026-11-28): postgres: open only PostgreSQL databases in the frontend tests (@glommer)
+- **PR #12634** (2026-11-28): postgres: add regtype, and give regclass and regtype an INPUT (@glommer)
+- **PR #12633** (2026-11-28): postgres: register the uuid type (@glommer)
+- **PR #12632** (2026-11-28): testing/sqltest: split the runner into one binary per dialect (@glommer)
+- **PR #12630** (2026-11-28): postgres: reject database attachment (@glommer)
 
 ---
 
@@ -2239,77 +1900,6 @@ The names, SQL and expected answers do not change.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Merge 'core/storage: fail WAL recovery on a short read' from Perfloop Agent
-
-**RULE**:
-When implementing operations in `core/storage/sqlite3_ondisk.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `71ae9708`: Merge 'core/storage: fail WAL recovery on a short read' from Perfloop Agent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/storage/sqlite3_ondisk.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-                    if let Some(err) = c.get_error() {
-                        return Err(err.into());
-                    }
-                    if let Some(err) = completion.get_error() {
-                        return Err(err.into());
-                    }
-            _reader.handle_header_read(res)
-            reader.handle_chunk_read(offset, res)
-    fn handle_header_read(
-        self: Arc<Self>,
-        res: Result<(Arc<Buffer>, i32), CompletionError>,
-    ) -> Option<CompletionError> {
-            return None;
-        // The file is at least as long as the header, so a read that returns
-        // fewer bytes does not mean that the WAL has no header. If recovery
-        // treated it that way, the committed frames would not be visible and
-        // the next write would overwrite them.
-            return Some(CompletionError::ShortReadWalFrame {
-                offset: 0,
-                expected: WAL_HEADER_SIZE,
-                actual: bytes_read as usize,
-            });
-            return None;
-        None
-    fn handle_chunk_read(
-        self: Arc<Self>,
-        offset: u64,
-        res: Result<(Arc<Buffer>, i32), CompletionError>,
-    ) -> Option<CompletionError> {
- 
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-            _reader.handle_header_read(res);
-            None
-            reader.handle_chunk_read(res);
-            None
-    fn handle_header_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
-            return;
-            self.finalize_loading();
-            return;
-            return;
-    fn handle_chunk_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
-            return;
-        let buf_slice = &buf.as_slice()[..bytes_read as usize];
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `71ae9708` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

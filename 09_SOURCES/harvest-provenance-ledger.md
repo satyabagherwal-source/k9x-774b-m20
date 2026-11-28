@@ -14029,3 +14029,7 @@ Every entry in this ledger must capture:
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `c7b96196` | Multi-dimensional audit evidence | 2026-11-28T06:22:08.872Z |
 | `learn-github-chroma-core-chroma` | `https://github.com/chroma-core/chroma` | `de23e663` | Multi-dimensional audit evidence | 2026-11-28T06:30:56.923Z |
 | `learn-github-str4d-rage` | `https://github.com/str4d/rage` | `11c93ccd` | Multi-dimensional audit evidence | 2026-11-28T06:40:24.654Z |
+| `learn-github-miso-belica-justext` | `https://github.com/miso-belica/justext` | `0ef8d122` | Multi-dimensional audit evidence | 2026-11-28T06:53:24.064Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `3aecc93e` | Multi-dimensional audit evidence | 2026-11-28T06:53:28.958Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `d4bbe58e` | Multi-dimensional audit evidence | 2026-11-28T06:53:33.992Z |
+| `learn-dom-d-5456c5f2` | `project://tursodatabase-turso` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md` | 2026-11-28T06:54:07.244Z |

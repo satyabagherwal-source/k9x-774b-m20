@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T06:40:39.407Z",
-  "total_records": 2879,
+  "last_updated": "2026-11-28T06:54:07.689Z",
+  "total_records": 2880,
   "domains": {
     "A": {
       "total": 27,
@@ -76,7 +76,7 @@
       ]
     },
     "D": {
-      "total": 1058,
+      "total": 1059,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1135,7 +1135,8 @@
         "DOM-D-F44634E3",
         "domain_intelligence-research-knowledge-intelligence-ai-sage-gigachat4-37b-a4b-core-invariants",
         "DOM-D-174E1CF1",
-        "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-37b-a4b-learnings-core-inva"
+        "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-37b-a4b-learnings-core-inva",
+        "DOM-D-5456C5F2"
       ]
     },
     "E": {
@@ -9088,10 +9089,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "d94570d319c2905f313fa907e2c09a21d22073f4c148da1d45ae6deaf9fd7c26",
-      "created_at": "2026-11-28T03:35:35.909Z"
+      "content_hash": "aa03ee33d4a15d8ce0603f1824b62e74e7a41c3e57e36fc378c62545f5585afa",
+      "created_at": "2026-11-28T06:53:34.231Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -9273,8 +9274,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "17ffb235504f5901714b1914f05dedcd0ea0ef41b55e10ca7b3365c1c7bf9f8c",
-      "created_at": "2026-11-27T13:55:27.198Z"
+      "content_hash": "3abfd3bb8695f4cb047def684d1a799c9fcc37e18bb472591b3b9966ae4b04ff",
+      "created_at": "2026-11-28T06:53:29.381Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -9351,8 +9352,8 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-learnings-technical-construction-intelligence-gocd-gocd-learnings-core.md",
       "repository": "gocd-gocd-learnings",
-      "content_hash": "cd78f97b353e4ab7ec2b495364bb49c26f56400a9b721b985541e899b16828be",
-      "created_at": "2026-11-27T13:55:31.417Z"
+      "content_hash": "2314559d3f912849ccb58f9b1bb86f08b27b2dab411b5ca3f373bfec13e53444",
+      "created_at": "2026-11-28T06:53:38.789Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -25041,8 +25042,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-turso-learnings",
-      "content_hash": "9573850e13dfd7915e0b9a172eb347986dbc44cae7b3e0e604fb634c51020430",
-      "created_at": "2026-11-27T12:21:29.387Z"
+      "content_hash": "0129e9d3be62dea3dc2c661b534fd8ba5c3098b3a3c3336da50a86d728ca3be0",
+      "created_at": "2026-11-28T06:54:07.689Z"
     },
     "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants",
@@ -43667,8 +43668,8 @@
       "title": "Technical Construction Intelligence: miso-belica/jusText Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-miso-belica-justext-technical-construction-intelligence-miso-belica-justext-core.md",
       "repository": "miso-belica/jusText",
-      "content_hash": "5182434c7d33ec2caabe704e1df57a2facafeaa6533b41f8800f9d66383008f4",
-      "created_at": "2026-11-24T22:15:52.359Z"
+      "content_hash": "25985bea1a29cc4b8ca65858e928d81361c63639e7f362487edc5dd459f9b3b9",
+      "created_at": "2026-11-28T06:53:24.508Z"
     },
     "domain_intelligence-technical-construction-intelligence-miso-belica-justext-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-miso-belica-justext-learnings-core-invariant",
@@ -43676,8 +43677,8 @@
       "title": "Technical Construction Intelligence: miso-belica-justext-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-miso-belica-justext-learnings-technical-construction-intelligence-miso-belica-ju.md",
       "repository": "miso-belica-justext-learnings",
-      "content_hash": "1f4665253e3e1b115e9047abd67071fb5b2559e8330d76d6a569b9c415242f03",
-      "created_at": "2026-11-24T22:16:05.798Z"
+      "content_hash": "f89a7da681d9319db54c03c82be2f175bac27935f49eb666e950b835065029e8",
+      "created_at": "2026-11-28T06:53:37.721Z"
     },
     "domain_intelligence-architecture-intelligence-medialab-xan-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-medialab-xan-core-invariants",
@@ -48750,6 +48751,48 @@
       "repository": "chroma-core-chroma-learnings",
       "content_hash": "d5125fe79a5d1875318b7e6499e6440b7305e45ee56bbb066ab18c624bfc4a43",
       "created_at": "2026-11-28T06:31:01.598Z"
+    },
+    "DOM-D-5456C5F2": {
+      "record_id": "DOM-D-5456C5F2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): tursodatabase/turso",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  \n> **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  \n> **Source Version**: `d4bbe58e`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-sy",
+      "content_hash": "13d6369ebd65272a40fb597e9b7d99bf22481ef1e1982e79af3bdbf58b382adf",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  \n> **Source**: github ([https://github.com/tursod -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  \n> **Source**: github ([https://github.com/tursod",
+      "provenance": {
+        "source_uri": "project://tursodatabase-turso/tursodatabase-turso-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T06:53:39.155Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tursodatabase-turso)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of tursodatabase-turso"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T06:54:07.216Z"
     }
   }
 }

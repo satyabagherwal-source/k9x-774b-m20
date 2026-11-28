@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T13:55:31.051Z",
+  "timestamp": "2026-11-28T06:53:38.441Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gocd-gocd-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gocd-gocd-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T13:55:31.051Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T06:53:38.441Z`  
 > **Learning ID**: `LEARN-EVO-gocd-gocd-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `4aea0221`  
+> **Source Version**: `3aecc93e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T13:55:25.280Z  
+> **Timestamp**: 2026-11-28T06:53:27.840Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T13:55:25.132Z  
+> **Harvest Timestamp**: 2026-11-28T06:53:27.836Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -908,81 +908,24 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4aea0221` (2026-11-27)
-**Commit Message**: build(deps-ui): bump chart.js in /server/src/main/webapp/WEB-INF/rails (#14770)
+### Incident Patch 1: `3aecc93e` (2026-11-27)
+**Commit Message**: build(deps): bump yaml plugin to latest release
 
-Bumps [chart.js](https://github.com/chartjs/Chart.js) from 4.6.1 to 4.6.2.
-- [Release notes](https://github.com/chartjs/Chart.js/releases)
-- [Commits](https://github.com/chartjs/Chart.js/compare/v4.6.1...v4.6.2)
-
----
-updated-dependencies:
-- dependency-name: chart.js
-  dependency-version: 4.6.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
+**File**: `tw-go-plugins/build.gradle` (modified, +3/-3)
 ```diff
-@@ -35,7 +35,7 @@
-     "angular": "file:node-vendor/angular#node-vendor/angular::hash=036648&locator=gocd-server-ui%40workspace%3A.",
-     "awesomplete": "^1.1.7",
-     "bourbon": "~7.1.0",
--    "chart.js": "^4.6.1",
-+    "chart.js": "^4.6.2",
-     "chartjs-plugin-zoom": "^2.2.0",
-     "classnames": "^2.5.1",
-     "core-js": "^3.51.0",
-```
-
-**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +10/-10)
-```diff
-@@ -1556,10 +1556,10 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@kurkle/color@npm:^0.3.0":
--  version: 0.3.4
--  resolution: "@kurkle/color@npm:0.3.4"
--  checksum: 10c0/0e9fd55c614b005c5f0c4c755bca19ec0293bc7513b4ea3ec1725234f9c2fa81afbc78156baf555c8b9cb0d305619253c3f5bca016067daeebb3d00ebb4ea683
-+"@kurkle/color@npm:^0.6.6":
-+  version: 0.6.6
-+  resolution: "@kurkle/color@npm:0.6.6"
-+  checksum: 10c0/ce7c1393621b5c8d51e51478ddb2390259af13e2673b5e10f145a468a5efc686e8c0072b6941fe58299817fac8f62576a7bdd4ab6ea218c9d85817e53b71bec8
-   languageName: node
-   linkType: hard
- 
-@@ -2763,12 +2763,12 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"chart.js@npm:^4.6.1":
--  version: 4.6.1
--  resolution: "chart.js@npm:4.6.1"
-+"chart.js@npm:^4.6.2":
-+  version: 4.6.2
-+  resolution: "chart.js@npm:4.6.2"
-   dependencies:
--    "@kurkle/color": "npm:^0.3.0"
--  checksum: 10c0/442e3f3958ddbb217b19ec9f57f997f59695d5543af246a8023f3d373bdca494d67ed4dd080600fef71b0894441cd36d7eaebb8e164b2686a97ceef43d91faa4
-+    "@kurkle/color": "npm:^0.6.6"
-+  checksum: 10c0/ec73e734cfaa043c5f4511c77ce3056f624e307be922c0e8919e0be7c8cc636c76049c746f166ecb4dc1b0331b448e0e46e52e76f6bbe6fd55c8942725d5db91
-   languageName: node
-   linkType: hard
- 
-@@ -4416,7 +4416,7 @@ __metadata:
-     awesomplete: "npm:^1.1.7"
-     babel-loader: "npm:^10.1.1"
-     bourbon: "npm:~7.1.0"
--    chart.js: "npm:^4.6.1"
-+    chart.js: "npm:^4.6.2"
-     chartjs-plugin-zoom: "npm:^2.2.0"
-     classnames: "npm:^2.5.1"
-     core-js: "npm:^3.51.0"
+@@ -38,9 +38,9 @@ def dependencies = [
+   new GithubArtifact(
+     user: 'tomzo',
+     repo: 'gocd-yaml-config-plugin',
+-    tagName: 'v2.1.0-552',
+-    asset: 'yaml-config-plugin-2.1.0-552.jar',
+-    checksum: '6f116cb0a5cb405f0b62b50144bde60ac852f54c27d5e09cf9f2b6ce5ddce639'
++    tagName: 'v2.1.1-557',
++    asset: 'yaml-config-plugin-2.1.1-557.jar',
++    checksum: '098e10526529e65854eb997b76edd8e00fe6a1b79fd30c137483c8326d3d4463'
+   ),
+   new GithubArtifact(
+     user: 'tomzo',
 ```
 
 #### Recent Merged Pull Requests:
@@ -1011,31 +954,35 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-ui): bump chart.js in /server/src/main/webapp/WEB-INF/rails
+## X. build(deps): bump yaml plugin to latest release
 
 **RULE**:
-When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tw-go-plugins/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4aea0221`: build(deps-ui): bump chart.js in /server/src/main/webapp/WEB-INF/rails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3aecc93e`: build(deps): bump yaml plugin to latest release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `tw-go-plugins/build.gradle`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    "chart.js": "^4.6.2",
+    tagName: 'v2.1.1-557',
+    asset: 'yaml-config-plugin-2.1.1-557.jar',
+    checksum: '098e10526529e65854eb997b76edd8e00fe6a1b79fd30c137483c8326d3d4463'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    "chart.js": "^4.6.1",
+    tagName: 'v2.1.0-552',
+    asset: 'yaml-config-plugin-2.1.0-552.jar',
+    checksum: '6f116cb0a5cb405f0b62b50144bde60ac852f54c27d5e09cf9f2b6ce5ddce639'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4aea0221` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3aecc93e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

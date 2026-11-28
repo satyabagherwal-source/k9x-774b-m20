@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-3PDP",
-    "timestamp": "2026-11-26T16:40:30.781Z",
-    "repository": "unsloth/Qwen3.8-27B-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-    "contentHash": "253b41f19f3c917998b6a7cbf3a3a0f04817cb5791bb301db2a2f93adecd84a2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-3RF1",
-    "timestamp": "2026-11-26T16:40:33.421Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "ac68a36a0c9b9ce018a419fad17267bd172544943ff183a50499baa9830e7a1a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-3UQ2",
-    "timestamp": "2026-11-26T16:40:37.706Z",
-    "repository": "react-hook-form/react-hook-form",
-    "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "3c6e5c55aa98c84f9394b847f5552ab7ea108dd2a6d34baecf05247ea729ea47",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-3ZON",
     "timestamp": "2026-11-26T16:40:44.135Z",
     "repository": "rustls/rustls",
@@ -7492,6 +7447,51 @@
     "contentHash": "5f324e0160c15011d92fdf78f08df272d9f6945d2ea4cc46d399f45f3839e079",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-0DLP",
+    "timestamp": "2026-11-28T06:53:24.061Z",
+    "repository": "miso-belica/jusText",
+    "learningId": "learn-github-miso-belica-justext",
+    "contentHash": "63644c5aa797fb885ff0b9440b0225a9933394edb248c9f367fab35e481cbda7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-0HDC",
+    "timestamp": "2026-11-28T06:53:28.944Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "04132e9de4f13d3d86c74b14a9f56d34b722c9e71d3b0886ee65648b3c3219a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-0L9A",
+    "timestamp": "2026-11-28T06:53:33.982Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "b5519ce8d4f689a8cdea6b50819fb0aa973766f4bf1aeb5387b755314afc5e12",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

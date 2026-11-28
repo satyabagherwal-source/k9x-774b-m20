@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T06:40:24.662Z",
-  "total_cycles_completed": 13281,
-  "total_learnings_persisted": 13281,
-  "total_rules_promoted": 11974,
+  "last_updated": "2026-11-28T06:53:33.997Z",
+  "total_cycles_completed": 13284,
+  "total_learnings_persisted": 13284,
+  "total_rules_promoted": 11976,
   "history": [
-    {
-      "timestamp": "2026-11-27T12:21:10.051Z",
-      "repository": "yyjeqhc/webcodex",
-      "learningId": "learn-github-yyjeqhc-webcodex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T12:21:15.456Z",
-      "repository": "SimonSchubert/LinuxCommandLibrary",
-      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T12:21:23.273Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T12:32:36.107Z",
       "repository": "tuist/tuist",
@@ -1403,6 +1382,27 @@
       "repository": "str4d/rage",
       "learningId": "learn-github-str4d-rage",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T06:53:24.070Z",
+      "repository": "miso-belica/jusText",
+      "learningId": "learn-github-miso-belica-justext",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T06:53:28.964Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T06:53:33.997Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

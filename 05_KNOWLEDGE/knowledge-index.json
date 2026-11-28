@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T06:40:39.922Z",
+  "last_updated": "2026-11-28T06:54:07.689Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27004,
+  "total_items": 27008,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113010,13 +113010,13 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "0dcd4f40",
-      "content_hash": "d94570d319c2905f313fa907e2c09a21d22073f4c148da1d45ae6deaf9fd7c26",
+      "source_version": "d4bbe58e",
+      "content_hash": "aa03ee33d4a15d8ce0603f1824b62e74e7a41c3e57e36fc378c62545f5585afa",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T03:35:35.909Z"
+      "persisted_at": "2026-11-28T06:53:34.231Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
@@ -113289,10 +113289,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "4aea0221",
-      "content_hash": "17ffb235504f5901714b1914f05dedcd0ea0ef41b55e10ca7b3365c1c7bf9f8c",
+      "source_version": "3aecc93e",
+      "content_hash": "3abfd3bb8695f4cb047def684d1a799c9fcc37e18bb472591b3b9966ae4b04ff",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T13:55:27.198Z"
+      "persisted_at": "2026-11-28T06:53:29.381Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113301,10 +113301,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "4aea0221",
-      "content_hash": "1f27d2eb095dc08e70461d36ec6b01f8d303cdd56b492ccce2d9b5871a76bfa8",
+      "source_version": "3aecc93e",
+      "content_hash": "0b2bc89a436313a30b1db602b218efc491c63aa9bc5fd7e1d9b26b1c0129e6be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T13:55:27.456Z"
+      "persisted_at": "2026-11-28T06:53:29.581Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -113362,9 +113362,9 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd78f97b353e4ab7ec2b495364bb49c26f56400a9b721b985541e899b16828be",
+      "content_hash": "2314559d3f912849ccb58f9b1bb86f08b27b2dab411b5ca3f373bfec13e53444",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T13:55:31.417Z"
+      "persisted_at": "2026-11-28T06:53:38.789Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings",
@@ -113374,9 +113374,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gocd-gocd-learnings",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "66404e337f2615ec904e8f0f7c5e0d3d311be9aa7e6180388ff68a10e1dc00ff",
+      "content_hash": "ae6664ac666be30f58692d7ed4cb24dc9d3a08fa96c52018eee784a47888637b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T13:55:31.656Z"
+      "persisted_at": "2026-11-28T06:53:38.983Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -213796,13 +213796,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "0dcd4f40",
-      "content_hash": "d81ddb59b2390cff398374f60b333d5ad36d309625c1083341fb7b562c0312c3",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "d4bbe58e",
+      "content_hash": "b5519ce8d4f689a8cdea6b50819fb0aa973766f4bf1aeb5387b755314afc5e12",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213900,7 +213900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T03:35:35.364Z",
+      "verified_at": "2026-11-28T06:53:33.723Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241835,8 +241835,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "4aea0221",
-      "content_hash": "3375ecdc342c19758c68036ed2df057be65865f0f620ce98c3321a0000a4b5cc",
+      "source_version": "3aecc93e",
+      "content_hash": "04132e9de4f13d3d86c74b14a9f56d34b722c9e71d3b0886ee65648b3c3219a0",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -241904,6 +241904,11 @@
           "number": 10911,
           "title": "build(deps-ui): bump chart.js in /server/src/main/webapp/WEB-INF/rails",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11055,
+          "title": "build(deps): bump yaml plugin to latest release",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241911,7 +241916,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T13:55:26.286Z",
+      "verified_at": "2026-11-28T06:53:28.653Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264371,9 +264376,9 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "9573850e13dfd7915e0b9a172eb347986dbc44cae7b3e0e604fb634c51020430",
+      "content_hash": "0129e9d3be62dea3dc2c661b534fd8ba5c3098b3a3c3336da50a86d728ca3be0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T12:21:29.387Z"
+      "persisted_at": "2026-11-28T06:54:07.689Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings",
@@ -344121,17 +344126,23 @@
       "slug": "miso-belica-justext",
       "platform": "github",
       "source_url": "https://github.com/miso-belica/justext",
-      "source_version": "68533528",
-      "content_hash": "eab67422a4233fb0ae7242ade3a136690a4f3d421688b4748e063c43bf3b156c",
+      "source_version": "0ef8d122",
+      "content_hash": "63644c5aa797fb885ff0b9440b0225a9933394edb248c9f367fab35e481cbda7",
       "dossier_path": "07_PROJECT_LEARNING/miso-belica-justext-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/miso-belica-justext-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 11054,
+          "title": "Decode documents with a UTF-32 BOM correctly",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T22:15:51.674Z",
+      "verified_at": "2026-11-28T06:53:23.788Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -344159,10 +344170,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-miso-belica-justext-technical-construction-intelligence-miso-belica-justext-core.md",
       "title": "Technical Construction Intelligence: miso-belica/jusText Core Invariants",
       "repository": "miso-belica/jusText",
-      "source_version": "68533528",
-      "content_hash": "5182434c7d33ec2caabe704e1df57a2facafeaa6533b41f8800f9d66383008f4",
+      "source_version": "0ef8d122",
+      "content_hash": "25985bea1a29cc4b8ca65858e928d81361c63639e7f362487edc5dd459f9b3b9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T22:15:52.359Z"
+      "persisted_at": "2026-11-28T06:53:24.508Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-miso-belica-justext": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-miso-belica-justext",
@@ -344171,10 +344182,10 @@
       "relative_path": "08_VERIFICATION/miso-belica-justext-verification-protocol-empirical-defect-shield-for-miso-belic.md",
       "title": "Verification Protocol: Empirical Defect Shield for miso-belica/jusText",
       "repository": "miso-belica/jusText",
-      "source_version": "68533528",
-      "content_hash": "730d5c176e63e0f25c14259f61fe93c8ef8afdc1ffe73b1472e823a3f4ce5959",
+      "source_version": "0ef8d122",
+      "content_hash": "f3c45c13854044eb78dcbd4f89a7328ee0456c9e1a62e5dbed064d5c8c8e4537",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:15:52.536Z"
+      "persisted_at": "2026-11-28T06:53:24.703Z"
     },
     "rule-10369": {
       "learning_id": "rule-10369",
@@ -344222,9 +344233,9 @@
       "title": "Technical Construction Intelligence: miso-belica-justext-learnings Core Invariants",
       "repository": "miso-belica-justext-learnings",
       "source_version": "HEAD",
-      "content_hash": "1f4665253e3e1b115e9047abd67071fb5b2559e8330d76d6a569b9c415242f03",
+      "content_hash": "f89a7da681d9319db54c03c82be2f175bac27935f49eb666e950b835065029e8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T22:16:05.798Z"
+      "persisted_at": "2026-11-28T06:53:37.721Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-miso-belica-justext-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-miso-belica-justext-learnings",
@@ -344234,9 +344245,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for miso-belica-justext-learnings",
       "repository": "miso-belica-justext-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b2473a9d81ce10861800b2aa9fb08089dbb1898806ee4a9cebde0519288dc94",
+      "content_hash": "bf55c41d548f97dc9a6d44a140e28c04e2373af0d09ff30c4f28d7f324967eb5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:16:05.969Z"
+      "persisted_at": "2026-11-28T06:53:37.911Z"
     },
     "candidate_directive-build-sync-main-to-0-2-165-after-release": {
       "item_id": "candidate_directive-build-sync-main-to-0-2-165-after-release",
@@ -371115,6 +371126,58 @@
       "content_hash": "854d2603822fc079c907bc191ce3b6ed57d715b273d70dd808006075024a1628",
       "domain_letter": "K",
       "persisted_at": "2026-11-28T06:40:36.491Z"
+    },
+    "rule-11054": {
+      "learning_id": "rule-11054",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11054,
+      "title": "Decode documents with a UTF-32 BOM correctly",
+      "source_url": "https://github.com/miso-belica/justext",
+      "source_version": "0ef8d122",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T06:53:23.788Z"
+    },
+    "candidate_directive-decode-documents-with-a-utf-32-bom-correctly": {
+      "item_id": "candidate_directive-decode-documents-with-a-utf-32-bom-correctly",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0NZQ-decode-documents-with-a-utf-32-bom-correctly.md",
+      "title": "Decode documents with a UTF-32 BOM correctly",
+      "repository": "miso-belica-justext-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8d12feb32e43a5658d1249e47aca858adbed08229be567920ca9b0052ec91e5b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T06:53:37.527Z"
+    },
+    "rule-11055": {
+      "learning_id": "rule-11055",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11055,
+      "title": "build(deps): bump yaml plugin to latest release",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "3aecc93e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T06:53:28.653Z"
+    },
+    "candidate_directive-build-deps-bump-yaml-plugin-to-latest-release": {
+      "item_id": "candidate_directive-build-deps-bump-yaml-plugin-to-latest-release",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0ORX-build-deps-bump-yaml-plugin-to-latest-release.md",
+      "title": "build(deps): bump yaml plugin to latest release",
+      "repository": "gocd-gocd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e4b7173ae9c55aea07e89abfd8d1b3fa0cb24515c20e640f70db03ecec8b9d66",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T06:53:38.541Z"
     }
   },
   "ai-builder-brain": {

@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "4aea0221",
+    "sourceVersion": "3aecc93e",
     "license": "Apache-2.0",
-    "contentHash": "3375ecdc342c19758c68036ed2df057be65865f0f620ce98c3321a0000a4b5cc",
-    "lastHarvestedAt": "2026-11-27T13:55:26.618Z",
+    "contentHash": "04132e9de4f13d3d86c74b14a9f56d34b722c9e71d3b0886ee65648b3c3219a0",
+    "lastHarvestedAt": "2026-11-28T06:53:28.958Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "df7ba30c",
+    "sourceVersion": "d4bbe58e",
     "license": "MIT",
-    "contentHash": "58369d3145a0f127dbcf448c65f2e7afef2f3bdc17117d38d9b0100ed77e8a38",
-    "lastHarvestedAt": "2026-11-27T12:21:23.263Z",
+    "contentHash": "b5519ce8d4f689a8cdea6b50819fb0aa973766f4bf1aeb5387b755314afc5e12",
+    "lastHarvestedAt": "2026-11-28T06:53:33.992Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -9893,10 +9893,10 @@
     "repository": "miso-belica/jusText",
     "platform": "github",
     "sourceUrl": "https://github.com/miso-belica/justext",
-    "sourceVersion": "68533528",
+    "sourceVersion": "0ef8d122",
     "license": "BSD-2-Clause",
-    "contentHash": "eab67422a4233fb0ae7242ade3a136690a4f3d421688b4748e063c43bf3b156c",
-    "lastHarvestedAt": "2026-11-24T22:15:51.908Z",
+    "contentHash": "63644c5aa797fb885ff0b9440b0225a9933394edb248c9f367fab35e481cbda7",
+    "lastHarvestedAt": "2026-11-28T06:53:24.064Z",
     "learningId": "learn-github-miso-belica-justext"
   },
   "heckj-swiftui-notes": {
