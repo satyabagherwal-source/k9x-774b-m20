@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T06:22:15.970Z",
-  "total_records": 2877,
+  "last_updated": "2026-11-28T06:31:04.495Z",
+  "total_records": 2879,
   "domains": {
     "A": {
       "total": 27,
@@ -1276,7 +1276,7 @@
       ]
     },
     "G": {
-      "total": 490,
+      "total": 492,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1767,7 +1767,9 @@
         "domain_intelligence-architecture-intelligence-apache-arrow-core-invariants",
         "domain_intelligence-architecture-intelligence-apache-arrow-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-infracost-infracost-core-invariants",
-        "domain_intelligence-architecture-intelligence-infracost-infracost-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-infracost-infracost-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-chroma-core-chroma-core-invariants",
+        "domain_intelligence-architecture-intelligence-chroma-core-chroma-learnings-core-invariants"
       ]
     },
     "H": {
@@ -18527,8 +18529,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "4c107422e7753a5d5f59e9ea0972cd2f2fef37e91fa38a2847827c3d0d08013f",
-      "created_at": "2026-11-28T05:55:45.297Z"
+      "content_hash": "22af1d6061f9a0dbd6c8d697ed2303e87105cd4a602e49b1263ffbeed375deda",
+      "created_at": "2026-11-28T06:31:04.495Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -34007,8 +34009,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "1583734c74aeb940e0de17660aa69fd74b1e464c9d939740c2f86eff4d12b2ba",
-      "created_at": "2026-11-28T05:46:56.364Z"
+      "content_hash": "c7e82506c65da355466b8201ab7c65d8e1958fd6df9883bb956069fb0508f992",
+      "created_at": "2026-11-28T06:31:02.744Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -48730,6 +48732,24 @@
       "repository": "hf-ai-sage-gigachat4-37b-a4b-learnings",
       "content_hash": "c1591ebbdc81f92f926a9e8e147749ac1a045876a6a68fad6898f0f5c9a83e71",
       "created_at": "2026-11-28T04:48:53.361Z"
+    },
+    "domain_intelligence-architecture-intelligence-chroma-core-chroma-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-chroma-core-chroma-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: chroma-core/chroma Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-chroma-core-chroma-architecture-intelligence-chroma-core-chroma-core-invariants.md",
+      "repository": "chroma-core/chroma",
+      "content_hash": "2ccc7e47b926ff2870c83894b5468f232557c500ce56e0520f7d450ace4d117b",
+      "created_at": "2026-11-28T06:30:57.350Z"
+    },
+    "domain_intelligence-architecture-intelligence-chroma-core-chroma-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-chroma-core-chroma-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: chroma-core-chroma-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-chroma-core-chroma-learnings-architecture-intelligence-chroma-core-chroma-learni.md",
+      "repository": "chroma-core-chroma-learnings",
+      "content_hash": "d5125fe79a5d1875318b7e6499e6440b7305e45ee56bbb066ab18c624bfc4a43",
+      "created_at": "2026-11-28T06:31:01.598Z"
     }
   }
 }

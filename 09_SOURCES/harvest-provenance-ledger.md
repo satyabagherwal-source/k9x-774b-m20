@@ -14027,3 +14027,4 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `761b277c` | Multi-dimensional audit evidence | 2026-11-28T06:04:30.451Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `4c6a489e` | Multi-dimensional audit evidence | 2026-11-28T06:13:21.297Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `c7b96196` | Multi-dimensional audit evidence | 2026-11-28T06:22:08.872Z |
+| `learn-github-chroma-core-chroma` | `https://github.com/chroma-core/chroma` | `de23e663` | Multi-dimensional audit evidence | 2026-11-28T06:30:56.923Z |

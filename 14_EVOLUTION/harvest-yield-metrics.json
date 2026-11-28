@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T06:22:08.878Z",
-  "total_cycles_completed": 13279,
-  "total_learnings_persisted": 13279,
-  "total_rules_promoted": 11972,
+  "last_updated": "2026-11-28T06:30:56.928Z",
+  "total_cycles_completed": 13280,
+  "total_learnings_persisted": 13280,
+  "total_rules_promoted": 11973,
   "history": [
-    {
-      "timestamp": "2026-11-27T12:12:28.441Z",
-      "repository": "mrkai77/Loop",
-      "learningId": "learn-github-mrkai77-loop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T12:12:32.183Z",
       "repository": "pulumi/pulumi",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T06:22:08.878Z",
       "repository": "meshery/meshery",
       "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T06:30:56.928Z",
+      "repository": "chroma-core/chroma",
+      "learningId": "learn-github-chroma-core-chroma",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

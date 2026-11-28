@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T06:22:13.165Z",
+  "updated_at": "2026-11-28T06:31:01.102Z",
   "stats": {
-    "total_discovered": 10815,
-    "approved_pending_harvest": 10267,
+    "total_discovered": 10824,
+    "approved_pending_harvest": 10276,
     "harvested_count": 0,
     "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10278,
+      "COMMUNITY_AND_EXPERT": 10286,
       "OFFICIAL_DOCUMENTATION": 296,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
-      "SECURITY_ADVISORIES": 58,
+      "SECURITY_ADVISORIES": 59,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 9
     }
@@ -234121,6 +234121,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
         "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-6F70AA6D92F7": {
+      "id": "SRC-6F70AA6D92F7",
+      "url": "https://github.com/chroma-core/chroma",
+      "title": "https://github.com/chroma-core/chroma",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:31:00.469Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
+        "fileName": "chroma-core-chroma-learnings.md"
+      }
+    },
+    "SRC-1EDA83248824": {
+      "id": "SRC-1EDA83248824",
+      "url": "https://stackoverflow.com/a/1094933",
+      "title": "https://stackoverflow.com/a/1094933",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:31:00.548Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
+        "fileName": "chroma-core-chroma-learnings.md"
+      }
+    },
+    "SRC-AAA6401FF826": {
+      "id": "SRC-AAA6401FF826",
+      "url": "https://doc.pytest.org/en/latest/example/simple.html",
+      "title": "https://doc.pytest.org/en/latest/example/simple.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:31:00.630Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
+        "fileName": "chroma-core-chroma-learnings.md"
+      }
+    },
+    "SRC-65DB57C54685": {
+      "id": "SRC-65DB57C54685",
+      "url": "https://www.sqlite.org/lang_returning.html",
+      "title": "https://www.sqlite.org/lang_returning.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:31:00.708Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
+        "fileName": "chroma-core-chroma-learnings.md"
+      }
+    },
+    "SRC-33DF1C7041A5": {
+      "id": "SRC-33DF1C7041A5",
+      "url": "https://stackoverflow.com/questions/76694215/python-type-casting-when-preallocating-list",
+      "title": "https://stackoverflow.com/questions/76694215/python-type-casting-when-preallocating-list",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:31:00.782Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
+        "fileName": "chroma-core-chroma-learnings.md"
+      }
+    },
+    "SRC-0718B6FCCF42": {
+      "id": "SRC-0718B6FCCF42",
+      "url": "https://github.com/rogerbinns/apsw/blob/master/apsw/tests.py",
+      "title": "https://github.com/rogerbinns/apsw/blob/master/apsw/tests.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:31:00.858Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
+        "fileName": "chroma-core-chroma-learnings.md"
+      }
+    },
+    "SRC-AC09F9AEFE99": {
+      "id": "SRC-AC09F9AEFE99",
+      "url": "https://avd.aquasec.com/nvd/cve-2026-45829",
+      "title": "https://avd.aquasec.com/nvd/cve-2026-45829",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:31:00.948Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
+        "fileName": "chroma-core-chroma-learnings.md"
+      }
+    },
+    "SRC-23738B0BEF31": {
+      "id": "SRC-23738B0BEF31",
+      "url": "https://github.com/advisories/GHSA-f4j7-r4q5-qw2c",
+      "title": "https://github.com/advisories/GHSA-f4j7-r4q5-qw2c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:31:01.025Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
+        "fileName": "chroma-core-chroma-learnings.md"
+      }
+    },
+    "SRC-FF53B38AA2E8": {
+      "id": "SRC-FF53B38AA2E8",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-45829",
+      "title": "Vulnerability Advisory CVE-2026-45829",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:31:01.102Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
+        "fileName": "chroma-core-chroma-learnings.md"
       }
     }
   }

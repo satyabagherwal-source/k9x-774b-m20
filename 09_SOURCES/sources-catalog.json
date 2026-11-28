@@ -6973,10 +6973,10 @@
     "repository": "chroma-core/chroma",
     "platform": "github",
     "sourceUrl": "https://github.com/chroma-core/chroma",
-    "sourceVersion": "0d511ea7",
+    "sourceVersion": "de23e663",
     "license": "Apache-2.0",
-    "contentHash": "0a55dcd888f6bab98b469ed333766364cc5b5ebd137022bb817eb8fe2c3d96fe",
-    "lastHarvestedAt": "2026-11-27T12:03:45.856Z",
+    "contentHash": "bad7e45d8bbe07b5c0be2342895bcc34a3a5d3671442e5935629e4aa7814d974",
+    "lastHarvestedAt": "2026-11-28T06:30:56.923Z",
     "learningId": "learn-github-chroma-core-chroma"
   },
   "restatedev-restate": {

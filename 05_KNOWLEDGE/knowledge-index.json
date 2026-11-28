@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T06:22:16.176Z",
+  "last_updated": "2026-11-28T06:31:04.495Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26997,
+  "total_items": 27002,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "23c3d39d8964117f4c7b323fbdb98161dfd26623ffbe72db980711a53eeee275",
+      "content_hash": "974bb8b895f56f42830891fce0bd800d079b712d2cbdc95910b1867f17b30e98",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T05:46:56.674Z"
+      "persisted_at": "2026-11-28T06:31:02.952Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "144c56fdc2ad940d6af6a94ab61bfdd95a05238b7acaaa337a1ce94d21235ba3",
+      "content_hash": "446e4567b8f1e9ce3ba6e38991d2d7e9ea1ac07e7667aaecab67359a4ef97dcd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T05:46:56.936Z"
+      "persisted_at": "2026-11-28T06:31:03.143Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -240161,9 +240161,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c107422e7753a5d5f59e9ea0972cd2f2fef37e91fa38a2847827c3d0d08013f",
+      "content_hash": "22af1d6061f9a0dbd6c8d697ed2303e87105cd4a602e49b1263ffbeed375deda",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T05:55:45.297Z"
+      "persisted_at": "2026-11-28T06:31:04.495Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -301707,9 +301707,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1583734c74aeb940e0de17660aa69fd74b1e464c9d939740c2f86eff4d12b2ba",
+      "content_hash": "c7e82506c65da355466b8201ab7c65d8e1958fd6df9883bb956069fb0508f992",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T05:46:56.364Z"
+      "persisted_at": "2026-11-28T06:31:02.744Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -363503,13 +363503,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MWEG-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7MGZ-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c48a137c90a30d0db43243541d23fd36998686c54d3b98d6374b53d370b291e",
+      "content_hash": "afb2b94982b61898d57cd532702a0a3bd4cb3ab857e2643c501f6dcf9686318e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T05:46:56.009Z"
+      "persisted_at": "2026-11-28T06:31:02.532Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -365223,14 +365223,19 @@
       "slug": "chroma-core-chroma",
       "platform": "github",
       "source_url": "https://github.com/chroma-core/chroma",
-      "source_version": "0d511ea7",
-      "content_hash": "0a55dcd888f6bab98b469ed333766364cc5b5ebd137022bb817eb8fe2c3d96fe",
+      "source_version": "de23e663",
+      "content_hash": "bad7e45d8bbe07b5c0be2342895bcc34a3a5d3671442e5935629e4aa7814d974",
       "dossier_path": "07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
       "promoted_rules": [
         {
           "number": 10894,
           "title": "[CHORE](foundation-api): Unmount MCP router",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11053,
+          "title": "[CHORE](frontend): Drop get-collection-by-CRN route",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -365239,7 +365244,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T12:03:45.590Z",
+      "verified_at": "2026-11-28T06:30:56.656Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -365293,10 +365298,10 @@
       "relative_path": "08_VERIFICATION/chroma-core-chroma-verification-protocol-empirical-defect-shield-for-chroma-core.md",
       "title": "Verification Protocol: Empirical Defect Shield for chroma-core/chroma",
       "repository": "chroma-core/chroma",
-      "source_version": "0d511ea7",
-      "content_hash": "a0e7bf73d25fac28425ad7143b2683b20deb761ff03abda7c8b9f76f43ad9549",
+      "source_version": "de23e663",
+      "content_hash": "5820551e786fb02a612751861655ff297da13cbe66366f73529c61d2f40492f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:03:46.512Z"
+      "persisted_at": "2026-11-28T06:30:57.543Z"
     },
     "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-learnings-": {
       "item_id": "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-learnings-",
@@ -371018,6 +371023,68 @@
       "content_hash": "dbeab545db29f760f804b12f422fb11ae05a6ab05314a970bfe33295b270f412",
       "domain_letter": "G",
       "persisted_at": "2026-11-28T06:22:13.889Z"
+    },
+    "rule-11053": {
+      "learning_id": "rule-11053",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11053,
+      "title": "[CHORE](frontend): Drop get-collection-by-CRN route",
+      "source_url": "https://github.com/chroma-core/chroma",
+      "source_version": "de23e663",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T06:30:56.656Z"
+    },
+    "candidate_directive-chore-frontend-drop-get-collection-by-crn-route": {
+      "item_id": "candidate_directive-chore-frontend-drop-get-collection-by-crn-route",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7LL8-chore-frontend-drop-get-collection-by-crn-route.md",
+      "title": "[CHORE](frontend): Drop get-collection-by-CRN route",
+      "repository": "chroma-core-chroma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d2267e48cad2d1f6a5b85348bd419432b03ac021b6f937e30e5aab3b8abd7a60",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T06:31:01.389Z"
+    },
+    "domain_intelligence-architecture-intelligence-chroma-core-chroma-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-chroma-core-chroma-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-chroma-core-chroma-architecture-intelligence-chroma-core-chroma-core-invariants.md",
+      "title": "Architecture Intelligence: chroma-core/chroma Core Invariants",
+      "repository": "chroma-core/chroma",
+      "source_version": "de23e663",
+      "content_hash": "2ccc7e47b926ff2870c83894b5468f232557c500ce56e0520f7d450ace4d117b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T06:30:57.350Z"
+    },
+    "domain_intelligence-architecture-intelligence-chroma-core-chroma-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-chroma-core-chroma-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-chroma-core-chroma-learnings-architecture-intelligence-chroma-core-chroma-learni.md",
+      "title": "Architecture Intelligence: chroma-core-chroma-learnings Core Invariants",
+      "repository": "chroma-core-chroma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d5125fe79a5d1875318b7e6499e6440b7305e45ee56bbb066ab18c624bfc4a43",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T06:31:01.598Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-chroma-core-chroma-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-chroma-core-chroma-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/chroma-core-chroma-learnings-verification-protocol-empirical-defect-shield-for-c.md",
+      "title": "Verification Protocol: Empirical Defect Shield for chroma-core-chroma-learnings",
+      "repository": "chroma-core-chroma-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a5bf3fe4be1b2db7942e10f1ead2f626a954c7c65f2d09dd48c4e8cec580a5a0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T06:31:01.799Z"
     }
   },
   "ai-builder-brain": {
