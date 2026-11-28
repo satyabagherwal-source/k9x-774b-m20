@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T17:37:29.271Z",
+  "timestamp": "2026-11-28T05:55:43.264Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-topoteretes-cognee-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [topoteretes-cognee-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T17:37:29.271Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T05:55:43.264Z`  
 > **Learning ID**: `LEARN-EVO-topoteretes-cognee-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from topoteretes-cognee-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source**: github ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
-> **Source Version**: `1961133d`  
+> **Source Version**: `dbc515bd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T17:37:22.493Z  
+> **Timestamp**: 2026-11-28T05:55:37.938Z  
 > **Learning ID**: `learn-github-topoteretes-cognee`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:37:22.488Z  
+> **Harvest Timestamp**: 2026-11-28T05:55:37.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 33431 stars
+- **Stars / Engagement**: 33678 stars
 
 ---
 
@@ -1532,11 +1532,11 @@ class DescriptorConnector(Connector):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6791** (2026-11-23): **Deleting one document's graph reads the whole dataset into memory; table loads run out of memory on a large graph**
+  *Symptoms*: ## Summary  `delete_by_document` finds the nodes and edges of one data item by fetching the source references of every node and every edge in the dataset and filtering them in Python. Its cost depends on the size of the dataset, not on the size of the document.  Cognify runs it once per table item through `purge_stale_dlt_source_artifacts`, also on a first load when nothing can be stale. Loading tables into a large dataset is therefore slow, and with several items in parallel the server runs out of memory.  ## Versions  - cognee 1.6.8, and the code path is unchanged in 1.6.9 (line numbers below are from 1.6.9) - Postgres graph store with pgvector, backend access control on  ## What happens  1. Cognify's table branch runs `purge_stale_dlt_source_artifacts` for every `DltSourceDocument` (`cognee/api/v1/cognify/cognify.py:815`). 2. That calls `delete_data_nodes_and_edges` → `try_delete_data_by_graph_provenance` → `unified.delete_by_document(dataset_id, data_id)`. 3. `delete_by_document` (`cognee/infrastructure/databases/unified/unified_store_engine.py:163`) calls `graph.find_node_source_refs_by_dataset(dataset_id)` and `graph.find_edge_source_refs_by_dataset(dataset_id)` (lines 192 and 197) and keeps the refs whose parsed data id equals `data_id`. 4. The Postgres adapter answers both with an unfiltered read of the dataset (`cognee/infrastructure/databases/graph/postgres_demo/adapter.py:1550` and `:1572`):  ```sql SELECT id, source_ref_keys FROM graph_node WHERE :dataset_id = ANY
+
 - **Issue #6689** (2026-11-13): **[Bug] LanceDB fails to persist transaction files on Windows during cognee.remember() — CognifyFailedError and CollectionNotFoundError**
   *Symptoms*: ### Bug Description  I'm encountering an issue when using Cognee on Windows with LanceDB as the vector database and OpenRouter for both LLM and embedding inference.  After resetting Cognee's data and ingesting local text files using cognee.remember(), the indexing pipeline fails because LanceDB cannot persist a transaction file.  The initial error is: _RuntimeError: lance error: LanceError(IO): failed to shutdown local writer LanceError(IO): failed to persist temp file The system cannot find the path specified. (os error 3)_  The subsequent rollback also fails: _CollectionNotFoundError: Collection 'DocumentChunk_text' not found! (Status code: 422)_  ### Steps to Reproduce  I run the following code in a Jupyter notebook (the code was given in the first video in cognee Youtube channel : https://www.youtube.com/watch?v=lQpmXvsrBzg&list=PLbJ6aa1LYeSTxMhlfOTKw3RbHGiL3fbm0&index=1): import cognee import os  await cognee.forget(everything=True)  data_path = "../data/silver"  for root, dirs, files in os.walk(data_path):     for file in files:         file_path = os.path.join(root, file)         print(file_path)          content = open(file_path, "r").read()         await cognee.remember(content)  The directory contains local md documents that I want to ingest into Cognee.  ### Expected Behavior  1. Ingest and index documents without filesystem errors. 2. Handle failed collection creation gracefully during rollback, without raising an additional CollectionNotFoundError.  ### Actual Be
-
-- **Issue #6558** (2026-11-09): **Recreated dataset reuses its deterministic ID but loses all non-owner ACLs, silently locking out shared principals**
-  *Symptoms*: ## Summary  When a dataset is deleted (`forget` / `delete_dataset`) and then created again under the same name by the same owner, it gets **the same dataset ID** but **only the owner's ACLs**. Every grant that other principals (users, roles, tenants) held on the old dataset is gone. Nothing in the API tells a client that this ID now refers to a different dataset. So a client that remembers "I already shared dataset `<id>` with role X" keeps trusting a grant that no longer exists. From then on that principal gets 403 on every read and write, with no clear signal why.  ## Where it comes from  - `cognee/modules/data/methods/get_unique_dataset_id.py`: the dataset ID is deterministic, `uuid5(NAMESPACE_OID, f"{dataset_name}{user.id}")` (and the tenant-aware variant). Recreating the dataset gives back the same UUID. - `cognee/modules/data/methods/delete_dataset.py`: `session.delete(dataset)` cascades and removes the dataset's ACL rows. That part is correct by itself. - On re-creation, only the owner gets `read/write/delete/share`.  Together these mean a dataset ID does not identify one dataset over its whole life. It can come back after a delete, with different permissions.  ## Steps to reproduce  1. User A creates dataset `agent_sessions` and adds data. 2. A grants a role (or another user B) `read` and `write` on it via `POST /api/v1/permissions/datasets/{principal_id}?permission_name=...`. 3. B writes to and searches the dataset successfully. 4. A runs `forget` on the dataset (or 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1553,89 +1553,536 @@ class DescriptorConnector(Connector):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1961133d` (2026-11-20)
-**Commit Message**: docs: Revise the LoCoMo technical report (COG-7552) (#6800)
+### Incident Patch 1: `dbc515bd` (2026-11-27)
+**Commit Message**: fix(COG-7553): isolate Hermes runtime venv imports (#6894)
 
-Brings the report in line with the GRO-248 review: the answer prompt's
-decline rules and the judge's half-of-the-items rule (and when it
-changed), how the exclusion list was built and what our audit could see,
-both runs of the main configuration by category and with nothing
-excluded, the cognee version behind the runs, and drops claims the
-records don't back, such as the default depth being more economical.
+## Summary
 
-**File**: `cognee/eval_framework/locomo/REPORT.md` (modified, +130/-66)
+- drop the inherited `PYTHONPATH` and `PYTHONHOME` from every process
+that runs on the Hermes plugin's private runtime venv: the local server
+(`_spawn()`), the `install-runtime` install step (pip and uv) and its
+version probe (`_installed_version()`). All three share one helper,
+`runtime_env.venv_env()`
+- keep both variables when the server runs on Hermes' own interpreter,
+which needs them to find its dependencies. Creating the venv also runs
+on the host interpreter and keeps them
+- add regression tests for the server (runtime venv, host and default
+interpreter) and for the installer (pip and uv paths)
+- bump the plugin to 1.4.4 (`pyproject.toml`, both `plugin.yaml` files,
+`inventory.yml`, `uv.lock`, the `cognee-integrations/README.md` table)
+and turn the changelog's `[Unreleased]` section, with this fix added,
+into `[1.4.4]`
+
+## Context
+
+Packaged Hermes hosts export `PYTHONPATH` entries for their own
+environment. Passing those entries to the private Cognee runtime makes
+that interpreter import `pydantic` and `uvicorn` from the host package.
+On MSIX Windows installations, loading `_pydantic_core.pyd` from that
+
+
+**File**: `cognee-integrations/README.md` (modified, +1/-1)
 ```diff
-@@ -1,118 +1,164 @@
--# Cognee on LoCoMo - Technical Evaluation Report
-+# Benchmarking cognee on LoCoMo - Technical Evaluation Report
+@@ -15,7 +15,7 @@ releases are still in that repository.
+ 
+ | Integration | Package | Version | Source | Release |
+ |---|---|---|---|---|
+-| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.3 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
++| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.4 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
+ 
+ <!-- inventory:end -->
+ 
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/CHANGELOG.md` (modified, +12/-1)
+```diff
+@@ -9,7 +9,7 @@ The version must match the `version` field in both `pyproject.toml` and
+ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
+ project adheres to [Semantic Versioning](https://semver.org/).
+ 
+-## [Unreleased]
++## [1.4.4]
+ 
+ ### Changed
+ - **The plugin's source moved to the cognee repository (SDK-1489).** It now lives in
+@@ -18,6 +18,17 @@ project adheres to [Semantic Versioning](https://semver.org/).
+   `integrations/hermes-agent` of topoteretes/cognee-integrations. The PyPI package name,
+   the entry points and `cognee-hermes-install` are unchanged.
+ 
++### Fixed
++- **The local runtime ignores the host's `PYTHONPATH` and `PYTHONHOME` (#6808).** A packaged
++  Hermes (the Windows desktop app) exports `PYTHONPATH` into its own package tree. The local
++  server then imported `pydantic` and `uvicorn` from there and died at start with
++  `DLL load failed while importing _pydantic_core: Access is denied`. The server, the
++  `install-runtime` install step and its version check now run on the runtime venv without
++  those two variables. A cognee in Hermes's own environment still gets them.
++  A runtime that pip built (no `uv` on PATH) while `PYTHONPATH` was set can be missing
++  packages the host already had: rebuild it with `hermes cognee remove-runtime`, then
++  `hermes cognee install-runtime`.
 +
-+*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
+ ## [1.4.3]
  
- ## 1. Introduction
+ ### Added
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/_plugin_root/plugin.yaml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ name: cognee
+ kind: exclusive
+-version: 1.4.3
++version: 1.4.4
+ description: "Cognee knowledge-graph memory for Hermes: recall, remember, forget and session-end improvement. After installing, run `hermes memory setup cognee` in a terminal to make it your memory provider, then start a new chat. Remote mode (the default: Cognee Cloud URL + API key) needs nothing else; local mode installs its cognee runtime (cognee==1.6.6, about 1 GB) into a private environment when you choose it."
+ hooks:
+   - on_session_end
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/runtime_env.py` (modified, +20/-1)
+```diff
+@@ -122,6 +122,23 @@ def venv_python(venv_dir: Optional[Path] = None) -> Path:
+     return venv_dir / "bin" / "python"
  
--This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
-+This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
  
--Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
-+cognee answered **~91%** of the 1,762 evaluated questions correctly according to the LLM judge (90.7% and 91.3% in two runs), using the hybrid retriever we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and excluded the questions that our audit or an external one flagged. We also left out open-domain questions, which need knowledge from outside the conversation. As is now common for LoCoMo, an LLM judge grades the answers, with one prompt for all questions; Section 5 compares its rules with those of other published LoCoMo judges.
++def venv_env() -> dict[str, str]:
++    """The environment for a process on the runtime venv's interpreter.
++
++    A packaged host (a desktop/MSIX Hermes) exports PYTHONPATH, pointing at its
++    own venv and source tree, for its own use. Inherited by the venv's
++    interpreter, those paths come before the venv's own site-packages: the
++    server imports the host's pydantic/uvicorn (which Windows refuses to load
++    out of an MSIX package path, #6808), pip counts the host's packages as
++    installed and leaves them out of the venv, and the version probe reads the
++    host's cognee. The venv is complete on its own, so both are dropped.
++    """
++    env = dict(os.environ)
++    for name in ("PYTHONPATH", "PYTHONHOME"):
++        env.pop(name, None)
++    return env
++
++
+ def _marker_requirement() -> Optional[str]:
+     try:
+         marker = json.loads(READY_MARKER.read_text(encoding="utf-8"))
+@@ -531,6 +548,7 @@ def _installed_version(python: Path, timeout: float = 60) -> str:
+     try:
+         result = subprocess.run(
+             [str(python), "-c", probe],
++            env=venv_env(),
+             capture_output=True,
+             text=True,
+             timeout=timeout,
+@@ -588,7 +606,7 @@ def install_runtime(
+             _run(
+                 [uv, "pip", "install", "--python", str(python), LOCAL_COGNEE_REQUIREMENT],
+                 step="Installing cognee with uv",
+-                env=env,
++                env={**venv_env(), "UV_PYTHON_DOWNLOADS": "never"},
+                 timeout=timeout,
+             )
+         else:
+@@ -601,6 +619,7 @@ def install_runtime(
+             _run(
+                 [str(python), "-m", "pip", "install", LOCAL_COGNEE_REQUIREMENT],
+                 step="Installing cognee with pip",
++                env=venv_env(),
+                 timeout=timeout,
+             )
+         version = _installed_version(python)
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/server_bootstrap.py` (modified, +6/-2)
+```diff
+@@ -41,6 +41,7 @@
+     pinned_version,
+     server_python,
+     spawn_lock,
++    venv_env,
+     write_server_pidfile,
+ )
  
--Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses a configuration at the retriever's default depth, how our grading compares with published LoCoMo judges, and the limits of the evaluation. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
-+Section 2 introduces LoCoMo and the parts of cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses an additional experiment at the retriever's default depth, how our grading compares with published LoCoMo judges, and what the evaluation doesn't show. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
+@@ -230,7 +231,11 @@ def _isolated_env_file():
  
- ## 2. Preliminaries
  
- ### 2.1 LoCoMo
+ def _spawn(port, data_root, system_root, log_path, python=None):
+-    env = dict(os.environ)
++    python = python or sys.executable
++    # The fallback interpreter IS the host's own (server_python returns
++    # sys.executable) and needs the host's import paths to find its
++    # dependencies, so only the runtime venv gets the environment without them.
++    env = dict(os.environ) if python == sys.executable else venv_env()
+     # An explicit COGNEE_ENV_FILE from the user wins; otherwise pin an empty one.
+     if not env.get("COGNEE_ENV_FILE"):
+         isolated = _isolated_env_file()
+@@ -295,7 +300,6 @@ def _spawn(port, data_root, system_root, log_path, python=None):
+         log = open(log_path, "ab", buffering=0)  # noqa: SIM115 — handed to the child
+     except Exception:
+         log = subprocess.DEVNULL
+-    python = python or sys.executable
+     try:
+         proc = subprocess.Popen(
+             [
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/plugin.yaml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ name: cognee
+ kind: exclusive
+-version: 1.4.3
++version: 1.4.4
+ description: "Cognee knowledge-graph memory for Hermes: recall, remember, forget and session-end improvement. After installing, run `hermes memory setup cognee` in a terminal to make it your memory provider, then start a new chat. Remote mode (the default: Cognee Cloud URL + API key) needs nothing else; local mode installs its cognee runtime (cognee==1.6.6, about 1 GB) into a private environment when you choose it."
+ hooks:
+   - on_session_end
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/pyproject.toml` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
  
--LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) contains 10 conversations between two people, each with 19–32 dated sessions and 369–689 turns, and 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temporal (321), open-domain (96) and adversarial (446). Open-domain questions combine what a speaker said with general knowledge. Adversarial questions cannot be answered from the conversation: the expected response is to say so, and the dataset pairs each with a plausible wrong answer.
-+LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) has a public release, `locomo10.json`, with 10 conversations between two people, a subset of the dataset described in the paper. Each conversation has 19–32 dated sessions and 369–689 turns, and the release has 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temp
+ [project]
+ name = "cognee-integration-hermes-agent"
+-version = "1.4.3"
++version = "1.4.4"
+ description = "Cognee memory provider plugin for Hermes Agent. After installing, run `hermes memory setup cognee`; Cognee Cloud needs nothing else, local mode runs cognee from a private environment the plugin installs on request."
+ readme = "README.md"
+ license = "Apache-2.0"
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/tests/test_runtime_env.py` (modified, +23/-0)
+```diff
+@@ -56,10 +56,12 @@ def __init__(self, root, version=PINNED, fail_on=None):
+         self.root, self.version, self.fail_on = root, version, fail_on
+         self.commands = []
+         self.envs = []
++        self.probe_envs = []
+ 
+     def __call__(self, command, **kwargs):
+         command = [str(c) for c in command]
+         if command[-2:] == ["-c", "import importlib.metadata as m; print(m.version('cognee'))"]:
++            self.probe_envs.append(kwargs.get("env"))
+             return subprocess.CompletedProcess(command, 0, stdout=f"{self.version}\n", stderr="")
+         self.commands.append(command)
+         self.envs.append(kwargs.get("env"))
+@@ -154,6 +156,27 @@ def test_install_without_uv_uses_venv_and_pip(runtime):
+     assert runtime_env.runtime_python() == str(_python(runtime))
+ 
+ 
++@pytest.mark.parametrize("uv", ["/bin/uv", None])
++def test_commands_on_the_venv_drop_the_host_import_paths(runtime, monkeypatch, uv):
++    # A host PYTHONPATH makes pip count the host's packages as installed and
++    # leave them out of the venv, and makes the version probe read the host's
++    # cognee. Creating the venv runs the host's interpreter, so it keeps them.
++    monkeypatch.setenv("PYTHONPATH", "/host/site-packages")
++    monkeypatch.setenv("PYTHONHOME", "/host")
++    run = _FakeRun(runtime)
++    with (
++        mock.patch.object(runtime_env, "_find_uv", return_value=uv),
++        mock.patch.object(runtime_env.subprocess, "run", side_effect=run),
++    ):
++        runtime_env.install_runtime(output=lambda _: None)
++    create_env, install_env = run.envs
++    (probe_env,) = run.probe_envs
++    for env in (install_env, probe_env):
++        assert "PYTHONPATH" not in env
++        assert "PYTHONHOME" not in env
++    assert (create_env or os.environ)["PYTHONPATH"] == "/host/site-packages"
++
++
+ def test_a_ready_runtime_is_not_reinstalled(runtime):
+     _mark_ready(runtime)
+     with mock.patch.object(runtime_env.subprocess, "run") as run:
 ```
 
 ---
 
-### Incident Patch 2: `013199f4` (2026-11-19)
-**Commit Message**: docs: Revise the LoCoMo technical report (COG-7552)
+### Incident Patch 2: `4e34e078` (2026-11-27)
+**Commit Message**: fix(hermes): drop host import paths in the runtime install too (#6808)
 
-Brings the report in line with the GRO-248 review: the answer prompt's
-decline rules and the judge's half-of-the-items rule (and when it
-changed), how the exclusion list was built and what our audit could see,
-both runs of the main configuration by category and with nothing
-excluded, the cognee version behind the runs, and drops claims the
-records don't back, such as the default depth being more economical.
+The pip install step and the version probe ran the runtime venv's
+interpreter with the host's PYTHONPATH/PYTHONHOME: pip skipped packages
+the host already had, and the probe could read the host's cognee.
+Both now share venv_env() with _spawn().
 
-**File**: `cognee/eval_framework/locomo/REPORT.md` (modified, +130/-66)
+Signed-off-by: Milenko Gavric <[REDACTED_EMAIL]>
+
+**File**: `cognee-integrations/integrations/hermes-agent/CHANGELOG.md` (modified, +11/-0)
 ```diff
-@@ -1,118 +1,164 @@
--# Cognee on LoCoMo - Technical Evaluation Report
-+# Benchmarking cognee on LoCoMo - Technical Evaluation Report
+@@ -18,6 +18,17 @@ project adheres to [Semantic Versioning](https://semver.org/).
+   `integrations/hermes-agent` of topoteretes/cognee-integrations. The PyPI package name,
+   the entry points and `cognee-hermes-install` are unchanged.
+ 
++### Fixed
++- **The local runtime ignores the host's `PYTHONPATH` and `PYTHONHOME` (#6808).** A packaged
++  Hermes (the Windows desktop app) exports `PYTHONPATH` into its own package tree. The local
++  server then imported `pydantic` and `uvicorn` from there and died at start with
++  `DLL load failed while importing _pydantic_core: Access is denied`. The server, the
++  `install-runtime` install step and its version check now run on the runtime venv without
++  those two variables. A cognee in Hermes's own environment still gets them.
++  A runtime that pip built (no `uv` on PATH) while `PYTHONPATH` was set can be missing
++  packages the host already had: rebuild it with `hermes cognee remove-runtime`, then
++  `hermes cognee install-runtime`.
 +
-+*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
+ ## [1.4.3]
  
- ## 1. Introduction
+ ### Added
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/runtime_env.py` (modified, +20/-1)
+```diff
+@@ -122,6 +122,23 @@ def venv_python(venv_dir: Optional[Path] = None) -> Path:
+     return venv_dir / "bin" / "python"
  
--This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
-+This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
  
--Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
-+cognee answered **~91%** of the 1,762 evaluated questions correctly according to the LLM judge (90.7% and 91.3% in two runs), using the hybrid retriever we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and excluded the questions that our audit or an external one flagged. We also left out open-domain questions, which need knowledge from outside the conversation. As is now common for LoCoMo, an LLM judge grades the answers, with one prompt for all questions; Section 5 compares its rules with those of other published LoCoMo judges.
++def venv_env() -> dict[str, str]:
++    """The environment for a process on the runtime venv's interpreter.
++
++    A packaged host (a desktop/MSIX Hermes) exports PYTHONPATH, pointing at its
++    own venv and source tree, for its own use. Inherited by the venv's
++    interpreter, those paths come before the venv's own site-packages: the
++    server imports the host's pydantic/uvicorn (which Windows refuses to load
++    out of an MSIX package path, #6808), pip counts the host's packages as
++    installed and leaves them out of the venv, and the version probe reads the
++    host's cognee. The venv is complete on its own, so both are dropped.
++    """
++    env = dict(os.environ)
++    for name in ("PYTHONPATH", "PYTHONHOME"):
++        env.pop(name, None)
++    return env
++
++
+ def _marker_requirement() -> Optional[str]:
+     try:
+         marker = json.loads(READY_MARKER.read_text(encoding="utf-8"))
+@@ -531,6 +548,7 @@ def _installed_version(python: Path, timeout: float = 60) -> str:
+     try:
+         result = subprocess.run(
+             [str(python), "-c", probe],
++            env=venv_env(),
+             capture_output=True,
+             text=True,
+             timeout=timeout,
+@@ -588,7 +606,7 @@ def install_runtime(
+             _run(
+                 [uv, "pip", "install", "--python", str(python), LOCAL_COGNEE_REQUIREMENT],
+                 step="Installing cognee with uv",
+-                env=env,
++                env={**venv_env(), "UV_PYTHON_DOWNLOADS": "never"},
+                 timeout=timeout,
+             )
+         else:
+@@ -601,6 +619,7 @@ def install_runtime(
+             _run(
+                 [str(python), "-m", "pip", "install", LOCAL_COGNEE_REQUIREMENT],
+                 step="Installing cognee with pip",
++                env=venv_env(),
+                 timeout=timeout,
+             )
+         version = _installed_version(python)
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/server_bootstrap.py` (modified, +5/-14)
+```diff
+@@ -41,6 +41,7 @@
+     pinned_version,
+     server_python,
+     spawn_lock,
++    venv_env,
+     write_server_pidfile,
+ )
  
--Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses a configuration at the retriever's default depth, how our grading compares with published LoCoMo judges, and the limits of the evaluation. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
-+Section 2 introduces LoCoMo and the parts of cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses an additional experiment at the retriever's default depth, how our grading compares with published LoCoMo judges, and what the evaluation doesn't show. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
+@@ -230,21 +231,11 @@ def _isolated_env_file():
  
- ## 2. Preliminaries
  
- ### 2.1 LoCoMo
+ def _spawn(port, data_root, system_root, log_path, python=None):
+-    env = dict(os.environ)
+     python = python or sys.executable
+-    # A packaged host (a desktop/MSIX Hermes) exports PYTHONPATH pointing at its
+-    # own venv and source tree for its own use. The server's interpreter would
+-    # then import pydantic/uvicorn from there instead of from its own runtime
+-    # venv, and Windows denies a process without package identity the right to
+-    # load a native .pyd out of an MSIX package path:
+-    #   ImportError: DLL load failed while importing _pydantic_core: Access is denied.
+-    # The runtime venv is complete on its own (uv pip check passes), so the
+-    # inherited import paths are dropped for it. The fallback interpreter IS the
+-    # host's own (server_python returns sys.executable) and needs those paths to
+-    # find its dependencies, so it keeps them.
+-    if str(python) != str(sys.executable):
+-        for name in ("PYTHONPATH", "PYTHONHOME"):
+-            env.pop(name, None)
++    # The fallback interpreter IS the host's own (server_python returns
++    # sys.executable) and needs the host's import paths to find its
++    # dependencies, so only the runtime venv gets the environment without them.
++    env = dict(os.environ) if python == sys.executable else venv_env()
+     # An explicit COGNEE_ENV_FILE from the user wins; otherwise pin an empty one.
+     if not env.get("COGNEE_ENV_FILE"):
+         isolated = _isolated_env_file()
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/tests/test_runtime_env.py` (modified, +23/-0)
+```diff
+@@ -56,10 +56,12 @@ def __init__(self, root, version=PINNED, fail_on=None):
+         self.root, self.version, self.fail_on = root, version, fail_on
+         self.commands = []
+         self.envs = []
++        self.probe_envs = []
  
--LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) contains 10 conversations between two people, each with 19–32 dated sessions and 369–689 turns, and 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temporal (321), open-domain (96) and adversarial (446). Open-domain questions combine what a speaker said with general knowledge. Adversarial questions cannot be answered from the conversation: the expected response is to say so, and the dataset pairs each with a plausible wrong answer.
-+LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) has a public release, `locomo10.json`, with 10 conversations between two people, a subset of the dataset described in the paper. Each conversation has 19–32 dated sessions and 369–689 turns, and the release has 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temp
+     def __call__(self, command, **kwargs):
+         command = [str(c) for c in command]
+         if command[-2:] == ["-c", "import importlib.metadata as m; print(m.version('cognee'))"]:
++            self.probe_envs.append(kwargs.get("env"))
+             return subprocess.CompletedProcess(command, 0, stdout=f"{self.version}\n", stderr="")
+         self.commands.append(command)
+         self.envs.append(kwargs.get("env"))
+@@ -154,6 +156,27 @@ def test_install_without_uv_uses_venv_and_pip(runtime):
+     assert runtime_env.runtime_python() == str(_python(runtime))
+ 
+ 
++@pytest.mark.parametrize("uv", ["/bin/uv", None])
++def test_commands_on_the_venv_drop_the_host_import_paths(runtime, monkeypatch, uv):
++    # A host PYTHONPATH makes pip count the host's packages as installed and
++    # leave them out of the venv, and makes the version probe read the host's
++    # cognee. Creating the venv runs the host's interpreter, so it keeps them.
++    monkeypatch.setenv("PYTHONPATH", "/host/site-packages")
++    monkeypatch.setenv("PYTHONHOME", "/host")
++    run = _FakeRun(runtime)
++    with (
++        mock.patch.object(runtime_env, "_find_uv", return_value=uv),
++        mock.patch.object(runtime_env.subprocess, "run", side_effect=run),
++    ):
++        runtime_env.install_runtime(output=lambda _: None)
++    create_env, install_env = run.envs
++    (probe_env,) = run.probe_envs
++    for env in (install_env, probe_env):
++        assert "PYTHONPATH" not in env
++        assert "PYTHONHOME" not in env
++    assert (create_env or os.environ)["PYTHONPATH"] == "/host/site-packages"
++
++
+ def test_a_ready_runtime_is_not_reinstalled(runtime):
+     _mark_ready(runtime)
+     with mock.patch.object(runtime_env.subprocess, "run") as run:
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/tests/test_server_mode.py` (modified, +4/-1)
+```diff
+@@ -276,8 +276,11 @@ def test_inherited_import_paths_are_kept_for_the_host_interpreter(self):
+         # The fallback interpreter IS the host's own (server_python returns
+         # sys.executable when cognee lives in Hermes's environment). It needs the
+         # host's PYTHONPATH to find its dependencies, so it must keep them.
+-        env = self._spawn_env(python=sys.executable, PYTHONPATH="/host/site-packages")
++        env = self._spawn_env(
++            python=sys.executable, PYTHONPATH="/host/site-packages", PYTHONHOME="/host"
++        )
+         self.assertEqual(env["PYTHONPATH"], "/host/site-packages")
++        self.assertEqual(env["PYTHONHOME"], "/host")
+ 
+     def test_default_interpreter_keeps_import_paths(self):
+         # python=None resolves to sys.executable (the host), so nothing is stripped.
+```
+
+---
+
+### Incident Patch 3: `8d78db20` (2026-11-27)
+**Commit Message**: fix(hermes): isolate runtime venv imports (#6808)
+
+Signed-off-by: Milenko Gavric <[REDACTED_EMAIL]>
+
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/server_bootstrap.py` (modified, +14/-1)
+```diff
+@@ -231,6 +231,20 @@ def _isolated_env_file():
+ 
+ def _spawn(port, data_root, system_root, log_path, python=None):
+     env = dict(os.environ)
++    python = python or sys.executable
++    # A packaged host (a desktop/MSIX Hermes) exports PYTHONPATH pointing at its
++    # own venv and source tree for its own use. The server's interpreter would
++    # then import pydantic/uvicorn from there instead of from its own runtime
++    # venv, and Windows denies a process without package identity the right to
++    # load a native .pyd out of an MSIX package path:
++    #   ImportError: DLL load failed while importing _pydantic_core: Access is denied.
++    # The runtime venv is complete on its own (uv pip check passes), so the
++    # inherited import paths are dropped for it. The fallback interpreter IS the
++    # host's own (server_python returns sys.executable) and needs those paths to
++    # find its dependencies, so it keeps them.
++    if str(python) != str(sys.executable):
++        for name in ("PYTHONPATH", "PYTHONHOME"):
++            env.pop(name, None)
+     # An explicit COGNEE_ENV_FILE from the user wins; otherwise pin an empty one.
+     if not env.get("COGNEE_ENV_FILE"):
+         isolated = _isolated_env_file()
+@@ -295,7 +309,6 @@ def _spawn(port, data_root, system_root, log_path, python=None):
+         log = open(log_path, "ab", buffering=0)  # noqa: SIM115 — handed to the child
+     except Exception:
+         log = subprocess.DEVNULL
+-    python = python or sys.executable
+     try:
+         proc = subprocess.Popen(
+             [
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/tests/test_server_mode.py` (modified, +29/-2)
+```diff
+@@ -202,7 +202,7 @@ def test_spawn_rotates_before_handing_the_log_to_the_child(self):
+ class TestSpawnEnvironment(unittest.TestCase):
+     """The spawned server's environment — where the session cache lives or dies."""
+ 
+-    def _spawn_env(self, **env_overrides):
++    def _spawn_env(self, *, python=None, **env_overrides):
+         captured = {}
+ 
+         def fake_popen(args, env=None, **kwargs):
+@@ -213,7 +213,7 @@ def fake_popen(args, env=None, **kwargs):
+             mock.patch.dict("os.environ", env_overrides, clear=False),
+             mock.patch.object(sb.subprocess, "Popen", side_effect=fake_popen),
+         ):
+-            sb._spawn(9999, "", "", "/dev/null")
++            sb._spawn(9999, "", "", "/dev/null", python=python)
+         return captured
+ 
+     def test_caching_is_enabled_for_the_session_tier(self):
+@@ -257,6 +257,33 @@ def test_roots_are_omitted_when_empty(self):
+         # carry them. What matters is we do not invent an empty value.
+         self.assertNotEqual(env.get("DATA_ROOT_DIRECTORY", "unset"), "")
+ 
++    def test_inherited_import_paths_are_dropped_for_the_runtime_venv(self):
++        # Regression for #6808: a packaged/MSIX Hermes exports PYTHONPATH into its
++        # own package tree. When the server runs on the runtime venv (an
++        # interpreter that is not sys.executable), inheriting PYTHONPATH makes it
++        # import pydantic/uvicorn from the host app, and Windows denies loading the
++        # native .pyd from an MSIX path ("_pydantic_core: Access is denied"). The
++        # venv is self-contained, so the inherited import paths must be dropped.
++        env = self._spawn_env(
++            python="/some/runtime/venv/python",
++            PYTHONPATH="C:/Program Files/WindowsApps/host/site-packages",
++            PYTHONHOME="C:/Program Files/WindowsApps/host",
++        )
++        self.assertNotIn("PYTHONPATH", env)
++        self.assertNotIn("PYTHONHOME", env)
++
++    def test_inherited_import_paths_are_kept_for_the_host_interpreter(self):
++        # The fallback interpreter IS the host's own (server_python returns
++        # sys.executable when cognee lives in Hermes's environment). It needs the
++        # host's PYTHONPATH to find its dependencies, so it must keep them.
++        env = self._spawn_env(python=sys.executable, PYTHONPATH="/host/site-packages")
++        self.assertEqual(env["PYTHONPATH"], "/host/site-packages")
++
++    def test_default_interpreter_keeps_import_paths(self):
++        # python=None resolves to sys.executable (the host), so nothing is stripped.
++        env = self._spawn_env(PYTHONPATH="/host/site-packages")
++        self.assertEqual(env["PYTHONPATH"], "/host/site-packages")
++
+ 
+ class TestOllamaEmbeddingPins(unittest.TestCase):
+     """The spawn env caps a local Ollama embedder at its real context length.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6807** (closed): fix(chunks): run the date-hint pass off the event loop (@pazonex)
-- **PR #6806** (2026-11-20): docs(graph): Describe Node neighbours as a copy (SDK-1684) (@dexters1)
-- **PR #6805** (2026-11-20): chore: Change default LLM model to gpt-6-luna (@dexters1)
-- **PR #6801** (2026-11-20): fix(graph): Look up one document's source refs (@dexters1)
-- **PR #6800** (2026-11-20): docs: Revise the LoCoMo technical report (COG-7552) (@goran-radonic)
-- **PR #6799** (closed): docs: Revise the LoCoMo technical report (COG-7552) (@goran-radonic)
+- **PR #6902** (2026-11-28): fix(auth): Address the review of the refresh token (SDK-1774) (@dexters1)
+- **PR #6894** (2026-11-27): fix(COG-7553): isolate Hermes runtime venv imports (@ArmagedonFlamer)
+- **PR #6888** (2026-11-27): chore: bump mcp to 0.5.10 (@siillee)
+- **PR #6887** (2026-11-27): chore: bump mcp to 0.5.10 (@siillee)
+- **PR #6885** (2026-11-28): feat(auth): Keep UI users logged in with a refresh token (SDK-1774) (@dexters1)
+- **PR #6883** (2026-11-26): fix(ci): Provide the Ladybug v0.17.0 JSON extension to the migration test (SDK-1760) (@siillee)
 
 ---
 
@@ -1655,38 +2102,31 @@ records don't back, such as the default depth being more economical.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: Revise the LoCoMo technical report (COG-7552)
+## X. COG-7553): isolate Hermes runtime venv imports
 
 **RULE**:
-When implementing operations in `cognee/eval_framework/locomo/REPORT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cognee-integrations/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1961133d`: docs: Revise the LoCoMo technical report (COG-7552). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dbc515bd`: COG-7553): isolate Hermes runtime venv imports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee/eval_framework/locomo/REPORT.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee-integrations/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# Benchmarking cognee on LoCoMo - Technical Evaluation Report
-
-*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
-This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
-cognee answered **~91%** of the 1,762 evaluated questions correctly according to the 
+| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.4 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-# Cognee on LoCoMo - Technical Evaluation Report
-This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
-Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
-Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation 
+| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.3 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1961133d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dbc515bd` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

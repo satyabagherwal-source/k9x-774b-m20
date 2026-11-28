@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T05:46:47.332Z",
+  "last_updated": "2026-11-28T05:55:39.251Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10266,14 +10266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topoteretes-cognee",
-      "content_hash": "db0f3afa8720f62df9d2dae26775bb42a245d937aa6d543478e4646c3bced2ae",
-      "verified_at": "2026-11-27T11:25:06.466Z",
+      "content_hash": "8c402e4131015189c8e1989a83e0ad05fee3b3e5d5164a94a64c3bebd3d5af1b",
+      "verified_at": "2026-11-28T05:55:39.250Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T11:25:06.466Z"
+      "last_updated": "2026-11-28T05:55:39.250Z"
     },
     "radix-ui/primitives": {
       "repository": "radix-ui/primitives",

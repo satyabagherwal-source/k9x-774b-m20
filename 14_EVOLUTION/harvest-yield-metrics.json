@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T05:46:47.328Z",
-  "total_cycles_completed": 13272,
-  "total_learnings_persisted": 13272,
-  "total_rules_promoted": 11966,
+  "last_updated": "2026-11-28T05:55:39.248Z",
+  "total_cycles_completed": 13273,
+  "total_learnings_persisted": 13273,
+  "total_rules_promoted": 11967,
   "history": [
-    {
-      "timestamp": "2026-11-27T11:44:32.748Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T11:54:25.293Z",
       "repository": "hashicorp/terraform",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T05:46:47.328Z",
       "repository": "aws/aws-cdk",
       "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T05:55:39.248Z",
+      "repository": "topoteretes/cognee",
+      "learningId": "learn-github-topoteretes-cognee",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

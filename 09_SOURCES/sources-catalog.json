@@ -6803,10 +6803,10 @@
     "repository": "topoteretes/cognee",
     "platform": "github",
     "sourceUrl": "https://github.com/topoteretes/cognee",
-    "sourceVersion": "ec4dbd34",
+    "sourceVersion": "dbc515bd",
     "license": "Apache-2.0",
-    "contentHash": "db0f3afa8720f62df9d2dae26775bb42a245d937aa6d543478e4646c3bced2ae",
-    "lastHarvestedAt": "2026-11-27T11:25:06.447Z",
+    "contentHash": "8c402e4131015189c8e1989a83e0ad05fee3b3e5d5164a94a64c3bebd3d5af1b",
+    "lastHarvestedAt": "2026-11-28T05:55:39.242Z",
     "learningId": "learn-github-topoteretes-cognee"
   },
   "radix-ui-primitives": {

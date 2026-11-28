@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T05:46:51.367Z",
-    "lastVerified": "2026-11-28T05:46:51.367Z",
+    "lastChecked": "2026-11-28T05:55:42.667Z",
+    "lastVerified": "2026-11-28T05:55:42.667Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-28T05:16:02.794Z",
+    "lastChecked": "2026-11-28T05:55:35.588Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-28T05:16:02.794Z"
+    "lastVerified": "2026-11-28T05:55:35.588Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -770,14 +770,14 @@
     "officialUrl": "https://github.com/topoteretes/cognee",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-27T11:24:50.705Z",
-    "lastVerified": "2026-11-27T11:24:50.705Z",
+    "lastChecked": "2026-11-28T05:55:37.803Z",
+    "lastVerified": "2026-11-28T05:55:37.803Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topoteretes-cognee",
-    "contentHash": "db0f3afa8720f62df9d2dae26775bb42a245d937aa6d543478e4646c3bced2ae",
+    "contentHash": "8c402e4131015189c8e1989a83e0ad05fee3b3e5d5164a94a64c3bebd3d5af1b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2187,8 +2187,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-28T01:45:23.281Z",
-    "lastVerified": "2026-11-28T01:45:23.281Z",
+    "lastChecked": "2026-11-28T05:55:30.735Z",
+    "lastVerified": "2026-11-28T05:55:30.735Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -5421,12 +5421,12 @@
     "lastVerified": "2026-11-27T02:26:58.142Z"
   },
   "infracost-infracost": {
-    "name": "infracost/infracost",
+    "name": "infracost",
     "officialUrl": "https://github.com/infracost/infracost",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T12:41:38.429Z",
-    "lastVerified": "2026-11-27T12:41:38.429Z",
+    "lastChecked": "2026-11-28T05:55:28.217Z",
+    "lastVerified": "2026-11-28T05:55:28.217Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infracost-infracost",
@@ -5435,7 +5435,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a972f623"
   },
   "skytable-skytable": {
     "name": "skytable",
@@ -7932,8 +7933,8 @@
     "officialUrl": "https://github.com/crate-ci/typos",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T06:05:57.435Z",
-    "lastVerified": "2026-11-27T06:05:57.435Z",
+    "lastChecked": "2026-11-28T05:55:20.644Z",
+    "lastVerified": "2026-11-28T05:55:20.644Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-ci-typos",
@@ -11381,9 +11382,9 @@
   "sindresorhus-keyboardshortcuts": {
     "name": "KeyboardShortcuts",
     "officialUrl": "https://github.com/sindresorhus/KeyboardShortcuts",
-    "lastChecked": "2026-11-26T03:55:06.643Z",
+    "lastChecked": "2026-11-28T05:55:25.586Z",
     "revisionIdentifier": "772133d9",
-    "lastVerified": "2026-11-26T03:55:06.643Z"
+    "lastVerified": "2026-11-28T05:55:25.586Z"
   },
   "syntax-tree-hast-util-from-html": {
     "name": "hast-util-from-html",
@@ -11752,12 +11753,12 @@
     "revisionIdentifier": "01c4c4f5"
   },
   "digitalbazaar-pyld": {
-    "name": "digitalbazaar/pyld",
+    "name": "pyld",
     "officialUrl": "https://github.com/digitalbazaar/pyld",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T21:01:23.793Z",
-    "lastVerified": "2026-11-24T21:01:23.793Z",
+    "lastChecked": "2026-11-28T05:55:23.158Z",
+    "lastVerified": "2026-11-28T05:55:23.158Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-digitalbazaar-pyld",
@@ -11766,7 +11767,8 @@
     "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c9a68bc3"
   },
   "kartiklabhshetwar-better-shot": {
     "name": "better-shot",

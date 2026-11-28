@@ -4,22 +4,22 @@
 {
   "source_repository": "topoteretes/cognee",
   "source_url": "https://github.com/topoteretes/cognee",
-  "source_version": "ec4dbd34",
+  "source_version": "dbc515bd",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T11:25:06.813Z",
+  "timestamp": "2026-11-28T05:55:39.494Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-topoteretes-cognee",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `ec4dbd34`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T11:25:06.813Z`  
+> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `dbc515bd`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T05:55:39.494Z`  
 > **Learning ID**: `learn-github-topoteretes-cognee`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `topoteretes/cognee` (Commit: `ec4dbd34`)
+- **Target Repository**: `topoteretes/cognee` (Commit: `dbc515bd`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T11:24:50.705Z  
+> **Harvest Timestamp**: 2026-11-28T05:55:37.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 33667 stars
+- **Stars / Engagement**: 33678 stars
 
 ---
 
@@ -1536,265 +1536,536 @@ class DescriptorConnector(Connector):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b3c04eb` (2026-11-27)
-**Commit Message**: chore: fix cognee version in mcp; bump mcp version (#6876)
+### Incident Patch 1: `dbc515bd` (2026-11-27)
+**Commit Message**: fix(COG-7553): isolate Hermes runtime venv imports (#6894)
 
-<!-- .github/pull_request_template.md -->
+## Summary
 
-## Description
-<!--
-Please provide a clear, human-generated description of the changes in
-this PR.
-DO NOT use AI-generated descriptions. We want to understand your thought
-process and reasoning.
--->
-MCP will now have a fixed cognee version, not a range. Always fixed to
-the latest cognee release. When we do a cognee release, we also bump mcp
-and release it as well.
+- drop the inherited `PYTHONPATH` and `PYTHONHOME` from every process
+that runs on the Hermes plugin's private runtime venv: the local server
+(`_spawn()`), the `install-runtime` install step (pip and uv) and its
+version probe (`_installed_version()`). All three share one helper,
+`runtime_env.venv_env()`
+- keep both variables when the server runs on Hermes' own interpreter,
+which needs them to find its dependencies. Creating the venv also runs
+on the host interpreter and keeps them
+- add regression tests for the server (runtime venv, host and default
+interpreter) and for the installer (pip and uv paths)
+- bump the plugin to 1.4.4 (`pyproject.toml`, both `plugin.yaml` files,
+`inventory.yml`, `uv.lock`, the `cognee-integrations/README.md` table)
+and turn the changelog's `[Unreleased]` section, with this fix added,
+into `[1.4.4]`
 
-## Acceptance Criteria
-<!--
-* Key requirements to the new feature or modification;
-* Proof that the changes work and meet the requirements;
--->
+## Context
 
-## Type of Change
-<!-- Please check the relevant option -->
-- [ ] Bug fix (non-breaking change that fixes an issue)
-- [ ] New feature (non-breaking change that adds functionality)
-- [ ] Code refactoring
-- [ ] Other (please specify):
+Packaged Hermes hosts export `PYTHONPATH` entries for their own
+environment. Passing those entries to the private Cognee runtime makes
+that interpreter import `pydantic` and `uvicorn` from the host package.
+On MSIX Windows installations, loading `_pydantic_core.pyd` from that
 
-## Screenshots
-<!-- ADD SCREENSHOT OF LOCAL TESTS PASSING-->
 
-## Pre-submission Checklist
-<!-- Please check all boxes that apply before submitting your PR -->
-- [ ] **I have tested my changes thoroughly before submitting this PR**
-(See `CONTRIBUTING.md`)
-- [ ] **This PR contains minimal changes necessary to address the
-issue/feature**
-- [ ] My code
-
-**File**: `cognee-mcp/README.md` (modified, +1/-1)
+**File**: `cognee-integrations/README.md` (modified, +1/-1)
 ```diff
-@@ -757,7 +757,7 @@ In order to use local cognee:
-     #"cognee[postgres-binary,docs,neo4j] @ file:/path/to/your/cognee"
-     ```
-     Replace `/path/to/your/cognee` with the absolute path to your cognee checkout, and
--    comment out the released `"cognee[...]>=1.5.0,<2.0.0"` line directly below it —
-+    comment out the released `"cognee[...]==1.6.11"` line directly below it —
-     otherwise both requirements apply and uv resolves the published package instead.
+@@ -15,7 +15,7 @@ releases are still in that repository.
  
- 2. Install dependencies with uv in the mcp folder
+ | Integration | Package | Version | Source | Release |
+ |---|---|---|---|---|
+-| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.3 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
++| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.4 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
+ 
+ <!-- inventory:end -->
+ 
 ```
 
-**File**: `cognee-mcp/pyproject.toml` (modified, +1/-4)
+**File**: `cognee-integrations/integrations/hermes-agent/CHANGELOG.md` (modified, +12/-1)
 ```diff
-@@ -11,10 +11,7 @@ requires-python = ">=3.10,<3.14"
- dependencies = [
-     # For local cognee repo usage remove comment below and add absolute path to cognee. Then run `uv sync --reinstall` in the mcp folder on local cognee changes.
-     #"cognee[postgres,docs,neo4j] @ file:/Users/igorilic/Desktop/cognee",
--    # Raise this floor to the first cognee release with SDK-1226 once it is on
--    # PyPI, and release cognee-mcp only after it: older releases return no
--    # structured evidence for the default recall answer, so it gets no refs.
--    "cognee[postgres-binary,docs,neo4j]>=1.5.4,<2.0.0",
-+    "cognee[postgres-binary,docs,neo4j]==1.6.11",
-     # FastMCP 3 ships tag-based visibility and the tool-search transform this
-     # server relies on; the FastMCP vendored in the `mcp` SDK is an older fork
-     # that has neither. `mcp` is still a direct dependency for its wire types.
+@@ -9,7 +9,7 @@ The version must match the `version` field in both `pyproject.toml` and
+ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
+ project adheres to [Semantic Versioning](https://semver.org/).
+ 
+-## [Unreleased]
++## [1.4.4]
+ 
+ ### Changed
+ - **The plugin's source moved to the cognee repository (SDK-1489).** It now lives in
+@@ -18,6 +18,17 @@ project adheres to [Semantic Versioning](https://semver.org/).
+   `integrations/hermes-agent` of topoteretes/cognee-integrations. The PyPI package name,
+   the entry points and `cognee-hermes-install` are unchanged.
+ 
++### Fixed
++- **The local runtime ignores the host's `PYTHONPATH` and `PYTHONHOME` (#6808).** A packaged
++  Hermes (the Windows desktop app) exports `PYTHONPATH` into its own package tree. The local
++  server then imported `pydantic` and `uvicorn` from there and died at start with
++  `DLL load failed while importing _pydantic_core: Access is denied`. The server, the
++  `install-runtime` install step and its version check now run on the runtime venv without
++  those two variables. A cognee in Hermes's own environment still gets them.
++  A runtime that pip built (no `uv` on PATH) while `PYTHONPATH` was set can be missing
++  packages the host already had: rebuild it with `hermes cognee remove-runtime`, then
++  `hermes cognee install-runtime`.
++
+ ## [1.4.3]
+ 
+ ### Added
 ```
 
-**File**: `cognee-mcp/uv.lock` (modified, +13/-12)
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/_plugin_root/plugin.yaml` (modified, +1/-1)
 ```diff
-@@ -989,7 +989,7 @@ wheels = [
+@@ -1,6 +1,6 @@
+ name: cognee
+ kind: exclusive
+-version: 1.4.3
++version: 1.4.4
+ description: "Cognee knowledge-graph memory for Hermes: recall, remember, forget and session-end improvement. After installing, run `hermes memory setup cognee` in a terminal to make it your memory provider, then start a new chat. Remote mode (the default: Cognee Cloud URL + API key) needs nothing else; local mode installs its cognee runtime (cognee==1.6.6, about 1 GB) into a private environment when you choose it."
+ hooks:
+   - on_session_end
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/runtime_env.py` (modified, +20/-1)
+```diff
+@@ -122,6 +122,23 @@ def venv_python(venv_dir: Optional[Path] = None) -> Path:
+     return venv_dir / "bin" / "python"
  
- [[package]]
- name = "cognee"
--version = "1.6.9"
-+version = "1.6.11"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "aiofiles" },
-@@ -1052,15 +1052,16 @@ dependencies = [
-     { name = "uvicorn" },
-     { name = "websockets" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/1b/33/51f53dc617154f819a069943366955691d210f752cd93d85b367ecec15ef/cognee-1.6.9.tar.gz", hash = "sha256:a2ca5d8e539dfd8575a977a6d205fece26b8bfb2de7720dbe7886d758b5d9df3", size = 43159695, upload-time = "2026-11-18T11:56:44.181Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/8e/41/0be19a22592dd8f974bd75220b0d2500368502a804686f6eb5a81aebe87c/cognee-1.6.11.tar.gz", hash = "sha256:21057ab36646579e4c8a7fcfba7972410403c3331ec14869cd0acc26268f71f8", size = 43471452, upload-time = "2026-11-26T17:12:13.74Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/82/c8/a6039e0c7b86b5ecd5c2c6b2e9458586cc9b0c85ef93c710131e036081dc/cognee-1.6.9-py3-none-any.whl", hash = "sha256:f1a7dcedbeee4f847d0bb5733807b02676f56123231b8ce073614eeff5fb16ac", size = 24801166, upload-time = "2026-11-18T11:56:40.23Z" },
-+    { url = "https://files.pythonhosted.org/packages/34/95/07a550a50903fadb6ff90894586c703908a64a2c9a872d6a8ced9810c0c0/cognee-1.6.11-py3-none-any.whl", hash = "sha256:d182df702670caec98f4ca3e53e78741df8ff6aa3a286f067c9f51295f0b2931", size = 25173607, upload-time = "2026-11-26T17:12:09.226Z" },
- ]
  
- [package.optional-dependencies]
- docs = [
-     { name = "lxml" },
-     { name = "nltk" },
-+    { name = "pandas" },
-     { name = "unstructured", version = "0.18.32", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version < '3.11'" },
-     { name = "unstructured", version = "0.22.23", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version >= '3.11'" },
- ]
-@@ -1108,7 +1109,7 @@ postgres-binary = [
- [package.metadata]
- requires-dist = [
-     { name = "certifi", specifier = ">=2026.10.19" },
--    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = ">=1.5.4,<2.0.0" },
-+    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = "==1.6.11" },
-     { name = "dateparser", specifier = ">=1.2,<2" },
-     { name = "fastmcp", specifier = ">=3.4.0,<4.0.0" },
-     { name = "httpx", specifier = ">=0.27.0,<1.0.0" },
-@@ -1785,16 +1786,16 @@ wheels = [
++def venv_env() -> dict[str, str]:
++    """The environment for a process on the runtime venv's interpreter.
++
++    A packaged host (a desktop/MSIX Hermes) exports PYTHONPATH, pointing at its
++    own venv and source tree, for its own use. Inherited by the venv's
++    interpreter, those paths come before the venv's own site-packages: the
++    server imports the host's pydantic/uvicorn (which Windows refuses to load
++    out of an MSIX package path, #6808), pip counts the host's packages as
++    installed and leaves them out of the venv, and the version probe reads the
++    host's cognee. The venv is complete on its own, so both are dropped.
++    """
++    env = dict(os.environ)
++    for name in ("PYTHONPATH", "PYTHONHOME"):
++        env.pop(name, None)
++    return env
++
++
+ def _marker_requirement() -> Optional[str]:
+     try:
+         marker = json.loads(READY_MARKER.read_text(encoding="utf-8"))
+@@ -531,6 +548,7 @@ def _installed_version(python: Path, timeout: float = 60) -> str:
+     try:
+         result = subprocess.run(
+             [str(python), "-c", probe],
++            env=venv_env(),
+             capture_output=True,
+             text=True,
+             timeout=timeout,
+@@ -588,7 +606,7 @@ def install_runtime(
+             _run(
+                 [uv, "pip", "install", "--python", str(python), LOCAL_COGNEE_REQUIREMENT],
+                 step="Installing cognee with uv",
+-                env=env,
++                env={**venv_env(), "UV_PYTHON_DOWNLOADS": "never"},
+                 timeout=timeout,
+             )
+         else:
+@@ -601,6 +619,7 @@ def install_runtime(
+             _run(
+                 [str(python), "-m", "pip", "install", LOCAL_COGNEE_REQUIREMENT],
+                 step="Installing cognee with pip",
++                env=venv_env(),
+                 timeout=timeout,
+             )
+         version = _installed_version(python)
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/server_bootstrap.py` (modified, +6/-2)
+```diff
+@@ -41,6 +41,7 @@
+     pinned_version,
+     server_python,
+     spawn_lock,
++    venv_env,
+     write_server_pidfile,
+ )
  
- [[package]]
- name = "enola-cli"
--version = "0.5.1"
-+version = "0.5.4"
- source = { registry = "https://pypi.org/simple" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/a9/95/1e67f8146434e71aac9a35b7bc687d579653845dca6aad1f403edb08d868/enola_cli-0.5.1-py3-none-macosx_12_0_arm64.whl", hash = "sha256:b72959c951c2eb9510d3cc5edfd8ef484716a5cffe9dc3a57db62488db4658cd", size = 13006808, upload-time = "2026-11-11T08:13:03.019Z" },
--    { url = "https://files.pythonhosted.org/packages/d6/89/2d872e3bd5d0325aad37ae2506752263288160411b7097f8463d5024f761/enola_cli-0.5.1-py3-none-macosx_12_0_x86_64.whl", hash = "sha256:a75c305ee70f51b4e3c0de7ff4adb8646eb225146477bd2d722dffee895ffcb7", size = 13797010, upload-time = "2026-11-11T08:13:05.853Z" },
--    { url = "https://files.pythonhosted.org/packages/b6/ce/1cc7bff6aa2d008b1423dea0f7117d9c4ace95c2e9537d794c0998ca6f97/enola_cli-0.5.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e10f7e79f56d663ee5c81f1b03e4c1833f8d2a4c31a0ce195191fccbae7d6a9a", size = 12546566, upload-time = "2026-11-11T08:13:08.805Z" },
--    { url = "https://files.pythonhosted.org/packages/b8/2c/3bbe69b1cb0fc684d5bd3971f56f26c863377ad508379324c9dca9e58125/enola_cli-0.5.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a1e0c0bbbaa1269a5c38802317dc039eed48337dd9d4099e1c8a917ea583d62d", size = 13767631, upload-time = "2026-11-11T08:13:11.63Z" },
--    { url = "https://files.pythonhosted.org/packages/f6/bb/16705b7aa974284350cdb142eb13330bdcec44998b4603a38572a1e95f81/enola_cli-0.5.1-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:e82ecf446181674bff56f2743efe14947550770b4b85e540b70211a3f593c209", size = 12547345, upload-time = "2026-11-11T08:13:14.303Z" },
--    { url = "https://files.pythonhosted.org/packages/c4/1f/5c001b42e0c520da2f23f1dbe909d05144138a9d6222adb85e4cd586fb17/enola_cli-0.5.1-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:c7b581ffee39be05bbdd3bb60ae193ba5415bf54bc643e8fcf720bf4cc1fa158", size = 13764243, upload-time = "2026-11-11T08:13:17.265Z" },
--    { url = "https://files.pythonhosted.org/packages/71/ff/c3bad27520754d6d3b8f14df2253e8a4c257df8d787fb881681d332b4aa6/enola_cli-0.5.1-py3-none-win_amd64.whl", hash = "sha256:ea74233628bdda55841e91beb76d51e592de117872b9abfc17faf3baa7cabd5d", size = 13971949, upload-t
+@@ -230,7 +231,11 @@ def _isolated_env_file():
+ 
+ 
+ def _spawn(port, data_root, system_root, log_path, python=None):
+-    env = dict(os.environ)
++    python = python or sys.executable
++    # The fallback interpreter IS the host's own (server_python returns
++    # sys.executable) and needs the host's import paths to find its
++    # dependencies, so only the runtime venv gets the environment without them.
++    env = dict(os.environ) if python == sys.executable else venv_env()
+     # An explicit COGNEE_ENV_FILE from the user wins; otherwise pin an empty one.
+     if not env.get("COGNEE_ENV_FILE"):
+         isolated = _isolated_env_file()
+@@ -295,7 +300,6 @@ def _spawn(port, data_root, system_root, log_path, python=None):
+         log = open(log_path, "ab", buffering=0)  # noqa: SIM115 — handed to the child
+     except Exception:
+         log = subprocess.DEVNULL
+-    python = python or sys.executable
+     try:
+         proc = subprocess.Popen(
+             [
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/plugin.yaml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ name: cognee
+ kind: exclusive
+-version: 1.4.3
++version: 1.4.4
+ description: "Cognee knowledge-graph memory for Hermes: recall, remember, forget and session-end improvement. After installing, run `hermes memory setup cognee` in a terminal to make it your memory provider, then start a new chat. Remote mode (the default: Cognee Cloud URL + API key) needs nothing else; local mode installs its cognee runtime (cognee==1.6.6, about 1 GB) into a private environment when you choose it."
+ hooks:
+   - on_session_end
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/pyproject.toml` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
+ 
+ [project]
+ name = "cognee-integration-hermes-agent"
+-version = "1.4.3"
++version = "1.4.4"
+ description = "Cognee memory provider plugin for Hermes Agent. After installing, run `hermes memory setup cognee`; Cognee Cloud needs nothing else, local mode runs cognee from a private environment the plugin installs on request."
+ readme = "README.md"
+ license = "Apache-2.0"
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/tests/test_runtime_env.py` (modified, +23/-0)
+```diff
+@@ -56,10 +56,12 @@ def __init__(self, root, version=PINNED, fail_on=None):
+         self.root, self.version, self.fail_on = root, version, fail_on
+         self.commands = []
+         self.envs = []
++        self.probe_envs = []
+ 
+     def __call__(self, command, **kwargs):
+         command = [str(c) for c in command]
+         if command[-2:] == ["-c", "import importlib.metadata as m; print(m.version('cognee'))"]:
++            self.probe_envs.append(kwargs.get("env"))
+             return subprocess.CompletedProcess(command, 0, stdout=f"{self.version}\n", stderr="")
+         self.commands.append(command)
+         self.envs.append(kwargs.get("env"))
+@@ -154,6 +156,27 @@ def test_install_without_uv_uses_venv_and_pip(runtime):
+     assert runtime_env.runtime_python() == str(_python(runtime))
+ 
+ 
++@pytest.mark.parametrize("uv", ["/bin/uv", None])
++def test_commands_on_the_venv_drop_the_host_import_paths(runtime, monkeypatch, uv):
++    # A host PYTHONPATH makes pip count the host's packages as installed and
++    # leave them out of the venv, and makes the version probe read the host's
++    # cognee. Creating the venv runs the host's interpreter, so it keeps them.
++    monkeypatch.setenv("PYTHONPATH", "/host/site-packages")
++    monkeypatch.setenv("PYTHONHOME", "/host")
++    run = _FakeRun(runtime)
++    with (
++        mock.patch.object(runtime_env, "_find_uv", return_value=uv),
++        mock.patch.object(runtime_env.subprocess, "run", side_effect=run),
++    ):
++        runtime_env.install_runtime(output=lambda _: None)
++    create_env, install_env = run.envs
++    (probe_env,) = run.probe_envs
++    for env in (install_env, probe_env):
++        assert "PYTHONPATH" not in env
++        assert "PYTHONHOME" not in env
++    assert (create_env or os.environ)["PYTHONPATH"] == "/host/site-packages"
++
++
+ def test_a_ready_runtime_is_not_reinstalled(runtime):
+     _mark_ready(runtime)
+     with mock.patch.object(runtime_env.subprocess, "run") as run:
 ```
 
 ---
 
-### Incident Patch 2: `bed2666e` (2026-11-26)
-**Commit Message**: chore: fix cognee version in mcp; bump mcp version (#6877)
+### Incident Patch 2: `4e34e078` (2026-11-27)
+**Commit Message**: fix(hermes): drop host import paths in the runtime install too (#6808)
 
-<!-- .github/pull_request_template.md -->
+The pip install step and the version probe ran the runtime venv's
+interpreter with the host's PYTHONPATH/PYTHONHOME: pip skipped packages
+the host already had, and the probe could read the host's cognee.
+Both now share venv_env() with _spawn().
 
-## Description
-<!--
-Please provide a clear, human-generated description of the changes in
-this PR.
-DO NOT use AI-generated descriptions. We want to understand your thought
-process and reasoning.
--->
-MCP will now have a fixed cognee version, not a range. Always fixed to
-the latest cognee release. When we do a cognee release, we also bump mcp
-and release it as well.
+Signed-off-by: Milenko Gavric <[REDACTED_EMAIL]>
 
-## Acceptance Criteria
-<!--
-* Key requirements to the new feature or modification;
-* Proof that the changes work and meet the requirements;
--->
-
-## Type of Change
-<!-- Please check the relevant option -->
-- [ ] Bug fix (non-breaking change that fixes an issue)
-- [ ] New feature (non-breaking change that adds functionality)
-- [ ] Code refactoring
-- [ ] Other (please specify):
-
-## Screenshots
-<!-- ADD SCREENSHOT OF LOCAL TESTS PASSING-->
-
-## Pre-submission Checklist
-<!-- Please check all boxes that apply before submitting your PR -->
-- [ ] **I have tested my changes thoroughly before submitting this PR**
-(See `CONTRIBUTING.md`)
-- [ ] **This PR contains minimal changes necessary to address the
-issue/feature**
-- [ ] My code
-
-**File**: `cognee-mcp/README.md` (modified, +1/-1)
+**File**: `cognee-integrations/integrations/hermes-agent/CHANGELOG.md` (modified, +11/-0)
 ```diff
-@@ -757,7 +757,7 @@ In order to use local cognee:
-     #"cognee[postgres-binary,docs,neo4j] @ file:/path/to/your/cognee"
-     ```
-     Replace `/path/to/your/cognee` with the absolute path to your cognee checkout, and
--    comment out the released `"cognee[...]>=1.5.0,<2.0.0"` line directly below it —
-+    comment out the released `"cognee[...]==1.6.11"` line directly below it —
-     otherwise both requirements apply and uv resolves the published package instead.
+@@ -18,6 +18,17 @@ project adheres to [Semantic Versioning](https://semver.org/).
+   `integrations/hermes-agent` of topoteretes/cognee-integrations. The PyPI package name,
+   the entry points and `cognee-hermes-install` are unchanged.
  
- 2. Install dependencies with uv in the mcp folder
++### Fixed
++- **The local runtime ignores the host's `PYTHONPATH` and `PYTHONHOME` (#6808).** A packaged
++  Hermes (the Windows desktop app) exports `PYTHONPATH` into its own package tree. The local
++  server then imported `pydantic` and `uvicorn` from there and died at start with
++  `DLL load failed while importing _pydantic_core: Access is denied`. The server, the
++  `install-runtime` install step and its version check now run on the runtime venv without
++  those two variables. A cognee in Hermes's own environment still gets them.
++  A runtime that pip built (no `uv` on PATH) while `PYTHONPATH` was set can be missing
++  packages the host already had: rebuild it with `hermes cognee remove-runtime`, then
++  `hermes cognee install-runtime`.
++
+ ## [1.4.3]
+ 
+ ### Added
 ```
 
-**File**: `cognee-mcp/pyproject.toml` (modified, +1/-4)
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/runtime_env.py` (modified, +20/-1)
 ```diff
-@@ -11,10 +11,7 @@ requires-python = ">=3.10,<3.14"
- dependencies = [
-     # For local cognee repo usage remove comment below and add absolute path to cognee. Then run `uv sync --reinstall` in the mcp folder on local cognee changes.
-     #"cognee[postgres,docs,neo4j] @ file:/Users/igorilic/Desktop/cognee",
--    # Raise this floor to the first cognee release with SDK-1226 once it is on
--    # PyPI, and release cognee-mcp only after it: older releases return no
--    # structured evidence for the default recall answer, so it gets no refs.
--    "cognee[postgres-binary,docs,neo4j]>=1.5.4,<2.0.0",
-+    "cognee[postgres-binary,docs,neo4j]==1.6.11",
-     # FastMCP 3 ships tag-based visibility and the tool-search transform this
-     # server relies on; the FastMCP vendored in the `mcp` SDK is an older fork
-     # that has neither. `mcp` is still a direct dependency for its wire types.
+@@ -122,6 +122,23 @@ def venv_python(venv_dir: Optional[Path] = None) -> Path:
+     return venv_dir / "bin" / "python"
+ 
+ 
++def venv_env() -> dict[str, str]:
++    """The environment for a process on the runtime venv's interpreter.
++
++    A packaged host (a desktop/MSIX Hermes) exports PYTHONPATH, pointing at its
++    own venv and source tree, for its own use. Inherited by the venv's
++    interpreter, those paths come before the venv's own site-packages: the
++    server imports the host's pydantic/uvicorn (which Windows refuses to load
++    out of an MSIX package path, #6808), pip counts the host's packages as
++    installed and leaves them out of the venv, and the version probe reads the
++    host's cognee. The venv is complete on its own, so both are dropped.
++    """
++    env = dict(os.environ)
++    for name in ("PYTHONPATH", "PYTHONHOME"):
++        env.pop(name, None)
++    return env
++
++
+ def _marker_requirement() -> Optional[str]:
+     try:
+         marker = json.loads(READY_MARKER.read_text(encoding="utf-8"))
+@@ -531,6 +548,7 @@ def _installed_version(python: Path, timeout: float = 60) -> str:
+     try:
+         result = subprocess.run(
+             [str(python), "-c", probe],
++            env=venv_env(),
+             capture_output=True,
+             text=True,
+             timeout=timeout,
+@@ -588,7 +606,7 @@ def install_runtime(
+             _run(
+                 [uv, "pip", "install", "--python", str(python), LOCAL_COGNEE_REQUIREMENT],
+                 step="Installing cognee with uv",
+-                env=env,
++                env={**venv_env(), "UV_PYTHON_DOWNLOADS": "never"},
+                 timeout=timeout,
+             )
+         else:
+@@ -601,6 +619,7 @@ def install_runtime(
+             _run(
+                 [str(python), "-m", "pip", "install", LOCAL_COGNEE_REQUIREMENT],
+                 step="Installing cognee with pip",
++                env=venv_env(),
+                 timeout=timeout,
+             )
+         version = _installed_version(python)
 ```
 
-**File**: `cognee-mcp/uv.lock` (modified, +13/-12)
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/server_bootstrap.py` (modified, +5/-14)
 ```diff
-@@ -989,7 +989,7 @@ wheels = [
+@@ -41,6 +41,7 @@
+     pinned_version,
+     server_python,
+     spawn_lock,
++    venv_env,
+     write_server_pidfile,
+ )
  
- [[package]]
- name = "cognee"
--version = "1.6.9"
-+version = "1.6.11"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "aiofiles" },
-@@ -1052,15 +1052,16 @@ dependencies = [
-     { name = "uvicorn" },
-     { name = "websockets" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/1b/33/51f53dc617154f819a069943366955691d210f752cd93d85b367ecec15ef/cognee-1.6.9.tar.gz", hash = "sha256:a2ca5d8e539dfd8575a977a6d205fece26b8bfb2de7720dbe7886d758b5d9df3", size = 43159695, upload-time = "2026-11-18T11:56:44.181Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/8e/41/0be19a22592dd8f974bd75220b0d2500368502a804686f6eb5a81aebe87c/cognee-1.6.11.tar.gz", hash = "sha256:21057ab36646579e4c8a7fcfba7972410403c3331ec14869cd0acc26268f71f8", size = 43471452, upload-time = "2026-11-26T17:12:13.74Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/82/c8/a6039e0c7b86b5ecd5c2c6b2e9458586cc9b0c85ef93c710131e036081dc/cognee-1.6.9-py3-none-any.whl", hash = "sha256:f1a7dcedbeee4f847d0bb5733807b02676f56123231b8ce073614eeff5fb16ac", size = 24801166, upload-time = "2026-11-18T11:56:40.23Z" },
-+    { url = "https://files.pythonhosted.org/packages/34/95/07a550a50903fadb6ff90894586c703908a64a2c9a872d6a8ced9810c0c0/cognee-1.6.11-py3-none-any.whl", hash = "sha256:d182df702670caec98f4ca3e53e78741df8ff6aa3a286f067c9f51295f0b2931", size = 25173607, upload-time = "2026-11-26T17:12:09.226Z" },
- ]
+@@ -230,21 +231,11 @@ def _isolated_env_file():
  
- [package.optional-dependencies]
- docs = [
-     { name = "lxml" },
-     { name = "nltk" },
-+    { name = "pandas" },
-     { name = "unstructured", version = "0.18.32", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version < '3.11'" },
-     { name = "unstructured", version = "0.22.23", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version >= '3.11'" },
- ]
-@@ -1108,7 +1109,7 @@ postgres-binary = [
- [package.metadata]
- requires-dist = [
-     { name = "certifi", specifier = ">=2026.10.19" },
--    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = ">=1.5.4,<2.0.0" },
-+    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = "==1.6.11" },
-     { name = "dateparser", specifier = ">=1.2,<2" },
-     { name = "fastmcp", specifier = ">=3.4.0,<4.0.0" },
-     { name = "httpx", specifier = ">=0.27.0,<1.0.0" },
-@@ -1785,16 +1786,16 @@ wheels = [
  
- [[package]]
- name = "enola-cli"
--version = "0.5.1"
-+version = "0.5.4"
- source = { registry = "https://pypi.org/simple" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/a9/95/1e67f8146434e71aac9a35b7bc687d579653845dca6aad1f403edb08d868/enola_cli-0.5.1-py3-none-macosx_12_0_arm64.whl", hash = "sha256:b72959c951c2eb9510d3cc5edfd8ef484716a5cffe9dc3a57db62488db4658cd", size = 13006808, upload-time = "2026-11-11T08:13:03.019Z" },
--    { url = "https://files.pythonhosted.org/packages/d6/89/2d872e3bd5d0325aad37ae2506752263288160411b7097f8463d5024f761/enola_cli-0.5.1-py3-none-macosx_12_0_x86_64.whl", hash = "sha256:a75c305ee70f51b4e3c0de7ff4adb8646eb225146477bd2d722dffee895ffcb7", size = 13797010, upload-time = "2026-11-11T08:13:05.853Z" },
--    { url = "https://files.pythonhosted.org/packages/b6/ce/1cc7bff6aa2d008b1423dea0f7117d9c4ace95c2e9537d794c0998ca6f97/enola_cli-0.5.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e10f7e79f56d663ee5c81f1b03e4c1833f8d2a4c31a0ce195191fccbae7d6a9a", size = 12546566, upload-time = "2026-11-11T08:13:08.805Z" },
--    { url = "https://files.pythonhosted.org/packages/b8/2c/3bbe69b1cb0fc684d5bd3971f56f26c863377ad508379324c9dca9e58125/enola_cli-0.5.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a1e0c0bbbaa1269a5c38802317dc039eed48337dd9d4099e1c8a917ea583d62d", size = 13767631, upload-time = "2026-11-11T08:13:11.63Z" },
--    { url = "https://files.pythonhosted.org/packages/f6/bb/16705b7aa974284350cdb142eb13330bdcec44998b4603a38572a1e95f81/enola_cli-0.5.1-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:e82ecf446181674bff56f2743efe14947550770b4b85e540b70211a3f593c209", size = 12547345, upload-time = "2026-11-11T08:13:14.303Z" },
--    { url = "https://files.pythonhosted.org/packages/c4/1f/5c001b42e0c520da2f23f1dbe909d05144138a9d6222adb85e4cd586fb17/enola_cli-0.5.1-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:c7b581ffee39be05bbdd3bb60ae193ba5415bf54bc643e8fcf720bf4cc1fa158", size = 13764243, upload-time = "2026-11-11T08:13:17.265Z" },
--    { url = "https://files.pythonhosted.org/packages/71/ff/c3bad27520754d6d3b8f14df2253e8a4c257df8d787fb881681d332b4aa6/enola_cli-0.5.1-py3-none-win_amd64.whl", hash = "sha256:ea74233628bdda55841e91beb76d51e592de117872b9abfc17faf3baa7cabd5d", size = 13971949, upload-t
+ def _spawn(port, data_root, system_root, log_path, python=None):
+-    env = dict(os.environ)
+     python = python or sys.executable
+-    # A packaged host (a desktop/MSIX Hermes) exports PYTHONPATH pointing at its
+-    # own venv and source tree for its own use. The server's interpreter would
+-    # then import pydantic/uvicorn from there instead of from its own runtime
+-    # venv, and Windows denies a process without package identity the right to
+-    # load a native .pyd out of an MSIX package path:
+-    #   ImportError: DLL load failed while importing _pydantic_core: Access is denied.
+-    # The runtime venv is complete on its own (uv pip check passes), so the
+-    # inherited import paths are dropped for it. The fallback interpreter IS the
+-    # host's own (server_python returns sys.executable) and needs those paths to
+-    # find its dependencies, so it keeps them.
+-    if str(python) != str(sys.executable):
+-        for name in ("PYTHONPATH", "PYTHONHOME"):
+-            env.pop(name, None)
++    # The fallback interpreter IS the host's own (server_python returns
++    # sys.executable) and needs the host's import paths to find its
++    # dependencies, so only the runtime venv gets the environment without them.
++    env = dict(os.environ) if python == sys.executable else venv_env()
+     # An explicit COGNEE_ENV_FILE from the user wins; otherwise pin an empty one.
+     if not env.get("COGNEE_ENV_FILE"):
+         isolated = _isolated_env_file()
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/tests/test_runtime_env.py` (modified, +23/-0)
+```diff
+@@ -56,10 +56,12 @@ def __init__(self, root, version=PINNED, fail_on=None):
+         self.root, self.version, self.fail_on = root, version, fail_on
+         self.commands = []
+         self.envs = []
++        self.probe_envs = []
+ 
+     def __call__(self, command, **kwargs):
+         command = [str(c) for c in command]
+         if command[-2:] == ["-c", "import importlib.metadata as m; print(m.version('cognee'))"]:
++            self.probe_envs.append(kwargs.get("env"))
+             return subprocess.CompletedProcess(command, 0, stdout=f"{self.version}\n", stderr="")
+         self.commands.append(command)
+         self.envs.append(kwargs.get("env"))
+@@ -154,6 +156,27 @@ def test_install_without_uv_uses_venv_and_pip(runtime):
+     assert runtime_env.runtime_python() == str(_python(runtime))
+ 
+ 
++@pytest.mark.parametrize("uv", ["/bin/uv", None])
++def test_commands_on_the_venv_drop_the_host_import_paths(runtime, monkeypatch, uv):
++    # A host PYTHONPATH makes pip count the host's packages as installed and
++    # leave them out of the venv, and makes the version probe read the host's
++    # cognee. Creating the venv runs the host's interpreter, so it keeps them.
++    monkeypatch.setenv("PYTHONPATH", "/host/site-packages")
++    monkeypatch.setenv("PYTHONHOME", "/host")
++    run = _FakeRun(runtime)
++    with (
++        mock.patch.object(runtime_env, "_find_uv", return_value=uv),
++        mock.patch.object(runtime_env.subprocess, "run", side_effect=run),
++    ):
++        runtime_env.install_runtime(output=lambda _: None)
++    create_env, install_env = run.envs
++    (probe_env,) = run.probe_envs
++    for env in (install_env, probe_env):
++        assert "PYTHONPATH" not in env
++        assert "PYTHONHOME" not in env
++    assert (create_env or os.environ)["PYTHONPATH"] == "/host/site-packages"
++
++
+ def test_a_ready_runtime_is_not_reinstalled(runtime):
+     _mark_ready(runtime)
+     with mock.patch.object(runtime_env.subprocess, "run") as run:
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/tests/test_server_mode.py` (modified, +4/-1)
+```diff
+@@ -276,8 +276,11 @@ def test_inherited_import_paths_are_kept_for_the_host_interpreter(self):
+         # The fallback interpreter IS the host's own (server_python returns
+         # sys.executable when cognee lives in Hermes's environment). It needs the
+         # host's PYTHONPATH to find its dependencies, so it must keep them.
+-        env = self._spawn_env(python=sys.executable, PYTHONPATH="/host/site-packages")
++        env = self._spawn_env(
++            python=sys.executable, PYTHONPATH="/host/site-packages", PYTHONHOME="/host"
++        )
+         self.assertEqual(env["PYTHONPATH"], "/host/site-packages")
++        self.assertEqual(env["PYTHONHOME"], "/host")
+ 
+     def test_default_interpreter_keeps_import_paths(self):
+         # python=None resolves to sys.executable (the host), so nothing is stripped.
+```
+
+---
+
+### Incident Patch 3: `8d78db20` (2026-11-27)
+**Commit Message**: fix(hermes): isolate runtime venv imports (#6808)
+
+Signed-off-by: Milenko Gavric <[REDACTED_EMAIL]>
+
+**File**: `cognee-integrations/integrations/hermes-agent/cognee_integration_hermes/server_bootstrap.py` (modified, +14/-1)
+```diff
+@@ -231,6 +231,20 @@ def _isolated_env_file():
+ 
+ def _spawn(port, data_root, system_root, log_path, python=None):
+     env = dict(os.environ)
++    python = python or sys.executable
++    # A packaged host (a desktop/MSIX Hermes) exports PYTHONPATH pointing at its
++    # own venv and source tree for its own use. The server's interpreter would
++    # then import pydantic/uvicorn from there instead of from its own runtime
++    # venv, and Windows denies a process without package identity the right to
++    # load a native .pyd out of an MSIX package path:
++    #   ImportError: DLL load failed while importing _pydantic_core: Access is denied.
++    # The runtime venv is complete on its own (uv pip check passes), so the
++    # inherited import paths are dropped for it. The fallback interpreter IS the
++    # host's own (server_python returns sys.executable) and needs those paths to
++    # find its dependencies, so it keeps them.
++    if str(python) != str(sys.executable):
++        for name in ("PYTHONPATH", "PYTHONHOME"):
++            env.pop(name, None)
+     # An explicit COGNEE_ENV_FILE from the user wins; otherwise pin an empty one.
+     if not env.get("COGNEE_ENV_FILE"):
+         isolated = _isolated_env_file()
+@@ -295,7 +309,6 @@ def _spawn(port, data_root, system_root, log_path, python=None):
+         log = open(log_path, "ab", buffering=0)  # noqa: SIM115 — handed to the child
+     except Exception:
+         log = subprocess.DEVNULL
+-    python = python or sys.executable
+     try:
+         proc = subprocess.Popen(
+             [
+```
+
+**File**: `cognee-integrations/integrations/hermes-agent/tests/test_server_mode.py` (modified, +29/-2)
+```diff
+@@ -202,7 +202,7 @@ def test_spawn_rotates_before_handing_the_log_to_the_child(self):
+ class TestSpawnEnvironment(unittest.TestCase):
+     """The spawned server's environment — where the session cache lives or dies."""
+ 
+-    def _spawn_env(self, **env_overrides):
++    def _spawn_env(self, *, python=None, **env_overrides):
+         captured = {}
+ 
+         def fake_popen(args, env=None, **kwargs):
+@@ -213,7 +213,7 @@ def fake_popen(args, env=None, **kwargs):
+             mock.patch.dict("os.environ", env_overrides, clear=False),
+             mock.patch.object(sb.subprocess, "Popen", side_effect=fake_popen),
+         ):
+-            sb._spawn(9999, "", "", "/dev/null")
++            sb._spawn(9999, "", "", "/dev/null", python=python)
+         return captured
+ 
+     def test_caching_is_enabled_for_the_session_tier(self):
+@@ -257,6 +257,33 @@ def test_roots_are_omitted_when_empty(self):
+         # carry them. What matters is we do not invent an empty value.
+         self.assertNotEqual(env.get("DATA_ROOT_DIRECTORY", "unset"), "")
+ 
++    def test_inherited_import_paths_are_dropped_for_the_runtime_venv(self):
++        # Regression for #6808: a packaged/MSIX Hermes exports PYTHONPATH into its
++        # own package tree. When the server runs on the runtime venv (an
++        # interpreter that is not sys.executable), inheriting PYTHONPATH makes it
++        # import pydantic/uvicorn from the host app, and Windows denies loading the
++        # native .pyd from an MSIX path ("_pydantic_core: Access is denied"). The
++        # venv is self-contained, so the inherited import paths must be dropped.
++        env = self._spawn_env(
++            python="/some/runtime/venv/python",
++            PYTHONPATH="C:/Program Files/WindowsApps/host/site-packages",
++            PYTHONHOME="C:/Program Files/WindowsApps/host",
++        )
++        self.assertNotIn("PYTHONPATH", env)
++        self.assertNotIn("PYTHONHOME", env)
++
++    def test_inherited_import_paths_are_kept_for_the_host_interpreter(self):
++        # The fallback interpreter IS the host's own (server_python returns
++        # sys.executable when cognee lives in Hermes's environment). It needs the
++        # host's PYTHONPATH to find its dependencies, so it must keep them.
++        env = self._spawn_env(python=sys.executable, PYTHONPATH="/host/site-packages")
++        self.assertEqual(env["PYTHONPATH"], "/host/site-packages")
++
++    def test_default_interpreter_keeps_import_paths(self):
++        # python=None resolves to sys.executable (the host), so nothing is stripped.
++        env = self._spawn_env(PYTHONPATH="/host/site-packages")
++        self.assertEqual(env["PYTHONPATH"], "/host/site-packages")
++
+ 
+ class TestOllamaEmbeddingPins(unittest.TestCase):
+     """The spawn env caps a local Ollama embedder at its real context length.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6902** (2026-11-28): fix(auth): Address the review of the refresh token (SDK-1774) (@dexters1)
+- **PR #6894** (2026-11-27): fix(COG-7553): isolate Hermes runtime venv imports (@ArmagedonFlamer)
 - **PR #6888** (2026-11-27): chore: bump mcp to 0.5.10 (@siillee)
 - **PR #6887** (2026-11-27): chore: bump mcp to 0.5.10 (@siillee)
+- **PR #6885** (2026-11-28): feat(auth): Keep UI users logged in with a refresh token (SDK-1774) (@dexters1)
 - **PR #6883** (2026-11-26): fix(ci): Provide the Ladybug v0.17.0 JSON extension to the migration test (SDK-1760) (@siillee)
-- **PR #6882** (2026-11-26): fix(code_graph): Read enola 0.5.4 cluster output (SDK-1759) (@Vasilije1990)
-- **PR #6880** (2026-11-26): chore: bump enola-cli to 0.5.4 (@siillee)
-- **PR #6879** (2026-11-26): chore: release v1.6.11 (@siillee)
 
 ---
 
@@ -1814,31 +2085,31 @@ issue/feature**
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix cognee version in mcp; bump mcp version
+## X. COG-7553): isolate Hermes runtime venv imports
 
 **RULE**:
-When implementing operations in `cognee-mcp/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cognee-integrations/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b3c04eb`: fix cognee version in mcp; bump mcp version. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dbc515bd`: COG-7553): isolate Hermes runtime venv imports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee-mcp/README.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee-integrations/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    comment out the released `"cognee[...]==1.6.11"` line directly below it —
+| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.4 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    comment out the released `"cognee[...]>=1.5.0,<2.0.0"` line directly below it —
+| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.3 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b3c04eb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dbc515bd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

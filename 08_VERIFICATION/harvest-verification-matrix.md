@@ -13987,3 +13987,4 @@
 | `CYCLE-20261128-UNKQ` | `2026-11-28T05:24:58.202Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11044` | Yes (`c15faa17...`) |
 | `CYCLE-20261128-5W1J` | `2026-11-28T05:33:42.391Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11045` | Yes (`1dedc67e...`) |
 | `CYCLE-20261128-MPOR` | `2026-11-28T05:46:47.307Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11046` | Yes (`e76645c8...`) |
+| `CYCLE-20261128-Y44L` | `2026-11-28T05:55:39.237Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11047` | Yes (`8c402e41...`) |

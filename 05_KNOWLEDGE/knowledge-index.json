@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T05:46:56.936Z",
+  "last_updated": "2026-11-28T05:55:46.442Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26980,
+  "total_items": 26983,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114705,10 +114705,10 @@
       "relative_path": "08_VERIFICATION/topoteretes-cognee-verification-protocol-empirical-defect-shield-for-topoteretes.md",
       "title": "Verification Protocol: Empirical Defect Shield for topoteretes/cognee",
       "repository": "topoteretes/cognee",
-      "source_version": "ec4dbd34",
-      "content_hash": "d5b3936c023cfbdcbf83ea1017a0fd96bec5694e5d36eedf870324898d075e73",
+      "source_version": "dbc515bd",
+      "content_hash": "93c4169db6ea4504e3d2a5c59bb412cad6d9e9c8dbae07de81b365eec9b748e7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:25:07.377Z"
+      "persisted_at": "2026-11-28T05:55:39.937Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning",
@@ -230526,9 +230526,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "e17e00a9a78625361e561e272f363ddb959aa39225c7a02129ffa030621031ae",
+      "content_hash": "5b83f6eff01830100a4c1a544f8093920b80ccd892de8b026f9e233db455a107",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T03:36:11.717Z"
+      "persisted_at": "2026-11-28T05:55:46.228Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230538,9 +230538,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f319a7ab439a12126b0423dbe412c2075c8e4399d66d25612d95c9855506673",
+      "content_hash": "8617a1036ab53c17c577d7e0046d3a634ec3fb99dce7992c65541373485928e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T03:36:11.946Z"
+      "persisted_at": "2026-11-28T05:55:46.442Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -240151,9 +240151,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "6bc64745762885a61347848bb0f2d300f4207db24485b24dfbd79926c650f9c0",
+      "content_hash": "4c107422e7753a5d5f59e9ea0972cd2f2fef37e91fa38a2847827c3d0d08013f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T04:57:48.137Z"
+      "persisted_at": "2026-11-28T05:55:45.297Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -262851,8 +262851,8 @@
       "slug": "topoteretes-cognee",
       "platform": "github",
       "source_url": "https://github.com/topoteretes/cognee",
-      "source_version": "ec4dbd34",
-      "content_hash": "db0f3afa8720f62df9d2dae26775bb42a245d937aa6d543478e4646c3bced2ae",
+      "source_version": "dbc515bd",
+      "content_hash": "8c402e4131015189c8e1989a83e0ad05fee3b3e5d5164a94a64c3bebd3d5af1b",
       "dossier_path": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
       "promoted_rules": [
@@ -262880,6 +262880,11 @@
           "number": 10887,
           "title": "fix cognee version in mcp; bump mcp version",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11047,
+          "title": "isolate Hermes runtime venv imports",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -262887,7 +262892,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T11:25:06.087Z",
+      "verified_at": "2026-11-28T05:55:38.949Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262966,9 +262971,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for topoteretes-cognee-learnings",
       "repository": "topoteretes-cognee-learnings",
       "source_version": "HEAD",
-      "content_hash": "f52c20a632b0558f216788c3db7de666786868c469fb82d0c3e8d0314a3cd2a9",
+      "content_hash": "b21bff5a410ccbaab78153df25ee987e9434214a8f68398a26a7d2b546d72c7d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:25:14.541Z"
+      "persisted_at": "2026-11-28T05:55:43.860Z"
     },
     "learn-github-nguyenphutrong-quotio": {
       "learning_id": "learn-github-nguyenphutrong-quotio",
@@ -301964,10 +301969,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-topoteretes-cognee-technical-construction-intelligence-topoteretes-cognee-core-i.md",
       "title": "Technical Construction Intelligence: topoteretes/cognee Core Invariants",
       "repository": "topoteretes/cognee",
-      "source_version": "c78a56ff",
-      "content_hash": "b6cc84dfc7e5dcb364ef14e23e4633d4944ebba6f61a4104279815eefe449ef3",
+      "source_version": "dbc515bd",
+      "content_hash": "74e1c802f42f4ce8c6614fa612b315b491c8fa79830dfb3bdfae71de04a048fb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T16:58:31.253Z"
+      "persisted_at": "2026-11-28T05:55:39.718Z"
     },
     "agent_contract-agent-contract-topoteretes-cognee-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-topoteretes-cognee-autonomous-specialist-persona",
@@ -312447,9 +312452,9 @@
       "title": "Technical Construction Intelligence: topoteretes-cognee-learnings Core Invariants",
       "repository": "topoteretes-cognee-learnings",
       "source_version": "HEAD",
-      "content_hash": "e07bf2613b6b91532d4dd2c09d88f2427c3463780f8cb12453e0f9ded8c7160b",
+      "content_hash": "66ddb70f1d5d790391fd68a89ae3e231ab6fede83ac8209d32fa3ce2d5e3cab0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T17:37:29.537Z"
+      "persisted_at": "2026-11-28T05:55:43.638Z"
     },
     "rule-9611": {
       "learning_id": "rule-9611",
@@ -350976,13 +350981,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-644O-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y9C8-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "7aba4bdc66a14f27ac6592b78064bbb9cd6a854775f90f8a577339a2fe0717b2",
+      "content_hash": "cc9a003b911c6cd41df5962b8ebad02315b4d3f1027e06940c07c8e56f9bbec5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T05:33:52.872Z"
+      "persisted_at": "2026-11-28T05:55:45.992Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -370772,6 +370777,44 @@
       "content_hash": "6f6af39e733a1699173f36d027c40116ebd40c640ac5d07499db09e0bfbe1562",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T05:46:52.508Z"
+    },
+    "rule-11047": {
+      "learning_id": "rule-11047",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11047,
+      "title": "isolate Hermes runtime venv imports",
+      "source_url": "https://github.com/topoteretes/cognee",
+      "source_version": "dbc515bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T05:55:38.949Z"
+    },
+    "candidate_directive-isolate-hermes-runtime-venv-imports": {
+      "item_id": "candidate_directive-isolate-hermes-runtime-venv-imports",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y4BN-isolate-hermes-runtime-venv-imports.md",
+      "title": "isolate Hermes runtime venv imports",
+      "repository": "topoteretes/cognee",
+      "source_version": "dbc515bd",
+      "content_hash": "8bb6420de4f01ab9fb73b73becb30d9b6fd7c3e40b5a4dffc0255d70aaa5b21b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T05:55:39.495Z"
+    },
+    "candidate_directive-cog-7553-isolate-hermes-runtime-venv-imports": {
+      "item_id": "candidate_directive-cog-7553-isolate-hermes-runtime-venv-imports",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y7CR-cog-7553-isolate-hermes-runtime-venv-imports.md",
+      "title": "COG-7553): isolate Hermes runtime venv imports",
+      "repository": "topoteretes-cognee-learnings",
+      "source_version": "HEAD",
+      "content_hash": "75ccc8753cc3cabf3782b1f9a21816ad4cf8a74d1c8295a1506a27ef6db247b0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T05:55:43.423Z"
     }
   },
   "ai-builder-brain": {
