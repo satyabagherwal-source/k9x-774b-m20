@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T12:41:48.952Z",
+  "timestamp": "2026-11-28T15:27:52.058Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-folkbench-folkbench-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [folkbench-folkbench-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T12:41:48.952Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T15:27:52.058Z`  
 > **Learning ID**: `LEARN-EVO-folkbench-folkbench-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), E (Creative Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), C (Market & Business Intelligence), E (Creative Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from folkbench-folkbench-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/folkbench-folkbench-learnings.md`  
 > **Source**: github ([https://github.com/Folkbench/folkbench](https://github.com/Folkbench/folkbench))  
-> **Source Version**: `d9006e93`  
+> **Source Version**: `41524b3e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T12:41:30.234Z  
+> **Timestamp**: 2026-11-28T15:27:39.825Z  
 > **Learning ID**: `learn-github-folkbench-folkbench`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/folkbench-folkbench-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Folkbench/folkbench](https://github.com/Folkbench/folkbench))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T12:41:30.231Z  
+> **Harvest Timestamp**: 2026-11-28T15:27:39.821Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: AI API 中转站推荐与评测：中转站排行榜、中转站检测、Claude / GPT / Gemini 中转站对比 · AI API relay rankings · Folkbench Switch for Claude Code, Codex & Gemini CLI
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3845 stars
+- **Stars / Engagement**: 4135 stars
 
 ---
 
@@ -1147,11 +1147,11 @@ process.stdout.write(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #16** (2026-11-28): **feat(switch): add APITokens Market to relay presets**
+  *Symptoms*: ## Changes  - Component: Switch (pps/switch/src/features/home/relay-presets.json) - User-visible change: Added **APITokens Market** (https://v1.apitokens.market | endpoint `https://v1.apitokens.market/v1`) to the built-in relay presets list (related to #15).  ## Verification  - [x] Validated JSON syntax and 2-space Prettier formatting (elay-presets.json) - [x] No credentials, user configs, prompts or production logs - [x] Claims reflect actual platform/tool verification (live OpenAI & Anthropic compatible gateway, uptime monitor: https://github.com/giorggios/apitokens-relay)  ## Release  This PR does not authorize creating a tag, publishing a Release or deploying the main site.
+
 - **Issue #12** (2026-11-17): **Release Switch 0.1.0-beta.9 and update localized blog & README docs**
   *Symptoms*: ## Summary - Release Switch `0.1.0-beta.9`: add named route profiles, system tray quick switching, local loopback privacy-masking proxy, and discovery/value-frontier UX refinements. - Update the Switch section across all 12 locales of the model degradation detection blog post and the feature tables in the 4 localized `README` files.  ## Release & Merge Notes - Contains two standalone commits (Switch `0.1.0-beta.9` release + blog/README documentation updates). - Merge with **Rebase and merge** or **Create a merge commit** into `main` to automatically trigger `switch-beta.yml` (cross-platform builds & macOS notarization) and `switch-publish.yml` (`switch-v0.1.0-beta.9` pre-release).
-
-- **Issue #11** (2026-11-17): **Convert blog article covers and inline raster figures from WebP to JPG**
-  *Symptoms*: Product changes - Convert all 20 twelve-locale public blog cover images and 15 inline raster figures across 4 articles from WebP to JPG so article pages, Open Graph metadata, structured data, and the blog content manifest emit .jpg URLs consistently. - Keep SVG vector diagrams and repository README showcase images unchanged to preserve unrelated documentation links.  Implementation - Convert and replace public/covers/*.webp (19 files), public/blog/covers/kimi-k3-1-pro-deep-dive.webp (1 file), and public/blog/figures/*/*.webp (15 files) with same-named .jpg assets in sRGB color space at quality 90 (4:2:0 subsampling). - Update references across src/lib/manifest.ts, src/lib/seo.ts, src/components/ArticleDetail.astro, src/pages/blog/[slug].astro, src/pages/[locale]/blog/[slug].astro, design/benchmark-series-covers-2026-11-14.json, public/blog/figures/kimi-k3-1-pro-deep-dive/NOTICE.txt, and 180 inline figure links across 48 localized Markdown articles.  Migration and compatibility - No database or environment variable changes; directory layouts under public/covers/ and public/blog/covers/ remain unchanged with .jpg extensions. - Reversible via git revert if WebP assets and paths ever need to be restored.  Operations - Affects only static blog build artifacts and blog-content-manifest.json cover URLs; coordinate deployment with main-site public blog assets so cached manifests and static assets stay aligned. - Scoped strictly to the public blog content and static build in this repo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1168,44 +1168,236 @@ process.stdout.write(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9006e93` (2026-11-26)
-**Commit Message**: 数据：更新每日公开快照（快照 public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7ae6347）
+### Incident Patch 1: `41524b3e` (2026-11-27)
+**Commit Message**: 数据：更新每日公开快照（快照 public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7b7b7b1）
 
-**File**: `README.md` (modified, +60/-57)
+**File**: `README.md` (modified, +64/-61)
 ```diff
-@@ -70,95 +70,98 @@ Folkbench 帮你挑线路、配好客户端，不是自建代理教程。
+@@ -69,98 +69,101 @@ Folkbench 帮你挑线路、配好客户端，不是自建代理教程。
  ## 今日公开快照
  
  <!-- FOLKBENCH-BOARD:START -->
--> 归档日期：2026-11-25 · 发布：2026-11-25 20:30:47（北京时间）· 快照：`public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86f65a33`
-+> 归档日期：2026-11-26 · 发布：2026-11-26 20:30:12（北京时间）· 快照：`public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7ae6347`
+-> 归档日期：2026-11-26 · 发布：2026-11-26 20:30:12（北京时间）· 快照：`public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7ae6347`
++> 归档日期：2026-11-27 · 发布：2026-11-27 20:30:41（北京时间）· 快照：`public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7b7b7b1`
  > 排序沿用主站规则，包含合作档位与运营加分。本页提供公开快照，不是原始运行记录。
  
  | 模型 | # | 中转站 | 综合 | 可用率 | 稳定性 | 输入 / 输出价 | 样本 |
  | :-- | :-: | :-- | --: | --: | --: | :-- | --: |
--| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.9% | 96.6% | ¥1.99 / 1M / ¥9.96 / 1M | 177 |
--| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 92.2% | 100.0% | 91.2% | ¥14.50 / 1M / ¥72.50 / 1M | 47 |
--| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 84.5% | 89.4% | 74.2% | ¥20.00 / 1M / ¥100.00 / 1M | 47 |
-+| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.3% | 96.0% | ¥1.99 / 1M / ¥9.96 / 1M | 180 |
-+| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 91.0% | 100.0% | 89.7% | ¥14.50 / 1M / ¥72.50 / 1M | 48 |
-+| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 85.4% | 95.7% | 83.3% | ¥20.00 / 1M / ¥100.00 / 1M | 47 |
+-| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.3% | 96.0% | ¥1.99 / 1M / ¥9.96 / 1M | 180 |
+-| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 91.0% | 100.0% | 89.7% | ¥14.50 / 1M / ¥72.50 / 1M | 48 |
+-| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 85.4% | 95.7% | 83.3% | ¥20.00 / 1M / ¥100.00 / 1M | 47 |
++| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.4% | 94.1% | ¥1.99 / 1M / ¥9.96 / 1M | 114 |
++| claude-fable-5-1 | 2 | [Zashmodel](https://folkbench.com/services/merchant-5cf7678f-611?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 97.4% | 91.5% | 76.0% | ¥2.80 / 1M / ¥14.00 / 1M | 47 |
++| claude-fable-5-1 | 3 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 94.0% | 95.7% | 78.2% | ¥12.00 / 1M / ¥60.00 / 1M | 47 |
  | | | [完整 Claude Fable 5.1 榜单 →](https://folkbench.com/rankings/claude-fable-5-1?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-more) | | | | | |
--| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.8% | 95.1% | ¥0.17 / 1M / ¥0.83 / 1M | 139 |
--| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 91.9% | 100.0% | 91.9% | ¥0.10 / 1M / ¥0.50 / 1M | 47 |
-+| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.6% | 95.3% | ¥0.17 / 1M / ¥0.83 / 1M | 168 |
-+| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 91.9% | 100.0% | 91.7% | ¥0.10 / 1M / ¥0.50 / 1M | 48 |
-+| claude-haiku-5-5 | 3 | [open7x](https://folkbench.com/services/merchant-b03836a6-3ec?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r3) | — | 100.0% | — | $0.10 / 1M / $0.50 / 1M | 7 |
+-| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.6% | 95.3% | ¥0.17 / 1M / ¥0.83 / 1M | 168 |
+-| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 91.9% | 100.0% | 91.7% | ¥0.10 / 1M / ¥0.50 / 1M | 48 |
+-| claude-haiku-5-5 | 3 | [open7x](https://folkbench.com/services/merchant-b03836a6-3ec?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r3) | — | 100.0% | — | $0.10 / 1M / $0.50 / 1M | 7 |
++| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.4% | 95.4% | ¥0.17 / 1M / ¥0.83 / 1M | 195 |
++| claude-haiku-5-5 | 2 | [open7x](https://folkbench.com/services/merchant-b03836a6-3ec?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r2) | 98.0% | 100.0% | 92.4% | $0.10 / 1M / $0.50 / 1M | 47 |
++| claude-haiku-5-5 | 3 | [无限星河AI（Infistar）](https://folkbench.com/services/merchant-49d406b0-71e?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r3) | 94.0% | 100.0% | 86.8% | ¥0.16 / 1M / ¥0.80 / 1M | 21 |
  | | | [完整 claude-haiku-5-5 榜单 →](https://folkbench.com/rankings/claude-haiku-5-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-more) | | | | | |
--| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 98.5% | 95.9% | ¥1.00 / 1M / ¥4.98 / 1M | 194 |
-+| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 97.9% | 94.7% | ¥1.00 / 1M / ¥4.98 / 1M | 140 |
- | | | [完整 Claude Opus 5 榜单 →](https://folkbench.com/rankings/claude-opus-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-more) | | | | | |
--| Claude Opus 5.5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r1) | 100.0% | 98.2% | 95.7% | ¥0.80 / 1M / ¥3.98 / 1M | 162 |
--| Claude Opus 5.5 | 2 | [IKunCode](https://folkbench.com/services/ikuncode?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r2) | 95.7% | 100.0% | 83.2% | ¥4.00 / 1M / ¥20.00 / 1M | 47 |
--| Claude Opus 5.5 | 3 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-5-r3) | 94.6% | 95.7% | 80.0% | ¥4.80 / 1M / ¥24.00 / 1M | 47 |
-+| Cla
+-| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 97.9% | 94.7% | ¥1.00 / 1M / ¥4.98 / 1M | 140 |
++| Claude Opus 5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r1) | 100.0% | 98.0% | 95.4% | ¥1.00 / 1M / ¥4.98 / 1M | 196 |
++| claude-opus-5 | 2 | [Zashmodel](https://folkbench.com/services/merchant-5cf7678f-611?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r2) | 97.4% | 93.6% | 78.0% | ¥1.40 / 1M / ¥7.00 / 1M | 47 |
++| claude-opus-5 | 3 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-r3) | 94.0% | 97.9% | 82.2% | ¥6.00 / 1M / ¥30.00 / 1M | 47 |
+ | | | [完整 Claude Opus 5 榜单 →](https://folkbench.com/rankings/claude-opus-5?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-opus-5-
+```
+
+---
+
+### Incident Patch 2: `93d598d9` (2026-11-27)
+**Commit Message**: Switch 预设线路改为从 Folkbench 读取，升至 0.1.0-beta.12
+
+简易模式、添加向导和专业模式的预设线路不再打包在安装包里，改为读取 Folkbench 公开接口 /api/public/switch/presets：预设随 Folkbench 更新，不需要升级客户端。读取失败时沿用本机 7 天内的上一份清单，过期或没有缓存时不显示预设；每一项都校验别名和 HTTPS 接口地址，注册链接仍只打开 Folkbench /go 页面，站点必须在当前清单里。
+
+删除打包的 relay-presets.json，开发文档中的预设交付说明随之更新。客户端版本升到 0.1.0-beta.12，更新记录、依赖许可清单和 Cargo 版本同步；新增预设解析、注册链接与 7 天缓存的 Rust 测试，简易模式测试改用接口形状的固定数据。
+
+**File**: `apps/switch/dependency-license-inventory.json` (modified, +3/-3)
+```diff
+@@ -1,10 +1,10 @@
+ {
+   "schemaVersion": 1,
+-  "version": "0.1.0-beta.11",
++  "version": "0.1.0-beta.12",
+   "hashes": {
+-    "package.json": "afba0c3784a07117741da198e4783fe14e11686402238f2ae4b80ce83055fde9",
++    "package.json": "74a4950ac520a17f924ffc4b6421fc91a8857d06ad689529b32556dcfac6d654",
+     "bun.lock": "231d61a49f3f16769c2034f5e30f7fc38824d906628edc0b3bbde18cb1b1a3cd",
+-    "src-tauri/Cargo.lock": "39868bc6b2bff1d957ddee17aa8ace77f5bc7034a8279fce8d1b8982b67197a9"
++    "src-tauri/Cargo.lock": "1684035bdbd432c86b103a48fdc8c223eb25ef4f608a8c75cb5f6aea084d3c8d"
+   },
+   "packages": [
+     {
+```
+
+**File**: `apps/switch/package.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "name": "folkbench-switch",
+   "private": true,
+-  "version": "0.1.0-beta.11",
++  "version": "0.1.0-beta.12",
+   "description": "Folkbench desktop assistant for API services the user already bought",
+   "license": "Apache-2.0",
+   "repository": {
+```
+
+**File**: `apps/switch/scripts/easy-mode.test.mjs` (modified, +7/-4)
+```diff
+@@ -130,10 +130,13 @@ test('easy discovery keeps connectable stations, deduplicates by best rank and s
+   assert.deepEqual(uniqueEasyStations([]), [])
+ })
+ 
+-test('paid presets remain available without rankings and do not inherit unrelated discovery stations', async () => {
+-  const presets = JSON.parse(await readFile(
+-    new URL('src/features/home/relay-presets.json', root), 'utf8'
+-  ))
++test('paid presets remain available without rankings and do not inherit unrelated discovery stations', () => {
++  // Shape of Folkbench /api/public/switch/presets (ADR-0072), as published on 2026-11-27.
++  const presets = [
++    { stationId: 'merchant-a3165bb8-847', stationName: 'Modelflare', slug: 'modelflare', baseUrl: 'https://modelflare.dev/v1' },
++    { stationId: 'merchant-7281389a-354', stationName: '智流 FluxLane', slug: 'fluxlane', baseUrl: 'https://api.fluxlane.cn' },
++    { stationId: 'merchant-955eb49b-34a', stationName: 'Sidrune AI', slug: 'merchant-955eb49b-34a', baseUrl: 'https://cn.sidrune.ai/v1' },
++  ]
+   const offline = easyPresetStations(presets, [])
+   assert.deepEqual(offline.map((row) => row.stationName), ['Modelflare', '智流 FluxLane', 'Sidrune AI'])
+   assert.ok(offline.every((row) => row.baseUrl.startsWith('https://')))
+```
+
+**File**: `apps/switch/src-tauri/Cargo.lock` (modified, +1/-1)
+```diff
+@@ -1217,7 +1217,7 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+ 
+ [[package]]
+ name = "folkbench-switch"
+-version = "0.1.0-beta.11"
++version = "0.1.0-beta.12"
+ dependencies = [
+  "arboard",
+  "base64 0.22.1",
+```
+
+**File**: `apps/switch/src-tauri/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "folkbench-switch"
+-version = "0.1.0-beta.11"
++version = "0.1.0-beta.12"
+ description = "Folkbench desktop client for API service configuration and public route data"
+ authors = ["Folkbench contributors"]
+ license = "Apache-2.0"
+```
+
+**File**: `apps/switch/src-tauri/crates/contract/src/catalog.rs` (modified, +27/-0)
+```diff
+@@ -289,6 +289,33 @@ pub struct PublishedCatalog {
+     pub stations: Vec<PublishedStation>,
+ }
+ 
++/// One preset relay read from Folkbench `/api/public/switch/presets`.
++///
++/// Membership follows the station's paid preset benefit on Folkbench, so the
++/// list changes without a client release (Folkbench ADR-0072).
++#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
++#[cfg_attr(feature = "generate-bindings", derive(ts_rs::TS))]
++#[cfg_attr(feature = "generate-bindings", ts(export, export_to = "catalog.ts"))]
++#[serde(rename_all = "camelCase")]
++pub struct PresetRelay {
++    pub station_id: String,
++    pub station_name: String,
++    /// Public slug; registration opens `https://folkbench.com/go/<slug>`.
++    pub slug: String,
++    /// Published API base, validated like the rankings' `baseUrl`.
++    pub base_url: String,
++}
++
++/// Preset relays for easy mode, the add wizard and the pro picker. Empty when
++/// the list cannot be read and no copy from the last 7 days is cached.
++#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
++#[cfg_attr(feature = "generate-bindings", derive(ts_rs::TS))]
++#[cfg_attr(feature = "generate-bindings", ts(export, export_to = "catalog.ts"))]
++#[serde(rename_all = "camelCase")]
++pub struct PresetRelayCatalog {
++    pub items: Vec<PresetRelay>,
++}
++
+ /// Client mode used when probing route integrity.
+ #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+ #[cfg_attr(feature = "generate-bindings", derive(ts_rs::TS))]
+```
+
+**File**: `apps/switch/src-tauri/crates/contract/src/lib.rs` (modified, +5/-5)
+```diff
+@@ -28,11 +28,11 @@ pub use catalog::{
+     IntegrityCacheSummary, IntegrityClientMode, IntegrityPeerAgreement,
+     IntegrityTokenRange, InvoiceStatus, ModelRiskLevel,
+     OfficialProviderHealthState, OfficialProviderStatus,
+-    OfficialProviderStatusCatalog, OfficialTokenPrice, PublicIntegrityCatalog,
+-    PublicIntegrityMeasurement, PublishedCatalog, PublishedDataSecurity,
+-    PublishedPrice, PublishedStation, PublishedStationBilling,
+-    PublishedStationProfile, PublishedStationRecharge, PublishedStationSupport,
+-    PublishedStatusState, RouteType,
++    OfficialProviderStatusCatalog, OfficialTokenPrice, PresetRelay,
++    PresetRelayCatalog, PublicIntegrityCatalog, PublicIntegrityMeasurement,
++    PublishedCatalog, PublishedDataSecurity, PublishedPrice, PublishedStation,
++    PublishedStationBilling, PublishedStationProfile, PublishedStationRecharge,
++    PublishedStationSupport, PublishedStatusState, RouteType,
+ };
+ pub use connect::{ConnectNotice, ConnectPreview, ConnectPublicStatus};
+ pub use links::{ExternalLink, ExternalLinkError};
+```
+
+**File**: `apps/switch/src-tauri/src/commands/catalog.rs` (modified, +21/-3)
+```diff
+@@ -2,7 +2,7 @@ use std::path::PathBuf;
+ 
+ use crate::domain::{
+     CatalogError, DataSecurityBoardCatalog, OfficialProviderStatusCatalog,
+-    PublicIntegrityCatalog, PublishedCatalog,
++    PresetRelayCatalog, PublicIntegrityCatalog, PublishedCatalog,
+ };
+ use crate::services;
+ use tauri::{AppHandle, Manager};
+@@ -84,12 +84,30 @@ pub fn open_data_security_station_website(
+         .map_err(|_| CatalogError::WebsiteUnavailable)
+ }
+ 
++/// Preset relays from Folkbench, or the copy cached within 7 days.
+ #[tauri::command(rename_all = "camelCase")]
+-pub fn open_preset_relay_website(
++pub async fn get_preset_relays(
++    app: AppHandle,
++) -> Result<PresetRelayCatalog, CatalogError> {
++    let directory = cache_dir(&app)?;
++    tauri::async_runtime::spawn_blocking(move || {
++        services::load_preset_relays(&directory)
++    })
++    .await
++    .map_err(|_| CatalogError::Unavailable)
++}
++
++#[tauri::command(rename_all = "camelCase")]
++pub async fn open_preset_relay_website(
+     app: AppHandle,
+     station_id: String,
+ ) -> Result<(), CatalogError> {
+-    let website = services::resolve_preset_relay_website(&station_id)?;
++    let directory = cache_dir(&app)?;
++    let website = tauri::async_runtime::spawn_blocking(move || {
++        services::resolve_preset_relay_website(&directory, &station_id)
++    })
++    .await
++    .map_err(|_| CatalogError::Unavailable)??;
+     app.opener()
+         .open_url(website, None::<&str>)
+         .map_err(|_| CatalogError::WebsiteUnavailable)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16** (closed): feat(switch): add APITokens Market to relay presets (@giorggios)
 - **PR #12** (2026-11-17): Release Switch 0.1.0-beta.9 and update localized blog & README docs (@MarlaRoselyn)
 - **PR #11** (2026-11-17): Convert blog article covers and inline raster figures from WebP to JPG (@MarlaRoselyn)
 - **PR #10** (2026-11-16): Upgrade Switch client to Phase 0–2 evaluation and Precision Spectrum v0.5 design system (@MarlaRoselyn)
@@ -1230,13 +1422,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 数据：更新每日公开快照（快照 public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7
+## X. 数据：更新每日公开快照（快照 public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Folkbench/folkbench. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9006e93`: 数据：更新每日公开快照（快照 public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7ae6347）. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41524b3e`: 数据：更新每日公开快照（快照 public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7b7b7b1）. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -1244,6 +1436,17 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
+> 归档日期：2026-11-27 · 发布：2026-11-27 20:30:41（北京时间）· 快照：`public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7b7b7b1`
+| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 97.4% | 94.1% | ¥1.99 / 1M / ¥9.96 / 1M | 114 |
+| claude-fable-5-1 | 2 | [Zashmodel](https://folkbench.com/services/merchant-5cf7678f-611?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 97.4% | 91.5% | 76.0% | ¥2.80 / 1M / ¥14.00 / 1M | 47 |
+| claude-fable-5-1 | 3 | [智流 FluxLane](https://folkbench.com/services/fluxlane?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 94.0% | 95.7% | 78.2% | ¥12.00 / 1M / ¥60.00 / 1M | 47 |
+| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.4% | 95.4% | ¥0.17 / 1M / ¥0.83 / 1M | 195 |
+| claude-haiku-5-5 | 2 | [open7x](https://folkbench.com/services/merchant-b03836a6-3ec?utm_so
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
 > 归档日期：2026-11-26 · 发布：2026-11-26 20:30:12（北京时间）· 快照：`public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7ae6347`
 | Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.3% | 96.0% | ¥1.99 / 1M / ¥9.96 / 1M | 180 |
 | claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 91.0% | 100.0% | 89.7% | ¥14.50 / 1M / ¥72.50 / 1M | 48 |
@@ -1252,19 +1455,8 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 | claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_sou
 ```
 
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Induced defect failure mode:
-> 归档日期：2026-11-25 · 发布：2026-11-25 20:30:47（北京时间）· 快照：`public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86f65a33`
-| Claude Fable 5.1 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r1) | 100.0% | 98.9% | 96.6% | ¥1.99 / 1M / ¥9.96 / 1M | 177 |
-| claude-fable-5-1 | 2 | [破晓](https://folkbench.com/services/merchant-4cf2b788-920?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r2) | 92.2% | 100.0% | 91.2% | ¥14.50 / 1M / ¥72.50 / 1M | 47 |
-| Claude Fable 5.1 | 3 | [Apiporter](https://folkbench.com/services/apiporter?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-fable-5-1-r3) | 84.5% | 89.4% | 74.2% | ¥20.00 / 1M / ¥100.00 / 1M | 47 |
-| claude-haiku-5-5 | 1 | [Modelflare](https://folkbench.com/services/modelflare?utm_source=github&utm_medium=readme&utm_campaign=main-repo&utm_content=daily-board-claude-haiku-5-5-r1) | 100.0% | 97.8% | 95.1% | ¥0.17 / 1M / ¥0.83 / 1M | 139 |
-| claude-haiku-5-5 | 2 | [Sidrune AI](https://folkbench.com/services/merchant-955eb49b-34a?utm_sou
-```
-
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9006e93` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41524b3e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

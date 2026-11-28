@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T15:19:33.619Z",
-  "total_cycles_completed": 13347,
-  "total_learnings_persisted": 13347,
-  "total_rules_promoted": 12043,
+  "last_updated": "2026-11-28T15:27:41.173Z",
+  "total_cycles_completed": 13348,
+  "total_learnings_persisted": 13348,
+  "total_rules_promoted": 12044,
   "history": [
-    {
-      "timestamp": "2026-11-27T19:35:34.264Z",
-      "repository": "llamaindex/OCRia-nano-1",
-      "learningId": "learn-huggingface-llamaindex-ocria-nano-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T19:44:14.031Z",
       "repository": "buresdv/Cork",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T15:19:33.619Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T15:27:41.173Z",
+      "repository": "Folkbench/folkbench",
+      "learningId": "learn-github-folkbench-folkbench",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T15:19:43.598Z",
+  "last_updated": "2026-11-28T15:27:54.912Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-AI94",
+      "id": "CD-E1PC",
       "directive_title": "Bump version number",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-AI94-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-E1PC-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -76639,6 +76639,44 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-DZLG",
+      "directive_title": "数据：更新每日公开快照（快照 public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7",
+      "source_repo": "folkbench-folkbench-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DZLG-public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-33C902",
+      "directive_title": "数据：更新每日公开快照（快照 public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "folkbench-folkbench",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-33C902--public-9df56a98576f574f43f8331208885658.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-CCE589",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CCE589-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-1B92CE",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1B92CE-bump-version-number.md",
+      "staged_date": "2026-11-28"
     }
   ]
 }

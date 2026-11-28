@@ -14108,3 +14108,4 @@ Every entry in this ledger must capture:
 | `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `8b30c334` | Multi-dimensional audit evidence | 2026-11-28T15:19:21.334Z |
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `8e35bfec` | Multi-dimensional audit evidence | 2026-11-28T15:19:24.251Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e6479ba8` | Multi-dimensional audit evidence | 2026-11-28T15:19:33.612Z |
+| `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `41524b3e` | Multi-dimensional audit evidence | 2026-11-28T15:27:41.167Z |

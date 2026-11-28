@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T15:19:37.414Z",
-    "lastVerified": "2026-11-28T15:19:37.414Z",
+    "lastChecked": "2026-11-28T15:27:50.191Z",
+    "lastVerified": "2026-11-28T15:27:50.191Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -256,9 +256,9 @@
   "bitnami-sealed-secrets": {
     "name": "sealed-secrets",
     "officialUrl": "https://github.com/bitnami/sealed-secrets",
-    "lastChecked": "2026-11-27T18:59:43.233Z",
+    "lastChecked": "2026-11-28T15:27:42.796Z",
     "revisionIdentifier": "53625dfe",
-    "lastVerified": "2026-11-27T18:59:43.233Z"
+    "lastVerified": "2026-11-28T15:27:42.796Z"
   },
   "microsoft-agent-governance-toolkit": {
     "name": "agent-governance-toolkit",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-28T14:46:49.223Z",
+    "lastChecked": "2026-11-28T15:27:50.177Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-28T14:46:49.223Z"
+    "lastVerified": "2026-11-28T15:27:50.177Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -574,8 +574,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T07:21:56.414Z",
-    "lastVerified": "2026-11-28T07:21:56.414Z",
+    "lastChecked": "2026-11-28T15:27:45.119Z",
+    "lastVerified": "2026-11-28T15:27:45.119Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -3573,12 +3573,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "neuron-core-neuron-ai": {
-    "name": "neuron-core/neuron-ai",
+    "name": "neuron-ai",
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-27T17:42:00.823Z",
-    "lastVerified": "2026-11-27T17:42:00.823Z",
+    "lastChecked": "2026-11-28T15:27:47.659Z",
+    "lastVerified": "2026-11-28T15:27:47.659Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-neuron-core-neuron-ai",
@@ -3587,7 +3587,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "73e2292b"
   },
   "gitoxidelabs-gitoxide": {
     "name": "GitoxideLabs/gitoxide",
@@ -9528,12 +9529,12 @@
     "officialUrl": "https://github.com/Folkbench/folkbench",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T12:41:30.231Z",
-    "lastVerified": "2026-11-27T12:41:30.231Z",
+    "lastChecked": "2026-11-28T15:27:39.821Z",
+    "lastVerified": "2026-11-28T15:27:39.821Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-folkbench-folkbench",
-    "contentHash": "ce0ce7dbd192126034c41f0c9c52fd00c3953386f1b8ab096c77c897f52e422f",
+    "contentHash": "8ad12a0fb82ab39c647c32831b1a38792a7c67af882a63ed40cae36ae624e361",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -12262,9 +12263,9 @@
   "mijick-popups": {
     "name": "Popups",
     "officialUrl": "https://github.com/Mijick/Popups",
-    "lastChecked": "2026-11-26T10:08:16.353Z",
+    "lastChecked": "2026-11-28T15:27:40.163Z",
     "revisionIdentifier": "3aa55233",
-    "lastVerified": "2026-11-26T10:08:16.353Z"
+    "lastVerified": "2026-11-28T15:27:40.163Z"
   },
   "vitest-dev-vitest": {
     "name": "vitest-dev/vitest",
@@ -12694,9 +12695,9 @@
   "scrapinghub-scrapy-poet": {
     "name": "scrapy-poet",
     "officialUrl": "https://github.com/scrapinghub/scrapy-poet",
-    "lastChecked": "2026-11-25T02:38:35.795Z",
+    "lastChecked": "2026-11-28T15:27:37.731Z",
     "revisionIdentifier": "c54e48e7",
-    "lastVerified": "2026-11-25T02:38:35.795Z"
+    "lastVerified": "2026-11-28T15:27:37.731Z"
   },
   "makecindy-cindy": {
     "name": "makecindy/cindy",

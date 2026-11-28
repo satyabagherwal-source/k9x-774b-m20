@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-1SOV",
-    "timestamp": "2026-11-26T19:54:59.071Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "19b3b7c10c0cb5331b490731adfe2bec445e0f883a3ee3680c53c895edef2026",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-DQKH",
     "timestamp": "2026-11-26T20:04:16.193Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "61162dd8751c2baeebd496b0b4f51cb7a05e326b896b63f8735a5d602ede909e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-DR3D",
+    "timestamp": "2026-11-28T15:27:41.161Z",
+    "repository": "Folkbench/folkbench",
+    "learningId": "learn-github-folkbench-folkbench",
+    "contentHash": "8ad12a0fb82ab39c647c32831b1a38792a7c67af882a63ed40cae36ae624e361",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

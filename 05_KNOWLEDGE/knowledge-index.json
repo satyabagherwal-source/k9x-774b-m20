@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T15:19:44.203Z",
+  "last_updated": "2026-11-28T15:27:55.381Z",
   "total_verified_learnings": 9153,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27183,
+  "total_items": 27185,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230616,9 +230616,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c0a343e8ccca50482041d57222492d8348a75071fcb034a21e958d38378ba8a1",
+      "content_hash": "72ca2504a61fc2a0ecf0bbc1c83c5abcbd5fc2d614f6b5aae085a3d5aed50d7d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T14:57:10.391Z"
+      "persisted_at": "2026-11-28T15:27:55.134Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230628,9 +230628,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b104d12040b9c2df52d3667e2d055395a32cccd2c70948e8041247fa063ed90",
+      "content_hash": "8a0e3df2d7e96f40f99702b895d379a261bb167ec5aca8f45c59439d0efcd13d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T14:57:10.660Z"
+      "persisted_at": "2026-11-28T15:27:55.381Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -240321,9 +240321,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "c0b2c6cb631c904c9c928c706ac7131fb4afe9fa32fe81d135582ff188a8db94",
+      "content_hash": "7f392764a562be6ab383b33eaa57b3c7aa99bd59a07901d59e9505ed74140867",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T13:39:57.715Z"
+      "persisted_at": "2026-11-28T15:27:54.132Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -260218,8 +260218,8 @@
       "slug": "folkbench-folkbench",
       "platform": "github",
       "source_url": "https://github.com/Folkbench/folkbench",
-      "source_version": "d9006e93",
-      "content_hash": "ce0ce7dbd192126034c41f0c9c52fd00c3953386f1b8ab096c77c897f52e422f",
+      "source_version": "41524b3e",
+      "content_hash": "8ad12a0fb82ab39c647c32831b1a38792a7c67af882a63ed40cae36ae624e361",
       "dossier_path": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "promoted_rules": [
@@ -260267,6 +260267,11 @@
           "number": 10901,
           "title": "数据：更新每日公开快照（快照 public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11118,
+          "title": "数据：更新每日公开快照（快照 public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -260274,7 +260279,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T12:41:31.177Z",
+      "verified_at": "2026-11-28T15:27:40.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260316,10 +260321,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "repository": "Folkbench/folkbench",
-      "source_version": "d9006e93",
-      "content_hash": "8a7ff200503f729dff4c0343a6e92b75979321cbb305e8582f5514e998a10fc3",
+      "source_version": "41524b3e",
+      "content_hash": "bae44e35a68279988cfd6b18cd5e017b0ca21a2beef4e009c809e9c3c9275aa6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T12:41:31.881Z"
+      "persisted_at": "2026-11-28T15:27:41.700Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench",
@@ -260328,10 +260333,10 @@
       "relative_path": "08_VERIFICATION/folkbench-folkbench-verification-protocol-empirical-defect-shield-for-folkbench-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Folkbench/folkbench",
       "repository": "Folkbench/folkbench",
-      "source_version": "d9006e93",
-      "content_hash": "95d86cc08c38765b1350d5732ddee652b8121f3f01a5860132d45cf2695532c9",
+      "source_version": "41524b3e",
+      "content_hash": "dba3954fca7145a38ca8b9282bd05671d4dcb25c59e3e228f8ce0ae827b420ec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:41:32.079Z"
+      "persisted_at": "2026-11-28T15:27:41.901Z"
     },
     "rule-8712": {
       "learning_id": "rule-8712",
@@ -260475,9 +260480,9 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "repository": "folkbench-folkbench-learnings",
       "source_version": "HEAD",
-      "content_hash": "e89313ed61d591a695ad4bcf87f19dd07511b041a131d66e2ee2645173a6ecd4",
+      "content_hash": "8e354140c1686413a305963dd715f4f9083a8f7bbbe1b960e4211992b8f47ebf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T12:41:49.311Z"
+      "persisted_at": "2026-11-28T15:27:52.427Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings",
@@ -260487,9 +260492,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for folkbench-folkbench-learnings",
       "repository": "folkbench-folkbench-learnings",
       "source_version": "HEAD",
-      "content_hash": "e79d3add74badfc2e136a9b561f97f83ea4d58ae88c7ba9d3587c16d353fb38d",
+      "content_hash": "afe9b9ccad28f6d701755b78a183fac2af07db8bf98863a168216806ccec9b4c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:41:49.515Z"
+      "persisted_at": "2026-11-28T15:27:52.713Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -351323,13 +351328,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-AI94-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-E1PC-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "2dbe96f19f045b847188f833f5862c6a0514ed7ac4fa8d8c0d8b1692f22e9812",
+      "content_hash": "ff21efff5c735d42040c06247c1fb35f88c7e0ff9bcafc85dcfa54a29c959697",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T14:57:10.120Z"
+      "persisted_at": "2026-11-28T15:27:54.912Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -373789,6 +373794,32 @@
       "content_hash": "4ef63120efe6b1e95fd64c827fb6eb23691c062c14d7a3fffc7abdbcc4e0bd75",
       "domain_letter": "G",
       "persisted_at": "2026-11-28T15:19:43.598Z"
+    },
+    "rule-11118": {
+      "learning_id": "rule-11118",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11118,
+      "title": "数据：更新每日公开快照（快照 public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7",
+      "source_url": "https://github.com/Folkbench/folkbench",
+      "source_version": "41524b3e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T15:27:40.826Z"
+    },
+    "candidate_directive-public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7": {
+      "item_id": "candidate_directive-public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DZLG-public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7.md",
+      "title": "数据：更新每日公开快照（快照 public-9df56a98576f574f43f833120888565804b25b852cab501feb472cd1e7",
+      "repository": "folkbench-folkbench-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e51d9e2003922726cd9ba58a171f0ee92f8acb51c9ed11d9edbf6e4cc631d446",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T15:27:52.188Z"
     }
   },
   "ai-builder-brain": {

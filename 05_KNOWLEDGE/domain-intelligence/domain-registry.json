@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T15:19:43.906Z",
+  "last_updated": "2026-11-28T15:27:55.134Z",
   "total_records": 2910,
   "domains": {
     "A": {
@@ -15701,8 +15701,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "c0a343e8ccca50482041d57222492d8348a75071fcb034a21e958d38378ba8a1",
-      "created_at": "2026-11-28T14:57:10.391Z"
+      "content_hash": "72ca2504a61fc2a0ecf0bbc1c83c5abcbd5fc2d614f6b5aae085a3d5aed50d7d",
+      "created_at": "2026-11-28T15:27:55.134Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -18560,8 +18560,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "c0b2c6cb631c904c9c928c706ac7131fb4afe9fa32fe81d135582ff188a8db94",
-      "created_at": "2026-11-28T13:39:57.715Z"
+      "content_hash": "7f392764a562be6ab383b33eaa57b3c7aa99bd59a07901d59e9505ed74140867",
+      "created_at": "2026-11-28T15:27:54.132Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -24378,8 +24378,8 @@
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "repository": "Folkbench/folkbench",
-      "content_hash": "8a7ff200503f729dff4c0343a6e92b75979321cbb305e8582f5514e998a10fc3",
-      "created_at": "2026-11-27T12:41:31.881Z"
+      "content_hash": "bae44e35a68279988cfd6b18cd5e017b0ca21a2beef4e009c809e9c3c9275aa6",
+      "created_at": "2026-11-28T15:27:41.700Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
@@ -24396,8 +24396,8 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-learnings-technical-construction-intelligence-folkbench-folk.md",
       "repository": "folkbench-folkbench-learnings",
-      "content_hash": "e89313ed61d591a695ad4bcf87f19dd07511b041a131d66e2ee2645173a6ecd4",
-      "created_at": "2026-11-27T12:41:49.311Z"
+      "content_hash": "8e354140c1686413a305963dd715f4f9083a8f7bbbe1b960e4211992b8f47ebf",
+      "created_at": "2026-11-28T15:27:52.427Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
