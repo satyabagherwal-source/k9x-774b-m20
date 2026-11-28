@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-R7G0",
-    "timestamp": "2026-11-26T16:30:47.664Z",
-    "repository": "unhappychoice/gitlogue",
-    "learningId": "learn-github-unhappychoice-gitlogue",
-    "contentHash": "35efb1e5d60e8b63b37924a93de6de748f36768d66366a3ab39839e58f9c3afc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-R90E",
     "timestamp": "2026-11-26T16:30:49.694Z",
     "repository": "dkhamsing/open-source-ios-apps",
@@ -7490,6 +7475,21 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "92bbbb4ab431e5499e21fe50358c267decd9751f4324e57eb59326089d83cff3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-KVLW",
+    "timestamp": "2026-11-28T06:13:21.284Z",
+    "repository": "weaviate/weaviate",
+    "learningId": "learn-github-weaviate-weaviate",
+    "contentHash": "d7e1aa8b16d7e98510cf5807f0a67dcf52f1ec2e0d28fad54c6598c4467f399d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

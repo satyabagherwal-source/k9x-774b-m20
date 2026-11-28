@@ -4,24 +4,24 @@
 {
   "source_repository": "weaviate/weaviate",
   "source_url": "https://github.com/weaviate/weaviate",
-  "source_version": "daddd4e1",
+  "source_version": "4c6a489e",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-27T11:44:31.577Z",
+  "timestamp": "2026-11-28T06:13:21.556Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-weaviate-weaviate",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `daddd4e1`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-27T11:44:31.577Z`  
+> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `4c6a489e`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-28T06:13:21.556Z`  
 > **Learning ID**: `learn-github-weaviate-weaviate`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 84%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 86%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from weaviate/weaviate:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T11:44:29.819Z  
+> **Harvest Timestamp**: 2026-11-28T06:13:19.870Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16969 stars
+- **Stars / Engagement**: 16970 stars
 
 ---
 
@@ -1748,574 +1748,474 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `daddd4e1` (2026-11-27)
-**Commit Message**: Merge pull request #14007 from weaviate/claude/project-thread-zanigm
+### Incident Patch 1: `fae588ff` (2026-11-27)
+**Commit Message**: fix(handlers/grpc): return error unchanged if it coulnd't be mapped
 
-vector index update: one owner for a shard's vector index state
-
-**File**: `adapters/repos/db/index_usage.go` (modified, +2/-1)
+**File**: `adapters/handlers/grpc/server.go` (modified, +2/-2)
 ```diff
-@@ -31,6 +31,7 @@ import (
- 	"github.com/weaviate/weaviate/adapters/repos/db/shardmeta"
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/common"
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/dynamic"
-+	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
- 	"github.com/weaviate/weaviate/cluster/usage/types"
- 	"github.com/weaviate/weaviate/entities/diskio"
- 	enterrors "github.com/weaviate/weaviate/entities/errors"
-@@ -579,7 +580,7 @@ func (i *Index) calculateUnloadedShardUsage(ctx context.Context, shardName strin
- 	}
+@@ -138,7 +138,7 @@ func CreateGRPCServer(state *state.State, conf Config, options ...grpc.ServerOpt
+ // ----------------------------------------------------------------------------
  
- 	// one shard's unreadable mapping must not fail the whole collection's report
--	indexIDs, locked, err := unloadedVectorIndexStorageIDs(shardPath(i.path(), shardName), slices.Collect(maps.Keys(vectorConfigs)))
-+	indexIDs, locked, err := vectormanifest.UnloadedStorageIDs(shardPath(i.path(), shardName), slices.Collect(maps.Keys(vectorConfigs)))
- 	cacheable := !locked && err == nil
- 	if !cacheable {
- 		reason := "a load holds the vector index mapping"
-```
-
-**File**: `adapters/repos/db/index_usage_cache_test.go` (modified, +1/-1)
-```diff
-@@ -299,7 +299,7 @@ func TestUnloadedShardUsageReportedWhenMappingUnreadable(t *testing.T) {
- 
- 	metadata, err := shardmeta.Open(shardPath(index.path(), tenantName), entlsmkv.BoltFlockTimeout)
- 	require.NoError(t, err)
--	require.NoError(t, metadata.Namespace(vectorIndexMappingNamespace).Put([]byte(vectorIndexMappingFormatVersionKey), []byte("99")))
-+	require.NoError(t, metadata.Namespace(manifestNamespace).Put([]byte(manifestFormatVersionKey), []byte("99")))
- 	require.NoError(t, metadata.Close())
- 
- 	usage, err := index.usageForCollection(ctx, semaphore.NewWeighted(1), true, vectorConfigs)
-```
-
-**File**: `adapters/repos/db/migrator.go` (modified, +7/-14)
-```diff
-@@ -28,6 +28,7 @@ import (
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/flat"
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hfresh"
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw"
-+	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
- 	command "github.com/weaviate/weaviate/cluster/proto/api"
- 	"github.com/weaviate/weaviate/cluster/router"
- 	clusterschema "github.com/weaviate/weaviate/cluster/schema"
-@@ -939,27 +940,19 @@ func (m *Migrator) ValidateVectorIndexConfigsUpdate(old, updated map[string]sche
- 	// A vector this update adds must not own a file an existing vector owns:
- 	// file names derive from the name, so "compressed" next to the legacy
- 	// vector shares its quantized bucket. Checked here, before the schema
--	// commits; the shard checks again against its own records. Names are
--	// enough: a vector rebuilt under a generated ID owns only names with a
--	// "-", which no vector name has (see validateVectorIndexID).
--	owners := make(map[string]vectorIndexOwner, len(old))
-+	// commits; the shard checks again against its own records.
-+	var existing, added []string
- 	for name, cfg := range old {
- 		if vectorIndexHasStorage(cfg) {
--			owners[name] = ownerAt(vectorIndexID(name))
-+			existing = append(existing, name)
- 		}
+ // withStatusCode assigns a gRPC status code to a known Weaviate error,
+-// e.g. auth, usage limits, or [codes.Unknown] otherwise.
++// e.g. auth, usage limits, or returns original err otherwise.
+ //
+ // TODO(dyma): if we implement GRPCStatus() *grpc.Status for all the known
+ // errors (or wrap them in types that do) then grpc-go will map them automatically.
+@@ -158,7 +158,7 @@ func withStatusCode(err error) error {
+ 	if v, ok := restrictions.AsViolation(err); ok {
+ 		return restrictionViolationToGRPCError(v)
  	}
- 	for _, name := range slices.Sorted(maps.Keys(updated)) {
--		if _, existed := old[name]; existed || !vectorIndexHasStorage(updated[name]) {
--			continue
--		}
--		owner := ownerAt(vectorIndexID(name))
--		collisions := vectorIndexCollisionsWith(owners, name, owner)
--		if len(collisions) > 0 {
--			return vectorIndexCollisionError(name, collisions)
-+		if _, existed := old[name]; !existed && vectorIndexHasStorage(updated[name]) {
-+			added = append(added, name)
- 		}
--		owners[name] = owner
- 	}
--	return nil
-+	return vectormanifest.RefuseCollidingNames(existing, added)
+-	return status.Error(codes.Unknown, err.Error())
++	return err
  }
  
- func (m *Migrator) ValidateInvertedIndexConfigUpdate(old, updated *models.InvertedIndexConfig,
-```
-
-**File**: `adapters/repos/db/shard.go` (modified, +3/-2)
-```diff
-@@ -34,6 +34,7 @@ import (
- 	"github.com/weaviate/weaviate/adapters/repos/db/roaringset"
- 	shardusage "github.com/weaviate/weaviate/adapters/repos/db/shard_usage"
- 	"github.com/weaviate/weaviate/adapters/repos/db/shardmeta"
-+	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
- 	"github.com/weaviate/weaviate/cluster/replication/changelog"
- 	"github.com/weaviate/weaviate/cluster/router/types"
- 	usagetypes "github.com/weaviate/weaviate/cluster/usage/types"
-@@ -407,8 +408,8 @@ type Shard struct {
- 	// metadataDB is <shard>/index.db, open for the shard's life: the vector
- 	// index mapping and dynamic's upgrade verdicts live in it.
- 	metadataDB *shardmeta.DB
--	// mapping is the shard's persisted view of its vector indexes.
--	mapping *vectorIndexMapping
-+	// manifest owns the persisted state of the shard's vector indexes.
-+	manifest *vectormanifest.Manifest
- 
- 	// indicates whether shard is shut down or dropped (or ongoing)
- 	shut atomic.Bool
-```
-
-**File**: `adapters/repos/db/shard_compressed_vectors_migrator.go` (modified, +33/-40)
-```diff
-@@ -20,7 +20,9 @@ import (
- 	"path/filepath"
- 
- 	"github.com/sirupsen/logrus"
-+
- 	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
-+	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
- 	schemaConfig "github.com/weaviate/weaviate/entities/schema/config"
- 	"github.com/weaviate/weaviate/entities/vectorindex"
- 	"github.com/weaviate/weaviate/entities/vectorindex/dynamic"
-@@ -65,27 +67,25 @@ func (m compressedVectorsMigrator) removeVectorsCompressedLink(lsmDir string) er
- 	return nil
- }
- 
--// do runs the compressed-vectors layout migration. records say where each
-+// do runs the compressed-vectors layout migration. entries say where each
- // vector's files live: the vector at "main" owns vectors_compressed, every
--// other vector is a target. configs are the vectors' configs, the legacy one
--// under the empty name.
--func (m compressedVectorsMigrator) do(s *Shard, records map[string]vectorIndexRecord,
--	configs map[string]schemaConfig.VectorIndexConfig,
--) error {
-+// other vector is a target.
-+func (m compressedVectorsMigrator) do(s *Shard, entries []vectormanifest.Entry) error {
- 	lsmDir := s.store.GetDir()
- 	if m.isMigrationDone(lsmDir) {
- 		// migration was performed, nothing to do
- 		return nil
- 	}
- 
--	owner, hasOwner := "", false
--	targets := make(map[string]vectorIndexRecord, len(records))
--	for name, rec := range records {
--		if rec.storageID() == vectorIndexID("") {
--			owner, hasOwner = name, true
-+	var owner vectormanifest.Entry
-+	hasOwner := false
-+	targets := make([]vectormanifest.Entry, 0, len(entries))
-+	for _, e := range entries {
-+		if e.StorageID == vectorIndexID("") {
-+			owner, hasOwner = e, true
- 			continue
- 		}
--		targets[name] = rec
-+		targets = append(targets, e)
- 	}
- 
- 	vectorsCompressedPath := filepath.Join(lsmDir, helpers.VectorsCompressedBucketLSM)
-@@ -98,32 +98,32 @@ func (m compressedVectorsMigrator) do(s *Shard, records map[string]vectorIndexRe
- 		if err != nil {
- 			return err
- 		}
--		if hasOwner && records[owner].IndexType == vectorindex.VectorIndexTypeHFresh {
-+		if hasOwner && owner.IndexType == vectorindex.VectorIndexTypeHFresh {
- 			targets = nil
- 		}
- 		switch {
--		case len(records) == 0:
-+		case len(entries) == 0:
- 			// do nothing
- 		case len(targets) == 0:
- 			// nothing to move: the bucket stays with its owner, or unattributed
- 			if err := m.markMigrationDone(lsmDir); err != nil {
- 				return fmt.Errorf("failed to mark migration as done: %w", err)
- 			}
- 		case !hasOwner && len(targets) == 1:
--			for name, rec := range targets {
-+			for _, e := range targets {
- 				// rename old bucket to new target vector bucket
--				if err := m.migrate(name, rec, configs[name], lsmDir, true); err != nil {
--					return fmt.Errorf("failed to rename old compressed vector bucket for target vector %s: %w", name, err)
-+				if err := m.migrate(e, lsmDir, true); err != nil {
-+					return fmt.Errorf("failed to rename old compressed vector bucket for target vector %s: %w", e.Name, err)
- 				}
- 			}
- 			if err := m.markMigrationDone(lsmDir); err != nil {
- 				return fmt.Errorf("failed to mark migration as done: %w", err)
- 			}
- 		default:
- 			// copy old buckets to new target vector buckets
--			for name, rec := range targets {
--				if err := m.migrate(name, rec, configs[name], lsmDir, false); err != nil {
--					return fmt.Errorf("failed to copy from old compressed vector bucket to new bucket for target vector: %s: %w", name, err)
-+			for _, e := range targets {
-+				if err := m.migrate(e, lsmDir, false); err != nil {
-+					return fmt.Errorf("failed to copy from old compressed vector bucket to new bucket for target vector: %s: %w", e.Name, err)
- 				}
- 			}
- 			if !hasOwner {
-@@ -139,7 +139,7 @@ func (m compressedVectorsMigrator) do(s *Shard, records map[string]vectorIndexRe
- 				}
- 			}
- 		}
--	} else if hasOwner && m.isQuantizationEnabled(configs[owner]) {
-+	} else if hasOwner && m.isQuantizationEnabled(owner.Config) {
- 		// a new legacy vector config was created, quantization is enabled but we didn't create the vectors_compressed
- 		// folder yet but we need to mark that the migration was done in order for it to not be trigered on healthy vector indexes
- 		if err := m.markMigrationDone(lsmDir); err != nil {
-@@ -150,38 +150,31 @@ func (m compressedVectorsMigrator) do(s *Shard, records map[string]vectorIndexRe
- }
- 
- // targetsWithStorage keeps the targets whose index already has its files.
--func (m compressedVectorsMigrator) targetsWithStorage(s *Shard, targets map[string]vectorIndexRecord,
--) (map[string]vectorIndexRecord, error) {
--	kept := make(map[string]vectorIndexRecord, len(targets))
--	for name, rec := range targets {
--		dirs, err := s.vectorIndexStorageDirsFor(rec)
--		if err != nil {
--			return nil, fmt.Errorf("vector %q: %w", name, err)
--		}
--		exists, err := vectorIndexStorageExists(dirs)
-+func (m compressedVectorsMigrator) targetsWithStorage(s *Shard, targets []vectormanifest.Entry,
-+) ([]vectormanifest.Entry, error) {
-+	kept := make([]vectormanifest.Entry, 0, len(
-```
-
-**File**: `adapters/repos/db/shard_debug.go` (modified, +7/-35)
-```diff
-@@ -18,14 +18,14 @@ import (
- 
- 	"github.com/pkg/errors"
- 
--	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
- 	"github.com/weaviate/weaviate/adapters/repos/db/propertyspecific"
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/common"
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/geo"
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hfresh"
- 	"github.com/weaviate/weaviate/entities/additional"
- 	enterrors "github.com/weaviate/weaviate/entities/errors"
- 	"github.com/weaviate/weaviate/entities/schema"
-+	schemaConfig "github.com/weaviate/weaviate/entities/schema/config"
- 	"github.com/weaviate/weaviate/entities/storobj"
- )
- 
-@@ -41,7 +41,7 @@ func (s *Shard) DebugResetVectorIndex(ctx context.Context, targetVector string)
- 		return fmt.Errorf("async indexing is not enabled")
- 	}
- 
--	rec, ok, err := s.mapping.Get(targetVector)
-+	entry, ok, err := s.manifest.Get(targetVector)
- 	if err != nil {
- 		return errors.Wrap(err, "read mapping record")
- 	}
-@@ -69,7 +69,7 @@ func (s *Shard) DebugResetVectorIndex(ctx context.Context, targetVector string)
- 
- 	// bracketed like a creation: a crash in between leaves creating, which
- 	// the next load resumes instead of refusing
--	err = s.markVectorIndexCreating(targetVector, rec)
-+	err = s.manifest.Reset(targetVector)
- 	if err != nil {
- 		q.Resume()
- 		return errors.Wrap(err, "mark vector index creating")
-@@ -81,15 +81,16 @@ func (s *Shard) DebugResetVectorIndex(ctx context.Context, targetVector string)
- 	}
- 
- 	if isHFresh {
--		err = s.removeHFreshArtifacts(ctx, targetVector, rec.storageID())
-+		// what is left would be loaded by the new index; it reuses the queue
-+		err = s.manifest.RemoveIndexFiles(ctx, targetVector)
- 		if err != nil {
- 			return errors.Wrap(err, "remove hfresh files")
- 		}
- 	}
- 
- 	newConfig := s.index.GetVectorIndexConfig(targetVector)
- 
--	vidx, err = s.initVectorIndex(ctx, targetVector, rec.storageID(), newConfig, false)
-+	vidx, err = s.initVectorIndex(ctx, targetVector, entry.StorageID, newConfig, false)
- 	if err != nil {
- 		return errors.Wrap(err, "init vector index")
- 	}
-@@ -109,42 +110,13 @@ func (s *Shard) DebugResetVectorIndex(ctx context.Context, targetVector string)
- 		}
- 	}, s.index.logger)
- 
--	err = s.markVectorIndexReady(targetVector, rec)
-+	err = s.manifest.Ready(map[string]schemaConfig.VectorIndexConfig{targetVector: newConfig})
- 	if err != nil {
- 		return errors.Wrap(err, "mark vector index ready")
- 	}
- 	return nil
- }
- 
--// removeHFreshArtifacts deletes what a dropped hfresh index left on disk,
--// which the new index would otherwise load. The queue stays: the reset reuses it.
--func (s *Shard) removeHFreshArtifacts(ctx context.Context, targetVector, physicalID string) error {
--	var otherIDs []string
--	for _, other := range otherTargetVectors(s.class, targetVector) {
--		rec, ok, err := s.mapping.Get(other)
--		if err != nil {
--			return fmt.Errorf("vector %q: %w", other, err)
--		}
--		if ok {
--			otherIDs = append(otherIDs, rec.storageID())
--		}
--	}
--	artifacts := helpers.VectorIndexArtifactsForID(physicalID, otherIDs)
--	for _, bucket := range artifacts.LSMBuckets {
--		err := s.removeBucket(ctx, bucket)
--		if err != nil {
--			return fmt.Errorf("drop bucket %q: %w", bucket, err)
--		}
--	}
--	for _, dir := range artifacts.ShardDirs {
--		err := removeDirIfExists(s.path(), dir)
--		if err != nil {
--			return fmt.Errorf("drop directory %q: %w", dir, err)
--		}
--	}
--	return nil
--}
--
- // DebugResetGeoIndex is DebugResetVectorIndex for propName's geo index. It is
- // for debugging only, under the same assumptions.
- func (s *Shard) DebugResetGeoIndex(ctx context.Context, propName string) error {
-```
-
-**File**: `adapters/repos/db/shard_drop_vector_index_helper.go` (modified, +4/-89)
-```diff
-@@ -14,12 +14,9 @@ package db
- import (
- 	"context"
- 	"fmt"
--	"os"
- 	"path/filepath"
- 
--	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
--	"github.com/weaviate/weaviate/adapters/repos/db/shardmeta"
--	"github.com/weaviate/weaviate/adapters/repos/db/vector/dynamic"
-+	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/modelsext"
- )
-@@ -78,94 +75,12 @@ func (s *Shard) clearDroppedVectorDimensions(ctx context.Context, class *models.
- }
- 
- // removeVectorIndexFiles removes every on-disk artifact of a named vector index
--// (see helpers.VectorIndexArtifactsFor for the set and why it is centralised).
--// otherTargetVectors are the collection's remaining vector names, needed so a
--// sibling whose own bucket collides with one of this target's artifact names is
--// not deleted along with it.
-+// of a shard that is not loaded. otherTargetVectors are the collection's
-+// remaining vector names, whose files stay.
- func (h *vectorDropIndexHelper) removeVectorIndexFiles(
- 	indexPath, shardName, targetVector string, otherTargetVectors []string,
- ) error {
--	lsmDir := filepath.Join(indexPath, shardName, "lsm")
--	shardDir := filepath.Join(indexPath, shardName)
--
--	// the record says what the vector owns; a shard from a pre-mapping backup
--	// has none, and the naming rule is what its first load would record
--	rec, recorded, initialized, err := readVectorIndexRecordOffline(shardDir, targetVector)
--	if shardmeta.IsLocked(err) {
--		// a load slipped in: the shard's own drop and reconcile finish it
--		return nil
--	}
--	if err != nil {
--		return err
--	}
--	var artifacts helpers.VectorIndexArtifacts
--	var id string
--	switch {
--	case !initialized:
--		id = helpers.VectorIndexIDForTarget(targetVector)
--		artifacts = helpers.VectorIndexArtifactsFor(targetVector, otherTargetVectors)
--	case !recorded:
--		return nil // nothing recorded, nothing owned
--	default:
--		id = rec.storageID()
--		records := map[string]vectorIndexRecord{targetVector: rec}
--		var otherIDs []string
--		for _, other := range otherTargetVectors {
--			otherRec, ok, _, err := readVectorIndexRecordOffline(shardDir, other)
--			if err != nil {
--				return err
--			}
--			if !ok {
--				continue
--			}
--			records[other] = otherRec
--			otherIDs = append(otherIDs, otherRec.storageID())
--		}
--		// a sibling sharing a queue or files would lose them; a load refuses the pair
--		err := refuseSharedVectorIndexQueues(records)
--		if err != nil {
--			return err
--		}
--		err = refuseGeneratedVectorIndexCollisions(records)
--		if err != nil {
--			return err
--		}
--		artifacts = helpers.VectorIndexArtifactsForID(id, otherIDs)
--		artifacts.ShardDirs = append(artifacts.ShardDirs, helpers.QueueDirName(rec.queueIDOrDefault()))
--	}
--
--	var dirs []string
--	for _, bucket := range artifacts.LSMBuckets {
--		dirs = append(dirs, filepath.Join(lsmDir, bucket))
--	}
--	for _, dir := range artifacts.ShardDirs {
--		dirs = append(dirs, filepath.Join(shardDir, dir))
--	}
--
--	for _, dir := range dirs {
--		if err := os.RemoveAll(dir); err != nil {
--			return fmt.Errorf("remove %s: %w", dir, err)
--		}
--	}
--
--	// A dynamic index records its flat-to-hnsw upgrade as a key in the shard's
--	// index.db, which no artifact above can reach: that file is one per shard,
--	// not one per vector, so removing it would take every sibling's state too.
--	//
--	// Unconditional because nothing here can tell a dynamic vector from any
--	// other — the drop rewrote this entry's VectorIndexType to "none" and
--	// discarded the original type along with its config.
--	if err := dynamic.RemoveStateKeyForID(shardDir, id); err != nil {
--		return fmt.Errorf("remove dynamic state for %q: %w", targetVector, err)
--	}
--
--	// the record goes last, so a failed sweep keeps it for the retry
--	key := []byte(vectorIndexMappingKey(targetVector))
--	if err := shardmeta.DeleteOffline(shardDir, vectorIndexMappingNamespace, key); err != nil {
--		return fmt.Errorf("remove mapping record for %q: %w", targetVector, err)
--	}
--
--	return nil
-+	return vectormanifest.DropUnloaded(filepath.Join(indexPath, shardName), targetVector, otherTargetVectors)
- }
- 
- // otherTargetVectors lists the collection's vector names except `exclude` —
-```
-
-**File**: `adapters/repos/db/shard_drop_vector_index_helper_test.go` (modified, +53/-49)
-```diff
-@@ -19,6 +19,7 @@ import (
- 
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+
- 	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
- 	"github.com/weaviate/weaviate/adapters/repos/db/shardmeta"
- 	entlsmkv "github.com/weaviate/weaviate/entities/lsmkv"
-@@ -185,20 +186,20 @@ func TestVectorDropIndexHelper_RemoveVectorIndexFiles(t *testing.T) {
- 
- 		db, err := shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
- 		require.NoError(t, err)
--		foo := vectorIndexRecord{PhysicalID: "vectors_foo", IndexType: "hnsw", State: "ready"}
--		bar := vectorIndexRecord{PhysicalID: "vectors_bar", IndexType: "flat", State: "ready"}
--		require.NoError(t, newVectorIndexMapping(db).Initialize(map[string]vectorIndexRecord{"foo": foo, "bar": bar}))
-+		foo := manifestRecord{PhysicalID: "vectors_foo", IndexType: "hnsw", State: "ready"}
-+		bar := manifestRecord{PhysicalID: "vectors_bar", IndexType: "flat", State: "ready"}
-+		require.NoError(t, newManifestRecords(db).Initialize(map[string]manifestRecord{"foo": foo, "bar": bar}))
- 		require.NoError(t, db.Close())
- 
- 		require.NoError(t, h.removeVectorIndexFiles(indexPath, shardName, "foo", nil))
- 
- 		db, err = shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
- 		require.NoError(t, err)
- 		defer db.Close()
--		records, initialized, err := newVectorIndexMapping(db).Load()
-+		records, initialized, err := newManifestRecords(db).Load()
- 		require.NoError(t, err)
- 		assert.True(t, initialized)
--		assert.Equal(t, map[string]vectorIndexRecord{"bar": bar}, records)
-+		assert.Equal(t, map[string]manifestRecord{"bar": bar}, records)
- 	})
- 
- 	t.Run("removes the queue under the record's queue ID", func(t *testing.T) {
-@@ -208,9 +209,9 @@ func TestVectorDropIndexHelper_RemoveVectorIndexFiles(t *testing.T) {
- 
- 		db, err := shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
- 		require.NoError(t, err)
--		foo := vectorIndexRecord{PhysicalID: "vectors_foo_2", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
--		bar := vectorIndexRecord{PhysicalID: "vectors_bar", IndexType: "hnsw", State: "ready", QueueID: "vectors_bar"}
--		require.NoError(t, newVectorIndexMapping(db).Initialize(map[string]vectorIndexRecord{"foo": foo, "bar": bar}))
-+		foo := manifestRecord{PhysicalID: "vectors_foo_2", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
-+		bar := manifestRecord{PhysicalID: "vectors_bar", IndexType: "hnsw", State: "ready", QueueID: "vectors_bar"}
-+		require.NoError(t, newManifestRecords(db).Initialize(map[string]manifestRecord{"foo": foo, "bar": bar}))
- 		require.NoError(t, db.Close())
- 
- 		commitLog := filepath.Join(shardDir, "vectors_foo_2.hnsw.commitlog.d")
-@@ -235,9 +236,9 @@ func TestVectorDropIndexHelper_RemoveVectorIndexFiles(t *testing.T) {
- 
- 		db, err := shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
- 		require.NoError(t, err)
--		foo := vectorIndexRecord{PhysicalID: "vectors_foo_2", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
--		bar := vectorIndexRecord{PhysicalID: "vectors_bar", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
--		require.NoError(t, newVectorIndexMapping(db).Initialize(map[string]vectorIndexRecord{"foo": foo, "bar": bar}))
-+		foo := manifestRecord{PhysicalID: "vectors_foo_2", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
-+		bar := manifestRecord{PhysicalID: "vectors_bar", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
-+		require.NoError(t, newManifestRecords(db).Initialize(map[string]manifestRecord{"foo": foo, "bar": bar}))
- 		require.NoError(t, db.Close())
- 
- 		commitLog := filepath.Join(shardDir, "vectors_foo_2.hnsw.commitlog.d")
-@@ -255,9 +256,9 @@ func TestVectorDropIndexHelper_RemoveVectorIndexFiles(t *testing.T) {
- 		db, err = shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
- 		require.NoError(t, err)
- 		defer db.Close()
--		records, _, err := newVectorIndexMapping(db).Load()
-+		records, _, err := newManifestRecords(db).Load()
- 		require.NoError(t, err)
--		assert.Equal(t, map[string]vectorIndexRecord{"foo": foo, "bar": bar}, records)
-+		assert.Equal(t, map[string]manifestRecord{"foo": foo, "bar": bar}, records)
- 	})
- 
- 	t.Run("refuses files a sibling with a generated ID names and deletes nothing", func(t *testing.T) {
-@@ -267,9 +268,9 @@ func TestVectorDropIndexHelper_RemoveVectorIndexFiles(t *testing.T) {
- 
- 		db, err := shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
- 		require.NoError(t, err)
--		foo := vectorIndexRecord{PhysicalID: "a-b", IndexType: "hnsw", State: "ready", QueueID: "a-b"}
--		mv := vectorIndexRecord{PhysicalID: "vectors_a-b", IndexType: "hnsw", State: "ready", QueueID: "vectors_mv"}
--		require.NoError(t, newVectorIndexMapping(db).Initialize(map[string]vectorIndexRecord{"foo": foo, "mv": mv}))
-+		foo := manifestRecord{PhysicalID: "a-b", IndexType: "hnsw", State: "ready", QueueID: "a-b"}
-+		mv := manifestRecord{PhysicalID: "vectors_a-b", IndexType: "hnsw", State: "ready", QueueID: "vectors_mv"}
-+		require.NoError(t, newManifestRecords(db).Initial
+ // restrictionViolationToGRPCError maps a ViolationError to
 ```
 
 ---
 
-### Incident Patch 2: `a9cb9aae` (2026-11-27)
-**Commit Message**: vectormanifest: say what Create finishes and what the package does not decide
+### Incident Patch 2: `edc24a0a` (2026-11-27)
+**Commit Message**: fix(handlers/grpc): return error if operational/maintenance mode changed while RecvMsg
 
-**File**: `adapters/repos/db/vectormanifest/manifest.go` (modified, +6/-3)
+**File**: `adapters/handlers/grpc/server.go` (modified, +6/-1)
 ```diff
-@@ -11,8 +11,10 @@
+@@ -348,7 +348,12 @@ func (ss *serverStateStream) RecvMsg(m any) error {
+ 	if err := ss.state.admit(ss.info.FullMethod); err != nil {
+ 		return err
+ 	}
+-	return ss.ServerStream.RecvMsg(m)
++	if err := ss.ServerStream.RecvMsg(m); err != nil {
++		return err
++	}
++	// The server's state might've change while the handler was blocked on RecvMsg,
++	// in which case we must return an error to ensure the request doesn't get processed.
++	return ss.state.admit(ss.info.FullMethod)
+ }
  
- // Package vectormanifest owns the state a shard persists about its vector
- // indexes: which index on disk each vector uses, in <shard>/index.db. Only
--// this package reads or writes that state, and only it decides which files
--// belong to a vector, except for package db's compressedVectorsMigrator.
-+// this package reads or writes that state. Which files belong to a vector it
-+// decides from the records; package db's compressedVectorsMigrator still picks
-+// the owner of the old shared compressed bucket, and a shard without records
-+// is dropped from by the names its caller passes.
- package vectormanifest
+ // ----------------------------------------------------------------------------
+```
+
+---
+
+### Incident Patch 3: `4c6a489e` (2026-11-27)
+**Commit Message**: Merge pull request #14019 from weaviate/fix/ssb-operational-mode-interceptor
+
+fix(ssb): Apply operational mode interceptor to streaming RPCs
+
+**File**: `adapters/handlers/grpc/limit_exceeded_grpc_test.go` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ func TestLimitExceededToGrpcError(t *testing.T) {
+ 		Value:           10000,
+ 		RenderedMessage: "hit limit of 10000 objects",
+ 	}
+-	err := limitExceededToGrpcError(le)
++	err := limitExceededToGRPCError(le)
+ 	if err == nil {
+ 		t.Fatal("expected non-nil error")
+ 	}
+```
+
+**File**: `adapters/handlers/grpc/restriction_violation_grpc_test.go` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ func TestRestrictionViolationToGrpcError(t *testing.T) {
+ 		Allowed:         []string{"hfresh", "hnsw"},
+ 		RenderedMessage: "flat is not allowed for vector_index_type",
+ 	}
+-	err := restrictionViolationToGrpcError(v)
++	err := restrictionViolationToGRPCError(v)
+ 	if err == nil {
+ 		t.Fatal("expected non-nil error")
+ 	}
+```
+
+**File**: `adapters/handlers/grpc/server.go` (modified, +265/-270)
+```diff
+@@ -13,7 +13,6 @@ package grpc
  
  import (
-@@ -242,7 +244,8 @@ func (m *Manifest) dropUnrecorded(ctx context.Context, dropped, siblings []strin
+ 	"context"
+-	"encoding/base64"
+ 	"errors"
+ 	"fmt"
+ 	"net"
+@@ -23,8 +22,7 @@ import (
  
- // Create records that name's index is about to be built under the naming rule
- // and returns where. It refuses a vector whose files another one owns; a retry
--// of an interrupted creation is not refused.
-+// of an interrupted creation is not refused, and a drop of name this shard did
-+// not finish is finished first.
- func (m *Manifest) Create(ctx context.Context, name string, cfg schemaConfig.VectorIndexConfig) (Entry, error) {
- 	m.mu.Lock()
- 	defer m.mu.Unlock()
+ 	"google.golang.org/grpc/peer"
+ 
+-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+-	grpc_sentry "github.com/johnbellone/grpc-middleware-sentry"
++	"github.com/prometheus/client_golang/prometheus"
+ 	"github.com/sirupsen/logrus"
+ 	restCtx "github.com/weaviate/weaviate/adapters/handlers/rest/context"
+ 	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
+@@ -55,71 +53,39 @@ import (
+ 	enterrors "github.com/weaviate/weaviate/entities/errors"
+ )
+ 
+-// CreateGRPCServer creates *grpc.Server with optional grpc.Serveroption passed.
+-// clientTracker is optional; when non-nil, a gRPC interceptor is added to track client SDK usage.
+-func CreateGRPCServer(state *state.State, clientTracker *telemetry.ClientTracker, integrationTracker *telemetry.IntegrationTracker, options ...grpc.ServerOption) (*grpc.Server, batch.Drain) {
++type Config struct {
++	// If set, server tracks client SDK usage.
++	ClientTracker *telemetry.ClientTracker
++	// If set, server tracks integrations usage.
++	IntegrationTracker *telemetry.IntegrationTracker
++	// Collects batch metrics.
++	Registerer prometheus.Registerer
++}
++
++// CreateGRPCServer creates *grpc.Server with optional grpc.ServerOption passed first.
++func CreateGRPCServer(state *state.State, conf Config, options ...grpc.ServerOption) (*grpc.Server, batch.Drain) {
++	grpcConf := state.ServerConfig.Config.GRPC
+ 	o := []grpc.ServerOption{
+-		grpc.MaxRecvMsgSize(state.ServerConfig.Config.GRPC.MaxMsgSize),
+-		grpc.MaxSendMsgSize(state.ServerConfig.Config.GRPC.MaxMsgSize),
++		grpc.MaxRecvMsgSize(grpcConf.MaxMsgSize),
++		grpc.MaxSendMsgSize(grpcConf.MaxMsgSize),
+ 	}
+ 
++	// Presently these are used to inject monitoring interceptors, which need to
++	// run first (outermost). This means options cannot be used to override any
++	// of the subsequent configurations, but that's not a requirement at the moment.
+ 	o = append(o, options...)
+ 
+ 	// Add TLS creds for the GRPC connection, if defined.
+-	if len(state.ServerConfig.Config.GRPC.CertFile) > 0 || len(state.ServerConfig.Config.GRPC.KeyFile) > 0 {
+-		c, err := credentials.NewServerTLSFromFile(state.ServerConfig.Config.GRPC.CertFile,
+-			state.ServerConfig.Config.GRPC.KeyFile)
++	if len(grpcConf.CertFile) > 0 || len(grpcConf.KeyFile) > 0 {
++		c, err := credentials.NewServerTLSFromFile(grpcConf.CertFile, grpcConf.KeyFile)
+ 		if err != nil {
+-			state.Logger.WithField("action", "grpc_startup").
++			state.Logger.
++				WithField("action", "grpc_startup").
+ 				Fatalf("grpc server TLS credential error: %s", err)
+ 		}
+ 		o = append(o, grpc.Creds(c))
+ 	}
+ 
+-	var interceptors []grpc.UnaryServerInterceptor
+-
+-	interceptors = append(interceptors, makeAuthInterceptor())
+-
+-	basicAuth := state.ServerConfig.Config.Cluster.AuthConfig.BasicAuth
+-	if basicAuth.Enabled() {
+-		interceptors = append(interceptors,
+-			basicAuthUnaryInterceptor("/weaviate.v1.FileReplicationService", basicAuth.Username, basicAuth.Password))
+-
+-		o = append(o, grpc.StreamInterceptor(
+-			basicAuthStreamInterceptor("/weaviate.v1.FileReplicationService", basicAuth.Username, basicAuth.Password),
+-		))
+-	}
+-
+-	// If sentry is enabled add automatic spans on gRPC requests
+-	if state.ServerConfig.Config.Sentry.Enabled {
+-		interceptors = append(interceptors, grpc_middleware.ChainUnaryServer(
+-			grpc_sentry.UnaryServerInterceptor(),
+-		))
+-	}
+-
+-	if state.Metrics != nil {
+-		interceptors = append(interceptors, makeMetricsInterceptor(state.Logger, state.Metrics))
+-	}
+-
+-	interceptors = append(interceptors, makeIPInterceptor())
+-	if clientTracker != nil {
+-		// ClientTrackingUnaryInterceptor both tracks usage and sets "clientIdentifier" in context,
+-		// so no need for a separate makeClientIdentifierInterceptor.
+-		interceptors = append(interceptors, telemetry.ClientTrackingUnaryInterceptor(clientTracker, integrationTracker))
+-	} else {
+-		interceptors = append(interceptors, makeClientIdentifierInterceptor())
+-	}
+-	interceptors = append(interceptors, makeOperationalModeInterceptor(state))
+-	interceptors = append(interceptors, makeMaintenanceModeUnaryInterceptor(state.Cluster.MaintenanceModeEnabledForLocalhost))
+-
+-	// Add OpenTelemetry tracing interceptors
+-	interceptors = append(interceptors, monitoring.GRPCTracingInterceptor())
+-	interceptors = append(interceptors, makeDocsLinkUnaryInterceptor())
+-
+-	if len(interceptors) > 0 {
+-		o = append(o, grpc.ChainUnaryInterceptor(interceptors...))
+-	}
+-
+ 	allowAnonymous := state.ServerConfig.Config.Authentication.AnonymousAccess.Enabled
+ 	authComposer := composer.New(
+ 		state.ServerConfig.Config.Authentication,
+@@ -129,58 +95,53 @@ func CreateGRPCServer(state *state.State, clientTracker *telemetry.ClientTracker
+ 		state.OIDC,
+ 	)
+ 
+-	o = append(o, grpc.ChainStreamInterceptor(makeAuthStreamInterceptor(auth.NewHandler(allowAnonymous, authComposer))))
+-	o = append(o, grpc.ChainStreamInterceptor(makeMaintenanceMo
+```
+
+**File**: `adapters/handlers/grpc/server_test.go` (modified, +396/-29)
+```diff
+@@ -14,6 +14,9 @@ package grpc
+ import (
+ 	"context"
+ 	"errors"
++	"fmt"
++	"io"
++	"net"
+ 	"testing"
+ 
+ 	"github.com/prometheus/client_golang/prometheus"
+@@ -22,55 +25,141 @@ import (
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 	"google.golang.org/grpc"
++	"google.golang.org/grpc/codes"
++	"google.golang.org/grpc/credentials/insecure"
++	"google.golang.org/grpc/health/grpc_health_v1"
+ 	"google.golang.org/grpc/metadata"
++	"google.golang.org/grpc/peer"
++	"google.golang.org/grpc/resolver"
++	"google.golang.org/grpc/status"
++	"google.golang.org/grpc/test/bufconn"
+ 
+ 	restCtx "github.com/weaviate/weaviate/adapters/handlers/rest/context"
++	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
++	"github.com/weaviate/weaviate/entities/sentry"
++	pbv0 "github.com/weaviate/weaviate/grpc/generated/protocol/v0"
+ 	pbv1 "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
++	"github.com/weaviate/weaviate/usecases/cluster"
++	"github.com/weaviate/weaviate/usecases/config"
++	"github.com/weaviate/weaviate/usecases/config/runtime"
+ 	"github.com/weaviate/weaviate/usecases/monitoring"
++	"github.com/weaviate/weaviate/usecases/telemetry"
+ )
+ 
+-func TestMakeClientIdentifierInterceptor(t *testing.T) {
+-	interceptor := makeClientIdentifierInterceptor()
++// mockAddr returns itself as [net.Addr.String].
++type mockAddr string
+ 
+-	tests := []struct {
+-		name        string
+-		headerValue string
++var _ net.Addr = (*mockAddr)(nil)
++
++func (a mockAddr) Network() string { return "mock" }
++func (a mockAddr) String() string  { return string(a) }
++
++func TestContextWithMetadataValues(t *testing.T) {
++	logger, _ := test.NewNullLogger()
++
++	ct := telemetry.NewClientTracker(logger)
++	t.Cleanup(ct.Stop)
++
++	it := telemetry.NewIntegrationTracker(logger)
++	t.Cleanup(it.Stop)
++
++	const client = telemetry.ClientTypeGo
++	const client_version = "v0.67.0"
++	const x_weaviate_client = string("weaviate-client-" + client + "/" + client_version)
++	const integration = "langchain"
++	const integration_version = "v0.420.0"
++	const x_weaviate_client_integration = integration + "/" + integration_version
++
++	for _, tt := range []struct {
++		name string
++		md   metadata.MD
++		peer *peer.Peer
++
++		clientID    any // Expected "clientIdentifier" value.
++		sourceIP    any // Expected "sourceIp" value.
++		integration any // Expected X-Weaviate-Client-Integration header.
+ 	}{
+ 		{
+-			name:        "python client",
+-			headerValue: "weaviate-client-python/4.10.0",
++			name: "IP in X-Real-IP",
++			md: metadata.Pairs(
++				"x-weaviate-client", x_weaviate_client,
++				"x-real-ip", "65.41.169.99",
++				"x-weaviate-client-integration", x_weaviate_client_integration,
++			),
++			clientID:    x_weaviate_client,
++			sourceIP:    "65.41.169.99",
++			integration: x_weaviate_client_integration,
+ 		},
+ 		{
+-			name:        "go client",
+-			headerValue: "weaviate-client-go/2.5.0",
++			name: "IP in X-Forwarded-For",
++			md: metadata.Pairs(
++				"x-weaviate-client", x_weaviate_client,
++				"x-forwarded-for", "65.41.169.99,110.44.57.14",
++				"x-weaviate-client-integration", x_weaviate_client_integration,
++			),
++			clientID:    x_weaviate_client,
++			sourceIP:    "65.41.169.99",
++			integration: x_weaviate_client_integration,
+ 		},
+ 		{
+-			name:        "no header",
+-			headerValue: "",
++			name:     "IPv4 from connection peer",
++			peer:     &peer.Peer{Addr: mockAddr("65.41.169.99")},
++			sourceIP: "65.41.169.99",
+ 		},
+-	}
+-
+-	for _, tt := range tests {
++		{
++			name:     "IPv4:port from connection peer",
++			peer:     &peer.Peer{Addr: mockAddr("65.41.169.99:80")},
++			sourceIP: "65.41.169.99",
++		},
++		{
++			name:     "IPv6 from connection peer",
++			peer:     &peer.Peer{Addr: mockAddr("3e91:4f1c:5475:8e36:f71:b8bd:902a:5c37")},
++			sourceIP: "3e91:4f1c:5475:8e36:f71:b8bd:902a:5c37",
++		},
++		{
++			name:     "IPv6:80 from connection peer",
++			peer:     &peer.Peer{Addr: mockAddr("[3e91:4f1c:5475:8e36:f71:b8bd:902a:5c37]:80")},
++			sourceIP: "3e91:4f1c:5475:8e36:f71:b8bd:902a:5c37",
++		},
++		{
++			name:     "IPv6 loopback from connection peer",
++			peer:     &peer.Peer{Addr: mockAddr("::1")},
++			sourceIP: "127.0.0.1",
++		},
++		{
++			name:     "IPv6 loopback :80 from connection peer",
++			peer:     &peer.Peer{Addr: mockAddr("[::1]:80")},
++			sourceIP: "127.0.0.1",
++		},
++		{
++			name:     "source IP unknown",
++			sourceIP: "unknown",
++		},
++	} {
+ 		t.Run(tt.name, func(t *testing.T) {
+-			ctx := context.Background()
+-			if tt.headerValue != "" {
+-				md := metadata.Pairs("x-weaviate-client", tt.headerValue)
+-				ctx = metadata.NewIncomingContext(ctx, md)
++			inctx := context.Background()
++			if tt.md != nil {
++				inctx = metadata.NewIncomingContext(inctx, tt.md)
+ 			}
+-
+-			var capturedCtx context.Context
+-			handler := func(ctx context.Context, req any) (any, error) {
+-				capturedCtx = ctx
+-				return nil, nil
++			if tt.peer != nil {
++				inctx = peer.NewContext(inctx, tt.peer)
+ 			}
+ 
+-			_, err := interceptor(ctx, nil, &grpc.UnaryServerInfo{}, ha
+```
+
+**File**: `adapters/handlers/grpc/v1/auth/auth.go` (modified, +1/-7)
+```diff
+@@ -43,13 +43,7 @@ func (h *Handler) PrincipalFromContext(ctx context.Context) (*models.Principal,
+ 		return h.tryAnonymous()
+ 	}
+ 
+-	// the grpc library will lowercase all md keys, so we need to make sure to
+-	// check a lowercase key
+-	authValue, ok := md["authorization"]
+-	if !ok {
+-		return h.tryAnonymous()
+-	}
+-
++	authValue := md.Get("authorization")
+ 	if len(authValue) == 0 {
+ 		return h.tryAnonymous()
+ 	}
+```
+
+**File**: `adapters/handlers/grpc/v1/batch/stream.go` (modified, +3/-0)
+```diff
+@@ -174,6 +174,9 @@ func (h *StreamHandler) Handle(stream pb.Weaviate_BatchStreamServer) (retErr err
+ 
+ 	message, err := stream.Recv()
+ 	if err != nil {
++		if errors.Is(err, io.EOF) {
++			return nil // Client closed the stream without sending any messages.
++		}
+ 		return fmt.Errorf("initial stream message receive: %w", err)
+ 	}
+ 
+```
+
+**File**: `adapters/handlers/grpc/v1/service.go` (modified, +10/-4)
+```diff
+@@ -73,8 +73,14 @@ type Service struct {
+ 	batchObjectsSem    *semaphore.Weighted
+ }
+ 
+-func NewService(allowAnonymous bool, authComposer composer.TokenFunc, state *state.State) (*Service, batch.Drain) {
+-	authenticator := auth.NewHandler(allowAnonymous, authComposer)
++type ServiceConfig struct {
++	AllowAnonymous bool
++	AuthComposer   composer.TokenFunc
++	Registerer     prometheus.Registerer
++}
++
++func NewService(state *state.State, conf ServiceConfig) (*Service, batch.Drain) {
++	authenticator := auth.NewHandler(conf.AllowAnonymous, conf.AuthComposer)
+ 	batchHandler := batch.NewHandler(
+ 		state.Authorizer,
+ 		state.BatchManager,
+@@ -88,15 +94,15 @@ func NewService(allowAnonymous bool, authComposer composer.TokenFunc, state *sta
+ 		state.Authorizer,
+ 		batchHandler,
+ 		state.SchemaManager,
+-		prometheus.DefaultRegisterer,
++		conf.Registerer,
+ 		state.ServerConfig.Config.BatchStream.Workers(),
+ 		state.Logger,
+ 		state.NamespaceQualifier,
+ 		batch.WithStreamConfig(state.ServerConfig.Config.BatchStream),
+ 	)
+ 	return &Service{
+ 		traverser:            state.Traverser,
+-		authComposer:         authComposer,
++		authComposer:         conf.AuthComposer,
+ 		allowAnonymousAccess: state.ServerConfig.Config.Authentication.AnonymousAccess.Enabled,
+ 		schemaManager:        state.SchemaManager,
+ 		batchManager:         state.BatchManager,
+```
+
+**File**: `adapters/handlers/rest/grpc.go` (modified, +6/-1)
+```diff
+@@ -12,6 +12,7 @@
+ package rest
+ 
+ import (
++	"github.com/prometheus/client_golang/prometheus"
+ 	grpcHandler "github.com/weaviate/weaviate/adapters/handlers/grpc"
+ 	"github.com/weaviate/weaviate/adapters/handlers/grpc/v1/batch"
+ 	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
+@@ -21,7 +22,11 @@ import (
+ )
+ 
+ func createGrpcServer(state *state.State, clientTracker *telemetry.ClientTracker, integrationTracker *telemetry.IntegrationTracker, options ...grpc.ServerOption) (*grpc.Server, batch.Drain) {
+-	return grpcHandler.CreateGRPCServer(state, clientTracker, integrationTracker, options...)
++	return grpcHandler.CreateGRPCServer(state, grpcHandler.Config{
++		ClientTracker:      clientTracker,
++		IntegrationTracker: integrationTracker,
++		Registerer:         prometheus.DefaultRegisterer,
++	}, options...)
+ }
+ 
+ func startGrpcServer(server *grpc.Server, state *state.State) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14083** (2026-11-27): Merge stable/v1.40 into stable/v1.41 (@antas-marcin)
+- **PR #14080** (2026-11-27): ci(prepare-release): remove tools/release_template tool (@antas-marcin)
+- **PR #14071** (2026-11-27): Test that namespace names exclude regex characters, ':', '/' and uppe… (@dirkkul)
+- **PR #14070** (2026-11-27): chore(ci): add eventual consistency handling to `TestReplicaMovementOneWriteExtraSlowFileCopy` (@tsmith023)
+- **PR #14066** (2026-11-27): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
 - **PR #14064** (2026-11-27): feat(text2vec-openai): drop dimensions validation from class settings (@antas-marcin)
-- **PR #14063** (2026-11-27): Refuse lookups without a class when namespaces are enabled (@dirkkul)
-- **PR #14058** (2026-11-27): fix(authz): refuse role: prefixed role IDs that alias built-in roles (@jeroiraz)
-- **PR #14055** (closed): fix(cluster): authenticate the raft transport and the cluster RPC service (@jeroiraz)
-- **PR #14052** (2026-11-26): backup: restore adopts only the class index dir from staging (@jeroiraz)
-- **PR #14051** (2026-11-26): Reject incremental backup refs that would read outside the backup (@jeroiraz)
 
 ---
 
@@ -2335,32 +2235,33 @@ vector index update: one owner for a shard's vector index state
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in index_usage.go
+## X. handlers/grpc): return error unchanged if it coulnd't be mapped
 
 **RULE**:
-When implementing operations in `adapters/repos/db/index_usage.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `adapters/handlers/grpc/server.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `daddd4e1`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fae588ff`: handlers/grpc): return error unchanged if it coulnd't be mapped. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/index_usage.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/handlers/grpc/server.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
-	indexIDs, locked, err := vectormanifest.UnloadedStorageIDs(shardPath(i.path(), shardName), slices.Collect(maps.Keys(vectorConfigs)))
+// e.g. auth, usage limits, or returns original err otherwise.
+	return err
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	indexIDs, locked, err := unloadedVectorIndexStorageIDs(shardPath(i.path(), shardName), slices.Collect(maps.Keys(vectorConfigs)))
+// e.g. auth, usage limits, or [codes.Unknown] otherwise.
+	return status.Error(codes.Unknown, err.Error())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `daddd4e1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fae588ff` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

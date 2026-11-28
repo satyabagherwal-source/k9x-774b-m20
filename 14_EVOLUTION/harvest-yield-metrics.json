@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T06:04:30.456Z",
-  "total_cycles_completed": 13277,
-  "total_learnings_persisted": 13277,
-  "total_rules_promoted": 11970,
+  "last_updated": "2026-11-28T06:13:21.302Z",
+  "total_cycles_completed": 13278,
+  "total_learnings_persisted": 13278,
+  "total_rules_promoted": 11971,
   "history": [
-    {
-      "timestamp": "2026-11-27T12:03:45.866Z",
-      "repository": "chroma-core/chroma",
-      "learningId": "learn-github-chroma-core-chroma",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T12:12:20.807Z",
       "repository": "strata-engine/Inkling-2-Mini-Strata",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T06:04:30.456Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T06:13:21.302Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

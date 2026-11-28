@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-28T05:33:51.108Z",
-    "lastVerified": "2026-11-28T05:33:51.108Z",
+    "lastChecked": "2026-11-28T06:13:17.538Z",
+    "lastVerified": "2026-11-28T06:13:17.538Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T06:04:33.749Z",
-    "lastVerified": "2026-11-28T06:04:33.749Z",
+    "lastChecked": "2026-11-28T06:13:24.705Z",
+    "lastVerified": "2026-11-28T06:13:24.706Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -944,14 +944,14 @@
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T11:44:29.819Z",
-    "lastVerified": "2026-11-27T11:44:29.819Z",
+    "lastChecked": "2026-11-28T06:13:19.870Z",
+    "lastVerified": "2026-11-28T06:13:19.870Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "9fa43264c42efd08dca7a9da272298d431da32f56a98a1c80ac0b5265809d84c",
+    "contentHash": "d7e1aa8b16d7e98510cf5807f0a67dcf52f1ec2e0d28fad54c6598c4467f399d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2353,8 +2353,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-28T02:03:42.194Z",
-    "lastVerified": "2026-11-28T02:03:42.194Z",
+    "lastChecked": "2026-11-28T06:13:12.598Z",
+    "lastVerified": "2026-11-28T06:13:12.598Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -5558,8 +5558,8 @@
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T13:13:52.901Z",
-    "lastVerified": "2026-11-27T13:13:52.901Z",
+    "lastChecked": "2026-11-28T06:13:10.146Z",
+    "lastVerified": "2026-11-28T06:13:10.146Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
@@ -8131,12 +8131,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "zvec-ai-zvec-grep": {
-    "name": "zvec-ai/zvec-grep",
+    "name": "zvec-grep",
     "officialUrl": "https://github.com/zvec-ai/zvec-grep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T06:37:40.919Z",
-    "lastVerified": "2026-11-27T06:37:40.919Z",
+    "lastChecked": "2026-11-28T06:13:02.750Z",
+    "lastVerified": "2026-11-28T06:13:02.750Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zvec-ai-zvec-grep",
@@ -8145,7 +8145,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "08e93f17"
   },
   "hf-qwen-qwen3-4b": {
     "name": "Qwen/Qwen3-4B",
@@ -11430,9 +11431,9 @@
   "sparrowcode-alertkit": {
     "name": "AlertKit",
     "officialUrl": "https://github.com/sparrowcode/AlertKit",
-    "lastChecked": "2026-11-26T04:13:22.589Z",
+    "lastChecked": "2026-11-28T06:13:07.584Z",
     "revisionIdentifier": "b8f3dff0",
-    "lastVerified": "2026-11-26T04:13:22.589Z"
+    "lastVerified": "2026-11-28T06:13:07.584Z"
   },
   "remarkjs-remark": {
     "name": "remark",
@@ -11806,9 +11807,9 @@
   "rdfjs-namespace": {
     "name": "namespace",
     "officialUrl": "https://github.com/rdfjs/namespace",
-    "lastChecked": "2026-11-24T21:24:07.427Z",
+    "lastChecked": "2026-11-28T06:13:05.049Z",
     "revisionIdentifier": "b7efbf00",
-    "lastVerified": "2026-11-24T21:24:07.427Z"
+    "lastVerified": "2026-11-28T06:13:05.049Z"
   },
   "sozercan-kaset": {
     "name": "sozercan/kaset",

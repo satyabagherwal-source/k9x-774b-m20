@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T06:04:37.419Z",
+  "last_updated": "2026-11-28T06:13:27.534Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26991,
+  "total_items": 26993,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb2254de73af38abd1ca0f70977a59f590cad1966df10c03cb070d2162640977",
+      "content_hash": "e37c776a6c0f945654d5a9f8bb719af317f77ac9aea12d603d6fcc0f78b3517a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T05:33:54.151Z"
+      "persisted_at": "2026-11-28T06:13:27.324Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e5a2110ee97a75c192668af5c7800eb32ad4ebf62715250637fcc17fca40a23",
+      "content_hash": "1b2f465646bf3e504c7441bc9298b7a0c88edfc91a4d93619ce5b8999a3afe16",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T05:33:54.374Z"
+      "persisted_at": "2026-11-28T06:13:27.534Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -115017,10 +115017,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "repository": "weaviate/weaviate",
-      "source_version": "daddd4e1",
-      "content_hash": "208aa054213980941005d8402c176d233abb323d9eacfe4f05efc754f0252d3e",
+      "source_version": "4c6a489e",
+      "content_hash": "c6394752597f082d9253037b15a3e70caa93b915eef1b841ecce78fd04bd44ac",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T11:44:31.830Z"
+      "persisted_at": "2026-11-28T06:13:21.773Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate",
@@ -115029,10 +115029,10 @@
       "relative_path": "08_VERIFICATION/weaviate-weaviate-verification-protocol-empirical-defect-shield-for-weaviate-wea.md",
       "title": "Verification Protocol: Empirical Defect Shield for weaviate/weaviate",
       "repository": "weaviate/weaviate",
-      "source_version": "daddd4e1",
-      "content_hash": "ae4cc4fb5d7f05f893f8f5c74b255b3dbc3641f29c99d898ae8219d222f4eeb0",
+      "source_version": "4c6a489e",
+      "content_hash": "8a67a789675a4026d15a4416bb13d202ffb425a31b41efaa53ece8cd39848e79",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:44:32.063Z"
+      "persisted_at": "2026-11-28T06:13:21.981Z"
     },
     "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants",
@@ -219807,9 +219807,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a94bc5ccf287250318ca96d5aeaa10d849d399daf0d16e7d69fba46bb99c40f",
+      "content_hash": "811da2ede4f18235de0cf62635a06b28c59cf14d611576d9482cf6f4a01444b2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T05:33:53.106Z"
+      "persisted_at": "2026-11-28T06:13:26.383Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219819,9 +219819,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "a02ff77018eb029e6355f34ea26144071ecc6a8a95485955bdee88643da5b42c",
+      "content_hash": "3a34316f3e652127ccdf4679cbf07519ab83fc73d6e22a85bf25f693a45bdc44",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T05:33:53.332Z"
+      "persisted_at": "2026-11-28T06:13:26.585Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -263384,8 +263384,8 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "daddd4e1",
-      "content_hash": "9fa43264c42efd08dca7a9da272298d431da32f56a98a1c80ac0b5265809d84c",
+      "source_version": "4c6a489e",
+      "content_hash": "d7e1aa8b16d7e98510cf5807f0a67dcf52f1ec2e0d28fad54c6598c4467f399d",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
@@ -263428,6 +263428,11 @@
           "number": 10888,
           "title": "Empirical Invariant Guard in index_usage.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11051,
+          "title": "handlers/grpc): return error unchanged if it coulnd't be mapped",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -263435,7 +263440,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T11:44:30.994Z",
+      "verified_at": "2026-11-28T06:13:21.016Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283194,9 +283199,9 @@
       "title": "Architecture Intelligence: weaviate-weaviate-learnings Core Invariants",
       "repository": "weaviate-weaviate-learnings",
       "source_version": "HEAD",
-      "content_hash": "bcdd4d0c3a00807de1c39f7970a793d40e95d7955f65166ff4533a896a86c153",
+      "content_hash": "99a7b413525c7967689fd8bf3528b79546509c8e64f1adb74c41e59a48882f58",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T11:44:37.965Z"
+      "persisted_at": "2026-11-28T06:13:25.386Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate-learnings",
@@ -283206,9 +283211,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for weaviate-weaviate-learnings",
       "repository": "weaviate-weaviate-learnings",
       "source_version": "HEAD",
-      "content_hash": "f16f157093cc812d3019bd076f09cbe3c491485f29687205d5e3e16535e68876",
+      "content_hash": "44b92f4b33a18bc4da876891369ddb05b4d6df33e16ff1c866c4efddc44a9148",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:44:38.189Z"
+      "persisted_at": "2026-11-28T06:13:25.593Z"
     },
     "learn-huggingface-comfy-org-fibo-2-0": {
       "learning_id": "learn-huggingface-comfy-org-fibo-2-0",
@@ -350996,13 +351001,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Y9C8-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KZDR-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-bootsplash-learnings",
+      "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "cc9a003b911c6cd41df5962b8ebad02315b4d3f1027e06940c07c8e56f9bbec5",
+      "content_hash": "81744c9ca774b82a3625650ec2be98f5dd80bc0f504472db8c24b1058e851b7a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T05:55:45.992Z"
+      "persisted_at": "2026-11-28T06:13:26.175Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -361914,13 +361919,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-64XU-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-L03N-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fa7aca0b2f21fad2ce3697c58b32e4ef53ab4f46b9f5c2697bd969c0b22d39a1",
+      "content_hash": "14200aa944cc1b04292fd64a2cf7732dafb01808fc162e69bc9ac7389bb37e73",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T05:33:53.925Z"
+      "persisted_at": "2026-11-28T06:13:27.110Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -370932,6 +370937,32 @@
       "content_hash": "1edbf3affc629bc0ea121e367a25466eeefe23572aa50250c3f5c211debf03b5",
       "domain_letter": "G",
       "persisted_at": "2026-11-28T06:04:37.045Z"
+    },
+    "rule-11051": {
+      "learning_id": "rule-11051",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11051,
+      "title": "handlers/grpc): return error unchanged if it coulnd't be mapped",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "4c6a489e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T06:13:21.016Z"
+    },
+    "candidate_directive-handlers-grpc-return-error-unchanged-if-it-coulnd-t-be-mapped": {
+      "item_id": "candidate_directive-handlers-grpc-return-error-unchanged-if-it-coulnd-t-be-mapped",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KYLD-handlers-grpc-return-error-unchanged-if-it-coulnd-t-be-mapped.md",
+      "title": "handlers/grpc): return error unchanged if it coulnd't be mapped",
+      "repository": "weaviate-weaviate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7c5c9a2e3a9acfe95167c100af95dd1b9d1de5eb681a606f2af64a9bbc72bf3d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T06:13:25.156Z"
     }
   },
   "ai-builder-brain": {

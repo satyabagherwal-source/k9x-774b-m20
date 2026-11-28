@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "daddd4e1",
+    "sourceVersion": "4c6a489e",
     "license": "NOASSERTION",
-    "contentHash": "9fa43264c42efd08dca7a9da272298d431da32f56a98a1c80ac0b5265809d84c",
-    "lastHarvestedAt": "2026-11-27T11:44:31.298Z",
+    "contentHash": "d7e1aa8b16d7e98510cf5807f0a67dcf52f1ec2e0d28fad54c6598c4467f399d",
+    "lastHarvestedAt": "2026-11-28T06:13:21.297Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {

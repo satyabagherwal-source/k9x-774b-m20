@@ -13992,3 +13992,4 @@
 | `CYCLE-20261128-966R` | `2026-11-28T06:04:15.123Z` | `arxanas/git-branchless` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11048` | Yes (`a6385947...`) |
 | `CYCLE-20261128-9DIV` | `2026-11-28T06:04:24.631Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11049` | Yes (`30913f79...`) |
 | `CYCLE-20261128-9I0F` | `2026-11-28T06:04:30.447Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11050` | Yes (`92bbbb4a...`) |
+| `CYCLE-20261128-KVLW` | `2026-11-28T06:13:21.284Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11051` | Yes (`d7e1aa8b...`) |
