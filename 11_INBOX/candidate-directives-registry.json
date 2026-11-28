@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T02:13:34.592Z",
+  "last_updated": "2026-11-28T02:22:41.864Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-O0G3",
+      "id": "CD-C91K",
       "directive_title": "Bump version number",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-O0G3-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-C91K-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -73986,6 +73986,55 @@
       "source_repo": "dosco-graphjin",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EDE234-bump-version-to-v3-27-0-skip-release-ski.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-C7DX",
+      "directive_title": "build(deps-dev): bump typescript-eslint from 8.73.0 to 8.74.0",
+      "source_repo": "fb55-css-select-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-C7DX-build-deps-dev-bump-typescript-eslint-from-8-73-0-to-8-74-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-C85Z",
+      "directive_title": "Empirical Invariant Guard in highway.cpp",
+      "source_repo": "vespa-engine-vespa-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-C85Z-empirical-invariant-guard-in-highway-cpp.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-61B521",
+      "directive_title": "build(deps-dev): bump typescript-eslint from 8.73.0 to 8.74.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fb55-css-select",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-61B521-build-deps-dev-bump-typescript-eslint-fr.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-FC3F7C",
+      "directive_title": "Empirical Invariant Guard in highway.cpp",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vespa-engine-vespa",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FC3F7C-empirical-invariant-guard-in-highway-cpp.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-5CF97A",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5CF97A-bump-version-number.md",
       "staged_date": "2026-11-28"
     }
   ]

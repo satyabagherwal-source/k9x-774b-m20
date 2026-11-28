@@ -13941,3 +13941,5 @@
 | `CYCLE-20261128-04F3` | `2026-11-28T02:13:15.999Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11015` | Yes (`119eaf39...`) |
 | `CYCLE-20261128-0A5Y` | `2026-11-28T02:13:23.447Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11016` | Yes (`214cd4b6...`) |
 | `CYCLE-20261128-0DRP` | `2026-11-28T02:13:28.117Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11017` | Yes (`8af96167...`) |
+| `CYCLE-20261128-BUZI` | `2026-11-28T02:22:23.646Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11012` | Yes (`62e9390d...`) |
+| `CYCLE-20261128-C3LK` | `2026-11-28T02:22:34.808Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11018` | Yes (`b51af697...`) |

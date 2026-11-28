@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T02:13:34.868Z",
+  "last_updated": "2026-11-28T02:22:42.067Z",
   "total_records": 2868,
   "domains": {
     "A": {
@@ -12259,8 +12259,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "b194131e531d5b2cbb04207085191bab486c9dad9820ab3e4a0b89c325912f4d",
-      "created_at": "2026-11-28T02:03:51.218Z"
+      "content_hash": "b9f496cf83a52efd1bcf37d39ed61e53cb31a72fabc1aaa39e4767829415f9ac",
+      "created_at": "2026-11-28T02:22:42.067Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -18554,8 +18554,8 @@
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "repository": "vespa-engine/vespa",
-      "content_hash": "24a9b9fcb922ebf4da9caf3c9cd3c92130e0982278d0caea96ddfe95400d601a",
-      "created_at": "2026-11-27T07:03:52.951Z"
+      "content_hash": "a92cef1a3075647f51c24a4bd4ed21c13e1caf2209dd20e6ce43e5b6ecb3cbbe",
+      "created_at": "2026-11-28T02:22:35.269Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
@@ -18624,8 +18624,8 @@
       "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-learnings-architecture-intelligence-vespa-engine-vespa-learni.md",
       "repository": "vespa-engine-vespa-learnings",
-      "content_hash": "257c4752dc9286523201965413d58662a6de4ab78bf36e873ead3bb094b9ccc9",
-      "created_at": "2026-11-27T07:03:58.322Z"
+      "content_hash": "2076a717869d8bdacf76eda926b330eba3ef5a7f7f183f57a05c1e50dcbfa1b4",
+      "created_at": "2026-11-28T02:22:40.928Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in",
@@ -25306,8 +25306,8 @@
       "title": "Technical Construction Intelligence: fb55/css-select Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-css-select-technical-construction-intelligence-fb55-css-select-core-invaria.md",
       "repository": "fb55/css-select",
-      "content_hash": "deb282b689167e1fbeb44ff562fe41b68627d508140ecd85f60b94fcba2b2041",
-      "created_at": "2026-11-24T17:42:39.379Z"
+      "content_hash": "5f99cf9df2ac5b96ccff190845784e7084d98ba63df50bc595599fd9e96fb56c",
+      "created_at": "2026-11-28T02:22:24.125Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-css-select-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-css-select-learnings-core-invariants",
@@ -25315,8 +25315,8 @@
       "title": "Technical Construction Intelligence: fb55-css-select-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-css-select-learnings-technical-construction-intelligence-fb55-css-select-le.md",
       "repository": "fb55-css-select-learnings",
-      "content_hash": "2e77ccb37499140d4f9aca75cace1c83d3b5387d144418f6f2cf8414fab40b88",
-      "created_at": "2026-11-24T17:43:23.195Z"
+      "content_hash": "9e672869a16b07a2b2b9de3aaa44d3cb7e6384ce13b7980b89e5da4b16549845",
+      "created_at": "2026-11-28T02:22:39.935Z"
     },
     "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-cheeriojs-dom-serializer-core-invariants",

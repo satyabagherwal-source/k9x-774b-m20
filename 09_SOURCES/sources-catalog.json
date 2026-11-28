@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "8a314aed",
+    "sourceVersion": "8de5482d",
     "license": "Apache-2.0",
-    "contentHash": "0131b285acf228e3623bb8b6eb68fa60eb0ae0857cf7998603d12ed2f47f4f12",
-    "lastHarvestedAt": "2026-11-27T07:03:52.507Z",
+    "contentHash": "b51af69772ffc5e33e062ce373dab1dc372bfe73d11fc2500d85f4faaaa640de",
+    "lastHarvestedAt": "2026-11-28T02:22:34.820Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -9393,10 +9393,10 @@
     "repository": "fb55/css-select",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/css-select",
-    "sourceVersion": "c96900f2",
+    "sourceVersion": "f060b990",
     "license": "BSD-2-Clause",
-    "contentHash": "aa142c80da6e97ff860ae49fa8c053d1188971861f430670c4dbe57e24e0adb0",
-    "lastHarvestedAt": "2026-11-24T17:42:38.980Z",
+    "contentHash": "62e9390d62369b016b6619efa31fbbb6948004798c18d04472f80a48e522c6e4",
+    "lastHarvestedAt": "2026-11-28T02:22:23.659Z",
     "learningId": "learn-github-fb55-css-select"
   },
   "sindresorhus-keyboardshortcuts": {

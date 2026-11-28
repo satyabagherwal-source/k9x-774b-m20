@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `8a314aed`  
+> **Source Version**: `8de5482d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T07:03:51.291Z  
+> **Timestamp**: 2026-11-28T02:22:33.584Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T07:03:51.286Z  
+> **Harvest Timestamp**: 2026-11-28T02:22:33.580Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7201 stars
+- **Stars / Engagement**: 7202 stars
 
 ---
 
@@ -1065,378 +1065,217 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a314aed` (2026-11-26)
-**Commit Message**: Merge pull request #38680 from vespa-engine/toregge/more-use-of-document-db-main-thread-service
+### Incident Patch 1: `8de5482d` (2026-11-27)
+**Commit Message**: Merge pull request #38695 from vespa-engine/vekterli/factor-out-bf16-centroids
 
-More usage of document db main thread service.
+Factor out BF16 centroid reconstruction and special-case 1 bit quant to avoid one LUT
 
-**File**: `searchcore/src/tests/proton/docsummary/docsummary_test.cpp` (modified, +1/-1)
+**File**: `vespalib/src/vespa/vespalib/hwaccelerated/highway.cpp` (modified, +111/-98)
 ```diff
-@@ -298,7 +298,7 @@ class DBContext : public DummyDBOwner {
-         op->setDbDocumentId(dbdId);
-         op->setPrevDbDocumentId(prevDbdId);
-         vespalib::Gate commitDone;
--        _ddb->getWriteService().master().execute(vespalib::makeLambdaTask([this, op = std::move(op), &commitDone]() {
-+        _ddb->getWriteService().main().execute(vespalib::makeLambdaTask([this, op = std::move(op), &commitDone]() {
-             _ddb->getFeedHandler().appendOperation(*op, std::make_shared<vespalib::GateCallback>(commitDone));
-         }));
-         commitDone.await();
-```
-
-**File**: `searchcore/src/tests/proton/documentdb/document_subdbs_test.cpp` (modified, +1/-1)
-```diff
-@@ -315,7 +315,7 @@ template <typename Traits> struct FixtureBase {
-         init();
-     }
-     ~FixtureBase() {
--        _service.write().master().execute(makeLambdaTask([this]() { _subDb.close(); }));
-+        _service.write().main().execute(makeLambdaTask([this]() { _subDb.close(); }));
-         _service.shutdown();
-     }
-     void setBucketStateCalculator(const std::shared_ptr<IBucketStateCalculator>& calc) {
-```
-
-**File**: `searchcore/src/tests/proton/documentdb/documentbucketmover_test.cpp` (modified, +7/-7)
-```diff
-@@ -40,7 +40,7 @@ struct ControllerFixtureBase : public ::testing::Test {
-     test::ResourceUsageNotifier              _resource_usage_notifier;
-     MonitoredRefCount                        _refCount;
-     ThreadStackExecutor                      _singleExecutor;
--    SyncableExecutorThreadService            _master;
-+    SyncableExecutorThreadService            _main_thread_service;
-     DummyBucketExecutor                      _bucketExecutor;
-     MyMoveHandler                            _moveHandler;
-     DocumentDBTaggedMetrics                  _metrics;
-@@ -97,12 +97,12 @@ struct ControllerFixtureBase : public ::testing::Test {
-     }
-     void sync() {
-         _bucketExecutor.sync();
--        _master.sync();
--        _master.sync(); // Handle that  master schedules onto master again
-+        _main_thread_service.sync();
-+        _main_thread_service.sync(); // Handle that document db main thread service schedules onto main again
-     }
-     template <typename FunctionType> void masterExecute(FunctionType&& function) {
--        _master.execute(vespalib::makeLambdaTask(std::forward<FunctionType>(function)));
--        _master.sync();
-+        _main_thread_service.execute(vespalib::makeLambdaTask(std::forward<FunctionType>(function)));
-+        _main_thread_service.sync();
-     }
+@@ -404,6 +404,79 @@ alignas(32) constexpr uint8_t bf16_lut_b4[32] = {
+     0x03, 0xc6, 0x28, 0x71, 0xa0, 0xcf, 0x04, 0x2e, 0x03, 0xc6, 0x28, 0x71, 0xa0, 0xcf, 0x04, 0x2e  // LSB
  };
  
-@@ -120,11 +120,11 @@ ControllerFixtureBase::ControllerFixtureBase(const BlockableMaintenanceJobConfig
-       _resource_usage_notifier(),
-       _refCount(),
-       _singleExecutor(1),
--      _master(_singleExecutor),
-+      _main_thread_service(_singleExecutor),
-       _bucketExecutor(4),
-       _moveHandler(*_bucketDB, storeMoveDoneContexts),
-       _metrics("test", 1),
--      _bmj(BucketMoveJob::create(_calc, RetainGuard(_refCount), _moveHandler, _modifiedHandler, _master,
-+      _bmj(BucketMoveJob::create(_calc, RetainGuard(_refCount), _moveHandler, _modifiedHandler, _main_thread_service,
-                                  _bucketExecutor, _ready._subDb, _notReady._subDb, _bucketCreateNotifier,
-                                  _clusterStateHandler, _bucketHandler, _resource_usage_notifier, blockableConfig,
-                                  _doc_type_name.getName(), makeBucketSpace())),
-```
-
-**File**: `searchcore/src/tests/proton/documentdb/feedhandler/feedhandler_test.cpp` (modified, +12/-12)
-```diff
-@@ -408,11 +408,11 @@ struct FeedHandlerFixture {
-     }
- 
-     ~FeedHandlerFixture() { _service.shutdown(); }
--    template <class FunctionType> inline void runAsMaster(FunctionType&& function) {
--        _service.write().master().execute(makeLambdaTask(std::move(function)));
--        syncMaster();
-+    template <class FunctionType> inline void run_in_main_thread_service(FunctionType&& function) {
-+        _service.write().main().execute(makeLambdaTask(std::move(function)));
-+        sync_main_thread_service();
-     }
--    void syncMaster() { _service.write().master().sync(); }
-+    void sync_main_thread_service() { _service.write().main().sync(); }
- };
- 
- } // namespace
-@@ -438,7 +438,7 @@ void FeedHandlerTest::TearDownTestSuite() {
- 
- TEST_F(FeedHandlerTest, require_that_heartBeat_calls_FeedViews_heartBeat) {
-     FeedHandlerFixture f;
--    f.runAsMaster([&]() { f.handler.heartBeat(); });
-+    f.run_in_main_thread_service([&]() { f.handler.heartBeat(); });
-     EXPECT_EQ(1, f.feedView.heartbeat_count);
- }
- 
-@@ -481,7 +481,7 @@ TEST_F(FeedHandlerTest, require_that_handleMove_calls_FeedView) {
-     DocumentContext    doc_context("id:ns:searchdocument::foo", f.schema.builder);
-     MoveOperation      op(doc_context.bucketId, Timestamp(2), doc_context.doc, DbDocumentId(0, 2), 1);
-     op.setDbDocumentId(DbDocumentId(1, 2));
--    f.runAsMaster([&]() { f.handler.handleMove(op, IDestructorCallback::SP()); });
-+    f.run_in_main_thread_service([&]() { f.handler.handleMove(op, IDestructorCallback::SP()); });
-     EXPECT_EQ(1, f.feedView.move_count);
-     EXPECT_EQ(1, f.tls_writer.store_count);
- }
-@@ -511,27 +511,27 @@ TEST_F(FeedHandlerTest, require_that_flush_done_calls_prune) {
-     f.handler.changeToNormalFeedState();
-     f.owner._allowPrune = true;
-     f.handler.flushDone(10);
--    f.syncMaster();
-+    f.sync_main_thread_service();
-     EXPECT_EQ(1, f.tls_writer.erase_count);
-     EXPECT_EQ(10u, f.handler.getPrunedSerialNum());
- }
- 
- TEST_F(FeedHandlerTest, require_that_flush_in_init_state_delays_pruning) {
-     FeedHandlerFixture f;
-     f.handler.flushDone(10);
--    f.syncMaster();
-+    f.sync_main_thread_service();
-     EXPECT_EQ(0, f.tls_writer.erase_count);
-     EXPECT_EQ(10u, f.handler.getPrunedSerialNum());
- }
- 
- TEST_F(FeedHandlerTest, require_that_flush_cannot_unprune) {
-     FeedHandlerFixture f;
-     f.handler.flushDone(10);
--    f.syncMaster();
-+    f.sync_main_thread_service();
-     EXPECT_EQ(10u, f.handler.getPrunedSerialNum());
- 
-     f.handler.flushDone(5); // Try to unprune.
--    f.syncMaster();
-+    f.sync_main_thread_service();
-     EXPECT_EQ(10u, f.handler.getPrunedSerialNum());
- }
- 
-@@ -692,8 +692,8 @@ TEST_F(FeedHandlerTest, require_that_feed_stats_are_updated) {
-     auto op = std::make_unique<PutOperation>(doc_context.bucketId, Timestamp(10), std::move(doc_context.doc));
-     FeedTokenContext token_context;
-     f.handler.performOperation(std::move(token_context.token), std::move(op));
--    f.syncMaster(); // wait for initateCommit
--    f.syncMaster(); // wait for onCommitDone
-+    f.sync_main_thread_service(); // wait for initateCommit
-+    f.sync_main_thread_service(); // wait for onCommitDone
-     auto stats = f.handler.get_stats(false);
-     EXPECT_EQ(1u, stats.get_commits());
-     EXPECT_EQ(1u, stats.get_operations());
-```
-
-**File**: `searchcore/src/tests/proton/documentdb/feedview_test.cpp` (modified, +9/-9)
-```diff
-@@ -639,7 +639,7 @@ struct FixtureBase {
-         runInMaster(
-             [this, onDone = std::make_shared<GateCallback>(gate)]() { performForceCommit(std::move(onDone)); });
-         gate.await();
--        _writeService.master().sync();
-+        _writeService.main().sync();
-     }
- 
-     std::string get_trace() { return _tracer._os.str(); }
-@@ -656,7 +656,7 @@ struct FixtureBase {
-         Gate gate;
-         runInMaster([&]() { performCompactLidSpace(wantedLidLimit, std::make_shared<GateCallback>(gate)); });
-         gate.await();
--        _writeService.master().sync();
-+        _writeService.main().sync();
-     }
-     LastChange get_last_change() { return _gidToLidChangeHandler->get_last_change(); }
-     uint32_t get_change_handler_count() { return _gidToLidChangeHandler->get_num_changes(); }
-@@ -908,12 +908,12 @@ TEST(FeedViewTest, require_that_remove_calls_removes_complete_via_delayed_thread
-     EXPECT_EQ(std::make_tuple(0u, 0u, 0u), get_execute_counts(f.writeServiceObserver()));
-     f.putAndWait(f.doc1(10));
-     f.forceCommitAndWait();
--    // put index fields handled in index thread
-+    // put index fields handled in document db index thread
-     EXPECT_EQ(std::make_tuple(2u, 2u, 2u), get_execute_counts(f.writeServiceObserver()));
-     f.removeAndWait(f.doc1(20));
-     f.forceCommitAndWait();
--    // remove index fields handled in index thread
--    // delayed remove complete handled in same index thread, then master thread
-+    // remove index fields handled in document db index thread
-+    // delayed remove complete handled in same document db index thread, then document db main thread
-     EXPECT_EQ(std::make_tuple(5u, 4u, 4u), get_execute_counts(f.writeServiceObserver()));
-     EXPECT_EQ(1u, f.metaStoreObserver()._removes_complete_cnt);
-     ASSERT_FALSE(f.metaStoreObserver()._removes_complete_lids.empty());
-@@ -1300,8 +1300,8 @@ TEST(
-     f.populateBeforeCompactLidSpace();
-     EXPECT_EQ(std::make_tuple(5u, 4u, 4u), get_execute_counts(f.writeServiceObserver()));
-     f.compactLidSpaceAndWait(2);
--    // performIndexForceCommit in index thread, then completion callback
--    // in master thread.
-+    // performIndexForceCommit in document db index thread, then completion callback
-+    // in document db main thread.
-     EXPECT_EQ(std::make_tuple(7u, 7u, 7u), get_execute_counts(f.writeServiceObserver()));
-     EXPECT_EQ(2u, f.metaStoreObserver()._compactLidSpaceLidLimit);
-     EXPECT_EQ(2u, f.getDocumentStore()._compactLidSpaceLidLimit);
-@@ -1321,8 +1321,8 @@ TEST(
-     f.runInMaster(
-         [&, onDone = std::make_shared<GateCallback>(gate)]() { f.fv.handleCompactLidSpace(op, std::move(onDone)); });
-     gate.await();
--    f._writeService.master().sync();
--    // Delayed holdUnblockShrinkLidSpace() in index thread, then master thread
-+    f._writeService.main().sync();
-+    // Delayed holdUnblockShrinkLidSpace() in document db index thread, then document db main thread
-     EXPECT_EQ(std::make_tuple(6u, 6u, 5u), get_execute_counts(f.writeServiceObserver()));
-     EXPECT_EQ(0u, f.metaStoreObserver()._compactLidSpaceLidLimit);
-     EXPECT_EQ(0u, f.getDocumentStore()._compactLidSpaceLidLimit);
-```
-
-**File**: `searchcore/src/tests/proton/documentdb/lid_space_jobtest.cpp` (modified, +5/-5)
-```diff
-@@ -46,18 +46,18 @@ void JobTestBase::init(uint32_t allowedLidBloat, double allowedLidBloatFactor, d
- 
-     _job.reset();
-     _singleExecutor = std::make_unique<vespalib::ThreadStackExecutor>(1);
--    _master = std::make_unique<proton::SyncableExecutorThreadService>(*_singleExecutor);
-+    _main_thread_service = std::make_unique<proton::SyncableExecutorThreadService>(*_singleExecutor);
-     _bucketExecutor = std::make_unique<storage::spi::dummy::DummyBucketExecutor>(4);
--    _job = lidspace::CompactionJob::create(compactCfg, RetainGuard(_refCount), _handler, _storer, *_master,
--                                           *_bucketExecutor, _resource_usage_notifier, blockableCfg,
--                                           _clusterStateHandler, node_retired_or_maintenance,
-+    _job = lidspace::CompactionJob::create(compactCfg, RetainGuard(_refCount), _handler, _storer,
-+                                           *_main_thread_service, *_bucketExecutor, _resource_usage_notifier,
-+                                           blockableCfg, _clusterStateHandler, node_retired_or_maintenance,
-                                            document::BucketSpace::placeHolder(), _maintenance_job_token_source);
- }
- 
- void JobTestBase::sync() const {
-     if (_bucketExecutor) {
-         _bucketExecutor->sync();
--        _master->sync();
-+        _main_thread_service->sync();
-     }
- }
- 
-```
-
-**File**: `searchcore/src/tests/proton/documentdb/lid_space_jobtest.h` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ struct JobTestBase : public ::testing::Test {
-     proton::test::ResourceUsageNotifier                           _resource_usage_notifier;
-     std::unique_ptr<storage::spi::dummy::DummyBucketExecutor>     _bucketExecutor;
-     std::unique_ptr<vespalib::SyncableThreadExecutor>             _singleExecutor;
--    std::unique_ptr<searchcorespi::index::ISyncableThreadService> _master;
-+    std::unique_ptr<searchcorespi::index::ISyncableThreadService> _main_thread_service;
-     std::shared_ptr<MyHandler>                                    _handler;
-     MyStorer                                                      _storer;
-     std::shared_ptr<MaintenanceJobTokenSource>                    _maintenance_job_token_source;
-```
-
-**File**: `searchcore/src/tests/proton/documentmetastore/lidreusedelayer/lidreusedelayer_test.cpp` (modified, +1/-1)
-```diff
-@@ -147,7 +147,7 @@ void LidReuseDelayerTest::cycleLids(const std::vector<uint32_t>& lids, vespalib:
- 
- void LidReuseDelayerTest::performCycleLids(const std::vector<uint32_t>&      lids,
-                                            vespalib::IDestructorCallback::SP onDone) {
--    _writeService.master().execute(makeLambdaTask([this, lids, onDone]() {
-+    _writeService.main().execute(makeLambdaTask([this, lids, onDone]() {
-         (void)onDone;
-         cycledLids(lids);
-     }));
++template <uint8_t Bits> struct BitsTag {
++    constexpr static uint8_t value = Bits;
++};
++constexpr const uint8_t* get_bf16_lut(BitsTag<1>) noexcept {
++    return bf16_lut_b1;
++}
++constexpr const uint8_t* get_bf16_lut(BitsTag<2>) noexcept {
++    return bf16_lut_b2;
++}
++constexpr const uint8_t* get_bf16_lut(BitsTag<3>) noexcept {
++    return bf16_lut_b3;
++}
++constexpr const uint8_t* get_bf16_lut(BitsTag<4>) noexcept {
++    return bf16_lut_b4;
++}
++
++template <uint8_t Bits, bool AllowReordering, bool ZeroOutOfBounds, InvocationMeta Meta, typename DU8, typename DBF16>
++HWY_API void bf16_centroids_from_indexes(const Meta meta, const DU8 du8, const DBF16 dbf16, hn::Vec<DU8> idx,
++                                         hn::Vec<DBF16>& bf16_lo_out, hn::Vec<DBF16>& bf16_hi_out) noexcept {
++    using VU8 = hn::Vec<decltype(du8)>;
++
++    constexpr const uint8_t* bf16_lut = get_bf16_lut(BitsTag<Bits>{});
++    // The compiler will hoist the LUT loads out of the loop and into the prologue.
++    // It can also de-dupe LUT registers since it can see that the const memory
++    // loaded is the same.
++    const VU8 bf16_msb_lut = hn::LoadDup128(du8, bf16_lut);
++    VU8       bf16_msb = hn::TableLookupBytes(bf16_msb_lut, idx);
++    VU8       bf16_lsb;
++    if constexpr (Bits > 1) {
++        const VU8 bf16_lsb_lut = hn::LoadDup128(du8, bf16_lut + 16);
++        bf16_lsb = hn::TableLookupBytes(bf16_lsb_lut, idx);
++    } else {
++        // Only the sign bit of the MSB differs for 1-bit centroids, so we can use a hard-coded LSB
++        bf16_lsb = hn::Set(du8, bf16_lut[16]); // First LSB entry
++    }
++
++    if constexpr (ZeroOutOfBounds && meta.is_partial()) {
++        const auto in_bounds = hn::FirstN(du8, meta.partial_count());
++        // FP (positive) zero is conveniently all zero bytes
++        bf16_msb = hn::IfThenElseZero(in_bounds, bf16_msb);
++        bf16_lsb = hn::IfThenElseZero(in_bounds, bf16_lsb);
++    }
++    // Glue the MSB/LSB pairs together. Note the reverse LUT order since we use little endian.
++    if constexpr (!AllowReordering) {
++        // When reordering is not allowed, InterleaveWhole(Lower|Upper) is used rather than just Interleave, as
++        // the latter works _within_ 128-bit _blocks_ and not across them.
++        //
++        // Example; assume 32-lane (256-bit) u8 inputs:
++        //
++        //  X = a0 a1 a2 a3 a4 a5 a6 a7 a8 a9 aa ab ac ad ae af b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd be bf
++        //  Y = c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf d0 d1 d2 d3 d4 d5 d6 d7 d8 d9 da db dc dd de df
++        //
++        // InterleaveLower(X, Y):
++        //      a0 c0 a1 c1 a2 c2 a3 c3 a4 c4 a5 c5 a6 c6 a7 c7 b0 d0 b1 d1 b2 d2 b3 d3 b4 d4 b5 d5 b6 d6 b7 d7
++        //
++        // Note the discontinuity when crossing a 16 lane boundary. This therefore cannot be
++        // directly matched with contiguous buffer data read from memory.
++        //
++        // InterleaveWholeLower(X, Y):
++        //      a0 c0 a1 c1 a2 c2 a3 c3 a4 c4 a5 c5 a6 c6 a7 c7 a8 c8 a9 c9 aa ca ab cb ac cc ad dd ae ce af cf
++        //
++        // Which _is_ contiguous. Note that Whole is more expensive on AVX{2,3} due to block-crossing.
++        // This doesn't matter for 128-bit vectors, but using Whole generalizes to higher bit widths.
++        bf16_lo_out = hn::BitCast(dbf16, hn::InterleaveWholeLower(du8, bf16_lsb, bf16_msb));
++        bf16_hi_out = hn::BitCast(dbf16, hn::InterleaveWholeUpper(du8, bf16_lsb, bf16_msb));
++    } else {
++        // Since we allow ourselves to pretend that FP additions commute, allowing reordering means that
++        // we can use non-block-crossing interleaving (see above for an example of the differing semantics).
++        bf16_lo_out = hn::BitCast(dbf16, hn::InterleaveLower(du8, bf16_lsb, bf16_msb));
++        bf16_hi_out = hn::BitCast(dbf16, hn::InterleaveUpper(du8, bf16_lsb, bf16_msb));
++    }
++}
++
+ // Convenience wrapper for computing the sum of pairwise element operations from a f32
+ // lhs and a bitpacked, quantized rhs. The quantized rhs is transparently unpacked and
+ // mapped to its corresponding centroid f32 values. The provided `inner_kernel_fn` is
+@@ -417,8 +490,7 @@ alignas(32) constexpr uint8_t bf16_lut_b4[32] = {
+ template <uint8_t Bits, bool ZeroOutOfBoundsRhs, typename InnerKernelFn>
+ [[nodiscard]]
+ float eden_f32_q_reduce_sum(const float* HWY_RESTRICT f32_lhs, const uint8_t* HWY_RESTRICT packed_rhs,
+-                            const uint8_t* HWY_RESTRICT bf16_lut, const size_t sz,
+-                            InnerKernelFn inner_kernel_fn) noexcept {
++                            const size_t sz, InnerKernelFn inner_kernel_fn) noexcept {
+     // Important: all of these are _fixed_ lane count tags, not ScalableTag!
+     const hn::Full128<uint8_t>                            du8;
+     const
 ```
 
 ---
 
-### Incident Patch 2: `8ccf04f3` (2026-11-26)
-**Commit Message**: Merge pull request #38683 from vespa-engine/johsol/rename-field-path-assign-function
+### Incident Patch 2: `34398731` (2026-11-27)
+**Commit Message**: Merge pull request #38693 from vespa-engine/johsol/author-cleanup
 
-rename fpupd function in test to field_path_assign
+Use full author names and remove trailing whitespace
 
-**File**: `searchcore/src/tests/proton/attribute/attribute_test.cpp` (modified, +12/-12)
+**File**: `container-search/src/main/java/com/yahoo/prelude/cluster/ClusterSearcher.java` (modified, +1/-1)
 ```diff
-@@ -545,7 +545,7 @@ void assert_str_array(AttributeVector& attr, uint32_t lid, const std::vector<con
- template <typename T>
- concept FpValue = std::convertible_to<T, int> || std::convertible_to<T, std::string_view>;
+@@ -59,7 +59,7 @@
+  *
+  * @author bratseth
+  * @author Steinar Knutsen
+- * @author geirst
++ * @author Geir Storli
+  */
+ @After("*")
+ public class ClusterSearcher extends Searcher {
+```
+
+**File**: `container-search/src/main/java/com/yahoo/prelude/fastsearch/Base64DataField.java` (modified, +2/-1)
+```diff
+@@ -7,7 +7,8 @@
  
--auto fpupd(const DocumentUpdate& upd, const std::string& field_path, FpValue auto&& value) {
-+auto field_path_assign(const DocumentUpdate& upd, const std::string& field_path, FpValue auto&& value) {
-     using T = std::decay_t<decltype(value)>;
-     std::unique_ptr<FieldValue> fv;
-     if constexpr (std::convertible_to<T, int>) {
-@@ -611,28 +611,28 @@ AttributeWriterFieldPathTest::~AttributeWriterFieldPathTest() = default;
- 
- TEST_F(AttributeWriterFieldPathTest, assign_element_updates_array_attributes) {
-     auto upd = make_update();
--    upd.addFieldPathUpdate(fpupd(upd, "a1[1]", 99));
--    upd.addFieldPathUpdate(fpupd(upd, "a2[0]", "baz"));
-+    upd.addFieldPathUpdate(field_path_assign(upd, "a1[1]", 99));
-+    upd.addFieldPathUpdate(field_path_assign(upd, "a2[0]", "baz"));
-     apply(2, upd);
-     assert_int_array(*_a1, LID1, {10, 99, 30});
-     assert_str_array(*_a2, LID1, {"baz", "bar"});
- }
- 
- TEST_F(AttributeWriterFieldPathTest, assign_element_out_of_bounds_is_ignored) {
-     auto upd = make_update();
--    upd.addFieldPathUpdate(fpupd(upd, "a1[5]", 77));
-+    upd.addFieldPathUpdate(field_path_assign(upd, "a1[5]", 77));
-     apply(2, upd);
-     assert_int_array(*_a1, LID1, {10, 20, 30});
- }
- 
- TEST_F(AttributeWriterFieldPathTest, assign_element_is_not_reapplied_on_replay) {
-     auto upd = make_update();
--    upd.addFieldPathUpdate(fpupd(upd, "a1[0]", 42));
-+    upd.addFieldPathUpdate(field_path_assign(upd, "a1[0]", 42));
-     apply(2, upd);
-     assert_int_array(*_a1, LID1, {42, 20, 30});
- 
-     auto replay = make_update();
--    replay.addFieldPathUpdate(fpupd(replay, "a1[0]", 77));
-+    replay.addFieldPathUpdate(field_path_assign(replay, "a1[0]", 77));
-     apply(2, replay); // same sync token as previous => ignored
-     assert_int_array(*_a1, LID1, {42, 20, 30});
-     apply(3, replay); // newer sync token => applied
-@@ -641,16 +641,16 @@ TEST_F(AttributeWriterFieldPathTest, assign_element_is_not_reapplied_on_replay)
- 
- TEST_F(AttributeWriterFieldPathTest, assign_element_to_non_attribute_field_is_ignored) {
-     auto upd = make_update();
--    upd.addFieldPathUpdate(fpupd(upd, "extra[0]", 5));
--    upd.addFieldPathUpdate(fpupd(upd, "a1[0]", 42));
-+    upd.addFieldPathUpdate(field_path_assign(upd, "extra[0]", 5));
-+    upd.addFieldPathUpdate(field_path_assign(upd, "a1[0]", 42));
-     apply(2, upd);
-     assert_int_array(*_a1, LID1, {42, 20, 30});
- }
- 
- TEST_F(AttributeWriterFieldPathTest, assign_element_observes_remove_in_same_update) {
-     auto upd = make_update();
-     upd.addUpdate(remove_fupd(upd, "a2", "foo"));
--    upd.addFieldPathUpdate(fpupd(upd, "a2[1]", "x"));
-+    upd.addFieldPathUpdate(field_path_assign(upd, "a2[1]", "x"));
-     apply(2, upd);
-     // In the document model, regular field updates are applied before field path updates.
-     // So, removing "foo" shifts "bar" over to position 0 and the field path update is
-@@ -677,9 +677,9 @@ struct RecordingFieldUpdateCallback : IFieldUpdateCallback {
- TEST_F(AttributeWriterFieldPathTest, field_path_updates_report_fields_to_update_callback) {
-     auto upd = make_update();
-     // attribute: reported and applied.
--    upd.addFieldPathUpdate(fpupd(upd, "a1[0]", 42));
-+    upd.addFieldPathUpdate(field_path_assign(upd, "a1[0]", 42));
-     // not an attribute: reported without attribute.
--    upd.addFieldPathUpdate(fpupd(upd, "extra[0]", 5));
-+    upd.addFieldPathUpdate(field_path_assign(upd, "extra[0]", 5));
-     // attribute, but an unsupported assign kind (expression based): reported, but not applied.
-     upd.addFieldPathUpdate(std::make_unique<AssignFieldPathUpdate>("a1[1]", "", "5"));
-     // field does not exist: not reported.
-@@ -704,7 +704,7 @@ TEST_F(AttributeWriterFieldPathTest, assign_element_observes_remove_from_earlier
-     _aw->update(2, remove_upd, LID1, emptyCallback, on_update);
- 
-     auto assign_upd = make_update();
--    assign_upd.addFieldPathUpdate(fpupd(assign_upd, "a2[1]", "x"));
-+    assign_upd.addFieldPathUpdate(field_path_assign(assign_upd, "a2[1]", "x"));
-     _aw->update(3, assign_upd, LID1, emptyCallback, on_update);
-     commit(3);
+ /**
+  * Represents a binary field that is presented as base64
+- * @author baldersheim
++ *
++ * @author Henning Baldersheim
+  */
+ public class Base64DataField extends DocsumField {
+     public Base64DataField(String name) {
+```
+
+**File**: `container-search/src/main/java/com/yahoo/prelude/fastsearch/DocumentDatabase.java` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ /**
+  * Representation of a document database realizing a schema in a content cluster.
+  *
+- * @author geirst
++ * @author Geir Storli
+  */
+ public class DocumentDatabase {
  
 ```
 
+**File**: `container-search/src/main/java/com/yahoo/prelude/fastsearch/ShortField.java` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ private Object convert(short value) {
+         } else {
+             return Short.valueOf(value);
+         }
+-    }        
++    }
+ 
+     @Override
+     public Object convert(Inspector value) {
+```
+
+**File**: `container-search/src/main/java/com/yahoo/prelude/fastsearch/VespaBackend.java` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@
+ /**
+  * Superclass for backend searchers.
+  *
+- * @author baldersheim
++ * @author Henning Baldersheim
+  */
+ public abstract class VespaBackend {
+ 
+```
+
+**File**: `container-search/src/main/java/com/yahoo/prelude/fastsearch/XMLField.java` (modified, +2/-1)
+```diff
+@@ -10,6 +10,7 @@
+ /**
+  * Class converting data (historically XML-encoded) from a document summary field.
+  * This has only been used to represent geographical positions.
++ *
+  * @author Steinar Knutsen
+  */
+ public class XMLField extends DocsumField {
+@@ -34,5 +35,5 @@ public Object convert(Inspector value) {
+         }
+         return convert(value.asString(""));
+     }
+-        
++
+ }
+```
+
+**File**: `container-search/src/main/java/com/yahoo/search/federation/sourceref/ResolveResult.java` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ package com.yahoo.search.federation.sourceref;
+ 
+ /**
+- * @author baldersheim
++ * @author Henning Baldersheim
+  */
+ public record ResolveResult(SearchChainInvocationSpec invocationSpec, String errorMsg) {
+     ResolveResult(SearchChainInvocationSpec invocationSpec) {
+```
+
 #### Recent Merged Pull Requests:
-- **PR #38683** (2026-11-26): rename fpupd function in test to field_path_assign (@johansolbakken)
-- **PR #38682** (closed): Add remove_element to AttributeUpdater (@johansolbakken)
-- **PR #38681** (2026-11-26): Upgrade @vscode/vsce to 4.1.1 in vscode client (@ean)
-- **PR #38680** (2026-11-26): More usage of document db main thread service. (@toregge)
-- **PR #38679** (2026-11-26): Upgrade org.json to 20260814 (CVE-2026-59171) (@ean)
-- **PR #38678** (2026-11-26): Add methods for the customer tags among cloud resource tags (@gjoranv)
+- **PR #38695** (2026-11-27): Factor out BF16 centroid reconstruction and special-case 1 bit quant to avoid one LUT (@vekterli)
+- **PR #38693** (2026-11-27): Use full author names and remove trailing whitespace (@johansolbakken)
+- **PR #38691** (2026-11-27): More use of document db main thread service. (@toregge)
+- **PR #38688** (2026-11-27): make change vector sort order easier to read (@johansolbakken)
+- **PR #38686** (2026-11-27): Validate that request and response filter chains don't inherit each other (@hmusum)
+- **PR #38685** (2026-11-27): Support REMOVE_ELEMENT field path update in attribute vectors (@johansolbakken)
 
 ---
 
@@ -1456,28 +1295,55 @@ rename fpupd function in test to field_path_assign
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in docsummary_test.cpp
+## X. Empirical Invariant Guard in highway.cpp
 
 **RULE**:
-When implementing operations in `searchcore/src/tests/proton/docsummary/docsummary_test.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `vespalib/src/vespa/vespalib/hwaccelerated/highway.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a314aed`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8de5482d`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `searchcore/src/tests/proton/docsummary/docsummary_test.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `vespalib/src/vespa/vespalib/hwaccelerated/highway.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        _ddb->getWriteService().main().execute(vespalib::makeLambdaTask([this, op = std::move(op), &commitDone]() {
+template <uint8_t Bits> struct BitsTag {
+    constexpr static uint8_t value = Bits;
+};
+constexpr const uint8_t* get_bf16_lut(BitsTag<1>) noexcept {
+    return bf16_lut_b1;
+}
+constexpr const uint8_t* get_bf16_lut(BitsTag<2>) noexcept {
+    return bf16_lut_b2;
+}
+constexpr const uint8_t* get_bf16_lut(BitsTag<3>) noexcept {
+    return bf16_lut_b3;
+}
+constexpr const uint8_t* get_bf16_lut(BitsTag<4>) noexcept {
+    return bf16_lut_b4;
+}
+
+template <uint8_t Bits, bool AllowReordering, bool ZeroOutOfBounds, InvocationMeta Meta, typename DU8, typename DBF16>
+HWY_API void bf16_centroids_from_indexes(const Meta meta, const DU8 du8, const DBF16 dbf16, hn::Vec<DU8> idx,
+                                         hn::Vec<DBF16>& bf16_lo_out, hn::Vec<DBF16>& bf16_hi_out) noexcept {
+    using VU8 = hn::Vec<decltype(du8)>;
+
+    constexpr const uint8_t* bf16_lut = get_bf16_lut(BitsTag<Bits>{});
+    // The compiler will hoist the LUT loads out of the loop and into the prologue.
+    // It can also de-dupe LUT registers since it can see that the const memory
+    // loaded is the same.
+    const VU8 bf16_msb_lut = hn::LoadDup128(du8, bf16_lut);
+    VU8       bf16_msb = hn::TableLookupBytes(bf16_msb_lut, id
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        _ddb->getWriteService().master().execute(vespalib::makeLambdaTask([this, op = std::move(op), &commitDone]() {
+                            const uint8_t* HWY_RESTRICT bf16_lut, const size_t sz,
+                            InnerKernelFn inner_kernel_fn) noexcept {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a314aed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8de5482d` are properly handled with clean fallback behavior.

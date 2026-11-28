@@ -13974,3 +13974,5 @@ Every entry in this ledger must capture:
 | `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `13366231` | Multi-dimensional audit evidence | 2026-11-28T02:13:16.019Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `d721e1f9` | Multi-dimensional audit evidence | 2026-11-28T02:13:23.471Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `a452de5f` | Multi-dimensional audit evidence | 2026-11-28T02:13:28.130Z |
+| `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `f060b990` | Multi-dimensional audit evidence | 2026-11-28T02:22:23.659Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `8de5482d` | Multi-dimensional audit evidence | 2026-11-28T02:22:34.820Z |

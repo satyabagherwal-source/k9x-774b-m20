@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T02:13:28.141Z",
+  "last_updated": "2026-11-28T02:22:34.828Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "0131b285acf228e3623bb8b6eb68fa60eb0ae0857cf7998603d12ed2f47f4f12",
-      "verified_at": "2026-11-27T07:03:52.519Z",
+      "content_hash": "b51af69772ffc5e33e062ce373dab1dc372bfe73d11fc2500d85f4faaaa640de",
+      "verified_at": "2026-11-28T02:22:34.828Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T07:03:52.519Z"
+      "last_updated": "2026-11-28T02:22:34.828Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -14136,14 +14136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-css-select",
-      "content_hash": "aa142c80da6e97ff860ae49fa8c053d1188971861f430670c4dbe57e24e0adb0",
-      "verified_at": "2026-11-24T17:42:38.993Z",
+      "content_hash": "62e9390d62369b016b6619efa31fbbb6948004798c18d04472f80a48e522c6e4",
+      "verified_at": "2026-11-28T02:22:23.667Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:42:38.993Z"
+      "last_updated": "2026-11-28T02:22:23.667Z"
     },
     "sindresorhus/KeyboardShortcuts": {
       "repository": "sindresorhus/KeyboardShortcuts",
