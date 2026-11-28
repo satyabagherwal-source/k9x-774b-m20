@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T11:15:54.747Z",
+  "timestamp": "2026-11-28T00:19:38.152Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kividbio-kividb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kividbio-kividb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T11:15:54.747Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T00:19:38.152Z`  
 > **Learning ID**: `LEARN-EVO-kividbio-kividb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain F (Design Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from kividbio-kividb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kividbio-kividb-learnings.md`  
 > **Source**: github ([https://github.com/kividbio/kividb](https://github.com/kividbio/kividb))  
-> **Source Version**: `5a9db7f7`  
+> **Source Version**: `59b4cf65`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T11:15:36.176Z  
+> **Timestamp**: 2026-11-28T00:19:30.472Z  
 > **Learning ID**: `learn-github-kividbio-kividb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kividbio-kividb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kividbio/kividb](https://github.com/kividbio/kividb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T11:15:36.170Z  
+> **Harvest Timestamp**: 2026-11-28T00:19:30.464Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A fast, multi-threaded Redis® and Valkey alternative written in Rust: drop-in compatible, with full-text and vector search built in
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 1501 stars
+- **Stars / Engagement**: 1557 stars
 
 ---
 
@@ -1537,11 +1537,11 @@ for size in SIZES:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1075** (2026-11-27): **Config: warn on daemonize yes instead of failing at startup**
+  *Symptoms*: <!-- Security vulnerabilities: do NOT report them here. See SECURITY.md for how to report one privately. -->  **What happened**  Starting KiviDB with a Redis-style configuration file that includes `daemonize yes` fails at startup with a hard error:  `'daemonize yes' is not supported: KiviDB runs in the foreground`  Users migrating from Redis who carry over settings from `redis.conf` hit a startup failure instead of a non-fatal warning like other unsupported/no-op Redis directives (`save`, `hz`, `tcp-keepalive`, `pidfile`, `unixsocket`).  **How to reproduce**  1. Create a config file `kividb.conf` containing `daemonize yes`. 2. Start KiviDB with `--configfile kividb.conf`. 3. KiviDB exits with `line 1: 'daemonize yes' is not supported: KiviDB runs in the foreground`.  **What you expected**  KiviDB should accept `daemonize yes` with a warning (e.g. `'daemonize' is accepted but has no effect: KiviDB runs in the foreground`) and continue starting in the foreground, matching how `save` and similar Redis directives are handled, and document this behavior in `docs/MIGRATING_FROM_REDIS.md`.  In Redis, `daemonize yes` forks into the background. KiviDB always runs in the foreground (managed by systemd, Docker, or a process supervisor).  **Environment**  - KiviDB version (`kividb --version`): `1.2.1` (`upstream/master` at `e55b4404`) - Build variant (`default`, `lua`, `tls` or `full`): `default` - Installed from (binary, .deb/.rpm, Docker image, built from source): built from source - O
+
 - **Issue #1016** (2026-11-25): **Large-string SETBIT, BITFIELD, SETRANGE and APPEND copy the entire value on small writes**
   *Symptoms*: ### Summary  While testing i noticed that small updates to large strings copy the entire buffer. This also affects read-only and no-op bitmap operations, making the cost depend on the string size rather than the actual change.  ### Benchmark results  Tested on Apple M3 Pro with KiviDB (release/fat LTO) and Redis 8.10.3 using a 64 MiB string. Each scenario was repeated three times, with replies and final values verified.  | Command | KiviDB | Redis | |---|---:|---:| | SETBIT (unchanged) | 1,423 µs | ≤0.6 µs | | SETBIT (changed) | 2,847 µs | ≤0.6 µs | | BITFIELD INCRBY | 5,033 µs | ≤0.8 µs | | BITFIELD GET | 2,835 µs | ≤0.6 µs | | SETRANGE (3 bytes) | 2,837 µs | ≤0.8 µs | | APPEND (3 bytes) | 1,402 µs | ≤0.3 µs |  With four pipelined clients, KiviDB handled 370–375 SETBIT/s compared to at least 475,000 SETBIT/s on Redis (client-limited).  Peak RSS increased from 202 MiB to 266 MiB during SETBIT and 330 MiB during BITFIELD.  Only a scratch macOS build fix was applied; no string or bitmap logic was changed.  ### Source findings  - `bitmap.rs:118,153` — SETBIT copies the entire value, even for unchanged bits, and copies it again when storing changes. - `bitmap.rs:599,608,724,729` — BITFIELD copies, clones and compares the entire buffer. - `strings.rs:685,1232` — APPEND and SETRANGE fall back to full-buffer copies for non-inline strings.  ### Possible improvement  - Avoid allocations for unchanged SETBIT and read-only BITFIELD operations. - Update only affected bytes when the buffe
-
-- **Issue #949** (2026-11-19): **DEBUG commands remain enabled even when `enable-debug-command` is set to `no`**
-  *Symptoms*: ### Summary  KiviDB accepts the Redis setting `enable-debug-command`, but doesn't enforce it. DEBUG commands still work for users with the required ACL permissions, even when the setting is `no`.  Redis 7+ disables DEBUG by default and supports three modes: `no`, `yes`, and `local`.  ### How to reproduce  ```text CONFIG GET enable-debug-command (empty array)  CONFIG SET enable-debug-command no OK  DEBUG SLEEP 0 OK ```  I also tested ACL permissions. A user with `+@all` can run DEBUG, while a restricted user without DEBUG permission gets `NOPERM`. So ACL checks appear to be working.  ### Expected behavior  - Default `enable-debug-command` to `no`. - Support `no`, `yes`, and `local`, like Redis. - With `no`, reject DEBUG commands. - With `yes`, allow DEBUG if the user has ACL permission. - With `local`, allow DEBUG only through loopback or Unix-socket connections, with ACL permission. - Reject runtime changes through `CONFIG SET`, as Redis treats this as a protected setting. - Return the configured value through `CONFIG GET`.  ### Suggested changes  - Remove `enable-debug-command` from the ignored Redis settings. - Parse and store the setting in server configuration. - Check the setting before running DEBUG commands. - Update tests that use DEBUG to enable it explicitly. - Add tests for all three modes and ACL permissions.  ### Scope  This is a security-hardening and Redis compatibility issue, not an ACL bypass. Existing DEBUG subcommands don't need to change, only when they're
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1558,587 +1558,618 @@ for size in SIZES:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87a9d213` (2026-11-25)
-**Commit Message**: FLAT int8: holds bounded in time, the setting checked before the build, maxmemory (#1033)
+### Incident Patch 1: `59b4cf65` (2026-11-27)
+**Commit Message**: Connections: a grown read buffer is kept while its turns need it, and given back after sixteen that do not (#1077)
 
-publish builds the bitset of slots to code with no lock held and only
-swaps it in under the write lock, going round again if more than 4,096
-slots came meanwhile. The coder's copy-out under the read lock stops on
-the 50 us budget the write phase uses.
+* Connections: a grown read buffer is given back after sixteen turns that did not need it
 
-The copy is built only while the setting is on, checked before publish
-and again under the write lock, with a count of CONFIG SETs so that a
-yes quickly followed by no makes none. A build that would take
-used_memory past maxmemory is skipped with a warning until the setting
-is set again.
+* Idle connection memory: tests of requests in small pieces and of bursts between single commands; suite 55 opens the count it gates; configuration note
 
-With the setting off a FLAT KNN takes no len() and no ids.count(). A
-panic while coding resets the index's coding flag and is logged.
-schedule() loads before it swaps; the skipped and re-scored counts sit
-on a cache line of their own; the cut-off is looked at on every
-candidate.
+* Suite 56: bursts between single commands, and requests in small pieces
 
-Tests: rule 5 checked by the readers while the writes run; a document
-deleted and its id and slot given to another between two runs of one
-filtered scan, through a test-only hook between runs.
+* Suite 56: recorded on a Standard_D8s_v5
 
-**File**: `src/vector/flat.rs` (modified, +185/-37)
+* Tests: the pipeline read test sends the small commands the buffer rule counts
+
+A grown read buffer is given back after sixteen turns in a row that did not
+need it; the test sends seventeen PINGs before it expects the pipeline to be
+read in two reads again.
+
+* Tests: the replication byte counts are first read once the link is quiet
+
+The master's and the replica's counts are read on two connections; the test
+waits until neither moves between two readings before taking its starting
+values, so both start from the same point of the stream.
+
+**File**: `benchmarks/1.3.0/regressions/README.md` (modified, +2/-0)
 ```diff
-@@ -83,6 +83,15 @@ pub struct VectorIndex {
-     copy: OnceLock<Int8Copy>,
-     coding: AtomicBool,
-     cursor: AtomicUsize,
-+    declined: AtomicU64,
-+    counts: Counts,
-+    #[cfg(test)]
-+    always: AtomicBool,
-+}
-+
-+#[derive(Debug, Default)]
-+#[repr(align(128))]
-+struct Counts {
-     skipped: AtomicU64,
-     rescored: AtomicU64,
- }
-@@ -310,22 +319,31 @@ impl VectorIndex {
-         }
-         let count = map.by_key.len();
-         drop(map);
--        if copy.is_some() || self.wants_copy(count) {
-+        if copy.is_some() || self.wants_copy(|| count) {
-             self.schedule();
-         }
-     }
+@@ -72,6 +72,7 @@ and why.
+ | `53-large-string-writes` | #1027, #1031, #1016, #1065 | one string of 64 MiB a case (`SETRANGE k 67108863 a`), one connection, one call at a time (2,000 calls a round; v1.2.2, which copies the string on every call: 10), 3 rounds: a `SETBIT` that leaves the bit as it is and a `BITFIELD ... GET u8` (#1027), a `SETBIT` that changes a bit, by turns set and cleared (#1031), `APPEND` of 3 bytes and of 1 KiB (#1016), and `SETRANGE` of 3 bytes at the string's end and 1 KiB past it (#1065): the server's own microseconds a call (`INFO commandstats`) and the client's wall time a call, median of the rounds; `bad_replies` and the lengths the appends and `SETRANGE`s end at. Gates in the same session, with fixed margins: every server time at most 0.01x v1.2.2's (100x faster: v1.2.2 takes 30-130 ms a call, the candidate one or two microseconds), every wall time at most 0.05x v1.2.2's and at most 2x Redis's; no gate on the server times against Redis's (both about a microsecond, on a clock of whole microseconds); `bad_replies` exactly 0 and the lengths as recorded. Recorded through `run-all.sh --candidate <default build> --only 53 --record` on a `Standard_D4s_v5` (`results/pr-1065-53-record`: all seven cases, with the `SETRANGE` ones, from the PR's head built by rustc 1.100.0; the five earlier cases are in `results/pr-append-53-record`) |
+ | `54-yii2-mutex` | #1049 | yii2-redis's `Mutex` cycle: `SET <lock> <token> NX PX 30000`, then the release, `EVAL` of the compare-and-delete with the script's text every time, on a lock of the connection's own (no hash tag), from 32 connections one command at a time each (`lib/mutex_load.c`, one thread a connection; needs a C compiler); the calls checked under MONITOR first. `--threads 4` (Redis `--io-threads 4`) on the first half of the CPUs, the load on the other: commands a second, the `EVAL` and `SET` p50 and p99, the server's CPUs, median of 3 rounds of 10 s; the candidate must run 90 % of the releases beside others. Gates in the same session: commands a second at least 1.2x Redis's and 1.6x v1.2.2's, and within 10 % of recorded; the `EVAL` p50 at most 0.9x and its p99 at most 1.1x Redis's. Needs the `lua,tls` builds (`--candidate-full`); `min_cpus=8`, recorded on a `Standard_D8s_v5` (`results/pr-1049-54-final`) |
+ | `55-idle-connection-memory` | idle connections | 10,000 connections opened from one client and left idle, on Tokio and on io_uring, each a configuration: ones that send nothing (`*-idle`) and ones that send one `PING` (`*-ping`); `used_memory` and VmRSS growth a connection, 5 s after the last went idle, with Redis's figure beside it; `CONFIG SET maxclients 20000` first. Gates: `used_per_conn` within 5 % (or 256 B) of recorded and at least 60 % of the recorded gain over v1.2.2; `rss_per_conn` within 10 % (or 1 KiB); `clients` as recorded. Recorded through `run-all.sh --candidate <default build> --only 55 --record` on a `Standard_D4s_v5` (`results/idle-connections-55-d4s_v5`) |
++| `56-burst-between-commands` | idle connections, the read buffer kept | one connection, on io_uring and on Tokio, each a configuration (`--threads 2`): 2,000 cycles of a pipelined burst of 400 `SET`s of 100 B (about 50 KiB in one write) then 4 `GET`s one at a time; and 200 `SET`s of an 8 KiB value sent in 2 KiB pieces 2 ms apart. The server's reads a burst (INFO `total_reads_processed`, less the `GET`s'), and its CPU time a burst cycle and a slow request (every thread's schedstat, shown). Gates: `burst_reads` within 0.25 of recorded and at most 1.1x v1.2.2's in the same session (a read buffer given back between bursts makes each burst one read more). Recorded on a `Standard_D8s_v5` (`results/buffer-reuse-56-d8s_v5`) |
  
--    fn wants_copy(&self, count: usize) -> bool {
-+    fn switched_on(&self) -> bool {
-+        #[cfg(test)]
-+        if self.always.load(Relaxed) {
-+            return true;
+ ## Running it
+ 
+@@ -292,6 +293,7 @@ was re-recorded for it:
+ | `53-large-string-writes` | 2 | one connection, one call at a time, as suite `48` |
+ | `54-yii2-mutex` | 4 | the issue's: the server pinned to half the CPUs of a `Standard_D8s_v5`, Redis with `--io-threads 4` |
+ | `55-idle-connection-memory` | 2 | the default on a `Standard_D4s_v5`: what a connection holds does not depend on the count |
++| `56-burst-between-commands` | 2 | as suite `55`: one connection |
+ | `32-default-threads` | 0 (none) | measures the default on purpose |
+ 
+ Redis ignores the count. The default itself is watched by
+```
+
+**File**: `benchmarks/1.3.0/regressions/baseline.json` (modified, +156/-0)
+```diff
+@@ -37195,6 +37195,162 @@
+           "keep": 0.6
+         }
+       ]
++    },
++    "56-burst-between-commands/tokio/burst_cpu_us": {
++      "suite": "56-burst-between-commands",
++      "config": "tokio",
++      "metric": "burst_cpu_us",
++      "unit": "us",
++      "better": "lower",
++      "recorded": {
++        "v1_2_2": 284.0166,
++        "candidate": 253.2641,
++        "redis": 312.8654,
++        "vm": "Standard_D8s_v5",
++        "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
++        "date": "2026-11-27",
++        "commit": "7f7c0541",
++        "label": "buffer-reuse-56-d8s_v5",
++        "rustc": "1.100.0",
++        "nproc": 8
++      },
++      "gate": [
++        {
++          "kind": "info"
 +        }
-         flat_int8::enabled()
-+    }
-+
-+    fn wants_copy(&self, count: impl FnOnce() -> usize) -> bool {
-+        self.switched_on()
-             && flat_int8::supported()
-             && self.copy.get().is_none()
-+            && self.declined.load(Relaxed) != flat_int8::times_set() + 1
-             && self.dim().is_some_and(|d| d >= flat_int8::DIM_MIN)
--            && count >= flat_int8::BUILD_AT
-+            && count() >= flat_int8::BUILD_AT
++      ]
++    },
++    "56-burst-between-commands/tokio/burst_reads": {
++      "suite": "56-burst-between-commands",
++      "config": "tokio",
++      "metric": "burst_reads",
++      "unit": "reads",
++      "better": "lower",
++      "recorded": {
++        "v1_2_2": 13.0,
++        "candidate": 2.0,
++        "redis": 3.0,
++        "vm": "Standard_D8s_v5",
++        "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
++        "date": "2026-11-27",
++        "commit": "7f7c0541",
++        "label": "buffer-reuse-56-d8s_v5",
++        "rustc": "1.100.0",
++        "nproc": 8
++      },
++      "gate": [
++        {
++          "kind": "rel",
++          "pct": 0,
++          "abs": 0.25
++        },
++        {
++          "kind": "vs_v1_2_2",
++          "max_x": 1.1
++        }
++      ]
++    },
++    "56-burst-between-commands/tokio/slow_cpu_us": {
++      "suite": "56-burst-between-commands",
++      "config": "tokio",
++      "metric": "slow_cpu_us",
++      "unit": "us",
++      "better": "lower",
++      "recorded": {
++        "v1_2_2": 113.4863,
++        "candidate": 120.4373,
++        "redis": 96.9379,
++        "vm": "Standard_D8s_v5",
++        "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
++        "date": "2026-11-27",
++        "commit": "7f7c0541",
++        "label": "buffer-reuse-56-d8s_v5",
++        "rustc": "1.100.0",
++        "nproc": 8
++      },
++      "gate": [
++        {
++          "kind": "info"
++        }
++      ]
++    },
++    "56-burst-between-commands/uring/burst_cpu_us": {
++      "suite": "56-burst-between-commands",
++      "config": "uring",
++      "metric": "burst_cpu_us",
++      "unit": "us",
++      "better": "lower",
++      "recorded": {
++        "v1_2_2": 252.9976,
++        "candidate": 252.4986,
++        "redis": 305.4377,
++        "vm": "Standard_D8s_v5",
++        "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
++        "date": "2026-11-27",
++        "commit": "7f7c0541",
++        "label": "buffer-reuse-56-d8s_v5",
++        "rustc": "1.100.0",
++        "nproc": 8
++      },
++      "gate": [
++        {
++          "kind": "info"
++        }
++      ]
++    },
++    "56-burst-between-commands/uring/burst_reads": {
++      "suite": "56-burst-between-commands",
++      "config": "uring",
++      "metric": "burst_reads",
++      "unit": "reads",
++      "better": "lower",
++      "recorded": {
++        "v1_2_2": 2.0,
++        "candidate": 2.0,
++        "redis": 3.0,
++        "vm": "Standard_D8s_v5",
++        "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
++        "date": "2026-11-27",
++        "commit": "7f7c0541",
++        "label": "buffer-reuse-56-d8s_v5",
++        "rustc": "1.100.0",
++        "nproc": 8
++      },
++      "gate": [
++        {
++          "kind": "rel",
++          "pct": 0,
++          "abs": 0.25
++        },
++        {
++          "kind": "vs_v1_2_2",
++          "max_x": 1.1
++        }
++      ]
++    },
++    "56-burst-between-commands/uring/slow_cpu_us": {
++      "suite": "56-burst-between-commands",
++      "config": "uring",
++      "metric": "slow_cpu_us",
++      "unit": "us",
++      "better": "lower",
++      "recorded": {
++        "v1_2_2": 106.9595,
++        "candidate": 127.5567,
++        "redis": 96.2118,
++        "vm": "Standard_D8s_v5",
++        "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
++        "date": "2026-11-27",
++        "commit": "7f7c0541",
++        "label": "buffer-reuse-56-d8s_v5",
++        "rustc": "1.100.0",
++        "nproc": 8
++      },
++      "gate": [
++        {
++          "kind": "info"
++        }
++      ]
      }
+   }
+ }
+```
+
+**File**: `benchmarks/1.3.0/regressions/results/buffer-reuse-56-d8s_v5/env.json` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++{
++ "label": "buffer-reuse-56-d8s_v5",
++ "date": "2026-11-27",
++ "vm": "Standard_D8s_v5",
++ "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
++ "nproc": 8,
++ "cpu_count": 8,
++ "calib_ms": 97.7,
++ "kernel": "7.0.0-1017-azure",
++ "glibc": "2.39",
++ "python": "3.12.3",
++ "redis_py": "5.2.1",
++ "candidate_commit": "7f7c0541",
++ "candidate_allocator": "glibc",
++ "suite_seconds": {
++  "56-burst-between-commands": 23
++ },
++ "scale": "1",
++ "full": "0",
++ "only": "56",
++ "engines_selected": [
++  "v1_2_2",
++  "candidate",
++  "redis"
++ ],
++ "failures": [],
++ "expected": [
++  {
++   "suite": "56-burst-between-commands",
++   "config": "uring",
++   "engines": [
++    "v1_2_2",
++    "candidate",
++    "redis"
++   ]
++  },
++  {
++   "suite": "56-burst-between-commands",
++   "config": "tokio",
++   "engines": [
++    "v1_2_2",
++    "candidate",
++    "redis"
++   ]
++  }
++ ],
++ "engines": {
++  "v1_2_2": {
++   "path": "/home/azureuser/.cache/kividb-regress/releases/v1.2.2/default/kividb",
++   "sha256": "38fc2cea40c131e041f4914527a98719e5d34dffdfe2abdc1f07ecb86aa6723e",
++   "version": "kividb 1.2.2",
++   "rustc": "1.100.0"
++  },
++  "candidate": {
++   "path": "/home/azureuser/kividb-branch",
++   "sha256": "5630d3e172b49778dad2f56ccaec5773e5a6669969a479ab06dbb0ec3e0578d2",
++   "version": "kividb 1.2.1 (default build: no Lua, no TLS)",
++   "rustc": "1.100.0"
++  },
++  "redis": {
++   "path": "/opt/redis-8.10.2/src/redis-server",
++   "sha256": "b0cd304980112fa6cd8dced524fdd6b136fd8efb802f5cf9e81610051a11891c",
++   "version": "Redis server v=8.10.2 sha=00000000:1 malloc=jemalloc-5.3.0 bits=64 build=75a9b36b1f0aa00",
++   "rustc": null
++  },
++  "v1_2_2_full": {
++   "path": "/home/azureuser/.cache/kividb-regress/releases/v1.2.2/full/kividb",
++   "sha256": "ac5e05fe1274fd1167780e512bc03aa103340f42525a2cef4a2a762e47317ad5",
++   "version": "kividb 1.2.2",
++   "rustc": "1.100.0"
++  }
++ },
++ "skipped_configs": [],
++ "rustc_override": false,
++ "allow_vm_change": false,
++ "redis_source_sha256": null,
++ "needs_more_cpus": {},
++ "ran_below_min_cpus": {},
++ "suite_min_cpus": {},
++ "min_cpus_only": false,
++ "run_failed": false
++}
+\ No newline at end of file
+```
+
+**File**: `benchmarks/1.3.0/regressions/results/buffer-reuse-56-d8s_v5/summary.json` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++{"label":"buffer-reuse-56-d8s_v5","env":{"label":"buffer-reuse-56-d8s_v5","date":"2026-11-27","vm":"Standard_D8s_v5","cpu":"Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz","nproc":8,"cpu_count":8,"calib_ms":97.7,"kernel":"7.0.0-1017-azure","glibc":"2.39","python":"3.12.3","redis_py":"5.2.1","candidate_commit":"7f7c0541","candidate_allocator":"glibc","suite_seconds":{"56-burst-between-commands":23},"scale":"1","full":"0","only":"56","engines_selected":["v1_2_2","candidate","redis"],"failures":[],"expected":[{"suite":"56-burst-between-commands","config":"uring","engines":["v1_2_2","candidate","redis"]},{"suite":"56-burst-between-commands","config":"tokio","engines":["v1_2_2","candidate","redis"]}],"engines":{"v1_2_2":{"path":"/home/azureuser/.cache/kividb-regress/releases/v1.2.2/default/kividb","sha256":"38fc2cea40c131e041f4914527a98719e5d34dffdfe2abdc1f07ecb86aa6723e","version":"kividb 1.2.2","rustc":"1.100.0"},"candidate":{"path":"/home/azureuser/kividb-branch","sha256":"5630d3e172b49778dad2f56ccaec5773e5a6669969a479ab06dbb0ec3e0578d2","version":"kividb 1.2.1 (default build: no Lua, no TLS)","rustc":"1.100.0"},"redis":{"path":"/opt/redis-8.10.2/src/redis-server","sha256":"b0cd304980112fa6cd8dced524fdd6b136fd8efb802f5cf9e81610051a11891c","version":"Redis server v=8.10.2 sha=00000000:1 malloc=jemalloc-5.3.0 bits=64 build=75a9b36b1f0aa00","rustc":null},"v1_2_2_full":{"path":"/home/azureuser/.cache/kividb-regress/releases/v1.2.2/full/kividb","sha256":"ac5e05fe1274fd1167780e512bc03aa103340f42525a2cef4a2a762e47317ad5","version":"kividb 1.2.2","rustc":"1.100.0"}},"skipped_configs":[],"rustc_override":false,"allow_vm_change":false,"redis_source_sha256":null,"needs_more_cpus":{},"ran_below_min_cpus":{},"suite_min_cpus":{},"min_cpus_only":false,"run_failed":false},"rows":[{"key":"56-burst-between-commands/tokio/burst_cpu_us","suite":"56-burst-between-commands","config":"tokio","metric":"burst_cpu_us","unit":"us","better":"lower","values":{"v1_2_2":284.0166,"candidate":253.2641,"redis":312.8654},"samples":{},"recorded_candidate":null,"host":null,"gates":[{"gate":{"kind":"info"},"status":"info","limit":""}],"status":"info"},{"key":"56-burst-between-commands/tokio/burst_reads","suite":"56-burst-between-commands","config":"tokio","metric":"burst_reads","unit":"reads","better":"lower","values":{"v1_2_2":13.0,"candidate":2.0,"redis":3.0},"samples":{},"recorded_candidate":null,"host":null,"gates":[{"gate":{"kind":"rel","pct":0,"abs":0.25},"status":"new","limit":"rel 0%: nothing recorded"},{"gate":{"kind":"vs_v1_2_2","max_x":1.1},"status":"pass","limit":"0.15x v1.2.2 <= 1.1x"}],"status":"pass"},{"key":"56-burst-between-commands/tokio/slow_cpu_us","suite":"56-burst-between-commands","config":"tokio","metric":"slow_cpu_us","unit":"us","better":"lower","values":{"v1_2_2":113.4863,"candidate":120.4373,"redis":96.9379},"samples":{},"recorded_candidate":null,"host":null,"gates":[{"gate":{"kind":"info"},"status":"info","limit":""}],"status":"info"},{"key":"56-burst-between-commands/uring/burst_cpu_us","suite":"56-burst-between-commands","config":"uring","metric":"burst_cpu_us","unit":"us","better":"lower","values":{"v1_2_2":252.9976,"candidate":252.4986,"redis":305.4377},"samples":{},"recorded_candidate":null,"host":null,"gates":[{"gate":{"kind":"info"},"status":"info","limit":""}],"status":"info"},{"key":"56-burst-between-commands/uring/burst_reads","suite":"56-burst-between-commands","config":"uring","metric":"burst_reads","unit":"reads","better":"lower","values":{"v1_2_2":2.0,"candidate":2.0,"redis":3.0},"samples":{},"recorded_candidate":null,"host":null,"gates":[{"gate":{"kind":"rel","pct":0,"abs":0.25},"status":"new","limit":"rel 0%: nothing recorded"},{"gate":{"kind":"vs_v1_2_2","max_x":1.1},"status":"pass","limit":"1.00x v1.2.2 <= 1.1x"}],"status":"pass"},{"key":"56-burst-between-commands/uring/slow_cpu_us","suite":"56-burst-between-commands","config":"uring","metric":"slow_cpu_us","unit":"us","better":"lower","values":{"v1_2_2":106.9595,"candidate":127.5567,"redis":96.2118},"samples":{},"recorded_candidate":null,"host":null,"gates":[{"gate":{"kind":"info"},"status":"info","limit":""}],"status":"info"}],"not_run":["01-scan-match/default/dbsize","01-scan-match/default/hscan_match_c1000_calls","01-scan-match/default/hscan_match_c1000_distinct","01-scan-match/default/hscan_match_c1000_ms","01-scan-match/default/keys_schedule_ms","01-scan-match/default/keys_schedule_returned","01-scan-match/default/scan_all_c1000_calls","01-scan-match/default/scan_all_c1000_distinct","01-scan-match/default/scan_all_c1000_ms","01-scan-match/default/scan_infix_c1000_calls","01-scan-match/default/scan_infix_c1000_distinct","01-scan-match/default/scan_infix_c1000_ms","01-scan-match/default/scan_match_c10000_calls","01-scan-match/default/scan_match_c10000_distinct","01-scan-match/default/scan_match_c10000_ms","01-scan-match/default/scan_match_c1000_calls","01-scan-match/default/scan_match_c1000_distinct","01-scan-match/default/scan_matc
+```
+
+**File**: `benchmarks/1.3.0/regressions/results/buffer-reuse-56-d8s_v5/summary.md` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++# Regression suite: buffer-reuse-56-d8s_v5
++
++Verdict: **ok**
++
++- Machine: Standard_D8s_v5, 8 vCPU, Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz, kernel 7.0.0-1017-azure, glibc 2.39
++- CPU: recorded on INTEL(R) XEON(R) PLATINUM 8573C / Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz / Intel(R) Xeon(R) Platinum 8473C; now Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
++- calibration (indicative only): 97.7 ms for a fixed sha256 loop, 8 cores
++- Client: Python 3.12.3, redis-py 5.2.1
++- v1_2_2: `kividb 1.2.2`, sha256 `38fc2cea40c131e041f4914527a98719e5d34dffdfe2abdc1f07ecb86aa6723e`, rustc 1.100.0
++- candidate: `kividb 1.2.1 (default build: no Lua, no TLS)`, sha256 `5630d3e172b49778dad2f56ccaec5773e5a6669969a479ab06dbb0ec3e0578d2`, rustc 1.100.0
++- redis: `Redis server v=8.10.2 sha=00000000:1 malloc=jemalloc-5.3.0 bits=64 build=75a9b36b1f0aa00`, sha256 `b0cd304980112fa6cd8dced524fdd6b136fd8efb802f5cf9e81610051a11891c`
++- v1_2_2_full: `kividb 1.2.2`, sha256 `ac5e05fe1274fd1167780e512bc03aa103340f42525a2cef4a2a762e47317ad5`, rustc 1.100.0
++- candidate commit: `7f7c0541`
++- date: 2026-11-27; FULL=0, SCALE=1
++- run time: 56-burst-between-commands 23s
++
++## 56-burst-between-commands
++
++| config | metric | unit | v1.2.2 | candidate | Redis | recorded | gate | result |
++|---|---|---|---:|---:|---:|---:|---|---|
++| tokio | burst_cpu_us | us | 284.0 | 253.3 | 312.9 | - | info | info |
++| tokio | burst_reads | reads | 13.00 | 2 | 3 | - | rel: rel 0%: nothing recorded<br>vs_v1_2_2: 0.15x v1.2.2 <= 1.1x | new<br>pass |
++| tokio | slow_cpu_us | us | 113.5 | 120.4 | 96.94 | - | info | info |
++| uring | burst_cpu_us | us | 253.0 | 252.5 | 305.4 | - | info | info |
++| uring | burst_reads | reads | 2 | 2 | 3 | - | rel: rel 0%: nothing recorded<br>vs_v1_2_2: 1.00x v1.2.2 <= 1.1x | new<br>pass |
++| uring | slow_cpu_us | us | 107.0 | 127.6 | 96.21 | - | info | info |
++
++## Not run this time
++
++`01-scan-match/default/dbsize`, `01-scan-match/default/hscan_match_c1000_calls`, `01-scan-match/default/hscan_match_c1000_distinct`, `01-scan-match/default/hscan_match_c1000_ms`, `01-scan-match/default/keys_schedule_ms`, `01-scan-match/default/keys_schedule_returned`, `01-scan-match/default/scan_all_c1000_calls`, `01-scan-match/default/scan_all_c1000_distinct`, `01-scan-match/default/scan_all_c1000_ms`, `01-scan-match/default/scan_infix_c1000_calls`, `01-scan-match/default/scan_infix_c1000_distinct`, `01-scan-match/default/scan_infix_c1000_ms`, `01-scan-match/default/scan_match_c10000_calls`, `01-scan-match/default/scan_match_c10000_distinct`, `01-scan-match/default/scan_match_c10000_ms`, `01-scan-match/default/scan_match_c1000_calls`, `01-scan-match/default/scan_match_c1000_distinct`, `01-scan-match/default/scan_match_c1000_ms`, `01-scan-match/default/sscan_match_c1000_calls`, `01-scan-match/default/sscan_match_c1000_distinct`, `01-scan-match/default/sscan_match_c1000_ms`, `01-scan-match/default/zscan_match_c1000_calls`, `01-scan-match/default/zscan_match_c1000_distinct`, `01-scan-match/default/zscan_match_c1000_ms`, `02-growth-ping/ex17m/dbsize`, `02-growth-ping/ex17m/load_s`, `02-growth-ping/ex17m/ping_max_ms`, `02-growth-ping/ex17m/ping_p99_ms`, `02-growth-ping/ex17m/pings`, `02-growth-ping/ex17m/pings_over_10ms`, `02-growth-ping/ex17m/rss_loaded_mib`, `02-growth-ping/ex17m/used_memory_mib`, `02-growth-ping/tokio/dbsize`, `02-growth-ping/tokio/load_s`, `02-growth-ping/tokio/ping_max_ms`, `02-growth-ping/tokio/ping_p99_ms`, `02-growth-ping/tokio/pings`, `02-growth-ping/tokio/pings_over_10ms`, `02-growth-ping/tokio/rss_loaded_mib`, `02-growth-ping/tokio/used_memory_mib`, `02-growth-ping/uring1/dbsize`, `02-growth-ping/uring1/load_s`, `02-growth-ping/uring1/ping_max_ms`, `02-growth-ping/uring1/ping_p99_ms`, `02-growth-ping/uring1/pings`, `02-growth-ping/uring1/pings_over_10ms`, `02-growth-ping/uring1/rss_loaded_mib`, `02-growth-ping/uring1/used_memory_mib`, `03-give-back/churn/delete_ms`, `03-give-back/churn/rss_after_15s_mib`, `03-give-back/churn/rss_after_1_5s_mib`, `03-give-back/churn/rss_after_5s_mib`, `03-give-back/churn/rss_loaded_mib`, `03-give-back/churn/rss_start_mib`, `03-give-back/churn/used_after_mib`, `03-give-back/churn/used_loaded_mib`, `03-give-back/hashdel/delete_ms`, `03-give-back/hashdel/rss_after_15s_mib`, `03-give-back/hashdel/rss_after_1_5s_mib`, `03-give-back/hashdel/rss_after_5s_mib`, `03-give-back/hashdel/rss_loaded_mib`, `03-give-back/hashdel/rss_start_mib`, `03-give-back/hashdel/used_after_mib`, `03-give-back/hashdel/used_loaded_mib`, `03-give-back/hdel/delete_ms`, `03-give-back/hdel/rss_after_15s_mib`, `03-give-back/hdel/rss_after_1_5s_mib`, `03-give-back/hdel/rss_after_5s_mib`, `03-give-back/hdel/rss_loaded_mib`, `03-give-back/hdel/rss_start_mib`, `03-give-back/hdel/used_after_mib`, `03-give-back/hdel/used_loaded_mib`, `04-long-commands/tokio/dbsize`, `04-long-commands/tokio/del_cmd_ms`, `04-long-commands/tokio/del_probes_stalled`, `04-long-commands/tokio/del_reply`, `04-long-commands/tokio/del
+```
+
+**File**: `benchmarks/1.3.0/regressions/suites/55-idle-connection-memory.py` (modified, +4/-3)
+```diff
+@@ -8,7 +8,8 @@
+ once it has been quiet for `query-buffer-idle-resize-after`).
  
-     fn schedule(&self) {
-         use std::sync::atomic::Ordering::SeqCst;
--        if self.coding.swap(true, SeqCst) {
-+        if self.coding.load(Relaxed) || self.coding.swap(true, SeqCst) {
-             return;
-         }
-         match self.me.upgrade() {
-@@ -341,16 +359,25 @@ impl VectorIndex {
-             return false;
-         };
-         let Some(copy) = self.copy.get() else {
--            self.publish(slots);
-+            if !self.wants_copy(|| usize::MAX) || !self.publish(slots) {
-+                self.coding.store(false, SeqCst);
-+                return false;
-+            }
-             return true;
-         };
-         let mut picked: Vec<(usize, Vec<f32>)> = Vec::new();
-         let mut found = false;
-         {
-             let map = self.map.read();
-+            let since = std::time::Instant::now();
-             let words = map.dirty.len();
-             let start = self.cursor.load(Relaxed).min(words);
--            'words: for w in (start..words).chain(0..start) {
-+            'words: for (n, w) in (start..words).chain(0..start).enumerate() {
-+                if n % 1024 == 1023 && since.elapsed() >= CODING_HOLD {
-+                    self.cursor.store(w, Relaxed);
-+                    found = true;
-+                    break;
-+                }
-                 let word = &map.dirty[w];
-                 let mut bits = word.load(Relaxed);
-                 while bits != 0 {
-@@ -362,13 +389,18 @@ impl VectorIndex {
-                     if map.keys.get(slot).is_some_and(Option::is_some) {
-                         picked.push((slot, slots.vector(slot).to_vec()));
-                     }
--                    if picked.len() >= RUN {
-+                    if picked.len() >= RUN
-+                        || (picked.len().is_multiple_of(8) && since.elapsed() >= CODING_HOLD)
-+                    {
-                         self.cursor.store(w, Relaxed);
-                         break 'words;
-                     }
+ Configurations (each a fresh server; CONNS connections, 10,000, opened from
+-one client process; `CONFIG SET maxclients 20000` first):
++one client process; `CONFIG SET maxclients 20000` first). The count is the
++same at any SCALE: `clients` is gated equal to the recorded count.
+ 
+   tokio-idle  `--io-model tokio`: connections that send nothing
+   tokio-ping  `--io-model tokio`: each sends one `PING`, reads its reply,
+@@ -38,7 +39,7 @@
+ import time
+ 
+ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "lib"))
+-from suite import Suite, Config, rel, bound, info, KEEP_IMPROVEMENT, scaled  # noqa: E402
++from suite import Suite, Config, rel, bound, info, KEEP_IMPROVEMENT  # noqa: E402
+ from rss import vmrss_mib, MIB  # noqa: E402
+ 
+ S = Suite("55-idle-connection-memory", [
+@@ -62,7 +63,7 @@ def recv_exactly(s, n):
+ 
+ @S.run
+ def run(ctx):
+-    conns = scaled(CONNS, step=100)
++    conns = CONNS
+     soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+     if soft < conns + 100:
+         resource.setrlimit(resource.RLIMIT_NOFILE, (min(hard, conns + 1000), hard))
+```
+
+**File**: `benchmarks/1.3.0/regressions/suites/56-burst-between-commands.py` (added, +169/-0)
+```diff
+@@ -0,0 +1,169 @@
++#!/usr/bin/env python3
++"""Bursts between single commands: a connection keeps the read buffer it uses.
++
++A client that sends a pipelined burst, then a few single commands, then a
++burst again (a worker that flushes a batch of writes and then reads a few
++keys one at a time), and one whose requests each arrive in several small
++reads (a slow sender of 8 KiB values). A read buffer grown for a burst is
++given back only after 16 reads in a row have not needed it, so both keep the
++buffer from one burst or request to the next: the next burst is read in as
++many reads as the first, rather than one more each time, and nothing is
++grown and given back between them.
++
++Configurations (each a fresh server, `--threads 2`; one connection):
++
++  uring  `--io-model uring`
++  tokio  `--io-model tokio`
++
++Each runs, after 5 cycles of warm-up:
++
++  burst  CYCLES cycles of one pipelined burst of 400 `SET k<i> <100 B>`
++         (about 50 KiB, sent in one write), its replies read, then 4 `GET`s,
++         each read before the next
++  slow   SLOW requests, each `SET` of an 8 KiB value sent in 2 KiB pieces
++         2 ms apart, its reply read before the next
++
++  burst_reads      the server's reads a burst cycle (INFO
++                   total_reads_processed), less the 4 `GET`s'
++  burst_cpu_us     the server's CPU time a burst cycle (every thread's
++                   schedstat), shown
++  slow_cpu_us      the server's CPU time a slow request, shown
++
++Gates (the candidate): `burst_reads` within 0.25 of recorded and at most
++1.1x v1.2.2's (whose read buffer is 32 KiB from the start) in the same
++session. v1.2.2 and Redis are shown.
++"""
++import os
++import socket
++import sys
++import time
++
++sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "lib"))
++from suite import Suite, Config, rel, info, vs_v1_2_2, scaled  # noqa: E402
++
++S = Suite("56-burst-between-commands", [
++    Config("uring", io="uring", threads=2),
++    Config("tokio", io="tokio", threads=2),
++])
++CYCLES = 2000
++SLOW = 200
++BURST = 400
++SINGLES = 4
++
++
++def enc(*args):
++    out = b"*%d\r\n" % len(args)
++    for a in args:
++        if isinstance(a, str):
++            a = a.encode()
++        out += b"$%d\r\n%s\r\n" % (len(a), a)
++    return out
++
++
++class Conn:
++    def __init__(self, port):
++        self.s = socket.create_connection(("127.0.0.1", port), timeout=60)
++        self.s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
++        self.buf = b""
++
++    def _fill(self):
++        d = self.s.recv(1 << 20)
++        if not d:
++            raise RuntimeError("connection closed")
++        self.buf += d
++
++    def line(self):
++        while b"\r\n" not in self.buf:
++            self._fill()
++        i = self.buf.index(b"\r\n")
++        ln, self.buf = self.buf[:i], self.buf[i + 2:]
++        return ln
++
++    def reply(self):
++        ln = self.line()
++        if ln[:1] == b"$":
++            n = int(ln[1:])
++            if n < 0:
++                return None
++            while len(self.buf) < n + 2:
++                self._fill()
++            v, self.buf = self.buf[:n], self.buf[n + 2:]
++            return v
++        if ln[:1] == b"-":
++            raise RuntimeError(ln.decode())
++        return ln
++
++    def cmd(self, *args):
++        self.s.sendall(enc(*args))
++        return self.reply()
++
++
++def server_cpu(pid):
++    """Seconds on a CPU, every thread of the server (schedstat, ns)."""
++    t = 0
++    for tid in os.listdir("/proc/%d/task" % pid):
++        try:
++            with open("/proc/%d/task/%s/schedstat" % (pid, tid)) as f:
++                t += int(f.read().split()[0])
++        except OSError:
++            pass
++    return t / 1e9
++
++
++@S.run
++def run(ctx):
++    cycles = scaled(CYCLES, step=100)
++    slow = scaled(SLOW, step=20)
++    ctl = ctx.client()
++    c = Conn(ctx.port)
++    value = b"b" * 100
++    burst = b"".join(enc("SET", "k%d" % i, value) for i in range(BURST))
++
++    def burst_cycle():
++        c.s.sendall(burst)
++        for _ in range(BURST):
++            if c.reply() != b"+OK":
++                raise RuntimeError("SET in a burst not OK")
++        for i in range(SINGLES):
++            if c.cmd("GET", "k%d" % i) != value:
++                raise RuntimeError("GET k%d" % i)
++
++    slow_request = enc("SET", "slow", b"s" * 8192)
++
++    def slow_cycle():
++        for i in range(0, len(slow_request), 2048):
++            c.s.sendall(slow_request[i:i + 2048])
++            time.sleep(0.002)
++        if c.reply() != b"+OK":
++            raise RuntimeError("slow SET not OK")
++
++    def reads():
++        return int(ctl.info("stats")["total_reads_processed"])
++
++    for _ in range(5):
++        burst_cycle()
++    r0, t0 = reads(), server_cpu(ctx.pid)
++    for _ in range(cycles):
++        burst_cycle()
++    # The INFO that reads the count is one read of its own connection.
++    r1, t1 = reads() - 1, server_cpu(ctx.pid)
++    burst_reads = (r1 - r0) / float(cycles) - SINGLES
++    burst_cpu = (t1 - t0) * 1e6 / 
+```
+
+**File**: `docs/CONFIGURATION.md` (modified, +4/-2)
+```diff
+@@ -140,8 +140,10 @@ warning. Cluster bus links, a replica's link to its master and files written whi
+ are not counted in that; leave room for them in a large cluster.
+ 
+ A connection's read buffer starts at 4 KiB and its reply buffers start empty, so a connection that
+-has sent nothing holds little more than that. A read buffer grown for a burst goes back to 4 KiB
+-once the connection's requests are small again, with the reply buffers; on the Tokio loop a
++has sent nothing holds little more than that. A read buffer grown for a burst goes back to 4 KiB,
++with the reply buffers, once sixteen reads in a row have not needed more than 4 KiB of it: a
++client whose requests arrive in several small reads, or that sends pipelined bursts between a few
++single commands, keeps the size it uses rather than growing it again for each. On the Tokio loop a
+ quiet connection also gives them back after `query-buffer-idle-resize-after`. On io_uring a read
+ buffer that has grown stays at its size while a read is pending on it. Suite
+ `55-idle-connection-memory` under `benchmarks/1.3.0/regressions/` measures what 10,000 idle
+```
+
+---
+
+### Incident Patch 2: `f67b1595` (2026-11-27)
+**Commit Message**: Config: daemonize yes is accepted with a warning (#1076)
+
+KiviDB runs in the foreground; the directive is reported as having no effect, like save and pidfile. A value that is neither yes nor no stops the start. Closes #1075.
+
+**File**: `docs/MIGRATING_FROM_REDIS.md` (modified, +1/-0)
+```diff
+@@ -65,6 +65,7 @@ The ones that behave differently:
+ | Directive | In KiviDB |
+ |---|---|
+ | `io-threads` | Accepted, no effect: commands run on every core. `--threads` sets the worker count (default: half the CPUs available to the process, rounded up, at least 2 where there are 2 or more). |
++| `daemonize` | `no` is accepted quietly; `yes` is accepted with a warning and has no effect. KiviDB always runs in the foreground — use systemd, Docker, or a process supervisor to run it in the background. |
+ | `save <points>` | Accepted with a warning, no effect. KiviDB doesn't snapshot on a schedule. Use `appendonly yes`, or `BGSAVE`. |
+ | `appendfsync` | `always` and `everysec` as in Redis. `no` is taken as `everysec`, with a warning. |
+ | `dbfilename`, `appendfilename` | Fixed: `dump.kdb` and `appendonly.aof`. KiviDB reads a Redis `dump.rdb` if there is no `dump.kdb`. `CONFIG GET dbfilename` answers `dump.kdb`, with `CONFIG GET dir` the place to find it after a `SAVE`. |
+```
+
+**File**: `src/config.rs` (modified, +10/-6)
+```diff
+@@ -2381,9 +2381,7 @@ impl Config {
+             }
+             "daemonize" => {
+                 if yes_no(key, one()?)? {
+-                    return Err(
+-                        "'daemonize yes' is not supported: KiviDB runs in the foreground".into(),
+-                    );
++                    return no_effect("KiviDB runs in the foreground");
                  }
              }
-         }
-+        if picked.is_empty() && found {
-+            return true;
-+        }
-         if !found {
-             self.coding.store(false, SeqCst);
-             let more = self.map.read().any_dirty();
-@@ -404,28 +436,44 @@ impl VectorIndex {
-         true
-     }
+             // When the AOF is synced (#513). It used to be read and warned
+@@ -3137,7 +3135,7 @@ mod config_file_tests {
+             "requirepass \"unterminated",
+             "maxmemory-policy allkeys-mru",
+             "maxmemory-samples 0",
+-            "daemonize yes",
++            "daemonize maybe",
+             "dbfilename other.rdb",
+         ] {
+             let err = load(bad).unwrap_err();
+@@ -3366,9 +3364,15 @@ mod config_file_tests {
  
--    fn publish(&self, slots: &Slots) {
-+    fn publish(&self, slots: &Slots) -> bool {
-         let codec = Codec::new(slots.dim());
-+        let set = flat_int8::times_set();
-+        let limit = crate::RUNTIME_MAXMEMORY.load(Relaxed);
-+        let len = self.map.read().keys.len();
-+        let need = len.saturating_mul(codec.bytes());
-+        if limit != 0 && crate::memory_use::counted().saturating_add(need) > limit {
-+            self.declined.store(set + 1, Relaxed);
-+            crate::log_warn!(
-+                "search-flat-int8: no int8 copy made for a FLAT index of {len} vectors: its \
-+                 {need} bytes would go past maxmemory ({limit}); set search-flat-int8 again \
-+                 to try once more"
-+            );
-+            return false;
-+        }
-         let bytes = Slots::bytes_only(codec.bytes());
-         loop {
-             let len = self.map.read().keys.len();
-             if len > 0 {
-                 bytes.reserve(len - 1);
-             }
-+            let dirty: Vec<AtomicU64> = (0..len.div_ceil(64) + 64)
-+                .map(|_| AtomicU64::new(u64::MAX))
-+                .collect();
-             let mut map = self.map.write();
--            let len = map.keys.len();
--            if len == 0 || bytes.has(len - 1) {
--                for slot in 0..len {
--                    if map.keys[slot].is_some() {
--                        map.mark(slot as u32);
--                    }
--                }
--                let _ = 
-```
-
-**File**: `src/vector/flat_int8.rs` (modified, +7/-1)
-```diff
-@@ -3,7 +3,7 @@
- //! shows it cannot enter the nearest `k`, so a scan returns exactly what the
- //! exact scan returns, ties and order included.
- 
--use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
-+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering::Relaxed};
- 
- use super::{DistanceMetric, simd};
- 
-@@ -30,9 +30,15 @@ const EPSILON: f64 = 1.0 / (1u64 << 48) as f64;
- const SUBNORMAL: f64 = 1.401_298_464_324_817e-45;
- 
- static ENABLED: AtomicBool = AtomicBool::new(false);
-+static SET: AtomicU64 = AtomicU64::new(0);
- 
- pub fn set_enabled(on: bool) {
-     ENABLED.store(on, Relaxed);
-+    SET.fetch_add(1, Relaxed);
-+}
-+
-+pub(crate) fn times_set() -> u64 {
-+    SET.load(Relaxed)
- }
- 
- pub fn enabled() -> bool {
-```
-
----
-
-### Incident Patch 2: `e23ebea9` (2026-11-25)
-**Commit Message**: Regression suite 54 recorded again; SCRIPTS.md: how keys without a tag are locked, and the cycle measured (#1049)
-
-**File**: `benchmarks/1.3.0/regressions/baseline.json` (modified, +23/-23)
-```diff
-@@ -36340,12 +36340,12 @@
-       "better": "lower",
-       "recorded": {
-         "v1_2_2": 252.0,
--        "candidate": 127.0,
--        "redis": 173.0,
-+        "candidate": 132.0,
-+        "redis": 178.0,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
-@@ -36365,13 +36365,13 @@
-       "unit": "us",
-       "better": "lower",
-       "recorded": {
--        "v1_2_2": 720.0,
--        "candidate": 178.0,
--        "redis": 295.0,
-+        "v1_2_2": 724.0,
-+        "candidate": 183.0,
-+        "redis": 308.0,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
-@@ -36391,13 +36391,13 @@
-       "unit": "ops/s",
-       "better": "higher",
-       "recorded": {
--        "v1_2_2": 127453.9,
--        "candidate": 253686.9,
--        "redis": 182647.9,
-+        "v1_2_2": 125979.9,
-+        "candidate": 244396.3,
-+        "redis": 177057.5,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
-@@ -36425,13 +36425,13 @@
-       "unit": "cpus",
-       "better": "lower",
-       "recorded": {
--        "v1_2_2": 3.3361,
--        "candidate": 3.9968,
--        "redis": 2.8553,
-+        "v1_2_2": 3.3344,
-+        "candidate": 3.9964,
-+        "redis": 2.862,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
-@@ -36450,13 +36450,13 @@
-       "unit": "us",
-       "better": "lower",
-       "recorded": {
--        "v1_2_2": 181.0,
--        "candidate": 122.0,
--        "redis": 169.0,
-+        "v1_2_2": 185.0,
-+        "candidate": 126.0,
-+        "redis": 175.0,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
-@@ -36475,13 +36475,13 @@
-       "unit": "us",
-       "better": "lower",
-       "recorded": {
--        "v1_2_2": 760.0,
--        "candidate": 172.0,
--        "redis": 291.0,
-+        "v1_2_2": 781.0,
-+        "candidate": 175.0,
-+        "redis": 302.0,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
-```
-
-**File**: `benchmarks/1.3.0/regressions/results/pr-1049-54-final/env.json` (modified, +5/-5)
-```diff
-@@ -5,15 +5,15 @@
-  "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-  "nproc": 8,
-  "cpu_count": 8,
-- "calib_ms": 97.1,
-+ "calib_ms": 92.1,
-  "kernel": "7.0.0-1017-azure",
-  "glibc": "2.39",
-  "python": "3.12.3",
-  "redis_py": "5.2.1",
-- "candidate_commit": "f3bd52d6",
-+ "candidate_commit": "8b3be2d3",
-  "candidate_allocator": "mimalloc",
-  "suite_seconds": {
--  "54-yii2-mutex": 109
-+  "54-yii2-mutex": 110
-  },
-  "scale": "1",
-  "full": "0",
-@@ -44,7 +44,7 @@
-   },
-   "candidate": {
-    "path": "/home/azureuser/tgt-branch/release/kividb",
--   "sha256": "c6a808f7d8eda1034ff8be2ac061ab9a753898d2c3f7aa2eac2a697dfab86664",
-+   "sha256": "783f9be3fc712bda2f62f8368935bc6de282417e73452a21da3bd666a9e064c0",
-    "version": "kividb 1.2.1 (full build: Lua, TLS)",
-    "rustc": "1.100.0"
-   },
-@@ -62,7 +62,7 @@
-   },
-   "candidate_full": {
-    "path": "/home/azureuser/tgt-branch/release/kividb",
--   "sha256": "c6a808f7d8eda1034ff8be2ac061ab9a753898d2c3f7aa2eac2a697dfab86664",
-+   "sha256": "783f9be3fc712bda2f62f8368935bc6de282417e73452a21da3bd666a9e064c0",
-    "version": "kividb 1.2.1 (full build: Lua, TLS)",
-    "rustc": "1.100.0"
-   }
-```
-
-**File**: `benchmarks/1.3.0/regressions/results/pr-1049-54-final/summary.md` (modified, +15/-13)
-```diff
-@@ -2,31 +2,33 @@
- 
- Verdict: **ok**
- 
--NOTE: v1.2.2 has no usable value for the speed metrics of 1 gate(s): speed gates were compared absolutely against the recorded values (54-yii2-mutex/uring4/ops_per_s).
--
- - Machine: Standard_D8s_v5, 8 vCPU, Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz, kernel 7.0.0-1017-azure, glibc 2.39
- - CPU: recorded on INTEL(R) XEON(R) PLATINUM 8573C / Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz / Intel(R) Xeon(R) Platinum 8473C; now Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
--- calibration (indicative only): 97.1 ms for a fixed sha256 loop, 8 cores
-+- calibration (indicative only): 92.1 ms for a fixed sha256 loop, 8 cores
- - Client: Python 3.12.3, redis-py 5.2.1
- - v1_2_2: `kividb 1.2.2`, sha256 `38fc2cea40c131e041f4914527a98719e5d34dffdfe2abdc1f07ecb86aa6723e`, rustc 1.100.0
--- candidate: `kividb 1.2.1 (full build: Lua, TLS)`, sha256 `c6a808f7d8eda1034ff8be2ac061ab9a753898d2c3f7aa2eac2a697dfab86664`, rustc 1.100.0
-+- candidate: `kividb 1.2.1 (full build: Lua, TLS)`, sha256 `783f9be3fc712bda2f62f8368935bc6de282417e73452a21da3bd666a9e064c0`, rustc 1.100.0
- - redis: `Redis server v=8.10.2 sha=00000000:1 malloc=jemalloc-5.3.0 bits=64 build=75a9b36b1f0aa00`, sha256 `b0cd304980112fa6cd8dced524fdd6b136fd8efb802f5cf9e81610051a11891c`
- - v1_2_2_full: `kividb 1.2.2`, sha256 `ac5e05fe1274fd1167780e512bc03aa103340f42525a2cef4a2a762e47317ad5`, rustc 1.100.0
--- candidate_full: `kividb 1.2.1 (full build: Lua, TLS)`, sha256 `c6a808f7d8eda1034ff8be2ac061ab9a753898d2c3f7aa2eac2a697dfab86664`, rustc 1.100.0
--- candidate commit: `f3bd52d6`
-+- candidate_full: `kividb 1.2.1 (full build: Lua, TLS)`, sha256 `783f9be3fc712bda2f62f8368935bc6de282417e73452a21da3bd666a9e064c0`, rustc 1.100.0
-+- candidate commit: `8b3be2d3`
- - date: 2026-11-25; FULL=0, SCALE=1
--- run time: 54-yii2-mutex 109s
-+- run time: 54-yii2-mutex 110s
-+
-+Host speed (this host vs the recorded one; 1.00 = same, below 1 = slower), from v1.2.2 measured in both sessions: global 0.99x over 5 metrics
-+- 54-yii2-mutex/uring4: 0.99x (5 metrics)
-+- recorded on Standard_D8s_v5 / Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz: 0.99x (5 metrics)
- 
- ## 54-yii2-mutex
- 
- | config | metric | unit | v1.2.2 | candidate | Redis | recorded | gate | result |
- |---|---|---|---:|---:|---:|---:|---|---|
--| uring4 | eval_p50_us | us | 252.0 | 127.0 | 173.0 | - | vs_redis: 0.73x Redis <= 0.9x | pass |
--| uring4 | eval_p99_us | us | 720.0 | 178.0 | 295.0 | - | vs_redis: 0.60x Redis <= 1.1x | pass |
--| uring4 | ops_per_s | ops/s | 127,454 | 253,687 | 182,648 | - | vs_redis: 0.72x Redis <= 0.833333x<br>vs_v1_2_2: 0.50x v1.2.2 <= 0.625x<br>rel: rel 10%: nothing recorded | pass<br>pass<br>new |
--| uring4 | server_cpus | cpus | 3.34 | 4 | 2.86 | - | info | info |
--| uring4 | set_p50_us | us | 181.0 | 122.0 | 169.0 | - | info | info |
--| uring4 | set_p99_us | us | 760.0 | 172.0 | 291.0 | - | info | info |
-+| uring4 | eval_p50_us | us | 252.0 | 132.0 | 178.0 | 127.0 | vs_redis: 0.74x Redis <= 0.9x | pass |
-+| uring4 | eval_p99_us | us | 724.0 | 183.0 | 308.0 | 178.0 | vs_redis: 0.59x Redis <= 1.1x | pass |
-+| uring4 | ops_per_s | ops/s | 125,980 | 244,396 | 177,058 | 253,687 | vs_redis: 0.72x Redis <= 0.833333x<br>vs_v1_2_2: 0.52x v1.2.2 <= 0.625x<br>rel: >= 225,678 (10% under 250,753, recorded 253,687 scaled by host speed 0.99x (group)) | pass<br>pass<br>pass |
-+| uring4 | server_cpus | cpus | 3.33 | 4 | 2.86 | 4 | info | info |
-+| uring4 | set_p50_us | us | 185.0 | 126.0 | 175.0 | 122.0 | info | info |
-+| uring4 | set_p99_us | us | 781.0 | 175.0 | 302.0 | 172.0 | info | info |
- 
- ## Not run this time
- 
-```
-
-**File**: `benchmarks/1.3.0/regressions/suites/54-yii2-mutex.py` (modified, +3/-3)
-```diff
-@@ -33,9 +33,9 @@
- Gates in the same session: commands a second at least 1.2x Redis's and at
- least 1.6x v1.2.2's, and within 10 % of recorded; the `EVAL` p50 at most
- 0.9x Redis's and its p99 at most 1.1x Redis's. Recorded on a
--`Standard_D8s_v5` (`results/pr-1049-54-final`): 253,687 commands a second
--against Redis's 182,648 (1.39x), an `EVAL` p50/p99 of 127/178 us against
--Redis's 173/295; all of the candidate's releases ran beside others. Needs
-+`Standard_D8s_v5` (`results/pr-1049-54-final`): 244,396 commands a second
-+against Redis's 177,058 (1.38x), an `EVAL` p50/p99 of 132/183 us against
-+Redis's 178/308; all of the candidate's releases ran beside others. Needs
- the `lua,tls` builds (`--candidate-full`); `min_cpus=8`.
- """
- import json
-```
-
-**File**: `docs/SCRIPTS.md` (modified, +10/-11)
-```diff
-@@ -414,24 +414,23 @@ whatever `lua-parallel-scripts` says. The setting decides whether a script
- may run beside others; a script that started by the setting before a
- `CONFIG SET` finds the tags it holds locked all the same.
- 
--Measured on an Azure `Standard_D8s_v5` (Intel Xeon Platinum 8370C; the
--server pinned to 4 vCPUs with `taskset`, `--threads 4`; Redis 8.12 and
--Valkey 8.1 with `--io-threads 4`; the load on the other 4): yii2-redis's
-+Measured on 2026-11-26 on an Azure `Standard_D8s_v5` (Intel Xeon Platinum
-+8370C; the server pinned to 4 vCPUs with `taskset`, `--threads 4`; Redis
-+8.12 and Valkey 8.1 with `--io-threads 4`; the load on the other 4): yii2-redis's
- `Mutex` cycle, `SET <lock> <token> NX PX 30000` and then the release above
- by `EVAL` with the script's text every time, 32 connections each on a lock
- of its own, one command at a time per connection, 10 s, three runs each,
- the servers in turn (median):
- 
- | | ops/s | `EVAL` p50 / p99 (µs) | `SET` p50 / p99 (µs) |
- |---|---:|---:|---:|
--| this build | 300,200 | 101 / 245 | 97 / 238 |
--| the build before | 159,500 | 203 / 432 | 184 / 396 |
--| Redis 8.12 | 211,300 | 146 / 285 | 142 / 280 |
--| Valkey 8.1 | 235,400 | 129 / 279 | 131 / 282 |
--
--The build before ran each release alone, the other commands held back
--around it; its four worker threads were 70 % busy. This build runs them
--beside each other, its four threads at 99 %.
-+| releases beside others (#1049) | 293,700 | 103 / 272 | 98 / 264 |
-+| releases alone (before #1049) | 159,900 | 203 / 428 | 184 / 392 |
-+| Redis 8.12 | 210,100 | 148 / 284 | 143 / 279 |
-+| Valkey 8.1 | 235,500 | 129 / 279 | 131 / 280 |
-+
-+Run alone, each release held the other commands back around it, and the
-+four worker threads were 70 % busy; beside each other, they were at 99 %.
- 
- ### What to know
- 
-```
-
----
-
-### Incident Patch 3: `ac55551f` (2026-11-25)
-**Commit Message**: FLAT int8: the coder paced, and the build's cost to searches documented (#1033)
-
-After each run the coder sleeps as long as the run took, three times as
-long when writes to the index arrived since its last run (counted under
-the write lock the write already holds): at most about half a CPU while
-it builds a copy, a quarter under a steady load.
-
-CONFIGURATION.md gives the search latency while a copy is made, from the
-D8s_v5 run, and the coder's pacing.
-
-**File**: `docs/CONFIGURATION.md` (modified, +10/-1)
-```diff
-@@ -389,7 +389,10 @@ x86_64 only; elsewhere the switch is taken and the pass is not used.
- The copy is made and kept up to date by one thread, `flat-int8`, not by the writes: a write
- marks its slot, and the thread codes what is marked with no lock held, stores each code
- under the write lock only if the slot still holds the same vector, and lets writers and
--searches in every 50 µs. Until a slot is coded again a scan measures it exactly. The copy
-+searches in every 50 µs. Until a slot is coded again a scan measures it exactly. After each
-+run the thread sleeps as long as the run took, three times as long while writes to the
-+index keep arriving, so it takes at most about half a CPU while it builds a copy and a
-+quarter under a steady load. The copy
- takes 16 bytes plus one a dimension per vector, is counted in `used_memory`, is not saved,
- and is made again after a restart. `FT.INFO` shows it under `flat_int8_indexes`: the field,
- its bytes, and how many candidates the pass skipped and measured exactly since the index
-@@ -403,6 +406,12 @@ again (`CONFIG SET search-flat-int8 yes`) lets it try once more. Made near the l
- can still leave too little room for the writes that follow, which then evict keys or, under
- `noeviction`, are refused.
- 
-+While a copy is being made, searches of its index are slower than with the switch off,
-+and they are faster once it is made. On an Azure D8s_v5 (server on 4 CPUs) with 1M vectors
-+of 1,536 dimensions and 4 clients each running a KNN 5 over 100,000 candidates, the p99 was
-+69 ms with the switch off, 121 ms for the 36 s the copy took to make, and 37 ms after.
-+Switching it on over a large index is best done when the index is not busiest.
-+
- A scan the query's timeout cuts returns the nearest of the candidates it reached, as it
- does without the pass.
- 
-```
-
-**File**: `src/vector/flat.rs` (modified, +19/-0)
-```diff
-@@ -84,6 +84,7 @@ pub struct VectorIndex {
-     coding: AtomicBool,
-     cursor: AtomicUsize,
-     declined: AtomicU64,
-+    writes_seen: AtomicU64,
-     counts: Counts,
-     #[cfg(test)]
-     always: AtomicBool,
-@@ -128,6 +129,7 @@ struct Map {
-     /// says the same.
-     doc_slot: Vec<AtomicU32>,
-     dirty: Vec<AtomicU64>,
-+    writes: u64,
- }
- 
- impl Map {
-@@ -317,6 +319,7 @@ impl VectorIndex {
-             // the read lock.
-             unsafe { copy.slots.write_bytes(slot as usize, 0, &[0; HEADER]) };
-             map.mark(slot);
-+            map.writes += 1;
-         }
-         let count = map.by_key.len();
-         drop(map);
-@@ -353,6 +356,11 @@ impl VectorIndex {
-         }
-     }
- 
-+    fn writes_arriving(&self) -> bool {
-+        let now = self.map.read().writes;
-+        self.writes_seen.swap(now, Relaxed) != now
-+    }
-+
-     fn code_some(&self) -> bool {
-         use std::sync::atomic::Ordering::SeqCst;
-         let Some(slots) = self.slots.get() else {
-@@ -803,6 +811,10 @@ mod coder {
- 
-     type Queue = (VecDeque<Weak<VectorIndex>>, bool);
- 
-+    const PACE_WRITES: u32 = 3;
-+    const PACE_BUILD: u32 = 1;
-+    const PACE_MOST: std::time::Duration = std::time::Duration::from_millis(20);
-+
-     static QUEUE: parking_lot::Mutex<Queue> = parking_lot::const_mutex((VecDeque::new(), false));
-     static READY: parking_lot::Condvar = parking_lot::Condvar::new();
- 
-@@ -840,6 +852,7 @@ mod coder {
-             let Some(strong) = index.upgrade() else {
-                 continue;
-             };
-+            let started = std::time::Instant::now();
-             let more =
-                 match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| strong.code_some()))
-                 {
-@@ -860,8 +873,14 @@ mod coder {
-                         false
-                     }
-                 };
-+            let pace = if more && strong.writes_arriving() {
-+                PACE_WRITES
-+            } else {
-+                PACE_BUILD
-+            };
-             drop(strong);
-             if more {
-+                std::thread::sleep((started.elapsed() * pace).min(PACE_MOST));
-                 QUEUE.lock().0.push_back(index);
-             }
-         }
+     #[test]
+     fn redis_directives_with_no_effect_are_reported_and_not_fatal() {
+-        let (_, warnings) = load("save 900 1\ntcp-keepalive 300\nappendfsync no\n").unwrap();
+-        assert_eq!(warnings.len(), 3, "{warnings:?}");
++        let (_, warnings) =
++            load("save 900 1\ntcp-keepalive 300\nappendfsync no\ndaemonize yes\n").unwrap();
++        assert_eq!(warnings.len(), 4, "{warnings:?}");
+         assert!(warnings[0].contains("line 1") && warnings[0].contains("'save'"));
++        assert!(
++            warnings[3].contains("line 4")
++                && warnings[3].contains("'daemonize'")
++                && warnings[3].contains("foreground")
++        );
+         // The values KiviDB already behaves as are not worth a warning.
+         let (_, warnings) =
+             load("save \"\"\nappendfsync everysec\ndaemonize no\ndbfilename dump.kdb\n").unwrap();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1053** (2026-11-26): BITPOS works out its range in signed units, as Redis does (@Seyamalam)
-- **PR #1052** (2026-11-26): Scripts that keep to their keys run beside others when the keys have no hash tag (#1049) (@murtazayusuf)
-- **PR #1051** (2026-11-25): Wait for cluster promotion warning in mixed-version tests (@Parikalp-Bhardwaj)
-- **PR #1050** (2026-11-26): FLAT KNN: an int8 first pass with exact re-scoring (#1033) (@IIITManjeet)
-- **PR #1048** (2026-11-25): Write SETRANGE and BITFIELD changes in place on large strings (@Parikalp-Bhardwaj)
-- **PR #1047** (2026-11-25): Search: level rows come in the order their documents were written (@murtazayusuf)
+- **PR #1077** (2026-11-27): Connections: a grown read buffer is kept while its turns need it, and given back after sixteen that do not (@murtazayusuf)
+- **PR #1076** (2026-11-27): Config: warn on daemonize yes instead of failing at startup (@JituRewar)
+- **PR #1073** (2026-11-27): Connections: read and reply buffers start small and are given back when a connection goes idle (@murtazayusuf)
+- **PR #1071** (2026-11-27): INFO fields for redis_exporter: client buffers, ACL denials, saves, replication traffic, expiry (@murtazayusuf)
+- **PR #1068** (2026-11-27): e2e: pub/sub tests publish after the subscription is confirmed; a limit on each e2e step (@murtazayusuf)
+- **PR #1067** (2026-11-27): Allocate collection group arrays from chunk slabs (@BLVCK-MAMBA-6)
 
 ---
 
@@ -2158,80 +2189,32 @@ D8s_v5 run, and the coder's pacing.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. FLAT int8: holds bounded in time, the setting checked before the build, maxmemor
+## X. Connections: a grown read buffer is kept while its turns need it, and given back
 
 **RULE**:
-When implementing operations in `src/vector/flat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kividbio/kividb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/1.3.0/regressions/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kividbio/kividb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `87a9d213`: FLAT int8: holds bounded in time, the setting checked before the build, maxmemory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59b4cf65`: Connections: a grown read buffer is kept while its turns need it, and given back after sixteen that do not. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/vector/flat.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/1.3.0/regressions/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    declined: AtomicU64,
-    counts: Counts,
-    #[cfg(test)]
-    always: AtomicBool,
-}
-
-#[derive(Debug, Default)]
-#[repr(align(128))]
-struct Counts {
-        if copy.is_some() || self.wants_copy(|| count) {
-    fn switched_on(&self) -> bool {
-        #[cfg(test)]
-        if self.always.load(Relaxed) {
-            return true;
-        }
-    }
-
-    fn wants_copy(&self, count: impl FnOnce() -> usize) -> bool {
-        self.switched_on()
-            && self.declined.load(Relaxed) != flat_int8::times_set() + 1
-            && count() >= flat_int8::BUILD_AT
-        if self.coding.load(Relaxed) || self.coding.swap(true, SeqCst) {
-            if !self.wants_copy(|| usize::MAX) || !self.publish(slots) {
-                self.coding.store(false, SeqCst);
-                return false;
-            }
-            let since = std::time::Instant::now();
-            'words: for (n, w) in (start..words).chain(0..start).enumerate() {
-                if n % 1024 == 1023 && since.elapsed() >= CODING_HOLD {
-                    self.cursor.store(w, Relaxed);
-                    found = true;
-                    break;
-                }
-                    if picked.len() >= RUN
-                        || 
+| `56-burst-between-commands` | idle connections, the read buffer kept | one connection, on io_uring and on Tokio, each a configuration (`--threads 2`): 2,000 cycles of a pipelined burst of 400 `SET`s of 100 B (about 50 KiB in one write) then 4 `GET`s one at a time; and 200 `SET`s of an 8 KiB value sent in 2 KiB pieces 2 ms apart. The server's reads a burst (INFO `total_reads_processed`, less the `GET`s'), and its CPU time a burst cycle and a slow request (every thread's schedstat, shown). Gates: `burst_reads` within 0.25 of recorded and at most 1.1x v1.2.2's in the same session (a read buffer given back between bursts makes each burst one read more). Recorded on a `Standard_D8s_v5` (`results/buffer-reuse-56-d8s_v5`) |
+| `56-burst-between-commands` | 2 | as suite `55`: one connection |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        if copy.is_some() || self.wants_copy(count) {
-    fn wants_copy(&self, count: usize) -> bool {
-            && count >= flat_int8::BUILD_AT
-        if self.coding.swap(true, SeqCst) {
-            self.publish(slots);
-            'words: for w in (start..words).chain(0..start) {
-                    if picked.len() >= RUN {
-    fn publish(&self, slots: &Slots) {
-            let len = map.keys.len();
-            if len == 0 || bytes.has(len - 1) {
-                for slot in 0..len {
-                    if map.keys[slot].is_some() {
-                        map.mark(slot as u32);
-                    }
-                }
-                let _ = 
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87a9d213` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59b4cf65` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

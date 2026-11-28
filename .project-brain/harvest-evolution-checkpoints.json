@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T00:09:52.175Z",
+  "last_updated": "2026-11-28T00:19:40.704Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T23:57:47.987Z",
+      "processed_at": "2026-11-28T00:19:39.168Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3183,7 +3183,7 @@
       "staged_for_review": 1
     },
     "webrecorder-pywb-learnings.md": {
-      "processed_at": "2026-11-20T15:15:26.414Z",
+      "processed_at": "2026-11-28T00:19:35.985Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3963,9 +3963,9 @@
       "staged_for_review": 0
     },
     "kividbio-kividb-learnings.md": {
-      "processed_at": "2026-11-27T05:12:43.808Z",
+      "processed_at": "2026-11-28T00:19:37.962Z",
       "promoted_canonical": 0,
-      "staged_for_review": 2
+      "staged_for_review": 1
     },
     "yetone-magpie-learnings.md": {
       "processed_at": "2026-11-26T12:59:38.324Z",
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5160,
+  "total_dossiers_evaluated": 5163,
   "total_canonical_promoted": 587,
-  "total_staged_for_review": 3903
+  "total_staged_for_review": 3906
 }

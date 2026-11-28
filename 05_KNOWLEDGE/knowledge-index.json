@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T00:09:51.946Z",
+  "last_updated": "2026-11-28T00:19:40.426Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26837,
+  "total_items": 26842,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9fdd8ca548e3e8c4abf36dad4dedc901958ece626521379e4123995cc190424f",
+      "content_hash": "64ebda0bf46afe7e256078138464621be51ce302f86319dbed6390b4356ea1b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T23:57:48.957Z"
+      "persisted_at": "2026-11-28T00:19:40.426Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -262981,8 +262981,8 @@
       "slug": "webrecorder-pywb",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/pywb",
-      "source_version": "28750e62",
-      "content_hash": "ef41bb330db7fa7c7d9e59396ffdb31641db80f87b359435a022e24421ac4835",
+      "source_version": "aff76541",
+      "content_hash": "e3846bca04ac0b5e4b1dc66ac635100ff56de16697c7a8909ade0a29b86c862a",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-pywb-learnings.md",
       "promoted_rules": [
@@ -262995,6 +262995,11 @@
           "number": 9586,
           "title": "Empirical Invariant Guard in loadWabac.js",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10995,
+          "title": "Empirical Invariant Guard in redisindexer.py",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -263002,7 +263007,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T15:15:13.158Z",
+      "verified_at": "2026-11-28T00:19:20.402Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263044,10 +263049,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-webrecorder-pywb-technical-construction-intelligence-webrecorder-pywb-core-invar.md",
       "title": "Technical Construction Intelligence: webrecorder/pywb Core Invariants",
       "repository": "webrecorder/pywb",
-      "source_version": "28750e62",
-      "content_hash": "533a6b0e2421a854f6e17dd14d9e84aa83d5d9fb6b8e35720f281bc401231eb3",
+      "source_version": "aff76541",
+      "content_hash": "8800933d8e66cfcd0cfcd7960ef2ff05641ed033443fbaf216e0633a991a6f8f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T15:15:13.722Z"
+      "persisted_at": "2026-11-28T00:19:21.430Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb",
@@ -263056,10 +263061,10 @@
       "relative_path": "08_VERIFICATION/webrecorder-pywb-verification-protocol-empirical-defect-shield-for-webrecorder-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for webrecorder/pywb",
       "repository": "webrecorder/pywb",
-      "source_version": "28750e62",
-      "content_hash": "562e03dc9e20c64dd7660c3385f3b91c7916deb654e047ddce7ac7d1f8a1b313",
+      "source_version": "aff76541",
+      "content_hash": "535da0ae13672297eed78f2973a2d0180049963ff7435b8481bbeec37141c670",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:15:13.874Z"
+      "persisted_at": "2026-11-28T00:19:21.707Z"
     },
     "learn-github-0xcub3-wblock": {
       "learning_id": "learn-github-0xcub3-wblock",
@@ -263273,9 +263278,9 @@
       "title": "Technical Construction Intelligence: webrecorder-pywb-learnings Core Invariants",
       "repository": "webrecorder-pywb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e7aaf2d8c4ed0a979b09bf52d513d4bec5331cdd8a3f7a3cde182024cf54e8a3",
+      "content_hash": "bb1d34cb301787acfcac0bc2ed0c730c77b5989fcadd2602684b079bc6ac2e66",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T15:15:27.165Z"
+      "persisted_at": "2026-11-28T00:19:37.398Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webrecorder-pywb-learnings",
@@ -263285,9 +263290,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for webrecorder-pywb-learnings",
       "repository": "webrecorder-pywb-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec6a1044a3304c45808ab3916a37b6e361b614dd83d0a55e429f7c14f91071f8",
+      "content_hash": "86b50846fd5d5a0f6855b3dfe7015c2bad0b32e361399b1f94de18b78b5e8dba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:15:27.315Z"
+      "persisted_at": "2026-11-28T00:19:37.681Z"
     },
     "candidate_directive-engine-respect-spotify-music-exceptions-across-blockers": {
       "item_id": "candidate_directive-engine-respect-spotify-music-exceptions-across-blockers",
@@ -355625,8 +355630,8 @@
       "slug": "kividbio-kividb",
       "platform": "github",
       "source_url": "https://github.com/kividbio/kividb",
-      "source_version": "3405fdb6",
-      "content_hash": "9b917fc1e614d45d9d599ddb2a8f5c889c5784d1eb5c60c81bf247195e452be5",
+      "source_version": "59b4cf65",
+      "content_hash": "1bae154edbefa7eca27fb46ede7a687a48290f9dc3bdd7e41f96c2ae6ec5d6f8",
       "dossier_path": "07_PROJECT_LEARNING/kividbio-kividb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kividbio-kividb-learnings.md",
       "promoted_rules": [
@@ -355639,6 +355644,11 @@
           "number": 10832,
           "title": "suite 53 recorded with the SETRANGE cases (D4s_v5)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10996,
+          "title": "a grown read buffer is kept while its turns need it, and given back",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -355646,7 +355656,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T05:11:28.726Z",
+      "verified_at": "2026-11-28T00:19:31.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -355688,10 +355698,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-kividbio-kividb-design-intelligence-kividbio-kividb-core-invariants.md",
       "title": "Design Intelligence: kividbio/kividb Core Invariants",
       "repository": "kividbio/kividb",
-      "source_version": "5a9db7f7",
-      "content_hash": "86a4a063a4873780561dd6ad89da194850fa2b9b1e1fb01e6b75bbfb8e8876fc",
+      "source_version": "59b4cf65",
+      "content_hash": "46b292b525cc9f77b70e264089c698f423c655b60d7eca05011a734b38a4367f",
       "domain_letter": "F",
-      "persisted_at": "2026-11-26T11:15:37.862Z"
+      "persisted_at": "2026-11-28T00:19:32.659Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kividbio-kividb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kividbio-kividb",
@@ -355700,10 +355710,10 @@
       "relative_path": "08_VERIFICATION/kividbio-kividb-verification-protocol-empirical-defect-shield-for-kividbio-kivid.md",
       "title": "Verification Protocol: Empirical Defect Shield for kividbio/kividb",
       "repository": "kividbio/kividb",
-      "source_version": "3405fdb6",
-      "content_hash": "73cfaa364ff5e79089829f64d2d9516bb4ed2b2f4f3940f64519859bf2c12e24",
+      "source_version": "59b4cf65",
+      "content_hash": "3378c413fcc5c4ce42ee2417f8b4742eeab0a24c7ebb79499401b23b410fa936",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T05:11:29.661Z"
+      "persisted_at": "2026-11-28T00:19:32.931Z"
     },
     "rule-10660": {
       "learning_id": "rule-10660",
@@ -355789,9 +355799,9 @@
       "title": "Design Intelligence: kividbio-kividb-learnings Core Invariants",
       "repository": "kividbio-kividb-learnings",
       "source_version": "HEAD",
-      "content_hash": "46cf2f5f2ca721bbb3672ca710db3534e10585ffe963b92d087d38f23d4e51e0",
+      "content_hash": "17f3b68356a2e71511f5b191b1ff70bf21889b766687511fadcc788f6f5b11b9",
       "domain_letter": "F",
-      "persisted_at": "2026-11-26T11:15:55.112Z"
+      "persisted_at": "2026-11-28T00:19:38.597Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kividbio-kividb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kividbio-kividb-learnings",
@@ -355801,9 +355811,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kividbio-kividb-learnings",
       "repository": "kividbio-kividb-learnings",
       "source_version": "HEAD",
-      "content_hash": "f21d860edae277bbc6ed4823370ea6fa1fb6678681fd12333839dbb77291f243",
+      "content_hash": "47efdb0e4a51c3ff27e67573c368f4306fa0fecce7e9e5397f11e5001d850bf8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T05:12:44.684Z"
+      "persisted_at": "2026-11-28T00:19:38.887Z"
     },
     "candidate_directive-wasm-rust-preserve-sse-events-with-crlf-line-endings": {
       "item_id": "candidate_directive-wasm-rust-preserve-sse-events-with-crlf-line-endings",
@@ -358721,13 +358731,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5X7J-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y120-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "39f538c98cd120e93984c063a27d014ef2cc2e70ec2f37c7075695a0d56b195c",
+      "content_hash": "6d20995751fa298ecb6f13996cebd2c7e6d2baaaf9e8def401f1302f5837202c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T23:57:48.514Z"
+      "persisted_at": "2026-11-28T00:19:39.870Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358737,9 +358747,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "61366e0f7c1e0f708bea476071fde5b0380701f129e18b3a1121c740f4c2771a",
+      "content_hash": "facb8ab178e995832aa8da42c0c54f73deb399cb594808786cb89259831ddf1f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T23:57:48.728Z"
+      "persisted_at": "2026-11-28T00:19:40.152Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -368650,6 +368660,70 @@
       "content_hash": "e9be6f2a1c952527196a979347bb7dd398e795a9847a6518dbb3646fd6b37f0a",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T00:09:47.895Z"
+    },
+    "rule-10995": {
+      "learning_id": "rule-10995",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10995,
+      "title": "Empirical Invariant Guard in redisindexer.py",
+      "source_url": "https://github.com/webrecorder/pywb",
+      "source_version": "aff76541",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T00:19:20.402Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-redisindexer-py": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-redisindexer-py",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XYXD-empirical-invariant-guard-in-redisindexer-py.md",
+      "title": "Empirical Invariant Guard in redisindexer.py",
+      "repository": "webrecorder-pywb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2137f04289eaf5e893331d62baa39af00cb847249075f77514a25d7a8f34fda7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T00:19:37.111Z"
+    },
+    "rule-10996": {
+      "learning_id": "rule-10996",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10996,
+      "title": "a grown read buffer is kept while its turns need it, and given back",
+      "source_url": "https://github.com/kividbio/kividb",
+      "source_version": "59b4cf65",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T00:19:31.671Z"
+    },
+    "candidate_directive-a-grown-read-buffer-is-kept-while-its-turns-need-it-and-given-back": {
+      "item_id": "candidate_directive-a-grown-read-buffer-is-kept-while-its-turns-need-it-and-given-back",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XV9T-a-grown-read-buffer-is-kept-while-its-turns-need-it-and-given-back.md",
+      "title": "a grown read buffer is kept while its turns need it, and given back",
+      "repository": "kividbio/kividb",
+      "source_version": "59b4cf65",
+      "content_hash": "c706dfedc7fd1cf7f91dc3f2af3812bce321eddece62da48da0715d352f7788f",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-28T00:19:32.377Z"
+    },
+    "candidate_directive-connections-a-grown-read-buffer-is-kept-while-its-turns-need-it-and-given-back": {
+      "item_id": "candidate_directive-connections-a-grown-read-buffer-is-kept-while-its-turns-need-it-and-given-back",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XZUW-connections-a-grown-read-buffer-is-kept-while-its-turns-need-it-and-given-back.md",
+      "title": "Connections: a grown read buffer is kept while its turns need it, and given back",
+      "repository": "kividbio-kividb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "95e06ab3b2e251343eb3e323d886407228cf9068529ff27506d6ce7454bba120",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-28T00:19:38.319Z"
     }
   },
   "ai-builder-brain": {

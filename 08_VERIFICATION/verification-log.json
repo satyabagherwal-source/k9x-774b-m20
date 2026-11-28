@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-W8NG",
-    "timestamp": "2026-11-26T12:50:45.580Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-    "contentHash": "2c610fd18a234babdfc3228ca3b4e321941088c88070b0ec7168345ca64460f4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-WF33",
-    "timestamp": "2026-11-26T12:50:53.919Z",
-    "repository": "makecindy/cindy",
-    "learningId": "learn-github-makecindy-cindy",
-    "contentHash": "c75d2c88532892dd2ea0d993d7d32df4ad051d9d1de31d48b10935bdd01e5772",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-772N",
     "timestamp": "2026-11-26T12:59:16.751Z",
     "repository": "yetone/magpie",
@@ -7490,6 +7460,36 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "e7725e55c0b2062a6708acb334715a5abc5431b84b56cf18302a27d3c1f1616d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-XMAS",
+    "timestamp": "2026-11-28T00:19:20.740Z",
+    "repository": "webrecorder/pywb",
+    "learningId": "learn-github-webrecorder-pywb",
+    "contentHash": "e3846bca04ac0b5e4b1dc66ac635100ff56de16697c7a8909ade0a29b86c862a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-XUZT",
+    "timestamp": "2026-11-28T00:19:32.009Z",
+    "repository": "kividbio/kividb",
+    "learningId": "learn-github-kividbio-kividb",
+    "contentHash": "1bae154edbefa7eca27fb46ede7a687a48290f9dc3bdd7e41f96c2ae6ec5d6f8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

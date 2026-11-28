@@ -13942,3 +13942,5 @@ Every entry in this ledger must capture:
 | `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `36838659` | Multi-dimensional audit evidence | 2026-11-27T23:57:32.929Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `5951a71b` | Multi-dimensional audit evidence | 2026-11-27T23:57:41.915Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `0c0198d2` | Multi-dimensional audit evidence | 2026-11-28T00:09:43.205Z |
+| `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `aff76541` | Multi-dimensional audit evidence | 2026-11-28T00:19:20.756Z |
+| `learn-github-kividbio-kividb` | `https://github.com/kividbio/kividb` | `59b4cf65` | Multi-dimensional audit evidence | 2026-11-28T00:19:32.022Z |

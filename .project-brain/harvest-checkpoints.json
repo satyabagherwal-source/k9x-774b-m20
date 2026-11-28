@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T00:09:43.216Z",
+  "last_updated": "2026-11-28T00:19:32.034Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13896,14 +13896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrecorder-pywb",
-      "content_hash": "ef41bb330db7fa7c7d9e59396ffdb31641db80f87b359435a022e24421ac4835",
-      "verified_at": "2026-11-20T15:15:13.372Z",
+      "content_hash": "e3846bca04ac0b5e4b1dc66ac635100ff56de16697c7a8909ade0a29b86c862a",
+      "verified_at": "2026-11-28T00:19:20.767Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T15:15:13.372Z"
+      "last_updated": "2026-11-28T00:19:20.767Z"
     },
     "Kruszoneq/macUSB": {
       "repository": "Kruszoneq/macUSB",
@@ -20406,14 +20406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kividbio-kividb",
-      "content_hash": "9b917fc1e614d45d9d599ddb2a8f5c889c5784d1eb5c60c81bf247195e452be5",
-      "verified_at": "2026-11-27T05:11:29.006Z",
+      "content_hash": "1bae154edbefa7eca27fb46ede7a687a48290f9dc3bdd7e41f96c2ae6ec5d6f8",
+      "verified_at": "2026-11-28T00:19:32.033Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T05:11:29.006Z"
+      "last_updated": "2026-11-28T00:19:32.033Z"
     },
     "yetone/magpie": {
       "repository": "yetone/magpie",

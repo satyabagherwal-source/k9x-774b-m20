@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T00:09:43.212Z",
-  "total_cycles_completed": 13200,
-  "total_learnings_persisted": 13200,
-  "total_rules_promoted": 11909,
+  "last_updated": "2026-11-28T00:19:32.029Z",
+  "total_cycles_completed": 13202,
+  "total_learnings_persisted": 13202,
+  "total_rules_promoted": 11911,
   "history": [
-    {
-      "timestamp": "2026-11-27T06:14:33.438Z",
-      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T06:14:35.312Z",
-      "repository": "oracle-devrel/oracle-ai-developer-hub",
-      "learningId": "learn-github-oracle-devrel-oracle-ai-developer-hub",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T06:14:51.257Z",
       "repository": "ytsaurus/ytsaurus",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T00:09:43.212Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T00:19:20.763Z",
+      "repository": "webrecorder/pywb",
+      "learningId": "learn-github-webrecorder-pywb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T00:19:32.029Z",
+      "repository": "kividbio/kividb",
+      "learningId": "learn-github-kividbio-kividb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

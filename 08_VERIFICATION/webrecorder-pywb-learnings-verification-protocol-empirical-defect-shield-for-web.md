@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T15:15:26.896Z",
+  "timestamp": "2026-11-28T00:19:36.949Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-webrecorder-pywb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [webrecorder-pywb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T15:15:26.896Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T00:19:36.949Z`  
 > **Learning ID**: `LEARN-EVO-webrecorder-pywb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrecorder-pywb-learnings.md`  
 > **Source**: github ([https://github.com/webrecorder/pywb](https://github.com/webrecorder/pywb))  
-> **Source Version**: `28750e62`  
+> **Source Version**: `aff76541`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T15:15:12.350Z  
+> **Timestamp**: 2026-11-28T00:19:19.199Z  
 > **Learning ID**: `learn-github-webrecorder-pywb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrecorder-pywb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrecorder/pywb](https://github.com/webrecorder/pywb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T15:15:12.222Z  
+> **Harvest Timestamp**: 2026-11-28T00:19:19.003Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Core Python Web Archiving Toolkit for replay and recording of web archives
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: Dockerfile
-- **Stars / Engagement**: 1718 stars
+- **Stars / Engagement**: 1719 stars
 
 ---
 
@@ -1599,57 +1599,139 @@ class RequestURIWSGIHandler(WSGIHandler):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28750e62` (2026-11-19)
-**Commit Message**: Merge pull request #1067 from webrecorder/client-side-replay-error-pages
+### Incident Patch 1: `aff76541` (2026-11-27)
+**Commit Message**: Merge pull request #1086 from HeliosLHC/update-redis
 
-Enable proxyPassErrors in wabac.js
+Add support for modern in-support Redis versions
 
-**File**: `pywb/static/loadWabac.js` (modified, +1/-0)
+**File**: `pywb/recorder/redisindexer.py` (modified, +1/-1)
 ```diff
-@@ -53,6 +53,7 @@ class WabacReplay
-         noPostToGet: false,
-         archivePrefix: this.prefix,
-         archiveMod: "ir_",
-+        proxyPassErrors: true,
-         adblockUrl: this.adblockUrl,
-         noPostToGet: true,
-         injectScripts: this.injectScripts.map(src => "../" + src),
+@@ -72,7 +72,7 @@ def add_urls_to_index(self, stream, params, filename, length):
+ 
+         for cdx in cdx_list:
+             if cdx:
+-                self.redis.zadd(z_key, 0, cdx)
++                self.redis.zadd(z_key, {cdx: 0})
+ 
+         return cdx_list
+ 
+```
+
+**File**: `pywb/warcserver/index/test/test_indexsource.py` (modified, +1/-1)
+```diff
+@@ -105,7 +105,7 @@ def setup_class(cls):
+ 
+         cls.all_sources = {
+             'file': FileIndexSource(TEST_CDX_PATH + 'iana.cdxj'),
+-            'redis': RedisIndexSource('redis://localhost:6379/2/test:rediscdx'),
++            'redis': RedisIndexSource('redis://localhost/2/test:rediscdx'),
+             'remote_cdx': RemoteIndexSource(rhizome_coll + 'cdx?url={url}',
+                               rhizome_coll + '{timestamp}id_/{url}'),
+ 
+```
+
+**File**: `pywb/warcserver/test/testutils.py` (modified, +5/-5)
+```diff
+@@ -5,7 +5,7 @@
+ import yaml
+ import time
+ 
+-from fakeredis import FakeStrictRedis, DATABASES
++from fakeredis import FakeStrictRedis, FakeServer
+ from mock import patch
+ 
+ from pywb.warcserver.basewarcserver import BaseWarcServer
+@@ -62,22 +62,22 @@ def __init__(self, *args, **kwargs):
+ # ============================================================================
+ class FakeRedisTests(object):
+     @classmethod
+-    def setup_class(cls, redis_url='redis://localhost:6379/2'):
++    def setup_class(cls, redis_url='redis://localhost/2'):
+         super(FakeRedisTests, cls).setup_class()
+ 
+         del PUBSUBS[:]
+-        DATABASES.clear()
++        FakeServer._servers_map.clear()
+ 
+         cls.redismock = patch('redis.StrictRedis', FakeStrictRedisSharedPubSub)
+         cls.redismock.start()
+ 
+-        cls.redis = FakeStrictRedis.from_url(redis_url)
++        cls.redis = FakeStrictRedisSharedPubSub.from_url(redis_url)
+ 
+     @classmethod
+     def add_cdx_to_redis(cls, filename, key):
+         with open(filename, 'rb') as fh:
+             for line in fh:
+-                cls.redis.zadd(key, 0, line.rstrip())
++                cls.redis.zadd(key, {line.rstrip(): 0})
+ 
+     @classmethod
+     def teardown_class(cls):
+```
+
+**File**: `requirements.txt` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ setuptools; python_version>="3.12"
+ warcio>=1.8.2
+ requests
+-redis==2.10.6
++redis>=7.0.0
+ jinja2>=3.1.2
+ surt>=0.3.1
+ # earlier versions of brotli are affected by CVE-2026-111497.
+@@ -16,7 +16,7 @@ portalocker
+ wsgiprox>=1.5.1
+ # certauth uses X509.add_extensions(), which was removed in pyOpenSSL 26.2.
+ pyOpenSSL<26.2
+-fakeredis<1.0
++fakeredis>=2.41.0
+ tldextract
+ python-dateutil
+ markupsafe>=2.1.1
+```
+
+**File**: `tests/test_record_dedup.py` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ class TestRecordDedup(HttpBinLiveTests, CollsDirMixin, BaseConfigTest, FakeRedis
+     @classmethod
+     def setup_class(cls):
+         super(TestRecordDedup, cls).setup_class('config_test_record_dedup.yaml', custom_config={'recorder': 'live'})
+-        cls.redis = FakeStrictRedis.from_url("redis://localhost/0")
++        cls.redis = FakeStrictRedis.from_url("redis://localhost:6379/0")
+ 
+     def test_init_coll(self):
+         manager(['init', 'test-dedup'])
 ```
 
 ---
 
-### Incident Patch 2: `0c853623` (2026-11-19)
-**Commit Message**: Merge pull request #1085 from webrecorder/update-wombat-3.11.2-wabac-2.28.0
+### Incident Patch 2: `f9ea40c2` (2026-11-27)
+**Commit Message**: Relax redis dep version from 8.0.0 to 7.0.0 to retain Python 3.9 support
 
-Update to wombat 3.11.2 and wabac 2.28.0
+Co-authored-by: Alex Osborne <[REDACTED_EMAIL]>
 
-**File**: `setup.py` (modified, +1/-1)
+**File**: `requirements.txt` (modified, +1/-1)
 ```diff
-@@ -15,7 +15,7 @@
- root_dir = pathlib.Path(__file__).parent
- 
- 
--WABAC_SW_VERSION = "2.27.4"
-+WABAC_SW_VERSION = "2.28.0"
- WABAC_SW_URL = f"https://cdn.jsdelivr.net/npm/@webrecorder/wabac@{WABAC_SW_VERSION}/dist/sw.js"
- 
- def download_wabac_sw():
-```
-
-**File**: `wombat` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit ad69888a2c57f8fdc408f054eaefce9c25011926
-+Subproject commit a7d84409f9669618052cc2cde8384c122fe9da8f
+@@ -1,7 +1,7 @@
+ setuptools; python_version>="3.12"
+ warcio>=1.8.2
+ requests
+-redis>=8.0.0
++redis>=7.0.0
+ jinja2>=3.1.2
+ surt>=0.3.1
+ # earlier versions of brotli are affected by CVE-2026-111497.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1086** (2026-11-27): Add support for modern in-support Redis versions (@HeliosLHC)
 - **PR #1085** (2026-11-19): Update to wombat 3.11.2 and wabac 2.28.0 (@ato)
 - **PR #1084** (2026-11-17): Scope the server-side cookie tracker to each visitor (@ato)
 - **PR #1083** (2026-11-17): Support ES modules in replay: rewrite to jm_ modifier, serve unwrapped (@Jaydenha09)
 - **PR #1082** (2026-11-14): Replace py3AMF with a data-only AMF decoder (@ato)
 - **PR #1081** (closed): [SECURITY] Disable shared live cookie tracking by default (@ANJALI-SAVANT)
-- **PR #1079** (closed): [SECURITY] Require opt-in for HTTP ACL user headers (@ANJALI-SAVANT)
 
 ---
 
@@ -1669,31 +1751,31 @@ Update to wombat 3.11.2 and wabac 2.28.0
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in loadWabac.js
+## X. Empirical Invariant Guard in redisindexer.py
 
 **RULE**:
-When implementing operations in `pywb/static/loadWabac.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/pywb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pywb/recorder/redisindexer.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrecorder/pywb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `28750e62`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aff76541`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pywb/static/loadWabac.js`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pywb/recorder/redisindexer.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        proxyPassErrors: true,
+                self.redis.zadd(z_key, {cdx: 0})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                self.redis.zadd(z_key, 0, cdx)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28750e62` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aff76541` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

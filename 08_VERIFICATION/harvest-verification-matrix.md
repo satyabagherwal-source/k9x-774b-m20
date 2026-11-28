@@ -13909,3 +13909,5 @@
 | `CYCLE-20261127-5L6C` | `2026-11-27T23:57:32.916Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10992` | Yes (`4bd44083...`) |
 | `CYCLE-20261127-5S3X` | `2026-11-27T23:57:41.901Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10993` | Yes (`ec21e306...`) |
 | `CYCLE-20261128-L8NR` | `2026-11-28T00:09:43.191Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10994` | Yes (`e7725e55...`) |
+| `CYCLE-20261128-XMAS` | `2026-11-28T00:19:20.740Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10995` | Yes (`e3846bca...`) |
+| `CYCLE-20261128-XUZT` | `2026-11-28T00:19:32.009Z` | `kividbio/kividb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10996` | Yes (`1bae154e...`) |

@@ -9233,10 +9233,10 @@
     "repository": "webrecorder/pywb",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/pywb",
-    "sourceVersion": "28750e62",
+    "sourceVersion": "aff76541",
     "license": "GPL-3.0",
-    "contentHash": "ef41bb330db7fa7c7d9e59396ffdb31641db80f87b359435a022e24421ac4835",
-    "lastHarvestedAt": "2026-11-20T15:15:13.364Z",
+    "contentHash": "e3846bca04ac0b5e4b1dc66ac635100ff56de16697c7a8909ade0a29b86c862a",
+    "lastHarvestedAt": "2026-11-28T00:19:20.756Z",
     "learningId": "learn-github-webrecorder-pywb"
   },
   "kruszoneq-macusb": {
@@ -13523,10 +13523,10 @@
     "repository": "kividbio/kividb",
     "platform": "github",
     "sourceUrl": "https://github.com/kividbio/kividb",
-    "sourceVersion": "3405fdb6",
+    "sourceVersion": "59b4cf65",
     "license": "AGPL-3.0",
-    "contentHash": "9b917fc1e614d45d9d599ddb2a8f5c889c5784d1eb5c60c81bf247195e452be5",
-    "lastHarvestedAt": "2026-11-27T05:11:28.993Z",
+    "contentHash": "1bae154edbefa7eca27fb46ede7a687a48290f9dc3bdd7e41f96c2ae6ec5d6f8",
+    "lastHarvestedAt": "2026-11-28T00:19:32.022Z",
     "learningId": "learn-github-kividbio-kividb"
   },
   "yetone-magpie": {
