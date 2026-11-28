@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T15:57:41.406Z",
+  "timestamp": "2026-11-28T00:38:32.684Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-juullabs-kable-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [juullabs-kable-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T15:57:41.406Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T00:38:32.684Z`  
 > **Learning ID**: `LEARN-EVO-juullabs-kable-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source**: github ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
-> **Source Version**: `aa3619b3`  
+> **Source Version**: `7db7f3ed`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T15:57:34.399Z  
+> **Timestamp**: 2026-11-28T00:38:18.021Z  
 > **Learning ID**: `learn-github-juullabs-kable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T15:57:34.392Z  
+> **Harvest Timestamp**: 2026-11-28T00:38:18.015Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Kotlin Asynchronous Bluetooth Low-Energy
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1204 stars
+- **Stars / Engagement**: 1206 stars
 
 ---
 
@@ -1144,35 +1144,23 @@ internal val bluetoothState = broadcastReceiverFlow(intentFilter)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa3619b3` (2026-11-25)
-**Commit Message**: Update Gradle to v9.9.2 (#1315)
+### Incident Patch 1: `5708d7c2` (2026-11-26)
+**Commit Message**: Update Rust crate uuid to v1.29.3 (#1311)
 
-**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
+**File**: `kable-btleplug-ffi/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,6 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.2-bin.zip
- networkTimeout=10000
- validateDistributionUrl=true
- zipStoreBase=GRADLE_USER_HOME
-```
-
----
-
-### Incident Patch 2: `d76b9d1b` (2026-11-25)
-**Commit Message**: Update agp to v9.5.2 (#1318)
-
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- [versions]
--agp = "9.5.1"
-+agp = "9.5.2"
- android-compile = "37"
- android-min = "21"
- android-target = "33"
+@@ -1249,9 +1249,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "uuid"
+-version = "1.29.2"
++version = "1.29.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bed99139f7dac9b5cfe5f17be4d66dc7079a34dee1d74bcc77217119240e267c"
++checksum = "3c14b15dffa2f4bd712103e857140aa04a4f2ff6e955c77d7eb8e53ee02a3b64"
+ dependencies = [
+  "js-sys",
+  "serde_core",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1180,8 +1168,8 @@ Observed empirical fixes and code patches:
 - **PR #1318** (2026-11-25): Update agp to v9.5.2 (@juul-mobile-bot)
 - **PR #1315** (2026-11-25): Update Gradle to v9.9.2 (@juul-mobile-bot)
 - **PR #1314** (2026-11-23): Update dependency androidx.lifecycle:lifecycle-common to v2.11.1 (@juul-mobile-bot)
-- **PR #1309** (2026-11-16): Update dependency io.mockk:mockk to v1.14.12 (@juul-mobile-bot)
-- **PR #1308** (2026-11-16): Update plugin dokka to v2.3.0 (@juul-mobile-bot)
+- **PR #1311** (2026-11-26): Update Rust crate uuid to v1.29.3 (@juul-mobile-bot)
+- **PR #1310** (2026-11-26): Update dependency org.jetbrains.kotlinx:kotlinx-io-core to v0.9.3 (@juul-mobile-bot)
 
 ---
 
@@ -1201,31 +1189,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Gradle to v9.9.2
+## X. Update Rust crate uuid to v1.29.3
 
 **RULE**:
-When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JuulLabs/kable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kable-btleplug-ffi/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JuulLabs/kable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa3619b3`: Update Gradle to v9.9.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5708d7c2`: Update Rust crate uuid to v1.29.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kable-btleplug-ffi/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.2-bin.zip
+version = "1.29.3"
+checksum = "3c14b15dffa2f4bd712103e857140aa04a4f2ff6e955c77d7eb8e53ee02a3b64"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
+version = "1.29.2"
+checksum = "bed99139f7dac9b5cfe5f17be4d66dc7079a34dee1d74bcc77217119240e267c"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa3619b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5708d7c2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T00:28:32.903Z",
-  "total_cycles_completed": 13205,
-  "total_learnings_persisted": 13205,
-  "total_rules_promoted": 11914,
+  "last_updated": "2026-11-28T00:38:26.852Z",
+  "total_cycles_completed": 13208,
+  "total_learnings_persisted": 13208,
+  "total_rules_promoted": 11916,
   "history": [
-    {
-      "timestamp": "2026-11-27T06:37:41.428Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T06:37:42.233Z",
-      "repository": "zvec-ai/zvec-grep",
-      "learningId": "learn-github-zvec-ai-zvec-grep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T06:46:19.196Z",
-      "repository": "autotrust/AutoTrust-Decider-Pro-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T06:54:51.538Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -1403,6 +1382,27 @@
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T00:38:17.372Z",
+      "repository": "ArchiveBox/ArchiveBox",
+      "learningId": "learn-github-archivebox-archivebox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T00:38:19.370Z",
+      "repository": "JuulLabs/kable",
+      "learningId": "learn-github-juullabs-kable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T00:38:26.852Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

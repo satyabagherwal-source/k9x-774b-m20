@@ -13914,3 +13914,7 @@
 | `CYCLE-20261128-984K` | `2026-11-28T00:28:22.244Z` | `webrecorder/browsertrix-crawler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10997` | Yes (`e85aa2c4...`) |
 | `CYCLE-20261128-9CJC` | `2026-11-28T00:28:27.960Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10998` | Yes (`d0488011...`) |
 | `CYCLE-20261128-9GC6` | `2026-11-28T00:28:32.886Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10999` | Yes (`376672c2...`) |
+| `CYCLE-20261128-LZBF` | `2026-11-28T00:38:17.355Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11000` | Yes (`6c2529ac...`) |
+| `CYCLE-20261128-M0UX` | `2026-11-28T00:38:19.353Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11001` | Yes (`7350b112...`) |
+| `CYCLE-20261128-M6LI` | `2026-11-28T00:38:26.790Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md` | Yes (`10eebabd...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T00:39:03.634Z` | `greptimeteam-greptimedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-797E7DCD` [Domain H] | Yes (`dcff8e07...`) |

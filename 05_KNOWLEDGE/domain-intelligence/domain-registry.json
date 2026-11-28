@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T00:28:41.143Z",
-  "total_records": 2866,
+  "last_updated": "2026-11-28T00:39:04.498Z",
+  "total_records": 2867,
   "domains": {
     "A": {
       "total": 27,
@@ -1765,7 +1765,7 @@
       ]
     },
     "H": {
-      "total": 693,
+      "total": 694,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2459,7 +2459,8 @@
         "domain_intelligence-technical-construction-intelligence-chroma-core-chroma-core-invariants",
         "DOM-H-C23687A0",
         "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-core-invaria",
-        "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-learnings-co"
+        "domain_intelligence-technical-construction-intelligence-webrecorder-browsertrix-crawler-learnings-co",
+        "DOM-H-797E7DCD"
       ]
     },
     "I": {
@@ -17853,8 +17854,8 @@
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "repository": "GreptimeTeam/greptimedb",
-      "content_hash": "cf7b0be74c5eb231080ff4dd59fcaa98b0c5a4bf316364b701dd729b9f143ea3",
-      "created_at": "2026-11-27T05:30:20.924Z"
+      "content_hash": "245893a7882b9214655f3b6e3340e45fb9b44f3edd9d61b7e30cf6b9f881fff4",
+      "created_at": "2026-11-28T00:38:27.368Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
@@ -17922,8 +17923,8 @@
       "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-learnings-architecture-intelligence-greptimeteam-greptim.md",
       "repository": "greptimeteam-greptimedb-learnings",
-      "content_hash": "3db89d8327a8d36fe1d800eec3188794b3b48921b5246860df84c9a6f3693890",
-      "created_at": "2026-11-27T05:30:25.966Z"
+      "content_hash": "ad58f23624ac7dfe48012dd3ac41097c34543d5404990c8257965b52c10b4d97",
+      "created_at": "2026-11-28T00:39:04.498Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar",
@@ -24265,8 +24266,8 @@
       "title": "Architecture Intelligence: JuulLabs/kable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-architecture-intelligence-juullabs-kable-core-invariants.md",
       "repository": "JuulLabs/kable",
-      "content_hash": "d14cbc1f5f6de79b0ec67cd000279f776ab84163ad4d03d838b84cc8586609c5",
-      "created_at": "2026-11-25T15:57:35.961Z"
+      "content_hash": "e5996c67f13718888660f3ab929c4191217778b1346a17f7cec2be6dbb7e16ab",
+      "created_at": "2026-11-28T00:38:19.908Z"
     },
     "DOM-F-4F38FEA1": {
       "record_id": "DOM-F-4F38FEA1",
@@ -24325,8 +24326,8 @@
       "title": "Architecture Intelligence: juullabs-kable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juullabs-kable-learnings-architecture-intelligence-juullabs-kable-learnings-core.md",
       "repository": "juullabs-kable-learnings",
-      "content_hash": "a3257f1af9bcae1b6561a649f3baab3d92c4f5d3dd720f5659fc2b89c26a9a17",
-      "created_at": "2026-11-25T15:57:41.815Z"
+      "content_hash": "5f2b2cfc54fa774025527175e79604f29a8fc84a0256afdb6735782374f65ee0",
+      "created_at": "2026-11-28T00:38:33.057Z"
     },
     "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-core-invariants",
@@ -36761,8 +36762,8 @@
       "title": "Architecture Intelligence: ArchiveBox/ArchiveBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-archivebox-archivebox-architecture-intelligence-archivebox-archivebox-core-invar.md",
       "repository": "ArchiveBox/ArchiveBox",
-      "content_hash": "ddc06e090a6eaaf0fc89b3870ef9d15731d4c18d5cb8819180552633f59a368e",
-      "created_at": "2026-11-20T15:43:56.017Z"
+      "content_hash": "d9aabe6a341b39797358f16b89a17778a57a938fe0c2b19b3b97e2daf4bde73c",
+      "created_at": "2026-11-28T00:38:17.882Z"
     },
     "domain_intelligence-content-information-intelligence-vcaesar-riot-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-vcaesar-riot-core-invariants",
@@ -36779,8 +36780,8 @@
       "title": "Architecture Intelligence: archivebox-archivebox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-archivebox-archivebox-learnings-architecture-intelligence-archivebox-archivebox-.md",
       "repository": "archivebox-archivebox-learnings",
-      "content_hash": "d2848bcdd9707853fe16d41b04412fcb9f9c3ae502278a6f87189afb0bec08f7",
-      "created_at": "2026-11-20T15:44:09.660Z"
+      "content_hash": "7dcbe3e7f781dfe4d1be8d9ab87d8f79458fe5039b0a060cc542856230ed062e",
+      "created_at": "2026-11-28T00:38:31.521Z"
     },
     "domain_intelligence-content-information-intelligence-vcaesar-riot-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-vcaesar-riot-learnings-core-invariants",
@@ -48422,6 +48423,48 @@
       "repository": "webrecorder-browsertrix-crawler-learnings",
       "content_hash": "409557c484536ad08445d7e8ad419382d4f90fd0a4cad8adf1fc67b432487148",
       "created_at": "2026-11-28T00:28:38.516Z"
+    },
+    "DOM-H-797E7DCD": {
+      "record_id": "DOM-H-797E7DCD",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "docs(rfc): propose an in-memory frontend write retry queue",
+      "content": "When implementing operations in `docs/rfcs/2026-10-27-in-memory-write-retry-queue.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "dcff8e07acd814989359f50914941158a313404d94f70e2792a160dd616cb2a8",
+      "summary": "Prevents defects observed in production commit `2c6b9515`: docs(rfc): propose an in-memory frontend write retry queue. Unvalidated execution -> When implementing operations in `docs/rfcs/2026-10-27-in-memory-write-retry-queue.md`, engineers MUST enforce rigorous boundary validation, ",
+      "provenance": {
+        "source_uri": "project://greptimeteam-greptimedb/greptimeteam-greptimedb-learnings.md",
+        "source_version": "9aebf3a8",
+        "observed_at": "2026-11-28T00:38:26.125Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (greptimeteam-greptimedb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of greptimeteam-greptimedb"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T00:39:03.593Z"
     }
   }
 }

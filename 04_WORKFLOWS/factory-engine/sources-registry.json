@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T23:57:37.525Z",
-    "lastVerified": "2026-11-27T23:57:37.525Z",
+    "lastChecked": "2026-11-28T00:38:23.950Z",
+    "lastVerified": "2026-11-28T00:38:23.950Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T00:28:36.489Z",
-    "lastVerified": "2026-11-28T00:28:36.489Z",
+    "lastChecked": "2026-11-28T00:38:30.384Z",
+    "lastVerified": "2026-11-28T00:38:30.384Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1560,9 +1560,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-27T20:19:52.648Z",
+    "lastChecked": "2026-11-28T00:38:19.185Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-27T20:19:52.648Z"
+    "lastVerified": "2026-11-28T00:38:19.185Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3258,9 +3258,9 @@
   "taubyte-tau": {
     "name": "tau",
     "officialUrl": "https://github.com/taubyte/tau",
-    "lastChecked": "2026-11-27T06:37:45.642Z",
+    "lastChecked": "2026-11-28T00:38:16.481Z",
     "revisionIdentifier": "59816f6f",
-    "lastVerified": "2026-11-27T06:37:45.642Z"
+    "lastVerified": "2026-11-28T00:38:16.481Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -5667,9 +5667,9 @@
   "ekzhang-rustpad": {
     "name": "rustpad",
     "officialUrl": "https://github.com/ekzhang/rustpad",
-    "lastChecked": "2026-11-27T00:32:54.989Z",
+    "lastChecked": "2026-11-28T00:38:08.923Z",
     "revisionIdentifier": "54e4a938",
-    "lastVerified": "2026-11-27T00:32:54.989Z"
+    "lastVerified": "2026-11-28T00:38:08.923Z"
   },
   "hf-fermionresearch-phonon-2": {
     "name": "FermionResearch/Phonon-2",
@@ -6456,14 +6456,14 @@
     "officialUrl": "https://github.com/GreptimeTeam/greptimedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T05:30:19.245Z",
-    "lastVerified": "2026-11-27T05:30:19.245Z",
+    "lastChecked": "2026-11-28T00:38:26.119Z",
+    "lastVerified": "2026-11-28T00:38:26.119Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "65570df268cf2fa161e7f88e65eb876dfae2d63e861ce6aadd481158501eea86",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "contentHash": "10eebabd35488983a2ef1fc72d5fb1074798238702d141ce4d588352f66428a9",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10587,14 +10587,14 @@
     "officialUrl": "https://github.com/JuulLabs/kable",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-25T15:57:34.392Z",
-    "lastVerified": "2026-11-25T15:57:34.392Z",
+    "lastChecked": "2026-11-28T00:38:18.015Z",
+    "lastVerified": "2026-11-28T00:38:18.015Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-juullabs-kable",
-    "contentHash": "d4957df8466fb61335df1cb5a1d3ab31b536f56a7682004322915ab7457bf979",
+    "contentHash": "7350b11216b278e82a029105abf8cc5da4f21018e69d7eddf65a6522cf60b91c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11105,14 +11105,14 @@
     "officialUrl": "https://github.com/ArchiveBox/ArchiveBox",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T16:19:49.594Z",
-    "lastVerified": "2026-11-24T16:19:49.594Z",
+    "lastChecked": "2026-11-28T00:38:15.726Z",
+    "lastVerified": "2026-11-28T00:38:15.726Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-archivebox-archivebox",
-    "contentHash": "44d6a4cb69c151c2509815b94b7964b9885513238d4dfa0c41a4ecff76b0d54d",
+    "contentHash": "6c2529ac7481948f112c7156850589cd5675f7ab285439cb8260bcb3f319291d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

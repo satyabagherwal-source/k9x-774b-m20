@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T16:19:58.666Z",
+  "timestamp": "2026-11-28T00:38:31.088Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-archivebox-archivebox-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [archivebox-archivebox-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T16:19:58.666Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T00:38:31.088Z`  
 > **Learning ID**: `LEARN-EVO-archivebox-archivebox-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/archivebox-archivebox-learnings.md`  
 > **Source**: github ([https://github.com/ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox))  
-> **Source Version**: `6e6064f9`  
+> **Source Version**: `391309b9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T16:19:49.770Z  
+> **Timestamp**: 2026-11-28T00:38:15.970Z  
 > **Learning ID**: `learn-github-archivebox-archivebox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/archivebox-archivebox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ArchiveBox/ArchiveBox](https://github.com/ArchiveBox/ArchiveBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:19:49.594Z  
+> **Harvest Timestamp**: 2026-11-28T00:38:15.726Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 🗃 Open source self-hosted web archiving. Takes URLs/browser history/bookmarks/Pocket/Pinboard/etc., saves HTML, JS, PDFs, media, and more...
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 29090 stars
+- **Stars / Engagement**: 29111 stars
 
 ---
 
@@ -242,6 +242,45 @@ class Migration(migrations.Migration):
 
 ```
 
+### Core Architecture Module: `archivebox/api/migrations/0007_rename_outboundwebhook_rule.py`
+```
+from django.db import migrations
+
+
+def rename_permissions(apps, schema_editor, old_name, new_name):
+    db = schema_editor.connection.alias
+    # Django renames the content type on migration. Rename its permissions in
+    # place so existing user and group assignments keep their permission IDs.
+    permission = apps.get_model("auth", "Permission")
+    permissions = permission.objects.using(db).filter(content_type__app_label="api", content_type__model="rule")
+    for action in ("add", "change", "delete", "view"):
+        target = f"{action}_{new_name}"
+        if not permissions.filter(codename=target).exists():
+            permissions.filter(codename=f"{action}_{old_name}").update(codename=target, name=f"Can {action} Rule")
+
+
+def forwards(apps, schema_editor):
+    rename_permissions(apps, schema_editor, "outboundwebhook", "rule")
+
+
+def backwards(apps, schema_editor):
+    rename_permissions(apps, schema_editor, "rule", "outboundwebhook")
+
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ("api", "0006_rule_event_scopes"),
+        ("auth", "0012_alter_user_first_name_max_length"),
+    ]
+    operations = [
+        # Pin the current table so the ORM rename never changes stored rules.
+        migrations.AlterModelTable(name="outboundwebhook", table="api_outboundwebhook"),
+        migrations.RenameModel(old_name="OutboundWebhook", new_name="Rule"),
+        migrations.RunPython(forwards, backwards),
+    ]
+
+```
+
 ### Core Architecture Module: `archivebox/api/v1_core.py`
 ```
 __package__ = "archivebox.api"
@@ -260,8 +299,8 @@ from uuid import UUID
 from typing import Union, Any, Annotated
 from datetime import datetime
 
-from django.db import IntegrityError
-from django.db.models import Model, Q
+from django.db import IntegrityError, transaction
+from django.db.models import Model, Prefetch, Q
 from django.http import HttpRequest, HttpResponse
 from django.http.multipartparser import MultiPartParser, MultiPartParserError
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist, ValidationError
@@ -283,7 +322,7 @@ from archivebox.core.models import Folder, Snapshot, ArchiveResult, Tag
 from archivebox.core.permissions import public_snapshots_queryset
 from archivebox.api.auth import API_AUTH_METHODS, authenticated_user_from_request
 from archivebox.config.common import get_config
-from archivebox.core.routes_util import build_snapshot_detail_url, build_web_url
+from archivebox.core.routes_util import build_snapshot_detail_path, build_web_url
 from archivebox.misc.util import equivalent_urls, validate_url_length
 from archivebox.core.tag_util import (
     add_snapshot_counts,
@@ -509,12 +548,12 @@ class ArchiveResultFilterSchema(FilterSchema):
     cmd_version: Annotated[str | None, FilterLookup("cmd_version")] = None
     created_at: Annotated[datetime | None, FilterLookup("created_at")] = None
     created_at__gte: Annotated[datetime | None, FilterLookup("created_at__gte")] = None
-    created_at__lt: Annotated[datetime | None, FilterLooku
+    created_at__lt: Annotated[date
 ```
 
 ### Core Architecture Module: `archivebox/api/webhook_actions.py`
 ```
-"""Ordered OutboundWebhook actions using native model APIs and Process logs."""
+"""Ordered Rule actions using native model APIs and Process logs."""
 
 from __future__ import annotations
 
@@ -621,7 +660,7 @@ def validate_actions(hook):
                 if not isinstance(value, str) or not value.strip():
                     raise ValueError("Enter code to execute.")
                 if kind == "python":
-                    compile(value, "<webhook>", "exec")
+                    compile(value, "<rule>", "exec")
             elif kind == "http_request":
                 endpoint = action.get("endpoint", "")
                 if not isinstance(endpoint, str) or not endpoint:
@@ -711,7 +750,7 @@ def _apply_model_action(action, instance, hook):
         return {kind: [tag.name for tag in tags]}
     if kind == "remove_tags":
         names = [name.strip() for name in action[kind].split(",") if name.strip()]
-        t
+        tags = [tag for
 ```
 
 ### Core Architecture Module: `archivebox/api/webhook_events.py`
@@ -854,7 +893,8 @@ def register_relationship_signals():
 
 def action_in_progress():
     # Process.launch passes provenance to child Python/shell environments too.
-    return executing_webhook.get() or bool(os.environ.get("ARCHIVEBOX_WEBHOOK_ID"))
+    # An action started by the previous version can still be running during upgrade.
+    return executing_webhook.get() or bool(os.environ.get("ARCHIVEBOX_RULE_ID") or os.environ.get("ARCHIVEBOX_WEBHOOK_ID"))
 
 
 class WebhookActionMiddleware:
@@ -942,11 +982,7 @@ def signal_choices():
     choices = dict(SignalChoices.choices)
     for model in event_catalog():
         for event in model["events"]:
-            choices.setdefault(event["key"], event["label"])
-    return list(choices.items())
-
-
-def event_payload(instance, signal, 
+       
 ```
 
 ### Core Architecture Module: `archivebox/api/webhook_membership.py`
@@ -970,12 +1006,12 @@ class MembershipChange:
         if executing_webhook.get():
             self.folder_ids = []
             return
-        from archivebox.api.models import OutboundWebhook
+        from archivebox.api.models import Rule
         from archivebox.core.models import Snapshot
         from archivebox.core.smart_folders import RuleQuery
 
         scopes = list(
-            OutboundWebhook.objects.filter(
+            Rule.objects.filter(
                 Q(folder_id__isnull=False) | Q(any_folder=True),
                 enabled=True,
                 ref="archivebox.core.models.Snapshot",
@@ -1193,31 +1229,33 @@ from archivebox.base_models.admin import HexUUIDConverter
 
 from . import webhook_views as views
 
-app_name = "webhooks"
+app_name = "rules"
 urlpatterns = [
     path("", views.index, name="index"),
     path("data/", views.data, name="data"),
     path("save/", views.save, name="save"),
     path("preview/", views.preview, name="preview"),
-    re_path(rf"^(?P<webhook_id>{HexUUIDConverter.regex})/delete/$", views.delete, name="delete"),
+    re_path(rf"^(?P<rule_id>{HexUUIDConverter.regex})/delete/$", views.delete, name="delete"),
 ]
 
 ```
 
 ### Core Architecture Module: `archivebox/api/webhook_views.py`
 ```
-"""The webhook editor uses OutboundWebhook and existing folder selections."""
+"""Edit rules and their folder scopes."""
 
 import json
 from functools import wraps
+from uuid import UUID
 
 from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import IntegrityError
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.http import require_GET, require_POST, require_safe
 from signal_webhooks.utils import model_from_reference
 
 from archivebox.core.admin_site import archivebox_admin
@@ -1225,12 +1263,12 @@ from archivebox.core.models import Folder, Snapshot, Tag
 from archivebox.core.widgets import TagEditorWidget
 from archivebox.plugins.discovery import get_plugin_catalog
 
-from .models import OutboundWebhook
+from .models import Rule
 from .webhook_actions import configurable_fields
 from .webhook_events import RELATIONSHIP_EVENTS, TAG_EVENTS, event_catalog, event_payload
 
 
-def webhook_admin(view):
+def rule_admin(view):
     @wraps(view)
     def wrapped(request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -1274,6 +1312,7 @@ def webhook_data(hook, tag_names=None):
         "stop_processing": hook.stop_processing,
         "stop_on_failure": hook.stop_on_failure,
         "has_auth_token": bool(hook.auth_token),
+        "keep_last_response": hook.keep_last_response,
         "last_success": hook.last_success,
         "last_failure": hook.last_failure,
         "num_uses_succeeded": hook.num_uses_succeeded,
@@ -1283,7 +1322,7 @@ def webhook_data(hook, tag_names=None):
 
 
 def editor_data():
-    rules = list(OutboundWebhook.objects.order_by("created_at", "pk"))
+    rules = list(Rule.objects.order_by("created_at", "pk"))
     tag_ids = {scope for hook in rules if type(scope := tag_scope(hook)) is int}
     tag_names = dict(Tag.objects.filter(pk__in=tag_ids).values_list("pk", "name"))
     hooks = [webhook_data(hook, tag_names) for hook in rules]
@@ -1294,7 +1333,7 @@ def editor_data():
     return {
         "hooks": hooks,
         "models": event_catalog(),
-        "signal_labels": dict(OutboundWebhook._meta.get_field("signal").choices),
+        "signal_labels": dict(Rule._meta.get_field("signal").choices),
         "folders": Folder.picker_choices(Folder.objects.filter(pk__in=folder_ids).only("name", "parent")),
         "plugins": sorted(get_plugin_catalog()),
         "config_fields": sorted(configurable_fields()),
@@ -1302,7 +1341,7 @@ def editor_data():
     }
 
 
-@webhook_admin
+@rule_admin
 @require_GET
 @ensure_csrf_cookie
 def index(request):
@@ -1313,16 +1352,33 @@ def index(request):
     )
 
 
-@webhook_admin
+@rule_admin
+@require_safe
+def legacy_model_redirect(request, suffix=""):
+    """Keep old admin bookmarks without offering another way to edit rules."""
+    target = (suffix or "").partition("/")[0]
+    if target == "add":
+        return redirect(reverse("rules:index", query={"rule": "new"}))
+    if target:
+        try:
+            rule_id = UUID(target).hex
+        except ValueError:
+            pass
+        else:
+            return redirect(reverse("rules:index", query={"rule": rule_id}))
+    return redirect("rules:index")
+
+
+@rule_admin
 @require_GET
 def data(request):
     return JsonResponse(editor_data())
 
 
-def submitted_webhook(request):
+def submitted_rule(request):
     payload = json.loads(request.body)
     if not isinstance(payload, dict):
-        raise ValidationError("Expected a webhook object.")
+        raise ValidationError("Expected a rule object.")
     allowed = {
         "id",
         "name",
@@ -1337,15 +1393,16 @@ def submitted_webhook(request):
         "stop_on_failure",
         "auth_token",
         "clear_auth_token",
+        "keep_last_response",
     }
     if payload.keys() - allowed:
-        raise ValidationError("Unknown webhook fields.")
-    for field in ("enabled", "stop_processing", "stop_on_failure", "clear_auth_token"):
+        raise ValidationError("Unknown rule fields.")
+    for field in ("enabled", "stop_processing", "stop_on_failure", "clear_auth_token", "keep_last_response"):
         if field in payload and not isinstance(payload[field], bool):
             raise ValidationError(f"{field} must be a boolean.")
     if "auth_token" in payload and not isinstance(payload["auth_token"], str):
         raise ValidationError("auth_token must be a string.")
-    hook = get_object_or_404(OutboundWebhook, pk=payload["id"]) if payload.get("id") else OutboundWebhook(created_by=request.user)
+    hook = get_object_or_404(Rule, pk=payload["id"]) if payload.get("id") else Rule(created_by=request.user)
     previous_signal = hook.signal
     for field in allowed - {"id", "auth_token", "clear_auth_token", "tag_id", "relationship"}:
         if field in payload:
@@ -1382,32 +1439,32 @@ def submitted_webhook(request):
 
 
 def validation_error(error):
-    return JsonResponse({"error": "; ".join(error.messages) if isinstance(error, ValidationError) else "Invalid webhook data."}, status=400)
+    return JsonResponse({"error": "; ".join(error.messages) if isinstance(error, ValidationError) else "Invalid rule data."}, status=400)
 
 
-@webhook_admin
+@rule_admin
 @require_POST
 def save(request):
     try:
-        hook = submitted_webhook(request)
+        hook = submitted_rule(request)
         hook.save()
     except (ValidationError, ValueError, TypeError, IntegrityError) as error:
         return validation_error(error)
     return JsonResponse({"hook": webhook_data(hook)})
 
 
-@webhook_admin
+@rule_admin
 @require_POST
-def delete(request, webhook_id):
-    get_object_or_404(OutboundWebhook, pk=webhook_id).delete()
+def delete(request, rule_id):
+    get_object_or_404(Rule, pk=rule_id).delete()
     return JsonResponse({"deleted": True})
 
 
-@webhook_admin
+@rule_admin
 @require_POST
 def preview(request):
     try:
-        hook = submitted_webhook(request)
+        hook = submitted_rule(request)
         model = model_from_reference(hook.ref)
         candidates = model._default_manager.all()
         if hook.folder_id:
@@ -1441,179 +1498,6 @@ def preview(request):
 
 ```
 
-### Core Architecture Module: `archivebox/api/webhooks.py`
-```
-__package__ = "archivebox.api"
-
-from typing import Any
-from collections.abc import Callable
-import logging
-
-from django.db import transaction
-from django.db.models import Q
-from django.db.models.signals import pre_delete
-from asgiref.sync import async_to_sync
-from signal_webhooks.handlers import build_client_kwargs_by_hook_id, default_hook_handler, fire_webhooks
-from signal_webhooks.utils import get_webhook_model
-from signal_webhooks.typing import METHOD_SIGNALS
-from signal_webhooks.utils import reference_for_model
-from archivebox.api.webhook_events import (
-    RELATIONSHIP_EVENTS,
-    TAG_EVENTS,
-    active_relationship,
-    event_options,
-    executing_webhook,
-    action_in_progress,
-    event_payload,
-)
-
-
-logger = logging.getLogger(__name__)
-
-
-def load_deferred_fields_for_delete_webhook(sender, instance, using, **kwargs) -> None:
-    """Materialize deferred fields while DELETE webhook rows still exist.
-
-    Admin lists defer large fields, but signal_webhooks serializes all concrete
-    fields in post_delete. Loading one then would query an already-deleted row
-    and drop the event. Hydrate only deferred fields on webhook-enabled models
-    here, preserving the normal list-query optimization.
-    """
-    from signal_webhooks.handlers import find_hook_handler
-    from signal_webhooks.utils import reference_for_model
-
-    ref = reference_for_model(type(instance))
-    deferred_fields = instance.get_deferred_fields()
-    if not deferred_fields or find_hook_handler(ref, "DELETE") is None:
-        return
-
-    instance.refresh_from_db(using=using, fields=deferred_fields)
-
-
-def register_delete_webhook_field_loader() -> None:
-    pre_delete.connect(
-        load_deferred_fields_for_delete_webhook,
-        dispatch_uid="archivebox.load_deferred_fields_for_delete_webhook",
-        weak=False,
-    )
-
-
-def warning_error_handler(hook: Any, error: Exception | None) -> None:
-    if error is not None:
-        logger.warning("Outbound webhook %r failed: %s", hook.name, error)
-        return
-
-    logger.warning("Outbound webhook %r returned a non-success response.", hook.name)
-
-
-def transaction_on_commit_task_handler(hook: Callable[..., None], **kwargs: Any) -> None:
-    if action_in_progress():
-        return
-    if hook is default_hook_handler and kwargs["method"] in RELATIONSHIP_EVENTS and (relationship := active_relationship.get()):
-        kwargs["metadata"] = {**kwargs.get("metadata", {}), "relationship": relationship}
-    # Freeze normal event inputs at the transition. CREATE must wait for the
-    # model's initialization transaction (including Snapshot tag defaults).
-    payload = (
-        None
-        if kwargs["method"] == "CREATE"
-        else event_payload(
-            kwargs["instance"],
-            kwargs["method"],
-            data=kwargs["data"],
-            **kwargs.get("metadata", {}),
-        )
-    )
-
-    def run_webhook() -> None:
-        try:
-            if hook is default_hook_handler:
-                # The library's asyncio.run() cannot return to an enclosing
-                # sync_to_async worker to persist delivery results. Use the
-                # matching asgiref bridge, with the DB reads materialized first.
-                deliver_webhooks(kwargs["instance"], kwargs["data"], kwargs["method"], metadata=kwargs.get("metadata", {}), payload=payload)
-            else:
-                hook(**kwargs)
-        except Exception:
-            logger.warning("Outbound webhook failed after transaction commit.", exc_info=True)
-
-    try:
-        transaction.on_commit(run_webhook)
-    except Exception:
-        logger.warning("Could not schedule outbound webhook after transaction commit.", exc_info=True)
-
-
-def deliver_webhooks(instance, data, method, *, metadata=None, subscriptions=None, payload=None):
-    from archivebox.api.webhook_actions import execute_actions
-    from archivebox.crawls.locks import after_lifecycle_locks
-
-    metadata = metadata or {}
-    # The package's lookup table knows CRUD/M2M aliases. Additional lifecycle
-    # events use their exact signal name, on the same OutboundWebhook model.
-    if subscriptions is None:
-        hooks = get_webhook_model().objects.filter(
-            ref=reference_for_model(type(instance)),
-            signal__in=(*METHOD_SIGNALS.get(method, ()), method),
-            enabled=True,
-        )
-        if method in {"FOLDER_ENTERED", "FOLDER_LEFT"}:
-            hooks = hooks.filter(Q(folder_id=metadata["folder_id"]) | Q(any_folder=True))
-        if method in TAG_EVENTS:
-            hooks = hooks.filter(relationship__in=["*", str(metadata["tag_id"])])
-        if method in RELATIONSHIP_EVENTS:
-            hooks = hooks.filter(relationship__in=["", metadata.get("relationship", "")])
-        hooks = list(hooks)
-    else:
-        hooks = subscriptions
-    if not hooks:
-        return True
-    token = executing_webhook.set(True)
-    succeeded = True
-    try:
-        payload = payload if payload is not None else event_payload(instance, method, data=data, **metadata)
-        for index, subscription in enumerate(hooks):
-            external = not subscription.actions or any(
-                action["type"] in {"http_request", "python", "shell"} for action in subscription.actions
-            )
-            if external and not event_options(type(instance), method).get("blocking"):
-                # A post-save callback can still be inside the crawl's lifecycle
-                # lock even after DB commit. Its HTTP/subprocess work may need
-                # that same lock. Preserve ordering/stop_processing by deferring
-                # this subscription AND the remaining subscriptions together.
-                remaining = hooks[index:]
-
-                def after_release():
-                    try:
-                        if method != "DELETE" and instance.pk:
-                            try:
-                                instance.refresh_from_db()
-                            except type(instance).DoesNotExist:
-                                pass  # HTTP/script payload still describes the committed event.
-                        deliver_webhooks(instance, data, method, metadata=metadata, subscriptions=remaining, payload=payload)
-                    except Exception:
-                        logger.warning("Outbound webhook failed after lifecycle lock release.", exc_info=True)
-
-                if after_lifecycle_locks(after_release):
-                    return succeeded
-            if subscription.actions:
-                success = execute_actions(subscription, instance, method, payload)
-            else:
-                # Preserve the original payload, HTTP client settings and delivery
-                # status semantics for already configured endpoint-only webhooks.
-                client_kwargs = build_client_kwargs_by_hook_id([subscription])
-                async_to_sync(fire_webhooks)([subscription], data, client_kwargs)
-                success = not subscription.last_failure or bool(
-                    subscription.last_success and subscription.last_success > subscription.last_failure,
-                )
-            subscription.increment_health_stats(success)
-            succeeded = succeeded and success
-            if success and subscription.stop_processing:
-                break
-    finally:
-        executing_webhook.reset(token)
-    return succeeded
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1641,211 +1525,83 @@ def deliver_webhooks(instance, data, method, *, metadata=None, subscriptions=Non
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e520d8cb` (2026-11-24)
-**Commit Message**: Fix upload readiness, crawl start logging, and first-paint test interception
+### Incident Patch 1: `391309b9` (2026-11-27)
+**Commit Message**: Bump release version to 0.9.78rc706
 
-**File**: `archivebox/templates/core/add.html` (modified, +2/-1)
+**File**: `etc/package.json` (modified, +1/-1)
 ```diff
-@@ -78,7 +78,7 @@ <h1>Create a new Crawl</h1>
-                                     {{ form.url }}
-                                 </div>
-                                 <div class="url-upload-controls">
--                                    <button type="button" id="url-upload-button"><span aria-hidden="true">↥</span> Upload</button>
-+                                    <button type="button" id="url-upload-button" disabled><span aria-hidden="true">↥</span> Upload</button>
-                                     <span>or drag &amp; drop in files containing URLs</span>
-                                     <button type="button" id="edit-url-list" aria-controls="{{ form.url.id_for_label }}" hidden>Edit URL list</button>
-                                 </div>
-@@ -1222,6 +1222,7 @@ <h3>Crawl Plugins</h3>
-                     fileInput.value = '';
-                     importURLFiles(files);
-                 });
-+                uploadButton.disabled = false;
-                 document.addEventListener('dragover', function(event) {
-                     if (!Array.from(event.dataTransfer.types).includes('Files')) return;
-                     event.preventDefault();
+@@ -1,6 +1,6 @@
+ {
+   "name": "archivebox",
+-  "version": "0.9.78rc705",
++  "version": "0.9.78rc706",
+   "repository": "github:ArchiveBox/ArchiveBox",
+   "license": "MIT",
+   "dependencies": {
 ```
 
-**File**: `archivebox/tests/test_snapshot_list_tag_layout.py` (modified, +12/-6)
+**File**: `pyproject.toml` (modified, +2/-2)
 ```diff
-@@ -1,7 +1,7 @@
- """Snapshot table alignment and compact tag sizing."""
+@@ -1,6 +1,6 @@
+ [project]
+ name = "archivebox"
+-version = "0.9.78rc705"
++version = "0.9.78rc706"
+ requires-python = ">=3.13"
+ description = "Self-hosted internet archiving solution."
+ authors = [{name = "Nick Sweeting", email = "pyproject.toml@archivebox.io"}]
+@@ -365,7 +365,7 @@ Donate = "https://github.com/ArchiveBox/ArchiveBox/wiki/Donations"
  
- import pytest
--from playwright.sync_api import expect, sync_playwright
-+from playwright.sync_api import Error, expect, sync_playwright
  
- pytestmark = pytest.mark.django_db(transaction=True)
- 
-@@ -261,14 +261,14 @@ def test_snapshot_list_layout_is_stable_from_first_paint(browser_runtime, live_s
-                 ],
-             },
-         )
--        held_assets = []
-+        held_assets = {}
-         asset_paths = ("/admin-snapshot-previews.js", "/open-sans/latin-normal.woff2")
-         delayed_filter_picker = width == 390
-         if delayed_filter_picker:
-             asset_paths += ("/record-picker.js",)
- 
-         def hold_asset(event):
--            held_assets.append(event)
-+            held_assets[event["requestId"]] = event["request"]["url"]
- 
-         network.on("Fetch.requestPaused", hold_asset)
-         network.send(
-@@ -282,13 +282,19 @@ def hold_asset(event):
-             page.wait_for_load_state("domcontentloaded")
- 
-         page.wait_for_function("window.snapshotLayoutFrames.length > 0")
--        assert all(any(path in event["request"]["url"] for event in held_assets) for path in asset_paths)
-+        assert all(any(path in url for url in held_assets.values()) for path in asset_paths)
-         first_frame = page.evaluate("JSON.parse(window.snapshotLayoutFrames[0])")
- 
-         # Release the actual assets only after the fallback-font list has painted.
-         # On phones the filter picker must not shift the stacked filter panel.
--        for event in held_assets:
--            network.send("Fetch.continueRequest", {"requestId": event["requestId"]})
-+        for request_id in tuple(held_assets):
-+            try:
-+                network.send("Fetch.continueRequest", {"requestId": request_id})
-+            except Error as error:
-+                # A request Chromium canceled is no longer paused. The
-+                # successful post-paint response for each asset is checked below.
-+                if "Protocol error (Fetch.continueRequest): Invalid InterceptionId." not in str(error):
-+                    raise
-         network.send("Fetch.disable")
-         page.wait_for_load_state("load")
-         page.evaluate(
+ [tool.bumpver]
+-current_version = "v0.9.78rc705"
++current_version = "v0.9.78rc706"
+ version_pattern = "vMAJOR.MINOR.PATCH[PYTAGNUM]"
+ commit_message = "bump version {old_version} -> {new_version}"
+ tag_message = "{new_version}"
 ```
 
-**File**: `archivebox/workers/runner.py` (modified, +14/-4)
+**File**: `uv.lock` (modified, +1/-1)
 ```diff
-@@ -10,8 +10,10 @@
- import sys
- import threading
- import time
-+from collections.abc import Callable
- from contextlib import nullcontext
- from datetime import datetime, timedelta
-+from functools import partial
- from itertools import batched
- from pathlib import Path
- from tempfile import TemporaryDirectory
-@@ -201,6 +203,7 @@ def __init__(
-         schedule_all_crawls: bool = False,
-         wait_for_resources: bool = True,
-         claimed_snapshot: tuple[str, str, datetime] | None = None,
-+        on_admission: Callable[[], None] | None = None,
-     ):
-         self.crawl = crawl
-         self.catalog = get_plugin_catalog()
-@@ -224,6 +227,7 @@ def __init__(
-         self.process_discovered_snapshots_inline = process_discovered_snapshots_inline
-         self.schedule_all_crawls = schedule_all_crawls
-         self.wait_for_resources = wait_for_resources
-+        self.on_admission = on_admission
-         self.claimed_snapshot = claimed_snapshot
-         self._scheduler_yielded = False
-         self.show_progress = show_progress
-@@ -473,6 +477,8 @@ async def run(self) -> None:
-             try:
-                 if not await self.wait_for_resource_admission(claimed_snapshot=self.claimed_snapshot):
-                     return
-+                if self.on_admission is not None:
-+                    self.on_admission()
-                 # Startup and its first snapshot are one admission. Browser
-                 # startup can itself cause reclaim; checking again immediately
-                 # would tear it down and repeat startup without doing any work.
-@@ -1562,6 +1568,7 @@ def run_crawl(
-     schedule_all_crawls: bool = False,
-     wait_for_resources: bool = True,
-     claimed_snapshot: tuple[str, str, datetime] | None = None,
-+    on_admission: Callable[[], None] | None = None,
- ) -> None:
-     with crawl_lifecycle_lock(crawl_id):
-         _run_crawl_locked(
-@@ -1575,6 +1582,7 @@ def run_crawl(
-             schedule_all_crawls=schedule_all_crawls,
-             wait_for_resources=wait_for_resources,
-             claimed_snapshot=claimed_snapshot,
-+            on_admission=on_admission,
-         )
+@@ -141,7 +141,7 @@ wheels = [
  
- 
-@@ -1590,6 +1598,7 @@ def _run_crawl_locked(
-     schedule_all_crawls: bool = False,
-     wait_for_resources: bool = True,
-     claimed_snapshot: tuple[str, str, datetime] | None = None,
-+    on_admission: Callable[[], None] | None = None,
- ) -> None:
-     from archivebox.crawls.models import Crawl
-     from django.db import close_old_connections
-@@ -1610,6 +1619,7 @@ def run_in_current_thread() -> None:
-                 schedule_all_crawls=schedule_all_crawls,
-                 wait_for_resources=wait_for_resources,
-                 claimed_snapshot=claimed_snapshot,
-+                on_admission=on_admission,
-             )
-             asyncio.run(runner.run())
-             if runner._resource_deferred and wait_for_resources and schedule_all_crawls:
-@@ -1887,9 +1897,9 @@ def _run_due_crawl_locked(
-         if crawl.status == crawl.StatusChoices.STARTED and crawl.is_finished():
-             crawl.advance_lifecycle()
-             return True
--        _runner_console_line(crawl=crawl)
-         run_crawl(
-             str(crawl.id),
-+            on_admission=partial(_runner_console_line, crawl=crawl),
-             process_discovered_snapshots_inline=True,
-             interactive_interrupts=interactive_interrupts,
-             schedule_all_crawls=schedule_all_crawls,
-@@ -1970,9 +1980,9 @@ def _run_due_snapshot_locked(
-             return True
-         retry_plugins = [str(name).strip() for name in (snapshot.config or {}).get("RETRY_PLUGINS", []) if str(name).strip()]
-         if retry_plugins:
--            _runner_console_line(crawl_id=snapshot.crawl_id, snapshot=snapshot)
-             run_crawl(
-                 str(snapshot.crawl_id),
-+                on_admission=partial(_runner_console_line, crawl_id=snapshot.crawl_id, snapshot=snapshot),
-                 snapshot_ids=[str(snapshot.id)],
-                 selected_plugins=retry_plugins,
-                 process_discovered_snapshots_inline=False,
-@@ -2020,9 +2030,9 @@ def _run_due_snapshot_locked(
-                 return False
-         if not snapshot.crawl.claim_processing_lock(lock_seconds=lock_seconds):
-             return False
--        _runner_console_line(crawl=snapshot.crawl)
-         _run_crawl_locked(
-             str(snapshot.crawl_id),
-+            on_admission=partial(_runner_console_line, crawl=snapshot.crawl),
-             process_discovered_snapshots_inline=True,
-             interactive_interrupts=interactive_interrupts,
-             schedule_all_crawls=schedule_all_crawls,
-@@ -2053,9 +2063,9 @@ def _run_due_snapshot_locked(
-         snapshot.refresh_from_db()
-     if snapshot.status != Snapshot.StatusChoices.STARTED:
-         return True
--    _runner_console_line(crawl_id=snapshot.crawl_id, snapshot=snapshot)
-     run_crawl(
-         str(snapshot.crawl_id),
-+        on_admission=partial(_runner_console_line, crawl_id=snapshot.crawl_id, snapshot=snapsh
+ [[package]]
+ name = "archivebox"
+-version = "0.9.78rc705"
++version = "0.9.78rc706"
+ source = { editable = "." }
+ dependencies = [
+     { name = "abx-dl" },
 ```
 
 ---
 
-### Incident Patch 2: `48cb6ae4` (2026-11-24)
-**Commit Message**: Merge main CI mirror fix into dev
+### Incident Patch 2: `b1251045` (2026-11-27)
+**Commit Message**: Read gallery iframe handles in their own document context
 
-Dev already prefers the public Ubuntu archive. This ancestry-only merge does not start release automation. [skip ci]
-
-
-
----
-
-### Incident Patch 3: `4c70bc45` (2026-11-24)
-**Commit Message**: Release tested snapshot admin fixes from current dev
-
-
+**File**: `bin/screenshot_gallery_helpers.js` (modified, +4/-2)
+```diff
+@@ -70,7 +70,9 @@ function addLaunchArg(args, arg) {
+ async function waitForVisibleCardPreviews(page, timeout = 45000) {
+   // The page load event does not wait for nested lazy card images. Capture their
+   // decoded pixels, without forcing hidden alternatives or offscreen cards to load.
+-  const cardHandles = await page.$$('iframe[title$=" card"]');
++  // Use the page's own execution world: transferring lazy iframe nodes from
++  // Puppeteer's isolated world can race their document attachment.
++  const cardHandles = await page.$$('iframe[title$=" card"]', {isolate: false});
+   const visibleFrames = [];
+   for (const cardHandle of cardHandles) {
+     const visible = await cardHandle.evaluate((iframe) => {
+@@ -140,7 +142,7 @@ async function waitForVisibleCardPreviews(page, timeout = 45000) {
+       && new URL(location.href).searchParams.get('files') === '1'
+       && Boolean(document.querySelector('.directory-list'));
+   }, {timeout}, await previewHandle.evaluate((iframe) => iframe.src));
+-  for (const pdfHandle of await preview.$$('iframe')) {
++  for (const pdfHandle of await preview.$$('iframe', {isolate: false})) {
+     const visiblePdf = await pdfHandle.evaluate((iframe) => {
+       const rect = iframe.getBoundingClientRect();
+       return new URL(iframe.src, location.href).pathname.toLowerCase().endsWith('.pdf')
+```
 
 #### Recent Merged Pull Requests:
 - **PR #1999** (2026-11-23): Move cache candidate lookup onto Snapshot (@pirate)
@@ -1873,32 +1629,31 @@ Dev already prefers the public Ubuntu archive. This ancestry-only merge does not
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. upload readiness, crawl start logging, and first-paint test interception
+## X. Bump release version to 0.9.78rc706
 
 **RULE**:
-When implementing operations in `archivebox/templates/core/add.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ArchiveBox/ArchiveBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `etc/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ArchiveBox/ArchiveBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e520d8cb`: upload readiness, crawl start logging, and first-paint test interception. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `391309b9`: Bump release version to 0.9.78rc706. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `archivebox/templates/core/add.html`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `etc/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                                    <button type="button" id="url-upload-button" disabled><span aria-hidden="true">↥</span> Upload</button>
-                uploadButton.disabled = false;
+  "version": "0.9.78rc706",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-                                    <button type="button" id="url-upload-button"><span aria-hidden="true">↥</span> Upload</button>
+  "version": "0.9.78rc705",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e520d8cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `391309b9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

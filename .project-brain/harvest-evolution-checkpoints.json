@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T00:28:41.589Z",
+  "last_updated": "2026-11-28T00:39:04.987Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T00:19:39.168Z",
@@ -648,7 +648,7 @@
       "staged_for_review": 1
     },
     "archivebox-archivebox-learnings.md": {
-      "processed_at": "2026-11-24T16:19:58.272Z",
+      "processed_at": "2026-11-28T00:38:30.587Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -838,9 +838,9 @@
       "staged_for_review": 1
     },
     "greptimeteam-greptimedb-learnings.md": {
-      "processed_at": "2026-11-27T05:30:25.442Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-28T00:39:03.634Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "ydb-platform-ydb-learnings.md": {
       "processed_at": "2026-11-27T05:39:57.512Z",
@@ -1293,7 +1293,7 @@
       "staged_for_review": 0
     },
     "juullabs-kable-learnings.md": {
-      "processed_at": "2026-11-25T15:57:40.766Z",
+      "processed_at": "2026-11-28T00:38:31.993Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5166,
-  "total_canonical_promoted": 587,
-  "total_staged_for_review": 3909
+  "total_dossiers_evaluated": 5169,
+  "total_canonical_promoted": 588,
+  "total_staged_for_review": 3911
 }

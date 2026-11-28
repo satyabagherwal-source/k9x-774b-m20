@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T00:28:40.913Z",
+  "last_updated": "2026-11-28T00:39:04.194Z",
   "directives": [
     {
       "id": "CD-001",
@@ -73509,6 +73509,57 @@
       "source_repo": "yugabyte-yugabyte-db",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D2E2C9--plat-22752-yba-earlyoom-can-t-lock-its-.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-MA0X",
+      "directive_title": "Bump release version to 0.9.78rc706",
+      "source_repo": "archivebox-archivebox-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MA0X-bump-release-version-to-0-9-78rc706.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-MB8V",
+      "directive_title": "Update Rust crate uuid to v1.29.3",
+      "source_repo": "juullabs-kable-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MB8V-update-rust-crate-uuid-to-v1-29-3.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-MZG6",
+      "directive_title": "docs(rfc): propose an in-memory frontend write retry queue",
+      "source_repo": "greptimeteam-greptimedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MZG6-docs-rfc-propose-an-in-memory-frontend-write-retry-queue.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-6994BA",
+      "directive_title": "Bump release version to 0.9.78rc706",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "archivebox-archivebox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6994BA-bump-release-version-to-0-9-78rc706.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-6F8AC1",
+      "directive_title": "Update Rust crate uuid to v1.29.3",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "juullabs-kable",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6F8AC1-update-rust-crate-uuid-to-v1-29-3.md",
       "staged_date": "2026-11-28"
     }
   ]

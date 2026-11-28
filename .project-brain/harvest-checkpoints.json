@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T00:28:32.907Z",
+  "last_updated": "2026-11-28T00:38:26.856Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "65570df268cf2fa161e7f88e65eb876dfae2d63e861ce6aadd481158501eea86",
-      "verified_at": "2026-11-27T05:30:20.483Z",
+      "content_hash": "10eebabd35488983a2ef1fc72d5fb1074798238702d141ce4d588352f66428a9",
+      "verified_at": "2026-11-28T00:38:26.855Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T05:30:20.483Z"
+      "last_updated": "2026-11-28T00:38:26.855Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",
@@ -13206,14 +13206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juullabs-kable",
-      "content_hash": "d4957df8466fb61335df1cb5a1d3ab31b536f56a7682004322915ab7457bf979",
-      "verified_at": "2026-11-25T15:57:35.418Z",
+      "content_hash": "7350b11216b278e82a029105abf8cc5da4f21018e69d7eddf65a6522cf60b91c",
+      "verified_at": "2026-11-28T00:38:19.374Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T15:57:35.418Z"
+      "last_updated": "2026-11-28T00:38:19.374Z"
     },
     "tmolavi/siteprobe": {
       "repository": "tmolavi/siteprobe",
@@ -13971,14 +13971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-archivebox-archivebox",
-      "content_hash": "44d6a4cb69c151c2509815b94b7964b9885513238d4dfa0c41a4ecff76b0d54d",
-      "verified_at": "2026-11-24T16:19:50.920Z",
+      "content_hash": "6c2529ac7481948f112c7156850589cd5675f7ab285439cb8260bcb3f319291d",
+      "verified_at": "2026-11-28T00:38:17.375Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T16:19:50.920Z"
+      "last_updated": "2026-11-28T00:38:17.375Z"
     },
     "buriy/python-readability": {
       "repository": "buriy/python-readability",
