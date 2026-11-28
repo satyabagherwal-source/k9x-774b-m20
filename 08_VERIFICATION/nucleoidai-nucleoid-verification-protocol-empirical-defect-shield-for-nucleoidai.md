@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "761b277c",
+  "source_version": "42b3267e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-28T06:04:30.680Z",
+  "timestamp": "2026-11-28T09:33:45.278Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `761b277c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T06:04:30.680Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `42b3267e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T09:33:45.278Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `761b277c`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `42b3267e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-28T06:04:29.274Z  
+> **Harvest Timestamp**: 2026-11-28T09:28:41.938Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1488,6 +1488,320 @@ export async function start(puzzle_id: string = "27a28665") {
 
 ```
 
+### Core Architecture Module: `arc/src/dataset/catalog.ts`
+```
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { document } from "./dataset";
+import { palette } from "../lib/terminal";
+import * as pdf from "../lib/pdf";
+
+const output_path: string = join(__dirname, "..", "..", "dataset.pdf");
+const document_title: string = "Nucleoid ARC instruction datasets";
+const introduction = [
+  "Every JSON instruction dataset in arc/src/dataset, in the filename order in which document() reads them for the solver's few-shot examples. Generated from the dataset files by bun run dataset:pdf in arc/; regenerate it whenever a dataset changes instead of editing it.",
+  "Each dataset shows its class_declaration, its declarations and its output_canvas, then one box per pair in dataset order: the pair's input_matrix and output_matrix, followed by one row per instance with its input_instance_matrix, its output_instance_matrix and its implementation. Sizes read rows×columns, and cells show colors 0 to 9 in the solver's terminal palette.",
+];
+
+const page_width: number = 612;
+const page_height: number = 792;
+const margin: number = 40;
+const content_top: number = 52;
+const content_bottom: number = page_height - 48;
+const content_width: number = page_width - 2 * margin;
+const content_right: number = margin + content_width;
+const header_baseline: number = 30;
+const header_rule: number = 36;
+const footer_baseline: number = page_height - 26;
+
+const padding: number = 8;
+const title_height: number = 16;
+const title_baseline: number = 11;
+const box_gap: number = 10;
+const panel_gap: number = 8;
+const label_height: number = 10;
+const code_leading: number = 9;
+const code_padding: number = 5;
+const code_chunk: number = 60;
+const code_hanging: number = 8;
+const wrap_columns_minimum: number = 16;
+const gutter_width: number = 16;
+const value_height: number = 20;
+const implementation_leading: number = 8.6;
+const implementation_hanging: number = 4;
+const instance_padding: number = 6;
+const beside_share: number = 0.45;
+const beside_columns: number = 56;
+const beside_height_maximum: number = 400;
+const grid_arrow: number = 22;
+const grid_cell_minimum: number = 2;
+const grid_cell_maximum: number = 14;
+const digit_cell_minimum: number = 9;
+const grid_height_maximum: number = 220;
+const thumbnail_arrow: number = 14;
+const thumbnail_extent: number = 44;
+const thumbnail_cell_minimum: number = 1.5;
+const thumbnail_cell_maximum: number = 8;
+const swatch_size: number = 14;
+const swatch_gap: number = 6;
+const contents_row: number = 13;
+const contents_columns = {
+  dataset: margin + 6,
+  canvas: margin + 210,
+  pairs: margin + 330,
+  instances: margin + 410,
+  page: content_right - 6,
+};
+
+const ink = [33, 37, 41];
+const muted = [108, 117, 125];
+const rule = [206, 212, 218];
+const title_fill = [241, 243, 245];
+const code_fill = [250, 251, 252];
+const stripe_fill = [248, 249, 250];
+const grid_line = [85, 85, 85];
+const black = [0, 0, 0];
+const white = [255, 255, 255];
+
+const title_style = { font: "sans_bold", size: 20, color: ink };
+const heading_style = { font: "sans_bold", size: 16, color: ink };
+const body_style = { font: "sans", size: 8.5, color: ink };
+const total_style = { font: "sans_bold", size: 8.5, color: ink };
+const summary_style = { font: "sans", size: 8.5, color: muted };
+const box_style = { font: "sans_bold", size: 7.5, color: ink };
+const note_style = { font: "sans", size: 7, color: muted };
+const label_style = { font: "sans", size: 6.5, color: muted };
+const code_style = { font: "mono", size: 7, color: ink };
+const gutter_style = { font: "mono", size: 7, color: muted };
+const value_style = { font: "mono_bold", size: 8, color: ink };
+const implementation_style = { font: "mono", size: 6.8, color: ink };
+const name_style = { font: "mono_bold", size: 6.8, color: ink };
+const column_style = { font: "sans_bold", size: 7.5, color: ink };
+const file_style = { font: "mono", size: 7.5, color: ink };
+const count_style = { font: "sans", size: 7.5, color: ink };
+
+function plural(count: number, noun: string): string {
+  return `${count} ${noun}${count === 1 ? "" : "s"}`;
+}
+
+function clamp(value: number, low: number, high: number): number {
+  return Math.min(high, Math.max(low, value));
+}
+
+function sum(values): number {
+  return values.reduce((total: number, value: number) => total + value, 0);
+}
+
+function puzzle_id(file: string): string {
+  return /^dataset\.([0-9a-f]{8})\.json$/.exec(file.toLowerCase())?.[1];
+}
+
+function instance_count(dataset): number {
+  return sum(dataset.dataset.map((pair) => pair.instances.length));
+}
+
+function parse(file: string) {
+  const source: string = readFileSync(join(__dirname, file), "utf8");
+  try {
+    return JSON.parse(source);
+  } catch (error) {
+    throw new Error(`${file}: ${error.message}`);
+  }
+}
+
+function load() {
+  const files: string[] = readdirSync(__dirname, { withFileTypes: true })
+    .filter((file) => {
+      const name: string = file.name.toLowerCase();
+      return (
+        file.isFile() && name.endsWith(".json") && !name.startsWith(".env")
+      );
+    })
+    .map((file) => file.name)
+    .sort();
+  const datasets = files.map(parse);
+  if (JSON.stringify(datasets) !== JSON.stringify(JSON.parse(document()))) {
+    throw new Error(
+      "The dataset files differ from the instruction datasets document() reads"
+    );
+  }
+  return files.map((file: string, index: number) => ({
+    file,
+    dataset: datasets[index],
+  }));
+}
+
+function wrap_text(text: string, style, width: number) {
+  const lines = [];
+  let line: string = "";
+  for (const word of text.split(" ")) {
+    const candidate: string = line === "" ? word : `${line} ${word}`;
+    if (line !== "" && pdf.text_width(candidate, style) > width) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = candidate;
+    }
+  }
+  return line === "" ? lines : [...lines, line];
+}
+
+function wrap_code(line: string, available: number, hanging: number) {
+  const columns: number = Math.max(available, wrap_columns_minimum);
+  const leading: number = line.length - line.trimStart().length;
+  const indent: string = " ".repeat(
+    Math.min(Math.floor(columns / 2), leading + hanging)
+  );
+  const lines = [];
+  let rest: string = line;
+  let prefix: string = "";
+  while (prefix.length + rest.length > columns) {
+    const room: number = columns - prefix.length;
+    const start: number = rest.length - rest.trimStart().length;
+    const space: number = rest.lastIndexOf(" ", room);
+    const cut: number = space > start ? space : room;
+    lines.push(prefix + rest.slice(0, cut).trimEnd());
+    rest = rest.slice(cut).trimStart();
+    prefix = indent;
+  }
+  return rest === "" && lines.length > 0 ? lines : [...lines, prefix + rest];
+}
+
+function code_columns(width: number, style): number {
+  return Math.floor(width / pdf.text_width(" ", style));
+}
+
+function grid_size(matrix) {
+  return {
+    rows: matrix.length,
+    columns: Math.max(0, ...matrix.map((row) => row.length)),
+  };
+}
+
+function color_of(value: number) {
+  return palette[value] ?? white;
+}
+
+function digit_style(value: number, cell: number) {
+  const [red, green, blue] = color_of(value);
+  return {
+    font: "sans_bold",
+    size: cell * 0.5,
+    color: red * 0.299 + green * 0.587 + blue * 0.114 > 160 ? black : white,
+  };
+}
+
+function draw_digit(page, x: number, y: number, cell: number, value: number) {
+  const text: string = String(value);
+  const style = digit_style(value, cell);
+  pdf.text(
+    page,
+    x + (cell - pdf.text_width(text, style)) / 2,
+    y + cell / 2 + style.size * 0.36,
+    text,
+    style
+  );
+}
+
+function draw_grid(
+  page,
+  x: number,
+  y: number,
+  matrix,
+  cell: number,
+  digits: boolean
+) {
+  const { rows, columns } = grid_size(matrix);
+  if (rows === 0 || columns === 0) {
+    pdf.text(page, x, y + label_style.size, "(empty)", label_style);
+    return;
+  }
+  const width: number = columns * cell;
+  const height: number = rows * cell;
+  pdf.rects(page, [[x, y, width, height]], color_of(0));
+  const cells = new Map();
+  matrix.forEach((row, r: number) =>
+    row.forEach((value: number, c: number) => {
+      if (value !== 0) {
+        const areas = cells.get(value) ?? [];
+        areas.push([x + c * cell, y + r * cell, cell, cell]);
+        cells.set(value, areas);
+      }
+    })
+  );
+  for (const [value, areas] of cells) {
+    pdf.rects(page, areas, color_of(value));
+  }
+  pdf.lines(
+    page,
+    [
+      ...Array.from({ length: rows + 1 }, (_, r: number) => [
+        x,
+        y + r * cell,
+        x + width,
+        y + r * cell,
+      ]),
+      ...Array.from({ length: columns + 1 }, (_, c: number) => [
+        x + c * cell,
+        y,
+        x + c * cell,
+        y + height,
+      ]),
+    ],
+    grid_line,
+    cell >= 8 ? 0.4 : 0.25
+  );
+  if (digits && cell >= digit_cell_minimum) {
+    for (const [value, areas] of cells) {
+      for (const [left, top] of areas) {
+        draw_digit(page, left, top, cell, value);
+      }
+    }
+  }
+}
+
+function draw_arrow(page, x: number, y: number, width: number) {
+  pdf.lines(page, [[x, y, x + width - 4, y]], muted, 0.8);
+  pdf.polygon(
+    page,
+    [
+      [x + width, y],
+      [x + width - 5, y - 2.8],
+      [x + width - 5, y + 2.8],
+    ],
+    muted
+  );
+}
+
+function draw_right(
+  page,
+  right: number,
+  baseline: number,
+  text: string,
+  style
+) {
+  pdf.text(page, right - pdf.text_width(text, style), baseline, text, style);
+}
+
+function code_rows(source: string, gutter?: string) {
+  const offset: number = gutter === undefined ? 0 : gutter_width;
+  const columns: number = code_columns(
+    content_width - 2 * padding - offset,
+    code_style
+  );
+  const lines = source
+    .split("\n")
+    .flatMap((line: string) =>
+      wrap_code(line.replace(/\t/g, "    "), columns, code_hanging)
+    );
+  return Array.from(
+    { length: Math.ceil(lines.length / code_chunk) },
+    (_, chunk: number) => {
+      const part = lines.slice(chunk * code_chunk, (chunk + 1) * code_chunk);
+      const height: number = part.length * code_leading + 2 * code_padding;
+      re
+```
+
 ### Core Architecture Module: `arc/src/dataset/dataset.ts`
 ```
 import { readdirSync, readFileSync } from "node:fs";
@@ -1529,12 +1843,6 @@ export function document(
 
 ```
 
-### Core Architecture Module: `arc/src/dataset/index.ts`
-```
-export { document } from "./dataset";
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1562,274 +1870,278 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `761b277c` (2026-11-28)
-**Commit Message**: Draft NUC 158 List Invocation of Function Values
+### Incident Patch 1: `42b3267e` (2026-11-28)
+**Commit Message**: Draft NUC 160 C# String Trimming Method Alias
 
-Category: Runtime features. Continuous mode.
+Category: Language compatibility. Continuous mode; runtime applicability N/A.
+The one unbiased live-registry draw selected index 4 of five categories;
+token comparison is categorically skipped, not a passing gate.
 
-Add only functionValue.invoke(argumentList), delivering an ordinary List's
-ordered values through the existing fixed/default/rest binder. Preserve
-Function-value context, lack of implicit this capture, source-order evaluation,
-nullish recovery, identities, reactivity and rollback; no spread syntax,
-closure, builtin/class construction, new global, dependency or version.
+Add only String receiver Trim() as an exact alias of accepted trim()/strip().
+Reuse the existing Unicode trimming arm, preserve every accepted routing,
+argument boundary, dependency, diagnostic and protected corpus/test case.
+No overloads, TrimStart/TrimEnd, case normalization, new grammar or version.
 
-Runtime applicability: new_feature. Accepted calls cannot deliver an arbitrary
-runtime-length List to an arbitrary user Function as positional arguments.
-Token comparison is skipped entirely; all behavior/integrity, accepted replay,
-compatibility and development checks remain mandatory.
-
-Allocate only the Draft proposal and both index rows before its details.
-One live-registry category draw, index 1 of 5, with no redraw or stale Draft.
-No hint, usefulness rubric or strategy learner is configured.
-Caller selection raw blob: 215578f9733dc24dc0e3dfa2743425e2f4bd948a.
+No hint, advisory rubric or strategy learner is configured. This allocates
+the Draft and both index rows only, before immutable baseline recording and
+fresh independent preparation/evaluation. No outcome is recorded.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -110,6 +110,7 @@ Created: 31-Jul-2026
- | [147](nuc-0147.md) | Deferred Suites | Accepted |
- | [151](nuc-0151.md) | Truthy Value Assignment | Accepted |
- | [152](nuc-0152.md) | Falsy Value Assignment | Rejected: protected truthy-assignment parser rejection test fails |
-+| [158](nuc-0158.md) | List Invocation of Function Values | Draft |
+@@ -203,6 +203,7 @@ Created: 31-Jul-2026
+ | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Accepted |
+ | [150](nuc-0150.md) | C# Truncation Method Alias | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
+ | [157](nuc-0157.md) | Padding Method Aliases | Accepted |
++| [160](nuc-0160.md) | C# String Trimming Method Alias | Draft |
  
- ### Utility enhancement
+ ### Documentation
  
-@@ -369,6 +370,7 @@ Created: 31-Jul-2026
- | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Standards Track | Utility enhancement | Rejected: 74 existing corpus-count and historical-locator tests fail |
- | [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail |
- | [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Draft |
-+| [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Draft |
+@@ -373,6 +374,7 @@ Created: 31-Jul-2026
+ | [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
+ | [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Draft |
++| [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0158.md` (added, +82/-0)
+**File**: `docs/nuc-0160.md` (added, +85/-0)
 ```diff
-@@ -0,0 +1,82 @@
-+# NUC 158 -- List Invocation of Function Values
+@@ -0,0 +1,85 @@
++# NUC 160 -- C# String Trimming Method Alias
 +
 +```
-+NUC: 158
-+Title: List Invocation of Function Values
++NUC: 160
++Title: C# String Trimming Method Alias
 +Author: Copilot <223556219+Copilot@users.noreply.github.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Runtime features
++Category: Language compatibility
 +Created: 28-Nov-2026
-+Requires: 8, 54, 74
++Requires: 110
 +```
 +
 +## Abstract
 +
-+- Add only `functionValue.invoke(argumentList)` for user Function Values.
-+  Pass the ordered elements of its first ordinary List argument to the
-+  existing fixed/default/rest parameter binder. The outer list is an
-+  argument container, not a single positional value.
-+- Preserve ordinary Function-value definition identity, invocation context,
-+  lack of implicit `this` capture, fresh scopes, object identity, dependency
-+  tracking, reactivity and rollback. Evaluate the receiver and supplied call
-+  arguments at their existing source-order boundaries; supplied surplus
-+  call arguments are evaluated and ignored, as for existing built-in methods.
-+- A nullish receiver or argument container retains Undefined/deferred
-+  recovery. Other non-List containers raise a typed error. No class or
-+  native-builtin construction, population/string expansion, spread syntax,
-+  closure, receiver rebinding, new global, dependency or version is added.
-+- The caller's one uniform live-registry draw selected Runtime features.
-+  This is `new_feature`: accepted calls cannot deliver an arbitrary
-+  runtime-length List to an arbitrary Function as positional arguments.
-+  Continuous evaluation skips token comparison entirely, while retaining
-+  immutable accepted replay, behavior/integrity and every hard criterion.
++- Add only `TEXT.Trim()` on String receivers as an exact alias of accepted
++  `TEXT.trim()` and `TEXT.strip()`. Reuse the same Unicode-whitespace
++  trimming arm, preserving internal whitespace, result text, live
++  dependencies and the written call name.
++- Preserve the accepted receiver and argument evaluation boundaries, including
++  evaluation and ignoring of supplied arguments. Other receivers, object
++  properties, class methods, ordinary member reads, static `String.Trim`
++  calls and existing diagnostics keep their meanings.
++- Add one familiar C# method name, not C# overloads, character/pattern
++  trimming, `TrimStart`, `TrimEnd`, case-insensitive dispatch, new grammar,
++  keywords, public types, dependencies or versions. This advances the
++  language-superset aspiration, not full .NET compatibility.
++- The caller's one unbiased live-registry draw selected Language
++  compatibility, index 4 of five eligible categories. Continuous evaluation
++  skips token comparison categorically, while preserving immutable accepted
++  replay, independent behavior/integrity and every hard criterion.
 +
 +## Motivation
 +
-+- Functions can collect a variable number of positional operands through
-+  final rest formals, but callers cannot send a runtime-length list back
-+  through that calling convention. Passing the list directly binds one
-+  value, while a fixed number of indexed expressions fixes the arity.
-+- Expose the existing invocation binder through one Function-value method,
-+  without adding the call-site spread syntax whose errors accepted tests
-+  pin, changing higher-order helpers or inventing a second binder.
-+- Preserve every accepted executable source, assertion, diagnostic and
-+  historical guard. Only demonstrably count-only pins caused by legitimate
-+  case additions may move; do not repair a selector, partition or byte seal
-+  to manufacture a passing suite.
++- C# programs and language models use `label.Trim()` to remove surrounding
++  whitespace. Accepted Nucleoid already implements that operation under
++  `trim` and `strip`, but the capitalized instance call is unsupported.
++  Extend the existing arm rather than introduce a second trimming algorithm.
++- Preserve every original executable case and native test, including source
++  bytes, canonical assertions, expected returns, executed coverage and
++  historical locators/seals/partitions. Exercise this bounded alias with
++  focused new non-ARC Rust behavior tests and synchronized authoritative
++  prose/fine-tuning examples without rewriting the protected corpus.
++- Keep this alias separate from accepted NUC 157's padding names and rejected
++  NUC 150's numeric truncation name; neither pending nor rejected code is a
++  dependency.
 +
 +## Rationale
 +
-+To be completed by the fresh proposal agent against the pushed allocation,
-+including independent verification of the new-feature applicability.
++To be completed by the fresh proposer against the pushed allocation, with
++the preserved Language compatibility category and continuous mode.
 +
 +## Specification
 +
-+To be completed with ordinary List argument delivery, existing Function-value
-+context and parameter binding, source-order evaluation and nullish recovery.
++To be completed with exact accepted trimming semantics, argument evaluation,
++standing reactivity and unchanged routing for every other receiver.
 +
 +## Errors
 +
-+To be completed without weakening accepted method, call or spread diagnostics.
++To be completed without weakening accepted diagnostics or adding overloads.
 +
 +## Backwards Compatibility
 +
-+To be completed with pinned accepted-source replay and preserved ordinary
-+functions, object methods, member reads, contexts and rollback.
++To be completed with pinned accepted-source replay, ordinary names/member
++reads/object methods, nullish safety and preserved test/corpus integrity.
 +
 +## Reference Implementation
 +
-+To be completed only in the isolated candidate after accepted inputs are
-+recorded. Reuse the existing invocation path; do not alter accepted syntax.
++To be completed only in the isolated candidate after immutable accepted inputs
++are recorded. Reuse the existing string-transform arm; accepted grammar stays.
 +
 +## Evaluation
 +
 +This allocation records no outcome. A fresh proposer, exactly one required
-+Rust improvement pass and a fresh independent evaluator will check the
-+frozen candidate. No hint, advisory rubric or strategy learner is configured.
-+The new-runtime-feature token check is skipped, not a zero-case passing gate.
++Rust improvement pass and a fresh independent evaluator will check the frozen
++candidate. Token comparison is skipped as `language_compatibility`, not a
++passing gate. Runtime applicability is N/A. No hint, rubric or strategy learner
++is configured.
 +
 +## Copyright
 +
-+This document has been placed in the public domain.
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 ---
 
-### Incident Patch 2: `2a771a12` (2026-11-28)
-**Commit Message**: NUC 156 Output Counts of Reasoning Selections
+### Incident Patch 2: `9c1ff719` (2026-11-28)
+**Commit Message**: NUC 158 List Invocation of Function Values
 
-Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail.
+Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail.
 
-Automatic acceptance is blocked by the every-test-passes hard criterion.
-The fresh independent full suite exits 101: 4,142 passed, 76 failed and
-25 ignored; all 20 additions pass and all 4,223 existing identities remain
-unweakened. Compilation, warning-denied Clippy, formatting and backward
-compatibility pass. Accepted replay protects 1,328 programs and 6,611
-canonical assertions.
+The frozen candidate passes all-target compilation, warning-denied Clippy,
+formatting and backward-compatibility checks. Its independent full suite,
+including doctests, reports 4,226 passed, 33 original tests failed and
+25 ignored. All 15 new tests pass; all 4,269 original IDs, ignored reasons,
+expected panics, assertions and diagnostics are preserved. The every-test
+hard criterion fails; the deterministic core's Accepted result does not
+waive those native guard failures.
 
-The independent overall decision is Rejected; the deterministic core is
-Accepted with zero issues. Required lexer-token comparison ran and passed:
-1,326 unchanged, two shorter, zero increases; specification 200 to 139,
-reference 223 to 152. Advisory reward is unscored (missing_rubric).
-Strategy learning is not configured; no checkpoint or reward is assigned.
+Continuous mode, Runtime features, new_feature: token comparison skipped
+entirely, not a passing token gate. Advisory reward unscored missing_rubric;
+strategy not_configured/unattributed, with no learning update.
 
-Publish only the evaluated proposal and its two index rows. Do not integrate
-the rejected runtime, specification, grammar, dataset or tests. Preserve the
-isolated frozen tree b93e64df579dd3cb39c6e91bfac8341223c5a53a and its reports.
-Caller review raw blob: ed5daabf200043197190767b5e8eb0195e79014c.
+Independent outcome 18e838f3a71ff9da16199ec017149e3f21200dc8;
+core report 57959bf4a766a11897ae2d81b98950015c22eec2;
+caller verification 95f8f5d1c233362a446b206eab592247fab9d2d1.
 
-Co-authored-by: C
+Only rejection documentation and both index rows are committed.
+Rejected runtime, executable documents, tests, datasets and exports stay
+isolated at frozen candidate tree af6a36914e66078bd5dde
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -176,7 +176,7 @@ Created: 31-Jul-2026
- | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Accepted |
- | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Accepted |
- | [153](nuc-0153.md) | State Labels of Reasoning Selections | Rejected: three protected executable-document guards fail |
--| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Draft |
-+| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail |
+@@ -110,7 +110,7 @@ Created: 31-Jul-2026
+ | [147](nuc-0147.md) | Deferred Suites | Accepted |
+ | [151](nuc-0151.md) | Truthy Value Assignment | Accepted |
+ | [152](nuc-0152.md) | Falsy Value Assignment | Rejected: protected truthy-assignment parser rejection test fails |
+-| [158](nuc-0158.md) | List Invocation of Function Values | Draft |
++| [158](nuc-0158.md) | List Invocation of Function Values | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
  
- ### Language compatibility
+ ### Utility enhancement
  
-@@ -367,7 +367,7 @@ Created: 31-Jul-2026
- | [153](nuc-0153.md) | State Labels of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: three protected executable-document guards fail |
- | [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Standards Track | Syntax enhancement | Rejected: eight historical source/field-seal tests fail |
+@@ -371,7 +371,7 @@ Created: 31-Jul-2026
  | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Standards Track | Utility enhancement | Rejected: 74 existing corpus-count and historical-locator tests fail |
--| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail |
- | [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Draft |
+ | [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail |
+ | [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Accepted |
+-| [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Draft |
++| [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
+ | [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Draft |
  
  ## Copyright
 ```
 
-**File**: `docs/nuc-0156.md` (modified, +215/-15)
+**File**: `docs/nuc-0158.md` (modified, +244/-15)
 ```diff
 @@ -4,7 +4,7 @@
- NUC: 156
- Title: Output Counts of Reasoning Selections
+ NUC: 158
+ Title: List Invocation of Function Values
  Author: Copilot <223556219+Copilot@users.noreply.github.com>
 -Status: Draft
 +Status: Rejected
  Type: Standards Track
- Category: Reasoning enhancement
- Created: 27-Nov-2026
-@@ -16,8 +16,8 @@ Requires: 48, 112, 133
- - Add only the final reasoning stage `SELECTION |> outdegrees`. Return one
-   nonnegative Number for each selected step, in selection order: the number
-   of edges recorded by that selection whose input name is that step's node.
--  Count the selected steps' recorded direct inputs, not paths or all
--  dependents in the model.
-+  Count occurrences in selected outputs' recorded direct inputs, not
-+  paths or all dependents in the model.
- - Equivalently, count each selected node name's occurrences as the first item
-   of `SELECTION |> edges`. Outputs outside the selection do not contribute;
-   an empty selection gives `[]`, and a selected step with no recorded output
-@@ -30,6 +30,11 @@ Requires: 48, 112, 133
-   This is a bounded explanation-structure projection, distinct from NUC 145's
-   recorded input counts. Continuous evaluation requires original accepted
-   replay, paired per-case lexer-token comparison and every hard criterion.
-+- **Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail.**
-+  The independently evaluated candidate passes compilation, compatibility
-+  and token comparison, but fails the every-test-passes hard criterion.
-+  Its implementation remains isolated; none of its language changes is
-+  integrated.
+ Category: Runtime features
+ Created: 28-Nov-2026
+@@ -31,6 +31,10 @@ Requires: 8, 54, 74
+   runtime-length List to an arbitrary Function as positional arguments.
+   Continuous evaluation skips token comparison entirely, while retaining
+   immutable accepted replay, behavior/integrity and every hard criterion.
++- **Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail.**
++  Independent compilation and compatibility checks pass, but the full suite
++  fails the every-test-passes hard criterion. The implementation remains
++  isolated; none of its language changes is integrated.
  
  ## Motivation
  
-@@ -46,33 +51,228 @@ Requires: 48, 112, 133
+@@ -48,35 +52,260 @@ Requires: 8, 54, 74
  
  ## Rationale
  
--To be completed by the fresh proposal agent against the pushed allocation.
-+- Query the edges already recorded by the same selection; do not walk the
-+  global graph for each node or reinterpret `affects` as including its
-+  source. In a depth-limited impact, `union(source)` explicitly appends the
-+  source after the reached steps.
-+- Reuse the existing typed `Projection` and `Runtime::projected` path.
-+  Output counts depend on the selection, not an isolated `StepField`.
-+  Keep one record materialization per selected step, even for zero counts.
-+- Use a finite scan of selected outputs' `from` lists for each selected
-+  node, converting its `usize` count with `number::from_usize`. Add no
-+  traversal, graph mutation, dependency, configuration or record field.
-+- Preserve the final-only precedent of NUC 145: recognize the ordinary
-+  Identifier in the pipeline parser, never `Stage::from_name`, which
-+  recognizes prefix stages. Ordinary names, calls and members keep lookup.
-+- Append public `Stage::Outdegrees` after all eleven existing variants.
-+  Their implicit discriminants remain unchanged. Expanding an existing
-+  exhaustive public enum requires human SemVer/API review for downstream
-+  matches; do not add `non_exhaustive` or change project versions.
-+- The caller made one unbiased live-registry draw, index 3 of 5, with no
-+  redraw. This bounded graph-evidence projection advances declarative
-+  reasoning, not a compatibility alias. Runtime applicability is N/A.
-+- No hint, frozen usefulness rubric, policy, receipt or strategy was
-+  supplied. Learning is `not_configured` and this preparation is
-+  unattributed; advisory usefulness is unscored (`missing_rubric`), not zero.
+-To be completed by the fresh proposal agent against the pushed allocation,
+-including independent verification of the new-feature applicability.
++- Keep one Function-value operation and reuse the accepted parameter binder;
++  the feature is argument delivery, not another signature or binding scheme.
++- The accepted `call_method` dispatcher has no Function route, and the pinned
++  unsupported probe reports `TypeError: function.invoke is not a function`.
++  The existing Rust `Runtime::invoke` is not a language-level calling protocol.
++- Passing a List as one ordinary argument binds one value. A fixed number of
++  indexed expressions fixes arity and cannot deliver an arbitrary runtime-length
++  List to an arbitrary Function. This is a new core execution feature, not a
++  utility query or equivalent spelling of an existing language protocol.
++- Preserve the caller's confirmed Runtime features category and continuous
++  mode. Applicability is `new_feature`; token comparison is skipped entirely as
++  `new_runtime_feature`, without comparisons, before-counts or counterparts.
++- Do not add `.call` or `.apply`, call-site spread, String/population expansion,
++  bound-method receivers, closures, implicit `this`, Function construction,
++  globals, flags, dependencies or a version change.
  
  ## Specification
  
--To be completed with the selection-local recorded-edge contract, ordinary
--final-stage boundaries and synchronized normative documentation.
-+- For each Step in `selection.steps`, in its order, return the Number of
-+  occurrences of `step.node` across the `from` lists of those same selected
-+  Steps. Equivalently, count matches as the first item of
-+  `selection |> edges`. Outside-selected outputs never contribute.
-+- Inputs outside the selection can appear in recorded edges, but have no
-+  returned count unless themselves selected. Empty selections give `[]`;
-+  a selected node with no recorded outgoing match gives `0`. Existing
-+  recorded-input deduplication is unchanged.
-+- Preserve selection order through filters, depth, paths, intersection,
-+  difference, union and symmetric difference. Do not count paths,
-+  traversal visits, global dependents or the selection's cardinality.
-+- Sources keep existing projection coercion: a reference denotes its
-+  own step; `model` denotes the selectable graph; a variable holding
-+  records still denotes its graph node, not its stored list.
-+- Standing projections keep value and structural subscriptions, observer
-+  exclusion and refresh on rewiring, deletion and recovery. Step metadata,
-+  record materialization, class/function contexts, snapshots, transactions
-+  and nullish context remain unchanged.
-+- Null-valued selected steps still contribute their recorded output count.
-+  Absent properties/deleted sources supply no step. Undefined selections,
-+  including `depth(null)`, remain Undefined rather than becoming `[]`;
-+  standing declarations retain deferred-
+-To be completed with ordinary List argument delivery, existing Function-value
+-context and parameter binding, source-order evaluation and nullish recovery.
++The following is the rejected, isolated contract, not accepted language
++behavior. Its root specification section and four new executable cases are
++not integrated.
++
++- The candidate synchronized this contract with its root specification's
++  `List invocation of function values` section and two appended entries,
++  `Nucleoid delivers list elements as positional function values` and
++  `Nucleoid preserves callable storage and nullish invocation recovery`.
++- Evaluate the receiver at the existing member-call point, capturing its
++  Function definition before arguments run. Evaluate every supplied call argument
++  expression once, left to right, per actual invocation. Evaluate and ignore
++  surplus call arguments after the first container; do not add a guarantee that
++  a whole standing declaration invokes only once.
++- Deliver the first ordinary List's elements, in order, through
++  `Runtime::invoke`. Empty Lists supply no positions. Fixed slots use their
++  existing absent/default behavior; final rest slots collect remaining values
++  into their existing fresh local List.
++- Nested Lists remain single positional values. Contained Null and Undefined
++  are supplied values rather than absent slots and never select defaults.
++  Ordinary null propagation and Value-copy boundaries remain; caller List
++  bindings are not mutated and contained Object identities remain shared.
++- A Null or Undefined receiver retains its existing argument-skipping Undefined
++  result. A missing, Null or Undefined first argument returns Undefined without
++  entering the Function, permitting ordinary dependent recovery. Other
++  containers are not coerced. Argument-expression failures still propagate
++  before container validation.
++- Invoke the Function Value through its ordinary context, not through an Object
++  method binding. `Runtime::invoke` continues to call `invoke_with_this` with
++  `None`, preserving fresh Scope frames, local histories, lack of captures and
++  the active class-instance context.
++- Live references observe redefinitions. Stored, frozen and historical Function
++  Values retain their definition identities while reading ordinary live state.
++  Dependencies, observers, records, snapshots, standing re-evaluation and
++  State/graph rollback use their existing paths.
++
++```nuc
++def pack(head = 7, ...tail) => [head, tail]
++arguments = [1, 2, 3]
++result = pack.invoke(arguments)
++assert(result, [1, [2, 3]])
++arguments = []
++assert(result, [7, []])
++arguments = [0, [4, 5]]
++assert(result, [0, [[4, 5]]])
++assert(pack(arguments), [[0, [4, 5]], []])
++assert(pack.invoke([]), [7, []])
++assert(pack(1, 2, 3), [1,
 ```
 
 #### Recent Merged Pull Requests:
@@ -1858,13 +2170,13 @@ Co-authored-by: C
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 158 List Invocation of Function Values
+## X. Draft NUC 160 C# String Trimming Method Alias
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `761b277c`: Draft NUC 158 List Invocation of Function Values. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42b3267e`: Draft NUC 160 C# String Trimming Method Alias. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1872,8 +2184,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [158](nuc-0158.md) | List Invocation of Function Values | Draft |
-| [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Draft |
+| [160](nuc-0160.md) | C# String Trimming Method Alias | Draft |
+| [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1883,7 +2195,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `761b277c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42b3267e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

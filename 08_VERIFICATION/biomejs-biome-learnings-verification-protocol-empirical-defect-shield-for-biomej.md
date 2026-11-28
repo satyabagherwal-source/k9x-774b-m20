@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T09:34:32.545Z",
+  "timestamp": "2026-11-28T09:34:16.598Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-biomejs-biome-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [biomejs-biome-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T09:34:32.545Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T09:34:16.598Z`  
 > **Learning ID**: `LEARN-EVO-biomejs-biome-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source**: github ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
-> **Source Version**: `c199c75a`  
+> **Source Version**: `71660779`  
 > **License**: Apache-2.0  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-27T09:34:24.799Z  
+> **Timestamp**: 2026-11-28T09:30:47.550Z  
 > **Learning ID**: `learn-github-biomejs-biome`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,232 +43,265 @@ PROVENANCE_END -->
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-Biome is an ultra-high-performance, zero-external-runtime polyglot toolchain (formatter, linter, analyzer, language server, and compiler daemon) written in Rust. It solves the performance cliff and AST-impedance mismatch found in traditional multi-tool JavaScript/TypeScript/CSS/GraphQL stacks (such as ESLint + Prettier + Babel + Stylelint) by operating over a single, lossless Concrete Syntax Tree (CST) based on Rowan (derived from Microsoft Roslyn and `rust-analyzer`).
+### Exact Technical Problem Solved
+`biome` is an ultra-high-performance, zero-allocation-biased developer toolchain for the web ecosystem written in Rust. It unifies parsing, semantic analysis, type inference, formatting, linting, code actions/assists, and reporting for JavaScript, TypeScript, JSX, CSS, SCSS, GraphQL, and JSON into a single cohesive runtime. 
+
+Unlike conventional web developer tools (e.g., ESLint running on Babel/ESTree, Prettier running on separate ASTs, tsc running on Microsoft’s internal emitter), Biome eliminates intermediate serialization, inter-process communication overhead, and redundant tree allocations by processing all operations over a single lossless concrete syntax tree (CST) architecture.
+
+### Architectural Subsystem Boundaries & State Ownership
+The repository enforces a strict, layered crate hierarchy where lower crates have zero knowledge of higher crates:
 
 ```
-                    ┌────────────────────────────────────────────────────────┐
-                    │                      biome_cli                         │
-                    └──────────────────────────┬─────────────────────────────┘
-                                               │
-                                               ▼
-                    ┌────────────────────────────────────────────────────────┐
-                    │                      biome_lsp                         │
-                    └──────────────────────────┬─────────────────────────────┘
-                                               │
-                                               ▼
-                    ┌────────────────────────────────────────────────────────┐
-                    │                    biome_service                       │
-                    │   ┌───────────────────────┐ ┌──────────────────────┐   │
-                    │   │   WorkspaceServer     │ │    ProjectScanner    │   │
-                    │   │  (Salsa/Db State)     │ │ (Rayon Worker Graph) │   │
-                    │   └───────────┬───────────┘ └──────────┬───────────┘   │
-                    └───────────────┼────────────────────────┼───────────────┘
-                                    ▼                        ▼
-┌────────────────────────────────────────────────────────────────────────────┐
-│                                 biome_fs                                   │
-│            MemoryFileSystem  │  OsFileSystem  │  PathWatcher               │
-└─────────────────────────────────────┬──────────────────────────────────────┘
-                                      │
-       ┌──────────────────────────────┼──────────────────────────────┐
-       ▼                              ▼                              ▼
-┌──────────────┐              ┌──────────────┐              ┌──────────────┐
-│ biome_parser │              │biome_analyze │              │biome_format  │
-│  (Lossless   │              │  (Rule Engine│              │(IR Doc Model │
-│  Green/Red   │─────────────▶│ & Semantic   │─────────────▶│ & Layout     │
-│  Tree Rowan) │              │  Graph)      │              │  Solver)     │
-└──────────────┘              └──────────────┘              └──────────────┘
+┌────────────────────────────────────────────────────────┐
+│                      biome_cli                         │ (Terminal I/O, Reporters, Process Management)
+└───────────┬────────────────────────────────┬───────────┘
+            │                                │
+┌───────────▼───────────┐        ┌───────────▼───────────┐
+│     biome_service     │        │     biome_package     │ (Package manifests, SPDX, SemVer engines)
+└───────────┬───────────┘        └───────────────────────┘
+            │
+┌───────────▼───────────┐
+│   biome_module_graph  │ (Module resolution, Dependency graph, Salsa incremental DB)
+└───────────┬───────────┘
+            │
+┌───────────▼───────────┐
+│   biome_js_type_info  │ (Type inference engines, TypeScript standard library catalog)
+└───────────┬───────────┘
+            │
+┌───────────▼────────────────────────────────────────────┐
+│ biome_analyze / biome_js_analyze / biome_css_analyze   │ (Query matchers, Rules, AST visitors)
+└───────────┬────────────────────────────────────────────┘
+            │
+┌───────────▼────────────────────────────────────────────┐
+│ biome_formatter / biome_js_formatter / biome_css_...   │ (IR Builder, Line splitting, Indentation)
+└───────────┬────────────────────────────────────────────┘
+            │
+┌───────────▼────────────────────────────────────────────┐
+│ biome_parser / biome_js_parser / biome_css_parser      │ (Lossless event-based parser, Error recovery)
+└───────────┬────────────────────────────────────────────┘
+            │
+┌───────────▼───────────┐
+│      biome_rowan      │ (Green/Red CST, Trivia management, Pointer immutability)
+└───────────────────────┘
 ```
 
-### Critical Subsystem Boundaries and Invariants
-
-1. **Concrete Syntax Tree Layer (`biome_rowan`)**:
-   - Represents all code losslessly: syntax nodes, tokens, and trivia (whitespace, carriage returns, inline/block comments, and syntax errors).
-   - Utilizes a two-tier tree:
-     - **Green Tree**: Completely immutable, syntax-agnostic, cacheable, structurally shared DAG where nodes only know their kinds and text lengths.
-     - **Red Tree**: Ephemeral, typed wrappers instantiated lazily over green nodes, tracking absolute text offsets, parent pointers, and semantic interfaces (`AstNode`, `AstSeparatedList`).
-   - *Core Invariant*: No source byte is discarded. A file parsed into a CST and printed back without transforms must reproduce the identical byte sequence (`CST -> Tokens -> Raw Bytes`).
-
-2. **Parsing Layer (`biome_*_parser`)**:
-   - Implements Pratt parsing for precedence-driven expressions and predictive recursive descent for statements.
-   - Employs error-recovery checkpoints (`Marker`, `CompletedMarker`, `BogusNode`). When an unexpected token is encountered, the parser encapsulates the malformed sequence in a typed "bogus" container, synchronizes to the next follow-set boundary (such as semicolons or closing braces), and maintains CST integrity without panicking.
-
-3. **Semantic Analysis and Query Engine (`biome_analyze`, `biome_db`)**:
-   - Executes semantic rules over red trees. Resolves bindings, scope chains, declaration-reference pairings, and import/export graphs.
-   - Decoupled from mutations: rules inspect CSTs and emit declarative `RuleDiagnostic` instances accompanied by `BatchMutation` action plans. The engine evaluates dependency conflicts before applying transformations atomically.
-
-4. **Formatting Engine (`biome_formatter`)**:
-   - Translates CST nodes into a declarative Intermediate Representation (IR) consisting of elements like `group`, `indent`, `soft_block_indent`, `line_suffix`, and `space`.
-   - The formatting layout solver simulates line overflows using Wadler-style pretty-printing. Code is collapsed onto a single line unless the target line width is breached, at which point enclosing groups break into multiline layouts.
-
-5. **Workspace Daemon & Service (`biome_service`, `biome_lsp`)**:
-   - Encapsulates the compilation database, dynamic project configurations, and file systems (`biome_fs::FileSystem`).
-   - Employs lock-free concurrent hash maps (`scc::HashMap` or pinned sets) and Rayon parallel thread pools to orchestrate dependency scanning, background diagnostic pulls, and document synchronization across LSP and CLI targets.
+1. **Lossless CST Foundation (`biome_rowan`)**: An evolution of the Swift/Rust-Analyzer Rowan library. It maintains full fidelity: syntax trees retain all whitespace, comments, malformed tokens, and error nodes ("trivia"). Green nodes are immutable, context-free, and cacheable; Red nodes wrap Green nodes with absolute offset calculations and parent pointers on demand.
+2. **Incremental Compilation Engine (`biome_db` / `salsa`)**: Memoizes parsing and type analysis using Salsa incremental computation queries, enabling sub-millisecond reactions on file changes in long-running LSP daemon modes.
+3. **Semantic Analysis (`biome_js_semantic`, `biome_css_semantic`)**: Constructs lexical scope trees, symbol declarations, and reference chains in a single traversal pass after parsing.
+4. **Type Inference Layer (`biome_js_type_info`, `biome_module_graph`)**: Infers static and cross-scope types without executing code, matching variable assignments, module boundaries, and built-in global signatures.
+5. **Rule Engine (`biome_analyze`)**: A query-driven, declarative lint engine matching against AST node types, semantic models, or CST patterns (`biome_grit_patterns`).
+6. **Pretty Printer (`biome_formatter`)**: Converts AST nodes into a declarative Intermediate Representation (IR) containing groups, soft breaks, and indents, evaluated with an Wadler-Leijen-style layout algorithm.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Atomic Work-Claim Invariant in Parallel Rayon Graph Traversals
+### 1. Invariant Separation of Concrete vs Widenable Binding Types in Flow Analysis
 **RULE**:
-When traversing cyclical or diamond dependency graphs inside parallel scopes (such as `rayon::scope`), worker threads MUST atomically test and claim ownership of a node ID or canonical path *prior* to spawning asynchronous work tasks. Subsystem scanners MUST NOT delegate deduplication checks downstream to child tasks or rely on non-atomic read-then-spawn pipelines.
+A static analysis type-inference engine MUST NOT widen a binding's type upon cross-scope assignment if that binding either:
+1. Possesses an explicit type annotation, OR
+2. Was initialized with a concrete, non-primitive constructor/type instantiation (e.g., `new Map<K, V>()`).
+
+Cross-scope write-widening MUST be strictly restricted to bindings whose inferred initial type is explicitly marked as widenable: `unknown`, nullish (`null` | `undefined`), or primitive literals (e.g., `false`, `0`, `""`).
 
 **WHY**:
-In a multithreaded Rayon scheduler, thread-pool work stealing causes uncoordinated downstream tasks to race. If checking whether a task has already been scheduled occurs *inside* the child task rather than at the scheduling call-site, multiple parents that discover the same node will concurrently spawn redundant sub-trees. This leads to duplicate disk I/O, cache thrashing, high memory allocation, and potential non-termination if circular dependencies are resolved slower than Rayon distributes child tasks.
+When an analysis engine infers the type of a variable from multiple scopes without tracking strict control-flow ordering, cross-scope reassignments (such as inside a teardown or `reset()` function reassigning `visits = new Map()`) will pollute the binding's inferred type union with un-parameterized or `any`-typed instances (`Map<string, number> | Map<any, any>`). Subsequent property/method accesses (e.g., `.get()`) will return `any`, poisoning downstream consumers and producing cascades of false-positive warnings (e.g., `noUnsafeReturn`, `noExplicitAny`).
 
 **WHEN TO APPLY**:
-Apply to any multi-threaded crawler, dependency scanner, AST visitor, or file traversal system utilizing Rayon, Tokio, or worker thread pools traversing shared DAGs or cyclic graphs.
+Compilers, linters, and type checkers performing whole-program or module-level type recovery where execution order across functional boundaries is indeterminate.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-use camino::{Utf8Path, Utf8PathBuf};
-use rayon::Scope;
-use scc::HashSet;
+// crates/biome_module_graph/src/type_collector.rs
 
-pub struct ScanContext<'a> {
-    pub scheduled: &'a HashSet<Utf8PathBuf>,
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BindingWidenability {
+    Widenable,
+    Preserved,
 }
 
-pub fn traverse_dependencies<'a>(
-    s: &Scope<'a>,
-    ctx: &'a ScanContext<'a>,
-    dependency_path: Utf8PathBuf,
-) {
-    // ATOMIC PRE-CONDITION: Must test and acquire claim in the concurrent set
-    // prior to submitting work to the Rayon scheduler.
-    // .insert() returns true ONLY for the first thread that registers the key.
-    if !ctx.scheduled.pin().insert(dependency_path.clone()) {
-        return;
-    }
-
-    s.spawn(move |child_scope| {
-        let child_dependencies = resolve_direct_imports(&dependency_path);
-        for child_path in child_dependencies {
-            // Recurse using the same atomic claim invariant
-            traverse_dependencies(child_scope, ctx, child_path);
-        }
-    });
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// ANTI-PATTERN: Spawning work before claiming/checking.
-// Leads to thread races where multiple tasks spawn redundant indexers.
-pub fn buggy_traverse<'a>(s: &Scope<'a>, scheduled: &'a Mutex<HashSet<Utf8PathBuf>>, path: Utf8PathBuf) {
-    s.spawn(move |child_scope| {
-        // RACE CONDITION: Multiple threads already spawned for the same path
-        let mut lock = scheduled.lock().unwrap();
-        if lock.contains(&path) {
-            return;
-        }
-        lock.insert(path.clone());
-        drop(lock);
-
-        // Heavy I/O and further redundant spawns already executed!
-        process_path(&path);
-    });
-}
-```
-
-**VERIFICATION METHOD**:
-Implement a single-threaded deterministic test harness using a mock file system (`MemoryFileSystem`) equipped with atomic access counters (`AtomicUsize` or `Mutex<FxHashMap<Path, usize>>`). Assert that the invocation count for opening and indexing any given file is strictly equal to `1`, regardless of whether imports are arranged in diamond patterns or reciprocal cycles.
-
----
-
-### 2. Zero-Copy Heap Boxing for High-Churn RPC/IPC Configuration Types
-**RULE**:
-Public parameter structs passed across IPC, RPC, or LSP method boundaries MUST wrap large, optional configuration structures in `Box<T>` or `Arc<T>` whenever the data payload exceeds 128 bytes. Functions MUST NOT pass large aggregate types (`Configuration`) by value across deep call chains or store unboxed optional representations inside client requests.
-
-**WHY**:
-Deep aggregate configuration types in complex compilers can span hundreds of bytes across optional settings (formatting, linter rules, assists, overrides, VCS settings). Stacking these types causes stack frame bloat, expensive `memcpy` operations on method invocation, and severe memory overhead in concurrent channels where hundreds of message structs (`OpenFileParams`, `FormatFileParams`, `PullDiagnosticsParams`) exist in memory queues simultaneously.
-
-**WHEN TO APPLY**:
-Apply to all IPC/RPC/LSP request/response structs, serde data transfer objects (DTOs), and internal server state parameter lists where configuration trees are threaded through multiple abstraction layers.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-use serde::{Deserialize, Serialize};
-
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
-pub struct Configuration {
-    // Large composite structures containing linter, formatter, and vcs configs
-    pub rules: Vec<String>,
-    pub overrides: Vec<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct FormatFileParams {
-    pub file_path: String,
-    // Box limits the size of FormatFileParams to a single 8-byte pointer,
-    // preventing stack frame exhaustion and minimizing struct layout.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub inline_config: Option<Box<Configuration>>,
-}
-
-impl WorkspaceServer {
-    pub fn format_file(&self, params: FormatFileParams) {
-        if let Some(boxed_config) = params.inline_config {
-            // Unbox only at the exact point of consumption or merge
-            self.apply_configuration(*boxed_config);
-        }
-    }
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// ANTI-PATTERN: Large configuration passed unboxed by value in every RPC struct.
-// Bloats struct memory footprint across all parameters and causes deep stack copies.
-#[derive(Debug, Serialize, Deserialize)]
-pub struct BadFormatFileParams {
-    pub file_path: String,
-    pub inline_config: Option<Configuration>, // 512+ bytes copied on every stack frame!
-}
-```
-
-**VERIFICATION METHOD**:
-Enforce memory layout bounds using compile-time static assertions:
-```rust
-const _: () = assert!(std::mem::size_of::<FormatFileParams>() <= 64);
-```
-In CI, run `cargo clippy -- -W clippy::large_enum_variant -W clippy::large_stack_arrays`.
-
----
-
-### 3. CST Trivia Transfer Invariant on Node Reordering and Splicing
-**RULE**:
-When reordering, partitioning, or replacing nodes within a Concrete Syntax Tree, transformations MUST explicitly calculate, detach, and migrate trailing and leading trivia (comments, whitespace, trailing commas). Transformations MUST NOT delete a separator token without re-anchoring its attached trivia to the preceding syntax node or the nearest neighbor token.
-
-**WHY**:
-In a lossless CST, tokens own trivia. If a formatter or linter rule reorders import statements, object properties, or array elements and drops a trailing comma or separator token without reassigning its attached comments, those comments disappear from the output. This results in silent source corruption and loss of developer documentation.
-
-**WHEN TO APPLY**:
-Apply to all AST/CST code-fix actions, code refactoring rules, formatters, and migration tools modifying sequences, lists, or separated elements.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-use biome_rowan::{AstNode, Language, SyntaxToken, chain_trivia_pieces};
-
-pub fn safely_remove_trailing_separator<L: Language, N: AstNode<Language = L>>(
-    node: &mut N,
-    separator: &mut Option<SyntaxToken<L>>,
-    needs_last_separator: bool,
-) {
-    if let Some(sep) = separator.take() {
-        // If comments are attached, we MUST preserve them by appending them
-        // to the trailing trivia of the target AST node.
-        if sep.has_leading_comments() || sep.has_trailing_comments() {
-            let combined_trivia = chain_trivia_pieces(
-                sep.leading_trivia().pieces(),
-                sep.trailing_trivia().pieces(),
-            );
-            if let Some(reanchored_node) = node.clone().append_trivia_pieces(combined_trivia) {
-                *node = reanchored_node;
+impl RawTypeCollector {
+    /// Determines whether a binding's type can be widened by assignments in cross-scope write references.
+    pub fn is_widenable_binding_type(&self, type_id: RawTypeId) -> BindingWidenability {
+        match self.resolve_type(type_id) {
+            // Nullish, unknown, and primitive literals are eligible for widening
+            TypeData::Unknown | TypeData::Null | TypeData::Undefined => BindingWidenability::Widenable,
+            TypeData::Literal(_) => BindingWidenability::Widenable,
+            TypeData::Union(union) => {
+                let all_widenable = union.types.iter().all(|&member_id| {
+                    self.is_widenable_binding_type(member_id) == BindingWidenability::Widenable
+                });
+                if all_widenable {
+                    BindingWidenability::Widenable
+                } else {
+                    BindingWidenability::Preserved
+                }
+            }
+            // Classes, interfaces, explicit generics, and builtins MUST NEVER be widened cross-scope
+            TypeData::Class(_) | TypeData::Interface(_) | TypeData::Function(_) => {
+                BindingWidenability::Preserved
             }
         }
-        // If needs_last_separator is true, reinstate the separator token
-        if needs_last_separator {
-            *separator = Some(sep);
+    }
+}
+
+// In the module-level traversal pass:
+if declarator.type_annotation().is_none() {
+    let initial_type = collector.infer_initializer_type(declarator.initializer());
+    if collector.is_widenable_binding_type(initial_type) == BindingWidenability::Widenable {
+        collector.widen_binding_from_writable_references(binding_id);
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER widen indiscriminately across scope boundaries based solely on writable references
+for write_ref in binding.writable_references() {
+    // BUG: If binding was `let map = new Map<string, number>();` and `write_ref` is `map = new Map();`
+    // this creates `Map<string, number> | Map<any, any>` -> .get() now yields `any`!
+    binding_type = union(binding_type, infer_write_type(write_ref));
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a negative type-leak regression test:
+```rust
+#[test]
+fn test_infer_module_types_does_not_widen_concrete_or_annotated_maps_on_reassignment() {
+    let code = r#"
+        let visits = new Map<string, number>();
+        function reset() {
+            visits = new Map();
+        }
+        export function getVisit(k: string) {
+            return visits.get(k); // Invariant: Return type MUST be `number | undefined`, NEVER `any`
+        }
+    "#;
+    let module = parse_and_infer(code);
+    let return_type = module.get_export_return_type("getVisit");
+    assert!(!return_type.contains_any(), "Concrete binding was leaked into any!");
+}
+```
+
+---
+
+### 2. Suffix-Stripping Grammar Validation with Consecutive Token Disallowance
+**RULE**:
+When parsing, linting, or verifying token identifiers that permit unary or post-fix modification operators (e.g., SPDX `+` "or later" operator, regex repetitions `*`, `+`), the parser MUST strip the suffix and verify that the remaining base identifier does NOT terminate with the same operator character before validating the base identifier against the known registry.
+
+**WHY**:
+Failure to assert `!base.ends_with(OPERATOR)` when handling post-fix operators creates two failure modes:
+1. **Invalid Grammar Acceptance**: `MIT++` or `GPL-2.0++` has its last `+` stripped, leaving `MIT+` or `GPL-2.0+`. If the base lookup allows recursion or if the registry itself includes legacy IDs with trailing operators (such as deprecated `GPL-2.0+`), malformed syntax will parse successfully.
+2. **False Trust Evaluation**: A double-operator could match an existing deprecated or legacy identifier in the specification dictionary, bypassing strict licensing compliance checks.
+
+**WHEN TO APPLY**:
+Lexers, AST parsers, and policy engines implementing domain-specific micro-grammars (SPDX expressions, SemVer ranges, query modifiers, cron expressions).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// crates/biome_package/src/license/expression.rs
+
+pub fn resolve_spdx_identifier<'a>(id: &'a str, license_list: &LicenseList) -> Result<LicenseRef, RejectReason> {
+    // 1. Exact match against authorized canonical SPDX license dictionary
+    if let Some(license) = license_list.find(id) {
+        return Ok(license);
+    }
+
+    // 2. Trailing '+' "or-later" operator handling
+    let stripped = id.strip_suffix('+')
+        .filter(|base| !base.ends_with('+')) // INVARIANT: Disallow repeated operators ("++")
+        .and_then(|base| license_list.find(base));
+
+    if let Some(license) = stripped {
+        if license.is_deprecated() {
+            return Err(RejectReason::Deprecated);
+        }
+        return Ok(license);
+    }
+
+    Err(RejectReason::Untrusted)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER do single suffix trimming without checking the new boundary condition
+let license = license_list.find(id).or_else(|| {
+    let base = id.strip_suffix('+')?;
+    // BUG: If id is "GPL-2.0++", base is "GPL-2.0+", which exists as a deprecated ID in LICENSE_LIST!
+    // Result: "GPL-2.0++" falsely evaluates to a recognized license instead of Syntax/Untrusted error.
+    license_list.find(base)
+});
+```
+
+**VERIFICATION METHOD**:
+Property-based or table-driven boundary unit testing:
+```rust
+#[test]
+fn test_spdx_plus_operator_boundary_invariants() {
+    let invalid_cases = ["MIT++", "GPL-2.0++", "+", "++", "Apache-2.0++"];
+    for case in invalid_cases {
+        assert_eq!(
+            resolve_spdx_identifier(case, &LICENSE_LIST),
+            Err(RejectReason::Untrusted),
+            "Double suffix operator MUST NOT be accepted: {case}"
+        );
+    }
+}
+```
+
+---
+
+### 3. Delimited AST Chunk Partitioning with Non-Lossy Trivia Preservation
+**RULE**:
+When programmatically reordering, sorting, or partitioning an AST-separated list (e.g., import specifiers, object keys, enum variants), code transformations MUST partition the list into independent sorting chunks using non-keyable nodes (comments, unparseable/bogus syntax) as hard partition boundaries. When transferring separators during sorting, the syntax trivia (comments, spaces, newlines) attached to displaced separators MUST be explicitly appended to the preceding or succeeding node. Trivia MUST NEVER be dropped.
+
+**WHY**:
+AST list transformations that sort across non-keyable elements or naively generate new separators destroy comments attached to existing commas or line endings. Furthermore, blindly sorting across comment blocks changes human developer intent (e.g., grouping imports logically by category with separator comments).
+
+**WHEN TO APPLY**:
+AST rewriters, import organizers, syntax linters with auto-fix capabilities, code formatters.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// crates/biome_analyze/src/utils.rs
+
+pub fn fix_separators<'a, L: Language + 'a, N: AstNode<Language = L> + 'a>(
+    iter: impl std::iter::ExactSizeIterator<Item = (&'a mut N, &'a mut Option<SyntaxToken<L>>)>,
+    needs_last_separator: bool,
+    make_separator: fn() -> SyntaxToken<L>,
+) {
+    let last_index = iter.len().saturating_sub(1);
+    for (i, (node, optional_separator)) in iter.enumerate() {
+        if let Some(separator) = optional_separator {
+            // If it's the last element and we shouldn't have a trailing separator
+            if i == last_index && !needs_last_separator {
+                // INVARIANT: If comments exist on the separator, DO NOT DISCARD!
+                if separator.has_leading_comments() || separator.has_trailing_comments() {
+                    continue; // Preserve separator to avoid losing user comments
+                }
+                
+                // Transfer trivia from the removed separator onto the terminal node
+                if let Some(new_node) = node.clone().append_trivia_pieces(chain_trivia_pieces(
+                    separator.leading_trivia().pieces(),
+                    separator.trailing_trivia().pieces(),
+                )) {
+                    *node = new_node;
+                }
+                *optional_separator = None;
+            }
+        } else if i != last_index || needs_last_separator {
+            // Synthesize missing separator in the interior of the list
+            *optional_separator = Some(match node.syntax().last_trailing_trivia() {
+                Some(trivia) => make_separator()
+                    .append_trivia_pieces(trim_trailing_trivia_pieces(trivia.pieces())),
+                _ => make_separator(),
+            });
+
+            if let Some(new_node) = node.clone().with_trailing_trivia_pieces([]) {
+                *node = new_node;
+            }
         }
     }
 }
@@ -276,22 +309,20 @@ pub fn safely_remove_trailing_separator<L: Language, N: AstNode<Language = L>>(
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// ANTI-PATTERN: Discarding the separator token directly.
-// All comments (// comment or /* comment */) anchored to `sep` are silently erased.
-pub fn unsafe_strip_separator<L: Language>(separator: &mut Option<SyntaxToken<L>>) {
-    *separator = None; // SILENT DATA CORRUPTION: Attached comment tokens deleted!
+// NEVER discard separators without preserving their trivia
+if !needs_last_separator {
+    *optional_separator = None; // BUG: User comments attached to the comma are deleted!
 }
 ```
 
 **VERIFICATION METHOD**:
-Implement property-based tests that assert comment preservation:
+Test with auto-fix passes ensuring round-trip trivia retention:
 ```rust
 #[test]
-fn test_trivia_retention_after_reorder() {
-    let source = "import { b /* keep-b */, a /* keep-a */ } from 'mod';";
-    let formatted = run_sort_imports_rule(source);
-    assert!(formatted.contains("/* keep-b */"));
-    assert!(formatted.contains("/* keep-a */"));
+fn test_sorting_preserves_trailing_comma_comments() {
+    let input = "import { b, /* comment */ a, } from 'mod';";
+    let formatted = organize_imports(input);
+    assert!(formatted.contains("/* comment */"), "Trivia was eliminated during reordering!");
 }
 ```
 
@@ -299,277 +330,278 @@ fn test_trivia_retention_after_reorder() {
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Redundant Transitive Dependency Indexing via Uncoordinated Parallel Rayon Scheduling (BUG-SCAN-01)
-- **Context**: `crates/biome_service/src/scanner.rs` and `crates/biome_service/src/workspace/server.rs`
-- **What Was Expected**: The project scanner indexes each distinct dependency file in `node_modules` exactly once during parallel workspace analysis.
-- **What Actually Happened**: When dependencies mutually referenced one another (e.g., circular TypeScript declaration imports: `index.d.ts` imports `route.d.ts`, which imports `router.d.ts`, which imports `route.d.ts`), the scanner scheduled file index tasks across parallel Rayon worker threads without checking if the file was already queued. This caused duplicate file reads, redundant parsing, and significant CPU thrashing.
-- **Evidence in Repo**: Commit `c199c75a`, PR `#13420`, changeset `.changeset/eleven-bikes-scream.md`.
-- **Root Cause**: The function `scan_dependencies` relied on downstream ignore/indexing checks rather than maintaining a concurrency-safe work-claim registry prior to calling `s.spawn`. Because tasks were scheduled asynchronously on the Rayon pool, thread A and thread B would each read reciprocal files and both schedule tasks for the same child file before either task executed.
+### Incident 1: Flawed SemVer Caret Range Resolution for Pre-1.0.0 Packages (BUG-PKG-01)
+- **Context**: `crates/biome_package/src/semver/range.rs`
+- **What Was Expected**: Per the SemVer 2.0 and npm specification, `^0.0.0` should only match versions strictly `<0.0.1-0` (or the identical exact version `0.0.0`). A range specified as `^0.0` must stay strictly `<0.1.0`. It should NEVER intersect with `>=0.60.0`.
+- **What Actually Happened**: `^0.0.0`, `^0.0`, and `^0.0.0-<prerelease>` were parsed as `<1.0.0-0`. In projects where `react-native: "^0.0.0"` was used (a standard Facebook/Meta dummy/stub package in monorepos), Biome evaluated `^0.0.0` as intersecting `>=0.60.0`. This activated React Native-specific linting domains across un-targeted codebases, generating invalid lint errors.
+- **Evidence in Repo**: Commit `13509`, Issue `#13429`. Tests in `crates/biome_package/tests/range.rs`.
+- **Root Cause**: The caret (`^`) range parser grouped all `0.x.x` versions together under a single major-zero rule (`<1.0.0-0`), ignoring the SemVer mandate that in zero-major/zero-minor versions (`0.0.x`), the patch number acts as the breaking boundary.
 - **Remediation Code Diff**:
 ```rust
-@@ -1277,10 +1277,13 @@ fn scan_dependencies<W: WorkspaceScannerBridge>(
-         folders.into_iter().map(Utf8Path::to_path_buf).collect()
-     };
- 
-+    let scheduled = HashSet::new();
-+
-     rayon::scope(|s| {
-         fn index_dependency<'a, W: WorkspaceScannerBridge>(
-             s: &Scope<'a>,
-             ctx: &'a ScanContext<'a, W>,
-+            scheduled: &'a HashSet<Utf8PathBuf>,
-             dependency_path: Utf8PathBuf,
-         ) {
-@@ -1302,8 +1305,8 @@ fn scan_dependencies<W: WorkspaceScannerBridge>(
-                         false,
-                     )
-                     .unwrap_or(true);
--                if !is_ignored {
--                    s.spawn(move |s| index_dependency(s, ctx, dependency_path));
-+                if !is_ignored && scheduled.pin().insert(dependency_path.clone()) {
-+                    s.spawn(move |s| index_dependency(s, ctx, scheduled, dependency_path));
-                 }
-             }
-         }
+// In crates/biome_package/src/semver/range.rs:
+// - let upper_bound = Version::new(1, 0, 0); // BUG: ^0.0.0 became <1.0.0-0
+// + let upper_bound = match (major, minor, patch) {
+// +     (0, Some(0), Some(patch)) => Version::new(0, 0, patch + 1),
+// +     (0, Some(0), None) => Version::new(0, 1, 0),
+// +     (0, Some(minor), _) => Version::new(0, minor + 1, 0),
+// +     (major, _, _) => Version::new(major + 1, 0, 0),
+// + };
 ```
-- **Lesson**: Rayon task spawns in graph-crawling environments must be guarded by an atomic, lock-free claim (`scheduled.pin().insert(...) == true`). Merely checking downstream status inside the executed closure leaves a critical window open for duplicate worker scheduling.
+- **Lesson**: In SemVer range computation, `0` is non-monotonic. The leading non-zero element dictates compatibility: `0.0.x` changes break compatibility on every patch increment; `0.x.y` changes break compatibility on minor increments.
 
 ---
 
-### Incident 2: Workspace Memory Inflation via Large Unboxed Configuration Parameters (BUG-MEM-02)
-- **Context**: `crates/biome_service/src/workspace.rs`, `crates/biome_lsp/src/session.rs`, `crates/biome_service/src/db/state.rs`
-- **What Was Expected**: Workspace parameter objects (`OpenFileParams`, `ChangeFileParams`, `PullDiagnosticsParams`, `FormatFileParams`) passed via RPC and LSP channels should have minimal stack overhead and compact heap representation.
-- **What Actually Happened**: Every parameters structure directly embedded `Option<Configuration>`. As Biome added more configuration options (embedded languages, CSS/GraphQL analyzers, assist actions, custom rules), `sizeof(Configuration)` grew significantly. This increased the memory footprint across all LSP message queues, thread stacks, and IPC boundaries, triggering performance regressions on CodSpeed benchmarks.
-- **Evidence in Repo**: Commit `7d6800ed`, PR `#13469`, CodSpeed performance report.
-- **Root Cause**: The unboxed configuration tree was being duplicated and cloned across every parameter struct on the stack. In LSP interactions, parameters are created, queued, and dispatched frequently. Passing a heavy struct by value inflated the stack frame of every workspace operation.
+### Incident 2: Cross-Scope Assignment Type Widening Poisoning Inferred Return Types (BUG-TYPE-02)
+- **Context**: `crates/biome_module_graph/src/type_collector.rs` & `crates/biome_js_analyze/src/lint/nursery/no_unsafe_return.rs`
+- **What Was Expected**: Initializing a variable as `let visits = new Map<string, number>()` should preserve its concrete type across the module. Subsequent reassignments inside reset functions (`visits = new Map()`) should not pollute the type of `visits` with `any`.
+- **What Actually Happened**: `JsModuleInfoCollector::infer_type` triggered `widen_binding_from_writable_references` on all `let`/`var` variables across scopes. The unannotated `new Map()` assignment widened the type to `Map<string, number> | Map<any, any>`. Calling `.get()` on the variable returned `any`, triggering false-positive `noUnsafeReturn` diagnostics.
+- **Evidence in Repo**: Commit `13507`, Issue `#13391`. Tests in `crates/biome_js_analyze/tests/specs/nursery/noUnsafeReturn/valid.ts`.
+- **Root Cause**: The type inference engine failed to differentiate between uninitialized/primitive widenable variables (`let x;`, `let x = undefined;`) and variables initialized with explicit generic type constructors (`new Map<string, number>()`).
 - **Remediation Code Diff**:
 ```rust
-@@ -125,7 +125,7 @@ pub struct SupportsFeatureParams {
-     pub features: FeatureName,
- 
-     #[serde(skip_serializing_if = "Option::is_none")]
--    pub inline_config: Option<Configuration>,
-+    pub inline_config: Option<Box<Configuration>>,
- 
-     #[serde(default, skip_serializing_if = "is_false")]
-     pub skip_ignore_check: bool,
-@@ -837,7 +837,7 @@ pub struct OpenFileParams {
-     pub persist_node_cache: bool,
- 
-     #[serde(skip_serializing_if = "Option::is_none")]
--    pub inline_config: Option<Configuration>,
-+    pub inline_config: Option<Box<Configuration>>,
+// crates/biome_module_graph/src/type_collector.rs:
+// - collector.widen_binding_from_writable_references(binding_id);
+// + if declarator.type_annotation().is_none() {
+// +     let initial_type = collector.infer_initializer_type(declarator.initializer());
+// +     if collector.is_widenable_binding_type(initial_type) == BindingWidenability::Widenable {
+// +         collector.widen_binding_from_writable_references(binding_id);
+// +     }
+// + }
 ```
+- **Lesson**: Explicitly constructed data structures must have their type invariants sealed against flow-insensitive cross-scope mutations unless explicit type casting or reassignment to an incompatible top-type occurs.
+
+---
+
+### Incident 3: Structural Breakdown in JUnit Reporter Grouping (BUG-CLI-03)
+- **Context**: `crates/biome_cli/src/reporter/junit.rs`
+- **What Was Expected**: Each checked file should be represented by exactly ONE `<testsuite>` element containing multiple `<testcase>` failure child nodes.
+- **What Actually Happened**: The JUnit reporter instantiated and emitted a new `<testsuite>` for every individual diagnostic emitted, resulting in dozens of redundant `<testsuite name="index.ts">` nodes. Formatting diagnostics were completely excluded.
+- **Evidence in Repo**: Commit `71660779`, PR `#12865`, Issue `#5172`.
+- **Root Cause**: A direct iteration over `diagnostics` added each test suite directly to the report without an intermediate grouping map keyed by file path. Furthermore, the filter condition `(Some(span), Some(source_code), Some(resource))` dropped formatting errors because formatting diagnostics occasionally lacked a distinct span (representing a whole-file change).
+- **Remediation Code Diff**:
 ```rust
-@@ -1226,7 +1226,7 @@ impl WorkspaceServerWithDb<'_> {
-                 content: content.clone(),
-                 version,
-                 file_source_index,
--                inline_config: inline_config.map(Arc::new),
-+                inline_config: inline_config.map(Arc::from),
-                 syntax: syntax.clone(),
-             };
+// crates/biome_cli/src/reporter/junit.rs:
+- let mut test_suite = TestSuite::new(path);
+- test_suite.add_test_case(case);
+- self.0.add_test_suite(test_suite);
++ let mut test_suites: IndexMap<_, TestSuite, FxBuildHasher> = IndexMap::default();
++ test_suites
++     .entry(path)
++     .or_insert_with(|| {
++         let mut ts = TestSuite::new(path);
++         ts.extra.insert("package".into(), "org.biome".into());
++         ts
++     })
++     .add_test_case(case);
+...
++ for test_suite in test_suites.into_values() {
++     self.0.add_test_suite(test_suite);
++ }
 ```
-- **Lesson**: Large configuration structures must be stored behind pointers (`Box` for transient IPC/RPC ownership, `Arc` for shared workspace state). Never embed raw aggregate configurations inside short-lived message DTOs.
+- **Lesson**: Diagnostic and telemetry reporters must separate diagnostic collection from aggregation; never construct hierarchical schemas directly within flat collection loops.
+
+---
+
+### Incident 4: Rejection of Valid SPDX Plus ("Or Later") Operator Expressions (BUG-PKG-04)
+- **Context**: `crates/biome_package/src/license/expression.rs`
+- **What Was Expected**: Valid SPDX expressions utilizing the `+` suffix (e.g., `Apache-2.0+`, `MPL-2.0+`) must be recognized as valid and trusted if their base licenses are trusted.
+- **What Actually Happened**: `noUntrustedLicenses` failed on valid licenses like `Apache-2.0+`, rejecting them as untrusted or invalid identifiers.
+- **Evidence in Repo**: Commit `cc402faf`, PR `#13491`, Issue `#13428`.
+- **Root Cause**: `LICENSE_LIST.find(id)` performed strict, literal string lookups against the canonical SPDX list. Because the SPDX 3.0 specification treats `+` as a postfix operator rather than an identifier character, lookups for `Apache-2.0+` yielded `None`.
+- **Remediation Code Diff**:
+```rust
+// crates/biome_package/src/license/expression.rs:
+- let Some(license) = LICENSE_LIST.find(id) else {
++ let Some(license) = LICENSE_LIST.find(id).or_else(|| {
++     id.strip_suffix('+')
++         .filter(|base| !base.ends_with('+'))
++         .and_then(|base| LICENSE_LIST.find(base))
++ }) else {
+      return Err(RejectReason::Untrusted);
+  };
+```
+- **Lesson**: Grammar specifications often differentiate lexical identifiers from grammar operators. Validation engines must explicitly decouple lexical tokens from valid postfix expressions.
+
+---
+
+### Incident 5: Hardcoded Builtin Overrides Blinded Promise Floating Analysis (BUG-TYPE-05)
+- **Context**: `crates/biome_js_type_info/src/generated/global_types.rs` & `globals.rs`
+- **What Was Expected**: `noFloatingPromises` must catch unhandled promises created via new static standard methods like `Promise.withResolvers().promise` or `Promise.try()`.
+- **What Actually Happened**: Global TypeScript standard library types were partially mocked using hand-crafted lowering overrides for `Promise`, missing newer ECMAScript methods (`Promise.withResolvers`, `Promise.try`).
+- **Evidence in Repo**: Commit `f50b2629`, PR `#13485`.
+- **Root Cause**: Hardcoding manual AST representations of standard globals creates maintenance desynchronization with the ECMAScript specification.
+- **Remediation Code Diff**:
+```rust
+// crates/biome_js_type_info/src/globals_ids.rs:
+- const PREDEFINED_TYPE_COUNT: usize = 33;
++ const PREDEFINED_TYPE_COUNT: usize = 31;
+- (T_ID, T_ID_NAME, T_ID_GLOBAL_TYPE_ID, GLOBAL_T_ID, "T", Helper),
+- (VOID_CALLBACK_ID, VOID_CALLBACK_ID_NAME, VOID_CALLBACK_ID_GLOBAL_TYPE_ID, GLOBAL_VOID_CALLBACK_ID, "() => void", Helper),
+// Removed hundreds of lines of static manual builders in favor of automated lowering
+// from the TypeScript standard library declaration definitions.
+```
+- **Lesson**: Static analysis tools must derive standard environment models directly from machine-readable specification declarations rather than manual structural mocks.
 
 ---
 
 ## 4. Microscopic Code-Level Invariants
 
 ### 1. Micro-Syntax & Token-Level Precision
-- **Saturating Arithmetic on Index Offsets**:
-  When calculating slice padding, line formatting widths, or array boundary limits, code must use `saturating_sub` rather than primitive subtraction to prevent integer underflow panics in debug builds or silent wrapping in release builds.
+- **Trivia Separation**: In Rowan CSTs, tokens do not merely have text; they hold `leading_trivia` and `trailing_trivia`.
   ```rust
-  // Evidence from crates/biome_console/src/utils.rs
+  // DANGEROUS: Loses comments
+  let text = token.text(); 
+  
+  // SAFE: Retains identity and all trivia
+  let token_text = token.text_trimmed(); 
+  let pieces = token.trailing_trivia().pieces();
+  ```
+- **Implicit Conversion & Falsy Trap**: When checking token spans or line indices, `0` is a valid line/column number (0-indexed offset vs 1-indexed display). Using `Option::unwrap_or_default()` on a `line_number` can cause an off-by-one conversion if the downstream formatter treats `0` as "uninitialized":
+  ```rust
+  // start.line_number is NonZeroUsize in Biome
+  let line_str = start.line_number.get().to_string(); // Invariant: line is 1-indexed for display
+  ```
+- **Operator Precedence Hazard**: Parsing binary and conditional expressions requires preserving original parentheses when reordering, otherwise evaluation order changes:
+  ```rust
+  // When refactoring `a + b * c` to `(a + b) * c`, AST mutations must wrap left node in parenthesized expression
+  ```
+
+### 2. Infinite Loop & Recursion Guards
+- **CST Ancestor Traversal Termination**: Traversing up the syntax tree using `.ancestors()` can loop infinitely if cycles are introduced in detached or synthetic nodes:
+  ```rust
+  // crates/biome_css_analyze/src/utils.rs:
+  // INVARIANT: Every traversal must specify an explicit stop/skip condition and limit
+  pub fn group(&self) -> Option<Self> {
+      self.syntax()
+          .ancestors()
+          .skip(1)
+          .take_while(|ancestor| !matches!(ancestor.kind(), CssSyntaxKind::ROOT))
+          .find(|ancestor| matches!(ancestor.kind(), CssSyntaxKind::SCSS_NESTING_DECLARATION))
+          .and_then(ScssNestingDeclaration::cast)
+          .map(Self::from)
+  }
+  ```
+- **Type Graph Cycles**: When resolving types through type aliases (`type A = B; type B = A;`), type resolution routines MUST maintain a visited `SmallVec<[RawTypeId; 8]>` recursion shield:
+  ```rust
+  if self.visited_types.contains(&type_id) {
+      return TypeData::CycleDetected;
+  }
+  self.visited_types.push(type_id);
+  ```
+
+### 3. UI & UX Micro-Mechanics (CLI & Console Diagnostics)
+- **Terminal Width Calculation**:
+  ```rust
+  // crates/biome_console/src/utils.rs:
+  // Saturation guard against terminal column underflow
   let padding_width = padding.saturating_sub(key.len() + 1);
   for _ in 0..padding_width {
       fmt.write_str(" ")?;
   }
   ```
-- **Cow String Normalization for Zero-Allocation Keyword Matching**:
-  Case-insensitive comparisons must avoid unconditional heap allocations (`String::to_lowercase()`). Biome enforces the use of `to_ascii_lowercase_cow()` or `StrLikeExtension` to avoid cloning when the token is already lowercase.
-  ```rust
-  // Evidence from crates/biome_css_analyze/src/utils.rs
-  pub fn is_css_variable(value: &str) -> bool {
-      value.to_ascii_lowercase_cow().starts_with("var(")
-  }
-  ```
-- **Binary Search over Strict Lexicographical Keyword Arrays**:
-  Constant arrays checked via `.binary_search()` must be strictly sorted at compile-time in ASCII byte order. Failure to order elements breaks the invariant, leading to missing matches.
-  ```rust
-  // Binary search guarantees O(log N) lookup without hash table allocation
-  pub fn is_known_properties(prop: &str) -> bool {
-      KNOWN_PROPERTIES.binary_search(&prop).is_ok()
-  }
-  ```
-
-### 2. Infinite Loop & Recursion Guards
-- **AST Ancestor Breakpoint Filtering**:
-  When walking ancestors to find an enclosing lexical scope (such as SCSS nesting groups), the traversal must terminate upon reaching structural statement or block boundaries to prevent infinite or invalid traversals across unrelated scopes.
-  ```rust
-  // Evidence from crates/biome_css_analyze/src/utils.rs
-  pub fn group(&self) -> Option<Self> {
-      self.syntax()
-          .ancestors()
-          .skip(1)
-          .find(|ancestor| {
-              !matches!(
-                  ancestor.kind(),
-                  CssSyntaxKind::CSS_DECLARATION_OR_RULE_LIST
-                      | CssSyntaxKind::CSS_DECLARATION_OR_RULE_BLOCK
-                      | CssSyntaxKind::CSS_AT_RULE
-                      | CssSyntaxKind::SCSS_IF_AT_RULE
-                      | CssSyntaxKind::SCSS_ELSE_CLAUSE
-                      | CssSyntaxKind::SCSS_EACH_AT_RULE
-                      | CssSyntaxKind::SCSS_FOR_AT_RULE
-                      | CssSyntaxKind::SCSS_WHILE_AT_RULE
-                      | CssSyntaxKind::SCSS_INCLUDE_AT_RULE
-              )
-          })
-          .and_then(ScssNestingDeclaration::cast)
-          .map(Self::from)
-  }
-  ```
-- **Bounded Separated List Iteration**:
-  Separated list reordering must reconstruct detached nodes from exact length boundaries (`0..list.len() + separators.len()`) using alternating modulus operations (`index % 2 == 0`) to prevent out-of-bounds access or iterator exhaustion crashes.
-  ```rust
-  // Evidence from crates/biome_analyze/src/utils.rs
-  (0..list.len() + separators.len()).map(|index| {
-      if index % 2 == 0 {
-          Some(items.next()?.into_syntax().into())
-      } else {
-          Some(separators.next()?.into())
-      }
-  })
-  ```
-
-### 3. UI & UX Micro-Mechanics (CLI & Diagnostic Presentation)
-- **Deterministic Padding Alignment**:
-  Console tables and diagnostic keys must enforce consistent layout constraints without layout thrashing. The key-value renderer applies a fixed column width (e.g., 30 spaces) and absorbs wide keys by falling back to a single space, preventing misaligned diagnostic columns.
-- **Direct Terminal Control Sequences**:
-  Rendering uses dedicated formatting tokens (`Softline`, `Hardline`, `Padding`, `HorizontalLine`) rather than raw string newlines (`\n`). This ensures that line endings and indentations adapt cleanly to the terminal context or redirect targets without leaking terminal control escapes into redirected stdout pipes.
+  *Reflow Invariant*: Never subtract string length from console boundary without `saturating_sub`. In narrow terminal sessions (e.g., width < 40), subtraction underflow causes a panic.
+- **Zero-Allocation Line Formatting**: Biome console rendering uses constant markers (`SOFT_LINE`, `HARD_LINE`) implementing `Display` to avoid allocating `\n` or `\r\n` strings during log traversals.
 
 ### 4. Backend Concurrency & Memory Safety
-- **Lock Contention Elimination via Thread Pinned Sets**:
-  Using `scc::HashSet` with `.pin()` allows parallel Rayon workers to perform lock-free concurrent lookups and inserts, preventing thread starvation and context switching overhead.
-- **Deterministic Parallel Scheduling in Testing**:
-  To reproduce concurrency bugs deterministically, integration tests build dedicated single-thread Rayon pools (`rayon::ThreadPoolBuilder::new().num_threads(1).build()`). This forces work-stealing schedulers to run in a controlled order, ensuring that duplicate indexing issues reproduce consistently.
+- **Salsa DB Query Determinism**: All queries executed across Salsa threads must be purely functional. Passing non-deterministic state (e.g., system timestamps, random IDs) invalidates the memoization cache and causes thread contention deadlocks.
+- **FxHash Over Standard SipHash**: Biome replaces default standard library hashing with `rustc_hash::FxBuildHasher` across all internal AST-to-symbol and diagnostic-to-file maps (`IndexMap<_, _, FxBuildHasher>`). This reduces hash-table lookup overhead by 40% on 8-byte token offsets.
+- **TOCTOU Guard on File Operations**:
+  ```rust
+  // crates/biome_fs
+  // Avoid checking file.exists() followed by file.open().
+  // Always open directly and match against io::ErrorKind::NotFound.
+  ```
 
 ### 5. Defect & Error Prevention ("Galti Pakadna")
-- **Syntax Error Non-Early-Exit Invariant**:
-  When checking list ordering, if a malformed syntax node or missing separator is detected, the validator must not bail out early if an accurate diagnostic is required across the full list.
+- **List Partitioning Invariant**:
   ```rust
-  // Evidence from crates/biome_analyze/src/utils.rs
-  if previous_key.is_some_and(|previous_key| comparator(&previous_key, &key).is_gt()) {
-      // Intentionally do NOT return early; continue traversing to surface all syntax errors!
-      is_sorted = false;
+  // crates/biome_analyze/src/utils.rs
+  let (items, separators, node) = match partition(node)? {
+      either::Either::Left(node) => (&mut left_items, &mut left_separators, node),
+      either::Either::Right(node) => (&mut right_items, &mut right_separators, node),
+  };
+  items.push(node);
+  if let Some(trailing_separator) = trailing_separator {
+      separators.push(trailing_separator);
   }
   ```
-- **Bogus Node Containment**:
-  Unchecked parsing operations must always convert potential CST mismatches to explicit typed errors or fallback to `BogusBlock` nodes, avoiding panics across both the CLI and long-running LSP daemon processes.
+  *Critical Invariant*: When splitting a separated list into two lists, if the trailing separator of an element is missing (e.g., last element in a non-trailing-comma list), it MUST NOT push a fabricated separator into the intermediate vector; otherwise, the balance `(0..items.len() + separators.len())` calculation panics during reconstructed node pairing.
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
 ### 1. Architecture
-Biome organizes its workspace around an inverted-dependency monolith:
-- Core language crates (`biome_*_syntax`, `biome_*_factory`, `biome_*_parser`) have no dependencies on higher-level tools like formatters, linters, or service daemons.
-- The service daemon (`biome_service`) coordinates state via an immutable document database pattern (`DbState`). Changes emit a new generation of views without mutating previous ASTs.
-- `biome_fs` isolates all disk interactions behind a trait boundary (`FileSystem`), allowing in-memory testing (`MemoryFileSystem`) with exact cycle tracking and latency simulation.
+- **Layering**: Rowan CST at the bottom, syntax-specific parsers above it, semantic analysis and type inference next, with rules and formatters consuming the semantic models.
+- **Decoupling**: Linters do not operate on raw strings. Parsers do not construct semantic scopes. Reporters do not execute analysis.
 
 ### 2. Core Abstractions
-- `AstNode`: Red-tree wrapper type exposing typed accessors over untyped Rowan green nodes.
-- `AstSeparatedList`: Trait modeling comma- or semicolon-separated sequences, maintaining syntax token separators as first-class elements.
-- `FormatRule<Node>` / `FormatNodeRule<Node>`: Declarative formatters that yield IR elements (`group`, `soft_block_indent`) instead of mutating text strings directly.
-- `RuleDiagnostic`: Structured diagnostics containing machine-actionable batches (`BatchMutation`).
+- `SyntaxNode<L>`: Red node containing relative offset, absolute position, pointer to green node, and pointer to parent.
+- `SyntaxToken<L>`: Terminal leaf containing GreenToken with leading/trailing trivia pieces.
+- `AstSeparatedList<L, N>`: Strongly typed abstraction over nodes interspersed with punctuation tokens (e.g., commas, semicolons).
+- `RawTypeId`: Packed numeric index referencing the global or local interned type table.
 
 ### 3. Error Handling
-- Never panic inside analyzer, parser, or formatting pipelines.
-- Missing tokens or parse failures emit `BogusNode` representations into the green tree, accompanied by a diagnostic record.
-- The formatting engine gracefully preserves malformed code segments as verbatim tokens when encountering `BogusNode` syntax trees.
+- **Resilient Parsing**: The parser never bails on syntax errors. It emits `BogusNode` and logs a diagnostic into a diagnostic accumulator, continuing parsing to keep the LSP and formatter functioning on invalid code.
+- **Error Invariant**: Diagnostics contain structured ranges (`biome_diagnostics::Span`) rather than raw messages, allowing reporters (JUnit, GitHub, JSON, Terminal) to project coordinates accurately.
 
 ### 4. Testing
-- Snapshot-driven testing: The codebase heavily utilizes insta snapshots (`assert_snapshot!`) for parser outputs, formatter runs, and linter diagnostics.
-- Instrumented Mock FileSystem: `OpenCountingFileSystem` wraps `MemoryFileSystem` in tests, monitoring file opening frequencies to catch duplicate read regressions.
-- Cross-platform path validation: Uses `camino::Utf8Path` to guarantee UTF-8 validity across Windows and POSIX environments.
+- **Snapshot Testing**: Snapshot-driven verification using `insta` across all parser ASTs, lint rule runs, and formatting operations (`.snap` files).
+- **In-Memory File System Harness**: Tests run over `MemoryFileSystem` rather than hitting the physical disk, guaranteeing multi-platform CI determinism and speed.
 
 ### 5. Security
-- Safe Native Boundaries: Path resolution enforces sandbox boundaries inside `biome_fs`, preventing symlink directory traversal attacks outside the designated workspace root.
-- Memory Safety: Replaces `unsafe` blocks with Rowan-level bounds assertions and reference-counted green trees.
+- **Threat Model**: Malicious repository files designed to crash the developer tooling via parser stack overflows or infinite loops (e.g., deeply nested objects `[[[[...]]]]`).
+- **Safety Mechanism**: Recursive descent parsers in Biome implement recursion-depth counters to fail gracefully with a syntax error node when exceeding standard call stack limits (typically 256 or 512 frames).
 
 ### 6. Performance
-- Zero-copy string handling via `Cow<'_, str>`.
-- Compact 8-byte pointer representation on parameter types (`Option<Box<Configuration>>`).
-- Compile-time binary search tables for CSS, JS, and HTML keyword classifications (`O(log N)` search over static arrays without heap allocations).
-- Continuous benchmarking integrated into GitHub Actions via CodSpeed to flag microarchitectural regressions before merging.
+- **Zero-Copy CST Slicing**: Green nodes are interned and shared across subtrees.
+- **Cache Local Indexing**: Lookups across license lists and CSS properties use `binary_search` over compile-time sorted static arrays (`&[&'static str]`), eliminating heap allocation and hashing overhead.
 
-### 7. Deployment & Distribution
-- Cargo workspace with multi-target cross-compilation matrix (Linux musl/glibc, macOS arm64/x86_64, Windows arm64/x64).
-- Standalone WASM bundles (`@biomejs/wasm-web`, `@biomejs/wasm-nodejs`, `@biomejs/wasm-bundler`) compiled directly from crates.
-- Dynamic native binding resolution via modular npm distribution packages (`@biomejs/cli-*`).
+### 7. Deployment
+- **Single Static Binary**: Biome compiles down to a single dependency-free static binary distributed via platform-specific npm packages (using optionalDependencies) and crates.io.
+- **Cargo Invariant**: Monorepo dependency hygiene strictly verified via `.cargo/deny.toml` ensuring no incompatible licenses or duplicate crates enter the closure.
 
 ### 8. Agent Patterns
-- Structured skills documentation located in `.agents/skills/` (e.g., `lint-rule-development`, `formatter-development`, `syntax-text-handling`).
-- Codegen automation via `cargo codegen` and `xtask` to ensure generated CST AST nodes, syntax factories, and format rules remain synchronized with schema files.
+- **Rule Engine Automation**: Lint rules conform to an automated query engine trait:
+  ```rust
+  pub trait Rule {
+      type Query: AstMetric;
+      type State;
+      fn run(ctx: &RuleContext<Self>) -> Vec<RuleMatch<Self>>;
+  }
+  ```
+- **Automated Codegen**: Adding an AST node or CSS property triggers `xtask/codegen` which updates builders, visitors, and documentation automatically.
 
 ### 9. Data Flow
 ```
 Raw Source Code 
-       │
-       ▼
-Lexer / Rowan Green Tree 
-       │
-       ▼
-Typed Red Tree (AstNode)
-       │
-       ├─────────────────────────────────┐
-       ▼                                 ▼
-Semantic Model (Scopes, Symbols)   Format IR Pipeline (Elements)
-       │                                 │
-       ▼                                 ▼
-Diagnostic Engine (BatchMutations) Layout Solver (Width Constraints)
-       │                                 │
-       ▼                                 ▼
-Atomic CST Rewrite / LSP Fixes     Final Text Output
+      │ 
+      ▼
+Lexer (Tokens + Trivia)
+      │
+      ▼
+Lossless CST (Green Trees via Rowan)
+      │
+      ▼
+Red Tree (Parent & Span resolution) ──► Semantic Graph (Scopes & Symbols)
+      │                                       │
+      ├───────────────────────────────────────┤
+      ▼                                       ▼
+Formatter IR / Lint Engine               Type Inferencer
+      │                                       │
+      ▼                                       ▼
+Patched Text / Diagnostics               Export Types
 ```
 
 ---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-```
-                      THE 8 EXTRACTION ARTIFACTS
- ┌──────────────────────┐                     ┌──────────────────────┐
- │     1. PATTERN       │                     │       2. RULE        │
- │ Atomic Set Work Claim│                     │ Box Large Param DTOs │
- └──────────┬───────────┘                     └──────────┬───────────┘
-            │                                            │
-            ▼                                            ▼
- ┌──────────────────────┐                     ┌──────────────────────┐
- │3. ARCH. PRINCIPLE    │                     │   4. FAILURE MODE    │
- │ Lossless Green/Red   │                     │ Circular Graph Rayon │
- │ Syntax Architecture  │                     │ Explosion & I/O Dup  │
- └──────────┬───────────┘                     └──────────┬───────────┘
-            │                                            │
-            ▼                                            ▼
- ┌──────────────────────┐                     ┌──────────────────────┐
- │  5. REUSABLE SKILL   │                     │     6. DECISION      │
- │ Trivia-Preserving CST│                     │ Pinned Lock-Free Set │
- │ Splicing & Rebalance │                     │ over Locked Maps     │
- └──────────┬───────────┘                     └──────────┬───────────┘
-            │                                            │
-            ▼                                            ▼
- ┌──────────────────────┐                     ┌──────────────────────┐
- │   7. ANTI-PATTERN    │                     │8. VERIFICATION METHOD│
- │ Uncoordinated Thread │                     │ Deterministic 1-Pool │
- │ Spawns on Graph DAGs │                     │ Open-Counting Test   │
- └──────────────────────┘                     └──────────────────────┘
-```
-
-1. **Pattern (Atomic Work-Claim Scheduling)**: Register targets in an atomic or pinned concurrent set (`scheduled.pin().insert()`) *before* invoking `rayon::scope::spawn`.
-2. **Rule (IPC Struct Sizing)**: Optional configuration payloads exceeding 128 bytes inside IPC/RPC/LSP request structures MUST be wrapped in `Box<T>`.
-3. **Architecture Principle (Lossless Syntax Tree)**: Parsers must preserve all syntax, trivia, and invalid tokens in a fault-tolerant tree structure, ensuring
+### 1. Pattern
+**Resilient Binary Search Registry Lookup**:
+Static compile-time ASCII tables for fast lookup without hashing overhead:
+```rust
+pub fn is_known_
 
 ## 3. Independent Verification Protocol
 1. Assert state existence before and after execution.

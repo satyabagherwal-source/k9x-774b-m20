@@ -2,20 +2,20 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T08:40:12.152Z",
+  "updated_at": "2026-11-28T09:34:51.725Z",
   "statistics": {
-    "total_nodes": 602,
+    "total_nodes": 604,
     "total_edges": 240,
     "domain_distribution": {
       "D": 358,
       "M": 1,
       "H": 120,
       "J": 23,
-      "K": 35,
+      "K": 36,
       "L": 9,
       "G": 1,
       "F": 33,
-      "B": 4,
+      "B": 5,
       "E": 2,
       "I": 14,
       "C": 1,
@@ -13430,6 +13430,50 @@
       ],
       "created_at": "2026-11-28T08:40:12.152Z",
       "updated_at": "2026-11-28T08:40:12.152Z"
+    },
+    "DOM-B-67232C2A": {
+      "id": "DOM-B-67232C2A",
+      "domain": "B",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Cross-Scope Assignment Type Widening Poisoning Inferred Return Types (BUG-TYPE-02)",
+      "summary": "The type inference engine failed to differentiate between uninitialized/primitive widenable variables (`let x;`, `let x = undefined;`) and v -> Explicitly constructed data structures must have their type invariants sealed against flow-insensitive cross-scope mutations unless explicit",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://biomejs-biome/biomejs-biome-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T09:33:48.552Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (biomejs-biome)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "B",
+        "Product Intelligence"
+      ],
+      "created_at": "2026-11-28T09:34:16.438Z",
+      "updated_at": "2026-11-28T09:34:16.438Z"
+    },
+    "DOM-K-287B8757": {
+      "id": "DOM-K-287B8757",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Self-Updater Downgrade & Staged Symlink Hijacking (BUG-UPDATE-02)",
+      "summary": "Lack of semver monotonic pre-checks and omission of filesystem metadata validation (`symlink_metadata().file_type().is_file()`) prior to bin -> Software updaters must classify failures into deterministic verification rejections versus transient I/O errors. Verification must enforce m",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://freenet-freenet-core/freenet-freenet-core-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T09:34:19.113Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (freenet-freenet-core)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-28T09:34:51.725Z",
+      "updated_at": "2026-11-28T09:34:51.725Z"
     }
   },
   "edges": [

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T09:08:28.369Z",
+  "last_updated": "2026-11-28T09:34:53.073Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27062,
+  "total_items": 27079,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "0c0198d2",
-      "content_hash": "1c00d7b624ac765b76c3cd0a4984c51d26ca0f257fabd0e5312bed3d26318429",
+      "source_version": "eb8f4fc3",
+      "content_hash": "99367c1a349717c31ed1c0557db02ded6cd8b062b1adff4622753d02a4def5f7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T00:09:43.818Z"
+      "persisted_at": "2026-11-28T09:30:51.430Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "0c0198d2",
-      "content_hash": "de36a5fd4be554cbee18f31d8a7b4c96452db551cb5c87578ccf45d0bac7f5a4",
+      "source_version": "eb8f4fc3",
+      "content_hash": "1cd523e5b211014e628a9e50128eb4653dad1372fa09e3d92e1e3ddfb500cdc7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T00:09:44.309Z"
+      "persisted_at": "2026-11-28T09:30:51.634Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "186abe5c8dae4ac5550495cbdc882fa7dafffb7ee0e45c4bb2c2de5bde124eae",
+      "content_hash": "eb868a976e8769d1cc8cc1e0e807fe765fd4642e6d0b45f17d1021baad089a2e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T00:09:48.174Z"
+      "persisted_at": "2026-11-28T09:34:52.820Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "56d2396b4c1c3bb4b6722eefc1d4994421f4712301deaf32122bf275df4d02d2",
+      "content_hash": "43b4e7545f94ded410926b0172ccb9ff4fcb593e484a12c6ed19a2d4be899624",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T00:09:48.698Z"
+      "persisted_at": "2026-11-28T09:34:53.073Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -221481,11 +221481,16 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "0c0198d2",
-      "content_hash": "e7725e55c0b2062a6708acb334715a5abc5431b84b56cf18302a27d3c1f1616d",
+      "source_version": "eb8f4fc3",
+      "content_hash": "c93be4f1886ab7cc7475fcec1d7c9fbaaaebac83e14e8f5bb1cb8227fdf9d216",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Fork-Isolated Workflow Checkout and Execution Barrier",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 8411,
           "title": "raise the QUIC-native wire floor to 0.2.158",
@@ -221690,6 +221695,16 @@
           "number": 10994,
           "title": "stop a PUT at a relay only when no connected peer is closer to the key",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11079,
+          "title": "Bounded Streaming Decompression Memory Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11081,
+          "title": "Strict Pre-Installation Version Binding & Monotonic Gatekeeping",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221697,7 +221712,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T00:09:42.853Z",
+      "verified_at": "2026-11-28T09:30:50.160Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231616,8 +231631,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "c56f9f1a",
-      "content_hash": "48bf9b5bfaaa057e31549d0a84555a446fa1f38f39855977aab2a1dbfaab8652",
+      "source_version": "42b3267e",
+      "content_hash": "85fd40064fcd7382490e039601169fa6f5914a28298d305dbe64f220550a2061",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231965,6 +231980,11 @@
           "number": 11050,
           "title": "Draft NUC 158 List Invocation of Function Values",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11083,
+          "title": "Draft NUC 160 C# String Trimming Method Alias",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231972,7 +231992,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T07:58:25.624Z",
+      "verified_at": "2026-11-28T09:33:44.768Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232014,10 +232034,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "c56f9f1a",
-      "content_hash": "28cb3f1e7a951f1381eb0c74e4f539c8fcab26811f29386d34f98b3af4b35599",
+      "source_version": "42b3267e",
+      "content_hash": "821bce98a39408dc2d9c9c66d2f0f3aa372e3f665678be919532159b2cf3b500",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T07:58:26.137Z"
+      "persisted_at": "2026-11-28T09:33:45.478Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -232026,10 +232046,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "761b277c",
-      "content_hash": "96c3de0c9b28291f7c04fce8d76176a827856cdedf9a711bb66b5bbe7d6ad91c",
+      "source_version": "42b3267e",
+      "content_hash": "96e70a5eff2d34627d42f84d288913bca3dcf2deec149c6b6b8b126281efc321",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T06:04:31.048Z"
+      "persisted_at": "2026-11-28T09:33:45.677Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -234498,8 +234518,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "c199c75a",
-      "content_hash": "9cfe17b1182d5e3c1b66156a79992489e3ee830773d8d4163d5e7d3a0b66c8b2",
+      "source_version": "71660779",
+      "content_hash": "5f85d2d7d9574853d685faed3425fbe341d088aa1872313a9dce70fa95b35ad5",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -234562,6 +234582,21 @@
           "number": 10870,
           "title": "CST Trivia Transfer Invariant on Node Reordering and Splicing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11078,
+          "title": "Invariant Separation of Concrete vs Widenable Binding Types in Flow Analysis",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11079,
+          "title": "Suffix-Stripping Grammar Validation with Consecutive Token Disallowance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11080,
+          "title": "Delimited AST Chunk Partitioning with Non-Lossy Trivia Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234569,7 +234604,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T09:34:27.499Z",
+      "verified_at": "2026-11-28T09:30:49.882Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234819,9 +234854,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for biomejs-biome-learnings",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd7d4e9d87a7913f974e66384294b53c2c3d379cf0b6aa123bf33ede69a6e3de",
+      "content_hash": "166ee27905ac8f4f9ed4cf19132c77043b1584c2de7c62f2d57be64ccac508e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T09:34:33.792Z"
+      "persisted_at": "2026-11-28T09:34:17.661Z"
     },
     "candidate_directive-deps-bump-aiohttp": {
       "item_id": "candidate_directive-deps-bump-aiohttp",
@@ -285272,8 +285307,8 @@
       "slug": "tanstack-router",
       "platform": "github",
       "source_url": "https://github.com/TanStack/router",
-      "source_version": "61d5cdda",
-      "content_hash": "ddd5dc783e87b91bed147ffc12a76ee45030c1ef61c6b6f87bb3713487c6b849",
+      "source_version": "10b22c27",
+      "content_hash": "11ecc7dfe8eff21d4a8d3e201d70b925496545b66b6a4ac17bf0338e2bb14a3c",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-router-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-router-learnings.md",
       "promoted_rules": [
@@ -285286,6 +285321,11 @@
           "number": 9676,
           "title": "replace goober with a static stylesheet",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11082,
+          "title": "test(benchmarks): add link-mount client-nav scenario",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -285293,7 +285333,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:58:38.394Z",
+      "verified_at": "2026-11-28T09:33:31.267Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -285347,10 +285387,10 @@
       "relative_path": "08_VERIFICATION/tanstack-router-verification-protocol-empirical-defect-shield-for-tanstack-route.md",
       "title": "Verification Protocol: Empirical Defect Shield for TanStack/router",
       "repository": "TanStack/router",
-      "source_version": "ce46b21b",
-      "content_hash": "dfe6ef3793bbdb2d313692f9663871923fd28d214aa5c0c96893f0962606357b",
+      "source_version": "10b22c27",
+      "content_hash": "36dc040399040dd79d2562c07f57560f23081be2629a48c430a80043ccf1ff9f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:24:39.144Z"
+      "persisted_at": "2026-11-28T09:33:32.162Z"
     },
     "rule-9051": {
       "learning_id": "rule-9051",
@@ -285462,9 +285502,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tanstack-router-learnings",
       "repository": "tanstack-router-learnings",
       "source_version": "HEAD",
-      "content_hash": "9538f62ea24e179ef27995cee98f3700c42bddb8f35a62b2a05c5275506ab569",
+      "content_hash": "285bc032100c6d1b2c8fde74da920fe2ac75794111bf1c4f15fdee82a441149c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:24:52.393Z"
+      "persisted_at": "2026-11-28T09:34:18.901Z"
     },
     "learn-huggingface-convaiinnovations-laya": {
       "learning_id": "learn-huggingface-convaiinnovations-laya",
@@ -371980,6 +372020,222 @@
       "content_hash": "f57ff9618d9f7e972040d6283c071131b49cc6ddc4d198ed6befe46ba4f11f85",
       "domain_letter": "K",
       "persisted_at": "2026-11-28T09:08:27.969Z"
+    },
+    "rule-11078": {
+      "learning_id": "rule-11078",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11078,
+      "title": "Invariant Separation of Concrete vs Widenable Binding Types in Flow Analysis",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "71660779",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:30:49.882Z"
+    },
+    "rule-11079": {
+      "learning_id": "rule-11079",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11079,
+      "title": "Bounded Streaming Decompression Memory Allocation",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "eb8f4fc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:30:50.160Z"
+    },
+    "rule-11080": {
+      "learning_id": "rule-11080",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11080,
+      "title": "Delimited AST Chunk Partitioning with Non-Lossy Trivia Preservation",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "71660779",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:30:49.882Z"
+    },
+    "rule-11081": {
+      "learning_id": "rule-11081",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11081,
+      "title": "Strict Pre-Installation Version Binding & Monotonic Gatekeeping",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "eb8f4fc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:30:50.160Z"
+    },
+    "candidate_directive-invariant-separation-of-concrete-vs-widenable-binding-types-in-flow-analysis": {
+      "item_id": "candidate_directive-invariant-separation-of-concrete-vs-widenable-binding-types-in-flow-analysis",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-R9NC-invariant-separation-of-concrete-vs-widenable-binding-types-in-flow-analysis.md",
+      "title": "Invariant Separation of Concrete vs Widenable Binding Types in Flow Analysis",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9368452d18e22348c6fb5b2901a1a7fc501243b5caeff0eff44309c7bf3ebeed",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T09:34:16.730Z"
+    },
+    "candidate_directive-bounded-streaming-decompression-memory-allocation": {
+      "item_id": "candidate_directive-bounded-streaming-decompression-memory-allocation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S0WK-bounded-streaming-decompression-memory-allocation.md",
+      "title": "Bounded Streaming Decompression Memory Allocation",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "df879c98efa96e5769d6880bb500566b77eb5912201018b2ad134bdb7e1cd332",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:34:52.053Z"
+    },
+    "candidate_directive-fork-isolated-workflow-checkout-and-execution-barrier": {
+      "item_id": "candidate_directive-fork-isolated-workflow-checkout-and-execution-barrier",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S0WK-fork-isolated-workflow-checkout-and-execution-barrier.md",
+      "title": "Fork-Isolated Workflow Checkout and Execution Barrier",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "af7d7810126f9f81c199962f228a76d994e4d58cc110029f0942ec989307c71e",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-28T09:34:52.314Z"
+    },
+    "candidate_directive-strict-pre-installation-version-binding-monotonic-gatekeeping": {
+      "item_id": "candidate_directive-strict-pre-installation-version-binding-monotonic-gatekeeping",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S0WL-strict-pre-installation-version-binding-monotonic-gatekeeping.md",
+      "title": "Strict Pre-Installation Version Binding & Monotonic Gatekeeping",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a3b25530c64ffdd85e6c7233a137448fb7a9240aa6ca10e773ffeb93227de71e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:34:52.570Z"
+    },
+    "rule-11082": {
+      "learning_id": "rule-11082",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11082,
+      "title": "test(benchmarks): add link-mount client-nav scenario",
+      "source_url": "https://github.com/TanStack/router",
+      "source_version": "10b22c27",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:33:31.267Z"
+    },
+    "candidate_directive-test-benchmarks-add-link-mount-client-nav-scenario": {
+      "item_id": "candidate_directive-test-benchmarks-add-link-mount-client-nav-scenario",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RAYR-test-benchmarks-add-link-mount-client-nav-scenario.md",
+      "title": "test(benchmarks): add link-mount client-nav scenario",
+      "repository": "tanstack-router-learnings",
+      "source_version": "HEAD",
+      "content_hash": "25cb1d7682901ed4b8bb255eb7fc4c5d0d30149fbafd4efca3b8fbecd6265f6f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T09:34:18.436Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tanstack-router-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tanstack-router-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-router-technical-construction-intelligence-tanstack-router-core-invaria.md",
+      "title": "Technical Construction Intelligence: TanStack/router Core Invariants",
+      "repository": "TanStack/router",
+      "source_version": "10b22c27",
+      "content_hash": "1a32382d7d5c0d098e5dc3712fdffc03b07c64776d3077e95b0532491330cc7b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:33:31.968Z"
+    },
+    "rule-11083": {
+      "learning_id": "rule-11083",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11083,
+      "title": "Draft NUC 160 C# String Trimming Method Alias",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "42b3267e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:33:44.768Z"
+    },
+    "candidate_directive-draft-nuc-160-c-string-trimming-method-alias": {
+      "item_id": "candidate_directive-draft-nuc-160-c-string-trimming-method-alias",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QLDN-draft-nuc-160-c-string-trimming-method-alias.md",
+      "title": "Draft NUC 160 C# String Trimming Method Alias",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "42b3267e",
+      "content_hash": "66c00e4bc7b6b2ac2aec5e3a9814b83f50bfef17cc3ecb965234774eef96d81d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T09:33:45.279Z"
+    },
+    "candidate_directive-suffix-stripping-grammar-validation-with-consecutive-token-disallowance": {
+      "item_id": "candidate_directive-suffix-stripping-grammar-validation-with-consecutive-token-disallowance",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-R9ND-suffix-stripping-grammar-validation-with-consecutive-token-disallowance.md",
+      "title": "Suffix-Stripping Grammar Validation with Consecutive Token Disallowance",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ba97872175e2b1ead939df57692a302f884ddec18a8018c9903343a5c22a8c2d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:34:16.956Z"
+    },
+    "candidate_directive-delimited-ast-chunk-partitioning-with-non-lossy-trivia-preservation": {
+      "item_id": "candidate_directive-delimited-ast-chunk-partitioning-with-non-lossy-trivia-preservation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-R9ND-delimited-ast-chunk-partitioning-with-non-lossy-trivia-preservation.md",
+      "title": "Delimited AST Chunk Partitioning with Non-Lossy Trivia Preservation",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3412b6b4dbcc0b95f51b7ce2b2ce1e2d869d1e976b6d9d0b05063ac81a03201e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:34:17.192Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-biomejs-biome-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-biomejs-biome-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-biomejs-biome-learnings-technical-construction-intelligence-biomejs-biome-learni.md",
+      "title": "Technical Construction Intelligence: biomejs-biome-learnings Core Invariants",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fe9c06e73c228260c5f4f8810571a8a822e65a24f9adc290f8ab4485e6f36f79",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:34:17.430Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tanstack-router-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tanstack-router-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-router-learnings-technical-construction-intelligence-tanstack-router-le.md",
+      "title": "Technical Construction Intelligence: tanstack-router-learnings Core Invariants",
+      "repository": "tanstack-router-learnings",
+      "source_version": "HEAD",
+      "content_hash": "833f92572dd1d1c191aa0e16d29a29018d78cb712c4ac2dbd3517d4b8188c679",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:34:18.673Z"
     }
   },
   "ai-builder-brain": {

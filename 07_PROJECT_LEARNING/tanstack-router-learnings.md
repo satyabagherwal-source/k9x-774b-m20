@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source**: github ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
-> **Source Version**: `61d5cdda`  
+> **Source Version**: `10b22c27`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T23:58:38.146Z  
+> **Timestamp**: 2026-11-28T09:33:30.290Z  
 > **Learning ID**: `learn-github-tanstack-router`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T23:58:38.142Z  
+> **Harvest Timestamp**: 2026-11-28T09:28:29.624Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 A client-first, server-capable, fully type-safe router and full-stack framework for the web (React and more).
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15359 stars
+- **Stars / Engagement**: 15385 stars
 
 ---
 
@@ -684,36 +684,302 @@ export const apiHandlers = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61d5cdda` (2026-11-24)
-**Commit Message**: docs: remove CodeRabbit sponsor logo (#8980)
+### Incident Patch 1: `10b22c27` (2026-11-27)
+**Commit Message**: test(benchmarks): add link-mount client-nav scenario (#8999)
 
-**File**: `README.md` (modified, +0/-9)
+* test(benchmarks): add link-mount client-nav scenario
+
+Measures mounting and unmounting 300 Links without navigating, in React,
+Solid and Vue, with the default preload setting and with 'intent'.
+
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+
+* test(benchmarks): register link-mount React toggle in a layout effect
+
+useSyncExternalStore subscribes in a passive effect, which can still be
+pending when the first warm-up step runs. Under the CodSpeed instrument's
+V8 flags it was, so flushSync rendered nothing and the step saw 0 Links.
+A layout effect runs in the same commit as the ready marker.
+
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+
+* test(benchmarks): run one link-mount lap per iteration
+
+CodSpeed simulation runs setup, the warm-up lap and one iteration 8 times
+within a single test timeout. Vue's link-mount took 33 s of the 60 s budget
+with two laps per iteration; one lap matches link-churn.
+
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+
+**File**: `benchmarks/client-nav/README.md` (modified, +2/-1)
 ```diff
-@@ -89,15 +89,6 @@ A full‑stack framework built on Router, designed for server rendering, streami
+@@ -60,6 +60,7 @@ be attributed to a specific feature area.
+ | `history`                                | History push/replace/back/forward traversal, location masking, registered-but-never-blocking `useBlocker`, and `useCanGoBack`/`useLocation` subscriptions.                                                                                                                                                                           |
+ | `hydration`                              | Initial DOM hydration: execute the SSR payload, restore `beforeLoad` context and loader data, and hydrate 192 ordinary and eight hash-sensitive Links through their follow-up effects in React and Solid.                                                                                                                            |
+ | `link-churn`                             | Links that depart, stay and mount: 30 `/hub` layout Links stay while 100 `/hub/list` leaf Links leave (alone, or with the layout to `/other`) and remount on return; a search-only change rebuilds updater and `to="."` Links. Unlike `links`, whose root-layout Links never depart.                                                 |
++| `link-mount`                             | Link setup and teardown without navigation: each step synchronously mounts or unmounts 300 Links on the index route, half plain `to="/about"` and half `to="/posts/$postId"` with `params`, `search` and `activeProps`. Runs with the default `defaultPreload: false` and again with `'intent'`, which attaches the intent handlers. |
+ | `links`                                  | Per-navigation cost of ~200 mounted `<Link>`s: link prop building, active-state recompute across `activeOptions` variants, `activeProps` swaps, and `useMatchRoute` probes (the `MatchRoute` component is avoided: vue-router's implementation leaks one subscription per render).                                                   |
+ | `loaders`                                | Client loader dispatch: always-stale re-runs (`staleTime: 0`), cached revisits (re-run once per lap by the `invalidate` step), `loaderDeps`-keyed caching, `router.invalidate()`, and `useLoaderData` selectors.                                                                                                                     |
+ | `mount`                                  | Cold start: `createRouter` (route-tree processing) + first render + initial `router.load()` + unmount, with a fresh router per mount.                                                                                                                                                                                                |
+@@ -76,7 +77,7 @@ scenarios follow these navigation/mount conventions:
  
- <table align="center">
-   <tr>
--        <td>
--      <a href="https://www.coderabbit.ai/?via=tanstack&dub_id=aCcEEdAOqqutX6OS" >
--        <picture>
--          <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/TanStack/tanstack.com/main/src/images/coderabbit-dark.svg" />
--          <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/TanStack/tanstack.com/main/src/images/coderabbit-light.svg" />
--          <img src="https://raw.githubusercontent.com/TanStack/tanstack.com/main/src/images/coderabbit-light.svg" height="40" alt="CodeRabbit" />
--        </picture>
--      </a>
--    </td>
-     <td>
-       <a href="https://www.cloudflare.com?utm_source=tanstack">
-         <picture>
+ - Apps are built with `NODE_ENV=production` (`minify: false`) into `dist/app.js`; benches import the built bundle, so production package builds and production JSX output are measured, not dev transforms.
+ - Scenarios behave like a real user app: navigation happens through `<Link>` clicks dispatched on real anchor elements (unless a scenario specifically measures the imperative API), the router uses the default browser history, and `scrollRestoration` is enabled.
+-- Each benchmark iteration advances a fixed, circular sequence of steps; every step awaits the router's `onRendered` event, so render work is included and steps cannot overlap. No two consecutive steps may target the same location, and the sequence ends back on the initial route.
++- Each benchmark iteration advances a fixed, circular sequence of steps; every step awaits the router's `onRendered` event, so render work is included and steps cannot overlap. Steps that leave the location unchanged, like `link-mount`'s, resolve once their render has committed instead. No two consecutive steps may target the same location, and the sequence ends back on the initial route.
+ - Setup runs one warm-up lap through the sequence and asserts each step's observable output (e.g. `document.title`), so a scenario that silently stops doing its work fails instead of reporting a fast time.
+ - Apps are mounted and disposed outside timing by `benchLifecycle` (`benchmarks/cpu-simulation.ts`): CodSpeed measures a single invocation, so every invocation gets a freshly mounted app; plain `vitest bench` keeps one app per warmup/run phase. Bench functions must be `async` functions, because CodSpeed's Vitest 5 provider awaits only `AsyncFunction`s.
+ - Determinism: no wall-clock timers (async work is resolved promises or counted `setTimeout(0)` hops), `staleTime`/`gcTime` only ever `0` or effectively-infinite, no `Math.random`/`Date.now` in the measured loop. Scroll restoration uses `getScrollRestorationKey: (location) => location.pathname` so its cache stays bounded (the default random per-entry key grows one cache entry per push navigation). The `mount` scenario opts out of `scrollRestoration` entirely and destroys its history on unmount — both register page-lifetime globals that would l
+```
+
+**File**: `benchmarks/client-nav/package.json` (modified, +6/-0)
+```diff
+@@ -66,6 +66,7 @@
+               "@benchmarks/client-nav-history-react",
+               "@benchmarks/client-nav-hydration-react",
+               "@benchmarks/client-nav-link-churn-react",
++              "@benchmarks/client-nav-link-mount-react",
+               "@benchmarks/client-nav-links-react",
+               "@benchmarks/client-nav-loaders-react",
+               "@benchmarks/client-nav-mount-react",
+@@ -96,6 +97,7 @@
+               "@benchmarks/client-nav-history-solid",
+               "@benchmarks/client-nav-hydration-solid",
+               "@benchmarks/client-nav-link-churn-solid",
++              "@benchmarks/client-nav-link-mount-solid",
+               "@benchmarks/client-nav-links-solid",
+               "@benchmarks/client-nav-loaders-solid",
+               "@benchmarks/client-nav-mount-solid",
+@@ -125,6 +127,7 @@
+               "@benchmarks/client-nav-head-vue",
+               "@benchmarks/client-nav-history-vue",
+               "@benchmarks/client-nav-link-churn-vue",
++              "@benchmarks/client-nav-link-mount-vue",
+               "@benchmarks/client-nav-links-vue",
+               "@benchmarks/client-nav-loaders-vue",
+               "@benchmarks/client-nav-mount-vue",
+@@ -209,10 +212,13 @@
+               "@benchmarks/client-nav-hydration-react",
+               "@benchmarks/client-nav-hydration-solid",
+               "@benchmarks/client-nav-link-churn-react",
++              "@benchmarks/client-nav-link-mount-react",
+               "@benchmarks/client-nav-links-react",
+               "@benchmarks/client-nav-link-churn-solid",
++              "@benchmarks/client-nav-link-mount-solid",
+               "@benchmarks/client-nav-links-solid",
+               "@benchmarks/client-nav-link-churn-vue",
++              "@benchmarks/client-nav-link-mount-vue",
+               "@benchmarks/client-nav-links-vue",
+               "@benchmarks/client-nav-loaders-react",
+               "@benchmarks/client-nav-loaders-solid",
+```
+
+**File**: `benchmarks/client-nav/scenarios/harness.ts` (modified, +21/-0)
+```diff
+@@ -57,6 +57,15 @@ export type ScenarioStep =
+       testId: string
+       settleHops?: number
+     }
++  | {
++      /**
++       * Runs app work that leaves the router location unchanged, such as
++       * mounting or unmounting a list of Links. `run` must resolve only after
++       * that work has rendered.
++       */
++      type: 'run'
++      run: () => void | Promise<void>
++    }
+   | { type: 'navigate'; getOptions: () => object }
+   | { type: 'preload'; getOptions: () => object; settleHops?: number }
+   | { type: 'invalidate'; settleHops?: number }
+@@ -295,6 +304,11 @@ export interface ScenarioSetupOptions {
+    * browser history traversal. All other scenarios use fresh memory history.
+    */
+   historyMode?: 'memory' | 'browser'
++  /**
++   * Test id that must render before the warm-up lap. Needed by scenarios
++   * whose steps click no links, so nothing else waits for the first render.
++   */
++  readyTestId?: string
+ }
+ 
+ function warnAboutDevMode(frameworkLabel: string) {
+@@ -394,6 +408,10 @@ export function createScenarioSetup(options: ScenarioSetupOptions) {
+           await settle(step.settleHops ?? 4)
+           return
+         }
++        case 'run': {
++          await step.run()
++          return
++        }
+         case 'navigate': {
+           const renderedPromise = rendered()
+           router.navigate(step.getOptions())
+@@ -434,6 +452,9 @@ export function createScenarioSetup(options: ScenarioSetupOptions) {
+     await router.load()
+ 
+     const linkTestIds = new Set<string>()
++    if (options.readyTestId) {
++      linkTestIds.add(options.readyTestId)
++    }
+     for (const step of options.steps) {
+       if (typeof step === 'string') {
+         linkTestIds.add(step)
+```
+
+**File**: `benchmarks/client-nav/scenarios/link-mount/react/project.json` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++{
++  "name": "@benchmarks/client-nav-link-mount-react",
++  "projectType": "application",
++  "targets": {
++    "build:client": {
++      "executor": "nx:run-commands",
++      "cache": false,
++      "dependsOn": [
++        {
++          "projects": ["@tanstack/react-router", "@tanstack/router-plugin"],
++          "target": "build"
++        }
++      ],
++      "options": {
++        "command": "NODE_ENV=production vite build --config {projectRoot}/vite.config.ts"
++      }
++    },
++    "test:types:client": {
++      "executor": "nx:run-commands",
++      "dependsOn": [
++        {
++          "projects": ["@tanstack/react-router", "@tanstack/router-plugin"],
++          "target": "build"
++        }
++      ],
++      "options": {
++        "command": "tsc -p {projectRoot}/tsconfig.json --noEmit"
++      }
++    },
++    "test:flame": {
++      "executor": "nx:run-commands",
++      "cache": false,
++      "dependsOn": ["build:client"],
++      "options": {
++        "command": "NODE_ENV=production flame run --md-format=detailed --delay=none --node-options=\"--stack-size=65500\" ./scenarios/link-mount/react/speed.flame.ts",
++        "cwd": "benchmarks/client-nav"
++      }
++    }
++  }
++}
+```
+
+**File**: `benchmarks/client-nav/scenarios/link-mount/react/setup.ts` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import { createScenarioSetup } from '../../harness'
++import { assertStepResult, createScenarioSteps, readyTestId } from '../shared'
++import type { LinkMountPreload } from '../shared'
++import type * as App from './src/main'
++
++const appModulePath = './dist/app.js'
++const { mountIntentTestApp, mountTestApp, setLinksVisible } = (await import(
++  /* @vite-ignore */ appModulePath
++)) as typeof App
++
++export function setup(preload: LinkMountPreload = 'default') {
++  return createScenarioSetup({
++    frameworkLabel: 'React',
++    mount: preload === 'intent' ? mountIntentTestApp : mountTestApp,
++    steps: createScenarioSteps(setLinksVisible),
++    assertAfterStep: assertStepResult,
++    readyTestId,
++  })
++}
+```
+
+**File**: `benchmarks/client-nav/scenarios/link-mount/react/speed-intent.bench.ts` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++import { test } from 'vitest'
++import { benchLifecycle } from '../../../../cpu-simulation'
++import { benchOptions, ticksPerIteration } from '../shared'
++import { setup } from './setup'
++
++// Separate file, so its worker's JIT feedback never mixes the two router
++// configurations.
++test('client-link-mount-intent', async ({ bench }) => {
++  const scenario = setup('intent')
++
++  await bench(
++    'client-link-mount intent loop (react)',
++    benchLifecycle(scenario),
++    async () => {
++      for (let i = 0; i < ticksPerIteration; i++) {
++        await scenario.tick()
++      }
++      await scenario.finishBatch()
++    },
++  ).run(benchOptions)
++})
+```
+
+**File**: `benchmarks/client-nav/scenarios/link-mount/react/speed.bench.ts` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import { test } from 'vitest'
++import { benchLifecycle } from '../../../../cpu-simulation'
++import { benchOptions, ticksPerIteration } from '../shared'
++import { setup } from './setup'
++
++test('client-link-mount', async ({ bench }) => {
++  const scenario = setup()
++
++  await bench(
++    'client-link-mount loop (react)',
++    benchLifecycle(scenario),
++    async () => {
++      for (let i = 0; i < ticksPerIteration; i++) {
++        await scenario.tick()
++      }
++      await scenario.finishBatch()
++    },
++  ).run(benchOptions)
++})
+```
+
+**File**: `benchmarks/client-nav/scenarios/link-mount/react/speed.flame.ts` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++import { window } from '../../../jsdom.ts'
++import { setup } from './setup.ts'
++
++const DURATION_MS = 10_000
++
++const test = setup()
++
++try {
++  await test.before()
++
++  const startedAt = performance.now()
++  while (performance.now() - startedAt < DURATION_MS) {
++    await test.tick()
++  }
++} finally {
++  test.after()
++  window.close()
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9008** (closed): fix(start): keep dev route CSS under Vite strict extended fs allow list (@pcbeingused333)
+- **PR #8999** (2026-11-27): test(benchmarks): add link-mount client-nav scenario (@schiller-manuel)
 - **PR #8980** (2026-11-24): docs: remove CodeRabbit sponsor logo (@tannerlinsley)
 - **PR #8977** (2026-11-23): ci: Version Packages (rc) (@github-actions[bot])
 - **PR #8973** (2026-11-23): fix(solid-start): import only published start-server-core exports (@brenelz)
 - **PR #8972** (2026-11-23): fix(solid-router): stop Link strict-read warnings on spread reactive options (@brenelz)
-- **PR #8963** (closed): fix(solid-router): write the SSR doctype without copying the first chunk (@brenelz)
-- **PR #8960** (2026-11-19): fix(solid-router-devtools): follow router state and prop changes in the Solid 2 wrappers (@brenelz)
 
 ---
 
@@ -727,3 +993,35 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. test(benchmarks): add link-mount client-nav scenario
+
+**RULE**:
+When implementing operations in `benchmarks/client-nav/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `10b22c27`: test(benchmarks): add link-mount client-nav scenario. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/client-nav/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+| `link-mount`                             | Link setup and teardown without navigation: each step synchronously mounts or unmounts 300 Links on the index route, half plain `to="/about"` and half `to="/posts/$postId"` with `params`, `search` and `activeProps`. Runs with the default `defaultPreload: false` and again with `'intent'`, which attaches the intent handlers. |
+- Each benchmark iteration advances a fixed, circular sequence of steps; every step awaits the router's `onRendered` event, so render work is included and steps cannot overlap. Steps that leave the location unchanged, like `link-mount`'s, resolve once their render has committed instead. No two consecutive steps may target the same location, and the sequence ends back on the initial route.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+- Each benchmark iteration advances a fixed, circular sequence of steps; every step awaits the router's `onRendered` event, so render work is included and steps cannot overlap. No two consecutive steps may target the same location, and the sequence ends back on the initial route.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `10b22c27` are properly handled with clean fallback behavior.

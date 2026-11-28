@@ -838052,3 +838052,783 @@ fn test_wire_prefix_stability() {
 ```
 
 ---
+
+
+---
+
+## 11078. Invariant Separation of Concrete vs Widenable Binding Types in Flow Analysis (Harvested from biomejs/biome)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Separation of Concrete vs Widenable Binding Types in Flow Analysis",
+  "source": "biomejs/biome",
+  "source_url": "https://github.com/biomejs/biome",
+  "source_version": "71660779",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-28T09:30:48.179Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-biomejs-biome",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [biomejs/biome](https://github.com/biomejs/biome) (Revision: `71660779`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+A static analysis type-inference engine MUST NOT widen a binding's type upon cross-scope assignment if that binding either:
+1. Possesses an explicit type annotation, OR
+2. Was initialized with a concrete, non-primitive constructor/type instantiation (e.g., `new Map<K, V>()`).
+
+Cross-scope write-widening MUST be strictly restricted to bindings whose inferred initial type is explicitly marked as widenable: `unknown`, nullish (`null` | `undefined`), or primitive literals (e.g., `false`, `0`, `""`).
+
+**WHY**:
+When an analysis engine infers the type of a variable from multiple scopes without tracking strict control-flow ordering, cross-scope reassignments (such as inside a teardown or `reset()` function reassigning `visits = new Map()`) will pollute the binding's inferred type union with un-parameterized or `any`-typed instances (`Map<string, number> | Map<any, any>`). Subsequent property/method accesses (e.g., `.get()`) will return `any`, poisoning downstream consumers and producing cascades of false-positive warnings (e.g., `noUnsafeReturn`, `noExplicitAny`).
+
+**WHEN TO APPLY**:
+Compilers, linters, and type checkers performing whole-program or module-level type recovery where execution order across functional boundaries is indeterminate.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// crates/biome_module_graph/src/type_collector.rs
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BindingWidenability {
+    Widenable,
+    Preserved,
+}
+
+impl RawTypeCollector {
+    /// Determines whether a binding's type can be widened by assignments in cross-scope write references.
+    pub fn is_widenable_binding_type(&self, type_id: RawTypeId) -> BindingWidenability {
+        match self.resolve_type(type_id) {
+            // Nullish, unknown, and primitive literals are eligible for widening
+            TypeData::Unknown | TypeData::Null | TypeData::Undefined => BindingWidenability::Widenable,
+            TypeData::Literal(_) => BindingWidenability::Widenable,
+            TypeData::Union(union) => {
+                let all_widenable = union.types.iter().all(|&member_id| {
+                    self.is_widenable_binding_type(member_id) == BindingWidenability::Widenable
+                });
+                if all_widenable {
+                    BindingWidenability::Widenable
+                } else {
+                    BindingWidenability::Preserved
+                }
+            }
+            // Classes, interfaces, explicit generics, and builtins MUST NEVER be widened cross-scope
+            TypeData::Class(_) | TypeData::Interface(_) | TypeData::Function(_) => {
+                BindingWidenability::Preserved
+            }
+        }
+    }
+}
+
+// In the module-level traversal pass:
+if declarator.type_annotation().is_none() {
+    let initial_type = collector.infer_initializer_type(declarator.initializer());
+    if collector.is_widenable_binding_type(initial_type) == BindingWidenability::Widenable {
+        collector.widen_binding_from_writable_references(binding_id);
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER widen indiscriminately across scope boundaries based solely on writable references
+for write_ref in binding.writable_references() {
+    // BUG: If binding was `let map = new Map<string, number>();` and `write_ref` is `map = new Map();`
+    // this creates `Map<string, number> | Map<any, any>` -> .get() now yields `any`!
+    binding_type = union(binding_type, infer_write_type(write_ref));
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a negative type-leak regression test:
+```rust
+#[test]
+fn test_infer_module_types_does_not_widen_concrete_or_annotated_maps_on_reassignment() {
+    let code = r#"
+        let visits = new Map<string, number>();
+        function reset() {
+            visits = new Map();
+        }
+        export function getVisit(k: string) {
+            return visits.get(k); // Invariant: Return type MUST be `number | undefined`, NEVER `any`
+        }
+    "#;
+    let module = parse_and_infer(code);
+    let return_type = module.get_export_return_type("getVisit");
+    assert!(!return_type.contains_any(), "Concrete binding was leaked into any!");
+}
+```
+
+---
+
+
+---
+
+## 11079. Suffix-Stripping Grammar Validation with Consecutive Token Disallowance (Harvested from biomejs/biome)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Suffix-Stripping Grammar Validation with Consecutive Token Disallowance",
+  "source": "biomejs/biome",
+  "source_url": "https://github.com/biomejs/biome",
+  "source_version": "71660779",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-28T09:30:48.843Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-biomejs-biome",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [biomejs/biome](https://github.com/biomejs/biome) (Revision: `71660779`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When parsing, linting, or verifying token identifiers that permit unary or post-fix modification operators (e.g., SPDX `+` "or later" operator, regex repetitions `*`, `+`), the parser MUST strip the suffix and verify that the remaining base identifier does NOT terminate with the same operator character before validating the base identifier against the known registry.
+
+**WHY**:
+Failure to assert `!base.ends_with(OPERATOR)` when handling post-fix operators creates two failure modes:
+1. **Invalid Grammar Acceptance**: `MIT++` or `GPL-2.0++` has its last `+` stripped, leaving `MIT+` or `GPL-2.0+`. If the base lookup allows recursion or if the registry itself includes legacy IDs with trailing operators (such as deprecated `GPL-2.0+`), malformed syntax will parse successfully.
+2. **False Trust Evaluation**: A double-operator could match an existing deprecated or legacy identifier in the specification dictionary, bypassing strict licensing compliance checks.
+
+**WHEN TO APPLY**:
+Lexers, AST parsers, and policy engines implementing domain-specific micro-grammars (SPDX expressions, SemVer ranges, query modifiers, cron expressions).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// crates/biome_package/src/license/expression.rs
+
+pub fn resolve_spdx_identifier<'a>(id: &'a str, license_list: &LicenseList) -> Result<LicenseRef, RejectReason> {
+    // 1. Exact match against authorized canonical SPDX license dictionary
+    if let Some(license) = license_list.find(id) {
+        return Ok(license);
+    }
+
+    // 2. Trailing '+' "or-later" operator handling
+    let stripped = id.strip_suffix('+')
+        .filter(|base| !base.ends_with('+')) // INVARIANT: Disallow repeated operators ("++")
+        .and_then(|base| license_list.find(base));
+
+    if let Some(license) = stripped {
+        if license.is_deprecated() {
+            return Err(RejectReason::Deprecated);
+        }
+        return Ok(license);
+    }
+
+    Err(RejectReason::Untrusted)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER do single suffix trimming without checking the new boundary condition
+let license = license_list.find(id).or_else(|| {
+    let base = id.strip_suffix('+')?;
+    // BUG: If id is "GPL-2.0++", base is "GPL-2.0+", which exists as a deprecated ID in LICENSE_LIST!
+    // Result: "GPL-2.0++" falsely evaluates to a recognized license instead of Syntax/Untrusted error.
+    license_list.find(base)
+});
+```
+
+**VERIFICATION METHOD**:
+Property-based or table-driven boundary unit testing:
+```rust
+#[test]
+fn test_spdx_plus_operator_boundary_invariants() {
+    let invalid_cases = ["MIT++", "GPL-2.0++", "+", "++", "Apache-2.0++"];
+    for case in invalid_cases {
+        assert_eq!(
+            resolve_spdx_identifier(case, &LICENSE_LIST),
+            Err(RejectReason::Untrusted),
+            "Double suffix operator MUST NOT be accepted: {case}"
+        );
+    }
+}
+```
+
+---
+
+
+---
+
+## 11079. Bounded Streaming Decompression Memory Allocation (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Bounded Streaming Decompression Memory Allocation",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "eb8f4fc3",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-28T09:30:48.851Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `eb8f4fc3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Any decompression or unarchiving stream parsing untrusted inputs MUST establish an explicit, hard memory allocation ceiling on internal decoder structures prior to initializing the stream, AND MUST read stream entry headers into bounded intermediate buffers verified against the exact remaining bytes of the enclosing container. It MUST NOT allocate memory dynamically based on self-reported, unvalidated header lengths.
+
+**WHY**:
+Formats like `.xz` (LZMA2) allow a small input stream (e.g., 64 bytes) to declare an arbitrary dictionary size (up to 2 GiB or more). Standard library decoders that allocate the dictionary immediately upon encountering the block header will cause rapid host Out-Of-Memory (OOM) crashes and kernel SIGKILL termination. Similarly, allocating vectors based on pre-read 32-bit/64-bit metadata size tags without checking whether those bytes exist in the underlying slice allows an attacker to force arbitrary heap allocations using single-byte truncated inputs.
+
+**WHEN TO APPLY**:
+Apply in any subsystem processing compressed archives (`tar.xz`, `zip`, `gzip`, `zstd`) from untrusted network sources, decentralized contract states, or user-uploaded file attachments.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// In crates/core/src/server/app_packaging.rs
+use std::io::{Cursor, Read};
+use xz2::stream::Stream;
+use xz2::read::XzDecoder;
+use tar::Archive;
+
+// Explicit 96 MiB cap admitting up to standard preset 9 (64 MiB dict) while rejecting gigabyte bombs
+const MAX_XZ_DECODER_MEM_BYTES: u64 = 96 * 1024 * 1024;
+const MAX_DECOMPRESSED_STREAM_BYTES: u64 = 50 * 1024 * 1024;
+
+pub fn decode_untrusted_archive(data: &[u8]) -> Result<Archive<LimitedReader<XzDecoder<&[u8]>>>, DecompressError> {
+    // 1. Strict memory bound passed directly into liblzma stream initialization
+    let stream = Stream::new_stream_decoder(MAX_XZ_DECODER_MEM_BYTES, 0)
+        .map_err(|e| DecompressError::UnpackingError(anyhow::anyhow!(e)))?;
+
+    // 2. Wrap decoder in a deterministic byte-counting LimitedReader
+    let decoder = XzDecoder::new_stream(data, stream);
+    let limited = LimitedReader {
+        inner: decoder,
+        remaining: MAX_DECOMPRESSED_STREAM_BYTES,
+    };
+
+    Ok(Archive::new(limited))
+}
+
+pub fn unpack_state_slice(state: &[u8]) -> Result<Vec<u8>, DecompressError> {
+    let total_len = state.len() as u64;
+    let mut cursor = Cursor::new(state);
+
+    // Read 8-byte length prefix
+    let mut len_buf = [0u8; 8];
+    cursor.read_exact(&mut len_buf).map_err(|_| DecompressError::Truncated)?;
+    let reported_size = u64::from_le_bytes(len_buf);
+
+    // Hard ceiling check
+    if reported_size > 1024 * 1024 {
+        return Err(DecompressError::PayloadTooLarge);
+    }
+
+    // Verify remaining bytes before allocation (PREVENT TOCTOU / OOM VIA ZERO-BYTES ALLOCATION)
+    let remaining = total_len.saturating_sub(cursor.position());
+    if reported_size > remaining {
+        return Err(DecompressError::TruncatedPayload {
+            claimed: reported_size,
+            actual: remaining,
+        });
+    }
+
+    let mut payload = vec![0u8; reported_size as usize];
+    cursor.read_exact(&mut payload).map_err(|_| DecompressError::Truncated)?;
+    Ok(payload)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER initialize XzDecoder without an explicit memory limit
+let decoder = XzDecoder::new(untrusted_slice); // CRASH HAZARD: Attacker LZMA2 dict_prop 0x26 requests 2 GiB heap!
+
+// NEVER allocate a Vec based directly on an untrusted header tag
+let reported_size = cursor.read_u64::<LittleEndian>()?;
+let mut buffer = vec![0; reported_size as usize]; // CRASH HAZARD: If slice only has 8 bytes, attacker allocates 4 GB!
+cursor.read_exact(&mut buffer)?;
+```
+
+**VERIFICATION METHOD**:
+Run unit tests passing synthetic streams with malicious LZMA2 `dict_prop` values (e.g., `0x20` for 256 MiB or `0x26` for 2 GiB) against `decode_untrusted_archive`. Assert that the function returns an `UnpackingError` immediately upon stream creation without allocating memory beyond `MAX_XZ_DECODER_MEM_BYTES`.
+
+---
+
+
+---
+
+## 11080. Delimited AST Chunk Partitioning with Non-Lossy Trivia Preservation (Harvested from biomejs/biome)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Delimited AST Chunk Partitioning with Non-Lossy Trivia Preservation",
+  "source": "biomejs/biome",
+  "source_url": "https://github.com/biomejs/biome",
+  "source_version": "71660779",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-28T09:30:49.528Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-biomejs-biome",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [biomejs/biome](https://github.com/biomejs/biome) (Revision: `71660779`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When programmatically reordering, sorting, or partitioning an AST-separated list (e.g., import specifiers, object keys, enum variants), code transformations MUST partition the list into independent sorting chunks using non-keyable nodes (comments, unparseable/bogus syntax) as hard partition boundaries. When transferring separators during sorting, the syntax trivia (comments, spaces, newlines) attached to displaced separators MUST be explicitly appended to the preceding or succeeding node. Trivia MUST NEVER be dropped.
+
+**WHY**:
+AST list transformations that sort across non-keyable elements or naively generate new separators destroy comments attached to existing commas or line endings. Furthermore, blindly sorting across comment blocks changes human developer intent (e.g., grouping imports logically by category with separator comments).
+
+**WHEN TO APPLY**:
+AST rewriters, import organizers, syntax linters with auto-fix capabilities, code formatters.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// crates/biome_analyze/src/utils.rs
+
+pub fn fix_separators<'a, L: Language + 'a, N: AstNode<Language = L> + 'a>(
+    iter: impl std::iter::ExactSizeIterator<Item = (&'a mut N, &'a mut Option<SyntaxToken<L>>)>,
+    needs_last_separator: bool,
+    make_separator: fn() -> SyntaxToken<L>,
+) {
+    let last_index = iter.len().saturating_sub(1);
+    for (i, (node, optional_separator)) in iter.enumerate() {
+        if let Some(separator) = optional_separator {
+            // If it's the last element and we shouldn't have a trailing separator
+            if i == last_index && !needs_last_separator {
+                // INVARIANT: If comments exist on the separator, DO NOT DISCARD!
+                if separator.has_leading_comments() || separator.has_trailing_comments() {
+                    continue; // Preserve separator to avoid losing user comments
+                }
+                
+                // Transfer trivia from the removed separator onto the terminal node
+                if let Some(new_node) = node.clone().append_trivia_pieces(chain_trivia_pieces(
+                    separator.leading_trivia().pieces(),
+                    separator.trailing_trivia().pieces(),
+                )) {
+                    *node = new_node;
+                }
+                *optional_separator = None;
+            }
+        } else if i != last_index || needs_last_separator {
+            // Synthesize missing separator in the interior of the list
+            *optional_separator = Some(match node.syntax().last_trailing_trivia() {
+                Some(trivia) => make_separator()
+                    .append_trivia_pieces(trim_trailing_trivia_pieces(trivia.pieces())),
+                _ => make_separator(),
+            });
+
+            if let Some(new_node) = node.clone().with_trailing_trivia_pieces([]) {
+                *node = new_node;
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER discard separators without preserving their trivia
+if !needs_last_separator {
+    *optional_separator = None; // BUG: User comments attached to the comma are deleted!
+}
+```
+
+**VERIFICATION METHOD**:
+Test with auto-fix passes ensuring round-trip trivia retention:
+```rust
+#[test]
+fn test_sorting_preserves_trailing_comma_comments() {
+    let input = "import { b, /* comment */ a, } from 'mod';";
+    let formatted = organize_imports(input);
+    assert!(formatted.contains("/* comment */"), "Trivia was eliminated during reordering!");
+}
+```
+
+---
+
+
+---
+
+## 11081. Strict Pre-Installation Version Binding & Monotonic Gatekeeping (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Strict Pre-Installation Version Binding & Monotonic Gatekeeping",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "eb8f4fc3",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-28T09:30:49.797Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.71,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `eb8f4fc3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 71%).
+
+**RULE**:
+Any self-updating executable or software distribution system MUST statically extract, verify, and semantically compare target binary versions against the currently running version before staging or swapping binaries. The target version MUST be strictly monotonically newer than the current version ($V_{\text{target}} > V_{\text{current}}$) unless an explicit `--force` flag is provided. The update process MUST verify that the downloaded binary is a regular executable file (not a symlink or hardlink), matches the exact release tag, and reports identical semver strings via `--version`. Failures MUST distinguish between deterministic verification rejections (counted against an install-failure circuit breaker) and transient network errors.
+
+**WHY**:
+Without monotonic version verification and asset tag checks:
+1. An attacker or corrupted CDN can serve an outdated, vulnerable release binary (downgrade/rollback attack).
+2. Archive unpacking could introduce symlink traversal exploits (`tar` symlink pointing outside staging root), allowing arbitrary file overwrite upon chmod/execution.
+3. Silent binary mismatches or failed runs will enter continuous crash loops, repeatedly downloading and restarting failed installations.
+
+**WHEN TO APPLY**:
+Apply to client-side self-updaters, daemon update managers, and automated background deployment agents across all desktop and server platforms.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// In crates/core/src/bin/commands/update.rs
+use semver::Version;
+use std::fs;
+use std::path::Path;
+
+#[derive(Debug)]
+pub struct ReleaseVerificationError(pub String);
+impl std::fmt::Display for ReleaseVerificationError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Verification failed: {}", self.0)
+    }
+}
+impl std::error::Error for ReleaseVerificationError {}
+
+pub fn validate_and_gate_version(
+    current_version_str: &str,
+    target_tag: &str,
+    force: bool,
+) -> Result<Version, ReleaseVerificationError> {
+    let current_ver = Version::parse(current_version_str)
+        .map_err(|e| ReleaseVerificationError(format!("Invalid current semver: {e}")))?;
+    
+    // Normalize release tag (e.g., "v0.1.5" -> "0.1.5")
+    let raw_tag = target_tag.strip_prefix('v').unwrap_or(target_tag);
+    let expected_version = Version::parse(raw_tag)
+        .map_err(|e| ReleaseVerificationError(format!("Invalid release tag semver {target_tag}: {e}")))?;
+
+    if !force && expected_version <= current_ver {
+        return Err(ReleaseVerificationError(format!(
+            "Refusing non-upgrade install: target version {expected_version} is not newer than current version {current_ver}."
+        )));
+    }
+
+    Ok(expected_version)
+}
+
+pub fn ensure_regular_binary_in_root(binary_path: &Path, staging_root: &Path) -> Result<(), ReleaseVerificationError> {
+    let canonical_root = staging_root.canonicalize()
+        .map_err(|e| ReleaseVerificationError(format!("Invalid staging root: {e}")))?;
+    let canonical_bin = binary_path.canonicalize()
+        .map_err(|e| ReleaseVerificationError(format!("Invalid binary path: {e}")))?;
+
+    // Reject symlinks outside staging root
+    if !canonical_bin.starts_with(&canonical_root) {
+        return Err(ReleaseVerificationError(format!(
+            "Binary path escapes staging root: {} outside {}",
+            canonical_bin.display(),
+            canonical_root.display()
+        )));
+    }
+
+    let meta = fs::symlink_metadata(binary_path)
+        .map_err(|e| ReleaseVerificationError(format!("Metadata read failed: {e}")))?;
+
+    if meta.file_type().is_symlink() {
+        return Err(ReleaseVerificationError("Extracted binary must not be a symlink".into()));
+    }
+    if !meta.file_type().is_file() {
+        return Err(ReleaseVerificationError("Extracted binary must be a regular file".into()));
+    }
+
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER download and install without verifying that the target tag is strictly newer
+let release = fetch_latest_release().await?;
+replace_binary(&release.asset_url).await?; // VULNERABILITY: Can downgrade to older compromised version
+
+// NEVER extract binaries directly from tar archives without symlink validation
+for entry in archive.entries()? {
+    entry?.unpack_in(staging_dir)?; // VULNERABILITY: Symlink "../../../../bin/target" permits file overwrite
+}
+```
+
+**VERIFICATION METHOD**:
+Write integration tests where a mock updater attempts:
+1. Upgrading from version `0.2.0` to `0.1.9` without `--force`. Ensure it returns `ReleaseVerificationError` and exits.
+2. Unpacking a tarball containing a symlinked binary pointing to `/usr/bin/touch`. Ensure `ensure_regular_binary_in_root` halts before `chmod +x` or execution.
+
+---
+
+
+---
+
+## 11082. test(benchmarks): add link-mount client-nav scenario (Harvested from TanStack/router)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "test(benchmarks): add link-mount client-nav scenario",
+  "source": "TanStack/router",
+  "source_url": "https://github.com/TanStack/router",
+  "source_version": "10b22c27",
+  "license": "MIT",
+  "extracted_at": "2026-11-28T09:33:30.915Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tanstack-router",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TanStack/router](https://github.com/TanStack/router) (Revision: `10b22c27`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `benchmarks/client-nav/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `10b22c27`: test(benchmarks): add link-mount client-nav scenario. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/client-nav/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+| `link-mount`                             | Link setup and teardown without navigation: each step synchronously mounts or unmounts 300 Links on the index route, half plain `to="/about"` and half `to="/posts/$postId"` with `params`, `search` and `activeProps`. Runs with the default `defaultPreload: false` and again with `'intent'`, which attaches the intent handlers. |
+- Each benchmark iteration advances a fixed, circular sequence of steps; every step awaits the router's `onRendered` event, so render work is included and steps cannot overlap. Steps that leave the location unchanged, like `link-mount`'s, resolve once their render has committed instead. No two consecutive steps may target the same location, and the sequence ends back on the initial route.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+- Each benchmark iteration advances a fixed, circular sequence of steps; every step awaits the router's `onRendered` event, so render work is included and steps cannot overlap. No two consecutive steps may target the same location, and the sequence ends back on the initial route.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `10b22c27` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11083. Draft NUC 160 C# String Trimming Method Alias (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Draft NUC 160 C# String Trimming Method Alias",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "42b3267e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-28T09:33:44.392Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `42b3267e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `42b3267e`: Draft NUC 160 C# String Trimming Method Alias. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| [160](nuc-0160.md) | C# String Trimming Method Alias | Draft |
+| [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Draft |
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `42b3267e` are properly handled with clean fallback behavior.

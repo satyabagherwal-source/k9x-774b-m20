@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T09:08:20.004Z",
+  "last_updated": "2026-11-28T09:33:45.038Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "48bf9b5bfaaa057e31549d0a84555a446fa1f38f39855977aab2a1dbfaab8652",
-      "verified_at": "2026-11-28T07:58:25.913Z",
+      "content_hash": "85fd40064fcd7382490e039601169fa6f5914a28298d305dbe64f220550a2061",
+      "verified_at": "2026-11-28T09:33:45.038Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-28T07:58:25.913Z"
+      "last_updated": "2026-11-28T09:33:45.038Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "e7725e55c0b2062a6708acb334715a5abc5431b84b56cf18302a27d3c1f1616d",
-      "verified_at": "2026-11-28T00:09:43.215Z",
+      "content_hash": "c93be4f1886ab7cc7475fcec1d7c9fbaaaebac83e14e8f5bb1cb8227fdf9d216",
+      "verified_at": "2026-11-28T09:30:50.502Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-28T00:09:43.215Z"
+      "last_updated": "2026-11-28T09:30:50.502Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -11511,14 +11511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "9cfe17b1182d5e3c1b66156a79992489e3ee830773d8d4163d5e7d3a0b66c8b2",
-      "verified_at": "2026-11-27T09:34:27.850Z",
+      "content_hash": "5f85d2d7d9574853d685faed3425fbe341d088aa1872313a9dce70fa95b35ad5",
+      "verified_at": "2026-11-28T09:30:50.174Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T09:34:27.850Z"
+      "last_updated": "2026-11-28T09:30:50.175Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",
@@ -17106,14 +17106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-router",
-      "content_hash": "ddd5dc783e87b91bed147ffc12a76ee45030c1ef61c6b6f87bb3713487c6b849",
-      "verified_at": "2026-11-24T23:58:38.585Z",
+      "content_hash": "11ecc7dfe8eff21d4a8d3e201d70b925496545b66b6a4ac17bf0338e2bb14a3c",
+      "verified_at": "2026-11-28T09:33:31.537Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:58:38.585Z"
+      "last_updated": "2026-11-28T09:33:31.537Z"
     },
     "tencent/Hy-SimulMT-30B-A3B-FP8": {
       "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",

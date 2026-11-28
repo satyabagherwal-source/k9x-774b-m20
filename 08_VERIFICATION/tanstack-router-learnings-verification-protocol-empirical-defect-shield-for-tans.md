@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T00:24:52.042Z",
+  "timestamp": "2026-11-28T09:34:18.304Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tanstack-router-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tanstack-router-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T00:24:52.042Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T09:34:18.304Z`  
 > **Learning ID**: `LEARN-EVO-tanstack-router-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source**: github ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
-> **Source Version**: `ce46b21b`  
+> **Source Version**: `10b22c27`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T00:24:37.814Z  
+> **Timestamp**: 2026-11-28T09:33:30.290Z  
 > **Learning ID**: `learn-github-tanstack-router`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:24:37.810Z  
+> **Harvest Timestamp**: 2026-11-28T09:28:29.624Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 🤖 A client-first, server-capable, fully type-safe router and full-stack framework for the web (React and more).
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15331 stars
+- **Stars / Engagement**: 15385 stars
 
 ---
 
@@ -709,569 +709,302 @@ export const apiHandlers = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e75f0ffb` (2026-11-19)
-**Commit Message**: fix(router-devtools-core): replace goober with a static stylesheet (#8954)
+### Incident Patch 1: `10b22c27` (2026-11-27)
+**Commit Message**: test(benchmarks): add link-mount client-nav scenario (#8999)
 
-* fix(router-devtools-core): replace goober with a static stylesheet
+* test(benchmarks): add link-mount client-nav scenario
 
-The devtools styles are now plain CSS in styles.css, inlined at build time
-and adopted into the document or shadow root the devtools render in. This
-drops goober and its runtime CSS generation.
+Measures mounting and unmounting 300 Links without navigating, in React,
+Solid and Vue, with the default preload setting and with 'intent'.
 
-- Styled under a CSP that blocks inline <style> elements, without a nonce.
-- Devtools rendered inside a shadow root are styled without
-  shadowDOMTarget.
-- Falls back to a <style> element where constructable stylesheets are
-  unavailable (jsdom, Safari < 16.4, Firefox < 101).
-- Styles are still attached by the lazily loaded devtools components.
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
 
-Computed styles and devtools screenshots match main across floating,
-embedded and shadow root modes.
+* test(benchmarks): register link-mount React toggle in a layout effect
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+useSyncExternalStore subscribes in a passive effect, which can still be
+pending when the first warm-up step runs. Under the CodSpeed instrument's
+V8 flags it was, so flushSync rendered nothing and the step saw 0 Links.
+A layout effect runs in the same commit as the ready marker.
 
-* refactor(router-devtools-core): drop clsx
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
 
-The style helpers return finished class strings, so the clsx calls around
-them did nothing. Build the few combined class names with template strings.
+* test(benchmarks): run one link-mount lap per iteration
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+CodSpeed simulation runs setup, the warm-up lap and one iteration 8 times
+within a single test timeout. Vue's link-mount took 33 s of the 60 s budget
+with two laps per iteration; one lap matches link-churn.
 
-* refactor(router-devtools-core): drop the style element fallback
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED
+---------
 
-**File**: `.changeset/router-devtools-static-styles.md` (added, +10/-0)
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
+
+**File**: `benchmarks/client-nav/README.md` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,10 @@
-+---
-+'@tanstack/router-devtools-core': patch
-+---
-+
-+The devtools no longer use goober. Their styles are now a static stylesheet adopted into the document or shadow root the devtools render in, instead of a `<style>` element in `<head>`. This means:
-+
-+- The devtools are styled on pages with a Content Security Policy that blocks inline `<style>` elements, without a nonce.
-+- Devtools rendered inside a shadow root are styled without passing `shadowDOMTarget`.
-+- The devtools no longer write to the shared `#_goober` style element.
-+- Browsers without adoptable stylesheets (before Safari 16.4 and Firefox 101) show the devtools unstyled.
+@@ -60,6 +60,7 @@ be attributed to a specific feature area.
+ | `history`                                | History push/replace/back/forward traversal, location masking, registered-but-never-blocking `useBlocker`, and `useCanGoBack`/`useLocation` subscriptions.                                                                                                                                                                           |
+ | `hydration`                              | Initial DOM hydration: execute the SSR payload, restore `beforeLoad` context and loader data, and hydrate 192 ordinary and eight hash-sensitive Links through their follow-up effects in React and Solid.                                                                                                                            |
+ | `link-churn`                             | Links that depart, stay and mount: 30 `/hub` layout Links stay while 100 `/hub/list` leaf Links leave (alone, or with the layout to `/other`) and remount on return; a search-only change rebuilds updater and `to="."` Links. Unlike `links`, whose root-layout Links never depart.                                                 |
++| `link-mount`                             | Link setup and teardown without navigation: each step synchronously mounts or unmounts 300 Links on the index route, half plain `to="/about"` and half `to="/posts/$postId"` with `params`, `search` and `activeProps`. Runs with the default `defaultPreload: false` and again with `'intent'`, which attaches the intent handlers. |
+ | `links`                                  | Per-navigation cost of ~200 mounted `<Link>`s: link prop building, active-state recompute across `activeOptions` variants, `activeProps` swaps, and `useMatchRoute` probes (the `MatchRoute` component is avoided: vue-router's implementation leaks one subscription per render).                                                   |
+ | `loaders`                                | Client loader dispatch: always-stale re-runs (`staleTime: 0`), cached revisits (re-run once per lap by the `invalidate` step), `loaderDeps`-keyed caching, `router.invalidate()`, and `useLoaderData` selectors.                                                                                                                     |
+ | `mount`                                  | Cold start: `createRouter` (route-tree processing) + first render + initial `router.load()` + unmount, with a fresh router per mount.                                                                                                                                                                                                |
+@@ -76,7 +77,7 @@ scenarios follow these navigation/mount conventions:
+ 
+ - Apps are built with `NODE_ENV=production` (`minify: false`) into `dist/app.js`; benches import the built bundle, so production package builds and production JSX output are measured, not dev transforms.
+ - Scenarios behave like a real user app: navigation happens through `<Link>` clicks dispatched on real anchor elements (unless a scenario specifically measures the imperative API), the router uses the default browser history, and `scrollRestoration` is enabled.
+-- Each benchmark iteration advances a fixed, circular sequence of steps; every step awaits the router's `onRendered` event, so render work is included and steps cannot overlap. No two consecutive steps may target the same location, and the sequence ends back on the initial route.
++- Each benchmark iteration advances a fixed, circular sequence of steps; every step awaits the router's `onRendered` event, so render work is included and steps cannot overlap. Steps that leave the location unchanged, like `link-mount`'s, resolve once their render has committed instead. No two consecutive steps may target the same location, and the sequence ends back on the initial route.
+ - Setup runs one warm-up lap through the sequence and asserts each step's observable output (e.g. `document.title`), so a scenario that silently stops doing its work fails instead of reporting a fast time.
+ - Apps are mounted and disposed outside timing by `benchLifecycle` (`benchmarks/cpu-simulation.ts`): CodSpeed measures a single invocation, so every invocation gets a freshly mounted app; plain `vitest bench` keeps one app per warmup/run phase. Bench functions must be `async` functions, because CodSpeed's Vitest 5 provider awaits only `AsyncFunction`s.
+ - Determinism: no wall-clock timers (async work is resolved promises or counted `setTimeout(0)` hops), `staleTime`/`gcTime` only ever `0` or effectively-infinite, no `Math.random`/`Date.now` in the measured loop. Scroll restoration uses `getScrollRestorationKey: (location) => location.pathname` so its cache stays bounded (the default random per-entry key grows one cache entry per push navigation). The `mount` scenario opts out of `scrollRestoration` entirely and destroys its history on unmount — both register page-lifetime globals that would l
 ```
 
-**File**: `docs/router/devtools.md` (modified, +4/-4)
+**File**: `benchmarks/client-nav/package.json` (modified, +6/-0)
 ```diff
-@@ -191,8 +191,8 @@ function App() {
-   - Defaults to `bottom-left`.
-   - The position of the TanStack Router logo to open and close the devtools panel.
- - `shadowDOMTarget?: ShadowRoot`
--  - Specifies a Shadow DOM target for the devtools.
--  - By default, devtool styles are applied to the `<head>` tag of the main document (light DOM). When a `shadowDOMTarget` is provided, styles will be applied within this Shadow DOM instead.
-+  - The shadow root to add the devtools styles to.
-+  - By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
- - `containerElement?: string | any`
-   - Use this to render the devtools inside a different type of container element for ally purposes.
-   - Any string which corresponds to a valid intrinsic JSX element is allowed.
-@@ -320,5 +320,5 @@ function App() {
- - `handleDragStart?: (e: any) => void`
-   - Handles the opening and closing the devtools panel.
- - `shadowDOMTarget?: ShadowRoot`
--  - Specifies a Shadow DOM target for the devtools.
--  - By default, devtool styles are applied to the `<head>` tag of the main document (light DOM). When a `shadowDOMTarget` is provided, styles will be applied within this Shadow DOM instead.
-+  - The shadow root to add the devtools styles to.
-+  - By default, the styles are added to the shadow root the devtools render in, or to the document when they do not render in a shadow root.
+@@ -66,6 +66,7 @@
+               "@benchmarks/client-nav-history-react",
+               "@benchmarks/client-nav-hydration-react",
+               "@benchmarks/client-nav-link-churn-react",
++              "@benchmarks/client-nav-link-mount-react",
+               "@benchmarks/client-nav-links-react",
+               "@benchmarks/client-nav-loaders-react",
+               "@benchmarks/client-nav-mount-react",
+@@ -96,6 +97,7 @@
+               "@benchmarks/client-nav-history-solid",
+               "@benchmarks/client-nav-hydration-solid",
+               "@benchmarks/client-nav-link-churn-solid",
++              "@benchmarks/client-nav-link-mount-solid",
+               "@benchmarks/client-nav-links-solid",
+               "@benchmarks/client-nav-loaders-solid",
+               "@benchmarks/client-nav-mount-solid",
+@@ -125,6 +127,7 @@
+               "@benchmarks/client-nav-head-vue",
+               "@benchmarks/client-nav-history-vue",
+               "@benchmarks/client-nav-link-churn-vue",
++              "@benchmarks/client-nav-link-mount-vue",
+               "@benchmarks/client-nav-links-vue",
+               "@benchmarks/client-nav-loaders-vue",
+               "@benchmarks/client-nav-mount-vue",
+@@ -209,10 +212,13 @@
+               "@benchmarks/client-nav-hydration-react",
+               "@benchmarks/client-nav-hydration-solid",
+               "@benchmarks/client-nav-link-churn-react",
++              "@benchmarks/client-nav-link-mount-react",
+               "@benchmarks/client-nav-links-react",
+               "@benchmarks/client-nav-link-churn-solid",
++              "@benchmarks/client-nav-link-mount-solid",
+               "@benchmarks/client-nav-links-solid",
+               "@benchmarks/client-nav-link-churn-vue",
++              "@benchmarks/client-nav-link-mount-vue",
+               "@benchmarks/client-nav-links-vue",
+               "@benchmarks/client-nav-loaders-react",
+               "@benchmarks/client-nav-loaders-solid",
 ```
 
-**File**: `e2e/react-router/basic/src/main.tsx` (modified, +31/-20)
+**File**: `benchmarks/client-nav/scenarios/harness.ts` (modified, +21/-0)
 ```diff
-@@ -22,7 +22,10 @@ import type { ErrorComponentProps } from '@tanstack/react-router'
- 
- const rootRoute = createRootRoute({
-   validateSearch: z.object({
--    devtools: z.enum(['panel', 'shadow']).optional().catch(undefined),
-+    devtools: z
-+      .enum(['panel', 'shadow', 'shadow-auto'])
-+      .optional()
-+      .catch(undefined),
-   }),
-   component: RootComponent,
-   notFoundComponent: () => {
-@@ -99,36 +102,42 @@ function RootComponent() {
-         </div>
-         <div className="ml-auto flex gap-2 text-sm items-center">
-           Devtools:
--          {(['floating', 'panel', 'shadow'] as const).map((mode) => (
--            <Link
--              key={mode}
--              to="."
--              search={(prev) => ({
--                ...prev,
--                devtools: mode === 'floating' ? undefined : mode,
--              })}
--              className={
--                (devtools ?? 'floating') === mode ? 'font-bold' : undefined
--              }
--            >
--              {mode}
--            </Link>
--          ))}
-+          {(['floating', 'panel', 'shadow', 'shadow-auto'] as const).map(
-+            (mode) => (
-+              <Link
-+                key={mode}
-+                to="."
-+                search={(prev) => ({
-+                  ...prev,
-+                  devtools: mode === 'floating' ? undefined : mode,
-+                })}
-+                className={
-+                  (devtools ?? 'floating') === mode ? 'font-bold' : undefined
-+                }
-+              >
-+                {mode}
-+              </Link>
-+            ),
-+          )}
-         </div>
-       </div>
-       <Outlet />
-       {devtools === 'panel' ? (
-         <TanStackRouterDevtoolsPanel />
--      ) : devtools === 'shadow' ? (
--        <ShadowDevtoolsPanel />
-+      ) : devtools === 'shadow' || devtools === 'shadow-auto' ? (
-+        <ShadowDevtoolsPanel passShadowDOMTarget={devtools === 'shadow'} />
-       ) : (
-         <TanStackRouterDevtools position="bottom-right" />
-       )}
-     </>
-   )
- }
- 
--function ShadowDevtoolsPanel() {
-+function ShadowDevtoolsPanel({
-+  passShadowDOMTarget,
-+}: {
-+  passShadowDOMTarget: boolean
-+}) {
-   const [shadowRoot, setShadowRoot] = useState<ShadowRoot>()
- 
-   return (
-@@ -141,7 +150,9 @@ function ShadowDevtoolsPanel() {
-     >
-       {shadowRoot
-         ? createPortal(
--            <TanStackRouterDevtoolsPanel shadowDOMTarget={shadowRoot} />,
-+            <TanStackRouterDevtoolsPanel
-+              shadowDOMTarget={passShadowDOMTarget ? shadowRoot : undefined}
-+            />,
-             shadowRoot,
-           )
-         : null}
-```
-
-**File**: `e2e/react-router/basic/tests/devtools.spec.ts` (modified, +40/-9)
-```diff
-@@ -1,18 +1,25 @@
- import { expect } from '@playwright/test'
- import { test } from '@tanstack/router-e2e-utils'
-+import type { Page } from '@playwright/test'
- 
--for (const mode of ['panel', 'shadow', 'floating']) {
-+const modes = ['panel', 'shadow', 'shadow-auto', 'floating'] as const
-+
-+async function openDevtools(page: Page, mode: (typeof modes)[number]) {
-+  await page.goto(mode === 'floating' ? '/' : `/?devtools=${mode}`)
-+  if (mode === 'floating') {
-+    await page
-+      .getByRole('button', { name: 'Open TanStack Router Devtools' })
-+      .click()
-+  }
-+
-+  return page.locator('.TanStackRouterDevtoolsPanel')
-+}
-+
-+for (const mode of modes) {
-   test(`devtools preserve typography and explorer indentation in ${mode} mode`, async ({
-     page,
-   }) => {
--    await page.goto(mode === 'floating' ? '/' : `/?devtools=${mode}`)
--    if (mode === 'floating') {
--      await page
--        .getByRole('button', { name: 'Open TanStack Router Devtools' })
--        .click()
--    }
--
--    const panel = page.locator('.TanStackRouterDevtoolsPanel')
-+    const panel = await openDevtools(page, mode)
-     const router = panel.getByRole('button', { name: /^Router\s*\d+ items/ })
-     const state = panel.getByRole('button', { name: /^state\s*\d+ items/ })
-     await expect(router).toBeVisible()
-@@ -39,4 +46,28 @@ for (const mode of ['panel', 'shadow', 'floating']) {
-       await expect(router).toHaveCSS('gap', '6px')
+@@ -57,6 +57,15 @@ export type ScenarioStep =
+       testId: string
+       settleHops?: number
      }
-   })
-+
-+  test(`devtools are styled under a CSP that blocks inline style elements in ${mode} mode`, async ({
-+    page,
-+  }) => {
-+    await page.route(
-+      (url) => url.pathname === '/',
-+      async (route) => {
-+        const response = await route.fetch()
-+        await route.fulfill({
-+          response,
-+          headers: {
-+            ...response.headers(),
-+            'content-security-policy': "style-src-elem 'self'",
-+          },
-+        })
-+      },
-+    )
-+
-+    const panel = await openDevtools(page, mode)
-+    const router = panel.getByRole('button', { name: /^Router\s*\d+ items/ })
-+    await expect(router).toBeVisible()
-+    await expect(router).toHaveCSS('font-size', '12px')
-+    await expect(router).toHaveCSS('gap', '4px')
-+  })
- }
-```
-
-**File**: `packages/router-devtools-core/package.json` (modified, +1/-4)
-```diff
-@@ -62,12 +62,9 @@
-   "engines": {
-     "node": ">=20.19"
-   },
--  "dependencies": {
--    "clsx": "^2.1.1",
--    "goober": "^2.1.16"
--  },
-   "devDependencies": {
-     "@testing-library/jest-dom": "catalog:",
-+    "esbuild": "^0.27.4",
-     "solid-js": "catalog:",
-     "vite": "*",
-     "vite-plugin-solid": "catalog:",
-```
-
-**File**: `packages/router-devtools-core/src/AgeTicker.tsx` (modified, +7/-5)
-```diff
-@@ -1,5 +1,3 @@
--import { clsx as cx } from 'clsx'
--import { useStyles } from './useStyles'
- import type { AnyRoute, AnyRouteMatch, AnyRouter } from '@tanstack/router-core'
- import type { Accessor } from 'solid-js'
- 
-@@ -29,8 +27,6 @@ export function AgeTicker({
-   match?: AnyRouteMatch
-   router: Accessor<AnyRouter>
- }) {
--  const styles = useStyles()
--
-   if (!match) {
-     return null
-   }
-@@ -50,7 +46,13 @@ export function AgeTicker({
-     route.options.gcTime ?? router().options.defaultGcTime ?? 300_000
- 
-   return (
--    <div class={cx(styles().ageTicker(age > staleTime))}>
-+    <div
-+      class={
-+        age > staleTime
-+          ? 'tsrd-age-ticker tsrd-age-ticker-warning'
-+          : 'tsrd-age-ticker'
-+      }
-+    >
-       <div>{formatTime(age)}</div>
-       <div>/</div>
-       <div>{formatTime(staleTime)}</div>
-```
-
-**File**: `packages/router-devtools-core/src/BaseTanStackRouterDevtoolsPanel.tsx` (modified, +89/-104)
-```diff
-@@ -1,4 +1,3 @@
--import { clsx as cx } from 'clsx'
- import {
-   getRouteSegments,
-   hasKeys,
-@@ -19,7 +18,7 @@ import {
-   untrack,
- } from 'solid-js'
- import { useDevtoolsOnClose } from './context'
--import { useStyles } from './useStyles'
-+import { attachStyles } from './styles'
- import useLocalStorage from './useLocalStorage'
- import { Explorer } from './Explorer'
- import { getRouteStatusColor, getStatusColor, multiSortBy } from './utils'
-@@ -66,20 +65,23 @@ export interface BaseDevtoolsPanelOptions {
-   router: Accessor<AnyRouter>
-   routerState: Accessor<any>
-   /**
--   * Use this to attach the devtool's styles to specific element in the DOM.
-+   * The element the devtools are mounted in. Its document or shadow root gets
-+   * the devtools styles.
-+   */
-+  mountElement?: Element
-+  /**
-+   * Adds the devtools styles to this shadow root instead.
-    */
-   shadowDOMTarget?: ShadowRoot
- }
- 
- const HISTORY_LIMIT = 15
- 
- function Logo(props: any) {
--  const { className, ...rest } = props
--  const styles = useStyles()
-   return (
--    <button {...rest} class={cx(styles().logo, className ? className() : '')}>
--      <div class={styles().tanstackLogo}>TANSTACK</div>
--      <div class={styles().routerLogo}>TanStack Router v1</div>
-+    <button {...props} class="tsrd-logo">
-+      <div class="tsrd-tanstack-logo">TANSTACK</div>
-+      <div class="tsrd-router-logo">TanStack Router v1</div>
-     </button>
-   )
- }
-@@ -147,7 +149,6 @@ function RouteComp({
-   activeId: Accessor<string | undefined>
-   setActiveId: (id: string) => void
- }) {
--  const styles = useStyles()
-   const matches = createMemo(() =>
-     pendingMatches().length ? pendingMatches() : routerState().matches,
-   )
-@@ -206,32 +207,32 @@ function RouteComp({
-             setActiveId(activeId() === route.id ? '' : route.id)
-           }
-         }}
--        class={cx(
--          styles().routesRowContainer(route.id === activeId(), !!match()),
--        )}
-+        class={`tsrd-routes-row-container${match() ? ' tsrd-routes-row-container-match' : ''}${route.id === activeId() ? ' tsrd-routes-row-container-active' : ''}`}
-       >
-         <div
--          class={cx(
--            styles().matchIndicator(getRouteStatusColor(matches(), route)),
--          )}
-+          class={`tsrd-match-indicator tsrd-match-indicator-${getRouteStatusColor(matches(), route)}`}
-         />
-         <NavigateLink
--          class={cx(styles().routesRow(!!match()))}
-+          class={
-+            match()
-+              ? 'tsrd-routes-row'
-+              : 'tsrd-routes-row tsrd-routes-row-unmatched'
-+          }
-           left={
-             <Show when={navigationTarget()}>
-               {(navigate) => <NavigateButton to={navigate()} router={router} />}
-             </Show>
-           }
-           right={<AgeTicker match={match()} router={router} />}
-         >
--          <code class={styles().code}>
-+          <code class="tsrd-code">
-             {isRoot ? rootRouteId : route.path || trimPath(route.id)}{' '}
-           </code>
--          <code class={styles().routeParamInfo}>{param()}</code>
-+          <code class="tsrd-route-param-info">{param()}</code>
-         </NavigateLink>
-       </div>
-       {route.children?.length ? (
--        <div class={styles().nestedRouteRow(!!isRoot)}>
-+        <div class={isRoot ? '' : 'tsrd-nested-route-row'}>
-           {[...(route.children as Array<AnyRoute>)]
-             .sort((a, b) => {
-               return a.rank - b.rank
-@@ -262,12 +263,16 @@ export const BaseTanStackRouterDevtoolsPanel =
-       handleDragStart,
-       router,
-       routerState,
-+      mountElement,
-       shadowDOMTarget,
-       ...panelProps
-     } = props
- 
-+    if (mountElement) {
-+      attachStyles(mountElement, shadowDOMTarget)
++  | {
++      /**
++       * Runs app work that leaves the router location unchanged, such as
++       * mounting or unmounting a list of Links. `run` must resolve only after
++       * that work has rendered.
++       */
++      type: 'run'
++      run: () => void | Promise<void>
 +    }
-+
-     const { onCloseClick } = useDevtoolsOnClose()
--    const styles = useStyles()
-     const { className, style, ...otherPanelProps } = panelProps
- 
-     // useStore(router.stores.__store)
-@@ -403,19 +408,15 @@ export const BaseTanStackRouterDevtoolsPanel =
- 
-     return (
-       <div
--        class={cx(
--          styles().devtoolsPanel,
--          'TanStackRouterDevtoolsPanel',
--          className ? className() : '',
--        )}
-+        class={`tsrd-devtools-panel TanStackRouterDevtoolsPanel ${className?.() ?? ''}`}
-         style={style ? style() : ''}
-         {...otherPanelProps}
-       >
-         {handleDragStart ? (
--          <div class={styles().dragHandle} onMouseDown={handleDragStart}></div>
-+          <div class="tsrd-drag-handle" onMouseDown={handleDragStart}></div>
-         ) : null}
-         <button
--          class={styles().panelCloseBtn}
-+          class="tsrd-panel-close-btn"
-           onClick={(e: any) => {
-             if (setIsOpen) {
-               setIsOpen(false)
-@@ -429,7 +430,7 @@ export const BaseTanStackRouterDevtoolsPanel =
-             height="6"
-             fill="none"
-             viewBox="0 0 10 6"
--            class={styles().panelCloseBtnIcon}
-+            class="tsrd-panel-close-btn-icon
-```
-
-**File**: `packages/router-devtools-core/src/Explorer.tsx` (modified, +24/-176)
-```diff
-@@ -1,15 +1,11 @@
- /* eslint-disable @typescript-eslint/no-unnecessary-condition */
--import { clsx as cx } from 'clsx'
--import * as goober from 'goober'
--import { createMemo, createSignal, useContext } from 'solid-js'
--import { tokens } from './tokens'
-+import { createMemo, createSignal } from 'solid-js'
- import {
-   displayValue,
-   getServerComponentSlotUsageSummary,
-   getServerComponentSlots,
-   getServerComponentType,
- } from './utils'
--import { ShadowDomTargetContext } from './context'
- import type { Accessor, JSX } from 'solid-js'
- 
- type ExpanderProps = {
-@@ -18,16 +14,19 @@ type ExpanderProps = {
+   | { type: 'navigate'; getOptions: () => object }
+   | { type: 'preload'; getOptions: () => object; settleHops?: number }
+   | { type: 'invalidate'; settleHops?: number }
+@@ -295,6 +304,11 @@ export interface ScenarioSetupOptions {
+    * browser history traversal. All other scenarios use fresh memory history.
+    */
+   historyMode?: 'memory' | 'browser'
++  /**
++   * Test id that must render before the warm-up lap. Needed by scenarios
++   * whose steps click no links, so nothing else waits for the first render.
++   */
++  readyTestId?: string
  }
  
- export const Expander = ({ expanded, style: _style = {} }: ExpanderProps) => {
--  const styles = useStyles()
-   return (
--    <span class={styles().expander}>
-+    <span class="tsrd-explorer-expander">
-       <svg
-         xmlns="http://www.w3.org/2000/svg"
-         width="12"
-         height="12"
-         fill="none"
-         viewBox="0 0 24 24"
--        class={cx(styles().expanderIcon(expanded))}
-+        class={
-+          expanded
-+            ? 'tsrd-explorer-expander-icon tsrd-explorer-expander-icon-expanded'
-+            : 'tsrd-explorer-expander-icon'
+ function warnAboutDevMode(frameworkLabel: string) {
+@@ -394,6 +408,10 @@ export function createScenarioSetup(options: ScenarioSetupOptions) {
+           await settle(step.settleHops ?? 4)
+           return
+         }
++        case 'run': {
++          await step.run()
++          return
 +        }
-       >
-         <path
-           stroke="currentColor"
-@@ -180,7 +179,6 @@ export function Explorer({
+         case 'navigate': {
+           const renderedPromise = rendered()
+           router.navigate(step.getOptions())
+@@ -434,6 +452,9 @@ export function createScenarioSetup(options: ScenarioSetupOptions) {
+     await router.load()
  
-   const [expandedPages, setExpandedPages] = createSignal<Array<number>>([])
-   const [valueSnapshot, setValueSnapshot] = createSignal(undefined)
--  const styles = useStyles()
- 
-   const refreshValueSnapshot = () => {
-     setValueSnapshot((value() as () => any)())
-@@ -210,24 +208,24 @@ export function Explorer({
-   )
- 
-   return (
--    <div class={styles().entry}>
-+    <div class="tsrd-explorer-entry">
-       {serverComponentType() !== null ? (
-         isCompositeWithSlots() ? (
-           <>
-             <button
--              class={styles().expandButton}
-+              class="tsrd-explorer-expand-button"
-               onClick={() => toggleExpanded()}
-             >
-               <Expander expanded={expanded() ?? false} />
-               <span>{rest.label}:</span>
--              <span class={styles().compositeComponent}>
-+              <span class="tsrd-explorer-composite-component">
-                 {displayValue(value())}
-               </span>
-             </button>
-             {(expanded() ?? false) ? (
--              <div class={styles().rscMetaRow}>
--                <span class={styles().rscMetaLabel}>slots</span>
--                <div class={styles().subEntries}>
-+              <div class="tsrd-explorer-rsc-meta-row">
-+                <span class="tsrd-explorer-rsc-meta-label">slots</span>
-+                <div class="tsrd-explorer-sub-entries">
-                   {serverComponentSlots().map((name) => {
-                     const usage = serverComponentSlotUsageSummary()[name]
-                     if (!usage) return null
-@@ -252,8 +250,8 @@ export function Explorer({
-             <span
-               class={
-                 serverComponentType() === 'compositeSource'
--                  ? styles().compositeComponent
--                  : styles().renderableComponent
-+                  ? 'tsrd-explorer-composite-component'
-+                  : 'tsrd-explorer-renderable-component'
-               }
-             >
-               {displayValue(value())}
-@@ -263,29 +261,29 @@ export function Explorer({
-       ) : subEntryPages().length ? (
-         <>
-           <button
--            class={styles().expandButton}
-+            class="tsrd-explorer-expand-button"
-             onClick={() => toggleExpanded()}
-           >
-             <Expander expanded={expanded() ?? false} />
-             {rest.label}
--            <span class={styles().info}>
-+            <span class="tsrd-explorer-info">
-               {String(type).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
-               {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
-             </span>
-           </button>
-           {(expanded() ?? false) ? (
-             subEntryPages().length === 1 ? (
--              <div class={styles().subEntries}>
-+              <div class="tsrd-explorer-sub-entries">
-                 {subEntries().map((entry, index) => handleEntry(entry))}
-               </div>
-             ) : (
--              <div class={styles().subEntries}>
-+              <div class="tsrd-explorer-sub-entries">
-                 {subEntryPages().map((entries, index) => {
-                   return (
-                     <div>
--                      <div class={styles().entry}>
-+                      <div class="tsrd-explorer-entry">
-                         <button
--                          class={cx(styles().labelButton, 'labelButton')}
-+                          class={`${'tsrd-explorer-label-button'} labelButton`}
-                           onClick={() =>
-                             setExpandedPages((old) =>
-                               old.includes(index)
-@@ -301,7 +299,7 @@ export function Explorer({
-                           {index * pageSi
+     const linkTestIds = new Set<string>()
++    if (options.readyTestId) {
++      linkTestIds.add(options.readyTestId)
++    }
+     for (const step of options.steps) {
+       if (typeof step === 'string') {
+         linkTestIds.add(step)
+```
+
+**File**: `benchmarks/client-nav/scenarios/link-mount/react/project.json` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++{
++  "name": "@benchmarks/client-nav-link-mount-react",
++  "projectType": "application",
++  "targets": {
++    "build:client": {
++      "executor": "nx:run-commands",
++      "cache": false,
++      "dependsOn": [
++        {
++          "projects": ["@tanstack/react-router", "@tanstack/router-plugin"],
++          "target": "build"
++        }
++      ],
++      "options": {
++        "command": "NODE_ENV=production vite build --config {projectRoot}/vite.config.ts"
++      }
++    },
++    "test:types:client": {
++      "executor": "nx:run-commands",
++      "dependsOn": [
++        {
++          "projects": ["@tanstack/react-router", "@tanstack/router-plugin"],
++          "target": "build"
++        }
++      ],
++      "options": {
++        "command": "tsc -p {projectRoot}/tsconfig.json --noEmit"
++      }
++    },
++    "test:flame": {
++      "executor": "nx:run-commands",
++      "cache": false,
++      "dependsOn": ["build:client"],
++      "options": {
++        "command": "NODE_ENV=production flame run --md-format=detailed --delay=none --node-options=\"--stack-size=65500\" ./scenarios/link-mount/react/speed.flame.ts",
++        "cwd": "benchmarks/client-nav"
++      }
++    }
++  }
++}
+```
+
+**File**: `benchmarks/client-nav/scenarios/link-mount/react/setup.ts` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import { createScenarioSetup } from '../../harness'
++import { assertStepResult, createScenarioSteps, readyTestId } from '../shared'
++import type { LinkMountPreload } from '../shared'
++import type * as App from './src/main'
++
++const appModulePath = './dist/app.js'
++const { mountIntentTestApp, mountTestApp, setLinksVisible } = (await import(
++  /* @vite-ignore */ appModulePath
++)) as typeof App
++
++export function setup(preload: LinkMountPreload = 'default') {
++  return createScenarioSetup({
++    frameworkLabel: 'React',
++    mount: preload === 'intent' ? mountIntentTestApp : mountTestApp,
++    steps: createScenarioSteps(setLinksVisible),
++    assertAfterStep: assertStepResult,
++    readyTestId,
++  })
++}
+```
+
+**File**: `benchmarks/client-nav/scenarios/link-mount/react/speed-intent.bench.ts` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++import { test } from 'vitest'
++import { benchLifecycle } from '../../../../cpu-simulation'
++import { benchOptions, ticksPerIteration } from '../shared'
++import { setup } from './setup'
++
++// Separate file, so its worker's JIT feedback never mixes the two router
++// configurations.
++test('client-link-mount-intent', async ({ bench }) => {
++  const scenario = setup('intent')
++
++  await bench(
++    'client-link-mount intent loop (react)',
++    benchLifecycle(scenario),
++    async () => {
++      for (let i = 0; i < ticksPerIteration; i++) {
++        await scenario.tick()
++      }
++      await scenario.finishBatch()
++    },
++  ).run(benchOptions)
++})
+```
+
+**File**: `benchmarks/client-nav/scenarios/link-mount/react/speed.bench.ts` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import { test } from 'vitest'
++import { benchLifecycle } from '../../../../cpu-simulation'
++import { benchOptions, ticksPerIteration } from '../shared'
++import { setup } from './setup'
++
++test('client-link-mount', async ({ bench }) => {
++  const scenario = setup()
++
++  await bench(
++    'client-link-mount loop (react)',
++    benchLifecycle(scenario),
++    async () => {
++      for (let i = 0; i < ticksPerIteration; i++) {
++        await scenario.tick()
++      }
++      await scenario.finishBatch()
++    },
++  ).run(benchOptions)
++})
+```
+
+**File**: `benchmarks/client-nav/scenarios/link-mount/react/speed.flame.ts` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++import { window } from '../../../jsdom.ts'
++import { setup } from './setup.ts'
++
++const DURATION_MS = 10_000
++
++const test = setup()
++
++try {
++  await test.before()
++
++  const startedAt = performance.now()
++  while (performance.now() - startedAt < DURATION_MS) {
++    await test.tick()
++  }
++} finally {
++  test.after()
++  window.close()
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8963** (closed): fix(solid-router): write the SSR doctype without copying the first chunk (@brenelz)
-- **PR #8960** (2026-11-19): fix(solid-router-devtools): follow router state and prop changes in the Solid 2 wrappers (@brenelz)
-- **PR #8959** (2026-11-19): feat(router-devtools): add a trustedTypesPolicy option (@schiller-manuel)
-- **PR #8957** (2026-11-19): refactor(router-devtools-core): migrate to Solid 2 (@schiller-manuel)
-- **PR #8956** (2026-11-18): ci(benchmarks): pin CodSpeed jobs to ubuntu-24.04 (@Sheraff)
-- **PR #8955** (2026-11-18): chore(deps): update vite to 8.3.8 for GHSA-p4f5-76q4-ffq7 (@DogPawHat)
+- **PR #9008** (closed): fix(start): keep dev route CSS under Vite strict extended fs allow list (@pcbeingused333)
+- **PR #8999** (2026-11-27): test(benchmarks): add link-mount client-nav scenario (@schiller-manuel)
+- **PR #8980** (2026-11-24): docs: remove CodeRabbit sponsor logo (@tannerlinsley)
+- **PR #8977** (2026-11-23): ci: Version Packages (rc) (@github-actions[bot])
+- **PR #8973** (2026-11-23): fix(solid-start): import only published start-server-core exports (@brenelz)
+- **PR #8972** (2026-11-23): fix(solid-router): stop Link strict-read warnings on spread reactive options (@brenelz)
 
 ---
 
@@ -1291,40 +1024,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. router-devtools-core): replace goober with a static stylesheet
+## X. test(benchmarks): add link-mount client-nav scenario
 
 **RULE**:
-When implementing operations in `.changeset/router-devtools-static-styles.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/client-nav/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e75f0ffb`: router-devtools-core): replace goober with a static stylesheet. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `10b22c27`: test(benchmarks): add link-mount client-nav scenario. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/router-devtools-static-styles.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/client-nav/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-'@tanstack/router-devtools-core': patch
----
-
-The devtools no longer use goober. Their styles are now a static stylesheet adopted into the document or shadow root the devtools render in, instead of a `<style>` element in `<head>`. This means:
-
-- The devtools are styled on pages with a Content Security Policy that blocks inline `<style>` elements, without a nonce.
-- Devtools rendered inside a shadow root are styled without passing `shadowDOMTarget`.
-- The devtools no longer write to the shared `#_goober` style element.
-- Browsers without adoptable stylesheets (before Safari 16.4 and Firefox 101) show the devtools unstyled.
+| `link-mount`                             | Link setup and teardown without navigation: each step synchronously mounts or unmounts 300 Links on the index route, half plain `to="/about"` and half `to="/posts/$postId"` with `params`, `search` and `activeProps`. Runs with the default `defaultPreload: false` and again with `'intent'`, which attaches the intent handlers. |
+- Each benchmark iteration advances a fixed, circular sequence of steps; every step awaits the router's `onRendered` event, so render work is included and steps cannot overlap. Steps that leave the location unchanged, like `link-mount`'s, resolve once their render has committed instead. No two consecutive steps may target the same location, and the sequence ends back on the initial route.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- Each benchmark iteration advances a fixed, circular sequence of steps; every step awaits the router's `onRendered` event, so render work is included and steps cannot overlap. No two consecutive steps may target the same location, and the sequence ends back on the initial route.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e75f0ffb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `10b22c27` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

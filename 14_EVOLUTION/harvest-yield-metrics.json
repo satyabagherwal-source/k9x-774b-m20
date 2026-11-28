@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T09:08:20.001Z",
-  "total_cycles_completed": 13303,
-  "total_learnings_persisted": 13303,
-  "total_rules_promoted": 11998,
+  "last_updated": "2026-11-28T09:33:45.035Z",
+  "total_cycles_completed": 13307,
+  "total_learnings_persisted": 13307,
+  "total_rules_promoted": 12006,
   "history": [
-    {
-      "timestamp": "2026-11-27T15:27:13.882Z",
-      "repository": "momenbasel/PureMac",
-      "learningId": "learn-github-momenbasel-puremac",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T15:36:45.224Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T15:36:46.799Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T15:45:25.831Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T15:45:39.385Z",
       "repository": "Ontos-AI/knowhere",
@@ -1403,6 +1375,34 @@
       "repository": "codewhale-hq/Codewhale",
       "learningId": "learn-github-codewhale-hq-codewhale",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T09:30:50.171Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T09:30:50.499Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T09:33:31.535Z",
+      "repository": "TanStack/router",
+      "learningId": "learn-github-tanstack-router",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T09:33:45.035Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

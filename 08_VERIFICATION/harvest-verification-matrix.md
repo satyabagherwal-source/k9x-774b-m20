@@ -14027,3 +14027,9 @@
 | `CYCLE-20261128-PQ05` | `2026-11-28T09:05:04.997Z` | `parcel-bundler/parcel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11073` | Yes (`d86f038f...`) |
 | `CYCLE-20261128-PXLH` | `2026-11-28T09:05:14.837Z` | `oshai/kotlin-logging` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11074` | Yes (`e2001df8...`) |
 | `CYCLE-20261128-TWGN` | `2026-11-28T09:08:19.991Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11075, Rule 11076, Rule 11077` | Yes (`261c2eda...`) |
+| `CYCLE-20261128-MU9B` | `2026-11-28T09:30:50.159Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11078, Rule 11079, Rule 11080` | Yes (`5f85d2d7...`) |
+| `CYCLE-20261128-MUHG` | `2026-11-28T09:30:50.452Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11079, Rule null, Rule 11081` | Yes (`c93be4f1...`) |
+| `CYCLE-20261128-QARO` | `2026-11-28T09:33:31.524Z` | `TanStack/router` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11082` | Yes (`11ecc7df...`) |
+| `CYCLE-20261128-QL6P` | `2026-11-28T09:33:45.025Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11083` | Yes (`85fd4006...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T09:34:16.441Z` | `biomejs-biome` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-67232C2A` [Domain B] | Yes (`a8fa6fed...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T09:34:51.728Z` | `freenet-freenet-core` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-287B8757` [Domain K] | Yes (`8632a2cd...`) |

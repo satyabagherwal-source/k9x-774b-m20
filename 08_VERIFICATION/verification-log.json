@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-7E4Y",
-    "timestamp": "2026-11-26T17:39:22.067Z",
-    "repository": "zulip/zulip",
-    "learningId": "learn-github-zulip-zulip",
-    "contentHash": "093e61c2f1b09ebdb123134179bab2c3152fa7e47f37047774a39905f8b83c2c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-7J8M",
-    "timestamp": "2026-11-26T17:39:28.678Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "381a8ff208cfe71e4c26140d83b4ebb3ded484f89fd3a10635afb7f22672012f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-7L2G",
-    "timestamp": "2026-11-26T17:39:31.048Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "78c03ecbf5a096a477a4814fc96b68b12d162bd22bc65d45519f2db55a0a41e5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-INQR",
-    "timestamp": "2026-11-26T17:48:07.731Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "64bda7b38eedba6c667566fed7e8002fbdd9a7404bd084e059b36f2984245a23",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-IOQI",
     "timestamp": "2026-11-26T17:48:09.018Z",
     "repository": "ratatui/ratatui",
@@ -7492,6 +7432,66 @@
     "contentHash": "261c2eda6aef104230b23c43298e108f80cfa461ab284fcad99906b5f2b34e90",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-MU9B",
+    "timestamp": "2026-11-28T09:30:50.159Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "5f85d2d7d9574853d685faed3425fbe341d088aa1872313a9dce70fa95b35ad5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-MUHG",
+    "timestamp": "2026-11-28T09:30:50.452Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "c93be4f1886ab7cc7475fcec1d7c9fbaaaebac83e14e8f5bb1cb8227fdf9d216",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-QARO",
+    "timestamp": "2026-11-28T09:33:31.524Z",
+    "repository": "TanStack/router",
+    "learningId": "learn-github-tanstack-router",
+    "contentHash": "11ecc7dfe8eff21d4a8d3e201d70b925496545b66b6a4ac17bf0338e2bb14a3c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-QL6P",
+    "timestamp": "2026-11-28T09:33:45.025Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "85fd40064fcd7382490e039601169fa6f5914a28298d305dbe64f220550a2061",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

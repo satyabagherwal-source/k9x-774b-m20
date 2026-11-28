@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "c56f9f1a",
+    "sourceVersion": "42b3267e",
     "license": "Apache-2.0",
-    "contentHash": "48bf9b5bfaaa057e31549d0a84555a446fa1f38f39855977aab2a1dbfaab8652",
-    "lastHarvestedAt": "2026-11-28T07:58:25.884Z",
+    "contentHash": "85fd40064fcd7382490e039601169fa6f5914a28298d305dbe64f220550a2061",
+    "lastHarvestedAt": "2026-11-28T09:33:45.030Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "0c0198d2",
+    "sourceVersion": "eb8f4fc3",
     "license": "NOASSERTION",
-    "contentHash": "e7725e55c0b2062a6708acb334715a5abc5431b84b56cf18302a27d3c1f1616d",
-    "lastHarvestedAt": "2026-11-28T00:09:43.205Z",
+    "contentHash": "c93be4f1886ab7cc7475fcec1d7c9fbaaaebac83e14e8f5bb1cb8227fdf9d216",
+    "lastHarvestedAt": "2026-11-28T09:30:50.457Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "c199c75a",
+    "sourceVersion": "71660779",
     "license": "Apache-2.0",
-    "contentHash": "9cfe17b1182d5e3c1b66156a79992489e3ee830773d8d4163d5e7d3a0b66c8b2",
-    "lastHarvestedAt": "2026-11-27T09:34:27.832Z",
+    "contentHash": "5f85d2d7d9574853d685faed3425fbe341d088aa1872313a9dce70fa95b35ad5",
+    "lastHarvestedAt": "2026-11-28T09:30:50.164Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {
@@ -11383,10 +11383,10 @@
     "repository": "TanStack/router",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/router",
-    "sourceVersion": "61d5cdda",
+    "sourceVersion": "10b22c27",
     "license": "MIT",
-    "contentHash": "ddd5dc783e87b91bed147ffc12a76ee45030c1ef61c6b6f87bb3713487c6b849",
-    "lastHarvestedAt": "2026-11-24T23:58:38.568Z",
+    "contentHash": "11ecc7dfe8eff21d4a8d3e201d70b925496545b66b6a4ac17bf0338e2bb14a3c",
+    "lastHarvestedAt": "2026-11-28T09:33:31.529Z",
     "learningId": "learn-github-tanstack-router"
   },
   "hf-tencent-hy-simulmt-30b-a3b-fp8": {

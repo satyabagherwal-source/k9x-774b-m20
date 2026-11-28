@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T09:08:27.969Z",
+  "last_updated": "2026-11-28T09:34:52.570Z",
   "directives": [
     {
       "id": "CD-001",
@@ -75654,6 +75654,121 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
       "domain_letter": "K"
+    },
+    {
+      "id": "CD-S0WK",
+      "directive_title": "Fork-Isolated Workflow Checkout and Execution Barrier",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-S0WK-fork-isolated-workflow-checkout-and-execution-barrier.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-002 (Security and Authentication Boundary Invariant): Opposing directive on 'disable': candidate prescribes action ('always disable') while canonical Rule CANON-002 forbids it ('never disable'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-002 (Security and Authentication Boundary Invariant)",
+      "date_staged": "2026-11-28",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-R9NC",
+      "directive_title": "Invariant Separation of Concrete vs Widenable Binding Types in Flow Analysis",
+      "source_repo": "biomejs-biome-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-R9NC-invariant-separation-of-concrete-vs-widenable-binding-types-in-flow-analysis.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-R9ND",
+      "directive_title": "Delimited AST Chunk Partitioning with Non-Lossy Trivia Preservation",
+      "source_repo": "biomejs-biome-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-R9ND-delimited-ast-chunk-partitioning-with-non-lossy-trivia-preservation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-S0WK",
+      "directive_title": "Bounded Streaming Decompression Memory Allocation",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-S0WK-bounded-streaming-decompression-memory-allocation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-S0WL",
+      "directive_title": "Strict Pre-Installation Version Binding & Monotonic Gatekeeping",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-S0WL-strict-pre-installation-version-binding-monotonic-gatekeeping.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-RAYR",
+      "directive_title": "test(benchmarks): add link-mount client-nav scenario",
+      "source_repo": "tanstack-router-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RAYR-test-benchmarks-add-link-mount-client-nav-scenario.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-QLDN",
+      "directive_title": "Draft NUC 160 C# String Trimming Method Alias",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "42b3267e",
+      "staged_file": "11_INBOX/candidate-directives/CD-QLDN-draft-nuc-160-c-string-trimming-method-alias.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-B1D0A3",
+      "directive_title": "Flawed SemVer Caret Range Resolution for Pre-1.0.0 Packages (BUG-PKG-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "biomejs-biome",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B1D0A3-flawed-semver-caret-range-resolution-for.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-R9ND",
+      "directive_title": "Suffix-Stripping Grammar Validation with Consecutive Token Disallowance",
+      "source_repo": "biomejs-biome-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-R9ND-suffix-stripping-grammar-validation-with-consecutive-token-disallowance.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-304564",
+      "directive_title": "test(benchmarks): add link-mount client-nav scenario",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tanstack-router",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-304564-test-benchmarks-add-link-mount-client-na.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-918DE9",
+      "directive_title": "CI Workflow Execution via Pull Request Target Head Checkout (BUG-CI-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-918DE9-ci-workflow-execution-via-pull-request-t.md",
+      "staged_date": "2026-11-28"
     }
   ]
 }

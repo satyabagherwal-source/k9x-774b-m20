@@ -14060,3 +14060,9 @@ Every entry in this ledger must capture:
 | `learn-github-parcel-bundler-parcel` | `https://github.com/parcel-bundler/parcel` | `346bc724` | Multi-dimensional audit evidence | 2026-11-28T09:05:05.002Z |
 | `learn-github-oshai-kotlin-logging` | `https://github.com/oshai/kotlin-logging` | `5d29bb85` | Multi-dimensional audit evidence | 2026-11-28T09:05:14.842Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `98e055e6` | Multi-dimensional audit evidence | 2026-11-28T09:08:19.995Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `71660779` | Multi-dimensional audit evidence | 2026-11-28T09:30:50.164Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `eb8f4fc3` | Multi-dimensional audit evidence | 2026-11-28T09:30:50.457Z |
+| `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `10b22c27` | Multi-dimensional audit evidence | 2026-11-28T09:33:31.529Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `42b3267e` | Multi-dimensional audit evidence | 2026-11-28T09:33:45.030Z |
+| `learn-dom-b-67232c2a` | `project://biomejs-biome` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md` | 2026-11-28T09:34:16.441Z |
+| `learn-dom-k-287b8757` | `project://freenet-freenet-core` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | 2026-11-28T09:34:51.728Z |

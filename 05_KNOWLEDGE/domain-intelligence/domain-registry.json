@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T09:08:28.178Z",
-  "total_records": 2890,
+  "last_updated": "2026-11-28T09:34:52.820Z",
+  "total_records": 2896,
   "domains": {
     "A": {
       "total": 27,
@@ -37,7 +37,7 @@
       ]
     },
     "B": {
-      "total": 25,
+      "total": 26,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -63,7 +63,8 @@
         "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-learnings-core-invariants",
         "domain_intelligence-product-intelligence-kube-rs-kube-core-invariants",
         "domain_intelligence-product-intelligence-kube-rs-kube-learnings-core-invariants",
-        "domain_intelligence-product-intelligence-goodrain-rainbond-core-invariants"
+        "domain_intelligence-product-intelligence-goodrain-rainbond-core-invariants",
+        "DOM-B-67232C2A"
       ]
     },
     "C": {
@@ -1776,7 +1777,7 @@
       ]
     },
     "H": {
-      "total": 701,
+      "total": 705,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2478,7 +2479,11 @@
         "DOM-H-34761320",
         "DOM-H-AA0E6A7E",
         "DOM-H-6CED55F4",
-        "DOM-H-73F87CC1"
+        "DOM-H-73F87CC1",
+        "domain_intelligence-technical-construction-intelligence-biomejs-biome-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tanstack-router-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-biomejs-biome-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tanstack-router-learnings-core-invariants"
       ]
     },
     "I": {
@@ -2724,7 +2729,7 @@
       ]
     },
     "K": {
-      "total": 188,
+      "total": 189,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2913,7 +2918,8 @@
         "DOM-K-1440511C",
         "domain_intelligence-quality-verification-intelligence-maziyarpanahi-openmed-core-invariants",
         "domain_intelligence-quality-verification-intelligence-maziyarpanahi-openmed-learnings-core-invariant",
-        "domain_intelligence-quality-verification-intelligence-lxml-lxml-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-lxml-lxml-learnings-core-invariants",
+        "DOM-K-287B8757"
       ]
     },
     "L": {
@@ -10256,8 +10262,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "1c00d7b624ac765b76c3cd0a4984c51d26ca0f257fabd0e5312bed3d26318429",
-      "created_at": "2026-11-28T00:09:43.818Z"
+      "content_hash": "99367c1a349717c31ed1c0557db02ded6cd8b062b1adff4622753d02a4def5f7",
+      "created_at": "2026-11-28T09:30:51.430Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10334,8 +10340,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "186abe5c8dae4ac5550495cbdc882fa7dafffb7ee0e45c4bb2c2de5bde124eae",
-      "created_at": "2026-11-28T00:09:48.174Z"
+      "content_hash": "eb868a976e8769d1cc8cc1e0e807fe765fd4642e6d0b45f17d1021baad089a2e",
+      "created_at": "2026-11-28T09:34:52.820Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -15969,8 +15975,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "28cb3f1e7a951f1381eb0c74e4f539c8fcab26811f29386d34f98b3af4b35599",
-      "created_at": "2026-11-28T07:58:26.137Z"
+      "content_hash": "821bce98a39408dc2d9c9c66d2f0f3aa372e3f665678be919532159b2cf3b500",
+      "created_at": "2026-11-28T09:33:45.478Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -49117,6 +49123,110 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-28T08:40:12.124Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-biomejs-biome-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-biomejs-biome-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: biomejs/biome Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-biomejs-biome-technical-construction-intelligence-biomejs-biome-core-invariants.md",
+      "repository": "biomejs/biome",
+      "content_hash": "10bb2503063894e8934afc5148a496f353214575e24d40be091c0a683afa83b1",
+      "created_at": "2026-11-28T09:30:51.077Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tanstack-router-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tanstack-router-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: TanStack/router Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-router-technical-construction-intelligence-tanstack-router-core-invaria.md",
+      "repository": "TanStack/router",
+      "content_hash": "1a32382d7d5c0d098e5dc3712fdffc03b07c64776d3077e95b0532491330cc7b",
+      "created_at": "2026-11-28T09:33:31.968Z"
+    },
+    "DOM-B-67232C2A": {
+      "record_id": "DOM-B-67232C2A",
+      "domain_letter": "B",
+      "domain_id": "product",
+      "domain_name": "Product Intelligence",
+      "secondary_domains": [],
+      "title": "Cross-Scope Assignment Type Widening Poisoning Inferred Return Types (BUG-TYPE-02)",
+      "content": "Explicitly constructed data structures must have their type invariants sealed against flow-insensitive cross-scope mutations unless explicit type casting or reassignment to an incompatible top-type occurs.",
+      "content_hash": "a8fa6fed9c5205fbbeacaeadebcb97e934fb6f55bf6a79945db341ccfbbe9bee",
+      "summary": "The type inference engine failed to differentiate between uninitialized/primitive widenable variables (`let x;`, `let x = undefined;`) and v -> Explicitly constructed data structures must have their type invariants sealed against flow-insensitive cross-scope mutations unless explicit",
+      "provenance": {
+        "source_uri": "project://biomejs-biome/biomejs-biome-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T09:33:48.552Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (biomejs-biome)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `13507`, Issue `#13391`. Tests in `crates/biome_js_analyze/tests/specs/nursery/noUnsafeReturn/valid.ts`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T09:34:16.408Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-biomejs-biome-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-biomejs-biome-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: biomejs-biome-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-biomejs-biome-learnings-technical-construction-intelligence-biomejs-biome-learni.md",
+      "repository": "biomejs-biome-learnings",
+      "content_hash": "fe9c06e73c228260c5f4f8810571a8a822e65a24f9adc290f8ab4485e6f36f79",
+      "created_at": "2026-11-28T09:34:17.430Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tanstack-router-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tanstack-router-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tanstack-router-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-router-learnings-technical-construction-intelligence-tanstack-router-le.md",
+      "repository": "tanstack-router-learnings",
+      "content_hash": "833f92572dd1d1c191aa0e16d29a29018d78cb712c4ac2dbd3517d4b8188c679",
+      "created_at": "2026-11-28T09:34:18.673Z"
+    },
+    "DOM-K-287B8757": {
+      "record_id": "DOM-K-287B8757",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Self-Updater Downgrade & Staged Symlink Hijacking (BUG-UPDATE-02)",
+      "content": "Software updaters must classify failures into deterministic verification rejections versus transient I/O errors. Verification must enforce monotonic semver progression and verify that extracted binaries are non-symlinked regular files before altering file execution permissions.",
+      "content_hash": "8632a2cdcff0baff40d59ca40ed8b7fbb7824e5250df86d4524c214a56fd1ffc",
+      "summary": "Lack of semver monotonic pre-checks and omission of filesystem metadata validation (`symlink_metadata().file_type().is_file()`) prior to bin -> Software updaters must classify failures into deterministic verification rejections versus transient I/O errors. Verification must enforce m",
+      "provenance": {
+        "source_uri": "project://freenet-freenet-core/freenet-freenet-core-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T09:34:19.113Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (freenet-freenet-core)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `406a7bd8`, PR #6425, lines 277–974 in `crates/core/src/bin/commands/update.rs`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T09:34:51.695Z"
     }
   }
 }
