@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T01:00:31.112Z",
+  "last_updated": "2026-11-28T01:10:00.706Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14016,14 +14016,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lxml-lxml",
-      "content_hash": "336a4ffe0a1d8970fe3624cfe1e27d1eb83ed7df2b4d6f32736980638309631d",
-      "verified_at": "2026-11-24T16:45:59.396Z",
+      "content_hash": "af0506cc0391105b3366df6a402a77b8551d6118994e8085b3cfdd6a65cfc81f",
+      "verified_at": "2026-11-28T01:10:00.705Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T16:45:59.396Z"
+      "last_updated": "2026-11-28T01:10:00.705Z"
     },
     "mazzzystar/Queryable": {
       "repository": "mazzzystar/Queryable",

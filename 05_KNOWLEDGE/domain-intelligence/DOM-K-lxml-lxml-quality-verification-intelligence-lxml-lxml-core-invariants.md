@@ -4,24 +4,24 @@
 {
   "source_repository": "lxml/lxml",
   "source_url": "https://github.com/lxml/lxml",
-  "source_version": "74e94856",
+  "source_version": "1bbb09aa",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-16T18:18:50.256Z",
+  "timestamp": "2026-11-28T01:10:01.035Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lxml-lxml",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lxml/lxml](https://github.com/lxml/lxml) (Revision: `74e94856`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-16T18:18:50.256Z`  
+> **Provenance**: Harvested from [lxml/lxml](https://github.com/lxml/lxml) (Revision: `1bbb09aa`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-28T01:10:01.035Z`  
 > **Learning ID**: `learn-github-lxml-lxml`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lxml/lxml:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:18:48.740Z  
+> **Harvest Timestamp**: 2026-11-28T01:09:59.001Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The lxml XML toolkit for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 3075 stars
+- **Stars / Engagement**: 3079 stars
 
 ---
 
@@ -1721,12 +1721,15 @@ def convert_changelog(lxml_path, changelog_file_path, rst2html_script, styleshee
     finally:
         f.close()
 
-    links = dict(LP='`%s <https://bugs.launchpad.net/lxml/+bug/%s>`_',
-                 GH='`%s <https://github.com/lxml/lxml/issues/%s>`_')
-    replace_tracker_links = re.compile('((LP|GH)#([0-9]+))').sub
+    links = dict(
+        LP='`%s <https://bugs.launchpad.net/lxml/+bug/%s>`_',
+        GH='`%s <https://github.com/lxml/lxml/issues/%s>`_',
+        GHSA='`%s <https://github.com/lxml/lxml/security/advisories/%s>`_',
+    )
+    replace_tracker_links = re.compile('(?<= )((LP#|GH#|GHSA-)([0-9a-z-]+))').sub
     def insert_link(match):
         text, ref_type, ref_id = match.groups()
-        return links[ref_type] % (text, ref_id)
+        return links[ref_type[:-1]] % (text, ref_id)
     content = replace_tracker_links(insert_link, content)
 
     command = [sys.executable, rst2html_script] + RST2HTML_OPTIONS.split() + [
@@ -1797,10 +1800,7 @@ def publish(dirname, lxml_path, release, with_donations=True):
     for section, text_files in SITE_STRUCTURE:
         section_head = make_menu_section_head(section, menu_div)
         for filename in text_files:
-            if filename.startswith('@'):
-                # special menu entry
-                page_title = filename[1:]
-                url = h
+            if filename.startswith('@')
 ```
 
 ### Core Architecture Module: `doc/mklatex.py`
@@ -2126,14 +2126,11 @@ def publish(dirname, lxml_path, release):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #548** (2026-11-13): **Allow bytearray parameters to qnames**
-  *Symptoms*: `etree.Element` allows the `tag` to be a `bytearray`, in which case it's decoded to a str. It also allows setting a `bytearray` as tag later on, in which case it is *not* decoded to a str.  However `etree.QName` would raise a `ValueError` with both a direct `bytearray` parameter or an `Element` with a `bytearray` tag. This is because it performed its own type checking stricter than that of `Element`.  Since `_getNsTag` handles `bytearray` and `QName`, the type guard really only needs to unwrap `Element` and check for `None`.  Closes https://bugs.launchpad.net/lxml/+bug/2172456
-  **Post-Mortem & Fix Analysis**:
-  > There's a caveat to this change: because I removed the `unicode` conversion case in the `QName` prologue, types which previously stringified to a valid tag name  now error e.g. ```python >>> class F(Enum): A = 1 # before >>> QName(False) 'False' >>> QName(F.A) 'F.A' # after >>> QName(False) ... TypeError: Argument must be bytes or unicode, got 'bool' >>> QName(F.A) ... TypeError: Argument must be bytes or unicode, got 'F' ``` If this is a problematic regression it can probably be restored by adding a try/except around the `_getNsTag` call, and fall back to `tag_utf = unicode(text_or_uri_or_element)`, which will restore the issue being caught (or not) by `_tagValidOrRaise` as it was previously.
-  > Thanks. I implemented a more complete API update in https://github.com/lxml/lxml/commit/16d61fa80a408d5237b4629b3c7df4f320eb13e4
+- **Issue #617** (2026-11-27): **Build: Use already downloaded libxml2/libxslt archives without network access**
+  *Symptoms*: `download_libxml2()` and `download_libxslt()` in `buildlibxml.py` always fetch the directory listing of https://download.gnome.org/sources/libxml2/ or https://download.gnome.org/sources/libxslt/ (`http_find_latest_version_directory()`) to find the directory of the requested version. Only then does `download_library()` find that the archive is already in the download directory, and it uses it without needing that directory. So a static build with explicitly requested library versions needs the network even when all archives are already there, and a failed DNS lookup breaks it.  That is what happened in https://github.com/lxml/lxml/actions/runs/45713449375/job/139558261508 (`ci (macos-latest, 3.16-dev, true)` on https://github.com/lxml/lxml/pull/602). The CI jobs restore `libs/` from the cache of the `cache_libs` job and set `LIBXML2_VERSION=2.15.4` and `LIBXSLT_VERSION=1.1.45`. The first `setup.py build_ext` in "Run CI" reused all four archives. `make test` then runs `setup.py build_ext` again: it reused zlib and libiconv, and about 30 seconds later the directory lookup for libxml2 failed:  ``` Using existing libiconv downloaded into libs/libiconv-1.19.tar.gz (delete this file if you want to re-download the package) Unpacking libiconv-1.19.tar.gz into build/tmp Traceback (most recent call last): ... socket.gaierror: [Errno 8] nodename nor servname provided, or not known ...   File "/Users/runner/work/lxml/lxml/buildlibxml.py", line 404, in download_libxml2     from_location = 
 
-- **Issue #547** (2026-11-13): **Build: bump softprops/action-gh-release from 3.0.3 to 3.0.4 in the github-actions group**
-  *Symptoms*: Bumps the github-actions group with 1 update: [softprops/action-gh-release](https://github.com/softprops/action-gh-release).  Updates `softprops/action-gh-release` from 3.0.3 to 3.0.4 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/softprops/action-gh-release/releases">softprops/action-gh-release's releases</a>.</em></p> <blockquote> <h2>v3.0.4</h2> <ul> <li>maintenance release with updated dependencies</li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/softprops/action-gh-release/blob/master/CHANGELOG.md">softprops/action-gh-release's changelog</a>.</em></p> <blockquote> <h2>3.0.4</h2> <ul> <li>maintenance release with updated dependencies</li> </ul> <h2>3.0.3</h2> <p><code>3.0.3</code> is a maintenance release with updated dependencies. It also safely classifies malformed GitHub API errors to avoid secondary failures (<a href="https://redirect.github.com/softprops/action-gh-release/issues/822">#822</a>).</p> <h2>What's Changed</h2> <h3>Bug fixes 🐛</h3> <ul> <li>fix: safely classify GitHub API errors by <a href="https://github.com/chenrui333"><code>@​chenrui333</code></a> in <a href="https://redirect.github.com/softprops/action-gh-release/pull/822">softprops/action-gh-release#822</a></li> </ul> <h3>Other Changes 🔄</h3> <ul> <li>dependency updates</li> </ul> <h2>3.0.2</h2> <p><code>3.0.2</code> is a patch release focused on release reliability and compatibility
+- **Issue #616** (2026-11-27): **Build: bump hendrikmuhs/ccache-action from 1.2.25 to 1.2.26 in the github-actions group**
+  *Symptoms*: Bumps the github-actions group with 1 update: [hendrikmuhs/ccache-action](https://github.com/hendrikmuhs/ccache-action).  Updates `hendrikmuhs/ccache-action` from 1.2.25 to 1.2.26 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/hendrikmuhs/ccache-action/releases">hendrikmuhs/ccache-action's releases</a>.</em></p> <blockquote> <h2>v1.2.26</h2> <h2>What's Changed</h2> <ul> <li>ci: automatically advance floating version tags on release by <a href="https://github.com/raycppwizard"><code>@​raycppwizard</code></a> in <a href="https://redirect.github.com/hendrikmuhs/ccache-action/pull/470">hendrikmuhs/ccache-action#470</a></li> </ul> <h2>New Contributors</h2> <ul> <li><a href="https://github.com/raycppwizard"><code>@​raycppwizard</code></a> made their first contribution in <a href="https://redirect.github.com/hendrikmuhs/ccache-action/pull/470">hendrikmuhs/ccache-action#470</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/hendrikmuhs/ccache-action/compare/v1.2.25...v1.2.26">https://github.com/hendrikmuhs/ccache-action/compare/v1.2.25...v1.2.26</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/hendrikmuhs/ccache-action/commit/e91f31892a1d1b8c44424b1a94c0b7f52d337168"><code>e91f318</code></a> ci: automatically advance floating version tags on release (<a href="https://redirect.github.com/hendrikmuhs/ccache-action/issues/470">#470</a>)</li> <li>See full diff
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2150,84 +2147,406 @@ def publish(dirname, lxml_path, release):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2bc2b79e` (2026-11-13)
-**Commit Message**: Build: bump softprops/action-gh-release (GH-547)
+### Incident Patch 1: `daf2d869` (2026-11-25)
+**Commit Message**: Tests: Wait for the threads of the thread tests without a timeout (GH-612)
 
-Bumps the github-actions group with 1 update: [softprops/action-gh-release](https://github.com/softprops/action-gh-release).
+_run_threads() let each thread wait at most 4 seconds for the other threads to start.  On a
+busy machine, starting the threads can take longer, especially with free-threaded Python.  A
+thread whose wait timed out died with a bare AssertionError, and the test failed with a
+message like "10 != 11" (LP#2175798).
+
+Wait at a threading.Barrier without a timeout instead.  If starting a thread fails, abort the
+barrier so that the threads that already started do not wait forever, and raise the error.
 
 
-Updates `softprops/action-gh-release` from 3.0.3 to 3.0.4
-- [Release notes](https://github.com/softprops/action-gh-release/releases)
-- [Changelog](https://github.com/softprops/action-gh-release/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/softprops/action-gh-release/compare/efb35369e0ad2afab669f228072c1b0d510eae64...8a0cd651e5b2365bd640854a3fa5dfc70e4875f3)
+Claude-Session: https://claude.ai/code/session_01GwUvhmzgfkiZ6vo4uGyesN
 
----
-updated-dependencies:
-- dependency-name: softprops/action-gh-release
-  dependency-version: 3.0.4
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: github-actions
-...
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/wheels.yml` (modified, +1/-1)
+**File**: `src/lxml/tests/test_threading.py` (modified, +13/-9)
 ```diff
-@@ -328,7 +328,7 @@ jobs:
-           exit ${RESULT_CODE}
+@@ -22,18 +22,15 @@ def _run_thread(self, func):
+         thread.join()
  
-       - name: Release
--        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
-+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
-         if: github.ref_type == 'tag'
-         with:
-           files: |
+     def _run_threads(self, count, func, main_func=None):
+-        sync = threading.Event()
++        # No timeout: starting threads can take long on a busy machine.
++        sync = threading.Barrier(count + (main_func is not None))
+         lock = threading.Lock()
+         counter = dict(started=0, finished=0, failed=0)
+ 
+         def sync_start(func):
+             with lock:
+-                started = counter['started'] + 1
+-                counter['started'] = started
+-            if started < count + (main_func is not None):
+-                sync.wait(4)  # wait until the other threads have started up
+-                assert sync.is_set()
+-            sync.set()  # all waiting => go!
++                counter['started'] += 1
++            sync.wait()  # wait until the other threads have started up
+             try:
+                 func()
+             except:
+@@ -45,8 +42,15 @@ def sync_start(func):
+                     counter['finished'] += 1
+ 
+         threads = [threading.Thread(target=sync_start, args=(func,)) for _ in range(count)]
+-        for thread in threads:
+-            thread.start()
++        for i, thread in enumerate(threads):
++            try:
++                thread.start()
++            except BaseException:
++                # Let the started threads fail instead of waiting for the others forever.
++                sync.abort()
++                for started_thread in threads[:i]:
++                    started_thread.join()
++                raise
+         if main_func is not None:
+             sync_start(main_func)
+         for thread in threads:
 ```
 
 ---
 
-### Incident Patch 2: `dbd4a7aa` (2026-11-13)
-**Commit Message**: Build: Exclude PyPy 3.9/3.10.
+### Incident Patch 2: `ae5dfef7` (2026-11-27)
+**Commit Message**: Build: Use already downloaded libxml2/libxslt archives without network access (GH-617)
 
-**File**: `pyproject.toml` (modified, +2/-0)
+download_libxml2() and download_libxslt() always fetched the directory listing of
+download.gnome.org to find the directory of the requested version before
+download_library() noticed that the archive was already in the download directory.
+Static builds with explicitly requested library versions and cached archives (as in CI,
+where the archives come from the "cache_libs" job) therefore still needed the network,
+and a failed DNS lookup broke the build.
+
+Check for an existing archive of an explicitly requested version first, with the same
+checksum verification as before, and look up the download directory only if the archive
+must be downloaded.  Builds that request no version still look up the latest one online.
+
+
+Claude-Session: https://claude.ai/code/session_01GwUvhmzgfkiZ6vo4uGyesN
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `buildlibxml.py` (modified, +19/-5)
 ```diff
-@@ -12,6 +12,8 @@ enable = [
- skip = [
-     "cp38-*",
-     "pp38-*",
-+    "pp39-*",
-+    "pp310-*",
-     "pp*-manylinux_i686",
-     "*-musllinux_i686",
-     "cp315*_i686",
+@@ -420,6 +420,9 @@ def download_libxml2(dest_dir, version=None):
+         # Temporarily using the latest master (2.9.12+) until there is a release that supports lxml again.
+         from_location = "https://gitlab.gnome.org/GNOME/libxml2/-/archive/dea91c97debeac7c1aaf9c19f79029809e23a353/"
+         version = "dea91c97debeac7c1aaf9c19f79029809e23a353"
++    elif version and (existing_file := find_existing_download(dest_dir, 'libxml2', filename % version)):
++        # Already downloaded, no need to look up the download directory online.
++        return existing_file
+     else:
+         from_location = http_find_latest_version_directory(LIBXML2_LOCATION, version=version)
+ 
+@@ -432,6 +435,9 @@ def download_libxslt(dest_dir, version=None):
+     #version_re = re.compile(r'LATEST_LIBXSLT_IS_([0-9.]+[0-9](?:-[abrc0-9]+)?)')
+     version_re = re.compile(r'libxslt-([0-9.]+[0-9])[.]tar[.]xz')
+     filename = 'libxslt-%s.tar.xz'
++    if version and (existing_file := find_existing_download(dest_dir, 'libxslt', filename % version)):
++        # Already downloaded, no need to look up the download directory online.
++        return existing_file
+     from_location = http_find_latest_version_directory(LIBXSLT_LOCATION, version=version)
+     return download_library(dest_dir, from_location, 'libxslt',
+                             version_re, filename, version=version)
+@@ -492,6 +498,15 @@ def file_exists(file_path: Path, size=None, digest=None):
+     return True
+ 
+ 
++def find_existing_download(dest_dir, name, filename):
++    dest_filepath = Path(dest_dir) / filename
++    if not file_exists(dest_filepath, digest=ARCHIVE_HASHES.get(filename)):
++        return None
++    print(f'Using existing {name} downloaded into {dest_filepath} '
++          '(delete this file if you want to re-download the package)')
++    return dest_filepath
++
++
+ def download_library(dest_dir, location, name, version_re, filename, version=None):
+     if version is None:
+         try:
+@@ -519,13 +534,12 @@ def download_library(dest_dir, location, name, version_re, filename, version=Non
+     if version:
+         filename = filename % version
+ 
++    existing_file = find_existing_download(dest_dir, name, filename)
++    if existing_file:
++        return existing_file
++
+     full_url = urljoin(location, filename)
+     dest_filepath = Path(dest_dir) / filename
+-    if file_exists(dest_filepath, digest=ARCHIVE_HASHES.get(filename)):
+-        print(f'Using existing {name} downloaded into {dest_filepath} '
+-              '(delete this file if you want to re-download the package)')
+-        return dest_filepath
+-
+     print('Downloading %s into %s from %s' % (name, dest_filepath, full_url))
+     for retry_after_seconds in (2, 5, 10, None):
+         try:
+```
+
+**File**: `tools/test_library_downloads.py` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++"""Tests for downloading the library sources of static builds.
++
++Run with: python -m unittest discover -s tools -p test_library_downloads.py
++"""
++import hashlib
++import io
++import tempfile
++import unittest
++from email.message import Message
++from pathlib import Path
++from unittest.mock import patch
++from urllib.response import addinfourl
++
++import buildlibxml
++
++
++class SourceLibrariesTest(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.libs = Path(self.tmp.name)
++        self.addCleanup(patch.stopall)
++        patch.dict(buildlibxml.ARCHIVE_HASHES, clear=True).start()
++
++    def add_checksum(self, filename, content):
++        patch.dict(buildlibxml.ARCHIVE_HASHES,
++                   {filename: hashlib.sha256(content).hexdigest()}).start()
++
++    def serve_downloads(self):
++        downloads = []
++
++        def list_directories(request):
++            listing = b'<a href="1.1/">1.1/</a> <a href="2.14/">2.14/</a> <a href="2.15/">2.15/</a>'
++            return addinfourl(io.BytesIO(listing), Message(), request.full_url)
++
++        def retrieve(url, destination):
++            downloads.append(url)
++            Path(destination).write_bytes(b'downloaded archive')
++
++        patch('buildlibxml.urlopen', side_effect=list_directories).start()
++        patch('buildlibxml.urlretrieve', side_effect=retrieve).start()
++        return downloads
++
++    def test_uses_local_archives_of_requested_versions_without_network_access(self):
++        libxml2 = self.libs / 'libxml2-2.15.4.tar.xz'
++        libxml2.write_bytes(b'libxml2 archive')
++        libxslt = self.libs / 'libxslt-1.1.45.tar.xz'
++        libxslt.write_bytes(b'libxslt archive')
++        self.add_checksum(libxslt.name, b'libxslt archive')
++        for function in ('urlopen', 'urlretrieve'):
++            patch('buildlibxml.' + function, side_effect=AssertionError(
++                'Local archives of the requested versions must be reused')).start()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.15.4'), libxml2)
++        self.assertEqual(buildlibxml.download_libxslt(str(self.libs), '1.1.45'), libxslt)
++
++    def test_downloads_missing_archives_from_their_version_directories(self):
++        downloads = self.serve_downloads()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.14.6'),
++                         self.libs / 'libxml2-2.14.6.tar.xz')
++        self.assertEqual(buildlibxml.download_libxslt(str(self.libs), '1.1.45'),
++                         self.libs / 'libxslt-1.1.45.tar.xz')
++        self.assertEqual(downloads, [
++            'https://download.gnome.org/sources/libxml2/2.14/libxml2-2.14.6.tar.xz',
++            'https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.45.tar.xz',
++        ])
++
++    @unittest.skipUnless(hasattr(hashlib, 'file_digest'),
++                         'archive checksums are only verified in Python 3.11+')
++    def test_downloads_archive_again_if_its_checksum_does_not_match(self):
++        archive = self.libs / 'libxml2-2.14.6.tar.xz'
++        archive.write_bytes(b'truncated archive')
++        self.add_checksum(archive.name, b'downloaded archive')
++        downloads = self.serve_downloads()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.14.6'), archive)
++        self.assertEqual(downloads, [
++            'https://download.gnome.org/sources/libxml2/2.14/libxml2-2.14.6.tar.xz',
++        ])
++        self.assertEqual(archive.read_bytes(), b'downloaded archive')
++
++
++if __name__ == '__main__':
++    unittest.main()
 ```
 
 ---
 
-### Incident Patch 3: `56f31cec` (2026-11-13)
-**Commit Message**: Tests: Remove left-over debug statement.
+### Incident Patch 3: `105f8424` (2026-11-27)
+**Commit Message**: Build: Use already downloaded libxml2/libxslt archives without network access (GH-617)
 
-**File**: `src/lxml/tests/test_etree.py` (modified, +0/-1)
+download_libxml2() and download_libxslt() always fetched the directory listing of
+download.gnome.org to find the directory of the requested version before
+download_library() noticed that the archive was already in the download directory.
+Static builds with explicitly requested library versions and cached archives (as in CI,
+where the archives come from the "cache_libs" job) therefore still needed the network,
+and a failed DNS lookup broke the build.
+
+Check for an existing archive of an explicitly requested version first, with the same
+checksum verification as before, and look up the download directory only if the archive
+must be downloaded.  Builds that request no version still look up the latest one online.
+
+
+Claude-Session: https://claude.ai/code/session_01GwUvhmzgfkiZ6vo4uGyesN
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `buildlibxml.py` (modified, +19/-5)
 ```diff
-@@ -235,7 +235,6 @@ def test_qname_bytearray(self):
-         self.assertEqual(etree.QName(name), etree.QName("a"))
+@@ -253,6 +253,9 @@ def download_libxml2(dest_dir, version=None):
+         # Temporarily using the latest master (2.9.12+) until there is a release that supports lxml again.
+         from_location = "https://gitlab.gnome.org/GNOME/libxml2/-/archive/dea91c97debeac7c1aaf9c19f79029809e23a353/"
+         version = "dea91c97debeac7c1aaf9c19f79029809e23a353"
++    elif version and (existing_file := find_existing_download(dest_dir, 'libxml2', filename % version)):
++        # Already downloaded, no need to look up the download directory online.
++        return existing_file
+     else:
+         from_location = http_find_latest_version_directory(LIBXML2_LOCATION, version=version)
  
-         el = etree.Element(name)
--        print(el, repr(el))
-         self.assertEqual(etree.QName(el), etree.QName("a"))
+@@ -265,6 +268,9 @@ def download_libxslt(dest_dir, version=None):
+     #version_re = re.compile(r'LATEST_LIBXSLT_IS_([0-9.]+[0-9](?:-[abrc0-9]+)?)')
+     version_re = re.compile(r'libxslt-([0-9.]+[0-9])[.]tar[.]xz')
+     filename = 'libxslt-%s.tar.xz'
++    if version and (existing_file := find_existing_download(dest_dir, 'libxslt', filename % version)):
++        # Already downloaded, no need to look up the download directory online.
++        return existing_file
+     from_location = http_find_latest_version_directory(LIBXSLT_LOCATION, version=version)
+     return download_library(dest_dir, from_location, 'libxslt',
+                             version_re, filename, version=version)
+@@ -325,6 +331,15 @@ def file_exists(file_path: Path, size=None, digest=None):
+     return True
  
-         el.tag = name  # force tag to bytearray
+ 
++def find_existing_download(dest_dir, name, filename):
++    dest_filepath = Path(dest_dir) / filename
++    if not file_exists(dest_filepath, digest=ARCHIVE_HASHES.get(filename)):
++        return None
++    print(f'Using existing {name} downloaded into {dest_filepath} '
++          '(delete this file if you want to re-download the package)')
++    return dest_filepath
++
++
+ def download_library(dest_dir, location, name, version_re, filename, version=None):
+     if version is None:
+         try:
+@@ -352,13 +367,12 @@ def download_library(dest_dir, location, name, version_re, filename, version=Non
+     if version:
+         filename = filename % version
+ 
++    existing_file = find_existing_download(dest_dir, name, filename)
++    if existing_file:
++        return existing_file
++
+     full_url = urljoin(location, filename)
+     dest_filepath = Path(dest_dir) / filename
+-    if file_exists(dest_filepath, digest=ARCHIVE_HASHES.get(filename)):
+-        print(f'Using existing {name} downloaded into {dest_filepath} '
+-              '(delete this file if you want to re-download the package)')
+-        return dest_filepath
+-
+     print('Downloading %s into %s from %s' % (name, dest_filepath, full_url))
+     for retry_after_seconds in (2, 5, 10, None):
+         try:
+```
+
+**File**: `tools/test_library_downloads.py` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++"""Tests for downloading the library sources of static builds.
++
++Run with: python -m unittest discover -s tools -p test_library_downloads.py
++"""
++import hashlib
++import io
++import tempfile
++import unittest
++from email.message import Message
++from pathlib import Path
++from unittest.mock import patch
++from urllib.response import addinfourl
++
++import buildlibxml
++
++
++class SourceLibrariesTest(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.libs = Path(self.tmp.name)
++        self.addCleanup(patch.stopall)
++        patch.dict(buildlibxml.ARCHIVE_HASHES, clear=True).start()
++
++    def add_checksum(self, filename, content):
++        patch.dict(buildlibxml.ARCHIVE_HASHES,
++                   {filename: hashlib.sha256(content).hexdigest()}).start()
++
++    def serve_downloads(self):
++        downloads = []
++
++        def list_directories(request):
++            listing = b'<a href="1.1/">1.1/</a> <a href="2.14/">2.14/</a> <a href="2.15/">2.15/</a>'
++            return addinfourl(io.BytesIO(listing), Message(), request.full_url)
++
++        def retrieve(url, destination):
++            downloads.append(url)
++            Path(destination).write_bytes(b'downloaded archive')
++
++        patch('buildlibxml.urlopen', side_effect=list_directories).start()
++        patch('buildlibxml.urlretrieve', side_effect=retrieve).start()
++        return downloads
++
++    def test_uses_local_archives_of_requested_versions_without_network_access(self):
++        libxml2 = self.libs / 'libxml2-2.15.4.tar.xz'
++        libxml2.write_bytes(b'libxml2 archive')
++        libxslt = self.libs / 'libxslt-1.1.45.tar.xz'
++        libxslt.write_bytes(b'libxslt archive')
++        self.add_checksum(libxslt.name, b'libxslt archive')
++        for function in ('urlopen', 'urlretrieve'):
++            patch('buildlibxml.' + function, side_effect=AssertionError(
++                'Local archives of the requested versions must be reused')).start()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.15.4'), libxml2)
++        self.assertEqual(buildlibxml.download_libxslt(str(self.libs), '1.1.45'), libxslt)
++
++    def test_downloads_missing_archives_from_their_version_directories(self):
++        downloads = self.serve_downloads()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.14.6'),
++                         self.libs / 'libxml2-2.14.6.tar.xz')
++        self.assertEqual(buildlibxml.download_libxslt(str(self.libs), '1.1.45'),
++                         self.libs / 'libxslt-1.1.45.tar.xz')
++        self.assertEqual(downloads, [
++            'https://download.gnome.org/sources/libxml2/2.14/libxml2-2.14.6.tar.xz',
++            'https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.45.tar.xz',
++        ])
++
++    @unittest.skipUnless(hasattr(hashlib, 'file_digest'),
++                         'archive checksums are only verified in Python 3.11+')
++    def test_downloads_archive_again_if_its_checksum_does_not_match(self):
++        archive = self.libs / 'libxml2-2.14.6.tar.xz'
++        archive.write_bytes(b'truncated archive')
++        self.add_checksum(archive.name, b'downloaded archive')
++        downloads = self.serve_downloads()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.14.6'), archive)
++        self.assertEqual(downloads, [
++            'https://download.gnome.org/sources/libxml2/2.14/libxml2-2.14.6.tar.xz',
++        ])
++        self.assertEqual(archive.read_bytes(), b'downloaded archive')
++
++
++if __name__ == '__main__':
++    unittest.main()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #548** (closed): Allow bytearray parameters to qnames (@xmo-odoo)
-- **PR #547** (2026-11-13): Build: bump softprops/action-gh-release from 3.0.3 to 3.0.4 in the github-actions group (@dependabot[bot])
-- **PR #546** (2026-11-13): Pypy3.12 fixes (@mattip)
-- **PR #545** (2026-11-13): fix(html): select matching option in fill_form for single-valued select (@pcbeingused333)
-- **PR #543** (2026-11-07): Do not share _IndexPathEvaluator state between ElementPath searches (@Nayana-Naik73)
-- **PR #542** (2026-11-10): Fix soupparser performance issues (@PLPeeters)
+- **PR #617** (2026-11-27): Build: Use already downloaded libxml2/libxslt archives without network access (@pylaterreur)
+- **PR #616** (2026-11-27): Build: bump hendrikmuhs/ccache-action from 1.2.25 to 1.2.26 in the github-actions group (@dependabot[bot])
+- **PR #614** (closed): Do not start tracemalloc for the tests in free-threaded Python (@pylaterreur)
+- **PR #612** (2026-11-25): Wait for the threads of the thread tests without a timeout (@pylaterreur)
+- **PR #610** (2026-11-25): Release the first writer in test_lock_write_wait_writers only when the second one waits (@pylaterreur)
+- **PR #591** (2026-11-25): Make the generated etree.c independent of PYTHONHASHSEED and fix a base URL leak of resolvers (@pylaterreur)
 
 ---
 
@@ -2247,31 +2566,51 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build: bump softprops/action-gh-release (GH-547)
+## X. Tests: Wait for the threads of the thread tests without a timeout (GH-612)
 
 **RULE**:
-When implementing operations in `.github/workflows/wheels.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/lxml/tests/test_threading.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2bc2b79e`: Build: bump softprops/action-gh-release (GH-547). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `daf2d869`: Tests: Wait for the threads of the thread tests without a timeout (GH-612). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/wheels.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/lxml/tests/test_threading.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+        # No timeout: starting threads can take long on a busy machine.
+        sync = threading.Barrier(count + (main_func is not None))
+                counter['started'] += 1
+            sync.wait()  # wait until the other threads have started up
+        for i, thread in enumerate(threads):
+            try:
+                thread.start()
+            except BaseException:
+                # Let the started threads fail instead of waiting for the others forever.
+                sync.abort()
+                for started_thread in threads[:i]:
+                    started_thread.join()
+                raise
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+        sync = threading.Event()
+                started = counter['started'] + 1
+                counter['started'] = started
+            if started < count + (main_func is not None):
+                sync.wait(4)  # wait until the other threads have started up
+                assert sync.is_set()
+            sync.set()  # all waiting => go!
+        for thread in threads:
+            thread.start()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2bc2b79e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `daf2d869` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

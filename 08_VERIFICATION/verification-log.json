@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-663S",
-    "timestamp": "2026-11-26T13:26:28.456Z",
-    "repository": "zhouxiaoka/autoclip",
-    "learningId": "learn-github-zhouxiaoka-autoclip",
-    "contentHash": "40497fb07b871195d2a681cf6f606f0d42a60b03cee14788f208fd2369807faa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-68LI",
     "timestamp": "2026-11-26T13:26:31.686Z",
     "repository": "HemmingwayAI/Hemmingway-1",
@@ -7490,6 +7475,21 @@
     "repository": "indexable-inc/blaze",
     "learningId": "learn-github-indexable-inc-blaze",
     "contentHash": "6fa6ec8086da6607c427c4365869c8c456eef72fa4283f9c91482d49a4e63cf7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-QRXL",
+    "timestamp": "2026-11-28T01:10:00.681Z",
+    "repository": "lxml/lxml",
+    "learningId": "learn-github-lxml-lxml",
+    "contentHash": "af0506cc0391105b3366df6a402a77b8551d6118994e8085b3cfdd6a65cfc81f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

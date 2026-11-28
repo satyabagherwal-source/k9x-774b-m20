@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T01:00:43.615Z",
-  "total_records": 2867,
+  "last_updated": "2026-11-28T01:10:13.746Z",
+  "total_records": 2868,
   "domains": {
     "A": {
       "total": 27,
@@ -2704,7 +2704,7 @@
       ]
     },
     "K": {
-      "total": 187,
+      "total": 188,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2892,7 +2892,8 @@
         "domain_intelligence-quality-verification-intelligence-meshery-meshery-learnings-core-invariants",
         "DOM-K-1440511C",
         "domain_intelligence-quality-verification-intelligence-maziyarpanahi-openmed-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-maziyarpanahi-openmed-learnings-core-invariant"
+        "domain_intelligence-quality-verification-intelligence-maziyarpanahi-openmed-learnings-core-invariant",
+        "domain_intelligence-quality-verification-intelligence-lxml-lxml-learnings-core-invariants"
       ]
     },
     "L": {
@@ -9600,8 +9601,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "a7c2b3a818c309fb69842d738841875c28aea6e9c5ed8a86f636881397b64e66",
-      "created_at": "2026-11-28T01:00:43.615Z"
+      "content_hash": "71a7dbcd4eb4018c5d606557d7dd5b82e2de0c09a9445897540dab806dbb7151",
+      "created_at": "2026-11-28T01:10:12.184Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -25152,8 +25153,8 @@
       "title": "Quality & Verification Intelligence: lxml/lxml Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-lxml-lxml-quality-verification-intelligence-lxml-lxml-core-invariants.md",
       "repository": "lxml/lxml",
-      "content_hash": "4ba7da5992affeea6fb77a56c5a47c7d39365aeb1162d0815b4f784bed642bab",
-      "created_at": "2026-11-16T18:18:50.400Z"
+      "content_hash": "f2fbb8811bbf84c51835a205558900317c699e6531aba1b6f0f1e8c4a2a376e8",
+      "created_at": "2026-11-28T01:10:01.320Z"
     },
     "domain_intelligence-technical-construction-intelligence-gravitl-netmaker-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gravitl-netmaker-core-invariants",
@@ -46814,8 +46815,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "424e328956e79895e8a33a1b0d7f0281c8284b0b5580781552c6f02744a9732f",
-      "created_at": "2026-11-28T00:50:58.779Z"
+      "content_hash": "e2052c9e3228b86ac592ff39bc5384215bb702a783d7ec10c32e7a07656e74eb",
+      "created_at": "2026-11-28T01:10:13.746Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -48465,6 +48466,15 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-28T00:39:03.593Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-lxml-lxml-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-lxml-lxml-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: lxml-lxml-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-lxml-lxml-learnings-quality-verification-intelligence-lxml-lxml-learnings-core-i.md",
+      "repository": "lxml-lxml-learnings",
+      "content_hash": "e66b135799046687bff228b46930e66b7e65ab81b4ae4c9720f963d9713bac07",
+      "created_at": "2026-11-28T01:10:10.916Z"
     }
   }
 }

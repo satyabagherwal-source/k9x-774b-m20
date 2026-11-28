@@ -4,22 +4,22 @@
 {
   "source_repository": "lxml/lxml",
   "source_url": "https://github.com/lxml/lxml",
-  "source_version": "eee8a0c2",
+  "source_version": "1bbb09aa",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-24T16:45:59.715Z",
+  "timestamp": "2026-11-28T01:10:01.041Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lxml-lxml",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lxml/lxml](https://github.com/lxml/lxml) (Revision: `eee8a0c2`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-24T16:45:59.715Z`  
+> **Provenance**: Harvested from [lxml/lxml](https://github.com/lxml/lxml) (Revision: `1bbb09aa`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-28T01:10:01.041Z`  
 > **Learning ID**: `learn-github-lxml-lxml`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `lxml/lxml` (Commit: `eee8a0c2`)
+- **Target Repository**: `lxml/lxml` (Commit: `1bbb09aa`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lxml-lxml-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lxml/lxml](https://github.com/lxml/lxml))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:45:57.859Z  
+> **Harvest Timestamp**: 2026-11-28T01:09:59.001Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The lxml XML toolkit for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 3078 stars
+- **Stars / Engagement**: 3079 stars
 
 ---
 
@@ -1718,12 +1718,15 @@ def convert_changelog(lxml_path, changelog_file_path, rst2html_script, styleshee
     finally:
         f.close()
 
-    links = dict(LP='`%s <https://bugs.launchpad.net/lxml/+bug/%s>`_',
-                 GH='`%s <https://github.com/lxml/lxml/issues/%s>`_')
-    replace_tracker_links = re.compile('((LP|GH)#([0-9]+))').sub
+    links = dict(
+        LP='`%s <https://bugs.launchpad.net/lxml/+bug/%s>`_',
+        GH='`%s <https://github.com/lxml/lxml/issues/%s>`_',
+        GHSA='`%s <https://github.com/lxml/lxml/security/advisories/%s>`_',
+    )
+    replace_tracker_links = re.compile('(?<= )((LP#|GH#|GHSA-)([0-9a-z-]+))').sub
     def insert_link(match):
         text, ref_type, ref_id = match.groups()
-        return links[ref_type] % (text, ref_id)
+        return links[ref_type[:-1]] % (text, ref_id)
     content = replace_tracker_links(insert_link, content)
 
     command = [sys.executable, rst2html_script] + RST2HTML_OPTIONS.split() + [
@@ -1794,10 +1797,7 @@ def publish(dirname, lxml_path, release, with_donations=True):
     for section, text_files in SITE_STRUCTURE:
         section_head = make_menu_section_head(section, menu_div)
         for filename in text_files:
-            if filename.startswith('@'):
-                # special menu entry
-                page_title = filename[1:]
-                url = h
+            if filename.startswith('@')
 ```
 
 ### Core Architecture Module: `doc/mklatex.py`
@@ -2123,11 +2123,11 @@ def publish(dirname, lxml_path, release):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #564** (2026-11-23): **escape changed link hrefs in htmldiff output**
-  *Symptoms*: Before, with lxml 6.1.3:      >>> htmldiff('<a href="http://example.com/">link</a>',     ...          '<a href="&lt;img src=x onerror=alert(1)&gt;">link</a>')     '<a href="&lt;img%20src=x%20onerror=alert(1)&gt;">link <ins> Link: <img src="x" onerror="alert(1)"></ins> <del> Link: http://example.com/</del> </a>'  Every word token is passed through `html_escape()` in `flatten_el()`, but a changed href is rendered by `href_token.html()` straight from `el.get('href')`, which is already entity-decoded. So an href that is harmless in the input (and that a sanitiser lets through) turns into live markup in the diff, which is usually shown to someone else, like an editor reviewing a wiki change. The fix escapes it in `href_token.html()`, the one place it is printed as text, and adds a doctest next to the existing href example. 
+- **Issue #617** (2026-11-27): **Build: Use already downloaded libxml2/libxslt archives without network access**
+  *Symptoms*: `download_libxml2()` and `download_libxslt()` in `buildlibxml.py` always fetch the directory listing of https://download.gnome.org/sources/libxml2/ or https://download.gnome.org/sources/libxslt/ (`http_find_latest_version_directory()`) to find the directory of the requested version. Only then does `download_library()` find that the archive is already in the download directory, and it uses it without needing that directory. So a static build with explicitly requested library versions needs the network even when all archives are already there, and a failed DNS lookup breaks it.  That is what happened in https://github.com/lxml/lxml/actions/runs/45713449375/job/139558261508 (`ci (macos-latest, 3.16-dev, true)` on https://github.com/lxml/lxml/pull/602). The CI jobs restore `libs/` from the cache of the `cache_libs` job and set `LIBXML2_VERSION=2.15.4` and `LIBXSLT_VERSION=1.1.45`. The first `setup.py build_ext` in "Run CI" reused all four archives. `make test` then runs `setup.py build_ext` again: it reused zlib and libiconv, and about 30 seconds later the directory lookup for libxml2 failed:  ``` Using existing libiconv downloaded into libs/libiconv-1.19.tar.gz (delete this file if you want to re-download the package) Unpacking libiconv-1.19.tar.gz into build/tmp Traceback (most recent call last): ... socket.gaierror: [Errno 8] nodename nor servname provided, or not known ...   File "/Users/runner/work/lxml/lxml/buildlibxml.py", line 404, in download_libxml2     from_location = 
 
-- **Issue #562** (2026-11-23): **Build: bump hendrikmuhs/ccache-action from 1.2.24 to 1.2.25 in the github-actions group**
-  *Symptoms*: Bumps the github-actions group with 1 update: [hendrikmuhs/ccache-action](https://github.com/hendrikmuhs/ccache-action).  Updates `hendrikmuhs/ccache-action` from 1.2.24 to 1.2.25 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/hendrikmuhs/ccache-action/releases">hendrikmuhs/ccache-action's releases</a>.</em></p> <blockquote> <h2>v1.2.25</h2> <h2>What's Changed</h2> <ul> <li>Bump <code>@​types/node</code> from 26.2.0 to 26.4.0 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/hendrikmuhs/ccache-action/pull/466">hendrikmuhs/ccache-action#466</a></li> <li>Bump <code>@​types/node</code> from 26.4.0 to 26.6.2 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/hendrikmuhs/ccache-action/pull/474">hendrikmuhs/ccache-action#474</a></li> <li>Bump handlebars from 4.7.9 to 4.7.10 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/hendrikmuhs/ccache-action/pull/478">hendrikmuhs/ccache-action#478</a></li> <li>Bump undici from 6.28.0 to 6.29.1 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/hendrikmuhs/ccache-action/pull/479">hendrikmuhs/ccache-action#479</a></li> <li>Bump brace-expansion by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="htt
+- **Issue #616** (2026-11-27): **Build: bump hendrikmuhs/ccache-action from 1.2.25 to 1.2.26 in the github-actions group**
+  *Symptoms*: Bumps the github-actions group with 1 update: [hendrikmuhs/ccache-action](https://github.com/hendrikmuhs/ccache-action).  Updates `hendrikmuhs/ccache-action` from 1.2.25 to 1.2.26 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/hendrikmuhs/ccache-action/releases">hendrikmuhs/ccache-action's releases</a>.</em></p> <blockquote> <h2>v1.2.26</h2> <h2>What's Changed</h2> <ul> <li>ci: automatically advance floating version tags on release by <a href="https://github.com/raycppwizard"><code>@​raycppwizard</code></a> in <a href="https://redirect.github.com/hendrikmuhs/ccache-action/pull/470">hendrikmuhs/ccache-action#470</a></li> </ul> <h2>New Contributors</h2> <ul> <li><a href="https://github.com/raycppwizard"><code>@​raycppwizard</code></a> made their first contribution in <a href="https://redirect.github.com/hendrikmuhs/ccache-action/pull/470">hendrikmuhs/ccache-action#470</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/hendrikmuhs/ccache-action/compare/v1.2.25...v1.2.26">https://github.com/hendrikmuhs/ccache-action/compare/v1.2.25...v1.2.26</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/hendrikmuhs/ccache-action/commit/e91f31892a1d1b8c44424b1a94c0b7f52d337168"><code>e91f318</code></a> ci: automatically advance floating version tags on release (<a href="https://redirect.github.com/hendrikmuhs/ccache-action/issues/470">#470</a>)</li> <li>See full diff
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2144,650 +2144,406 @@ def publish(dirname, lxml_path, release):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6aa4130f` (2026-11-22)
-**Commit Message**: Avoid quadratic rebuilding in `rewrite_links()` (GH-551)
+### Incident Patch 1: `daf2d869` (2026-11-25)
+**Commit Message**: Tests: Wait for the threads of the thread tests without a timeout (GH-612)
 
-`rewrite_links()` currently rebuilds the same text for each link it replaces, causing quadratic behaviour as the number of links increases. It now groups the links returned by `iterlinks()` per `(element, attribute)` and rebuilds `<style>` text and `style` attribute values once per value instead of once per link.
+_run_threads() let each thread wait at most 4 seconds for the other threads to start.  On a
+busy machine, starting the threads can take longer, especially with free-threaded Python.  A
+thread whose wait timed out died with a bare AssertionError, and the test failed with a
+message like "10 != 11" (LP#2175798).
 
-On an extreme case with 32k links, rewriting `<style>` text drops from 46.9s to 0.11s.
+Wait at a threading.Barrier without a timeout instead.  If starting a thread fails, abort the
+barrier so that the threads that already started do not wait forever, and raise the error.
 
-Note that this introduces a small behaviour change (but it aligns it with the documented behaviour): in `rewrite_links()`, a link function returning `None` for a link inside a `<style>` text or `style` attribute now removes the entire value. Currently this either crashes or leaves broken text behind.
 
-**File**: `src/lxml/html/__init__.py` (modified, +47/-21)
+Claude-Session: https://claude.ai/code/session_01GwUvhmzgfkiZ6vo4uGyesN
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/lxml/tests/test_threading.py` (modified, +13/-9)
 ```diff
-@@ -44,6 +44,8 @@
+@@ -22,18 +22,15 @@ def _run_thread(self, func):
+         thread.join()
  
- from collections.abc import MutableMapping, MutableSet
- from functools import partial
-+from itertools import groupby
-+from operator import itemgetter
- from urllib.parse import urljoin
+     def _run_threads(self, count, func, main_func=None):
+-        sync = threading.Event()
++        # No timeout: starting threads can take long on a busy machine.
++        sync = threading.Barrier(count + (main_func is not None))
+         lock = threading.Lock()
+         counter = dict(started=0, finished=0, failed=0)
  
- from .. import etree
-@@ -598,28 +600,52 @@ def rewrite_links(self, link_repl_func, resolve_base_href=True,
-         elif resolve_base_href:
-             self.resolve_base_href()
+         def sync_start(func):
+             with lock:
+-                started = counter['started'] + 1
+-                counter['started'] = started
+-            if started < count + (main_func is not None):
+-                sync.wait(4)  # wait until the other threads have started up
+-                assert sync.is_set()
+-            sync.set()  # all waiting => go!
++                counter['started'] += 1
++            sync.wait()  # wait until the other threads have started up
+             try:
+                 func()
+             except:
+@@ -45,8 +42,15 @@ def sync_start(func):
+                     counter['finished'] += 1
  
--        for el, attrib, link, pos in self.iterlinks():
--            new_link = link_repl_func(link.strip())
--            if new_link == link:
--                continue
--            if new_link is None:
--                # Remove the attribute or element content
--                if attrib is None:
--                    el.text = ''
--                else:
--                    del el.attrib[attrib]
--                continue
--
--            if attrib is None:
--                new = el.text[:pos] + new_link + el.text[pos+len(link):]
--                el.text = new
-+        for (el, attr_name), links in groupby(self.iterlinks(), key=itemgetter(0, 1)):
-+            if attr_name is None or attr_name == 'style':
-+                # <style> text and "style" attribute: the links of one value
-+                # are reported last to first.  Rebuild the value once,
-+                # instead of once per link.
-+                value = el.text if attr_name is None else el.get(attr_name)
-+                unprocessed_end = len(value)
-+                chunks = []  # replacements and the text following them, reversed
-+                removed = False
-+                for _, _, link, pos in links:
-+                    new_link = link_repl_func(link.strip())
-+                    if new_link == link:
-+                        continue
-+                    if new_link is None:
-+                        # Remove the attribute or element content
-+                        removed = True
-+                        if attr_name is None:
-+                            el.text = ''
-+                        else:
-+                            del el.attrib[attr_name]
-+                        break
-+                    chunks.append(value[pos+len(link):unprocessed_end])
-+                    chunks.append(new_link)
-+                    unprocessed_end = pos
-+                if chunks and not removed:
-+                    new = value[:unprocessed_end] + ''.join(reversed(chunks))
-+                    if attr_name is None:
-+                        el.text = new
-+                    else:
-+                        el.set(attr_name, new)
-             else:
--                cur = el.get(attrib)
--                if not pos and len(cur) == len(link):
--                    new = new_link  # most common case
--                else:
--                    new = cur[:pos] + new_link + cur[pos+len(link):]
--                el.set(attrib, new)
-+                for _, _, link, pos in links:
-+                    new_link = link_repl_func(link.strip())
-+                    if new_link == link:
-+                        continue
-+                    if new_link is None:
-+                        # Remove the attribute
-+                        del el.attrib[attr_name]
-+                        continue
-+
-+                    cur = el.get(attr_name)
-+                    if not pos and len(cur) == len(link):
-+                        new = new_link  # complete replacement, most common case
-+                    else:
-+                        new = cur[:pos] + new_link + cur[pos+len(link):]
-+                    el.set(attr_name, new)
- 
- 
- class _MethodFunc:
-```
-
-**File**: `src/lxml/html/tests/test_rewritelinks.py` (modified, +72/-0)
-```diff
-@@ -1,9 +1,81 @@
- import doctest
-+import sys
- import unittest
-+from lxml import html
-+
-+
-+class TestRewriteLinks(unittest.TestCase):
-+    def test_rewrite_links_style_text_many_urls(self):
-+        css = 'a{background:url(img/%d.png)} @import "sheet%d.css";\n'
-+        count = 50
-+        doc = html.fromstring(
-+            '<html><head><style>%s</style></head><body></body></html>'
-+            % ''.join(css % (n, n) for n in range(count)))
-+        doc.make_links_absolute('http://example.com/base/')
-+        self.assertEqual(
-+            doc.find('.//style').text,
-+            ''.join(
-+                css.replace('img/', 'http://example.com/base/img/')
-+                   .replace('"sheet', '"http://example.com/base/sheet') % (n, n)
-+                for n in range(count)))
-+
-+    def test_rewrite_links_style_text_unchanged_and_changed(self):
-+        doc = html.fromstring(
-+            '<html><head><style>a{b:url(keep)} c{d:url(x)} e{f:url(keep)} g{h:url(y)}'
-+            '</style></head></html>')
-+        doc.rewrite_links(
-+            lambda link: link if link == 'keep' else 'LONG-' + link,
-+            resolve_base_href=False)
-+        self.assertEqual(
-+            doc.find('.//style').text,
-+            'a{b:url(keep)} c{d:url(LONG-x)} e{f:url(keep)} g{h:url(LONG-y)}')
-+
-+    def test_rewrite_links_style_attribute_many_urls(self):
-+        doc = html.fromstring(
-+            '<div style="a:url(1.png);b:url(\'2.png\');c:url(&quot;3.png&quot;)"></div>')
-+        doc.rewrite_links(lambda link: 'http://h/' + link, resolve_base_href=False)
-+        self.assertEqual(
-+            doc.get('style'),
-+            'a:url(http://h/1.png);b:url(\'http://h/2.png\');c:url("http://h/3.png")')
-+
-+    def test_rewrite_links_none_removes_style_text_and_attribute(self):
-+        doc = html.fromstring(
-+            '<html><head><style>a{b:url(x)} c{d:url(y)}</style></head>'
-+            '<body><div style="a:url(x);b:url(y)" id="d"><a href="z">t</a></div></body></html>')
-+        doc.rewrite_links(
-+            lambda link: None if link == 'y' else link + '2',
-+            resolve_base_href=False)
-+        self.assertEqual(doc.find('.//style').text, '')
-+        div = doc.find('.//div')
-+        self.assertNotIn('style', div.attrib)
-+        self.assertEqual(div.get('id'), 'd')
-+        self.assertEqual(div[0].get('href'), 'z2')
-+
-+    def test_rewrite_links_style_text_and_attribute_in_one_pass(self):
-+        doc = html.fromstring(
-+            '<html><head><style style="a:url(1);b:url(2)">c{d:url(3)} e{f:url(4)}'
-+            '</style></head></html>')
-+        doc.rewrite_links(lambda link: 'N' + link + 'N', resolve_base_href=False)
-+        style = doc.find('.//style')
-+        self.assertEqual(style.text, 'c{d:url(N3N)} e{f:url(N4N)}')
-+        self.assertEqual(style.get('style'), 'a:url(N1N);b:url(N2N)')
-+
-+    def test_rewrite_links_none_after_replacement_in_same_value(self):
-+        # Links of one value are reported last to first, so the removal of
-+        # the first link happens after the later ones were replaced.
-+        doc = html.fromstring(
-+            '<html><head><style>a{b:url(x)} c{d:url(y)}</style></head>'
-+            '<body><div style="a:url(x);b:url(y)"></div></body></html>')
-+        doc.rewrite_links(
-+            lambda link: None if link == 'x' else link + '2',
-+            resolve_base_href=False)
-+        self.assertEqual(doc.find('.//style').text, '')
-+        self.assertNotIn('style', doc.find('.//div').attrib)
- 
- def test_suite():
-     suite = unittest.TestSuite()
-     suite.addTests([doctest.DocFileSuite('test_rewritelinks.txt')])
-+    suite.addTest(unittest.TestLoader().loadTestsFromModule(sys.modules[__name__]))
-     return suite
- 
- if __name__ == '__main__':
+         threads = [threading.Thread(target=sync_start, args=(func,)) for _ in range(count)]
+-        for thread in threads:
+-            thread.start()
++        for i, thread in enumerate(threads):
++            try:
++                thread.start()
++            except BaseException:
++                # Let the started threads fail instead of waiting for the others forever.
++                sync.abort()
++                for started_thread in threads[:i]:
++                    started_thread.join()
++                raise
+         if main_func is not None:
+             sync_start(main_func)
+         for thread in threads:
 ```
 
 ---
 
-### Incident Patch 2: `e4be4f82` (2026-11-23)
-**Commit Message**: Fix Windows library compiler mismatches (GH-555)
+### Incident Patch 2: `ae5dfef7` (2026-11-27)
+**Commit Message**: Build: Use already downloaded libxml2/libxslt archives without network access (GH-617)
 
-Select the MSVC toolset explicitly and download libraries built with the same compiler version. Include that version in cache keys to prevent reusing incompatible libraries.
+download_libxml2() and download_libxslt() always fetched the directory listing of
+download.gnome.org to find the directory of the requested version before
+download_library() noticed that the archive was already in the download directory.
+Static builds with explicitly requested library versions and cached archives (as in CI,
+where the archives come from the "cache_libs" job) therefore still needed the network,
+and a failed DNS lookup broke the build.
 
-**File**: `.github/workflows/cache_libs.yml` (modified, +16/-5)
+Check for an existing archive of an explicitly requested version first, with the same
+checksum verification as before, and look up the download directory only if the archive
+must be downloaded.  Builds that request no version still look up the latest one online.
+
+
+Claude-Session: https://claude.ai/code/session_01GwUvhmzgfkiZ6vo4uGyesN
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `buildlibxml.py` (modified, +19/-5)
 ```diff
-@@ -64,9 +64,12 @@ jobs:
-           - "ubuntu-22.04"
-           - "ubuntu-22.04-arm"
-           - "macos-latest"
--          - "windows-2022"    # win32
--          - "windows-latest"  # win_amd64
-           - "windows-11-arm"
-+        include:
-+          - os: "windows-2022"
-+            windows-arch: "win32"
-+          - os: "windows-2022"
-+            windows-arch: "win64"
+@@ -420,6 +420,9 @@ def download_libxml2(dest_dir, version=None):
+         # Temporarily using the latest master (2.9.12+) until there is a release that supports lxml again.
+         from_location = "https://gitlab.gnome.org/GNOME/libxml2/-/archive/dea91c97debeac7c1aaf9c19f79029809e23a353/"
+         version = "dea91c97debeac7c1aaf9c19f79029809e23a353"
++    elif version and (existing_file := find_existing_download(dest_dir, 'libxml2', filename % version)):
++        # Already downloaded, no need to look up the download directory online.
++        return existing_file
+     else:
+         from_location = http_find_latest_version_directory(LIBXML2_LOCATION, version=version)
  
-     runs-on: ${{ matrix.os }}
+@@ -432,6 +435,9 @@ def download_libxslt(dest_dir, version=None):
+     #version_re = re.compile(r'LATEST_LIBXSLT_IS_([0-9.]+[0-9](?:-[abrc0-9]+)?)')
+     version_re = re.compile(r'libxslt-([0-9.]+[0-9])[.]tar[.]xz')
+     filename = 'libxslt-%s.tar.xz'
++    if version and (existing_file := find_existing_download(dest_dir, 'libxslt', filename % version)):
++        # Already downloaded, no need to look up the download directory online.
++        return existing_file
+     from_location = http_find_latest_version_directory(LIBXSLT_LOCATION, version=version)
+     return download_library(dest_dir, from_location, 'libxslt',
+                             version_re, filename, version=version)
+@@ -492,6 +498,15 @@ def file_exists(file_path: Path, size=None, digest=None):
+     return True
  
-@@ -80,25 +83,33 @@ jobs:
-     - name: Check out the repo
-       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
  
-+    - name: Identify Windows compiler
-+      if: runner.os == 'Windows'
-+      id: msvc
-+      shell: bash
-+      run: |
-+        version=$(python buildlibxml.py --msvc-version ${{ matrix.windows-arch }})
-+        echo "version=$version" >> "$GITHUB_OUTPUT"
++def find_existing_download(dest_dir, name, filename):
++    dest_filepath = Path(dest_dir) / filename
++    if not file_exists(dest_filepath, digest=ARCHIVE_HASHES.get(filename)):
++        return None
++    print(f'Using existing {name} downloaded into {dest_filepath} '
++          '(delete this file if you want to re-download the package)')
++    return dest_filepath
 +
-     - name: Cache [libs]
-       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-       with:
-         path: |
-           libs/*.xz
-           libs/*.gz
-           libs/*.zip
--        key: libs-${{ runner.os }}-${{ matrix.os == 'windows-2022' && 'i686' || runner.arch }}-${{ env.LIBXML2_VERSION }}-${{ env.LIBXSLT_VERSION }}-${{ env.LIBICONV_VERSION }}-${{ env.ZLIB_VERSION }}
-+        key: libs-${{ runner.os }}-${{ matrix.windows-arch == 'win32' && 'i686' || runner.arch }}-${{ env.LIBXML2_VERSION }}-${{ env.LIBXSLT_VERSION }}-${{ env.LIBICONV_VERSION }}-${{ env.ZLIB_VERSION }}${{ steps.msvc.outputs.version && format('-msvc-{0}', steps.msvc.outputs.version) || '' }}
++
+ def download_library(dest_dir, location, name, version_re, filename, version=None):
+     if version is None:
+         try:
+@@ -519,13 +534,12 @@ def download_library(dest_dir, location, name, version_re, filename, version=Non
+     if version:
+         filename = filename % version
  
-     - name: Download latest libraries
-       env:
-         GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
--      run: python3 buildlibxml.py --download-only  ${{ matrix.os == 'windows-2022' && 'win32' || '' }}
-+      run: python3 buildlibxml.py --download-only  ${{ matrix.windows-arch }}
- 
-     - name: Check Windows library versions
-       if: ${{ contains(matrix.os, 'windows-') }}
-       run: |
-         bash -c '
--        for file in  libs/zlib-${{ inputs.WIN_ZLIB_VERSION }}.*.zip  libs/iconv-${{ inputs.WIN_LIBICONV_VERSION }}.*.zip  libs/libxml2-${{ inputs.WIN_LIBXML2_VERSION }}.*.zip  libs/libxslt-${{ inputs.WIN_LIBXSLT_VERSION }}.*.zip; do
-+        for file in  libs/zlib-${{ inputs.WIN_ZLIB_VERSION }}.*.msvc-${{ steps.msvc.outputs.version }}.zip  libs/iconv-${{ inputs.WIN_LIBICONV_VERSION }}.*.msvc-${{ steps.msvc.outputs.version }}.zip  libs/libxml2-${{ inputs.WIN_LIBXML2_VERSION }}.*.msvc-${{ steps.msvc.outputs.version }}.zip  libs/libxslt-${{ inputs.WIN_LIBXSLT_VERSION }}.*.msvc-${{ steps.msvc.outputs.version }}.zip; do
-             [[ -f "$file" ]] || { echo "MISSING: $file" ; exit 1; }
-         done
-         '
++    existing_file = find_existing_download(dest_dir, name, filename)
++    if existing_file:
++        return existing_file
++
+     full_url = urljoin(location, filename)
+     dest_filepath = Path(dest_dir) / filename
+-    if file_exists(dest_filepath, digest=ARCHIVE_HASHES.get(filename)):
+-        print(f'Using existing {name} downloaded into {dest_filepath} '
+-              '(delete this file if you want to re-download the package)')
+-        return dest_filepath
+-
+     print('Downloading %s into %s from %s' % (name, dest_filepath, full_url))
+     for retry_after_seconds in (2, 5, 10, None):
+         try:
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +9/-1)
+**File**: `tools/test_library_downloads.py` (added, +82/-0)
 ```diff
-@@ -261,6 +261,14 @@ jobs:
-           create-symlink: true
-           key: ${{ runner.os }}-${{ runner.arch }}-ccache${{ matrix.extra_hash }}-${{ matrix.python-version }}-${{ matrix.env.STATIC_DEPS }}-${{ matrix.env.LIBXML2_VERSION || env.LIBXML2_VERSION }}-${{ matrix.env.LIBXSLT_VERSION || env.LIBXSLT_VERSION }}
- 
-+      - name: Identify Windows compiler
-+        if: runner.os == 'Windows' && matrix.env.STATIC_DEPS
-+        id: msvc
-+        shell: bash
-+        run: |
-+          version=$(python buildlibxml.py --msvc-version)
-+          echo "version=$version" >> "$GITHUB_OUTPUT"
+@@ -0,0 +1,82 @@
++"""Tests for downloading the library sources of static builds.
 +
-       - name: Cache [libs]
-         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-         if: matrix.env.STATIC_DEPS
-@@ -269,7 +277,7 @@ jobs:
-             libs/*.xz
-             libs/*.gz
-             libs/*.zip
--          key: libs-${{ runner.os }}-${{ runner.arch }}-${{ env.LIBXML2_VERSION }}-${{ env.LIBXSLT_VERSION }}-${{ env.LIBICONV_VERSION }}-${{ env.ZLIB_VERSION }}
-+          key: libs-${{ runner.os }}-${{ runner.arch }}-${{ env.LIBXML2_VERSION }}-${{ env.LIBXSLT_VERSION }}-${{ env.LIBICONV_VERSION }}-${{ env.ZLIB_VERSION }}${{ steps.msvc.outputs.version && format('-msvc-{0}', steps.msvc.outputs.version) || '' }}
- 
-       - name: Run CI
-         continue-on-error: ${{ matrix.allowed_failure || false }}
-```
-
-**File**: `.github/workflows/wheels.yml` (modified, +9/-1)
-```diff
-@@ -141,14 +141,22 @@ jobs:
-       - name: Check out the repo
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
-+      - name: Identify Windows compiler
-+        if: runner.os == 'Windows'
-+        id: msvc
-+        shell: bash
-+        run: |
-+          version=$(python buildlibxml.py --msvc-version ${{ contains(matrix.only, 'win32') && 'win32' || contains(matrix.only, 'win_arm64') && 'win-arm64' || 'win64' }})
-+          echo "version=$version" >> "$GITHUB_OUTPUT"
-+
-       - name: Cache [libs]
-         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-         with:
-           path: |
-             libs/*.xz
-             libs/*.gz
-             libs/*.zip
--          key: libs-${{ runner.os }}-${{ contains(matrix.only, 'win32') && 'i686' || runner.arch }}-${{ env.LIBXML2_VERSION }}-${{ env.LIBXSLT_VERSION }}-${{ env.LIBICONV_VERSION }}-${{ env.ZLIB_VERSION }}
-+          key: libs-${{ runner.os }}-${{ contains(matrix.only, 'win32') && 'i686' || runner.arch }}-${{ env.LIBXML2_VERSION }}-${{ env.LIBXSLT_VERSION }}-${{ env.LIBICONV_VERSION }}-${{ env.ZLIB_VERSION }}${{ steps.msvc.outputs.version && format('-msvc-{0}', steps.msvc.outputs.version) || '' }}
- 
-       - name: Set up QEMU
-         if: runner.os == 'Linux' && !(endsWith(matrix.platform, 'x86_64') || endsWith(matrix.platform, 'i686') || endsWith(matrix.platform, 'aarch64'))
-```
-
-**File**: `INSTALL.txt` (modified, +10/-1)
-```diff
-@@ -205,12 +205,21 @@ Due to the additional lack of package management of this platform,
- it is best to link the library dependencies statically if you decide
- to build from sources, rather than using a binary installer.  For
- that, lxml can use the `binary distribution of libxml2 and libxslt
--<http://www.zlatkovic.com/libxml.en.html>`_, which it downloads
-+<https://github.com/lxml/libxml2-win-binaries/releases>`_, which it downloads
- automatically during the static build.  It needs both libxml2 and
- libxslt, as well as iconv and zlib, which are available from the
- same download site.  Further build instructions are in the
- `source build documentation <build.html>`_.
- 
-+These static libraries use MSVC whole-program optimisation (``/GL``), so
-+lxml must use the exact compiler version that built them.  The build selects
-+the installed MSVC 14.44 toolset for x86/x64 or 14.52 for ARM64 and keeps
-+setuptools from selecting another compiler.  Install the required toolset
-+with the Visual Studio Installer.  Archive names include ``_MSC_FULL_VER``;
-+unqualified archives and archives from another compiler patch are not reused.
-+If no matching archive is published, rebuild and publish the Windows
-+libraries with the same toolset before building lxml.
-+
- 
- Source builds on MacOS-X
- ------------------------
-```
-
-**File**: `Makefile` (modified, +4/-1)
-```diff
-@@ -164,7 +164,10 @@ pdf: apipdf pdfclean
- 
- # Two pdflatex runs are needed to build the correct Table of contents.
- 
--test: test_inplace
-+test_windows_library_downloads:
-+	$(PYTHON) -m unittest discover -s tools -p test_windows_library_downloads.py
-+
-+test: test_inplace  # test_windows_library_downloads
- 
- valtest: valgrind_test_inplace
- 
-```
-
-**File**: `buildlibxml.py` (modified, +83/-12)
-```diff
-@@ -3,8 +3,10 @@
- import os
- import platform
- import re
-+import subprocess
- import sys
- import tarfile
-+import tempfile
- import time
- from contextlib import closing
- from ftplib import FTP
-@@ -32,6 +34,65 @@
- 
- # use pre-built libraries on Windows
- 
-+def windows_architecture(arch=None):
-+    if arch:
-+        return arch.replace('_', '-')
-+    target = os.getenv('VSCMD_ARG_TGT_ARCH')
-+    if target:
-+        return {'x86': 'win32', 'x64': 'win64', 'arm64': 'win-arm64'}[target]
-+    if platform.machine() == 'ARM64' and sys.maxsize > 2**32:
-+        return 'win-arm64'
-+    return 'win32' if sys.maxsize <= 2**32 else 'win64'
-+
-+
-+def configure_windows_msvc(arch):
-+    # Keep these toolset families in sync with libxml2-win-binaries/build.ps1.
-+    # Archives are additionally qualified by _MSC_FULL_VER: servicing updates
-+    # within a toolset family can also make /GL objects incompatible.
-+    toolset = '14.52' if arch == 'win-arm64' else '14.44'
-+    target = {'win32': 'x86', 'win64': 'x64', 'win-arm64': 'arm64'}[arch]
-+    host = 'arm64' if platform.machine() == 'ARM64' else 'x64'
-+    vcvars_arch = target if host == target else f'{host}_{target}'
-+    vswhere = os.path.join(os.environ['ProgramFiles(x86)'],
-+                           'Microsoft Visual Studio', 'Installer', 'vswhere.exe')
-+    installations = subprocess.check_output(
-+        [vswhere, '-all', '-prerelease', '-products', '*', '-utf8', '-property',
-+         'installationPath'], encoding='utf-8').splitlines()
-+    for installation in installations:
-+        vc = Path(installation) / 'VC'
-+        versions = sorted((vc / 'Tools' / 'MSVC').glob(toolset + '.*'),
-+                          key=lambda path: tuple(map(int, path.name.split('.'))),
-+                          reverse=True)
-+        if not versions:
-+            continue
-+        version = versions[0].name
-+        vcvars = vc / 'Auxiliary' / 'Build' / 'vcvarsall.bat'
-+        output = subprocess.check_output(
-+            f'cmd.exe /d /u /s /c ""{vcvars}" {vcvars_arch} '
-+            f'-vcvars_ver={version} >nul && set"', encoding='utf-16le')
-+        for line in output.splitlines():
-+            key, sep, value = line.partition('=')
-+            if sep and key:
-+                os.environ[key] = value
-+        if os.environ['VCToolsVersion'].rstrip('\\/') != version:
-+            raise RuntimeError(f'Visual Studio did not select MSVC {version}')
-+        # Prevent setuptools from replacing the selected compiler environment.
-+        os.environ['DISTUTILS_USE_SDK'] = '1'
-+        os.environ['MSSdk'] = '1'
-+        with tempfile.TemporaryDirectory() as tmp:
-+            probe = Path(tmp) / 'msvc-version.c'
-+            probe.write_text('_MSC_FULL_VER\n', encoding='ascii')
-+            compiler_version = subprocess.check_output(
-+                ['cl.exe', '/nologo', '/EP', '/TC', str(probe)], text=True).strip()
-+        if not compiler_version.isdecimal():
-+            raise RuntimeError(f'Cannot determine _MSC_FULL_VER: {compiler_version!r}')
-+        return compiler_version
-+    raise RuntimeError(
-+        f'MSVC {toolset} for {target} is required to use the Windows /GL libraries. '
-+        'Install this toolset with the Visual Studio Installer; no newer compiler '
-+        'will be substituted automatically.')
-+
-+
- def read_file_digest(file):
-     buffer = bytearray(2**18)
-     view = memoryview(buffer)
-@@ -49,17 +110,11 @@ def read_file_digest(file):
- 
- 
- def download_and_extract_windows_binaries(destdir, arch=None):
--    # Check for native ARM64 build or the environment variable that is set by
--    # Visual Studio for cross-compilation (same variable as setuptools uses)
--    if platform.machine() == 'ARM64' or os.getenv('VSCMD_ARG_TGT_ARCH') == 'arm64':
--        arch = "win-arm64"
--    elif arch == 'win32' or (arch != 'win64' and sys.maxsize <= 2**32):
--        arch = "win32"
--    else:
--        arch = "win64"
-+    arch = windows_architecture(arch)
-+    msvc_version = configure_windows_msvc(arch)
- 
-     def build_libzip_name(libname, version):
--        return f"{libname}-{version}.{arch}.zip"
-+        return f"{libname}-{version}.{arch}.msvc-{msvc_version}.zip"
- 
-     def read_latest_release():
-         url = "https://api.github.com/repos/lxml/libxml2-win-binaries/releases?per_page=5"
-@@ -98,20 +153,28 @@ def find_local_lib(libname, version):
-     if None in libs.values():
-         # Need to gather version and download URL from winlibs release.
-         latest_release = read_latest_release()
--        arch_part = f'.{arch}.'
-+        archive_suffix = f'.{arch}.msvc-{msvc_version}.zip'
-         asset_files = {
-             asset['name']: (asset['size'], asset['digest'])
-             for asset in latest_release.get('assets', ())
--            if arch_part in asset['name']
-+            if asset['name'].endswith(archive_suffix)
-         }
-         release_tag = latest_release['tag_name']
-         download_url = f"https://github.com/lxml/libxml2-win-binaries/releases/download/{urlquote
-```
-
-**File**: `tools/test_windows_library_downloads.py` (added, +110/-0)
-```diff
-@@ -0,0 +1,110 @@
-+"""Tests for the Windows static-library download boundary.
-+
-+Run with: python -m unittest discover -s tools -p test_windows_library_downloads.py
++Run with: python -m unittest discover -s tools -p test_library_downloads.py
 +"""
++import hashlib
 +import io
-+import json
-+import os
-+from pathlib import Path
 +import tempfile
 +import unittest
++from email.message import Message
++from pathlib import Path
 +from unittest.mock import patch
-+from urllib.parse import unquote, urlparse
-+import zipfile
++from urllib.response import addinfourl
 +
 +import buildlibxml
 +
 +
-+class WindowsLibrariesTest(unittest.TestCase):
++class SourceLibrariesTest(unittest.TestCase):
 +    def setUp(self):
 +        self.tmp = tempfile.TemporaryDirectory()
 +        self.addCleanup(self.tmp.cleanup)
-+        self.root = Path(self.tmp.name)
-+        self.vs = self.root / 'Visual Studio'
-+        (self.vs / 'VC/Tools/MSVC/14.52.37025').mkdir(parents=True)
-+        (self.vs / 'VC/Auxiliary/Build').mkdir(parents=True)
-+        (self.vs / 'VC/Auxiliary/Build/vcvarsall.bat').touch()
-+        self.libs = self.root / 'libs'
-+        self.libs.mkdir()
-+        self.versions = {'libxml2': '2.11.9', 'libxslt': '1.1.45',
-+                         'zlib': '1.4', 'iconv': '1.19'}
++        self.libs = Path(self.tmp.name)
 +        self.addCleanup(patch.stopall)
-+        patch.dict(os.environ, {'ProgramFiles(x86)': str(self.root),
-+                               'VSCMD_ARG_TGT_ARCH': 'arm64',
-+                               **{('LIBICONV_VERSION' if lib == 'iconv' else
-+                                   lib.upper() + '_VERSION'): version
-+                                  for lib, version in self.versions.items()}}).start()
-+        patch('subprocess.check_output', side_effect=[
-+            str(self.vs), 'VCToolsVersion=14.52.37025\nPATH=test-path',
-+            '195237025\n']).start()
++        patch.dict(buildlibxml.ARCHIVE_HASHES, clear=True).start()
 +
-+    def archive(self, name):
-+        with zipfile.ZipFile(self.libs / name, 'w') as archive:
-+            archive.writestr(name[:-4] + '/', '')
-+            archive.writestr(name[:-4] + '/lib/test.lib', b'library')
++    def add_checksum(self, filename, content):
++        patch.dict(buildlibxml.ARCHIVE_HASHES,
++                   {filename: hashlib.sha256(content).hexdigest()}).start()
 +
-+    def test_uses_local_archives_for_the_exact_compiler(self):
-+        for lib, version in self.versions.items():
-+            self.archive(f'{lib}-{version}.win-arm64.msvc-195237025.zip')
-+        patch('buildlibxml.urlopen', side_effect=AssertionError(
-+            'Matching compiler-qualified local archives must be reused')).start()
-+        paths = buildlibxml.download_and_extract_windows_binaries(str(self.libs))
-+        self.assertEqual(set(paths), set(self.versions))
-+        for path in paths.values():
-+            self.assertTrue(Path(path, 'lib/test.lib').is_file())
-+
-+    def test_rejects_unqualified_and_different_compiler_archives(self):
-+        assets = []
-+        for lib, version in self.versions.items():
-+            for suffix in ('', '.msvc-195136231'):
-+                name = f'{lib}-{version}.win-arm64{suffix}.zip'
-+                self.archive(name)
-+                assets.append({'name': name, 'size': 1, 'digest': 'sha256:unused'})
-+        response = io.BytesIO(json.dumps([
-+            {'tag_name': '2026.11.07', 'assets': assets}]).encode())
-+        response.headers = {}
-+        patch('buildlibxml.urlopen', return_value=response).start()
-+        patch('buildlibxml.urlretrieve', side_effect=AssertionError(
-+            'Incompatible archives must never be downloaded')).start()
-+        with self.assertRaisesRegex(RuntimeError, '195237025'):
-+            buildlibxml.download_and_extract_windows_binaries(str(self.libs))
-+
-+    def test_downloads_only_matching_compiler_archives(self):
-+        assets = [
-+            {'name': f'{lib}-{version}.win-arm64.msvc-{compiler}.zip',
-+             'size': 1, 'digest': 'sha256:unused'}
-+            for lib, version in self.versions.items()
-+            for compiler in ('195136231', '195237025')
-+        ]
-+        response = io.BytesIO(json.dumps([
-+            {'tag_name': '2026.11.14', 'assets': assets}]).encode())
-+        response.headers = {}
-+        patch('buildlibxml.urlopen', return_value=response).start()
++    def serve_downloads(self):
 +        downloads = []
 +
++        def list_directories(request):
++            listing = b'<a href="1.1/">1.1/</a> <a href="2.14/">2.14/</a> <a href="2.15/">2.15/</a>'
++            return addinfourl(io.BytesIO(listing), Message(), request.full_url)
++
 +        def retrieve(url, destination):
-+            name = unquote(Path(urlparse(url).path).name)
-+            self.assertEqual(Path(destination).name, name)
-+            downloads.append(name)
-+            self.archive(name)
++            downloads.append(url)
++            Path(destination).write_bytes(b'downloaded archive')
 +
++        patch('buildlibxml.urlopen', side_effect=list_directories).start()
 +        patch('buildlibxml.urlretrieve', side_effect=retrieve).start()
-+        paths = buildlibxml.download_and_extract_windows_binaries(str(self.libs))
-+        self.assertEqual(len(paths), 4)
-+        self.assertEqual(set(downloads), {
-+            'libxml2-2.11.9.win-arm64.msvc-195237025.zip',
-+            'libxslt-1.1.45.win-arm64.msvc-195237025.zip',
-+            'zlib-1.4.win-arm64.msvc-195237025.zip',
-+            'iconv-1.19.win-arm64.msvc-195237025.zip',
-+        })
++        return downloads
 +
-+    def test_missing_toolset_fails_before_downloading(self):
-+        (self.vs / 'VC/Tools/MSVC/14.52.37025').rmdir()
-+        patch('buildlibxml.urlopen', side_effect=AssertionError(
-+            'Missing toolset must be diagnosed before downloading')).start()
-+        with self.assertRaisesRegex(RuntimeError, 'MSVC 14.52'):
-+            buildlibxml.download_and_extract_windows_binaries(str(self.libs))
++    def test_uses_local_archives_of_requested_versions_without_network_access(self):
++        libxml2 = self.libs / 'libxml2-2.15.4.tar.xz'
++        libxml2.write_bytes(b'libxml2 archive')
++        libxslt = self.libs / 'libxslt-1.1.45.tar.xz'
++        libxslt.write_bytes(b'libxslt archive')
++        self.add_checksum(libxslt.name, b'libxslt archive')
++        for function in ('urlopen', 'urlretrieve'):
++            patch('buildlibxml.' + function, side_effect=AssertionError(
++                'Local archives of the requested versions must be reused')).start()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.15.4'), libxml2)
++        self.assertEqual(buildlibxml.download_libxslt(str(self.libs), '1.1.45'), libxslt)
++
++    def test_downloads_missing_archives_from_their_version_directories(self):
++        downloads = self.serve_downloads()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.14.6'),
++                         self.libs / 'libxml2-2.14.6.tar.xz')
++        self.assertEqual(buildlibxml.download_libxslt(str(self.libs), '1.1.45'),
++                         self.libs / 'libxslt-1.1.45.tar.xz')
++        self.assertEqual(downloads, [
++            'https://download.gnome.org/sources/libxml2/2.14/libxml2-2.14.6.tar.xz',
++            'https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.45.tar.xz',
++        ])
++
++    @unittest.skipUnless(hasattr(hashlib, 'file_digest'),
++                         'archive checksums are only verified in Python 3.11+')
++    def test_downloads_archive_again_if_its_checksum_does_not_match(self):
++        archive = self.libs / 'libxml2-2.14.6.tar.xz'
++        archive.write_bytes(b'truncated archive')
++        self.add_checksum(archive.name, b'downloaded archive')
++        downloads = self.serve_downloads()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.14.6'), archive)
++        self.assertEqual(downloads, [
++            'https://download.gnome.org/sources/libxml2/2.14/libxml2-2.14.6.tar.xz',
++        ])
++        self.assertEqual(archive.read_bytes(), b'downloaded archive')
 +
 +
-+if __name__
++if __name__ == '__main__':
++    unittest.main()
 ```
 
 ---
 
-### Incident Patch 3: `7f0d03e7` (2026-11-23)
-**Commit Message**: Build: bump hendrikmuhs/ccache-action (GH-562)
+### Incident Patch 3: `105f8424` (2026-11-27)
+**Commit Message**: Build: Use already downloaded libxml2/libxslt archives without network access (GH-617)
 
-Bumps the github-actions group with 1 update: [hendrikmuhs/ccache-action](https://github.com/hendrikmuhs/ccache-action).
+download_libxml2() and download_libxslt() always fetched the directory listing of
+download.gnome.org to find the directory of the requested version before
+download_library() noticed that the archive was already in the download directory.
+Static builds with explicitly requested library versions and cached archives (as in CI,
+where the archives come from the "cache_libs" job) therefore still needed the network,
+and a failed DNS lookup broke the build.
+
+Check for an existing archive of an explicitly requested version first, with the same
+checksum verification as before, and look up the download directory only if the archive
+must be downloaded.  Builds that request no version still look up the latest one online.
 
 
-Updates `hendrikmuhs/ccache-action` from 1.2.24 to 1.2.25
-- [Release notes](https://github.com/hendrikmuhs/ccache-action/releases)
-- [Commits](https://github.com/hendrikmuhs/ccache-action/compare/f09c25b45002a07be2955cbe52e8cee55643f89d...dbeefd73e8e2ffc1bbc412570072735eb4db3607)
+Claude-Session: https://claude.ai/code/session_01GwUvhmzgfkiZ6vo4uGyesN
 
----
-updated-dependencies:
-- dependency-name: hendrikmuhs/ccache-action
-  dependency-version: 1.2.25
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: github-actions
-...
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/benchmarks.yml` (modified, +1/-1)
+**File**: `buildlibxml.py` (modified, +19/-5)
 ```diff
-@@ -62,7 +62,7 @@ jobs:
-           fetch-tags: true
+@@ -253,6 +253,9 @@ def download_libxml2(dest_dir, version=None):
+         # Temporarily using the latest master (2.9.12+) until there is a release that supports lxml again.
+         from_location = "https://gitlab.gnome.org/GNOME/libxml2/-/archive/dea91c97debeac7c1aaf9c19f79029809e23a353/"
+         version = "dea91c97debeac7c1aaf9c19f79029809e23a353"
++    elif version and (existing_file := find_existing_download(dest_dir, 'libxml2', filename % version)):
++        # Already downloaded, no need to look up the download directory online.
++        return existing_file
+     else:
+         from_location = http_find_latest_version_directory(LIBXML2_LOCATION, version=version)
  
-       - name: ccache
--        uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-+        uses: hendrikmuhs/ccache-action@dbeefd73e8e2ffc1bbc412570072735eb4db3607 # v1.2.25
-         if: runner.os == 'Linux' || runner.os == 'macOS'
-         with:
-           max-size: 150M
+@@ -265,6 +268,9 @@ def download_libxslt(dest_dir, version=None):
+     #version_re = re.compile(r'LATEST_LIBXSLT_IS_([0-9.]+[0-9](?:-[abrc0-9]+)?)')
+     version_re = re.compile(r'libxslt-([0-9.]+[0-9])[.]tar[.]xz')
+     filename = 'libxslt-%s.tar.xz'
++    if version and (existing_file := find_existing_download(dest_dir, 'libxslt', filename % version)):
++        # Already downloaded, no need to look up the download directory online.
++        return existing_file
+     from_location = http_find_latest_version_directory(LIBXSLT_LOCATION, version=version)
+     return download_library(dest_dir, from_location, 'libxslt',
+                             version_re, filename, version=version)
+@@ -325,6 +331,15 @@ def file_exists(file_path: Path, size=None, digest=None):
+     return True
+ 
+ 
++def find_existing_download(dest_dir, name, filename):
++    dest_filepath = Path(dest_dir) / filename
++    if not file_exists(dest_filepath, digest=ARCHIVE_HASHES.get(filename)):
++        return None
++    print(f'Using existing {name} downloaded into {dest_filepath} '
++          '(delete this file if you want to re-download the package)')
++    return dest_filepath
++
++
+ def download_library(dest_dir, location, name, version_re, filename, version=None):
+     if version is None:
+         try:
+@@ -352,13 +367,12 @@ def download_library(dest_dir, location, name, version_re, filename, version=Non
+     if version:
+         filename = filename % version
+ 
++    existing_file = find_existing_download(dest_dir, name, filename)
++    if existing_file:
++        return existing_file
++
+     full_url = urljoin(location, filename)
+     dest_filepath = Path(dest_dir) / filename
+-    if file_exists(dest_filepath, digest=ARCHIVE_HASHES.get(filename)):
+-        print(f'Using existing {name} downloaded into {dest_filepath} '
+-              '(delete this file if you want to re-download the package)')
+-        return dest_filepath
+-
+     print('Downloading %s into %s from %s' % (name, dest_filepath, full_url))
+     for retry_after_seconds in (2, 5, 10, None):
+         try:
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `tools/test_library_downloads.py` (added, +82/-0)
 ```diff
-@@ -254,7 +254,7 @@ jobs:
-           ln -s /usr/local/bin/glibtoolize /usr/local/bin/libtoolize
- 
-       - name: ccache
--        uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-+        uses: hendrikmuhs/ccache-action@dbeefd73e8e2ffc1bbc412570072735eb4db3607 # v1.2.25
-         if: runner.os == 'Linux' || runner.os == 'macOS'
-         with:
-           max-size: 100M
-```
-
-**File**: `.github/workflows/wheels.yml` (modified, +1/-1)
-```diff
-@@ -157,7 +157,7 @@ jobs:
-           platforms: all
- 
-       - name: ccache
--        uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
-+        uses: hendrikmuhs/ccache-action@dbeefd73e8e2ffc1bbc412570072735eb4db3607 # v1.2.25
-         if: runner.os == 'Linux' || runner.os == 'macOS'
-         with:
-           max-size: 100M
+@@ -0,0 +1,82 @@
++"""Tests for downloading the library sources of static builds.
++
++Run with: python -m unittest discover -s tools -p test_library_downloads.py
++"""
++import hashlib
++import io
++import tempfile
++import unittest
++from email.message import Message
++from pathlib import Path
++from unittest.mock import patch
++from urllib.response import addinfourl
++
++import buildlibxml
++
++
++class SourceLibrariesTest(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.libs = Path(self.tmp.name)
++        self.addCleanup(patch.stopall)
++        patch.dict(buildlibxml.ARCHIVE_HASHES, clear=True).start()
++
++    def add_checksum(self, filename, content):
++        patch.dict(buildlibxml.ARCHIVE_HASHES,
++                   {filename: hashlib.sha256(content).hexdigest()}).start()
++
++    def serve_downloads(self):
++        downloads = []
++
++        def list_directories(request):
++            listing = b'<a href="1.1/">1.1/</a> <a href="2.14/">2.14/</a> <a href="2.15/">2.15/</a>'
++            return addinfourl(io.BytesIO(listing), Message(), request.full_url)
++
++        def retrieve(url, destination):
++            downloads.append(url)
++            Path(destination).write_bytes(b'downloaded archive')
++
++        patch('buildlibxml.urlopen', side_effect=list_directories).start()
++        patch('buildlibxml.urlretrieve', side_effect=retrieve).start()
++        return downloads
++
++    def test_uses_local_archives_of_requested_versions_without_network_access(self):
++        libxml2 = self.libs / 'libxml2-2.15.4.tar.xz'
++        libxml2.write_bytes(b'libxml2 archive')
++        libxslt = self.libs / 'libxslt-1.1.45.tar.xz'
++        libxslt.write_bytes(b'libxslt archive')
++        self.add_checksum(libxslt.name, b'libxslt archive')
++        for function in ('urlopen', 'urlretrieve'):
++            patch('buildlibxml.' + function, side_effect=AssertionError(
++                'Local archives of the requested versions must be reused')).start()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.15.4'), libxml2)
++        self.assertEqual(buildlibxml.download_libxslt(str(self.libs), '1.1.45'), libxslt)
++
++    def test_downloads_missing_archives_from_their_version_directories(self):
++        downloads = self.serve_downloads()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.14.6'),
++                         self.libs / 'libxml2-2.14.6.tar.xz')
++        self.assertEqual(buildlibxml.download_libxslt(str(self.libs), '1.1.45'),
++                         self.libs / 'libxslt-1.1.45.tar.xz')
++        self.assertEqual(downloads, [
++            'https://download.gnome.org/sources/libxml2/2.14/libxml2-2.14.6.tar.xz',
++            'https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.45.tar.xz',
++        ])
++
++    @unittest.skipUnless(hasattr(hashlib, 'file_digest'),
++                         'archive checksums are only verified in Python 3.11+')
++    def test_downloads_archive_again_if_its_checksum_does_not_match(self):
++        archive = self.libs / 'libxml2-2.14.6.tar.xz'
++        archive.write_bytes(b'truncated archive')
++        self.add_checksum(archive.name, b'downloaded archive')
++        downloads = self.serve_downloads()
++        self.assertEqual(buildlibxml.download_libxml2(str(self.libs), '2.14.6'), archive)
++        self.assertEqual(downloads, [
++            'https://download.gnome.org/sources/libxml2/2.14/libxml2-2.14.6.tar.xz',
++        ])
++        self.assertEqual(archive.read_bytes(), b'downloaded archive')
++
++
++if __name__ == '__main__':
++    unittest.main()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #564** (closed): escape changed link hrefs in htmldiff output (@anayaxd)
-- **PR #562** (2026-11-23): Build: bump hendrikmuhs/ccache-action from 1.2.24 to 1.2.25 in the github-actions group (@dependabot[bot])
-- **PR #559** (closed): Fix out-of-bounds read in xmlfile.write() for CDATA ending in ']' (@Nayana-Naik73)
-- **PR #555** (2026-11-23): Fix Windows library compiler mismatches (@PLPeeters)
-- **PR #554** (2026-11-23): Use lxml's libxml2 and isolate external-document tests in a subprocess (@PLPeeters)
-- **PR #552** (2026-11-22): Avoid recursive tree conversion in soupparser (@PLPeeters)
+- **PR #617** (2026-11-27): Build: Use already downloaded libxml2/libxslt archives without network access (@pylaterreur)
+- **PR #616** (2026-11-27): Build: bump hendrikmuhs/ccache-action from 1.2.25 to 1.2.26 in the github-actions group (@dependabot[bot])
+- **PR #614** (closed): Do not start tracemalloc for the tests in free-threaded Python (@pylaterreur)
+- **PR #612** (2026-11-25): Wait for the threads of the thread tests without a timeout (@pylaterreur)
+- **PR #610** (2026-11-25): Release the first writer in test_lock_write_wait_writers only when the second one waits (@pylaterreur)
+- **PR #591** (2026-11-25): Make the generated etree.c independent of PYTHONHASHSEED and fix a base URL leak of resolvers (@pylaterreur)
 
 ---
 
@@ -2807,74 +2563,51 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Avoid quadratic rebuilding in `rewrite_links()` (GH-551)
+## X. Tests: Wait for the threads of the thread tests without a timeout (GH-612)
 
 **RULE**:
-When implementing operations in `src/lxml/html/__init__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/lxml/tests/test_threading.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lxml/lxml. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6aa4130f`: Avoid quadratic rebuilding in `rewrite_links()` (GH-551). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `daf2d869`: Tests: Wait for the threads of the thread tests without a timeout (GH-612). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/lxml/html/__init__.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/lxml/tests/test_threading.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from itertools import groupby
-from operator import itemgetter
-        for (el, attr_name), links in groupby(self.iterlinks(), key=itemgetter(0, 1)):
-            if attr_name is None or attr_name == 'style':
-                # <style> text and "style" attribute: the links of one value
-                # are reported last to first.  Rebuild the value once,
-                # instead of once per link.
-                value = el.text if attr_name is None else el.get(attr_name)
-                unprocessed_end = len(value)
-                chunks = []  # replacements and the text following them, reversed
-                removed = False
-                for _, _, link, pos in links:
-                    new_link = link_repl_func(link.strip())
-                    if new_link == link:
-                        continue
-                    if new_link is None:
-                        # Remove the attribute or element content
-                        removed = True
-                        if attr_name is None:
-                            el.text = ''
-                        else:
-                            del el.attrib[attr_name]
-                        break
-                    chunks.append(value[
+        # No timeout: starting threads can take long on a busy machine.
+        sync = threading.Barrier(count + (main_func is not None))
+                counter['started'] += 1
+            sync.wait()  # wait until the other threads have started up
+        for i, thread in enumerate(threads):
+            try:
+                thread.start()
+            except BaseException:
+                # Let the started threads fail instead of waiting for the others forever.
+                sync.abort()
+                for started_thread in threads[:i]:
+                    started_thread.join()
+                raise
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-        for el, attrib, link, pos in self.iterlinks():
-            new_link = link_repl_func(link.strip())
-            if new_link == link:
-                continue
-            if new_link is None:
-                # Remove the attribute or element content
-                if attrib is None:
-                    el.text = ''
-                else:
-                    del el.attrib[attrib]
-                continue
-
-            if attrib is None:
-                new = el.text[:pos] + new_link + el.text[pos+len(link):]
-                el.text = new
-                cur = el.get(attrib)
-                if not pos and len(cur) == len(link):
-                    new = new_link  # most common case
-                else:
-                    new = cur[:pos] + new_link + cur[pos+len(link):]
-                el.set(attrib, new)
+        sync = threading.Event()
+                started = counter['started'] + 1
+                counter['started'] = started
+            if started < count + (main_func is not None):
+                sync.wait(4)  # wait until the other threads have started up
+                assert sync.is_set()
+            sync.set()  # all waiting => go!
+        for thread in threads:
+            thread.start()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6aa4130f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `daf2d869` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

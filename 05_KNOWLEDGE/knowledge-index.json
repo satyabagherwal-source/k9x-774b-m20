@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T01:00:43.925Z",
+  "last_updated": "2026-11-28T01:10:14.018Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26864,
+  "total_items": 26868,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9240f45aa521f1fa6dee64d6e072bfaeef9b26ad0157fc203853d355aad9c944",
+      "content_hash": "fbf725215b2fe54c9460595a0b678d42aada19ac7967dbb4dde659641a7a477e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T00:50:59.044Z"
+      "persisted_at": "2026-11-28T01:10:14.018Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a7c2b3a818c309fb69842d738841875c28aea6e9c5ed8a86f636881397b64e66",
+      "content_hash": "71a7dbcd4eb4018c5d606557d7dd5b82e2de0c09a9445897540dab806dbb7151",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T01:00:43.615Z"
+      "persisted_at": "2026-11-28T01:10:12.184Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "862bfc62124374c0b87bc664b350013b5652cb534d75cc812ee8923911507612",
+      "content_hash": "2819458feda4d4c8f739adf167c2399723b5d5f3f3c633dba3dee2f407dfcae1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T01:00:43.925Z"
+      "persisted_at": "2026-11-28T01:10:12.476Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -264678,8 +264678,8 @@
       "slug": "lxml-lxml",
       "platform": "github",
       "source_url": "https://github.com/lxml/lxml",
-      "source_version": "eee8a0c2",
-      "content_hash": "336a4ffe0a1d8970fe3624cfe1e27d1eb83ed7df2b4d6f32736980638309631d",
+      "source_version": "1bbb09aa",
+      "content_hash": "af0506cc0391105b3366df6a402a77b8551d6118994e8085b3cfdd6a65cfc81f",
       "dossier_path": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lxml-lxml-learnings.md",
       "promoted_rules": [
@@ -264692,6 +264692,11 @@
           "number": 10305,
           "title": "Avoid quadratic rebuilding in `rewrite_links()` (GH-551)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11004,
+          "title": "Wait for the threads of the thread tests without a timeout (GH-612)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -264699,7 +264704,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T16:45:59.114Z",
+      "verified_at": "2026-11-28T01:10:00.344Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264741,10 +264746,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-lxml-lxml-quality-verification-intelligence-lxml-lxml-core-invariants.md",
       "title": "Quality & Verification Intelligence: lxml/lxml Core Invariants",
       "repository": "lxml/lxml",
-      "source_version": "74e94856",
-      "content_hash": "4ba7da5992affeea6fb77a56c5a47c7d39365aeb1162d0815b4f784bed642bab",
+      "source_version": "1bbb09aa",
+      "content_hash": "f2fbb8811bbf84c51835a205558900317c699e6531aba1b6f0f1e8c4a2a376e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:18:50.400Z"
+      "persisted_at": "2026-11-28T01:10:01.320Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lxml-lxml": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lxml-lxml",
@@ -264753,10 +264758,10 @@
       "relative_path": "08_VERIFICATION/lxml-lxml-verification-protocol-empirical-defect-shield-for-lxml-lxml.md",
       "title": "Verification Protocol: Empirical Defect Shield for lxml/lxml",
       "repository": "lxml/lxml",
-      "source_version": "eee8a0c2",
-      "content_hash": "dd3b49aefc6ad35c89e2153915ad08753053e27af6fdcaa41715ebc822d4f9fb",
+      "source_version": "1bbb09aa",
+      "content_hash": "f3c105b29c231e929358079f91d8fcc14a9cf4b944f5c86749dcd00097f4fe3d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:46:00.160Z"
+      "persisted_at": "2026-11-28T01:10:01.594Z"
     },
     "candidate_directive-pre-release-fixes-v1-8-0": {
       "item_id": "candidate_directive-pre-release-fixes-v1-8-0",
@@ -264814,9 +264819,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lxml-lxml-learnings",
       "repository": "lxml-lxml-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c562bd27fde5bf60a17953071c803a777cbcfc5631d7b16090a9d3eda9b5d1b",
+      "content_hash": "b9c987d3086c441f194d981bac09fbc5e8ad8160cbeda3e427780b19a81c0137",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:46:17.016Z"
+      "persisted_at": "2026-11-28T01:10:11.187Z"
     },
     "domain_intelligence-technical-construction-intelligence-gravitl-netmaker-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-gravitl-netmaker-learnings-core-invariants",
@@ -358761,13 +358766,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-2AMJ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-R1SL-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "8573e23124a4fa4bcadcd9a7ec67769052d4c95e633b8f389b51a3e125e62821",
+      "content_hash": "5857cac9cc4b1711b887c0b462413a0ebead7e973f5fdd04b6960a0900a17434",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T00:50:58.510Z"
+      "persisted_at": "2026-11-28T01:10:13.467Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358777,9 +358782,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "424e328956e79895e8a33a1b0d7f0281c8284b0b5580781552c6f02744a9732f",
+      "content_hash": "e2052c9e3228b86ac592ff39bc5384215bb702a783d7ec10c32e7a07656e74eb",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T00:50:58.779Z"
+      "persisted_at": "2026-11-28T01:10:13.746Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361668,13 +361673,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ETVB-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-R0L6-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1bfbc46fda944627d8ef884010c3a3ac9ba6af01581572b2c9869dc21d5ef6a6",
+      "content_hash": "8f006455125a8c3b40a3afcf1cb083dc824ac589813bb991e8545732433e830f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T01:00:43.323Z"
+      "persisted_at": "2026-11-28T01:10:11.904Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -369053,6 +369058,56 @@
       "content_hash": "2ed82ced869535d9a4d6197ac1e92ab3cbf50ca8af004f6f47c4ad7751365454",
       "domain_letter": "K",
       "persisted_at": "2026-11-28T01:00:40.349Z"
+    },
+    "rule-11004": {
+      "learning_id": "rule-11004",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11004,
+      "title": "Wait for the threads of the thread tests without a timeout (GH-612)",
+      "source_url": "https://github.com/lxml/lxml",
+      "source_version": "1bbb09aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T01:10:00.344Z"
+    },
+    "candidate_directive-wait-for-the-threads-of-the-thread-tests-without-a-timeout-gh-612": {
+      "item_id": "candidate_directive-wait-for-the-threads-of-the-thread-tests-without-a-timeout-gh-612",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QS7E-wait-for-the-threads-of-the-thread-tests-without-a-timeout-gh-612.md",
+      "title": "Wait for the threads of the thread tests without a timeout (GH-612)",
+      "repository": "lxml/lxml",
+      "source_version": "1bbb09aa",
+      "content_hash": "22039dcac2e0487b48cd8d9fe6297076f094e8a1ac36875f13f8dea882f54360",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T01:10:01.041Z"
+    },
+    "candidate_directive-tests-wait-for-the-threads-of-the-thread-tests-without-a-timeout-gh-612": {
+      "item_id": "candidate_directive-tests-wait-for-the-threads-of-the-thread-tests-without-a-timeout-gh-612",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QZLL-tests-wait-for-the-threads-of-the-thread-tests-without-a-timeout-gh-612.md",
+      "title": "Tests: Wait for the threads of the thread tests without a timeout (GH-612)",
+      "repository": "lxml-lxml-learnings",
+      "source_version": "HEAD",
+      "content_hash": "95aef00422b52ecc8d46ce28cb1c720cefac26962bb94bcd0a05ae371b80fcec",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T01:10:10.624Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-lxml-lxml-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-lxml-lxml-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-lxml-lxml-learnings-quality-verification-intelligence-lxml-lxml-learnings-core-i.md",
+      "title": "Quality & Verification Intelligence: lxml-lxml-learnings Core Invariants",
+      "repository": "lxml-lxml-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e66b135799046687bff228b46930e66b7e65ab81b4ae4c9720f963d9713bac07",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T01:10:10.916Z"
     }
   },
   "ai-builder-brain": {

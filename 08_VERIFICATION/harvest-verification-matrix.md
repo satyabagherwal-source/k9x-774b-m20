@@ -13921,3 +13921,4 @@
 | `CYCLE-20261128-1SGF` | `2026-11-28T00:50:34.959Z` | `AngelSlim/Hy4-flash-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md` | Yes (`4262f096...`) |
 | `CYCLE-20261128-25KJ` | `2026-11-28T00:50:51.955Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11002` | Yes (`113b06f0...`) |
 | `CYCLE-20261128-EKFI` | `2026-11-28T01:00:31.086Z` | `indexable-inc/blaze` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11003` | Yes (`6fa6ec80...`) |
+| `CYCLE-20261128-QRXL` | `2026-11-28T01:10:00.681Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11004` | Yes (`af0506cc...`) |

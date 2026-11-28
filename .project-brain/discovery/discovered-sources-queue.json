@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T00:39:03.828Z",
+  "updated_at": "2026-11-28T01:10:10.238Z",
   "stats": {
-    "total_discovered": 10651,
-    "approved_pending_harvest": 10110,
+    "total_discovered": 10665,
+    "approved_pending_harvest": 10124,
     "harvested_count": 0,
     "rejected_count": 541,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10119,
+      "COMMUNITY_AND_EXPERT": 10133,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -230562,6 +230562,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
         "fileName": "greptimeteam-greptimedb-learnings.md"
+      }
+    },
+    "SRC-3E3A8F023BEC": {
+      "id": "SRC-3E3A8F023BEC",
+      "url": "https://github.com/lxml/lxml/security/advisories/%s",
+      "title": "https://github.com/lxml/lxml/security/advisories/%s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:08.703Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-9475C1D61B97": {
+      "id": "SRC-9475C1D61B97",
+      "url": "https://download.gnome.org/sources/libxml2",
+      "title": "https://download.gnome.org/sources/libxml2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:08.876Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-FE0526C4FC96": {
+      "id": "SRC-FE0526C4FC96",
+      "url": "https://download.gnome.org/sources/libxslt",
+      "title": "https://download.gnome.org/sources/libxslt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:08.978Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-B827C40F567F": {
+      "id": "SRC-B827C40F567F",
+      "url": "https://github.com/lxml/lxml/actions/runs/45713449375/job/139558261508",
+      "title": "https://github.com/lxml/lxml/actions/runs/45713449375/job/139558261508",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:09.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-B3B7329C927B": {
+      "id": "SRC-B3B7329C927B",
+      "url": "https://github.com/lxml/lxml/pull/602",
+      "title": "https://github.com/lxml/lxml/pull/602",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:09.193Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-DE003F22EEA7": {
+      "id": "SRC-DE003F22EEA7",
+      "url": "https://github.com/raycppwizard",
+      "title": "https://github.com/raycppwizard",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:09.391Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-D7796A6FE84A": {
+      "id": "SRC-D7796A6FE84A",
+      "url": "https://redirect.github.com/hendrikmuhs/ccache-action/pull/470",
+      "title": "https://redirect.github.com/hendrikmuhs/ccache-action/pull/470",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:09.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-737D8F6676B8": {
+      "id": "SRC-737D8F6676B8",
+      "url": "https://github.com/hendrikmuhs/ccache-action/compare/v1.2.25...v1.2.26",
+      "title": "https://github.com/hendrikmuhs/ccache-action/compare/v1.2.25...v1.2.26",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:09.592Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-4F57BE7E5CD5": {
+      "id": "SRC-4F57BE7E5CD5",
+      "url": "https://github.com/hendrikmuhs/ccache-action/commit/e91f31892a1d1b8c44424b1a94c0b7f52d337168",
+      "title": "https://github.com/hendrikmuhs/ccache-action/commit/e91f31892a1d1b8c44424b1a94c0b7f52d337168",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:09.721Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-335BD4D4921F": {
+      "id": "SRC-335BD4D4921F",
+      "url": "https://redirect.github.com/hendrikmuhs/ccache-action/issues/470",
+      "title": "https://redirect.github.com/hendrikmuhs/ccache-action/issues/470",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:09.824Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-3B04FBCE2363": {
+      "id": "SRC-3B04FBCE2363",
+      "url": "https://claude.ai/code/session_01GwUvhmzgfkiZ6vo4uGyesN",
+      "title": "https://claude.ai/code/session_01GwUvhmzgfkiZ6vo4uGyesN",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:09.924Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-7F71EC6ACF5F": {
+      "id": "SRC-7F71EC6ACF5F",
+      "url": "https://gitlab.gnome.org/GNOME/libxml2/-/archive/dea91c97debeac7c1aaf9c19f79029809e23a353",
+      "title": "https://gitlab.gnome.org/GNOME/libxml2/-/archive/dea91c97debeac7c1aaf9c19f79029809e23a353",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:10.035Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-572F83E2F4E5": {
+      "id": "SRC-572F83E2F4E5",
+      "url": "https://download.gnome.org/sources/libxml2/2.14/libxml2-2.14.6.tar.xz",
+      "title": "https://download.gnome.org/sources/libxml2/2.14/libxml2-2.14.6.tar.xz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:10.140Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
+      }
+    },
+    "SRC-EEF8DCA9985B": {
+      "id": "SRC-EEF8DCA9985B",
+      "url": "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.45.tar.xz",
+      "title": "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.45.tar.xz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:10:10.238Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lxml-lxml-learnings.md",
+        "fileName": "lxml-lxml-learnings.md"
       }
     }
   }

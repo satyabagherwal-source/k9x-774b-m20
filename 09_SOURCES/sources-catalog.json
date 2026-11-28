@@ -9313,10 +9313,10 @@
     "repository": "lxml/lxml",
     "platform": "github",
     "sourceUrl": "https://github.com/lxml/lxml",
-    "sourceVersion": "eee8a0c2",
+    "sourceVersion": "1bbb09aa",
     "license": "BSD-3-Clause",
-    "contentHash": "336a4ffe0a1d8970fe3624cfe1e27d1eb83ed7df2b4d6f32736980638309631d",
-    "lastHarvestedAt": "2026-11-24T16:45:59.377Z",
+    "contentHash": "af0506cc0391105b3366df6a402a77b8551d6118994e8085b3cfdd6a65cfc81f",
+    "lastHarvestedAt": "2026-11-28T01:10:00.694Z",
     "learningId": "learn-github-lxml-lxml"
   },
   "mazzzystar-queryable": {

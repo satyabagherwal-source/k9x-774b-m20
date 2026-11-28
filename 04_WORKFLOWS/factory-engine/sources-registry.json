@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T01:00:39.783Z",
-    "lastVerified": "2026-11-28T01:00:39.783Z",
+    "lastChecked": "2026-11-28T01:10:07.989Z",
+    "lastVerified": "2026-11-28T01:10:07.989Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -403,8 +403,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T00:28:29.722Z",
-    "lastVerified": "2026-11-28T00:28:29.722Z",
+    "lastChecked": "2026-11-28T01:10:07.976Z",
+    "lastVerified": "2026-11-28T01:10:07.976Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1788,12 +1788,12 @@
     "lastVerified": "2026-11-27T21:38:57.519Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T20:47:01.557Z",
-    "lastVerified": "2026-11-27T20:47:01.557Z",
+    "lastChecked": "2026-11-28T01:10:03.169Z",
+    "lastVerified": "2026-11-28T01:10:03.169Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1802,7 +1802,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ebb631f8"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -3423,9 +3424,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-27T07:03:40.607Z",
+    "lastChecked": "2026-11-28T01:10:00.464Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-27T07:03:40.607Z"
+    "lastVerified": "2026-11-28T01:10:00.464Z"
   },
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
@@ -5778,9 +5779,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-27T00:58:46.628Z",
+    "lastChecked": "2026-11-28T01:09:52.960Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-27T00:58:46.628Z"
+    "lastVerified": "2026-11-28T01:09:52.960Z"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
     "name": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -6651,9 +6652,9 @@
   "olric-data-olric": {
     "name": "olric",
     "officialUrl": "https://github.com/olric-data/olric",
-    "lastChecked": "2026-11-27T05:57:42.581Z",
+    "lastChecked": "2026-11-28T01:10:05.454Z",
     "revisionIdentifier": "9092df94",
-    "lastVerified": "2026-11-27T05:57:42.581Z"
+    "lastVerified": "2026-11-28T01:10:05.454Z"
   },
   "yvgude-lean-ctx": {
     "name": "lean-ctx",
@@ -10647,9 +10648,9 @@
   "mikepenz-multiplatform-markdown-renderer": {
     "name": "multiplatform-markdown-renderer",
     "officialUrl": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-    "lastChecked": "2026-11-25T23:11:42.704Z",
+    "lastChecked": "2026-11-28T01:09:57.955Z",
     "revisionIdentifier": "8077f612",
-    "lastVerified": "2026-11-25T23:11:42.704Z"
+    "lastVerified": "2026-11-28T01:09:57.955Z"
   },
   "melihandic-deep-in-gsc": {
     "name": "deep-in-gsc",
@@ -11170,14 +11171,14 @@
     "officialUrl": "https://github.com/lxml/lxml",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T16:45:57.859Z",
-    "lastVerified": "2026-11-24T16:45:57.859Z",
+    "lastChecked": "2026-11-28T01:09:59.001Z",
+    "lastVerified": "2026-11-28T01:09:59.001Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lxml-lxml",
-    "contentHash": "336a4ffe0a1d8970fe3624cfe1e27d1eb83ed7df2b4d6f32736980638309631d",
+    "contentHash": "af0506cc0391105b3366df6a402a77b8551d6118994e8085b3cfdd6a65cfc81f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
