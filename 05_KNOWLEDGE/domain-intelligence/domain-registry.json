@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T00:39:04.498Z",
+  "last_updated": "2026-11-28T00:50:58.779Z",
   "total_records": 2867,
   "domains": {
     "A": {
@@ -17959,8 +17959,8 @@
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "repository": "ydb-platform/ydb",
-      "content_hash": "a37bc7667da033b570a5e1aaa03ff0a1d2c851606ffde3e3602678eccb70c25d",
-      "created_at": "2026-11-27T05:39:51.989Z"
+      "content_hash": "c577670170a828a1337d4dcc8e8b8e2e92974d9f473a598f52c50dcd43465f32",
+      "created_at": "2026-11-28T00:50:52.578Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -24020,8 +24020,8 @@
       "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-learnings-technical-construction-intelligence-ydb-platform-ydb-.md",
       "repository": "ydb-platform-ydb-learnings",
-      "content_hash": "756b327ae8759b6b44a2100234b24a4d33924cc97269d6983465897f79553bc0",
-      "created_at": "2026-11-27T05:39:58.138Z"
+      "content_hash": "69683401dcd4afd47dbb56ec23eab08238a250b25ef5bca4c24e0f60718adcfb",
+      "created_at": "2026-11-28T00:50:57.195Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants",
@@ -36807,8 +36807,8 @@
       "title": "Research & Knowledge Intelligence: AngelSlim/Hy4-flash-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-angelslim-hy4-flash-gguf-research-knowledge-intelligence-angelslim-hy4-flash-.md",
       "repository": "AngelSlim/Hy4-flash-GGUF",
-      "content_hash": "27ea39bd4dd88c53bb10849488f9afc3c0064828de7d1cd68cef81bdefac8a2e",
-      "created_at": "2026-11-24T16:28:13.950Z"
+      "content_hash": "b9ff923fbb4a466e8670f54f2c66f91cc002c21d92f22882f672a4ff066cfc24",
+      "created_at": "2026-11-28T00:50:35.299Z"
     },
     "DOM-D-981F2664": {
       "record_id": "DOM-D-981F2664",
@@ -36858,8 +36858,8 @@
       "title": "Research & Knowledge Intelligence: hf-angelslim-hy4-flash-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-angelslim-hy4-flash-gguf-learnings-research-knowledge-intelligence-hf-angelsl.md",
       "repository": "hf-angelslim-hy4-flash-gguf-learnings",
-      "content_hash": "10332ac06fd5438b34405aa95ddf04bdec4ff3c46a895703c6ece14a805226eb",
-      "created_at": "2026-11-24T16:28:25.695Z"
+      "content_hash": "03ab0f134514faba34c589dd3a925208662b91dcd40839acef5cb7006fe8c50a",
+      "created_at": "2026-11-28T00:50:56.231Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lxml-lxml-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lxml-lxml-core-invariants",
@@ -46814,8 +46814,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "facb8ab178e995832aa8da42c0c54f73deb399cb594808786cb89259831ddf1f",
-      "created_at": "2026-11-28T00:19:40.152Z"
+      "content_hash": "424e328956e79895e8a33a1b0d7f0281c8284b0b5580781552c6f02744a9732f",
+      "created_at": "2026-11-28T00:50:58.779Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

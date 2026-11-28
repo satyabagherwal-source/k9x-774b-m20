@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T00:39:04.987Z",
+  "last_updated": "2026-11-28T00:50:59.286Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-28T00:19:39.168Z",
+      "processed_at": "2026-11-28T00:50:57.757Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -843,7 +843,7 @@
       "staged_for_review": 0
     },
     "ydb-platform-ydb-learnings.md": {
-      "processed_at": "2026-11-27T05:39:57.512Z",
+      "processed_at": "2026-11-28T00:50:56.558Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3593,7 +3593,7 @@
       "staged_for_review": 0
     },
     "hf-angelslim-hy4-flash-gguf-learnings.md": {
-      "processed_at": "2026-11-24T16:28:25.489Z",
+      "processed_at": "2026-11-28T00:50:55.871Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5169,
+  "total_dossiers_evaluated": 5172,
   "total_canonical_promoted": 588,
-  "total_staged_for_review": 3911
+  "total_staged_for_review": 3913
 }

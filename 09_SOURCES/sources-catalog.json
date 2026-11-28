@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "8194d077",
+    "sourceVersion": "a7dd32bc",
     "license": "Apache-2.0",
-    "contentHash": "8274743d7e26e6d60523877e6a8f9b989879449b6e9b6917c72e0338d7911e39",
-    "lastHarvestedAt": "2026-11-27T05:39:51.355Z",
+    "contentHash": "113b06f00e749c1d1eb9ef77e927bb2c397a1c01fc5d6ec885be90ca91ffeaf1",
+    "lastHarvestedAt": "2026-11-28T00:50:51.969Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -13075,8 +13075,8 @@
     "sourceUrl": "https://huggingface.co/AngelSlim/Hy4-flash-GGUF",
     "sourceVersion": "hf-angelslim-hy4-flash-gguf",
     "license": "Open-Source",
-    "contentHash": "e98d7b4d5aca2b6ea80a6360315824c0213c26e5929b304603dfc895f8d2029e",
-    "lastHarvestedAt": "2026-11-24T16:28:13.732Z",
+    "contentHash": "4262f096ff49276f94360efdb79d39dca10cee57f7610f0ce91dcc01e12ebf57",
+    "lastHarvestedAt": "2026-11-28T00:50:34.974Z",
     "learningId": "learn-huggingface-angelslim-hy4-flash-gguf"
   },
   "hf-apple-depthpro2": {

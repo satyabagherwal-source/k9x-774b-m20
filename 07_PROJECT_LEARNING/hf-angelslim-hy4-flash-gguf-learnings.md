@@ -3,7 +3,7 @@
 > **Source Version**: `hf-angelslim`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T16:28:13.262Z  
+> **Timestamp**: 2026-11-28T00:50:34.157Z  
 > **Learning ID**: `learn-huggingface-angelslim-hy4-flash-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/AngelSlim/Hy4-flash-GGUF](https://huggingface.co/AngelSlim/Hy4-flash-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:28:13.095Z  
+> **Harvest Timestamp**: 2026-11-28T00:50:34.005Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 145168 downloads | 217 likes
+- **Stars / Engagement**: 207576 downloads | 247 likes
 
 ---
 

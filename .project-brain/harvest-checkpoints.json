@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T00:38:26.856Z",
+  "last_updated": "2026-11-28T00:50:51.980Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "8274743d7e26e6d60523877e6a8f9b989879449b6e9b6917c72e0338d7911e39",
-      "verified_at": "2026-11-27T05:39:51.379Z",
+      "content_hash": "113b06f00e749c1d1eb9ef77e927bb2c397a1c01fc5d6ec885be90ca91ffeaf1",
+      "verified_at": "2026-11-28T00:50:51.979Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T05:39:51.379Z"
+      "last_updated": "2026-11-28T00:50:51.979Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -19701,14 +19701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-angelslim-hy4-flash-gguf",
-      "content_hash": "e98d7b4d5aca2b6ea80a6360315824c0213c26e5929b304603dfc895f8d2029e",
-      "verified_at": "2026-11-24T16:28:13.747Z",
+      "content_hash": "4262f096ff49276f94360efdb79d39dca10cee57f7610f0ce91dcc01e12ebf57",
+      "verified_at": "2026-11-28T00:50:34.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T16:28:13.747Z"
+      "last_updated": "2026-11-28T00:50:34.984Z"
     },
     "apple/DepthPro2": {
       "repository": "apple/DepthPro2",

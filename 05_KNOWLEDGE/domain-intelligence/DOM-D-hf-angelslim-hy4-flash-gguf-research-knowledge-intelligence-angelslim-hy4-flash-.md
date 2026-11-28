@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/AngelSlim/Hy4-flash-GGUF",
   "source_version": "hf-angelslim-hy4-flash-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T16:28:13.949Z",
+  "timestamp": "2026-11-28T00:50:35.298Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-angelslim-hy4-flash-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [AngelSlim/Hy4-flash-GGUF](https://huggingface.co/AngelSlim/Hy4-flash-GGUF) (Revision: `hf-angelsl`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T16:28:13.949Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T00:50:35.298Z`  
 > **Learning ID**: `learn-huggingface-angelslim-hy4-flash-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/AngelSlim/Hy4-flash-GGUF](https://huggingface.co/AngelSlim/Hy4-flash-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:28:13.095Z  
+> **Harvest Timestamp**: 2026-11-28T00:50:34.005Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 145168 downloads | 217 likes
+- **Stars / Engagement**: 207576 downloads | 247 likes
 
 ---
 

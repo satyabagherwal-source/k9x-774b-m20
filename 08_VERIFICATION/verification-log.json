@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-V1C4",
-    "timestamp": "2026-11-26T13:17:49.060Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "05546c80ae569bbec6e3ebcef98be788637ca9b3ba111ec1bdcee70bde039b19",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-V7V2",
-    "timestamp": "2026-11-26T13:17:57.518Z",
-    "repository": "kirillzyusko/react-native-keyboard-controller",
-    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-    "contentHash": "09cdafbbe5629de4d448c2f6c6c7c74a06b4b6e1711e0717c3fc7082191ed0c4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-VF3U",
     "timestamp": "2026-11-26T13:18:06.906Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7462,36 @@
     "contentHash": "10eebabd35488983a2ef1fc72d5fb1074798238702d141ce4d588352f66428a9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-1SGF",
+    "timestamp": "2026-11-28T00:50:34.959Z",
+    "repository": "AngelSlim/Hy4-flash-GGUF",
+    "learningId": "learn-huggingface-angelslim-hy4-flash-gguf",
+    "contentHash": "4262f096ff49276f94360efdb79d39dca10cee57f7610f0ce91dcc01e12ebf57",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-25KJ",
+    "timestamp": "2026-11-28T00:50:51.955Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "113b06f00e749c1d1eb9ef77e927bb2c397a1c01fc5d6ec885be90ca91ffeaf1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

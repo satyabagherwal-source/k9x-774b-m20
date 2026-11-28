@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T00:38:26.852Z",
-  "total_cycles_completed": 13208,
-  "total_learnings_persisted": 13208,
-  "total_rules_promoted": 11916,
+  "last_updated": "2026-11-28T00:50:51.976Z",
+  "total_cycles_completed": 13210,
+  "total_learnings_persisted": 13210,
+  "total_rules_promoted": 11917,
   "history": [
-    {
-      "timestamp": "2026-11-27T06:54:51.538Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T06:55:06.388Z",
-      "repository": "MariaDB/server",
-      "learningId": "learn-github-mariadb-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T07:03:36.622Z",
       "repository": "inclusionAI/Ling-3.2-air",
@@ -1403,6 +1389,20 @@
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T00:50:34.980Z",
+      "repository": "AngelSlim/Hy4-flash-GGUF",
+      "learningId": "learn-huggingface-angelslim-hy4-flash-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T00:50:51.976Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
